@@ -33,6 +33,23 @@ const CONCURRENCY_CONFIG = {
   request_delay: 100,       // Delay between batches in milliseconds
 } as const;
 
+// PATH ENVIRONMENT CONFIGURATION
+const PATH_CONFIG = {
+  custom_paths: [
+    '/usr/local/bin',
+    '/usr/bin',
+    '/bin',
+    '/usr/sbin',
+    '/sbin',
+    '/opt/homebrew/bin',
+    '/home/linuxbrew/.linuxbrew/bin',
+    './node_modules/.bin',
+    '../node_modules/.bin',
+    '../../node_modules/.bin',
+  ],
+  binary_extensions: process.platform === 'win32' ? ['.exe', '.cmd', '.bat'] : [''],
+} as const;
+
 // PERFORMANCE MONITORING
 interface PerformanceMetrics {
   totalRequests: number;
@@ -155,6 +172,121 @@ class MemoryPool {
       used: this.offset,
       available: this.size - this.offset,
       utilization: this.offset / this.size
+    };
+  }
+}
+
+// PATH utility for binary discovery and execution
+class PathResolver {
+  private static cachedPaths: string[] | null = null;
+  
+  /**
+   * Get enhanced PATH with custom directories
+   */
+  static getEnhancedPath(): string[] {
+    if (this.cachedPaths) return this.cachedPaths;
+    
+    const systemPath = process.env.PATH || '';
+    const systemPaths = systemPath.split(':').filter(p => p.trim());
+    
+    // Combine system PATH with custom paths
+    const allPaths = [...new Set([...PATH_CONFIG.custom_paths, ...systemPaths])];
+    
+    this.cachedPaths = allPaths.filter(path => {
+      try {
+        return Bun.file(path).exists();
+      } catch {
+        return false;
+      }
+    });
+    
+    return this.cachedPaths;
+  }
+  
+  /**
+   * Find binary in enhanced PATH
+   */
+  static async findBinary(binaryName: string): Promise<string | null> {
+    const paths = this.getEnhancedPath();
+    
+    for (const path of paths) {
+      for (const ext of PATH_CONFIG.binary_extensions) {
+        const fullPath = `${path}/${binaryName}${ext}`;
+        try {
+          const file = Bun.file(fullPath);
+          if (await file.exists()) {
+            return fullPath;
+          }
+        } catch {
+          continue;
+        }
+      }
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Execute binary with enhanced PATH
+   */
+  static async executeBinary(binaryName: string, args: string[] = [], options: {
+    cwd?: string;
+    env?: Record<string, string>;
+    timeout?: number;
+  } = {}): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+    const binaryPath = await this.findBinary(binaryName);
+    
+    if (!binaryPath) {
+      throw new Error(`Binary '${binaryName}' not found in PATH`);
+    }
+    
+    const enhancedEnv = {
+      ...process.env,
+      PATH: this.getEnhancedPath().join(':'),
+      ...options.env,
+    };
+    
+    const proc = Bun.spawn([binaryPath, ...args], {
+      cwd: options.cwd || process.cwd(),
+      env: enhancedEnv,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    
+    // Set timeout if specified
+    if (options.timeout) {
+      setTimeout(() => {
+        proc.kill();
+      }, options.timeout);
+    }
+    
+    const stdout = await new Response(proc.stdout!).text();
+    const stderr = await new Response(proc.stderr!).text();
+    const exitCode = await proc.exited;
+    
+    return { stdout, stderr, exitCode };
+  }
+  
+  /**
+   * Get PATH statistics
+   */
+  static getPathStats(): {
+    totalPaths: number;
+    validPaths: number;
+    systemPaths: number;
+    customPaths: number;
+    pathList: string[];
+  } {
+    const systemPath = process.env.PATH || '';
+    const systemPaths = systemPath.split(':').filter(p => p.trim());
+    const validPaths = this.getEnhancedPath();
+    
+    return {
+      totalPaths: systemPaths.length + PATH_CONFIG.custom_paths.length,
+      validPaths: validPaths.length,
+      systemPaths: systemPaths.length,
+      customPaths: PATH_CONFIG.custom_paths.length,
+      pathList: validPaths,
     };
   }
 }
@@ -1251,6 +1383,7 @@ async function main() {
   const showDiagnosticsOnly = args.includes('--diagnostics');
   const showOptimizations = args.includes('--optimize');
   const useBunNative = args.includes('--bun-native');
+  const showPathInfo = args.includes('--path-info');
   
   // Parse concurrency options
   const concurrentScriptsIndex = args.findIndex(arg => arg === '--concurrent-scripts');
@@ -1290,6 +1423,7 @@ OPTIONS:
   --diagnostics       Show only R-Score diagnostics (no validation table)
   --optimize          Show v4.3 optimization recommendations for weak metrics
   --bun-native        Enable Bun-native optimizations (P0-P2) for maximum performance
+  --path-info         Show enhanced PATH information and binary discovery statistics
   --concurrent-scripts <number>  Maximum number of concurrent jobs for lifecycle scripts (default: 5)
   --network-concurrency <number> Maximum number of concurrent network requests (default: 48)
   --lenient           Enable lenient mode (disable all strict features)
@@ -1316,7 +1450,49 @@ EXAMPLES:
     return;
   }
 
-  // Run canonical validation tests if requested
+  // Show PATH information if requested
+  if (showPathInfo) {
+    console.log('🔍 Enhanced PATH Information');
+    console.log('================================');
+    
+    const pathStats = PathResolver.getPathStats();
+    console.log(`📊 PATH Statistics:`);
+    console.log(`   Total paths configured: ${pathStats.totalPaths}`);
+    console.log(`   Valid paths found: ${pathStats.validPaths}`);
+    console.log(`   System paths: ${pathStats.systemPaths}`);
+    console.log(`   Custom paths: ${pathStats.customPaths}`);
+    console.log('');
+    
+    console.log(`🛤️  Valid PATH Directories:`);
+    pathStats.pathList.forEach((path, index) => {
+      console.log(`   ${index + 1}. ${path}`);
+    });
+    console.log('');
+    
+    // Test binary discovery
+    console.log(`🔍 Binary Discovery Test:`);
+    const testBinaries = ['node', 'npm', 'bun', 'git', 'curl'];
+    
+    for (const binary of testBinaries) {
+      try {
+        const binaryPath = await PathResolver.findBinary(binary);
+        if (binaryPath) {
+          console.log(`   ✅ ${binary}: ${binaryPath}`);
+        } else {
+          console.log(`   ❌ ${binary}: not found`);
+        }
+      } catch (error) {
+        console.log(`   ❌ ${binary}: error - ${error}`);
+      }
+    }
+    
+    console.log('');
+    console.log(`🌐 Environment PATH:`);
+    console.log(`   ${process.env.PATH || 'PATH not set'}`);
+    console.log('');
+    
+    return; // Exit after showing PATH info
+  }
   if (doCanonicalTest) {
     console.log("--- Pointer Validation Audit ---");
     
