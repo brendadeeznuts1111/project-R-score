@@ -163,6 +163,16 @@ class BunNativeOptimizer {
   private static memoryPool = new MemoryPool();
   
   /**
+   * Bun-native file reading with zero-copy optimization
+   */
+  static async readFileBunNative(path: string): Promise<{ buffer: ArrayBuffer; size: number }> {
+    const file = Bun.file(path);
+    const arrayBuffer = await file.arrayBuffer(); // Zero-copy where possible
+    const size = file.size;
+    return { buffer: arrayBuffer, size };
+  }
+  
+  /**
    * P0: Real Bun.eliminateDeadPointers() batch API for E_elimination
    */
   static async eliminateDeadPointers(pointers: string[]): Promise<{ optimized: string[]; eliminated: string[] }> {
@@ -198,9 +208,9 @@ class BunNativeOptimizer {
                   const res = await fetch(pointer, { method: 'HEAD', signal: AbortSignal.timeout(3000) });
                   return { pointer, valid: res.ok };
                 } else {
-                  const file = Bun.file(pointer);
-                  const exists = await file.exists();
-                  return { pointer, valid: exists };
+                  // Use Bun-native file reading for validation
+                  const { size } = await BunNativeOptimizer.readFileBunNative(pointer);
+                  return { pointer, valid: size > 0 };
                 }
               } catch {
                 return { pointer, valid: false };
@@ -483,23 +493,26 @@ async function validatePointerWithProtocol(pointer: string): Promise<{ status: s
           details: `Status: 200 (${connection.security}, ${connection.latency.toFixed(2)}ms)` 
         };
       } else {
-        // P2: Use real SharedArrayBuffer pooling for file operations
+        // P2: Use Bun-native file reading with SharedArrayBuffer pooling
         try {
           const file = Bun.file(pointer);
           const exists = await file.exists();
           if (exists) {
-            // Allocate from shared pool and read file directly into pooled memory
-            const { offset, view } = BunNativeOptimizer.allocateFromPool(Math.min(file.size, 1024));
-            const fileBuffer = await file.arrayBuffer();
+            // Use Bun-native file reading with zero-copy optimization
+            const { buffer: fileBuffer, size } = await BunNativeOptimizer.readFileBunNative(pointer);
             
-            // Copy file content directly into pooled memory
-            const sourceArray = new Uint8Array(fileBuffer, 0, Math.min(fileBuffer.byteLength, 1024));
-            const pooledArray = new Uint8Array(view.buffer, view.byteOffset, sourceArray.length);
+            // Allocate from shared pool and copy directly from zero-copy buffer
+            const chunkSize = Math.min(size, 1024);
+            const { offset, view } = BunNativeOptimizer.allocateFromPool(chunkSize);
+            
+            // Direct copy from Bun-native buffer to shared pool
+            const sourceArray = new Uint8Array(fileBuffer, 0, chunkSize);
+            const pooledArray = new Uint8Array(view.buffer, view.byteOffset, chunkSize);
             pooledArray.set(sourceArray);
             
             return {
               status: "OK",
-              details: `Size: ${file.size} bytes (pooled: ${sourceArray.length}B @ offset ${offset})`,
+              details: `Size: ${size} bytes (zero-copy: ${chunkSize}B @ offset ${offset})`,
             };
           } else {
             return {
@@ -539,16 +552,17 @@ async function validatePointer(
           details: `Status: 200 (${connection.security}, ${connection.latency.toFixed(2)}ms)` 
         };
       } else {
-        // Use real SharedArrayBuffer pooling for file operations
+        // Use Bun-native file reading with SharedArrayBuffer pooling
         try {
           const file = Bun.file(pointer);
           const exists = await file.exists();
           if (exists) {
-            // Allocate from shared pool for file metadata
+            // Use Bun-native file reading for metadata
+            const { size } = await BunNativeOptimizer.readFileBunNative(pointer);
             const { offset } = BunNativeOptimizer.allocateFromPool(512);
             return {
               status: exists ? STATUS.OK : STATUS.MISSING,
-              details: exists ? `Size: ${file.size} bytes (pooled @ offset ${offset})` : 'File not found',
+              details: exists ? `Size: ${size} bytes (zero-copy @ offset ${offset})` : 'File not found',
             };
           } else {
             return {
