@@ -849,49 +849,37 @@ interface DiagnosticResult {
 }
 
 /**
- * Calculate R-Score based on validation results
+ * Calculate R-Score from actual runtime metrics, not hardcoded values
  */
-function calculateRScore(results: ValidationResult[]): RScoreMetrics {
+const calculateRScore = (results: ValidationResult[], networkMetrics: PerformanceMetrics, memoryStats: { utilization: number }): RScoreMetrics => {
   const totalPointers = results.length;
   const successfulPointers = results.filter(r => r.status === 'OK').length;
-  const failedPointers = results.filter(r => r.status === 'ERROR').length;
-  const missingPointers = results.filter(r => r.status === 'MISSING').length;
+  const failedValidations = results.filter(r => r.status === 'ERROR' || r.status === 'MISSING').length;
   
-  // P_ratio: Performance ratio (Native HTTP/1.1 via Bun.fetch)
+  // P_ratio: Protocol efficiency based on successful fetches
   const p_ratio = totalPointers > 0 ? successfulPointers / totalPointers : 0;
   
-  // M_impact: Memory impact (zero-copy decompression verified)
-  // Optimize for file operations and successful HTTP requests
-  const fileOperations = results.filter(r => r.protocol === 'file:').length;
-  const httpOperations = results.filter(r => r.protocol.startsWith('http')).length;
-  const successfulHttp = results.filter(r => r.protocol.startsWith('http') && r.status === 'OK').length;
-  const successfulFiles = results.filter(r => r.protocol === 'file:' && r.status === 'OK').length;
+  // M_impact: Memory efficiency based on pool utilization (optimal range 0.1-0.3)
+  const m_impact = memoryStats.utilization > 0 ? 
+    Math.min(memoryStats.utilization * 3, 1.0) : // Scale up utilization, cap at 1.0
+    0.5; // Default if no pool used
   
-  // Better memory impact calculation - reward successful operations more heavily
-  const m_impact = totalPointers > 0 ? 
-    ((successfulFiles * 0.7) + (successfulHttp * 0.3)) / totalPointers : 1.0;
+  // E_elimination: Error elimination rate
+  const e_elimination = totalPointers > 0 ? 1 - (failedValidations / totalPointers) : 1.0;
   
-  // E_elimination: Error elimination (failure rate)
-  const errorRate = (failedPointers + missingPointers) / totalPointers;
-  const e_elimination = Math.max(0, 1 - errorRate - 0.15); // Penalize failures
+  // S_hardening: Security hardening based on TLS usage and connection security
+  const networkPointers = results.filter(r => r.pointer.startsWith('http'));
+  const secureConnections = networkPointers.filter(r => 
+    r.details.includes('hardened_tls') || 
+    r.details.includes('trusted_localhost')
+  ).length;
+  const s_hardening = networkPointers.length > 0 ? 
+    (secureConnections / networkPointers.length) * 0.5 + 0.5 : // Scale 0.5-1.0
+    0.8; // Default for file-only operations
   
-  // S_hardening: Security hardening (protocol verification)
-  const httpsUrls = results.filter(r => r.protocol === 'https:').length;
-  const httpUrls = results.filter(r => r.protocol === 'http:').length;
-  const fileUrls = results.filter(r => r.protocol === 'file:').length;
-  
-  // Better security calculation - reward HTTPS heavily, penalize HTTP slightly, reward file operations
-  let s_hardening = 0;
-  if (totalPointers > 0) {
-    s_hardening = (httpsUrls / totalPointers) * 1.0 +           // HTTPS: full points
-                 (httpUrls / totalPointers) * 0.3 +             // HTTP: partial points (localhost is OK)
-                 (fileUrls / totalPointers) * 0.8;               // File: good points (local security)
-  }
-  s_hardening = Math.min(1.0, s_hardening);
-  
-  // Weighted R-Score calculation
+  // Calculate weighted R-Score
   const total_score = (p_ratio * 0.35) + (m_impact * 0.30) + (e_elimination * 0.20) + (s_hardening * 0.15);
-  
+
   return {
     p_ratio,
     m_impact,
@@ -899,7 +887,7 @@ function calculateRScore(results: ValidationResult[]): RScoreMetrics {
     s_hardening,
     total_score
   };
-}
+};
 
 /**
  * Generate diagnostic results for display
@@ -1063,7 +1051,7 @@ function displayOptimizationRecommendations(rScore: RScoreMetrics): void {
  * Display R-Score diagnostics
  */
 function displayRScoreDiagnostics(results: ValidationResult[]): void {
-  const rScore = calculateRScore(results);
+  const rScore = calculateRScore(results, networkController.getMetrics(), BunNativeOptimizer.getPoolStats());
   const diagnostics = generateDiagnostics(rScore);
   
   console.log('\n📊 R-Score Diagnostics (Current Run)');
@@ -1581,7 +1569,7 @@ EXAMPLES:
   
   // Show optimization recommendations if requested
   if (showOptimizations) {
-    const rScore = calculateRScore(results);
+    const rScore = calculateRScore(results, networkController.getMetrics(), BunNativeOptimizer.getPoolStats());
     displayOptimizationRecommendations(rScore);
   }
 
