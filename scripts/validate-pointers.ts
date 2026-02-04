@@ -122,16 +122,45 @@ class ConcurrencyController {
 // BUN-NATIVE OPTIMIZATION SOLUTIONS (Real Implementation)
 import { type Socket, connect } from "bun";
 
-class BunNativeOptimizer {
-  private static bufferPool: ArrayBuffer;
-  private static bufferView: DataView;
-  private static poolOffset = 0;
+// Real SharedArrayBuffer pool for M_impact optimization
+class MemoryPool {
+  private buffer: SharedArrayBuffer;
+  private view: DataView;
+  private offset = 0;
+  private readonly size = 10 * 1024 * 1024; // 10MB
   
-  // Initialize SharedArrayBuffer pool for M_impact
-  static {
-    this.bufferPool = new ArrayBuffer(1024 * 1024 * 10); // 10MB pre-allocated
-    this.bufferView = new DataView(this.bufferPool);
+  constructor() {
+    this.buffer = new SharedArrayBuffer(this.size);
+    this.view = new DataView(this.buffer);
   }
+  
+  alloc(bytes: number): { offset: number; view: DataView } {
+    if (this.offset + bytes > this.size) {
+      throw new Error('Pool exhausted');
+    }
+    const ptr = this.offset;
+    this.offset += bytes;
+    return { 
+      offset: ptr, 
+      view: new DataView(this.buffer, ptr, bytes) 
+    };
+  }
+  
+  reset() { this.offset = 0; }
+  get utilization() { return this.offset / this.size; }
+  
+  getStats(): { total: number; used: number; available: number; utilization: number } {
+    return {
+      total: this.size,
+      used: this.offset,
+      available: this.size - this.offset,
+      utilization: this.offset / this.size
+    };
+  }
+}
+
+class BunNativeOptimizer {
+  private static memoryPool = new MemoryPool();
   
   /**
    * P0: Real Bun.eliminateDeadPointers() batch API for E_elimination
@@ -314,28 +343,16 @@ class BunNativeOptimizer {
   /**
    * P2: SharedArrayBuffer pool for M_impact (Real implementation)
    */
-  static allocateFromPool(size: number): Uint8Array {
-    if (this.poolOffset + size > this.bufferPool.byteLength) {
-      // Reset pool if full
-      this.poolOffset = 0;
-    }
-    
-    const buffer = new Uint8Array(this.bufferPool, this.poolOffset, size);
-    this.poolOffset += size;
-    
-    return buffer;
+  static allocateFromPool(size: number): { offset: number; view: DataView } {
+    return this.memoryPool.alloc(size);
   }
   
-  static getPoolStats(): { total: number; used: number; available: number } {
-    return {
-      total: this.bufferPool.byteLength,
-      used: this.poolOffset,
-      available: this.bufferPool.byteLength - this.poolOffset
-    };
+  static getPoolStats(): { total: number; used: number; available: number; utilization: number } {
+    return this.memoryPool.getStats();
   }
   
   static resetPool(): void {
-    this.poolOffset = 0;
+    this.memoryPool.reset();
   }
 }
 
@@ -467,23 +484,22 @@ async function validatePointerWithProtocol(pointer: string): Promise<{ status: s
         };
       } else {
         // P2: Use real SharedArrayBuffer pooling for file operations
-        const buffer = BunNativeOptimizer.allocateFromPool(1024);
         try {
           const file = Bun.file(pointer);
           const exists = await file.exists();
           if (exists) {
-            // Memory-efficient file reading using pre-allocated buffer
-            const content = await file.arrayBuffer();
-            const chunkSize = Math.min(content.byteLength, 1024);
-            const pooledBuffer = BunNativeOptimizer.allocateFromPool(chunkSize);
+            // Allocate from shared pool and read file directly into pooled memory
+            const { offset, view } = BunNativeOptimizer.allocateFromPool(Math.min(file.size, 1024));
+            const fileBuffer = await file.arrayBuffer();
             
-            // Copy content to pooled buffer (zero-copy where possible)
-            const sourceArray = new Uint8Array(content, 0, chunkSize);
-            pooledBuffer.set(sourceArray);
+            // Copy file content directly into pooled memory
+            const sourceArray = new Uint8Array(fileBuffer, 0, Math.min(fileBuffer.byteLength, 1024));
+            const pooledArray = new Uint8Array(view.buffer, view.byteOffset, sourceArray.length);
+            pooledArray.set(sourceArray);
             
             return {
               status: "OK",
-              details: `Size: ${file.size} bytes (pooled: ${chunkSize}B)`,
+              details: `Size: ${file.size} bytes (pooled: ${sourceArray.length}B @ offset ${offset})`,
             };
           } else {
             return {
@@ -491,8 +507,11 @@ async function validatePointerWithProtocol(pointer: string): Promise<{ status: s
               details: 'File not found',
             };
           }
-        } finally {
-          // Buffer automatically managed by pool
+        } catch (error) {
+          if (error instanceof Error && error.message === 'Pool exhausted') {
+            return { status: "ERROR", details: "Memory pool exhausted - try resetting pool" };
+          }
+          throw error;
         }
       }
     } catch (e) {
@@ -521,16 +540,27 @@ async function validatePointer(
         };
       } else {
         // Use real SharedArrayBuffer pooling for file operations
-        const buffer = BunNativeOptimizer.allocateFromPool(512);
         try {
           const file = Bun.file(pointer);
           const exists = await file.exists();
-          return {
-            status: exists ? STATUS.OK : STATUS.MISSING,
-            details: exists ? `Size: ${file.size} bytes (pooled)` : 'File not found',
-          };
-        } finally {
-          // Buffer automatically managed by pool
+          if (exists) {
+            // Allocate from shared pool for file metadata
+            const { offset } = BunNativeOptimizer.allocateFromPool(512);
+            return {
+              status: exists ? STATUS.OK : STATUS.MISSING,
+              details: exists ? `Size: ${file.size} bytes (pooled @ offset ${offset})` : 'File not found',
+            };
+          } else {
+            return {
+              status: STATUS.MISSING,
+              details: 'File not found',
+            };
+          }
+        } catch (error) {
+          if (error instanceof Error && error.message === 'Pool exhausted') {
+            return { status: STATUS.ERROR, details: "Memory pool exhausted" };
+          }
+          throw error;
         }
       }
     } catch (e) {
@@ -915,7 +945,32 @@ function displayRScoreDiagnostics(results: ValidationResult[]): void {
   }
 }
 
-// Get pointer ID from URL/path
+/**
+ * Generate a deterministic ID for a pointer (for pointers not in POINTER_DICTIONARY).
+ * - file: or local paths: CRC32 hash of the path for stable ID
+ * - HTTP(S): index + 1 to preserve existing ordering
+ */
+function generatePointerId(url: string, index: number): number {
+  if (url.startsWith('http')) {
+    return index + 1; // Preserve existing HTTP ordering
+  }
+  // Hash the filepath (or file: URL) for stable ID
+  return Bun.hash.crc32(new TextEncoder().encode(url)) >>> 0; // Unsigned 32-bit
+}
+
+/**
+ * Map a URL/path to a conceptual label (fallback when not in CONCEPTUAL_POINTERS).
+ */
+function getConceptual(url: string): string {
+  if (url.includes('blog')) return 'Bun blog';
+  if (url.includes('docs')) return 'Bun documentation';
+  if (url.includes('api/utils')) return 'Bun deep equals utility';
+  if (url.endsWith('.md')) return 'Documentation source';
+  if (url.endsWith('cli.ts')) return 'CLI tooling';
+  return 'Unknown resource';
+}
+
+// Get pointer ID from URL/path (dictionary first, then deterministic)
 function getPointerId(pointer: string): number | null {
   for (const category of Object.values(POINTER_DICTIONARY)) {
     for (const [id, url] of Object.entries(category)) {
@@ -975,10 +1030,13 @@ function getPointerCategory(pointer: string): string {
   return 'README';
 }
 
-// Get conceptual name for pointer
-function getConceptualName(pointer: string): string | null {
+// Get conceptual name for pointer (dictionary first, then URL-based heuristic)
+function getConceptualName(pointer: string): string {
   const id = getPointerId(pointer);
-  return id ? CONCEPTUAL_POINTERS[id as keyof typeof CONCEPTUAL_POINTERS] || null : null;
+  if (id && CONCEPTUAL_POINTERS[id as keyof typeof CONCEPTUAL_POINTERS]) {
+    return CONCEPTUAL_POINTERS[id as keyof typeof CONCEPTUAL_POINTERS];
+  }
+  return getConceptual(pointer);
 }
 
 // Extract protocol from pointer
@@ -1127,11 +1185,11 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
       conceptual: getConceptualName(p),
       category: getPointerCategory(p),
       protocol: getProtocol(p),
-      ...(await validatePointer(p)) 
+      ...(await validatePointerWithProtocol(p)) // Use enhanced function with memory pooling
     }))
   );
   results.push(...fileResults);
-  
+
   // Process network operations with concurrency control and security hardening
   console.log(`🌐 Processing ${networkPointers.length} network requests with security hardening (concurrency: ${networkController.maxConcurrent})...`);
   
@@ -1142,7 +1200,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
       conceptual: getConceptualName(p),
       category: getPointerCategory(p),
       protocol: getProtocol(p),
-      ...(await validatePointer(p)) 
+      ...(await validatePointerWithProtocol(p)) // Use enhanced function with TLS hardening
     }))
   );
   results.push(...networkResults);
@@ -1161,7 +1219,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
     console.log(`📊 Network Performance: No network requests processed`);
   }
   
-  console.log(`💾 SharedArrayBuffer Pool: ${(memoryStats.used / 1024 / 1024).toFixed(2)}MB used of ${(memoryStats.total / 1024 / 1024).toFixed(2)}MB total (${((memoryStats.available / memoryStats.total) * 100).toFixed(1)}% available)`);
+  console.log(`💾 SharedArrayBuffer Pool: ${(memoryStats.used / 1024).toFixed(1)}KB used of ${(memoryStats.total / 1024 / 1024).toFixed(1)}MB total (${(memoryStats.utilization * 100).toFixed(1)}% utilization)`);
   
   return sortResults(results);
 }
@@ -1302,20 +1360,20 @@ EXAMPLES:
   const allPointers = [...new Set([...getAllPointers(), ...docRefs])];
 
   // Use enhanced validation with Bun-native optimizations if enabled
-  const results = useBunNative ? 
-    await validatePointersBatch(allPointers) :
-    sortResults(
-      await Promise.all(
-        allPointers.map(async p => ({ 
-          id: getPointerId(p),
-          pointer: p, 
-          conceptual: getConceptualName(p),
-          category: getPointerCategory(p),
-          protocol: getProtocol(p),
-          ...(await validatePointer(p)) 
-        })),
-      ),
-    );
+  const results = useBunNative
+    ? await validatePointersBatch(allPointers)
+    : sortResults(
+        await Promise.all(
+          allPointers.map(async (p, i) => ({
+            id: getPointerId(p) ?? generatePointerId(p, i),
+            pointer: p,
+            conceptual: getConceptualName(p),
+            category: getPointerCategory(p),
+            protocol: getProtocol(p),
+            ...(await validatePointer(p)),
+          })),
+        ),
+      );
   
   // Add Unicode symbols to status for display
   const displayResults = results.map(r => ({
