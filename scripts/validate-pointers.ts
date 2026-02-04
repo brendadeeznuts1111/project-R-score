@@ -9,6 +9,9 @@
  */
 
 import { join } from 'path';
+import { globalPool } from '../lib/memory-pool';
+import { hardenedFetch } from '../lib/hardened-fetch';
+import { generatePointerId as generatePointerIdLib, getConceptual as getConceptualLib } from '../lib/pointer-id';
 
 // CONSTANTS
 const README_PATH = join(import.meta.dir, '..', 'README.md');
@@ -601,62 +604,59 @@ async function validatePointerWithProtocol(pointer: string): Promise<{ status: s
   return networkController.execute(async () => {
     try {
       if (pointer.startsWith('http')) {
-        // P1: Use hardened connection for S_hardening
-        const connection = await BunNativeOptimizer.hardenedConnection(pointer);
-        
-        if (!connection.success) {
-          return { status: "ERROR", details: `Connection failed (${connection.security})` };
-        }
-        
-        // Check protocol integrity against canonical base
-        const url = new URL(pointer);
-        const protocolValid = Bun.deepEquals(
-          { protocol: url.protocol, host: url.host },
-          { protocol: CANONICAL_BASE.protocol, host: CANONICAL_BASE.host },
-          true
-        );
-        
-        if (!protocolValid) {
-          return { status: "FAIL", details: "Protocol Mismatch" };
-        }
-        
-        return { 
-          status: "OK", 
-          details: `Status: 200 (${connection.security}, ${connection.latency.toFixed(2)}ms)` 
-        };
-      } else {
-        // P2: Use Bun-native file reading with SharedArrayBuffer pooling
+        // P1: Use hardened fetch with TLS verification for S_hardening
         try {
+          const response = await hardenedFetch({
+            url: pointer,
+            timeout: 5000,
+            method: 'HEAD',
+          });
+          
+          // Check protocol integrity against canonical base (skip for localhost)
+          const url = new URL(pointer);
+          const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+          if (!isLocalhost) {
+            const protocolValid = Bun.deepEquals(
+              { protocol: url.protocol, host: url.host },
+              { protocol: CANONICAL_BASE.protocol, host: CANONICAL_BASE.host },
+              true
+            );
+            
+            if (!protocolValid) {
+              return { status: "FAIL", details: "Protocol Mismatch" };
+            }
+          }
+          
+          const status = response.ok && response.status >= 200 && response.status < 400 ? STATUS.OK : STATUS.ERROR;
+          return {
+            status,
+            details: `Status: ${response.status} (hardened TLS)`,
+          };
+        } catch (error) {
+          const msg = error instanceof Error ? error.message : String(error);
+          return { status: "ERROR", details: `Connection failed: ${msg}` };
+        }
+      } else {
+        // P2: Use memory pool for zero-copy file operations
+        try {
+          const filePath = pointer.startsWith('file://') ? pointer.replace('file://', '') : pointer;
+          const { size, ptr } = await globalPool.readFile(filePath);
+          
+          return {
+            status: "OK",
+            details: `Size: ${size} bytes (pooled @ ptr ${ptr})`,
+          };
+        } catch (error) {
+          if (error instanceof Error && error.message.includes('exceeds pool size')) {
+            return { status: "ERROR", details: "Memory pool exhausted - file too large" };
+          }
+          // Fallback to standard check if pool read fails
           const file = Bun.file(pointer);
           const exists = await file.exists();
-          if (exists) {
-            // Use Bun-native file reading with zero-copy optimization
-            const { buffer: fileBuffer, size } = await BunNativeOptimizer.readFileBunNative(pointer);
-            
-            // Allocate from shared pool and copy directly from zero-copy buffer
-            const chunkSize = Math.min(size, 1024);
-            const { offset, view } = BunNativeOptimizer.allocateFromPool(chunkSize);
-            
-            // Direct copy from Bun-native buffer to shared pool
-            const sourceArray = new Uint8Array(fileBuffer, 0, chunkSize);
-            const pooledArray = new Uint8Array(view.buffer, view.byteOffset, chunkSize);
-            pooledArray.set(sourceArray);
-            
-            return {
-              status: "OK",
-              details: `Size: ${size} bytes (zero-copy: ${chunkSize}B @ offset ${offset})`,
-            };
-          } else {
-            return {
-              status: "MISSING",
-              details: 'File not found',
-            };
-          }
-        } catch (error) {
-          if (error instanceof Error && error.message === 'Pool exhausted') {
-            return { status: "ERROR", details: "Memory pool exhausted - try resetting pool" };
-          }
-          throw error;
+          return {
+            status: exists ? "OK" : "MISSING",
+            details: exists ? `Size: ${file.size} bytes` : 'File not found',
+          };
         }
       }
     } catch (e) {
@@ -672,41 +672,37 @@ async function validatePointer(
   return networkController.execute(async () => {
     try {
       if (pointer.startsWith('http')) {
-        // Use hardened connection for all HTTP requests
-        const connection = await BunNativeOptimizer.hardenedConnection(pointer);
+        // Use hardened fetch with TLS verification for all HTTP requests
+        const response = await hardenedFetch({
+          url: pointer,
+          timeout: 5000,
+          method: 'HEAD',
+        });
         
-        if (!connection.success) {
-          return { status: STATUS.ERROR, details: `Connection failed (${connection.security})` };
-        }
-        
-        return { 
-          status: STATUS.OK, 
-          details: `Status: 200 (${connection.security}, ${connection.latency.toFixed(2)}ms)` 
+        return {
+          status: response.ok ? STATUS.OK : STATUS.ERROR,
+          details: `Status: ${response.status} (hardened)`,
         };
       } else {
-        // Use Bun-native file reading with SharedArrayBuffer pooling
+        // Use memory pool for zero-copy file operations
         try {
+          const filePath = pointer.startsWith('file://') ? pointer.replace('file://', '') : pointer;
+          const { size, ptr } = await globalPool.readFile(filePath);
+          return {
+            status: STATUS.OK,
+            details: `Size: ${size} bytes (pooled @ ptr ${ptr})`,
+          };
+        } catch (error) {
+          if (error instanceof Error && error.message.includes('exceeds pool size')) {
+            return { status: STATUS.ERROR, details: "Memory pool exhausted - file too large" };
+          }
+          // Fallback to standard check if pool read fails
           const file = Bun.file(pointer);
           const exists = await file.exists();
-          if (exists) {
-            // Use Bun-native file reading for metadata
-            const { size } = await BunNativeOptimizer.readFileBunNative(pointer);
-            const { offset } = BunNativeOptimizer.allocateFromPool(512);
-            return {
-              status: exists ? STATUS.OK : STATUS.MISSING,
-              details: exists ? `Size: ${size} bytes (zero-copy @ offset ${offset})` : 'File not found',
-            };
-          } else {
-            return {
-              status: STATUS.MISSING,
-              details: 'File not found',
-            };
-          }
-        } catch (error) {
-          if (error instanceof Error && error.message === 'Pool exhausted') {
-            return { status: STATUS.ERROR, details: "Memory pool exhausted" };
-          }
-          throw error;
+          return {
+            status: exists ? STATUS.OK : STATUS.MISSING,
+            details: exists ? `Size: ${file.size} bytes` : 'File not found',
+          };
         }
       }
     } catch (e) {
@@ -1081,27 +1077,18 @@ function displayRScoreDiagnostics(results: ValidationResult[]): void {
 
 /**
  * Generate a deterministic ID for a pointer (for pointers not in POINTER_DICTIONARY).
- * - file: or local paths: CRC32 hash of the path for stable ID
- * - HTTP(S): index + 1 to preserve existing ordering
+ * Uses lib/pointer-id.ts for improved ID generation.
  */
 function generatePointerId(url: string, index: number): number {
-  if (url.startsWith('http')) {
-    return index + 1; // Preserve existing HTTP ordering
-  }
-  // Hash the filepath (or file: URL) for stable ID
-  return Bun.hash.crc32(new TextEncoder().encode(url)) >>> 0; // Unsigned 32-bit
+  return generatePointerIdLib(url, index);
 }
 
 /**
  * Map a URL/path to a conceptual label (fallback when not in CONCEPTUAL_POINTERS).
+ * Uses lib/pointer-id.ts for improved conceptual mapping.
  */
 function getConceptual(url: string): string {
-  if (url.includes('blog')) return 'Bun blog';
-  if (url.includes('docs')) return 'Bun documentation';
-  if (url.includes('api/utils')) return 'Bun deep equals utility';
-  if (url.endsWith('.md')) return 'Documentation source';
-  if (url.endsWith('cli.ts')) return 'CLI tooling';
-  return 'Unknown resource';
+  return getConceptualLib(url);
 }
 
 // Get pointer ID from URL/path (dictionary first, then deterministic)
@@ -1109,7 +1096,13 @@ function getPointerId(pointer: string): number | null {
   for (const category of Object.values(POINTER_DICTIONARY)) {
     for (const [id, url] of Object.entries(category)) {
       if (url === pointer) {
-        return parseInt(id);
+        const parsedId = parseInt(id);
+        // Only return if it's a valid number (not NaN)
+        if (!isNaN(parsedId)) {
+          return parsedId;
+        }
+        // If key is not numeric (e.g., 'overseer'), return null to use generatePointerId
+        return null;
       }
     }
   }
@@ -1121,15 +1114,34 @@ async function validatePointer(
 ): Promise<{ status: string; details: string }> {
   try {
     if (pointer.startsWith('http')) {
-      const res = await fetch(pointer, { method: 'HEAD' });
-      return { status: res.ok ? STATUS.OK : STATUS.ERROR, details: `Status: ${res.status}` };
-    } else {
-      const file = Bun.file(pointer);
-      const exists = await file.exists();
+      // Use hardened fetch with TLS verification for HTTPS
+      const response = await hardenedFetch({
+        url: pointer,
+        timeout: 5000,
+        method: 'HEAD',
+      });
       return {
-        status: exists ? STATUS.OK : STATUS.MISSING,
-        details: exists ? `Size: ${file.size} bytes` : 'File not found',
+        status: response.ok ? STATUS.OK : STATUS.ERROR,
+        details: `Status: ${response.status} (hardened)`,
       };
+    } else {
+      // Use memory pool for zero-copy file operations
+      const filePath = pointer.startsWith('file://') ? pointer.replace('file://', '') : pointer;
+      try {
+        const { size } = await globalPool.readFile(filePath);
+        return {
+          status: STATUS.OK,
+          details: `Size: ${size} bytes (pooled)`,
+        };
+      } catch (fileError) {
+        // Fallback to standard check if pool read fails
+        const file = Bun.file(filePath);
+        const exists = await file.exists();
+        return {
+          status: exists ? STATUS.OK : STATUS.MISSING,
+          details: exists ? `Size: ${file.size} bytes` : 'File not found',
+        };
+      }
     }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -1313,29 +1325,29 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
   // Process file operations first (faster, no network limits)
   console.log(`📁 Processing ${filePointers.length} file operations with memory pooling...`);
   const fileResults = await Promise.all(
-    filePointers.map(async p => ({ 
-      id: getPointerId(p),
-      pointer: p, 
+    filePointers.map(async (p, i) => ({
+      id: getPointerId(p) ?? generatePointerId(p, i),
+      pointer: p,
       conceptual: getConceptualName(p),
       category: getPointerCategory(p),
       protocol: getProtocol(p),
-      ...(await validatePointerWithProtocol(p)) // Use enhanced function with memory pooling
-    }))
+      ...(await validatePointerWithProtocol(p)), // Use enhanced function with memory pooling
+    })),
   );
   results.push(...fileResults);
 
   // Process network operations with concurrency control and security hardening
   console.log(`🌐 Processing ${networkPointers.length} network requests with security hardening (concurrency: ${networkController.maxConcurrent})...`);
-  
+
   const networkResults = await Promise.all(
-    networkPointers.map(async p => ({ 
-      id: getPointerId(p),
-      pointer: p, 
+    networkPointers.map(async (p, i) => ({
+      id: getPointerId(p) ?? generatePointerId(p, filePointers.length + i),
+      pointer: p,
       conceptual: getConceptualName(p),
       category: getPointerCategory(p),
       protocol: getProtocol(p),
-      ...(await validatePointerWithProtocol(p)) // Use enhanced function with TLS hardening
-    }))
+      ...(await validatePointerWithProtocol(p)), // Use enhanced function with TLS hardening
+    })),
   );
   results.push(...networkResults);
   
@@ -1598,6 +1610,9 @@ EXAMPLES:
     await Bun.write(BASELINE_PATH, JSON.stringify(results, null, 2));
     console.log(`\n💾 Baseline saved to ${BASELINE_PATH}`);
   }
+
+  // Display memory pool statistics
+  console.log('💾 Memory Pool Stats:', globalPool.stats);
 }
 
 main().catch(console.error);
