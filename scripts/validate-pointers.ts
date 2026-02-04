@@ -12,6 +12,7 @@ import { join } from 'path';
 import { globalPool } from '../lib/memory-pool';
 import { hardenedFetch } from '../lib/hardened-fetch';
 import { generatePointerId as generatePointerIdLib, getConceptual as getConceptualLib } from '../lib/pointer-id';
+import { metricsFeed } from '../lib/tier1380-metrics-feed';
 
 // CONSTANTS
 const README_PATH = join(import.meta.dir, '..', 'README.md');
@@ -1424,6 +1425,7 @@ OPTIONS:
   --optimize          Show v4.3 optimization recommendations for weak metrics
   --bun-native        Enable Bun-native optimizations (P0-P2) for maximum performance
   --path-info         Show enhanced PATH information and binary discovery statistics
+  --serve-metrics     Start Tier-1380 metrics RSS feed server on port 1380
   --concurrent-scripts <number>  Maximum number of concurrent jobs for lifecycle scripts (default: 5)
   --network-concurrency <number> Maximum number of concurrent network requests (default: 48)
   --lenient           Enable lenient mode (disable all strict features)
@@ -1613,6 +1615,105 @@ EXAMPLES:
 
   // Display memory pool statistics
   console.log('💾 Memory Pool Stats:', globalPool.stats);
+
+  // Push metrics to Tier-1380 feed
+  try {
+    const rScore = calculateRScore(results, networkController.getMetrics(), BunNativeOptimizer.getPoolStats());
+    const metrics = networkController.getMetrics();
+    const poolStats = globalPool.stats;
+
+    // Get git info
+    let gitCommit = 'unknown';
+    let gitBranch = 'main';
+    let gitTag = 'v4.4.1';
+
+    try {
+      const commitProc = Bun.spawnSync(['git', 'rev-parse', '--short', 'HEAD'], {
+        cwd: PLATFORM_ROOT,
+        stdout: 'pipe',
+      });
+      gitCommit = new TextDecoder().decode(commitProc.stdout).trim() || 'unknown';
+    } catch {
+      // Git not available or not in repo
+    }
+
+    try {
+      const branchProc = Bun.spawnSync(['git', 'branch', '--show-current'], {
+        cwd: PLATFORM_ROOT,
+        stdout: 'pipe',
+      });
+      gitBranch = new TextDecoder().decode(branchProc.stdout).trim() || 'main';
+    } catch {
+      // Git not available
+    }
+
+    try {
+      const tagProc = Bun.spawnSync(['git', 'describe', '--tags', '--exact-match'], {
+        cwd: PLATFORM_ROOT,
+        stdout: 'pipe',
+      });
+      const tag = new TextDecoder().decode(tagProc.stdout).trim();
+      if (tag) gitTag = tag;
+    } catch {
+      // No exact tag match, use default
+    }
+
+    const payload = {
+      timestamp: Date.now(),
+      version: '4.4.1',
+      rscore: {
+        current: rScore.total_score,
+        projected: rScore.total_score + 0.051, // HTTP/2 projection
+        components: {
+          p_ratio: rScore.p_ratio,
+          m_impact: rScore.m_impact,
+          e_elimination: rScore.e_elimination,
+          s_hardening: rScore.s_hardening,
+        },
+      },
+      performance: {
+        latency_ms: metrics.averageLatency || 0,
+        throughput_rps: metrics.totalRequests > 0
+          ? (metrics.totalRequests / ((metrics.endTime - metrics.startTime) / 1000))
+          : 0,
+        memory_utilization: poolStats.utilization,
+      },
+      git: {
+        commit: gitCommit,
+        tag: gitTag,
+        branch: gitBranch,
+      },
+    };
+
+    metricsFeed.push(payload);
+
+    // Push to Tier-1380 endpoint if configured
+    const endpoint = process.env.TIER1380_METRICS_ENDPOINT;
+    const secret = process.env.TIER1380_SECRET || '';
+    if (endpoint) {
+      try {
+        await metricsFeed.pushToEndpoint(endpoint, secret);
+        console.log('📡 Metrics pushed to Tier-1380 endpoint');
+      } catch (error) {
+        console.error('⚠️  Failed to push metrics:', error);
+      }
+    }
+  } catch (error) {
+    console.error('⚠️  Metrics collection failed:', error);
+  }
+
+  // Start local RSS server if requested
+  if (args.includes('--serve-metrics')) {
+    const server = metricsFeed.serve(1380);
+    console.log('📡 Tier-1380 metrics feed: http://localhost:1380/metrics/rss.xml');
+    console.log('📊 JSON endpoint: http://localhost:1380/metrics/json');
+    console.log('Press Ctrl+C to stop the server');
+    // Keep process alive
+    process.on('SIGINT', () => {
+      server.stop();
+      process.exit(0);
+    });
+  }
 }
 
 main().catch(console.error);
