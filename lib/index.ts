@@ -1,7 +1,7 @@
 /**
  * 🏭 FactoryWager Library Index
  * 
- * The heart of all projects - centralized constants, types, utilities, and theming
+ * The heart of all projects - centralized constants, types, utilities, theming, and documentation
  * 
  * @version 4.0
  * @author FactoryWager Team
@@ -17,6 +17,9 @@ export * from './core-documentation';
 export * from './theme/colors';
 export * from './terminal-color-256';
 
+// Documentation
+export * from './docs';
+
 // Constants and configuration
 export * from './constants';
 export * from './config';
@@ -27,6 +30,7 @@ export * from './utils';
 export { styled, log, FW_COLORS } from './theme/colors';
 export { FACTORYWAGER_CONFIG, PERFORMANCE_THRESHOLDS } from './config';
 export { Utils } from './utils';
+export { DOC_PATTERNS, DocumentationUtils } from './docs';
 
 /**
  * FactoryWager Library Info
@@ -53,6 +57,12 @@ export const FW = {
   
   // Utils
   utils: Utils,
+  
+  // Documentation
+  docs: {
+    patterns: DOC_PATTERNS,
+    utils: DocumentationUtils,
+  },
   
   // Types
   types: {
