@@ -50,6 +50,7 @@ interface Config {
 export class SkillRouter {
   private config: Config | null = null;
   private skillCache: Map<string, SkillInfo> = new Map();
+  private regexCache: Map<string, RegExp> = new Map();
   private lastConfigLoad = 0;
   private configTTL = 5000; // Reload config every 5 seconds
 
@@ -220,16 +221,25 @@ export class SkillRouter {
           .replace(/\[.*?\]/g, ".*")
           .replace(/,\s*/g, "|");
 
-        try {
-          const regex = new RegExp(pattern, "i");
-          if (regex.test(lowerMsg)) {
-            return skill;
+        // Cache compiled regex patterns for performance
+        let regex = this.regexCache.get(pattern);
+        if (!regex) {
+          try {
+            regex = new RegExp(pattern, "i");
+            this.regexCache.set(pattern, regex);
+          } catch {
+            // Invalid regex pattern - fallback to simple includes check
+            if (lowerMsg.includes(trigger.toLowerCase())) {
+              return skill;
+            }
+            continue;
           }
-        } catch {
-          // Fallback to simple includes check
-          if (lowerMsg.includes(trigger.toLowerCase())) {
-            return skill;
-          }
+        }
+
+        // Reset regex lastIndex for global regex (safety)
+        regex.lastIndex = 0;
+        if (regex.test(lowerMsg)) {
+          return skill;
         }
       }
     }
@@ -251,6 +261,7 @@ export class SkillRouter {
 
   clearCache() {
     this.skillCache.clear();
+    this.regexCache.clear();
     this.config = null;
     this.lastConfigLoad = 0;
   }
