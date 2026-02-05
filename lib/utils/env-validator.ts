@@ -149,7 +149,7 @@ export const SAFE_HOSTS = {
 /**
  * Environment-specific validation
  */
-export const validateForEnvironment = (env: string = process.env.NODE_ENV || 'development') => {
+export const validateForEnvironment = (env: string = Bun.env.NODE_ENV || 'development') => {
   const safeHosts = SAFE_HOSTS[env as keyof typeof SAFE_HOSTS] || SAFE_HOSTS.development;
   
   return {

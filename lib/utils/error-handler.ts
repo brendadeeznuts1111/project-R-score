@@ -64,7 +64,7 @@ export class ErrorHandler {
       operation: standardizedError.context?.operation,
       requestId: standardizedError.context?.requestId,
       userId: standardizedError.context?.userId,
-      error: originalError
+      error
     };
 
     switch (logLevel) {

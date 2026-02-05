@@ -1,16 +1,6 @@
 // lib/tier1380-directories-enhanced.ts — Bun-optimized directory scanner
 import { readdir } from "node:fs/promises";
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 import { join, relative } from "node:path";
 
 /**

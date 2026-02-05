@@ -1,14 +1,4 @@
 /**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
-/**
  * 🔧 bun:ffi Environment Variable Support - Bun v1.3.7+ v1.4
  * 
  * Documents C_INCLUDE_PATH and LIBRARY_PATH support for non-FHS systems

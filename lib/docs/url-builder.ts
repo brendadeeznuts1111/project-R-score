@@ -75,8 +75,8 @@ export class DocsUrlBuilder {
   }
 }
 
-// Enhanced BUN_DOCS object with secrets support
-export const BUN_DOCS = {
+// Enhanced BUN_DOCS URL helpers with secrets support
+export const BUN_DOCS_URL_HELPERS = {
   // Base domains
   domains: {
     sh: 'https://bun.sh',
@@ -85,34 +85,34 @@ export const BUN_DOCS = {
   
   // Runtime APIs
   runtime: (section: string, hash?: string, domain: BunDomain = 'sh') => 
-    `${BUN_DOCS.domains[domain]}/docs/runtime/${section}${hash ? `#${hash}` : ''}`
+    `${BUN_DOCS_URL_HELPERS.domains[domain]}/docs/runtime/${section}${hash ? `#${hash}` : ''}`
 } as const;
 
 // Add secrets API after BUN_DOCS is defined
-BUN_DOCS.secrets = {
+BUN_DOCS_URL_HELPERS.secrets = {
   // All variations
-  overview: BUN_DOCS.runtime('secrets'),
-  api: BUN_DOCS.runtime('secrets', 'api'),
-  getOptions: BUN_DOCS.runtime('secrets', 'bun-secrets-get-options'),
+  overview: BUN_DOCS_URL_HELPERS.runtime('secrets'),
+  api: BUN_DOCS_URL_HELPERS.runtime('secrets', 'api'),
+  getOptions: BUN_DOCS_URL_HELPERS.runtime('secrets', 'bun-secrets-get-options'),
   
   // Domain-specific
   com: {
-    overview: BUN_DOCS.runtime('secrets', undefined, 'com'),
-    api: BUN_DOCS.runtime('secrets', 'api', 'com'),
-    getOptions: BUN_DOCS.runtime('secrets', 'bun-secrets-get-options', 'com')
+    overview: BUN_DOCS_URL_HELPERS.runtime('secrets', undefined, 'com'),
+    api: BUN_DOCS_URL_HELPERS.runtime('secrets', 'api', 'com'),
+    getOptions: BUN_DOCS_URL_HELPERS.runtime('secrets', 'bun-secrets-get-options', 'com')
   },
   
   // Helper function
   ref: (hash?: string, domain: BunDomain = 'sh') => 
-    BUN_DOCS.runtime('secrets', hash, domain)
+    BUN_DOCS_URL_HELPERS.runtime('secrets', hash, domain)
 };
 
 // Add conversion methods
-BUN_DOCS.toCom = (shUrl: string): string => DocsUrlBuilder.convertUrl(shUrl, 'com');
-BUN_DOCS.toSh = (comUrl: string): string => DocsUrlBuilder.convertUrl(comUrl, 'sh');
+BUN_DOCS_URL_HELPERS.toCom = (shUrl: string): string => DocsUrlBuilder.convertUrl(shUrl, 'com');
+BUN_DOCS_URL_HELPERS.toSh = (comUrl: string): string => DocsUrlBuilder.convertUrl(comUrl, 'sh');
 
 // Add pattern matching helpers
-BUN_DOCS.patterns = {
+BUN_DOCS_URL_HELPERS.patterns = {
   isSecretsUrl: DocsUrlBuilder.isSecretsUrl,
   getSecretsAction: DocsUrlBuilder.getSecretsAction,
   parseUrl: DocsUrlBuilder.parseUrl,
@@ -149,11 +149,11 @@ export class ReferenceManager {
     
     if (DocsUrlBuilder.isSecretsUrl(currentUrl)) {
       return [
-        BUN_DOCS.runtime('secrets', undefined, domain),
-        BUN_DOCS.runtime('secrets', 'api', domain),
-        BUN_DOCS.runtime('secrets', 'bun-secrets-get-options', domain),
-        BUN_DOCS.runtime('binary-data', undefined, domain),
-        BUN_DOCS.runtime('typescript', undefined, domain)
+        BUN_DOCS_URL_HELPERS.runtime('secrets', undefined, domain),
+        BUN_DOCS_URL_HELPERS.runtime('secrets', 'api', domain),
+        BUN_DOCS_URL_HELPERS.runtime('secrets', 'bun-secrets-get-options', domain),
+        BUN_DOCS_URL_HELPERS.runtime('binary-data', undefined, domain),
+        BUN_DOCS_URL_HELPERS.runtime('typescript', undefined, domain)
       ];
     }
     

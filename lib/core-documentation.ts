@@ -10,18 +10,12 @@
  */
 
 import { validateOrThrow, StringValidators } from './core-validation';
-
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 import { createValidationError, EnterpriseErrorCode } from './core-errors';
+import {
+  ENTERPRISE_DOCUMENTATION_BASE_URLS as _CANONICAL_URLS,
+  SIGNIFICANT_COMMITS as _CANONICAL_COMMITS,
+  TEXT_FRAGMENT_PATTERNS as _CANONICAL_FRAGMENTS,
+} from './documentation/constants/domains';
 
 // ============================================================================
 // DOCUMENTATION PROVIDERS ENUM
@@ -102,260 +96,10 @@ export interface DocumentationMetadata {
   readonly rssFeed?: string;
 }
 
-// ============================================================================
-// ENTERPRISE URL CONFIGURATION
-// ============================================================================
-
-/**
- * Enhanced enterprise documentation base URLs with comprehensive provider support
- */
-export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
-  // bun.sh domain (technical documentation)
-  [DocumentationProvider.BUN_OFFICIAL]: {
-    BASE: process.env.BUN_DOCS_BASE_URL || 'https://bun.sh',
-    DOCS: process.env.BUN_DOCS_URL || 'https://bun.sh/docs/cli',
-    ALTERNATIVE_BASE: 'https://bun.com',
-    ALTERNATIVE_DOCS: 'https://bun.com/docs',
-    API: 'https://bun.sh/docs/cli/api',
-    RUNTIME: 'https://bun.sh/docs/cli/runtime',
-    GUIDES: 'https://bun.sh/docs/cli/guides',
-    EXAMPLES: 'https://bun.sh/docs/cli/examples',
-    RSS_FEED: 'https://bun.sh/feed.xml',
-    BLOG: 'https://bun.sh/blog',
-    SECURITY: 'https://bun.sh/docs/cli/security',
-    PERFORMANCE: 'https://bun.sh/docs/cli/performance',
-    metadata: {
-      title: "Bun — A fast all-in-one JavaScript runtime",
-      description: "Bun is a fast JavaScript runtime and toolkit with features like bundling, package management, testing, and more. It supports TypeScript, JSX, and web-standard APIs.",
-      lastUpdated: "Not specified (latest version: Bun v1.3.8)",
-      mainSections: ["Release notes (v1.3.8 to v1.3.3)", "Overview", "Benchmarks", "Tools (Runtime, Package Manager, Test Runner, Bundler)", "Users (Claude Code, Railway Functions, Midjourney)", "Comparison (Bun vs. Node vs. Deno)", "Code examples (HTTP, WebSocket, file I/O, etc.)", "Testimonials"],
-      rssFeed: "https://bun.sh/feed.xml (Note: Feed URL returned 404 during validation; may be temporary or incorrect)"
-    }
-  },
-  
-  // bun.com/reference
-  [DocumentationProvider.BUN_REFERENCE]: {
-    BASE: 'https://bun.com',
-    REFERENCE: 'https://bun.com/reference',
-    API_REFERENCE: 'https://bun.com/reference/api',
-    CLI_REFERENCE: 'https://bun.com/reference/cli',
-    CONFIG_REFERENCE: 'https://bun.com/reference/config',
-    TUTORIALS: 'https://bun.com/reference/tutorials',
-    COOKBOOK: 'https://bun.com/reference/cookbook',
-    CHEATSHEET: 'https://bun.com/reference/cheatsheet',
-    GLOSSARY: 'https://bun.com/reference/glossary',
-    
-    // Text fragment examples
-    TEXT_FRAGMENT_EXAMPLES: {
-      NODE_ZLIB: 'https://bun.com/reference#:~:text=node%3Azlib',
-      BUN_API_REFERENCE: 'https://bun.com/reference#:~:text=Bun%20API%20Reference'
-    }
-  },
-  
-  // bun.com/guides
-  [DocumentationProvider.BUN_GUIDES]: {
-    BASE: 'https://bun.com',
-    GUIDES: 'https://bun.com/guides',
-    GETTING_STARTED: 'https://bun.com/guides/getting-started',
-    TUTORIALS: 'https://bun.com/guides/tutorials',
-    HOW_TO: 'https://bun.com/guides/how-to',
-    BEST_PRACTICES: 'https://bun.com/guides/best-practices',
-    MIGRATION: 'https://bun.com/guides/migration',
-    TROUBLESHOOTING: 'https://bun.com/guides/troubleshooting',
-    FAQ: 'https://bun.com/guides/faq',
-    COMMUNITY: 'https://bun.com/guides/community'
-  },
-  
-  // RSS feeds from both domains
-  [DocumentationProvider.BUN_RSS]: {
-    BASE: 'https://bun.com',
-    MAIN_RSS: 'https://bun.com/rss.xml',
-    BLOG_RSS: 'https://bun.com/blog/rss.xml',
-    RELEASES_RSS: 'https://bun.com/releases/rss.xml',
-    SECURITY_RSS: 'https://bun.com/security/rss.xml',
-    TECHNICAL_RSS: 'https://bun.sh/feed.xml',
-    COMMUNITY_RSS: 'https://bun.com/community/rss.xml'
-  },
-  
-  // GitHub Public Repository (oven-sh/bun)
-  [DocumentationProvider.GITHUB_PUBLIC]: {
-    BASE: 'https://github.com',
-    REPOSITORY: 'https://github.com/oven-sh/bun',
-    RELEASES: 'https://github.com/oven-sh/bun/releases',
-    ISSUES: 'https://github.com/oven-sh/bun/issues',
-    PULL_REQUESTS: 'https://github.com/oven-sh/bun/pulls',
-    DISCUSSIONS: 'https://github.com/oven-sh/bun/discussions',
-    ACTIONS: 'https://github.com/oven-sh/bun/actions',
-    WIKI: 'https://github.com/oven-sh/bun/wiki',
-    
-    // Specific branches/tags/commits
-    MAIN_BRANCH: 'https://github.com/oven-sh/bun/tree/main',
-    CANARY: 'https://github.com/oven-sh/bun/tree/canary',
-    
-    // Package directories
-    PACKAGES: {
-      BUN_TYPES: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
-      BUN_TEST: 'https://github.com/oven-sh/bun/tree/main/packages/bun-test',
-      BUN_FFI: 'https://github.com/oven-sh/bun/tree/main/packages/bun-ffi',
-      BUN_PM: 'https://github.com/oven-sh/bun/tree/main/packages/bun-pm'
-    },
-    
-    // Example commit you provided
-    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types'
-  },
-  
-  // GitHub Enterprise
-  [DocumentationProvider.GITHUB_ENTERPRISE]: {
-    BASE: process.env.GITHUB_ENTERPRISE_URL || 'https://github.com',
-    ENTERPRISE: process.env.GITHUB_ENTERPRISE_URL || 'https://github.com/enterprise',
-    API_V3: 'https://api.github.com',
-    API_V4: 'https://api.github.com/graphql',
-    RAW_CONTENT: 'https://raw.githubusercontent.com',
-    GIST: 'https://gist.github.com'
-  },
-  
-  // Bun TypeScript Definitions
-  [DocumentationProvider.BUN_TYPES]: {
-    BASE: 'https://bun.sh/docs/cli/typescript',
-    INSTALLATION: 'https://bun.sh/docs/cli/typescript/installation',
-    CONFIGURATION: 'https://bun.sh/docs/cli/typescript/configuration',
-    AUTOCOMPLETE: 'https://bun.sh/docs/cli/typescript/autocomplete',
-    
-    // npm package
-    NPM_PACKAGE: 'https://www.npmjs.com/package/bun-types',
-    
-    // GitHub
-    GITHUB_PACKAGE: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
-    
-    // TypeScript playground with Bun types
-    TYPESCRIPT_PLAYGROUND: 'https://www.typescriptlang.org/play?install-plugin=bun-types'
-  },
-  
-  // NPM Packages
-  [DocumentationProvider.NPM_PACKAGES]: {
-    BASE: 'https://www.npmjs.com',
-    BUN_TYPES: 'https://www.npmjs.com/package/bun-types',
-    SEARCH: 'https://www.npmjs.com/search',
-    ORGANIZATION: 'https://www.npmjs.com/org/oven'
-  },
-  
-  // GitHub Gist
-  [DocumentationProvider.GITHUB_GIST]: {
-    BASE: 'https://gist.github.com',
-    RAW: 'https://gist.githubusercontent.com',
-    DOWNLOAD: 'https://gist.githubusercontent.com'
-  },
-  
-  // External references
-  [DocumentationProvider.MDN_WEB_DOCS]: {
-    BASE: 'https://developer.mozilla.org',
-    EN_US: 'https://developer.mozilla.org/en-US',
-    API: 'https://developer.mozilla.org/api/v1',
-    SEARCH: 'https://developer.mozilla.org/search'
-  },
-  
-  [DocumentationProvider.NODE_JS]: {
-    BASE: 'https://nodejs.org',
-    DOCS: 'https://nodejs.org/docs',
-    API: 'https://nodejs.org/api',
-    DOWNLOAD: 'https://nodejs.org/download'
-  },
-  
-  [DocumentationProvider.WEB_STANDARDS]: {
-    BASE: 'https://web.dev',
-    SPECIFICATIONS: 'https://spec.whatwg.org',
-    TC39: 'https://tc39.es'
-  },
-  
-  [DocumentationProvider.PERFORMANCE_GUIDES]: {
-    BASE: 'https://web.dev',
-    METRICS: 'https://web.dev/metrics',
-    OPTIMIZATION: 'https://web.dev/optimize',
-    TOOLS: 'https://web.dev/tools'
-  },
-  
-  [DocumentationProvider.SECURITY_DOCS]: {
-    BASE: 'https://owasp.org',
-    CHEAT_SHEETS: 'https://cheatsheetseries.owasp.org',
-    VULNERABILITIES: 'https://cve.mitre.org'
-  },
-  
-  [DocumentationProvider.API_REFERENCE]: {
-    BASE: 'https://rapidapi.com',
-    SWAGGER: 'https://swagger.io',
-    OPENAPI: 'https://openapis.org'
-  },
-  
-  [DocumentationProvider.COMMUNITY_BLOG]: {
-    BASE: 'https://bun.sh/blog',
-    ARCHIVE: 'https://bun.sh/blog/archive',
-    RSS: 'https://bun.sh/feed.xml'
-  }
-} as const;
-
-// ============================================================================
-// SIGNIFICANT COMMITS AND TEXT FRAGMENTS
-// ============================================================================
-
-/**
- * Special commit hashes for important releases
- */
-export const SIGNIFICANT_COMMITS = {
-  // Example commit from your link
-  AF762966: 'main' as const,
-  
-  // Other significant commits (would be maintained in real usage)
-  LATEST_RELEASE: 'main' as const,
-  CANARY_BUILD: 'canary' as const,
-  
-  // Tags for versioning
-  V1_0_0: 'v1.0.0' as const,
-  V1_1_0: 'v1.1.0' as const,
-  
-  // Feature branches
-  TYPED_ARRAY_PERF: 'feature/typed-array-perf' as const,
-  FETCH_OPTIMIZATION: 'feature/fetch-optimization' as const
-} as const;
-
-/**
- * Text fragment patterns for deep linking
- */
-export const TEXT_FRAGMENT_PATTERNS = {
-  // Common patterns for bun.com/reference
-  NODE_ZLIB: 'node%3Azlib',
-  BUN_API_REFERENCE: 'Bun%20API%20Reference',
-  TYPED_ARRAY: 'TypedArray',
-  FETCH_API: 'fetch%20API',
-  
-  // Encoding helper
-  encode: (text: string) => encodeURIComponent(text),
-  decode: (encoded: string) => decodeURIComponent(encoded)
-} as const;
-
-// ============================================================================
-// DOCUMENTATION CATEGORIES
-// ============================================================================
-
-/**
- * Documentation categories
- */
-export enum DocumentationCategory {
-  API_REFERENCE = 'api_reference',
-  RUNTIME_FEATURES = 'runtime_features',
-  CLI_TOOLS = 'cli_tools',
-  PERFORMANCE_OPTIMIZATION = 'performance_optimization',
-  SECURITY_GUIDELINES = 'security_guidelines',
-  DEPLOYMENT_GUIDES = 'deployment_guides',
-  TROUBLESHOOTING = 'troubleshooting',
-  EXAMPLES_TUTORIALS = 'examples_tutorials',
-  INSTALLATION = 'installation',
-  QUICKSTART = 'quickstart',
-  BEST_PRACTICES = 'best_practices',
-  MIGRATION_GUIDES = 'migration_guides',
-  PACKAGE_MANAGER = 'package_manager',
-  BUNDLER = 'bundler',
-  COMMUNITY_RESOURCES = 'community_resources'
-}
+// Re-export canonical enterprise constants from domains.ts (single source of truth)
+export const ENTERPRISE_DOCUMENTATION_BASE_URLS = _CANONICAL_URLS;
+export const SIGNIFICANT_COMMITS = _CANONICAL_COMMITS;
+export const TEXT_FRAGMENT_PATTERNS = _CANONICAL_FRAGMENTS;
 
 // ============================================================================
 // DOCUMENTATION PATH CONSTANTS
@@ -2220,7 +1964,7 @@ export class EnterpriseDocumentationURLBuilder {
       },
       'rss': {
         main: 'https://bun.com/rss.xml',
-        technical: 'https://bun.sh/feed.xml',
+        technical: 'https://bun.sh/rss.xml',
         blog: 'https://bun.com/blog/rss.xml',
         releases: 'https://bun.com/releases/rss.xml'
       },
@@ -2786,7 +2530,7 @@ export function getAllCriticalURLs(): Record<string, any> {
     rssFeeds: {
       main: 'https://bun.com/rss.xml',
       blog: 'https://bun.com/blog/rss.xml',
-      technical: 'https://bun.sh/feed.xml'
+      technical: 'https://bun.sh/rss.xml'
     },
     
     // GitHub resources
@@ -3089,7 +2833,7 @@ export const getEnterprisePaths = () =>
  *
  * Centralized access to Bun documentation URLs organized by category
  */
-export const BUN_DOCS = {
+export const BUN_DOCS_BUILDERS = {
   // Secrets management documentation
   secrets: {
     overview: () => buildBunDocsURL('docs/runtime/bun-secrets'),

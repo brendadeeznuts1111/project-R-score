@@ -9,8 +9,6 @@
  * @version 5.1
  */
 
-import { BUN_DOCS } from './constants/domains';
-
 // Base domain configuration
 export const DOC_DOMAINS = {
   bun_sh: 'https://bun.sh',
@@ -152,5 +150,3 @@ export const getRollbackDocs = (domain: 'sh' | 'com' = 'com'): string => {
   return BUN_DOCS_EXTENDED.runtime.secrets[domain === 'com' ? 'com' : 'overview'].rollback;
 };
 
-// Export for backward compatibility
-export { BUN_DOCS_EXTENDED as BUN_DOCS };

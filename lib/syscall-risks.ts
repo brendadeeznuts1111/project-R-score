@@ -1,13 +1,3 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 // lib/syscall-risks.ts
 export const SYSCALL_RISKS = {
   LINUX_COPY_FILE_RANGE: 1.000000500 as const,  // Zero-copy

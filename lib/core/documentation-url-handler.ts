@@ -21,7 +21,7 @@ export type DocumentationType = 'bun' | 'utils' | 'cli' | 'github' | 'custom';
 /**
  * Enhanced documentation URL configuration
  */
-export interface DocumentationURLConfig {
+export interface DocumentationURLHandlerConfig {
   type: DocumentationType;
   category?: string;
   page?: string;
@@ -50,7 +50,7 @@ export class DocumentationURLHandler {
   /**
    * Generate documentation URL with enhanced fragment support
    */
-  static generateDocumentationURL(config: DocumentationURLConfig): string {
+  static generateDocumentationURL(config: DocumentationURLHandlerConfig): string {
     try {
       const baseUrl = this.BASE_URLS[config.type];
       if (!baseUrl && config.type !== 'custom') {
@@ -106,7 +106,7 @@ export class DocumentationURLHandler {
   /**
    * Build Bun documentation URL
    */
-  private static buildBunURL(config: DocumentationURLConfig, baseUrl: string): string {
+  private static buildBunURL(config: DocumentationURLHandlerConfig, baseUrl: string): string {
     if (config.page && Object.values(DOC_PATHS).includes(config.page as any)) {
       return new URL(config.page, baseUrl).toString();
     }
@@ -121,7 +121,7 @@ export class DocumentationURLHandler {
   /**
    * Build utilities documentation URL
    */
-  private static buildUtilsURL(config: DocumentationURLConfig, baseUrl: string): string {
+  private static buildUtilsURL(config: DocumentationURLHandlerConfig, baseUrl: string): string {
     const category = config.category as UtilsCategory;
     
     if (category && BUN_UTILS_URLS[category]) {
@@ -141,7 +141,7 @@ export class DocumentationURLHandler {
   /**
    * Build CLI documentation URL
    */
-  private static buildCLIURL(config: DocumentationURLConfig, baseUrl: string): string {
+  private static buildCLIURL(config: DocumentationURLHandlerConfig, baseUrl: string): string {
     const category = config.category as CLICategory;
     
     if (category && CLI_DOCUMENTATION_URLS[category]) {
@@ -161,7 +161,7 @@ export class DocumentationURLHandler {
   /**
    * Build GitHub URL
    */
-  private static buildGitHubURL(config: DocumentationURLConfig, baseUrl: string): string {
+  private static buildGitHubURL(config: DocumentationURLHandlerConfig, baseUrl: string): string {
     const path = config.category || '';
     return new URL(path, baseUrl).toString();
   }
@@ -268,7 +268,7 @@ export class DocumentationURLHandler {
   /**
    * Validate documentation URL
    */
-  static validateDocumentationURL(url: string, config?: DocumentationURLConfig['validation']): boolean {
+  static validateDocumentationURL(url: string, config?: DocumentationURLHandlerConfig['validation']): boolean {
     try {
       const validationOptions = {
         allowedHosts: ['bun.sh', 'github.com'],
@@ -288,7 +288,7 @@ export class DocumentationURLHandler {
    * Generate shareable documentation link
    */
   static generateShareableLink(
-    config: DocumentationURLConfig,
+    config: DocumentationURLHandlerConfig,
     expiresIn?: number
   ): string {
     const fragment = {
@@ -410,7 +410,7 @@ export class DocumentationURLHandler {
    * Generate example URL with syntax highlighting
    */
   static generateExampleURL(
-    config: DocumentationURLConfig & {
+    config: DocumentationURLHandlerConfig & {
       example: string;
       language?: string;
       highlight?: boolean;

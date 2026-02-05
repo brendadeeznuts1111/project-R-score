@@ -7,16 +7,6 @@
 
 import { URLNormalizer } from '../documentation/constants/utils';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATION
@@ -290,7 +280,7 @@ export function buildUrlWithSegments(baseUrl: string, ...segments: string[]): st
 // ============================================================================
 
 export function getEnvironment(): 'development' | 'staging' | 'production' {
-  const nodeEnv = process.env.NODE_ENV?.toLowerCase();
+  const nodeEnv = Bun.env.NODE_ENV?.toLowerCase();
   
   if (nodeEnv === 'production') return 'production';
   if (nodeEnv === 'staging') return 'staging';

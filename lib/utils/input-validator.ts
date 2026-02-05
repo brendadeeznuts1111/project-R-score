@@ -149,7 +149,7 @@ export class SecureInputValidator implements InputValidator {
       }
 
       // Prevent localhost in production
-      if (process.env.NODE_ENV === 'production') {
+      if (Bun.env.NODE_ENV === 'production') {
         const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';
         const localhostPatterns = [
           'localhost', 

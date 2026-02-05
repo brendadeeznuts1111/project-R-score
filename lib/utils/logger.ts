@@ -65,10 +65,10 @@ export class Logger {
   private getDefaultConfig(): LoggerConfig {
     return {
       level: (process.env.LOG_LEVEL as LogLevel) || 'info',
-      includeTimestamp: process.env.NODE_ENV !== 'test',
+      includeTimestamp: Bun.env.NODE_ENV !== 'test',
       includeModule: true,
       jsonOutput: process.env.JSON_LOGS === 'true',
-      colors: process.env.NO_COLORS !== 'true' && process.env.NODE_ENV !== 'production',
+      colors: process.env.NO_COLORS !== 'true' && Bun.env.NODE_ENV !== 'production',
       maxLogSize: 10000
     };
   }

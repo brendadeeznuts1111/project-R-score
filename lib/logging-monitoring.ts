@@ -90,7 +90,7 @@ export class Logger {
       level: LogLevel.INFO,
       service: 'bun-service',
       version: '1.0.0',
-      environment: process.env.NODE_ENV || 'development',
+      environment: Bun.env.NODE_ENV || 'development',
       enableConsole: true,
       enableFile: false,
       enableMetrics: true,
@@ -520,7 +520,7 @@ export class LoggingMiddleware {
 
 export const defaultLogger = new Logger({
   service: 'bun-platform',
-  level: process.env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
+  level: Bun.env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
   enableConsole: true,
   enableMetrics: true
 });

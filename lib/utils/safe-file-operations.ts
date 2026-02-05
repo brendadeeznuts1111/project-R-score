@@ -187,10 +187,12 @@ export class SafeFileOperations {
 
       // Write file with retries
       let lastError: Error | unknown;
+      let written = false;
 
       for (let attempt = 1; attempt <= opts.maxRetries; attempt++) {
         try {
           await writeFile(filePath, content, opts.encoding);
+          written = true;
           break;
         } catch (error) {
           lastError = error;
@@ -200,7 +202,7 @@ export class SafeFileOperations {
         }
       }
 
-      if (attempt > opts.maxRetries) {
+      if (!written) {
         throw lastError;
       }
 
@@ -254,10 +256,12 @@ export class SafeFileOperations {
 
       // Append with retries
       let lastError: Error | unknown;
+      let appended = false;
 
       for (let attempt = 1; attempt <= opts.maxRetries; attempt++) {
         try {
           await appendFile(filePath, content, opts.encoding);
+          appended = true;
           break;
         } catch (error) {
           lastError = error;
@@ -267,7 +271,7 @@ export class SafeFileOperations {
         }
       }
 
-      if (attempt > opts.maxRetries) {
+      if (!appended) {
         throw lastError;
       }
 

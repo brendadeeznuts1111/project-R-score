@@ -16,16 +16,6 @@ if (import.meta.path !== Bun.main) {
 
 import { validateOrExit, setDefaults, showIntegrationHelp } from './cli-validation-integration';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 
 async function main() {
   // Set default environment variables (optional)
@@ -42,7 +32,7 @@ async function main() {
   console.log(`✅ Running with Bun ${version.trim()}`);
   
   // Example: Show current environment
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+  console.log(`📊 Environment: ${Bun.env.NODE_ENV}`);
   console.log(`🔧 Platform: ${process.platform} ${process.arch}`);
 }
 
