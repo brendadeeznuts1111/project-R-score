@@ -1,0 +1,264 @@
+#!/usr/bin/env bun
+/**
+ * cb-skill - Scaffold and manage skills
+ * Usage: cb-skill new <name> | cb-skill list | cb-skill test <name>
+ */
+
+const SKILLS_DIR = `${Bun.env.HOME}/clawd/skills`;
+
+interface Skill {
+  name: string;
+  description: string;
+  path: string;
+  hasMetadata: boolean;
+}
+
+async function listSkills(): Promise<Skill[]> {
+  const skills: Skill[] = [];
+
+  try {
+    // Read directory
+    const proc = Bun.spawn(["ls", SKILLS_DIR]);
+    const exitCode = await proc.exited;
+    if (exitCode !== 0) return skills;
+
+    const text = await new Response(proc.stdout).text();
+
+    for (const file of text.trim().split("\n")) {
+      if (!file.endsWith(".md")) continue;
+
+      const path = `${SKILLS_DIR}/${file}`;
+      const content = await Bun.file(path).text();
+
+      // Parse frontmatter
+      const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+      if (!frontmatterMatch) continue;
+
+      const frontmatter = frontmatterMatch[1];
+      const nameMatch = frontmatter.match(/^name:\s*(.+)$/m);
+      const descMatch = frontmatter.match(/^description:\s*(.+)$/m);
+      const metadataMatch = frontmatter.match(/^metadata:\s*(.+)$/m);
+
+      skills.push({
+        name: nameMatch?.[1] || file.replace(".md", ""),
+        description: descMatch?.[1] || "No description",
+        path,
+        hasMetadata: !!metadataMatch,
+      });
+    }
+  } catch {
+    // Directory doesn't exist
+  }
+
+  return skills;
+}
+
+async function createSkill(name: string, description?: string) {
+  const filename = `${name}.md`;
+  const filepath = `${SKILLS_DIR}/${filename}`;
+
+  // Check if exists
+  if (await Bun.file(filepath).exists()) {
+    console.log(`\n  \x1b[31m✗\x1b[0m Skill "${name}" already exists at ${filepath}\n`);
+    process.exit(1);
+  }
+
+  const desc = description || `${name} skill for Clawdbot`;
+
+  const template = `---
+name: ${name}
+description: ${desc}
+metadata: {"clawdbot":{"emoji":"🔧","os":["darwin","linux"]}}
+---
+
+# ${name.charAt(0).toUpperCase() + name.slice(1)} Skill
+
+Brief description of what this skill does.
+
+## Capabilities
+
+- Capability 1
+- Capability 2
+- Capability 3
+
+## Usage
+
+Describe how the agent should use this skill.
+
+### Example Commands
+
+\`\`\`bash
+# Example command 1
+echo "hello"
+
+# Example command 2
+ls -la
+\`\`\`
+
+## Response Format
+
+Describe how responses should be formatted.
+
+## Triggers
+
+List phrases that should activate this skill:
+- "trigger phrase 1"
+- "trigger phrase 2"
+
+## Notes
+
+Any additional notes or caveats.
+`;
+
+  await Bun.write(filepath, template);
+  console.log(`\n  \x1b[32m✓\x1b[0m Created skill: ${filepath}\n`);
+  console.log(`  Edit the file to customize your skill.`);
+  console.log(`  Test with: cb-skill test ${name}\n`);
+}
+
+async function testSkill(name: string) {
+  const skills = await listSkills();
+  const skill = skills.find(s => s.name === name);
+
+  if (!skill) {
+    console.log(`\n  \x1b[31m✗\x1b[0m Skill "${name}" not found.\n`);
+    console.log(`  Available skills: ${skills.map(s => s.name).join(", ") || "none"}\n`);
+    process.exit(1);
+  }
+
+  console.log("\n┌─────────────────────────────────┐");
+  console.log("│         SKILL VALIDATOR         │");
+  console.log("└─────────────────────────────────┘\n");
+
+  const content = await Bun.file(skill.path).text();
+  const issues: string[] = [];
+
+  // Check frontmatter
+  const hasFrontmatter = content.startsWith("---");
+  if (!hasFrontmatter) {
+    issues.push("Missing YAML frontmatter (---)");
+  }
+
+  // Check required fields
+  const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (frontmatterMatch) {
+    const fm = frontmatterMatch[1];
+    if (!fm.includes("name:")) issues.push("Missing 'name' in frontmatter");
+    if (!fm.includes("description:")) issues.push("Missing 'description' in frontmatter");
+
+    // Check metadata format
+    const metadataMatch = fm.match(/^metadata:\s*(.+)$/m);
+    if (metadataMatch) {
+      try {
+        JSON.parse(metadataMatch[1]);
+      } catch {
+        issues.push("Invalid JSON in metadata field");
+      }
+    }
+  }
+
+  // Check content structure
+  if (!content.includes("# ")) {
+    issues.push("Missing main heading (#)");
+  }
+
+  // Check for common sections
+  const hasTriggers = content.toLowerCase().includes("trigger") || content.toLowerCase().includes("usage");
+  if (!hasTriggers) {
+    issues.push("Consider adding Triggers or Usage section");
+  }
+
+  // Report results
+  console.log(`  Skill: ${skill.name}`);
+  console.log(`  Path:  ${skill.path}`);
+  console.log(`  Size:  ${content.length} bytes`);
+  console.log();
+
+  if (issues.length === 0) {
+    console.log("  \x1b[32m✓ All checks passed\x1b[0m\n");
+  } else {
+    console.log("  Issues found:\n");
+    for (const issue of issues) {
+      console.log(`    \x1b[33m⚠\x1b[0m ${issue}`);
+    }
+    console.log();
+  }
+
+  // Show preview
+  console.log("  Preview (first 500 chars):");
+  console.log("  ─".repeat(30));
+  const preview = content.slice(0, 500).split("\n").map(l => `  ${l}`).join("\n");
+  console.log(preview);
+  if (content.length > 500) console.log("  ...");
+  console.log();
+}
+
+async function main() {
+  const args = Bun.argv.slice(2);
+  const command = args[0];
+
+  if (!command || command === "list" || command === "-l") {
+    const skills = await listSkills();
+
+    console.log("\n┌─────────────────────────────────┐");
+    console.log("│        WORKSPACE SKILLS         │");
+    console.log("└─────────────────────────────────┘\n");
+
+    if (skills.length === 0) {
+      console.log("  No skills found in ~/clawd/skills/\n");
+      console.log("  Create one: cb-skill new <name>\n");
+      return;
+    }
+
+    for (const skill of skills) {
+      const meta = skill.hasMetadata ? "\x1b[32m●\x1b[0m" : "\x1b[33m○\x1b[0m";
+      console.log(`  ${meta} ${skill.name.padEnd(20)} ${skill.description.slice(0, 40)}`);
+    }
+
+    console.log();
+    console.log("  \x1b[32m●\x1b[0m = has metadata   \x1b[33m○\x1b[0m = no metadata\n");
+    return;
+  }
+
+  if (command === "new" || command === "create") {
+    const name = args[1];
+    const description = args.slice(2).join(" ") || undefined;
+
+    if (!name) {
+      console.log("\n  Usage: cb-skill new <name> [description]\n");
+      console.log("  Example: cb-skill new weather \"Check weather forecasts\"\n");
+      process.exit(1);
+    }
+
+    await createSkill(name, description);
+    return;
+  }
+
+  if (command === "test" || command === "check") {
+    const name = args[1];
+
+    if (!name) {
+      console.log("\n  Usage: cb-skill test <name>\n");
+      process.exit(1);
+    }
+
+    await testSkill(name);
+    return;
+  }
+
+  console.log(`
+  Usage: cb-skill <command> [options]
+
+  Commands:
+    list              List all workspace skills
+    new <name>        Create a new skill from template
+    test <name>       Validate a skill file
+
+  Examples:
+    cb-skill list
+    cb-skill new weather "Check weather forecasts"
+    cb-skill test system-control
+`);
+}
+
+main();

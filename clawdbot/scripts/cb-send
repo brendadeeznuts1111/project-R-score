@@ -1,0 +1,160 @@
+#!/usr/bin/env bun
+/**
+ * cb-send - Send test messages to Telegram
+ * Usage: cb-send <message> [--chat <id>] [--topic <id>] [--reply <msg_id>]
+ */
+
+const BOT_TOKEN = "7873135075:AAHmySXcKIJpQ0KQX0aAOufB-VPMsdMF73Y";
+const DEFAULT_CHAT = "8013171035"; // Your user ID from allowFrom
+const GROUP_CHAT = "-1003663527473"; // Forum group with topics
+
+interface SendOptions {
+  chatId: string;
+  text: string;
+  topicId?: number;
+  replyTo?: number;
+}
+
+async function sendMessage(opts: SendOptions): Promise<{ ok: boolean; messageId?: number; error?: string }> {
+  const params: Record<string, any> = {
+    chat_id: opts.chatId,
+    text: opts.text,
+    parse_mode: "Markdown",
+  };
+
+  if (opts.topicId) {
+    params.message_thread_id = opts.topicId;
+  }
+  if (opts.replyTo) {
+    params.reply_to_message_id = opts.replyTo;
+  }
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      return { ok: true, messageId: data.result.message_id };
+    }
+    return { ok: false, error: data.description };
+  } catch (err: any) {
+    return { ok: false, error: err.message };
+  }
+}
+
+async function getRecentChats(): Promise<Array<{ id: string; type: string; title?: string }>> {
+  const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=20`);
+  const data = await res.json();
+
+  if (!data.ok) return [];
+
+  const chats = new Map<string, { id: string; type: string; title?: string }>();
+
+  for (const update of data.result) {
+    const msg = update.message;
+    if (!msg?.chat) continue;
+
+    const chat = msg.chat;
+    chats.set(String(chat.id), {
+      id: String(chat.id),
+      type: chat.type,
+      title: chat.title || chat.first_name || "DM",
+    });
+  }
+
+  return Array.from(chats.values());
+}
+
+function parseArgs(): { message: string; chatId: string; topicId?: number; replyTo?: number; listChats: boolean } {
+  const args = Bun.argv.slice(2);
+  let message = "";
+  let chatId = DEFAULT_CHAT;
+  let topicId: number | undefined;
+  let replyTo: number | undefined;
+  let listChats = false;
+  let chatOverride = false;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg === "--chat" || arg === "-c") {
+      chatId = args[++i];
+      chatOverride = true;
+    } else if (arg === "--topic" || arg === "-t") {
+      topicId = parseInt(args[++i]);
+    } else if (arg === "--reply" || arg === "-r") {
+      replyTo = parseInt(args[++i]);
+    } else if (arg === "--list" || arg === "-l") {
+      listChats = true;
+    } else if (arg === "--group" || arg === "-g") {
+      chatId = GROUP_CHAT;
+      chatOverride = true;
+    } else if (!arg.startsWith("-")) {
+      message = arg;
+    }
+  }
+
+  // Auto-switch to group when topic is specified (topics only exist in groups)
+  if (topicId && !chatOverride) {
+    chatId = GROUP_CHAT;
+  }
+
+  return { message, chatId, topicId, replyTo, listChats };
+}
+
+async function main() {
+  const opts = parseArgs();
+
+  if (opts.listChats) {
+    console.log("\n  Recent chats:\n");
+    const chats = await getRecentChats();
+    for (const chat of chats) {
+      console.log(`    ${chat.id.padEnd(15)} ${chat.type.padEnd(12)} ${chat.title}`);
+    }
+    console.log();
+    return;
+  }
+
+  if (!opts.message) {
+    console.log(`
+  Usage: cb-send <message> [options]
+
+  Options:
+    -c, --chat <id>     Chat ID to send to (default: DM)
+    -g, --group         Send to forum group (${GROUP_CHAT})
+    -t, --topic <id>    Topic/thread ID (auto-selects group)
+    -r, --reply <id>    Message ID to reply to
+    -l, --list          List recent chats
+
+  Examples:
+    cb-send "Hello world"              # Send to DM
+    cb-send "Test" --topic 2           # Send to Code topic
+    cb-send "Test" --group             # Send to group (General)
+    cb-send --list                     # List chats
+`);
+    return;
+  }
+
+  console.log(`\n  Sending to ${opts.chatId}${opts.topicId ? ` (topic ${opts.topicId})` : ""}...`);
+
+  const result = await sendMessage({
+    chatId: opts.chatId,
+    text: opts.message,
+    topicId: opts.topicId,
+    replyTo: opts.replyTo,
+  });
+
+  if (result.ok) {
+    console.log(`  \x1b[32m✓ Sent\x1b[0m (message_id: ${result.messageId})\n`);
+  } else {
+    console.log(`  \x1b[31m✗ Failed:\x1b[0m ${result.error}\n`);
+    process.exit(1);
+  }
+}
+
+main();
