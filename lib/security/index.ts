@@ -48,6 +48,44 @@ export class SecurityUtils {
   }
   
   /**
+   * Hash password using Bun.password (argon2id by default)
+   */
+  static async hashPassword(password: string, options?: {
+    algorithm?: 'argon2id' | 'argon2i' | 'argon2d' | 'bcrypt';
+    memoryCost?: number;
+    timeCost?: number;
+    cost?: number;
+  }): Promise<string> {
+    return await Bun.password.hash(password, options);
+  }
+  
+  /**
+   * Hash password synchronously
+   */
+  static hashPasswordSync(password: string, options?: {
+    algorithm?: 'argon2id' | 'argon2i' | 'argon2d' | 'bcrypt';
+    memoryCost?: number;
+    timeCost?: number;
+    cost?: number;
+  }): string {
+    return Bun.password.hashSync(password, options);
+  }
+  
+  /**
+   * Verify password against hash
+   */
+  static async verifyPassword(password: string, hash: string): Promise<boolean> {
+    return await Bun.password.verify(password, hash);
+  }
+  
+  /**
+   * Verify password synchronously
+   */
+  static verifyPasswordSync(password: string, hash: string): boolean {
+    return Bun.password.verifySync(password, hash);
+  }
+  
+  /**
    * Validate secret strength
    */
   static validateStrength(secret: string): {

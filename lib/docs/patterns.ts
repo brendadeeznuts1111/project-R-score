@@ -17,6 +17,7 @@ export const DOC_PATTERNS = {
     '/runtime/file-system': 'filesystem',
     '/runtime/network': 'network',
     '/runtime/process': 'process',
+    '/runtime/hashing': 'hashing',
     
     // API patterns
     '/api/bun': 'bun-api',
@@ -40,7 +41,18 @@ export const DOC_PATTERNS = {
         BUN_DOCS.secrets.versioning,
         BUN_DOCS.secrets.rollback,
         BUN_DOCS.runtime('binary-data'),
-        BUN_DOCS.runtime('typescript')
+        BUN_DOCS.runtime('typescript'),
+        BUN_DOCS.runtime('hashing') // Added hashing docs
+      ];
+      return related;
+    }
+    
+    if (url.includes('/runtime/hashing')) {
+      const related = [
+        BUN_DOCS.runtime('hashing'),
+        BUN_DOCS.runtime('secrets'),
+        BUN_DOCS.runtime('binary-data'),
+        BUN_DOCS.runtime('crypto')
       ];
       return related;
     }
