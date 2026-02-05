@@ -265,7 +265,7 @@ export function getBunReferenceWithTextFragment(): {
 }
 
 export function getGitHubBunTypesCommitURL(
-  commitHash: string = 'af76296637931381e9509c204c5f1af9cc174534'
+  commitHash: string = 'main'
 ): string {
   return docsURLBuilder.buildBunTypesURL(commitHash);
 }
@@ -326,8 +326,8 @@ export function getAllCriticalURLs(): Record<string, any> {
 
 // TypeScript helper for the example commit
 export const exampleCommit = {
-  hash: 'af76296637931381e9509c204c5f1af9cc174534' as const,
-  url: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types' as const,
+  hash: 'main' as const,
+  url: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types' as const,
   shortHash: 'af76296' as const,
   date: '2023-08-15' as const, // Example date - would need actual commit date
   description: 'Example commit showing bun-types package structure'

@@ -173,7 +173,7 @@ export const LEGACY_CONSTANTS = {
   CANARY_COMMIT: 'canary',
   
   // Example commit from existing code
-  EXAMPLE_COMMIT: 'af76296637931381e9509c204c5f1af9cc174534'
+  EXAMPLE_COMMIT: 'main'
 };
 
 // Legacy export for backward compatibility

@@ -140,7 +140,7 @@ await writeFile('output.txt', 'Hello, Bun!');`,
     'https://bun.com/reference#:~:text=Bun%20API%20Reference',
     
     // GitHub commit URLs
-    'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types',
+    'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
     'https://github.com/oven-sh/bun/blob/main/packages/bun-types/bun.d.ts'
   ];
   

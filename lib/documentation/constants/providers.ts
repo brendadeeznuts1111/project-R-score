@@ -91,7 +91,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
       `https://raw.githubusercontent.com/oven-sh/bun/${commitHash}/${path}`,
 
     // Example commit you provided
-    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types'
+    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types'
   },
 
   // GitHub Enterprise
@@ -234,7 +234,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
 // Special commit hashes for important releases
 export const SIGNIFICANT_COMMITS = {
   // Example commit from your link
-  AF762966: 'af76296637931381e9509c204c5f1af9cc174534' as const,
+  AF762966: 'main' as const,
 
   // Other significant commits (would be maintained in real usage)
   LATEST_RELEASE: 'main' as const,

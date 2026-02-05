@@ -57,6 +57,7 @@
     "url:optimize": "bun run scripts/optimize-examples-prefetch.ts optimize",
     "url:localhost-to-example": "bun run scripts/localhost-to-example.ts convert",
     "standards:check": "bun run url:check && bun run lint && bun run type-check",
+    "validate:bun-urls": "bun run validate-bun-urls.ts",
     "ci:validate": "bun run standards:check && bun run test:all",
     "markdown:styled": "bun run lib/enhanced-markdown.ts docs/styling-demo.md ansi",
     "markdown:html": "bun run lib/enhanced-markdown.ts README.md html",

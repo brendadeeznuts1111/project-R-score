@@ -201,7 +201,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     },
     
     // Example commit you provided
-    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types'
+    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types'
   },
   
   // GitHub Enterprise
@@ -302,7 +302,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
  */
 export const SIGNIFICANT_COMMITS = {
   // Example commit from your link
-  AF762966: 'af76296637931381e9509c204c5f1af9cc174534' as const,
+  AF762966: 'main' as const,
   
   // Other significant commits (would be maintained in real usage)
   LATEST_RELEASE: 'main' as const,
@@ -844,7 +844,7 @@ export const FRAGMENT_METADATA: Record<string, {
   'commit': {
     description: 'GitHub commit view - detailed commit information and file changes',
     relatedFragments: ['tree', 'blob', 'diff'],
-    examples: ['https://github.com/oven-sh/bun/commit/af76296637931381e9509c204c5f1af9cc174534'],
+    examples: ['https://github.com/oven-sh/bun/commit/main'],
     seeAlso: ['tree', 'pull', 'branch']
   },
   
@@ -2038,7 +2038,7 @@ export class EnterpriseDocumentationURLBuilder {
 
   /**
    * Build GitHub URL for a specific commit and path
-   * Example: https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types
+   * Example: https://github.com/oven-sh/bun/tree/main/packages/bun-types
    */
   public buildGitHubCommitURL(
     owner: string = 'oven-sh',

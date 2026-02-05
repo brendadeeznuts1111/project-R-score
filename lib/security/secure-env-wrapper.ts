@@ -7,12 +7,12 @@
  * and audited environment variable management.
  */
 
-import { z } from "zod";
+import { SimpleValidator, ValidationSchema, Schemas as ValidationSchemas } from "../utils/simple-validation";
 import { auditLogger } from "./secret-audit-logger";
 
 export interface EnvVarConfig<T = string> {
   name: string;
-  schema: z.ZodType<T>;
+  schema: ValidationSchema<T>;
   required?: boolean;
   defaultValue?: T;
   sensitive?: boolean;
@@ -76,7 +76,7 @@ class SecureEnvManager {
   /**
    * Get environment variable with default (no registration required)
    */
-  getWithDefault<T>(name: string, defaultValue: T, schema?: z.ZodType<T>, context?: SecurityContext): T {
+  getWithDefault<T>(name: string, defaultValue: T, schema?: ValidationSchema<T>, context?: SecurityContext): T {
     const rawValue = process.env[name];
     
     if (rawValue === undefined) {
@@ -84,7 +84,7 @@ class SecureEnvManager {
     }
 
     try {
-      const value = schema ? schema.parse(rawValue) : (rawValue as T);
+      const value = schema ? SimpleValidator.validate(rawValue, schema) : (rawValue as T);
       this.auditAccess(name, true, context);
       return value;
     } catch (error) {
@@ -146,7 +146,7 @@ class SecureEnvManager {
     }
 
     try {
-      const value = config.schema.parse(rawValue);
+      const value = SimpleValidator.validate(rawValue, config.schema);
       this.cache.set(name, value);
       this.auditAccess(name, true, context);
       return value;
@@ -208,27 +208,30 @@ class SecureEnvManager {
 // Global instance
 export const secureEnv = new SecureEnvManager();
 
+// Export the class for testing
+export { SecureEnvManager };
+
 // Common schemas for convenience
 export const Schemas = {
-  string: z.string(),
-  number: z.string().transform(Number).pipe(z.number()),
-  boolean: z.enum(['true', 'false', '1', '0']).transform(val => val === 'true' || val === '1'),
-  url: z.string().url(),
-  email: z.string().email(),
-  port: z.string().transform(Number).pipe(z.number().int().min(1).max(65535)),
-  nonEmptyString: z.string().min(1),
-  apiKey: z.string().min(16).max(256),
-  databaseUrl: z.string().url(),
-  jwtSecret: z.string().min(32),
-  encryptionKey: z.string().length(64), // For 256-bit keys in hex
-  logLevel: z.enum(['debug', 'info', 'warn', 'error']),
-  environment: z.enum(['development', 'staging', 'production'])
+  string: ValidationSchemas.string(),
+  number: ValidationSchemas.number(),
+  boolean: ValidationSchemas.boolean(),
+  url: ValidationSchemas.url(),
+  email: ValidationSchemas.email(),
+  port: ValidationSchemas.port(),
+  nonEmptyString: ValidationSchemas.nonEmptyString(),
+  apiKey: ValidationSchemas.apiKey(),
+  databaseUrl: ValidationSchemas.url(),
+  jwtSecret: ValidationSchemas.jwtSecret(),
+  encryptionKey: ValidationSchemas.encryptionKey(),
+  logLevel: ValidationSchemas.logLevel(),
+  environment: ValidationSchemas.environment()
 };
 
 // Helper function to create common environment variable configs
 export function createEnvConfig<T>(
   name: string,
-  schema: z.ZodType<T>,
+  schema: ValidationSchema<T>,
   options: {
     required?: boolean;
     defaultValue?: T;

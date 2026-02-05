@@ -47,7 +47,7 @@ export const BUN_REPO_URL = "https://github.com/oven-sh/bun";
 
 /** Mintlify docs.json source (GitHub raw). MCP reference for Bun documentation structure. */
 export const BUN_DOCS_JSON_URL =
-	"https://github.com/oven-sh/bun/blob/af76296637931381e9509c204c5f1af9cc174534/docs/docs.json";
+	"https://github.com/oven-sh/bun/blob/main/docs/docs.json";
 
 /** Bun TypeScript types package in oven-sh/bun. https://github.com/oven-sh/bun/tree/main/packages/bun-types */
 export const BUN_TYPES_REPO_URL =

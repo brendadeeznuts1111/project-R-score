@@ -68,7 +68,7 @@ console.log();
 // 4. GitHub URL Parsing & Validation
 console.log('🔍 4. GitHub URL Analysis');
 console.log('-'.repeat(40));
-const exampleURL = 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types';
+const exampleURL = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
 const parsed = EnhancedDocumentationURLValidator.parseGitHubURL(exampleURL);
 console.log('URL:', exampleURL);
 console.log('Parsed:', {

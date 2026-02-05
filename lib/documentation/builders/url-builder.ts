@@ -542,7 +542,7 @@ export class EnterpriseDocumentationURLBuilder {
    * Get example commit URL
    */
   public getExampleCommitURL(): string {
-    return 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types';
+    return 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
   }
 
   /**
@@ -578,7 +578,7 @@ export class EnterpriseDocumentationURLBuilder {
     packageName: string,
     commitHash?: string
   ): Record<string, string> {
-    const hash = commitHash || 'af76296637931381e9509c204c5f1af9cc174534';
+    const hash = commitHash || 'main';
     const basePath = `packages/${packageName}`;
     return {
       tree: this.buildGitHubCommitURL('oven-sh', 'bun', hash, basePath, 'tree'),
@@ -594,7 +594,7 @@ export class EnterpriseDocumentationURLBuilder {
     commitHash?: string,
     path?: string
   ): string {
-    const hash = commitHash || 'af76296637931381e9509c204c5f1af9cc174534';
+    const hash = commitHash || 'main';
     const pth = path || 'packages/bun-types';
     return this.buildGitHubCommitURL('oven-sh', 'bun', hash, pth, 'tree');
   }

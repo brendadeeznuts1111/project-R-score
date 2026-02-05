@@ -150,7 +150,7 @@ const _patterns = [
 	},
 	{
 		Pattern: "GitHub docs.json",
-		URL: "https://github.com/oven-sh/bun/blob/af76296637931381e9509c204c5f1af9cc174534/docs/docs.json",
+		URL: "https://github.com/oven-sh/bun/blob/main/docs/docs.json",
 		Purpose: "MCP reference source",
 	},
 	{
