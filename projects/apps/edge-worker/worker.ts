@@ -127,10 +127,12 @@ async function deploy() {
   if (!dryRun && !local) {
     await deployWorker(config, bundlePath, kvName);
   } else if (local) {
+    const EDGE_WORKER_PORT = parseInt(process.env.EDGE_WORKER_PORT || '8788', 10);
+    const EDGE_WORKER_HOST = process.env.EDGE_WORKER_HOST || process.env.SERVER_HOST || 'localhost';
     console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Local Development Mode                                  ║
-║  Worker running at http://localhost:8788                 ║
+║  Worker running at http://${EDGE_WORKER_HOST}:${EDGE_WORKER_PORT}                 ║
 ║  (simulated - not actually starting server)             ║
 ╚═══════════════════════════════════════════════════════════╝
     `);

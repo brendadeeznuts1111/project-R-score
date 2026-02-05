@@ -43,10 +43,11 @@ async function main() {
   }
 
   if (command === "server") {
-    const port = parseInt(args[1]) || 3000;
+    const port = parseInt(args[1]) || parseInt(process.env.PORT || '3000', 10);
+    const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
     console.log(`🚀 Starting T3-LATTICE v3.4 servers on port ${port}...`);
-    console.log("📊 HTTP API: http://localhost:" + port + "/health");
-    console.log("📡 WebSocket: ws://localhost:" + port + "/ws");
+    console.log(`📊 HTTP API: http://${SERVER_HOST}:${port}/health`);
+    console.log(`📡 WebSocket: ws://${SERVER_HOST}:${port}/ws`);
     console.log("💡 Press Ctrl+C to stop\n");
     
     // Start HTTP server

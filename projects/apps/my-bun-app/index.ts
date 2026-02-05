@@ -21,7 +21,8 @@ console.log(`Project Home: ${process.env.PROJECT_HOME || 'Not set'}`);
 console.log(`BUN_PLATFORM_HOME: ${process.env.BUN_PLATFORM_HOME || 'Not set'}`);
 
 // Simple web server
-const port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT || '3000', 10);
+const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
 
 Bun.serve({
   port: Number(port),
@@ -66,4 +67,4 @@ Bun.serve({
   }
 });
 
-console.log(`Server running at http://localhost:${port}`);
+console.log(`Server running at http://${SERVER_HOST}:${port}`);

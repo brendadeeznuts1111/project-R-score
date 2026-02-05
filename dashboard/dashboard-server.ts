@@ -11,7 +11,8 @@ import { serve } from "bun";
 import { masterTokenManager } from '../lib/security/master-token.ts';
 import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
 
-const PORT = process.env.DASHBOARD_PORT || 3456;
+const PORT = parseInt(process.env.DASHBOARD_PORT || '3456', 10);
+const DASHBOARD_HOST = process.env.DASHBOARD_HOST || process.env.SERVER_HOST || 'localhost';
 const DASHBOARD_HTML = './dashboard/web-dashboard.html';
 
 // CORS headers for API endpoints
@@ -164,8 +165,8 @@ async function collectDashboardData() {
 
 // Start server
 console.log(`🏭 Starting FactoryWager MCP Dashboard Server...`);
-console.log(`📊 Dashboard: http://localhost:${PORT}`);
-console.log(`📡 API: http://localhost:${PORT}/api/dashboard`);
+console.log(`📊 Dashboard: http://${DASHBOARD_HOST}:${PORT}`);
+console.log(`📡 API: http://${DASHBOARD_HOST}:${PORT}/api/dashboard`);
 console.log('');
 
 serve({

@@ -249,8 +249,10 @@ describe("WebSocket Server", () => {
     if (client) client.close();
   });
 
+  const WS_TEST_HOST = process.env.WS_TEST_HOST || process.env.SERVER_HOST || 'localhost';
+  const WS_TEST_PORT = parseInt(process.env.WS_TEST_PORT || '3002', 10);
   it("should establish WebSocket connection", (done) => {
-    client = new WebSocket("ws://localhost:3002");
+    client = new WebSocket(`ws://${WS_TEST_HOST}:${WS_TEST_PORT}`);
 
     client.on("open", () => {
       expect(client.readyState).toBe(WebSocket.OPEN);
@@ -261,7 +263,7 @@ describe("WebSocket Server", () => {
   });
 
   it("should echo messages", (done) => {
-    client = new WebSocket("ws://localhost:3002");
+    client = new WebSocket(`ws://${WS_TEST_HOST}:${WS_TEST_PORT}`);
 
     client.on("open", () => {
       client.send("test message");

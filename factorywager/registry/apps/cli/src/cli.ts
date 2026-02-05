@@ -26,6 +26,10 @@ function wrapText(text: string, columns: number = 80): string {
   return text;
 }
 
+const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+
 const COMMANDS = {
   'start': 'Start the registry server',
   'publish': 'Publish a package to the registry',
@@ -122,7 +126,10 @@ class RegistryCLI {
    */
   private async handlePublish(options: any): Promise<void> {
     const packagePath = options._[0] || '.';
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     console.log(styled(`\n📦 Publishing from ${packagePath}...`, 'accent'));
 
@@ -209,7 +216,10 @@ class RegistryCLI {
   private async handleUnpublish(options: any): Promise<void> {
     const packageName = options._[0];
     const version = options.version;
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     if (!packageName) {
       console.error(styled('❌ Package name required', 'error'));
@@ -261,7 +271,10 @@ class RegistryCLI {
    */
   private async handleInfo(options: any): Promise<void> {
     const packageName = options._[0];
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     if (!packageName) {
       console.error(styled('❌ Package name required', 'error'));
@@ -330,7 +343,10 @@ class RegistryCLI {
    */
   private async handleSearch(options: any): Promise<void> {
     const query = options._[0];
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     if (!query) {
       console.error(styled('❌ Search query required', 'error'));
@@ -367,7 +383,10 @@ class RegistryCLI {
    * List all packages
    */
   private async handleList(options: any): Promise<void> {
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     try {
       const response = await fetch(`${registry}/-/all`);
@@ -522,7 +541,7 @@ class RegistryCLI {
 
     console.log(styled('\nExamples:', 'info'));
     console.log(styled('  registry start --port 4873 --auth basic', 'muted'));
-    console.log(styled('  registry publish ./my-package --registry http://localhost:4873', 'muted'));
+    console.log(styled(`  registry publish ./my-package --registry ${DEFAULT_REGISTRY_URL}`, 'muted'));
     console.log(styled('  registry info my-package', 'muted'));
     console.log(styled('  registry search utils', 'muted'));
     console.log(styled('  registry tokens create admin', 'muted'));
