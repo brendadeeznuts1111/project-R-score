@@ -60,12 +60,19 @@ export function styled(text: string, color: FactoryWagerColor, background?: Fact
   const fgColor = FW_COLORS[color];
   const bgColor = background ? FW_COLORS[background] : undefined;
   
-  // Use Bun.color for ANSI output
-  if (bgColor) {
-    return Bun.color(fgColor, 'ansi') + text + Bun.color(bgColor, 'ansi', 'background') + Bun.color('reset', 'ansi');
+  // Use Bun.color for ANSI output (fallback to plain text if not available)
+  try {
+    const fg = Bun.color(fgColor, 'ansi') || '';
+    const bg = bgColor ? (Bun.color(bgColor, 'ansi', 'background') || '') : '';
+    const reset = Bun.color('reset', 'ansi') || '';
+    
+    if (bgColor) {
+      return fg + text + bg + reset;
+    }
+    return fg + text + reset;
+  } catch {
+    return text;
   }
-  
-  return Bun.color(fgColor, 'ansi') + text + Bun.color('reset', 'ansi');
 }
 
 /**

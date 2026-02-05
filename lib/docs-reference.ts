@@ -13,7 +13,11 @@
  * 
  * Provides centralized URL management with URLPattern support
  * for consistent and maintainable documentation links.
+ * Enhanced with fragment support for deep linking and state management.
  */
+
+import { URLHandler, URLFragmentUtils } from './core/url-handler.ts';
+import { DocumentationURLHandler } from './core/documentation-url-handler.ts';
 
 // Base URLs as constants
 export const DOCS = {
@@ -166,27 +170,76 @@ export class DocsReference {
   }
   
   /**
-   * Build a URL from path and optional hash
+   * Build a URL from path and optional hash with fragment support
    */
-  buildUrl(path: string, hash?: string, baseUrl?: string): string {
+  buildUrl(path: string, hash?: string, baseUrl?: string, fragment?: Record<string, string>): string {
     const base = baseUrl || DOCS.BUN.BASE;
     const url = new URL(path, base);
+    
     if (hash) url.hash = hash;
+    
+    // Add fragment parameters if provided
+    if (fragment && Object.keys(fragment).length > 0) {
+      const fragmentString = URLFragmentUtils.buildFragment(fragment);
+      if (hash) {
+        url.hash = hash + '&' + fragmentString.replace('#', '');
+      } else {
+        url.hash = fragmentString;
+      }
+    }
+    
     return url.toString();
   }
   
   /**
-   * Get specific documentation URL by key
+   * Get specific documentation URL by key with optional fragment
    */
-  getUrl(key: keyof typeof DOC_PATHS): string {
+  getUrl(key: keyof typeof DOC_PATHS, fragment?: Record<string, string>): string {
     const path = DOC_PATHS[key];
-    return this.buildUrl(path);
+    return this.buildUrl(path, undefined, undefined, fragment);
+  }
+
+  /**
+   * Get URL with enhanced fragment support
+   */
+  getUrlWithFragment(
+    key: keyof typeof DOC_PATHS, 
+    fragment: Record<string, string>
+  ): string {
+    return this.getUrl(key, fragment);
+  }
+
+  /**
+   * Parse documentation URL with fragment extraction
+   */
+  parseUrlWithFragments(url: string): {
+    pattern?: string;
+    groups?: Record<string, string>;
+    valid: boolean;
+    fragment?: Record<string, string>;
+    anchor?: string;
+  } {
+    const basicParse = this.parseUrl(url);
+    
+    // Extract fragment data
+    const parsed = URLHandler.parse(url);
+    const fragment = parsed.hasFragment() ? URLFragmentUtils.parseFragment(parsed.fragment) : {};
+    
+    // Extract anchor if present
+    const anchor = fragment.anchor || undefined;
+    delete fragment.anchor;
+
+    return {
+      ...basicParse,
+      fragment: Object.keys(fragment).length > 0 ? fragment : undefined,
+      anchor
+    };
   }
   
   /**
-   * Get typed array related URLs
+   * Get typed array related URLs with fragment support
    */
-  getTypedArrayUrls(): {
+  getTypedArrayUrls(fragment?: Record<string, string>): {
     base: string;
     methods: string;
     performance: string;
@@ -194,18 +247,18 @@ export class DocsReference {
     sharedArrayBuffer: string;
   } {
     return {
-      base: this.buildUrl('/docs/runtime/binary-data', 'typedarray'),
-      methods: this.buildUrl('/docs/runtime/binary-data', 'methods'),
-      performance: this.buildUrl('/docs/runtime/binary-data', 'performance'),
-      zeroCopy: this.buildUrl('/docs/runtime/binary-data', 'zero-copy'),
-      sharedArrayBuffer: this.buildUrl('/docs/runtime/binary-data', 'sharedarraybuffer')
+      base: this.buildUrl('/docs/runtime/binary-data', 'typedarray', undefined, fragment),
+      methods: this.buildUrl('/docs/runtime/binary-data', 'methods', undefined, fragment),
+      performance: this.buildUrl('/docs/runtime/binary-data', 'performance', undefined, fragment),
+      zeroCopy: this.buildUrl('/docs/runtime/binary-data', 'zero-copy', undefined, fragment),
+      sharedArrayBuffer: this.buildUrl('/docs/runtime/binary-data', 'sharedarraybuffer', undefined, fragment)
     };
   }
   
   /**
-   * Get R-Score optimization URLs
+   * Get R-Score optimization URLs with fragment support
    */
-  getRSysUrls(): {
+  getRSysUrls(fragment?: Record<string, string>): {
     memoryPool: string;
     http2Multiplexing: string;
     hardenedFetch: string;
@@ -213,11 +266,11 @@ export class DocsReference {
     performance: string;
   } {
     return {
-      memoryPool: this.getUrl('MEMORY_POOL'),
-      http2Multiplexing: this.getUrl('HTTP2_MULTIPLEXING'),
-      hardenedFetch: this.getUrl('HARDCODED_FETCH'),
-      redirectHandling: this.getUrl('REDIRECT_HANDLING'),
-      performance: this.getUrl('PERFORMANCE')
+      memoryPool: this.getUrl('MEMORY_POOL', fragment),
+      http2Multiplexing: this.getUrl('HTTP2_MULTIPLEXING', fragment),
+      hardenedFetch: this.getUrl('HARDCODED_FETCH', fragment),
+      redirectHandling: this.getUrl('REDIRECT_HANDLING', fragment),
+      performance: this.getUrl('PERFORMANCE', fragment)
     };
   }
   
@@ -294,9 +347,9 @@ export class DocsReference {
   }
   
   /**
-   * Generate markdown reference table
+   * Generate markdown reference table with fragment support
    */
-  generateMarkdownTable(title: string = 'Documentation References'): string {
+  generateMarkdownTable(title: string = 'Documentation References', includeFragments: boolean = false): string {
     const refs = this.getAllReferences();
     
     let markdown = `## ${title}\n\n`;
@@ -304,10 +357,61 @@ export class DocsReference {
     markdown += '|-----|-----|-------------|\n';
     
     refs.forEach(ref => {
-      markdown += `| \`${ref.key}\` | [${ref.url}](${ref.url}) | ${ref.description} |\n`;
+      let url = ref.url;
+      if (includeFragments) {
+        // Add example fragment for demonstration
+        url = this.buildUrl(ref.url.replace(DOCS.BUN.BASE, ''), undefined, DOCS.BUN.BASE, {
+          example: 'true',
+          interactive: 'true'
+        });
+      }
+      markdown += `| \`${ref.key}\` | [${url}](${url}) | ${ref.description} |\n`;
     });
     
     return markdown;
+  }
+
+  /**
+   * Generate interactive documentation links
+   */
+  generateInteractiveLinks(): Array<{
+    name: string;
+    url: string;
+    fragment: Record<string, string>;
+    description: string;
+  }> {
+    const interactiveFragment = {
+      interactive: 'true',
+      theme: 'auto',
+      editable: 'false'
+    };
+
+    return [
+      {
+        name: 'Interactive Utils Demo',
+        url: this.buildUrl('/docs/api/utils', undefined, undefined, interactiveFragment),
+        fragment: interactiveFragment,
+        description: 'Interactive Bun utilities demonstration'
+      },
+      {
+        name: 'Performance Testing',
+        url: this.buildUrl('/docs/guides/performance', undefined, undefined, {
+          ...interactiveFragment,
+          test: 'benchmark'
+        }),
+        fragment: { ...interactiveFragment, test: 'benchmark' },
+        description: 'Performance testing and benchmarking'
+      },
+      {
+        name: 'CLI Tutorial',
+        url: this.buildUrl('/docs/cli', undefined, undefined, {
+          ...interactiveFragment,
+          tutorial: 'beginner'
+        }),
+        fragment: { ...interactiveFragment, tutorial: 'beginner' },
+        description: 'Interactive CLI tutorial for beginners'
+      }
+    ];
   }
 }
 
@@ -317,16 +421,44 @@ export class DocsReference {
 export const docs = DocsReference.getInstance();
 
 /**
- * Quick URL builders
- */
-export const buildDocsUrl = (path: string, hash?: string) => docs.buildUrl(path, hash);
-export const getTypedArrayDocs = () => docs.getTypedArrayUrls();
-export const getRSysDocs = () => docs.getRSysUrls();
+   * Quick URL builders with fragment support
+   */
+export const buildDocsUrl = (path: string, hash?: string, fragment?: Record<string, string>) => 
+  docs.buildUrl(path, hash, undefined, fragment);
+export const getTypedArrayDocs = (fragment?: Record<string, string>) => docs.getTypedArrayUrls(fragment);
+export const getRSysDocs = (fragment?: Record<string, string>) => docs.getRSysUrls(fragment);
 export const validateDocUrl = (url: string) => docs.validateUrl(url);
 
 /**
- * Type-safe reference resolver
- */
+   * Enhanced URL builders with fragment support
+   */
+export const buildInteractiveDocsUrl = (path: string, options?: {
+  theme?: 'light' | 'dark' | 'auto';
+  editable?: boolean;
+  example?: string;
+}) => {
+  const fragment = {
+    interactive: 'true',
+    theme: options?.theme || 'auto',
+    editable: options?.editable ? 'true' : 'false',
+    ...options
+  };
+  return docs.buildUrl(path, undefined, undefined, fragment);
+};
+
+export const buildExampleDocsUrl = (path: string, example: string, language?: string) => {
+  const fragment = {
+    example,
+    language: language || 'typescript',
+    highlight: 'true',
+    runnable: 'true'
+  };
+  return docs.buildUrl(path, undefined, undefined, fragment);
+};
+
+/**
+   * Type-safe reference resolver with fragment support
+   */
 export class DocReferenceResolver {
   private static readonly REFERENCE_MAP = {
     'bun.docs': '/docs',
@@ -343,15 +475,51 @@ export class DocReferenceResolver {
     'bun.rss': '/rss.xml'
   } as const;
   
-  static resolve(reference: keyof typeof this.REFERENCE_MAP): string {
+  static resolve(reference: keyof typeof this.REFERENCE_MAP, fragment?: Record<string, string>): string {
     const path = this.REFERENCE_MAP[reference];
-    return new URL(path, DOCS.BUN.BASE).toString();
+    const baseUrl = DOCS.BUN.BASE;
+    
+    if (fragment && Object.keys(fragment).length > 0) {
+      return docs.buildUrl(path, undefined, baseUrl, fragment);
+    }
+    
+    return new URL(path, baseUrl).toString();
+  }
+  
+  static resolveWithFragment(
+    reference: keyof typeof this.REFERENCE_MAP, 
+    fragment: Record<string, string>
+  ): string {
+    return this.resolve(reference, fragment);
   }
   
   static getAllReferences(): Array<{ key: string; url: string }> {
     return Object.entries(this.REFERENCE_MAP).map(([key, path]) => ({
       key,
       url: new URL(path, DOCS.BUN.BASE).toString()
+    }));
+  }
+
+  /**
+   * Generate interactive reference URLs
+   */
+  static generateInteractiveReferences(): Array<{
+    key: string;
+    url: string;
+    interactiveUrl: string;
+    description: string;
+  }> {
+    const interactiveFragment = {
+      interactive: 'true',
+      theme: 'auto',
+      runnable: 'true'
+    };
+
+    return Object.entries(this.REFERENCE_MAP).map(([key, path]) => ({
+      key,
+      url: new URL(path, DOCS.BUN.BASE).toString(),
+      interactiveUrl: this.resolve(key as keyof typeof this.REFERENCE_MAP, interactiveFragment),
+      description: `${key.replace(/\./g, ' ')} documentation`
     }));
   }
 }

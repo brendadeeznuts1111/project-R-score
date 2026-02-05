@@ -20,7 +20,8 @@ async function runAllTests() {
     const testFiles = [
       './validation.test.ts',
       './concurrent-operations.test.ts',
-      './r2-integration.test.ts'
+      './r2-integration.test.ts',
+      './url-handler.test.ts'
     ];
 
     let totalSuites = 0;

@@ -1,8 +1,9 @@
-// eslint.config.ts — Enhanced configuration for Levenshtein Tier-1380
+// eslint.config.ts — FactoryWager Enterprise Platform Configuration
 import tseslint from 'typescript-eslint';
 import { Linter } from 'eslint';
 import { join } from 'path';
 import importPlugin from 'eslint-plugin-import';
+import security from 'eslint-plugin-security';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default tseslint.config(
@@ -21,6 +22,10 @@ export default tseslint.config(
       '**/*.d.ts',
       '**/generated/**',
     ],
+    plugins: {
+      security,
+      import: importPlugin,
+    },
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {

@@ -99,10 +99,11 @@ class SpawnOptimizer {
     this.validateCommandInput(command, args);
 
     const startTime = performance.now();
+    let proc: ReturnType<typeof Bun.spawn> | null = null;
     
     try {
       // Use Bun.spawn with proper response streaming
-      const proc = Bun.spawn([command, ...args], {
+      proc = Bun.spawn([command, ...args], {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: 10000,
         ...options
@@ -127,7 +128,27 @@ class SpawnOptimizer {
 
     } catch (error: any) {
       const executionTime = performance.now() - startTime;
+      
+      // Ensure process cleanup on error
+      if (proc && !(await proc.exited)) {
+        try {
+          proc.kill();
+          console.warn(`Process killed due to error: ${command}`);
+        } catch (killError) {
+          console.error(`Failed to kill process: ${killError.message}`);
+        }
+      }
+      
       throw new Error(`Spawn failed after ${executionTime.toFixed(2)}ms: ${error?.message || String(error)}`);
+    } finally {
+      // Final cleanup check
+      if (proc && !(await proc.exited)) {
+        try {
+          proc.kill();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
     }
   }
 
@@ -139,25 +160,56 @@ class SpawnOptimizer {
     this.validateCommandInput(command, args);
 
     const startTime = performance.now();
+    let proc: ReturnType<typeof Bun.spawn> | null = null;
     
     try {
       // Use Bun.spawn for maximum performance
-      const proc = Bun.spawn([command, ...args], {
+      proc = Bun.spawn([command, ...args], {
         stdout: 'pipe',
         stderr: 'pipe',
         stdin: 'inherit'
       });
 
-      const text = await new Response(proc.stdout).text();
+      const [stdout, stderr] = await Promise.all([
+        new Response(proc.stdout).text(),
+        new Response(proc.stderr).text()
+      ]);
+
+      await proc.exited;
       const executionTime = performance.now() - startTime;
-      
-      console.log(`Fast spawn completed in ${executionTime.toFixed(2)}ms`);
-      return text.trim();
+
+      if (proc.exitCode !== 0) {
+        throw new Error(`Command failed with exit code ${proc.exitCode}: ${stderr.trim()}`);
+      }
+
+      return stdout.trim();
 
     } catch (error) {
       const executionTime = performance.now() - startTime;
-      console.log(`Fast spawn failed in ${executionTime.toFixed(2)}ms: ${error.message}`);
-      throw error;
+      
+      // Ensure process cleanup on error
+      if (proc && !(await proc.exited)) {
+        try {
+          proc.kill();
+          console.warn(`Process killed due to error: ${command}`);
+        } catch (killError) {
+          console.error(`Failed to kill process: ${killError.message}`);
+        }
+      }
+      
+      throw {
+        error: error.message,
+        executionTime
+      };
+    } finally {
+      // Final cleanup check
+      if (proc && !(await proc.exited)) {
+        try {
+          proc.kill();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
     }
   }
 

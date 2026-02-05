@@ -25,24 +25,24 @@ export * from './secret-lifecycle';
 // Security utilities
 export class SecurityUtils {
   /**
-   * Generate secure random string
+   * Generate secure random string using Bun.random.hex for better performance
    */
   static generateSecret(length: number = 32): string {
-    return Bun.random.bytes(length).toString('hex');
+    return Bun.random.hex(length);
   }
   
   /**
-   * Generate API key with prefix
+   * Generate API key with prefix using secure random generation
    */
   static generateApiKey(prefix: string = 'sk'): string {
-    return `${prefix}_${this.generateSecret(24)}`;
+    return `${prefix}_${Bun.random.hex(24)}`;
   }
   
   /**
-   * Generate JWT secret
+   * Generate JWT secret using secure random generation
    */
   static generateJWTSecret(): string {
-    return this.generateSecret(64);
+    return Bun.random.hex(64);
   }
   
   /**
@@ -58,7 +58,7 @@ export class SecurityUtils {
   }
   
   /**
-   * Hash password using Bun.password (argon2id by default)
+   * Hash password using Bun.password (argon2id by default with secure defaults)
    */
   static async hashPassword(password: string, options?: {
     algorithm?: 'argon2id' | 'argon2i' | 'argon2d' | 'bcrypt';
@@ -66,7 +66,22 @@ export class SecurityUtils {
     timeCost?: number;
     cost?: number;
   }): Promise<string> {
-    return await Bun.password.hash(password, options);
+    // Secure defaults for enterprise-grade password hashing
+    const secureOptions = {
+      algorithm: 'argon2id' as const,
+      memoryCost: 65536, // 64MB - OWASP recommendation
+      timeCost: 3,       // 3 iterations - OWASP recommendation
+      ...options
+    };
+    
+    // Override bcrypt cost if using bcrypt
+    if (secureOptions.algorithm === 'bcrypt') {
+      secureOptions.cost = secureOptions.cost || 12; // OWASP recommends 12+
+      delete secureOptions.memoryCost;
+      delete secureOptions.timeCost;
+    }
+    
+    return await Bun.password.hash(password, secureOptions);
   }
   
   /**
@@ -78,7 +93,22 @@ export class SecurityUtils {
     timeCost?: number;
     cost?: number;
   }): string {
-    return Bun.password.hashSync(password, options);
+    // Secure defaults for enterprise-grade password hashing
+    const secureOptions = {
+      algorithm: 'argon2id' as const,
+      memoryCost: 65536, // 64MB - OWASP recommendation
+      timeCost: 3,       // 3 iterations - OWASP recommendation
+      ...options
+    };
+    
+    // Override bcrypt cost if using bcrypt
+    if (secureOptions.algorithm === 'bcrypt') {
+      secureOptions.cost = secureOptions.cost || 12; // OWASP recommends 12+
+      delete secureOptions.memoryCost;
+      delete secureOptions.timeCost;
+    }
+    
+    return Bun.password.hashSync(password, secureOptions);
   }
   
   /**

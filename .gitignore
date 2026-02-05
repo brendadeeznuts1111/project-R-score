@@ -1,3 +1,5 @@
+# FactoryWager Enterprise Platform - .gitignore
+
 # Dependencies
 node_modules/
 bun.lockb

@@ -1,0 +1,109 @@
+{
+  "semi": true,
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "quoteProps": "as-needed",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "embeddedLanguageFormatting": "auto",
+  "insertPragma": false,
+  "proseWrap": "preserve",
+  "requirePragma": false,
+  "htmlWhitespaceSensitivity": "css",
+  "vueIndentScriptAndStyle": false,
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "printWidth": 80,
+        "proseWrap": "always",
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.yml",
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.yaml",
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.toml",
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.lock",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ".prettierrc",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ".editorconfig",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ".gitignore",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "package.json",
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "tsconfig.json",
+      "options": {
+        "printWidth": 80,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.test.ts",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.spec.ts",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2
+      }
+    }
+  ]
+}

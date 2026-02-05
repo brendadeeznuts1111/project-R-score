@@ -1,11 +1,13 @@
 #!/usr/bin/env bun
 /**
- * 🌐 Enhanced Internal Wiki Generator CLI
+ * 🌐 Enhanced Internal Wiki Generator CLI with R2 Integration
  * 
  * Advanced wiki generation with search, templates, analytics, and multi-format output
+ * Now integrated with R2 storage for real-time data and metrics.
  */
 
 import { write, exists } from "bun";
+import { r2MCPIntegration } from './mcp/r2-integration.ts';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -31,6 +33,8 @@ interface WikiConfig {
   theme: 'light' | 'dark' | 'auto';
   customTemplate?: string;
   outputDir: string;
+  r2Integration: boolean;
+  realTimeData: boolean;
 }
 
 interface WikiAnalytics {
@@ -64,7 +68,9 @@ const defaultConfig: WikiConfig = {
   includeAnalytics: true,
   includeTOC: true,
   theme: 'auto',
-  outputDir: './internal-wiki'
+  outputDir: './internal-wiki',
+  r2Integration: true,
+  realTimeData: true
 };
 
 /**
@@ -983,6 +989,359 @@ function generateJSONWiki(wikiData: any, analytics: WikiAnalytics, searchIndex: 
   return JSON.stringify(jsonData, null, 2);
 }
 
+/**
+ * R2 Integration Methods
+ */
+
+/**
+ * Load real-time data from R2 storage
+ */
+async function loadR2Data(config: WikiConfig): Promise<any> {
+  if (!config.r2Integration) {
+    return null;
+  }
+
+  console.log('\n🌐 Loading real-time data from R2...');
+  
+  try {
+    const r2 = r2MCPIntegration;
+    
+    // Load dashboard metrics
+    const dashboardMetrics = await r2.getJSON('dashboard/metrics.json');
+    
+    // Load AI integration data
+    const aiData = await r2.getJSON('integrations/ai/configuration.json');
+    
+    // Load domain data
+    const domainData = await r2.getJSON('integrations/domain-intelligence/status.json');
+    
+    // Load advanced metrics
+    const advancedMetrics = await r2.getJSON('integrations/advanced-metrics/latest.json');
+    
+    const r2Data = {
+      timestamp: new Date().toISOString(),
+      dashboard: dashboardMetrics,
+      ai: aiData,
+      domains: domainData,
+      metrics: advancedMetrics,
+      connectionStatus: 'connected'
+    };
+    
+    console.log('✅ Real-time R2 data loaded');
+    return r2Data;
+    
+  } catch (error) {
+    console.log(`⚠️  R2 data loading failed: ${error.message}`);
+    return {
+      timestamp: new Date().toISOString(),
+      connectionStatus: 'disconnected',
+      error: error.message
+    };
+  }
+}
+
+/**
+ * Generate wiki with R2 integration
+ */
+async function generateWikiWithR2(config: Partial<WikiConfig> = {}): Promise<void> {
+  const finalConfig = { ...defaultConfig, ...config };
+  console.log('\n🌐 GENERATING WIKI WITH R2 INTEGRATION...');
+  
+  // Generate base wiki data
+  const wikiData = generateWikiURLs(config);
+  const analytics = generateAnalytics(wikiData, 0);
+  const searchIndex = generateSearchIndex(wikiData);
+  
+  // Load R2 data if enabled
+  let r2Data = null;
+  if (finalConfig.r2Integration && finalConfig.realTimeData) {
+    r2Data = await loadR2Data(finalConfig);
+  }
+  
+  // Create enhanced wiki content with R2 data
+  await createWikiFilesWithR2(wikiData, analytics, searchIndex, r2Data, finalConfig);
+  
+  // Store wiki data in R2 if enabled
+  if (finalConfig.r2Integration) {
+    await storeWikiInR2(wikiData, analytics, searchIndex, r2Data, finalConfig);
+  }
+}
+
+/**
+ * Create wiki files with R2 data integration
+ */
+async function createWikiFilesWithR2(
+  wikiData: any, 
+  analytics: WikiAnalytics, 
+  searchIndex: SearchIndex,
+  r2Data: any,
+  config: WikiConfig
+): Promise<void> {
+  console.log('\n📁 CREATING ENHANCED WIKI FILES WITH R2 DATA...');
+
+  const outputDir = config.outputDir;
+  
+  try {
+    // Create enhanced markdown with R2 data
+    if (config.format === 'markdown' || config.format === 'all') {
+      const markdownContent = generateMarkdownWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
+      await write(`${outputDir}/bun-utilities-wiki-r2.md`, markdownContent);
+      console.log('   ✅ Created: bun-utilities-wiki-r2.md');
+    }
+
+    // Create enhanced HTML with R2 data
+    if (config.format === 'html' || config.format === 'all') {
+      const htmlContent = generateHTMLWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
+      await write(`${outputDir}/bun-utilities-wiki-r2.html`, htmlContent);
+      console.log('   ✅ Created: bun-utilities-wiki-r2.html');
+    }
+
+    // Create enhanced JSON with R2 data
+    if (config.format === 'json' || config.format === 'all') {
+      const jsonContent = generateJSONWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
+      await write(`${outputDir}/bun-utilities-wiki-r2.json`, jsonContent);
+      console.log('   ✅ Created: bun-utilities-wiki-r2.json');
+    }
+
+    // Create R2 integration summary
+    const r2Summary = generateR2IntegrationSummary(r2Data, config);
+    await write(`${outputDir}/r2-integration-summary.md`, r2Summary);
+    console.log('   ✅ Created: r2-integration-summary.md');
+
+  } catch (error) {
+    console.log(`   ❌ Error creating files: ${error.message}`);
+  }
+
+  console.log(`\n🎉 Enhanced wiki files with R2 data created in '${outputDir}/' directory!`);
+}
+
+/**
+ * Generate markdown wiki with R2 integration
+ */
+function generateMarkdownWikiWithR2(
+  wikiData: any, 
+  analytics: WikiAnalytics, 
+  searchIndex: SearchIndex,
+  r2Data: any,
+  config: WikiConfig
+): string {
+  let content = generateMarkdownWiki(wikiData, config, analytics, searchIndex);
+  
+  // Add R2 integration section
+  if (r2Data && config.r2Integration) {
+    content += `
+
+## 🌐 R2 Integration Status
+
+> **Real-time data integration** with FactoryWager R2 storage system.
+
+### Connection Status
+- **Status**: ${r2Data.connectionStatus === 'connected' ? '🟢 Connected' : '🔴 Disconnected'}
+- **Last Sync**: ${r2Data.timestamp}
+- **Data Sources**: Dashboard, AI Systems, Domain Intelligence, Advanced Metrics
+
+### Live Metrics
+`;
+
+    if (r2Data.dashboard) {
+      content += `- **Total R2 Objects**: ${r2Data.dashboard.totalObjects || 'N/A'}
+- **Storage Size**: ${r2Data.dashboard.totalSize ? `${(r2Data.dashboard.totalSize / 1024 / 1024).toFixed(2)} MB` : 'N/A'}
+- **Categories**: ${Object.keys(r2Data.dashboard.categories || {}).length}
+`;
+    }
+
+    if (r2Data.ai) {
+      content += `
+### AI System Status
+- **Models Loaded**: ${r2Data.ai.aiSystem?.modelsLoaded || 'N/A'}
+- **Processing Queue**: ${r2Data.ai.aiSystem?.processingQueue || 'N/A'}
+- **Total Processed**: ${r2Data.ai.aiSystem?.totalProcessed || 'N/A'}
+`;
+    }
+
+    content += `
+### R2 Data Access
+- **Dashboard**: [View Dashboard](https://dashboard.factory-wager.com)
+- **R2 Browser**: [Browse Data](https://r2.factory-wager.com)
+- **API**: [REST API](https://api.factory-wager.com/r2)
+
+---
+`;
+  }
+  
+  return content;
+}
+
+/**
+ * Generate HTML wiki with R2 integration
+ */
+function generateHTMLWikiWithR2(
+  wikiData: any, 
+  analytics: WikiAnalytics, 
+  searchIndex: SearchIndex,
+  r2Data: any,
+  config: WikiConfig
+): string {
+  let html = generateHTMLWiki(wikiData, config, analytics, searchIndex);
+  
+  // Add R2 integration section to HTML
+  if (r2Data && config.r2Integration) {
+    const r2Section = `
+        <div class="category" id="r2-integration">
+            <h2 class="category-title">🌐 R2 INTEGRATION</h2>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">${r2Data.connectionStatus === 'connected' ? '🟢' : '🔴'}</div>
+                    <div class="stat-label">Connection Status</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${r2Data.dashboard?.totalObjects || 'N/A'}</div>
+                    <div class="stat-label">R2 Objects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${r2Data.ai?.aiSystem?.modelsLoaded || 'N/A'}</div>
+                    <div class="stat-label">AI Models</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${new Date(r2Data.timestamp).toLocaleTimeString()}</div>
+                    <div class="stat-label">Last Sync</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <a href="https://dashboard.factory-wager.com" target="_blank" class="utility-table a" style="padding: 10px 20px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+                    🚀 Open Dashboard
+                </a>
+                <a href="https://r2.factory-wager.com" target="_blank" class="utility-table a" style="padding: 10px 20px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 5px;">
+                    🔍 Browse R2 Data
+                </a>
+            </div>
+        </div>
+`;
+    
+    // Insert R2 section before the footer
+    html = html.replace('<div class="footer">', r2Section + '\n        <div class="footer">');
+  }
+  
+  return html;
+}
+
+/**
+ * Generate JSON wiki with R2 integration
+ */
+function generateJSONWikiWithR2(
+  wikiData: any, 
+  analytics: WikiAnalytics, 
+  searchIndex: SearchIndex,
+  r2Data: any,
+  config: WikiConfig
+): string {
+  const baseJson = JSON.parse(generateJSONWiki(wikiData, analytics, searchIndex));
+  
+  // Add R2 integration data
+  if (r2Data && config.r2Integration) {
+    baseJson.r2Integration = {
+      enabled: true,
+      connectionStatus: r2Data.connectionStatus,
+      lastSync: r2Data.timestamp,
+      dataSources: {
+        dashboard: !!r2Data.dashboard,
+        ai: !!r2Data.ai,
+        domains: !!r2Data.domains,
+        metrics: !!r2Data.metrics
+      },
+      endpoints: {
+        dashboard: "https://dashboard.factory-wager.com",
+        r2Browser: "https://r2.factory-wager.com",
+        api: "https://api.factory-wager.com/r2"
+      },
+      data: r2Data
+    };
+  }
+  
+  return JSON.stringify(baseJson, null, 2);
+}
+
+/**
+ * Store wiki data in R2
+ */
+async function storeWikiInR2(
+  wikiData: any, 
+  analytics: WikiAnalytics, 
+  searchIndex: SearchIndex,
+  r2Data: any,
+  config: WikiConfig
+): Promise<void> {
+  console.log('\n💾 Storing wiki data in R2...');
+  
+  try {
+    const r2 = r2MCPIntegration;
+    
+    // Store wiki metadata
+    await r2.putJSON('wiki/metadata.json', {
+      timestamp: new Date().toISOString(),
+      config: config,
+      analytics: analytics,
+      totalUtilities: wikiData.total,
+      categories: Object.keys(wikiData.categories).length
+    });
+    
+    // Store search index
+    await r2.putJSON('wiki/search-index.json', searchIndex);
+    
+    // Store wiki pages data
+    await r2.putJSON('wiki/pages.json', wikiData.wikiPages);
+    
+    // Store categories data
+    await r2.putJSON('wiki/categories.json', wikiData.categories);
+    
+    console.log('✅ Wiki data stored in R2');
+    
+  } catch (error) {
+    console.log(`❌ Failed to store wiki data in R2: ${error.message}`);
+  }
+}
+
+/**
+ * Generate R2 integration summary
+ */
+function generateR2IntegrationSummary(r2Data: any, config: WikiConfig): string {
+  return `# 🌐 R2 Integration Summary
+
+## Configuration
+- **R2 Integration**: ${config.r2Integration ? '✅ Enabled' : '❌ Disabled'}
+- **Real-time Data**: ${config.realTimeData ? '✅ Enabled' : '❌ Disabled'}
+- **Generated**: ${new Date().toISOString()}
+
+## Connection Status
+- **Status**: ${r2Data?.connectionStatus === 'connected' ? '🟢 Connected' : '🔴 Disconnected'}
+- **Last Sync**: ${r2Data?.timestamp || 'Never'}
+
+## Available Data
+${r2Data ? `
+- **Dashboard Metrics**: ${r2Data.dashboard ? '✅ Available' : '❌ Not Available'}
+- **AI System Data**: ${r2Data.ai ? '✅ Available' : '❌ Not Available'}
+- **Domain Intelligence**: ${r2Data.domains ? '✅ Available' : '❌ Not Available'}
+- **Advanced Metrics**: ${r2Data.metrics ? '✅ Available' : '❌ Not Available'}
+` : '- No R2 data available'}
+
+## Access Points
+- **Dashboard**: https://dashboard.factory-wager.com
+- **R2 Browser**: https://r2.factory-wager.com
+- **API**: https://api.factory-wager.com/r2
+
+## Integration Benefits
+1. **Real-time Data**: Live metrics and system status
+2. **Centralized Storage**: All data in R2 bucket
+3. **Cross-domain Intelligence**: Shared knowledge across systems
+4. **Performance Monitoring**: Real-time performance metrics
+5. **Automated Updates**: Continuous data synchronization
+
+---
+*Generated by Wiki Generator with R2 Integration*`;
+}
+
 interface CLIOptions {
   format?: 'markdown' | 'html' | 'json' | 'pdf' | 'all';
   baseUrl?: string;
@@ -1182,7 +1541,9 @@ async function main(): Promise<void> {
       includeTOC: options.toc !== false,
       theme: options.theme || defaultConfig.theme,
       customTemplate: options.customTemplate,
-      outputDir: options.outputDir || defaultConfig.outputDir
+      outputDir: options.outputDir || defaultConfig.outputDir,
+      r2Integration: true, // Enable R2 integration by default
+      realTimeData: true
     };
 
     console.log('🔧 CONFIGURATION:');
@@ -1191,17 +1552,30 @@ async function main(): Promise<void> {
     console.log(`   Output Directory: ${config.outputDir}`);
     console.log(`   Base URL: ${config.baseUrl}`);
     console.log(`   Workspace: ${config.workspace}`);
+    console.log(`   R2 Integration: ${config.r2Integration ? '✅ Enabled' : '❌ Disabled'}`);
+    console.log(`   Real-time Data: ${config.realTimeData ? '✅ Enabled' : '❌ Disabled'}`);
     console.log(`   Features: Search=${config.includeSearch}, Analytics=${config.includeAnalytics}, TOC=${config.includeTOC}`);
     console.log('');
 
-    // Generate enhanced wiki files
-    await createWikiFiles(config);
+    // Generate enhanced wiki files with R2 integration
+    if (config.r2Integration) {
+      await generateWikiWithR2(config);
+    } else {
+      await createWikiFiles(config);
+    }
 
     console.log('\n🎉 Enhanced wiki generation completed successfully!');
-    console.log('\n� Generated Files:');
+    console.log('\n📁 Generated Files:');
     console.log(`   📝 ${config.outputDir}/bun-utilities-wiki.md - Enhanced markdown with TOC and analytics`);
     console.log(`   🌐 ${config.outputDir}/bun-utilities-wiki.html - Interactive HTML with search and themes`);
     console.log(`   📄 ${config.outputDir}/bun-utilities-wiki.json - API-ready with search index`);
+    
+    if (config.r2Integration) {
+      console.log(`   🌐 ${config.outputDir}/bun-utilities-wiki-r2.md - Enhanced markdown with R2 data`);
+      console.log(`   🌐 ${config.outputDir}/bun-utilities-wiki-r2.html - Interactive HTML with R2 integration`);
+      console.log(`   📄 ${config.outputDir}/bun-utilities-wiki-r2.json - API-ready with R2 data`);
+      console.log(`   📊 ${config.outputDir}/r2-integration-summary.md - R2 integration status`);
+    }
     
     if (config.includeSearch) {
       console.log(`   🔍 ${config.outputDir}/search-index.json - Fast search lookup`);

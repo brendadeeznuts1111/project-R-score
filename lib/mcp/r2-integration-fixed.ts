@@ -17,6 +17,7 @@ import {
 import { validateR2Key } from '../core/validation.ts';
 import { globalCache } from '../core/cache-manager.ts';
 import { safeConcurrent } from '../core/concurrent-operations.ts';
+import { URLHandler, FactoryWagerURLUtils, URLFragmentUtils } from '../core/url-handler.ts';
 
 export interface R2Config {
   accountId: string;
@@ -352,6 +353,101 @@ export class R2MCPIntegration {
       handleError(error, 'R2MCPIntegration.putJSON', 'high');
       throw error;
     }
+  }
+
+  /**
+   * Generate signed URL with proper fragment handling
+   */
+  async generateSignedURL(key: string, expiresIn: number = 3600): Promise<string> {
+    try {
+      this.ensureInitialized();
+      
+      // Validate key
+      const keyValidation = validateR2Key(key);
+      if (!keyValidation.isValid) {
+        throw new R2DataError(`Invalid key for signed URL: ${keyValidation.errors.join(', ')}`);
+      }
+
+      const validatedKey = keyValidation.data;
+      
+      // Create base URL
+      const baseURL = `https://${this.config.accountId}.r2.cloudflarestorage.com/${this.config.bucketName}/${validatedKey}`;
+      
+      // Add fragment with metadata
+      const fragment = {
+        expires: new Date(Date.now() + expiresIn * 1000).toISOString(),
+        bucket: this.config.bucketName,
+        key: validatedKey
+      };
+      
+      const urlWithFragment = URLHandler.addFragment(baseURL, URLFragmentUtils.buildFragment(fragment));
+      
+      // Cache the signed URL
+      const cacheKey = `signed-url:${validatedKey}:${expiresIn}`;
+      await globalCache.set(cacheKey, urlWithFragment, { 
+        ttl: expiresIn * 1000, 
+        tags: ['r2', 'signed-url'] 
+      });
+
+      return urlWithFragment;
+
+    } catch (error) {
+      handleError(error, 'R2MCPIntegration.generateSignedURL', 'high');
+      throw error;
+    }
+  }
+
+  /**
+   * Get dashboard URL with fragment navigation
+   */
+  getDashboardURL(section?: string, fragment?: Record<string, string>): string {
+    return FactoryWagerURLUtils.createDashboardURL(section, fragment);
+  }
+
+  /**
+   * Get R2 browser URL with fragment for specific object
+   */
+  getR2BrowserURL(category?: string, objectKey?: string): string {
+    const fragment: Record<string, string> = {};
+    
+    if (objectKey) {
+      fragment.key = objectKey;
+      fragment.view = 'object';
+    }
+    
+    return FactoryWagerURLUtils.createR2BrowserURL(category, fragment);
+  }
+
+  /**
+   * Parse and validate FactoryWager URLs
+   */
+  parseFactoryWagerURL(url: string): { valid: boolean; service?: string; fragment?: Record<string, string> } {
+    try {
+      // Validate URL
+      if (!FactoryWagerURLUtils.validateFactoryWagerURL(url)) {
+        return { valid: false };
+      }
+
+      // Extract service
+      const service = FactoryWagerURLUtils.extractService(url);
+      
+      // Parse fragment
+      const fragmentStr = URLHandler.getFragment(url);
+      const fragment = fragmentStr ? URLFragmentUtils.parseFragment(fragmentStr) : undefined;
+
+      return { valid: true, service, fragment };
+
+    } catch (error) {
+      handleError(error, 'R2MCPIntegration.parseFactoryWagerURL', 'medium');
+      return { valid: false };
+    }
+  }
+
+  /**
+   * Create API URL with proper parameters
+   */
+  createAPIURL(endpoint: string, params?: Record<string, string>): string {
+    return FactoryWagerURLUtils.createAPIURL(endpoint, params);
   }
 
   /**

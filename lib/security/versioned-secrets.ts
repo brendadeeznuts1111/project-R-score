@@ -74,67 +74,104 @@ export interface LifecycleRule {
 export class VersionedSecretManager {
   private versionGraph = new Map<string, VersionNode[]>();
   private r2Bucket: any; // Would be R2 bucket instance
+  private operationLocks = new Map<string, Promise<void>>();
   
   constructor(r2Bucket?: any) {
     this.r2Bucket = r2Bucket;
   }
   
+  /**
+   * Acquire operation lock for a specific key to prevent race conditions
+   */
+  private async acquireLock(key: string): Promise<void> {
+    // Wait for existing operation to complete
+    while (this.operationLocks.has(key)) {
+      await this.operationLocks.get(key);
+    }
+    
+    // Create new lock promise
+    const lockPromise = new Promise<void>((resolve) => {
+      this.operationLocks.set(key, lockPromise);
+    });
+    
+    return lockPromise;
+  }
+  
+  /**
+   * Release operation lock for a specific key
+   */
+  private releaseLock(key: string): void {
+    this.operationLocks.delete(key);
+  }
+  
   async set(key: string, value: string, metadata: VersionMetadata = {}) {
-    // Get current version
-    const current = await this.getWithVersion(key);
+    // Acquire lock to prevent race conditions
+    const lockPromise = this.acquireLock(key);
     
-    // Generate new version
-    const newVersion = this.generateVersion(
-      key, 
-      current?.version, 
-      metadata
-    );
-    
-    // Store with version in key
-    const versionedKey = `${key}@${newVersion}`;
-    
-    // Store in Bun secrets with version metadata
-    await Bun.secrets.set(versionedKey, value, {
-      description: metadata.description || `Version ${newVersion} of ${key}`,
-      tags: {
-        ...metadata.tags,
-        'factorywager:version': newVersion,
-        'factorywager:previous': current?.version || 'none',
-        'factorywager:author': metadata.author || 'system',
-        'factorywager:action': 'SET',
-        'visual:color': FW_COLORS[metadata.level === 'CRITICAL' ? 'error' : 
-                              metadata.level === 'HIGH' ? 'warning' : 'success']
-      }
-    });
-    
-    // Update version graph
-    await this.updateVersionGraph(key, {
-      version: newVersion,
-      timestamp: new Date().toISOString(),
-      author: metadata.author || 'system',
-      description: metadata.description,
-      hash: Bun.hash.sha256(value).toString('hex'),
-      previous: current?.version,
-      action: 'SET',
-      metadata
-    });
-    
-    // Update current pointer
-    await Bun.secrets.set(key, value, {
-      description: `Current: ${newVersion} - ${metadata.description || 'No description'}`,
-      tags: { 
-        'factorywager:current-version': newVersion,
-        'factorywager:last-updated': new Date().toISOString()
-      }
-    });
+    try {
+      // Get current version (atomic within lock)
+      const current = await this.getWithVersion(key);
+      
+      // Generate new version
+      const newVersion = this.generateVersion(
+        key, 
+        current?.version, 
+        metadata
+      );
+      
+      // Store with version in key
+      const versionedKey = `${key}@${newVersion}`;
+      
+      // Store in Bun secrets with version metadata (atomic operation)
+      await Bun.secrets.set(versionedKey, value, {
+        description: metadata.description || `Version ${newVersion} of ${key}`,
+        tags: {
+          ...metadata.tags,
+          'factorywager:version': newVersion,
+          'factorywager:previous': current?.version || 'none',
+          'factorywager:author': metadata.author || 'system',
+          'factorywager:action': 'SET',
+          'visual:color': FW_COLORS[metadata.level === 'CRITICAL' ? 'error' : 
+                                metadata.level === 'HIGH' ? 'warning' : 'success']
+        }
+      });
+      
+      // Update version graph
+      await this.updateVersionGraph(key, {
+        version: newVersion,
+        timestamp: new Date().toISOString(),
+        author: metadata.author || 'system',
+        description: metadata.description,
+        hash: Bun.hash.sha256(value).toString('hex'),
+        previous: current?.version,
+        action: 'SET',
+        metadata
+      });
+      
+      // Update current pointer (atomic operation)
+      await Bun.secrets.set(key, value, {
+        description: `Current: ${newVersion} - ${metadata.description || 'No description'}`,
+        tags: { 
+          'factorywager:current-version': newVersion,
+          'factorywager:last-updated': new Date().toISOString()
+        }
+      });
     
     // Audit the change
-    await this.auditVersionChange(key, newVersion, 'SET', metadata);
-    
-    log.success(`Set ${key} to version ${newVersion}`);
-    log.metric('Versioned key', versionedKey, 'muted');
-    
-    return { version: newVersion, key: versionedKey };
+      await this.auditVersionChange(key, newVersion, 'SET', metadata);
+      
+      log.success(`Set ${key} to version ${newVersion}`);
+      log.metric('Versioned key', versionedKey, 'muted');
+      
+      return { version: newVersion, key: versionedKey };
+      
+    } catch (error) {
+      log.error(`Failed to set ${key}: ${error.message}`);
+      throw error;
+    } finally {
+      // Always release the lock
+      this.releaseLock(key);
+    }
   }
   
   async getWithVersion(key: string, version?: string) {

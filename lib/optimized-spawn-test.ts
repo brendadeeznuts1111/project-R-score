@@ -68,8 +68,10 @@ class OptimizedSpawn {
 
     const startTime = performance.now();
     
+    let proc: ReturnType<typeof Bun.spawn> | null = null;
+    
     try {
-      const proc = Bun.spawn([command, ...args], {
+      proc = Bun.spawn([command, ...args], {
         stdout: 'pipe',
         stderr: 'pipe',
         stdin: 'inherit'
@@ -92,10 +94,30 @@ class OptimizedSpawn {
 
     } catch (error) {
       const executionTime = performance.now() - startTime;
+      
+      // Ensure process cleanup on error
+      if (proc && !(await proc.exited)) {
+        try {
+          proc.kill();
+          console.warn(`Process killed due to error: ${command}`);
+        } catch (killError) {
+          console.error(`Failed to kill process: ${killError.message}`);
+        }
+      }
+      
       throw {
         error: error.message,
         executionTime
       };
+    } finally {
+      // Final cleanup check
+      if (proc && !(await proc.exited)) {
+        try {
+          proc.kill();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
     }
   }
 

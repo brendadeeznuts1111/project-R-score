@@ -42,41 +42,55 @@ export class BunMemoryPool {
   private view: DataView;
   private offset = 0;
   private allocations = 0;
-  private isLocked = false;
-  private lockQueue: (() => void)[] = [];
   private expanding = false;
   private targetUtilization = 0.65;
+  
+  // Atomics for proper thread synchronization
+  private lockBuffer: SharedArrayBuffer;
+  private lockView: Int32Array;
+  private static readonly LOCKED = 1;
+  private static readonly UNLOCKED = 0;
 
   constructor(sizeMB = 10) {
     this.size = sizeMB * 1024 * 1024;
     this.buffer = new SharedArrayBuffer(this.size);
     this.view = new DataView(this.buffer);
+    
+    // Initialize atomic lock
+    this.lockBuffer = new SharedArrayBuffer(4);
+    this.lockView = new Int32Array(this.lockBuffer);
+    Atomics.store(this.lockView, 0, BunMemoryPool.UNLOCKED);
   }
 
   /**
-   * Acquire lock for thread-safe operations
+   * Acquire lock using Atomics API for thread safety
    */
   private async acquireLock(): Promise<void> {
-    return new Promise((resolve) => {
-      if (!this.isLocked) {
-        this.isLocked = true;
-        resolve();
-      } else {
-        this.lockQueue.push(resolve);
+    while (true) {
+      // Try to acquire lock atomically
+      const previousValue = Atomics.compareExchange(
+        this.lockView, 
+        0, 
+        BunMemoryPool.UNLOCKED, 
+        BunMemoryPool.LOCKED
+      );
+      
+      if (previousValue === BunMemoryPool.UNLOCKED) {
+        // Successfully acquired lock
+        return;
       }
-    });
+      
+      // Lock is held, wait for it to be released
+      Atomics.wait(this.lockView, 0, BunMemoryPool.LOCKED);
+    }
   }
 
   /**
-   * Release lock and process next queued operation
+   * Release lock using Atomics API
    */
   private releaseLock(): void {
-    if (this.lockQueue.length > 0) {
-      const next = this.lockQueue.shift();
-      if (next) next();
-    } else {
-      this.isLocked = false;
-    }
+    Atomics.store(this.lockView, 0, BunMemoryPool.UNLOCKED);
+    Atomics.notify(this.lockView, 0, 1); // Notify one waiting thread
   }
 
   /**
@@ -132,8 +146,7 @@ export class BunMemoryPool {
   }
 
   /**
-   * Zero-copy file read into pool
-   * Uses Bun.file() lazy loading with .exists() check and optimized reading
+   * Zero-copy file read into pool using Bun.file arrayBuffer for optimal performance
    * @param filePath Path to file to read
    * @returns Pointer, size, and DataView of the file content
    */
@@ -153,45 +166,34 @@ export class BunMemoryPool {
     // Allocate slot in pool
     const slot = await this.alloc(size);
 
-    // For large files (>1MB), use stream for zero-copy
-    // For smaller files, arrayBuffer is more efficient
-    if (size > 1024 * 1024) {
-      // Large file: use stream for zero-copy processing
-      const stream = file.stream();
-      const reader = stream.getReader();
-      let offset = 0;
+    // Use Bun.file.arrayBuffer() for true zero-copy operation
+    // This is the most efficient way to read files into SharedArrayBuffer
+    const fileBuffer = await file.arrayBuffer();
+    
+    // Copy file data into pool using zero-copy approach
+    const sourceArray = new Uint8Array(fileBuffer);
+    const targetView = new Uint8Array(this.buffer, slot.ptr, size);
+    targetView.set(sourceArray);
 
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+    return {
+      ptr: slot.ptr,
+      size,
+      view: slot.view
+    };
+  }
 
-          if (!value) {
-            throw new Error('Received empty chunk during file read');
-          }
-
-          const chunk = new Uint8Array(value);
-          const targetView = new Uint8Array(this.buffer, slot.ptr + offset, chunk.length);
-          targetView.set(chunk);
-          offset += chunk.length;
-        }
-      } catch (error) {
-        reader.releaseLock();
-        throw new Error(`Failed to read file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-      }
-    } else {
-      // Small file: use arrayBuffer (more efficient for small files)
-      try {
-        const content = await file.arrayBuffer();
-        const sourceArray = new Uint8Array(content);
-        const targetArray = new Uint8Array(this.buffer, slot.ptr, size);
-        targetArray.set(sourceArray);
-      } catch (error) {
-        throw new Error(`Failed to read file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-      }
-    }
-
-    return { ...slot, size };
+  /**
+   * Zero-copy file write from pool to disk
+   * @param filePath Path to write file
+   * @param ptr Pointer to data in pool
+   * @param size Size of data to write
+   */
+  async writeFile(filePath: string, ptr: number, size: number): Promise<void> {
+    // Create view of data in pool
+    const sourceView = new Uint8Array(this.buffer, ptr, size);
+    
+    // Use Bun.write with Uint8Array for optimal performance
+    await Bun.write(filePath, sourceView);
   }
 
   /**

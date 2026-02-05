@@ -7,10 +7,11 @@
  * for the complete FactoryWager ecosystem integration.
  */
 
-import { r2MCPIntegration } from './r2-integration.ts';
-import { advancedIntegration } from './advanced-integration.ts';
-import { aiIntegrationSystem } from './ai-integration.ts';
+import { R2MCPIntegration } from './r2-integration-fixed.ts';
 import { styled, FW_COLORS } from '../theme/colors.ts';
+import { globalCache } from '../core/cache-manager.ts';
+import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from '../core/url-handler.ts';
+import { handleError } from '../core/error-handling.ts';
 
 export interface R2DataItem {
   key: string;
@@ -583,6 +584,132 @@ export class R2BrowserDashboard {
       console.log(styled(`❌ Failed to get object: ${error.message}`, 'error'));
       return null;
     }
+  }
+
+  /**
+   * Generate dashboard URL with navigation fragments
+   */
+  getDashboardURL(section?: string, fragment?: Record<string, string>): string {
+    return FactoryWagerURLUtils.createDashboardURL(section, fragment);
+  }
+
+  /**
+   * Generate R2 browser URL with object-specific fragments
+   */
+  getR2BrowserURL(category?: string, objectKey?: string): string {
+    const fragment: Record<string, string> = {};
+    
+    if (objectKey) {
+      fragment.key = objectKey;
+      fragment.view = 'object';
+      fragment.timestamp = new Date().toISOString();
+    }
+    
+    return FactoryWagerURLUtils.createR2BrowserURL(category, fragment);
+  }
+
+  /**
+   * Parse dashboard URL fragments
+   */
+  parseDashboardURL(url: string): { valid: boolean; section?: string; fragment?: Record<string, string> } {
+    try {
+      const parsed = URLHandler.parse(url);
+      
+      if (!FactoryWagerURLUtils.validateFactoryWagerURL(url)) {
+        return { valid: false };
+      }
+
+      const service = FactoryWagerURLUtils.extractService(url);
+      if (service !== 'dashboard') {
+        return { valid: false };
+      }
+
+      const fragment = parsed.hasFragment() 
+        ? URLFragmentUtils.parseFragment(parsed.fragment)
+        : undefined;
+
+      return {
+        valid: true,
+        section: parsed.pathname.replace(/^\//, '') || undefined,
+        fragment
+      };
+
+    } catch (error) {
+      handleError(error, 'R2BrowserDashboard.parseDashboardURL', 'medium');
+      return { valid: false };
+    }
+  }
+
+  /**
+   * Create shareable URL for R2 objects
+   */
+  createShareableURL(objectKey: string, expiresIn: number = 3600): Promise<string> {
+    return this.r2.generateSignedURL(objectKey, expiresIn);
+  }
+
+  /**
+   * Generate navigation links with proper fragments
+   */
+  generateNavigationLinks(): Array<{ 
+    name: string; 
+    url: string; 
+    fragment?: Record<string, string> 
+  }> {
+    const links = [
+      {
+        name: 'Dashboard',
+        url: this.getDashboardURL(),
+        fragment: { section: 'overview' }
+      },
+      {
+        name: 'Diagnoses',
+        url: this.getR2BrowserURL('diagnoses'),
+        fragment: { view: 'list', sort: 'timestamp' }
+      },
+      {
+        name: 'Audits',
+        url: this.getR2BrowserURL('audits'),
+        fragment: { view: 'list', sort: 'timestamp' }
+      },
+      {
+        name: 'Metrics',
+        url: this.getR2BrowserURL('metrics'),
+        fragment: { view: 'analytics' }
+      },
+      {
+        name: 'Analytics',
+        url: this.getDashboardURL('analytics'),
+        fragment: { tab: 'overview', period: '7d' }
+      }
+    ];
+
+    return links;
+  }
+
+  /**
+   * Generate HTML with proper fragment navigation
+   */
+  generateHTMLWithNavigation(): string {
+    const navigation = this.generateNavigationLinks();
+    const navHTML = navigation.map(link => {
+      const fragmentStr = link.fragment 
+        ? URLFragmentUtils.buildFragment(link.fragment)
+        : '';
+      
+      return `
+        <a href="${link.url}${fragmentStr}" 
+           class="nav-link" 
+           data-section="${link.name.toLowerCase()}">
+          ${link.name}
+        </a>
+      `;
+    }).join('');
+
+    return `
+      <nav class="dashboard-nav">
+        ${navHTML}
+      </nav>
+    `;
   }
 
   /**

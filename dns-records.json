@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-02-05T10:09:51.3NZ",
+  "zone_name": "factory-wager.com",
+  "account_id": "7a470541a704caaf91e71efccc78fd36",
+  "sync_source": "cloudflare_api",
+  "total_records": 26,
+  "dashboard_url": "https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com/dns/records",
+  "record_summary": {
+    "A": 10,
+    "AAAA": 1,
+    "CNAME": 8,
+    "MX": 2,
+    "TXT": 4,
+    "SRV": 1
+  },
+  "enterprise_features": {
+    "proxied_records": 13,
+    "enterprise_records": 15,
+    "ssl_required": 14,
+    "advanced_ddos_protection": true,
+    "bot_management": true,
+    "web_application_firewall": true
+  }
+}

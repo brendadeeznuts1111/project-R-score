@@ -1,0 +1,20 @@
+{
+  "id": "demo-001",
+  "timestamp": "2026-02-05T10:05:35.3NZ",
+  "error": {
+    "name": "ReferenceError",
+    "message": "Bun is not defined",
+    "stack": "ReferenceError: Bun is not defined at script.js:1:1"
+  },
+  "fix": "Add 'import { Bun } from \"bun\";' at the top of your file",
+  "relatedAudits": ["audit-045", "audit-112"],
+  "relatedDocs": ["bun-runtime", "module-imports"],
+  "confidence": 95,
+  "context": "runtime",
+  "metadata": {
+    "bunDocsCount": 3,
+    "auditHistoryCount": 2,
+    "hasSecurityNotes": false,
+    "factorywagerContext": true
+  }
+}

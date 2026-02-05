@@ -1,0 +1,75 @@
+# CODEOWNERS File for FactoryWager Project
+# Defines teams responsible for different areas of the codebase
+
+# Global owners - have access to all files
+* @brendadeeznuts1111
+
+# Security Team - Critical security issues and vulnerabilities
+lib/security/ @brendadeeznuts1111
+*.security.* @brendadeeznuts1111
+**/security/** @brendadeeznuts1111
+
+# Performance Team - Performance optimizations and benchmarks
+lib/performance-optimizer.ts @brendadeeznuts1111
+lib/memory-pool.ts @brendadeeznuts1111
+lib/optimized-spawn-test.ts @brendadeeznuts1111
+**/performance/** @brendadeeznuts1111
+
+# Infrastructure Team - Core infrastructure and tooling
+lib/core/ @brendadeeznuts1111
+lib/config/ @brendadeeznuts1111
+lib/constants/ @brendadeeznuts1111
+**/infrastructure/** @brendadeeznuts1111
+
+# Bun Native Team - Bun-specific implementations and optimizations
+lib/bun-*.ts @brendadeeznuts1111
+**/bun-*/** @brendadeeznuts1111
+
+# Documentation Team - Documentation and examples
+docs/ @brendadeeznuts1111
+**/docs/** @brendadeeznuts1111
+*.md @brendadeeznuts1111
+
+# R2 Storage Team - Cloudflare R2 integration
+lib/r2/ @brendadeeznuts1111
+**/r2-*/** @brendadeeznuts1111
+
+# MCP Integration Team - MCP server implementations
+lib/mcp/ @brendadeeznuts1111
+**/mcp-*/** @brendadeeznuts1111
+
+# Version Management Team - Version tracking and deployment
+lib/version-tracking.ts @brendadeeznuts1111
+lib/tier1380-*.ts @brendadeeznuts1111
+
+# Testing Team - Test files and validation
+tests/ @brendadeeznuts1111
+**/test*/** @brendadeeznuts1111
+*.test.ts @brendadeeznuts1111
+*.spec.ts @brendadeeznuts1111
+
+# CLI Tools Team - Command-line interface tools
+lib/cli-*.ts @brendadeeznuts1111
+**/cli-*/** @brendadeeznuts1111
+
+# Server Team - Server implementations and APIs
+server/ @brendadeeznuts1111
+**/server*/** @brendadeeznuts1111
+
+# Utilities Team - Utility functions and helpers
+lib/utils/ @brendadeeznuts1111
+**/utils/** @brendadeeznuts1111
+
+# Theme and UI Team - Visual components and theming
+lib/theme/ @brendadeeznuts1111
+**/theme*/** @brendadeeznuts1111
+
+# Enterprise Features Team - Enterprise-specific implementations
+lib/enterprise-*.ts @brendadeeznuts1111
+**/enterprise/** @brendadeeznuts1111
+
+# Default fallback for unassigned files
+# This will be the default team for any files not covered above
+*.ts @brendadeeznuts1111
+*.js @brendadeeznuts1111
+*.json @brendadeeznuts1111

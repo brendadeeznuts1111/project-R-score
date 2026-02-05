@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "bun-docs": {
+      "command": "bun",
+      "args": [
+        "run",
+        "/Users/nolarose/Projects/scripts/mcp-bridge.ts"
+      ],
+      "env": {
+        "FW_COLORS_ENABLED": "true",
+        "R2_AUDIT_BUCKET": "scanner-cookies",
+        "NODE_ENV": "production"
+      }
+    },
+    "factorywager-tools": {
+      "command": "bun",
+      "args": [
+        "run",
+        "/Users/nolarose/Projects/scripts/fw-tools-mcp.ts"
+      ],
+      "env": {
+        "FW_COLORS_ENABLED": "true",
+        "R2_AUDIT_BUCKET": "scanner-cookies"
+      }
+    }
+  }
+}

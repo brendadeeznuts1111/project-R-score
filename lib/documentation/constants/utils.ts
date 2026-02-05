@@ -9,6 +9,8 @@
  * Generated automatically by optimize-examples-prefetch.ts
  */
 // lib/documentation/constants/utils.ts
+import { URLHandler, URLFragmentUtils } from '../../core/url-handler.ts';
+
 export enum UtilsCategory {
   FILE_SYSTEM = 'file_system',
   NETWORKING = 'networking',
@@ -111,14 +113,15 @@ export interface BunUtility {
   docUrl: string;
   description: string;
   exampleCode: string;
+  fragment?: Record<string, string>;
 }
 
 /**
- * Utility factory with built-in validation and normalization
+ * Enhanced Utility factory with fragment support
  */
 export class UtilityFactory {
   /**
-   * Creates a new utility with automatic URL normalization and validation
+   * Creates a new utility with automatic URL normalization, validation, and fragment support
    */
   static create(config: {
     id: string;
@@ -127,6 +130,7 @@ export class UtilityFactory {
     docUrl: string;
     description: string;
     exampleCode: string;
+    fragment?: Record<string, string>;
   }): BunUtility {
     // Validate required fields
     if (!config.id || typeof config.id !== 'string') {
@@ -161,6 +165,13 @@ export class UtilityFactory {
     if (!URLNormalizer.validateBunUrl(normalizedUrl)) {
       console.warn(`Warning: URL does not point to Bun documentation: ${normalizedUrl}`);
     }
+
+    // Add fragment to URL if provided
+    let finalUrl = normalizedUrl;
+    if (config.fragment && Object.keys(config.fragment).length > 0) {
+      const fragmentString = URLFragmentUtils.buildFragment(config.fragment);
+      finalUrl = URLHandler.addFragment(normalizedUrl, fragmentString);
+    }
     
     // Validate example code (basic syntax check)
     if (config.exampleCode.includes('eval(') || config.exampleCode.includes('Function(')) {
@@ -171,10 +182,67 @@ export class UtilityFactory {
       id: config.id.toLowerCase(),
       name: config.name.trim(),
       category: config.category,
-      docUrl: normalizedUrl,
+      docUrl: finalUrl,
       description: config.description.trim(),
-      exampleCode: config.exampleCode.trim()
+      exampleCode: config.exampleCode.trim(),
+      fragment: config.fragment
     };
+  }
+
+  /**
+   * Create utility with interactive fragment
+   */
+  static createInteractive(config: {
+    id: string;
+    name: string;
+    category: UtilsCategory;
+    docUrl: string;
+    description: string;
+    exampleCode: string;
+    options?: {
+      runnable?: boolean;
+      editable?: boolean;
+      theme?: 'light' | 'dark' | 'auto';
+    };
+  }): BunUtility {
+    const interactiveFragment = {
+      interactive: 'true',
+      runnable: config.options?.runnable ? 'true' : 'false',
+      editable: config.options?.editable ? 'true' : 'false',
+      theme: config.options?.theme || 'auto',
+      utility: config.id
+    };
+
+    return this.create({
+      ...config,
+      fragment: interactiveFragment
+    });
+  }
+
+  /**
+   * Create utility with example highlighting
+   */
+  static createWithExample(config: {
+    id: string;
+    name: string;
+    category: UtilsCategory;
+    docUrl: string;
+    description: string;
+    exampleCode: string;
+    exampleName: string;
+    language?: string;
+  }): BunUtility {
+    const exampleFragment = {
+      example: config.exampleName,
+      language: config.language || 'typescript',
+      highlight: 'true',
+      utility: config.id
+    };
+
+    return this.create({
+      ...config,
+      fragment: exampleFragment
+    });
   }
   
   /**

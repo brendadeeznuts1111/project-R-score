@@ -54,10 +54,27 @@ class BunWriteTest {
       const response = await OptimizedFetch.fetch(testUrl);
       console.log('✅ Response fetched successfully');
 
-      // Step 2: Use exact Bun.write pattern from documentation
+      // Step 2: Use exact Bun.write pattern from documentation with streaming optimization
       console.log(`   Writing response to: ${outputPath}`);
-      await write(outputPath, response);
-      console.log('✅ await write(response) completed successfully');
+      
+      // For large responses, use streaming to avoid loading entire response into memory
+      if (response.headers.get('content-length') && 
+          parseInt(response.headers.get('content-length')!) > 10 * 1024 * 1024) { // 10MB threshold
+        console.log('   Using streaming write for large response...');
+        
+        // Create writable stream for large files
+        const fileWriter = Bun.file(outputPath).writer();
+        try {
+          await response.body?.pipeTo(fileWriter);
+          console.log('✅ Streaming write completed successfully');
+        } finally {
+          await fileWriter.end();
+        }
+      } else {
+        // For smaller responses, use direct write (more efficient for small files)
+        await write(outputPath, response);
+        console.log('✅ Direct write completed successfully');
+      }
 
       // Step 3: Verify the file was written correctly
       const file = Bun.file(outputPath);

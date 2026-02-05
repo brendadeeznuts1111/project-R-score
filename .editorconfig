@@ -1,0 +1,143 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+# TypeScript, JavaScript, JSON files
+[*.{ts,js,json}]
+indent_style = space
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Markdown files
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Configuration files
+[*.{toml,ini,cfg}]
+indent_style = space
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_style = space
+indent_size = 2
+
+# Docker files
+[Dockerfile*]
+indent_style = space
+indent_size = 2
+
+# Makefiles
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+# Package files
+[package.json]
+indent_style = space
+indent_size = 2
+
+# Lock files
+[*.{lock,lockb}]
+indent_style = space
+indent_size = 2
+
+# Test files
+[*.{test,spec}.{ts,js}]
+indent_style = space
+indent_size = 2
+
+# Documentation files
+[*.{md,txt}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Configuration files
+[.editorconfig]
+indent_style = space
+indent_size = 2
+
+# Git files
+[.gitignore]
+indent_style = space
+indent_size = 2
+
+# GitHub files
+[.github/**/*]
+indent_style = space
+indent_size = 2
+
+# CI/CD files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Environment files
+[.env*]
+indent_style = space
+indent_size = 2
+
+# Log files
+[*.log]
+indent_style = space
+indent_size = 2
+
+# Temporary files
+[*.{tmp,temp}]
+indent_style = space
+indent_size = 2
+
+# Backup files
+[*.{bak,backup}]
+indent_style = space
+indent_size = 2
+
+# Archive files
+[*.{tar,gz,zip,rar}]
+indent_style = space
+indent_size = 2
+
+# Binary files (should not be modified)
+[*.{bin,exe,dll,so,dylib}]
+indent_style = space
+indent_size = 2
+
+# Image files (should not be modified)
+[*.{jpg,jpeg,png,gif,bmp,svg,ico,webp}]
+indent_style = space
+indent_size = 2
+
+# Font files (should not be modified)
+[*.{ttf,otf,woff,woff2,eot}]
+indent_style = space
+indent_size = 2
+
+# Audio files (should not be modified)
+[*.{wav,mp3,ogg,flac,aac}]
+indent_style = space
+indent_size = 2
+
+# Video files (should not be modified)
+[*.{mp4,avi,mov,wmv,flv,webm}]
+indent_style = space
+indent_size = 2
+
+# Database files (should not be modified)
+[*.{db,sqlite,sqlite3}]
+indent_style = space
+indent_size = 2

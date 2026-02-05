@@ -1,0 +1,29 @@
+{
+  "primary": {
+    "domain": "factory-wager.com",
+    "environment": "production",
+    "tier": "enterprise"
+  },
+  "subdomains": {
+    "npm": "npm.factory-wager.com",
+    "api": "api.factory-wager.com",
+    "cdn": "cdn.factory-wager.com",
+    "monitor": "monitor.factory-wager.com",
+    "docs": "docs.factory-wager.com",
+    "rss": "rss.factory-wager.com",
+    "config": "config.factory-wager.com",
+    "admin": "admin.factory-wager.com"
+  },
+  "enterprise": {
+    "mrr_baseline": 65,
+    "compliance_level": "critical",
+    "security_posture": "mTLS",
+    "monitoring": "realtime"
+  },
+  "cloudflare": {
+    "account_id": "7a470541a704caaf91e71efccc78fd36",
+    "dashboard_url": "https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com",
+    "r2_bucket": "scanner-cookies"
+  },
+  "timestamp": "2026-02-05T10:07:35.3NZ"
+}

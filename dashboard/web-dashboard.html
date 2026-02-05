@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏭 FactoryWager MCP System Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-green {
+            0%, 100% { background-color: rgb(34 197 94); }
+            50% { background-color: rgb(74 222 128); }
+        }
+        @keyframes pulse-red {
+            0%, 100% { background-color: rgb(239 68 68); }
+            50% { background-color: rgb(248 113 113); }
+        }
+        @keyframes pulse-yellow {
+            0%, 100% { background-color: rgb(245 158 11); }
+            50% { background-color: rgb(251 191 36); }
+        }
+        .status-healthy { animation: pulse-green 2s infinite; }
+        .status-error { animation: pulse-red 2s infinite; }
+        .status-warning { animation: pulse-yellow 2s infinite; }
+        .factory-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="factory-gradient shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="factory" class="w-8 h-8"></i>
+                    <h1 class="text-2xl font-bold">FactoryWager MCP Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="lastUpdate" class="text-sm opacity-75"></span>
+                    <button onclick="refreshDashboard()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- System Status Overview -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="activity" class="w-5 h-5 mr-2"></i>
+                System Status Overview
+            </h2>
+            <div id="systemStatus" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Status cards will be inserted here -->
+            </div>
+        </section>
+
+        <!-- Metrics Dashboard -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i>
+                System Metrics
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Authentication Metrics -->
+                <div class="glass-effect rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-green-400"></i>
+                        Authentication Metrics
+                    </h3>
+                    <div id="authMetrics" class="space-y-3">
+                        <!-- Auth metrics will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Storage Metrics -->
+                <div class="glass-effect rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="cloud" class="w-5 h-5 mr-2 text-blue-400"></i>
+                        Storage Metrics
+                    </h3>
+                    <div id="storageMetrics" class="space-y-3">
+                        <!-- Storage metrics will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Usage Metrics -->
+                <div class="glass-effect rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="trending-up" class="w-5 h-5 mr-2 text-purple-400"></i>
+                        Usage Metrics
+                    </h3>
+                    <div id="usageMetrics" class="space-y-3">
+                        <!-- Usage metrics will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- System Metrics -->
+                <div class="glass-effect rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="monitor" class="w-5 h-5 mr-2 text-yellow-400"></i>
+                        System Metrics
+                    </h3>
+                    <div id="systemMetrics" class="space-y-3">
+                        <!-- System metrics will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="clock" class="w-5 h-5 mr-2"></i>
+                Recent Activity
+            </h2>
+            <div class="glass-effect rounded-lg p-6">
+                <div id="recentActivity" class="space-y-2">
+                    <!-- Activity items will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Token Management -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="key" class="w-5 h-5 mr-2"></i>
+                Token Management
+            </h2>
+            <div class="glass-effect rounded-lg p-6">
+                <div id="tokenManagement" class="space-y-4">
+                    <!-- Token cards will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section>
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="zap" class="w-5 h-5 mr-2"></i>
+                Quick Actions
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <button onclick="executeAction('createToken')" class="glass-effect rounded-lg p-4 hover:bg-white/20 transition-colors text-left">
+                    <i data-lucide="plus" class="w-6 h-6 mb-2 text-green-400"></i>
+                    <h3 class="font-medium">Create Token</h3>
+                    <p class="text-sm opacity-75">Generate new authentication token</p>
+                </button>
+                <button onclick="executeAction('testR2')" class="glass-effect rounded-lg p-4 hover:bg-white/20 transition-colors text-left">
+                    <i data-lucide="cloud-check" class="w-6 h-6 mb-2 text-blue-400"></i>
+                    <h3 class="font-medium">Test R2 Connection</h3>
+                    <p class="text-sm opacity-75">Verify R2 storage connectivity</p>
+                </button>
+                <button onclick="executeAction('runDemo')" class="glass-effect rounded-lg p-4 hover:bg-white/20 transition-colors text-left">
+                    <i data-lucide="play" class="w-6 h-6 mb-2 text-purple-400"></i>
+                    <h3 class="font-medium">Run Demo</h3>
+                    <p class="text-sm opacity-75">Execute MCP integration demo</p>
+                </button>
+                <button onclick="executeAction('generateReport')" class="glass-effect rounded-lg p-4 hover:bg-white/20 transition-colors text-left">
+                    <i data-lucide="file-text" class="w-6 h-6 mb-2 text-yellow-400"></i>
+                    <h3 class="font-medium">Generate Report</h3>
+                    <p class="text-sm opacity-75">Create detailed system report</p>
+                </button>
+                <button onclick="executeAction('viewLogs')" class="glass-effect rounded-lg p-4 hover:bg-white/20 transition-colors text-left">
+                    <i data-lucide="file-search" class="w-6 h-6 mb-2 text-red-400"></i>
+                    <h3 class="font-medium">View Logs</h3>
+                    <p class="text-sm opacity-75">Check system logs and errors</p>
+                </button>
+                <button onclick="executeAction('systemHealth')" class="glass-effect rounded-lg p-4 hover:bg-white/20 transition-colors text-left">
+                    <i data-lucide="heart" class="w-6 h-6 mb-2 text-green-400"></i>
+                    <h3 class="font-medium">System Health</h3>
+                    <p class="text-sm opacity-75">Run comprehensive health check</p>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="fixed bottom-4 right-4 glass-effect rounded-lg p-4 hidden max-w-sm">
+        <div class="flex items-center space-x-3">
+            <i id="notificationIcon" class="w-5 h-5"></i>
+            <div>
+                <p id="notificationTitle" class="font-medium"></p>
+                <p id="notificationMessage" class="text-sm opacity-75"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Dashboard state
+        let refreshInterval;
+        let isRefreshing = false;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDashboard();
+            startAutoRefresh();
+        });
+
+        // Refresh dashboard data
+        async function refreshDashboard() {
+            if (isRefreshing) return;
+            isRefreshing = true;
+
+            try {
+                // Update last refresh time
+                document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+                // Fetch dashboard data (in real implementation, this would call your API)
+                const dashboardData = await fetchDashboardData();
+                
+                // Update all sections
+                updateSystemStatus(dashboardData.systemStatus);
+                updateMetrics(dashboardData.metrics);
+                updateRecentActivity(dashboardData.recentActivity);
+                updateTokenManagement(dashboardData.tokens);
+
+            } catch (error) {
+                showNotification('error', 'Refresh Failed', error.message);
+            } finally {
+                isRefreshing = false;
+            }
+        }
+
+        // Mock dashboard data (replace with real API calls)
+        async function fetchDashboardData() {
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            return {
+                systemStatus: [
+                    {
+                        component: '🔐 Master Token System',
+                        status: 'healthy',
+                        message: '3 active tokens, 0 recent failures',
+                        metrics: { activeTokens: 3, recentFailures: 0 }
+                    },
+                    {
+                        component: '☁️ R2 Storage Integration',
+                        status: 'healthy',
+                        message: 'Connected: 243 objects (15.7MB)',
+                        metrics: { configured: true, bucketName: 'scanner-cookies' }
+                    },
+                    {
+                        component: '📚 Bun MCP Server',
+                        status: 'healthy',
+                        message: 'Server script accessible',
+                        metrics: { accessible: true }
+                    },
+                    {
+                        component: '🔧 Tools MCP Server',
+                        status: 'healthy',
+                        message: 'Server script accessible',
+                        metrics: { accessible: true }
+                    },
+                    {
+                        component: '🌉 MCP Bridge',
+                        status: 'healthy',
+                        message: 'Server script accessible',
+                        metrics: { accessible: true }
+                    },
+                    {
+                        component: '🔍 fw-docs CLI',
+                        status: 'healthy',
+                        message: 'CLI tool accessible',
+                        metrics: { accessible: true }
+                    }
+                ],
+                metrics: {
+                    authentication: {
+                        activeTokens: 3,
+                        recentAuths: 15,
+                        failedAuths: 0
+                    },
+                    storage: {
+                        totalObjects: 243,
+                        totalSize: '15.7MB',
+                        diagnosesCount: 85,
+                        auditsCount: 125
+                    },
+                    usage: {
+                        totalSearches: 1250,
+                        totalDiagnoses: 85,
+                        totalExamples: 320,
+                        avgResponseTime: 45
+                    },
+                    system: {
+                        uptime: '2h 15m',
+                        memoryUsage: '45.2 MB',
+                        errorRate: 0.0,
+                        lastRestart: 'Today 09:20 AM'
+                    }
+                },
+                recentActivity: [
+                    { time: '09:24:58', event: 'Diagnosis stored', type: 'success' },
+                    { time: '09:23:21', event: 'R2 connection test', type: 'success' },
+                    { time: '09:22:15', event: 'MCP bridge started', type: 'success' },
+                    { time: '09:20:00', event: 'Dashboard initialized', type: 'success' }
+                ],
+                tokens: [
+                    {
+                        id: 'mt_1704441234567_abc12345',
+                        permissions: ['search:docs', 'store:diagnosis', 'write:metrics'],
+                        expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000),
+                        metadata: { createdFor: 'CLI User' }
+                    },
+                    {
+                        id: 'mt_1704440987654_def67890',
+                        permissions: ['search:docs', 'audit:search', 'metrics:read'],
+                        expiresAt: new Date(Date.now() + 6 * 60 * 60 * 1000),
+                        metadata: { createdFor: 'Claude Desktop' }
+                    },
+                    {
+                        id: 'mt_1704440765432_ghi11111',
+                        permissions: ['manage:tokens', 'read:audits', 'system:admin'],
+                        expiresAt: new Date(Date.now() + 23 * 60 * 60 * 1000),
+                        metadata: { createdFor: 'Admin' }
+                    }
+                ]
+            };
+        }
+
+        // Update system status cards
+        function updateSystemStatus(statusData) {
+            const container = document.getElementById('systemStatus');
+            container.innerHTML = statusData.map(status => `
+                <div class="glass-effect rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-medium">${status.component}</h3>
+                        <div class="w-3 h-3 rounded-full status-${status.status}"></div>
+                    </div>
+                    <p class="text-sm opacity-75 mb-2">${status.message}</p>
+                    ${status.metrics ? Object.entries(status.metrics).map(([key, value]) => 
+                        `<div class="text-xs opacity-50">${key}: ${value}</div>`
+                    ).join('') : ''}
+                </div>
+            `).join('');
+        }
+
+        // Update metrics sections
+        function updateMetrics(metrics) {
+            // Authentication metrics
+            document.getElementById('authMetrics').innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span>Active Tokens</span>
+                    <span class="font-mono text-green-400">${metrics.authentication.activeTokens}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Recent Auths (1h)</span>
+                    <span class="font-mono text-blue-400">${metrics.authentication.recentAuths}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Failed Auths (1h)</span>
+                    <span class="font-mono ${metrics.authentication.failedAuths > 0 ? 'text-red-400' : 'text-green-400'}">${metrics.authentication.failedAuths}</span>
+                </div>
+            `;
+
+            // Storage metrics
+            document.getElementById('storageMetrics').innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span>Total Objects</span>
+                    <span class="font-mono text-blue-400">${metrics.storage.totalObjects}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Total Size</span>
+                    <span class="font-mono text-purple-400">${metrics.storage.totalSize}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Diagnoses</span>
+                    <span class="font-mono text-green-400">${metrics.storage.diagnosesCount}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Audits</span>
+                    <span class="font-mono text-yellow-400">${metrics.storage.auditsCount}</span>
+                </div>
+            `;
+
+            // Usage metrics
+            document.getElementById('usageMetrics').innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span>Total Searches</span>
+                    <span class="font-mono text-blue-400">${metrics.usage.totalSearches}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Total Diagnoses</span>
+                    <span class="font-mono text-green-400">${metrics.usage.totalDiagnoses}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Total Examples</span>
+                    <span class="font-mono text-purple-400">${metrics.usage.totalExamples}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Avg Response Time</span>
+                    <span class="font-mono text-yellow-400">${metrics.usage.avgResponseTime}ms</span>
+                </div>
+            `;
+
+            // System metrics
+            document.getElementById('systemMetrics').innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span>Uptime</span>
+                    <span class="font-mono text-green-400">${metrics.system.uptime}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Memory Usage</span>
+                    <span class="font-mono text-blue-400">${metrics.system.memoryUsage}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Error Rate</span>
+                    <span class="font-mono ${(metrics.system.errorRate * 100) > 5 ? 'text-red-400' : 'text-green-400'}">${(metrics.system.errorRate * 100).toFixed(1)}%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Last Restart</span>
+                    <span class="font-mono text-yellow-400">${metrics.system.lastRestart}</span>
+                </div>
+            `;
+        }
+
+        // Update recent activity
+        function updateRecentActivity(activity) {
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = activity.map(item => {
+                const icon = item.type === 'success' ? 'check-circle' : 'alert-circle';
+                const color = item.type === 'success' ? 'text-green-400' : 'text-yellow-400';
+                return `
+                    <div class="flex items-center space-x-3 p-2 rounded hover:bg-white/5 transition-colors">
+                        <i data-lucide="${icon}" class="w-4 h-4 ${color}"></i>
+                        <span class="text-sm">${item.time}</span>
+                        <span class="text-sm flex-1">${item.event}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            // Re-initialize icons for new content
+            lucide.createIcons();
+        }
+
+        // Update token management
+        function updateTokenManagement(tokens) {
+            const container = document.getElementById('tokenManagement');
+            
+            if (tokens.length === 0) {
+                container.innerHTML = '<p class="text-center opacity-75">No active tokens found</p>';
+                return;
+            }
+
+            container.innerHTML = tokens.map((token, index) => {
+                const expiresSoon = new Date(token.expiresAt) < new Date(Date.now() + 6 * 60 * 60 * 1000);
+                const statusColor = expiresSoon ? 'text-yellow-400' : 'text-green-400';
+                
+                return `
+                    <div class="border border-white/10 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium font-mono text-sm">${token.id}</h4>
+                            <span class="${statusColor} text-sm">
+                                Expires: ${token.expiresAt.toLocaleString()}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            ${token.permissions.map(perm => 
+                                `<span class="bg-blue-500/20 text-blue-300 text-xs px-2 py-1 rounded">${perm}</span>`
+                            ).join('')}
+                        </div>
+                        ${token.metadata ? Object.entries(token.metadata).map(([key, value]) => 
+                            `<div class="text-xs opacity-50">${key}: ${value}</div>`
+                        ).join('') : ''}
+                        <div class="flex space-x-2 mt-3">
+                            <button onclick="revokeToken('${token.id}')" class="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1 rounded transition-colors">
+                                Revoke
+                            </button>
+                            <button onclick="rotateToken('${token.id}')" class="text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 px-3 py-1 rounded transition-colors">
+                                Rotate
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Execute quick actions
+        async function executeAction(action) {
+            showNotification('info', 'Executing', `Running ${action}...`);
+            
+            try {
+                // In real implementation, these would call your backend API
+                switch (action) {
+                    case 'createToken':
+                        showNotification('success', 'Token Created', 'New CLI token generated successfully');
+                        break;
+                    case 'testR2':
+                        showNotification('success', 'R2 Connection', 'R2 storage is working properly');
+                        break;
+                    case 'runDemo':
+                        showNotification('info', 'Demo Running', 'MCP integration demo started');
+                        break;
+                    case 'generateReport':
+                        showNotification('success', 'Report Generated', 'System report saved to file');
+                        break;
+                    case 'viewLogs':
+                        showNotification('info', 'Logs', 'Opening system logs...');
+                        break;
+                    case 'systemHealth':
+                        showNotification('success', 'Health Check', 'All systems operational');
+                        break;
+                }
+                
+                // Refresh dashboard after action
+                setTimeout(refreshDashboard, 1000);
+                
+            } catch (error) {
+                showNotification('error', 'Action Failed', error.message);
+            }
+        }
+
+        // Token management functions
+        function revokeToken(tokenId) {
+            if (confirm(`Are you sure you want to revoke token ${tokenId}?`)) {
+                showNotification('info', 'Revoking Token', `Revoking ${tokenId}...`);
+                setTimeout(() => {
+                    showNotification('success', 'Token Revoked', `Token ${tokenId} has been revoked`);
+                    refreshDashboard();
+                }, 1000);
+            }
+        }
+
+        function rotateToken(tokenId) {
+            showNotification('info', 'Rotating Token', `Rotating ${tokenId}...`);
+            setTimeout(() => {
+                showNotification('success', 'Token Rotated', `Token ${tokenId} has been rotated`);
+                refreshDashboard();
+            }, 1000);
+        }
+
+        // Show notification
+        function showNotification(type, title, message) {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+
+            // Set content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // Set icon and color based on type
+            const iconMap = {
+                success: { icon: 'check-circle', class: 'text-green-400' },
+                error: { icon: 'x-circle', class: 'text-red-400' },
+                info: { icon: 'info', class: 'text-blue-400' },
+                warning: { icon: 'alert-triangle', class: 'text-yellow-400' }
+            };
+
+            const config = iconMap[type] || iconMap.info;
+            icon.setAttribute('data-lucide', config.icon);
+            icon.className = `w-5 h-5 ${config.class}`;
+
+            // Show notification
+            notification.classList.remove('hidden');
+            lucide.createIcons();
+
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Auto-refresh
+        function startAutoRefresh() {
+            refreshInterval = setInterval(refreshDashboard, 30000); // 30 seconds
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>

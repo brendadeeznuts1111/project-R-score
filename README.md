@@ -1,8 +1,54 @@
-# Project R-Score Monorepo
+# 🚀 FactoryWager Enterprise Platform
 
-A comprehensive development ecosystem featuring enterprise-grade tools, automation frameworks, and performance optimization utilities built with Bun and TypeScript.
+<div align="center">
 
-## 🚀 Quick Start
+![FactoryWager Logo](https://img.shields.io/badge/FactoryWager-Enterprise-3b82f6?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K)
+
+**Enterprise-Grade Bun Native Platform for High-Performance Applications**
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Bun Version](https://img.shields.io/badge/bun-1.0%2B-black.svg)](https://bun.sh)
+[![TypeScript](https://img.shields.io/badge/typescript-5.0%2B-blue.svg)](https://www.typescriptlang.org/)
+[![Build Status](https://img.shields.io/github/workflow/status/brendadeeznuts1111/project-R-score/CI/badge.svg)](https://github.com/brendadeeznuts1111/project-R-score/actions)
+
+[📊 Metrics Dashboard](METRICS.md) • [📋 Issue Tracking](ISSUE_TRACKING_GUIDE.md) • [🔧 Documentation](docs/) • [🚀 Getting Started](#getting-started)
+
+</div>
+
+## 🎯 Overview
+
+FactoryWager is a **cutting-edge enterprise platform** built with **Bun native optimizations** for maximum performance and reliability. This monorepo contains core infrastructure, security systems, performance optimizations, and enterprise-grade tools.
+
+### ✨ Key Features
+
+- 🔐 **Enterprise Security** - Versioned secrets, atomic operations, OWASP compliance
+- ⚡ **Bun Native Performance** - Zero-copy operations, streaming I/O, optimized memory management
+- 🧵 **Thread Safety** - Atomics API, SharedArrayBuffer, concurrent operations
+- 📊 **Real-time Metrics** - Comprehensive monitoring and health checks
+- 🏗️ **Scalable Architecture** - Microservices, event-driven, cloud-native
+- 🛠️ **Developer Tools** - CLI, debugging, profiling, and automation
+
+## � Repository Structure
+
+```
+FactoryWager/
+├── 📁 lib/                    # Core library components
+│   ├── 🔐 security/           # Security & authentication
+│   ├── ⚡ core/               # Core infrastructure
+│   ├── 🧠 memory-pool.ts      # Shared memory management
+│   ├── 🦊 bun-*.ts           # Bun native implementations
+│   └── 📊 performance/       # Performance optimizations
+├── 📁 server/                # Server implementations
+├── 📁 services/              # Microservices
+├── 📁 tools/                 # Developer tools
+├── 📁 tests/                 # Test suites
+├── 📁 docs/                  # Documentation
+├── 📁 projects/              # Project templates
+├── 📁 .github/               # GitHub workflows & templates
+└── 📁 scripts/               # Build & deployment scripts
+```
+
+## �🚀 Quick Start
 
 ```bash
 # Clone and install
