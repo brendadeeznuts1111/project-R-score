@@ -24,7 +24,7 @@
 
 import { logger } from "../monitoring/structured-logger";
 import { globalCaches } from "../performance/cache-manager";
-import { nanoseconds, color, deepEquals, openInEditor } from "bun";
+import { nanoseconds, deepEquals, openInEditor } from "bun";
 import * as yaml from "js-yaml"; // Use js-yaml instead of bun.yaml
 import { Mutex } from "../core/safe-concurrency";
 import { EventEmitter } from "events";
@@ -130,22 +130,83 @@ export interface CacheStats {
   misses: number;
   hitRate: number;
   evictions: number;
+  totalSets: number;
+  totalGets: number;
+  averageAccessTime: number;
+  memoryUsage: number;
+  oldestEntry?: number;
+  newestEntry?: number;
 }
 
-export class AdvancedLRUCache<T> {
+export interface CacheOptions {
+  maxSize: number;
+  defaultTTL: number;
+  cleanupInterval: number;
+  enableStats: boolean;
+  enableMemoryTracking: boolean;
+  evictionPolicy: 'lru' | 'lfu' | 'ttl';
+}
+
+export interface CacheEvent {
+  type: 'set' | 'get' | 'delete' | 'evict' | 'expire' | 'clear';
+  key: string;
+  timestamp: number;
+  size: number;
+  hitRate?: number;
+}
+
+export class AdvancedLRUCache<T> extends EventEmitter {
   private maxSize: number;
   private defaultTTL: number;
+  private cleanupInterval: number;
+  private enableStats: boolean;
+  private enableMemoryTracking: boolean;
+  private evictionPolicy: 'lru' | 'lfu' | 'ttl';
+  
   private head: LRUCacheNode<T>;
   private tail: LRUCacheNode<T>;
   private cache = new Map<string, LRUCacheNode<T>>();
+  private frequencyMap = new Map<string, number>(); // For LFU
+  private statsMutex = new Mutex(); // Thread-safe statistics
+  
+  // Enhanced statistics
   private hits = 0;
   private misses = 0;
   private evictions = 0;
+  private totalSets = 0;
+  private totalGets = 0;
+  private totalAccessTime = 0;
+  private memoryUsage = 0;
+  private oldestEntry = 0;
+  private newestEntry = 0;
+  
   private cleanupTimer?: ReturnType<typeof setInterval>;
+  private lastCleanup = Date.now();
+  private isCleaningUp = false; // Prevent concurrent cleanups
 
-  constructor(maxSize: number = 1000, defaultTTL: number = 300000) {
-    this.maxSize = maxSize;
-    this.defaultTTL = defaultTTL;
+  constructor(options: Partial<CacheOptions> = {}) {
+    super();
+    
+    // Validate configuration
+    this.validateConfig(options);
+    
+    const defaults: CacheOptions = {
+      maxSize: 1000,
+      defaultTTL: 300000, // 5 minutes
+      cleanupInterval: 60000, // 1 minute
+      enableStats: true,
+      enableMemoryTracking: true,
+      evictionPolicy: 'lru'
+    };
+    
+    const config = { ...defaults, ...options };
+    
+    this.maxSize = config.maxSize;
+    this.defaultTTL = config.defaultTTL;
+    this.cleanupInterval = config.cleanupInterval;
+    this.enableStats = config.enableStats;
+    this.enableMemoryTracking = config.enableMemoryTracking;
+    this.evictionPolicy = config.evictionPolicy;
     
     // Initialize dummy head and tail nodes
     this.head = { key: '', value: null as any, expires: 0, prev: null, next: null };
@@ -156,15 +217,41 @@ export class AdvancedLRUCache<T> {
     this.startCleanup();
   }
 
+  private validateConfig(options: Partial<CacheOptions>): void {
+    if (options.maxSize !== undefined && options.maxSize <= 0) {
+      throw new Error('Cache maxSize must be positive');
+    }
+    if (options.defaultTTL !== undefined && options.defaultTTL <= 0) {
+      throw new Error('Cache defaultTTL must be positive');
+    }
+    if (options.cleanupInterval !== undefined && options.cleanupInterval <= 0) {
+      throw new Error('Cache cleanupInterval must be positive');
+    }
+  }
+
   set(key: string, value: T, ttl?: number): void {
+    const startTime = this.enableStats ? performance.now() : 0;
     const expires = Date.now() + (ttl || this.defaultTTL);
     
     if (this.cache.has(key)) {
       // Update existing node
       const node = this.cache.get(key)!;
+      const oldSize = this.calculateItemSize(node.value);
+      
       node.value = value;
       node.expires = expires;
       this.moveToHead(node);
+      
+      // Update memory usage
+      if (this.enableMemoryTracking) {
+        const newSize = this.calculateItemSize(value);
+        this.memoryUsage = this.memoryUsage - oldSize + newSize;
+      }
+      
+      // Update frequency for LFU
+      if (this.evictionPolicy === 'lfu') {
+        this.frequencyMap.set(key, (this.frequencyMap.get(key) || 0) + 1);
+      }
     } else {
       // Create new node
       const newNode: LRUCacheNode<T> = {
@@ -175,20 +262,66 @@ export class AdvancedLRUCache<T> {
         next: null
       };
       
+      // Check if eviction is needed
       if (this.cache.size >= this.maxSize) {
-        this.evictLRU();
+        this.evict();
       }
       
       this.cache.set(key, newNode);
       this.addToHead(newNode);
+      
+      // Initialize frequency for LFU
+      if (this.evictionPolicy === 'lfu') {
+        this.frequencyMap.set(key, 1);
+      }
+      
+      // Update memory usage and timestamps
+      if (this.enableMemoryTracking) {
+        this.memoryUsage += this.calculateItemSize(value);
+      }
+      
+      if (this.oldestEntry === 0) {
+        this.oldestEntry = Date.now();
+      }
+      this.newestEntry = Date.now();
     }
+    
+    // Update statistics atomically
+    this.updateStats(async () => {
+      this.totalSets++;
+      if (startTime > 0) {
+        this.totalAccessTime += performance.now() - startTime;
+      }
+    });
+    
+    // Emit event only if there are listeners
+    this.safeEmit('cache:set', {
+      type: 'set',
+      key,
+      timestamp: Date.now(),
+      size: this.cache.size,
+      hitRate: this.calculateHitRate()
+    } as CacheEvent);
   }
 
   get(key: string): T | null {
+    const startTime = this.enableStats ? performance.now() : 0;
     const node = this.cache.get(key);
     
     if (!node) {
-      this.misses++;
+      this.updateStats(async () => {
+        this.misses++;
+        this.totalGets++;
+      });
+      
+      this.safeEmit('cache:get', {
+        type: 'get',
+        key,
+        timestamp: Date.now(),
+        size: this.cache.size,
+        hitRate: this.calculateHitRate()
+      } as CacheEvent);
+      
       return null;
     }
     
@@ -196,12 +329,55 @@ export class AdvancedLRUCache<T> {
     if (Date.now() > node.expires) {
       this.removeNode(node);
       this.cache.delete(key);
-      this.misses++;
+      this.frequencyMap.delete(key);
+      
+      this.updateStats(async () => {
+        this.misses++;
+        this.totalGets++;
+      });
+      
+      // Update memory usage
+      if (this.enableMemoryTracking) {
+        this.memoryUsage -= this.calculateItemSize(node.value);
+      }
+      
+      this.safeEmit('cache:expire', {
+        type: 'expire',
+        key,
+        timestamp: Date.now(),
+        size: this.cache.size,
+        hitRate: this.calculateHitRate()
+      } as CacheEvent);
+      
       return null;
     }
     
-    this.hits++;
-    this.moveToHead(node);
+    // Update statistics and move node
+    this.updateStats(async () => {
+      this.hits++;
+      this.totalGets++;
+      if (startTime > 0) {
+        this.totalAccessTime += performance.now() - startTime;
+      }
+    });
+    
+    // Update frequency for LFU and move to appropriate position
+    if (this.evictionPolicy === 'lfu') {
+      this.frequencyMap.set(key, (this.frequencyMap.get(key) || 0) + 1);
+      // For LFU, we don't move to head on every access
+      // Position is determined by frequency during eviction
+    } else {
+      this.moveToHead(node);
+    }
+    
+    this.safeEmit('cache:get', {
+      type: 'get',
+      key,
+      timestamp: Date.now(),
+      size: this.cache.size,
+      hitRate: this.calculateHitRate()
+    } as CacheEvent);
+    
     return node.value;
   }
 
@@ -213,6 +389,21 @@ export class AdvancedLRUCache<T> {
     if (Date.now() > node.expires) {
       this.removeNode(node);
       this.cache.delete(key);
+      this.frequencyMap.delete(key);
+      
+      // Update memory usage
+      if (this.enableMemoryTracking) {
+        this.memoryUsage -= this.calculateItemSize(node.value);
+      }
+      
+      this.emit('cache:expire', {
+        type: 'expire',
+        key,
+        timestamp: Date.now(),
+        size: this.cache.size,
+        hitRate: this.calculateHitRate()
+      } as CacheEvent);
+      
       return false;
     }
     
@@ -225,16 +416,56 @@ export class AdvancedLRUCache<T> {
     
     this.removeNode(node);
     this.cache.delete(key);
+    this.frequencyMap.delete(key);
+    
+    // Update memory usage
+    if (this.enableMemoryTracking) {
+      this.memoryUsage -= this.calculateItemSize(node.value);
+    }
+    
+    this.emit('cache:delete', {
+      type: 'delete',
+      key,
+      timestamp: Date.now(),
+      size: this.cache.size,
+      hitRate: this.calculateHitRate()
+    } as CacheEvent);
+    
     return true;
   }
 
   clear(): void {
+    const oldSize = this.cache.size;
+    
     this.cache.clear();
+    this.frequencyMap.clear();
     this.head.next = this.tail;
     this.tail.prev = this.head;
-    this.hits = 0;
-    this.misses = 0;
-    this.evictions = 0;
+    
+    // Reset statistics
+    if (this.enableStats) {
+      this.hits = 0;
+      this.misses = 0;
+      this.evictions = 0;
+      this.totalSets = 0;
+      this.totalGets = 0;
+      this.totalAccessTime = 0;
+    }
+    
+    if (this.enableMemoryTracking) {
+      this.memoryUsage = 0;
+    }
+    
+    this.oldestEntry = 0;
+    this.newestEntry = 0;
+    
+    this.emit('cache:clear', {
+      type: 'clear',
+      key: '',
+      timestamp: Date.now(),
+      size: 0,
+      hitRate: 0
+    } as CacheEvent);
   }
 
   getStats(): CacheStats {
@@ -243,9 +474,173 @@ export class AdvancedLRUCache<T> {
       maxSize: this.maxSize,
       hits: this.hits,
       misses: this.misses,
-      hitRate: this.hits + this.misses > 0 ? this.hits / (this.hits + this.misses) : 0,
-      evictions: this.evictions
+      hitRate: this.calculateHitRate(),
+      evictions: this.evictions,
+      totalSets: this.totalSets,
+      totalGets: this.totalGets,
+      averageAccessTime: this.totalGets > 0 ? this.totalAccessTime / this.totalGets : 0,
+      memoryUsage: this.memoryUsage,
+      oldestEntry: this.oldestEntry > 0 ? this.oldestEntry : undefined,
+      newestEntry: this.newestEntry > 0 ? this.newestEntry : undefined
     };
+  }
+
+  // Enhanced utility methods
+  private async updateStats(updateFn: () => void): Promise<void> {
+    if (!this.enableStats) return;
+    await this.statsMutex.withLock(async () => {
+      updateFn();
+    });
+  }
+
+  private safeEmit(event: string, data: CacheEvent): void {
+    if (this.listenerCount(event) > 0) {
+      this.emit(event, data);
+    }
+  }
+
+  private calculateHitRate(): number {
+    const total = this.hits + this.misses;
+    return total > 0 ? this.hits / total : 0;
+  }
+
+  private calculateItemSize(item: T): number {
+    if (!this.enableMemoryTracking) return 0;
+    
+    try {
+      // Rough estimation of memory usage
+      if (item === null || item === undefined) return 0;
+      
+      if (typeof item === 'string') {
+        return item.length * 2; // 2 bytes per character
+      }
+      
+      if (typeof item === 'number') {
+        return 8; // 64-bit number
+      }
+      
+      if (typeof item === 'boolean') {
+        return 4;
+      }
+      
+      if (item instanceof Date) {
+        return 8;
+      }
+      
+      if (Array.isArray(item)) {
+        return item.reduce((sum, val) => sum + this.calculateItemSize(val), 0) + 24;
+      }
+      
+      if (typeof item === 'object') {
+        // Safe JSON.stringify with circular reference handling
+        const seen = new WeakSet();
+        const jsonString = JSON.stringify(item, (key, value) => {
+          if (typeof value === 'object' && value !== null) {
+            if (seen.has(value)) {
+              return '[Circular]';
+            }
+            seen.add(value);
+          }
+          return value;
+        });
+        return (jsonString?.length || 0) * 2 + 24;
+      }
+      
+      return 24; // Base object overhead
+    } catch {
+      return 24; // Fallback estimation
+    }
+  }
+
+  // Enhanced eviction methods
+  private evict(): void {
+    switch (this.evictionPolicy) {
+      case 'lru':
+        this.evictLRU();
+        break;
+      case 'lfu':
+        this.evictLFU();
+        break;
+      case 'ttl':
+        this.evictExpired();
+        if (this.cache.size >= this.maxSize) {
+          this.evictLRU(); // Fallback to LRU if TTL eviction doesn't free enough space
+        }
+        break;
+      default:
+        this.evictLRU();
+    }
+  }
+
+  private evictLFU(): void {
+    let minFrequency = Infinity;
+    let lfuKey = '';
+    
+    // Find the item with the lowest frequency - use Array.from for compatibility
+    for (const [key, frequency] of Array.from(this.frequencyMap.entries())) {
+      if (frequency < minFrequency && this.cache.has(key)) {
+        minFrequency = frequency;
+        lfuKey = key;
+      }
+    }
+    
+    if (lfuKey && this.cache.has(lfuKey)) {
+      const node = this.cache.get(lfuKey)!;
+      this.removeNode(node);
+      this.cache.delete(lfuKey);
+      this.frequencyMap.delete(lfuKey);
+      
+      if (this.enableMemoryTracking) {
+        this.memoryUsage -= this.calculateItemSize(node.value);
+      }
+      
+      this.evictions++;
+      
+      this.safeEmit('cache:evict', {
+        type: 'evict',
+        key: lfuKey,
+        timestamp: Date.now(),
+        size: this.cache.size,
+        hitRate: this.calculateHitRate()
+      } as CacheEvent);
+    }
+  }
+
+  private evictExpired(): void {
+    const now = Date.now();
+    const expiredEntries: Array<{ key: string; node: LRUCacheNode<T> }> = [];
+    
+    // Collect expired entries in a single pass - use Array.from for compatibility
+    for (const [key, node] of Array.from(this.cache.entries())) {
+      if (now > node.expires) {
+        expiredEntries.push({ key, node });
+      }
+    }
+    
+    // Remove expired entries
+    for (const { key, node } of expiredEntries) {
+      // Double-check the entry still exists and is expired
+      const currentNode = this.cache.get(key);
+      if (currentNode === node && now > node.expires) {
+        this.removeNode(node);
+        this.cache.delete(key);
+        this.frequencyMap.delete(key);
+        
+        if (this.enableMemoryTracking) {
+          this.memoryUsage -= this.calculateItemSize(node.value);
+        }
+        
+        this.evictions++;
+        
+        this.safeEmit('cache:expire', {
+          type: 'expire',
+          key,
+          timestamp: Date.now(),
+          size: this.cache.size,
+          hitRate: this.calculateHitRate()
+        } as CacheEvent);
+      }
+    }
   }
 
   private addToHead(node: LRUCacheNode<T>): void {
@@ -276,33 +671,145 @@ export class AdvancedLRUCache<T> {
     if (lru && lru !== this.head) {
       this.removeNode(lru);
       this.cache.delete(lru.key);
+      this.frequencyMap.delete(lru.key);
+      
+      if (this.enableMemoryTracking) {
+        this.memoryUsage -= this.calculateItemSize(lru.value);
+      }
+      
       this.evictions++;
+      
+      this.safeEmit('cache:evict', {
+        type: 'evict',
+        key: lru.key,
+        timestamp: Date.now(),
+        size: this.cache.size,
+        hitRate: this.calculateHitRate()
+      } as CacheEvent);
     }
   }
 
   private startCleanup(): void {
+    // Clear existing timer if any
+    if (this.cleanupTimer) {
+      clearInterval(this.cleanupTimer);
+    }
+    
     this.cleanupTimer = setInterval(() => {
       this.cleanupExpired();
-    }, 60000); // Clean up expired entries every minute
+    }, this.cleanupInterval);
   }
 
   private cleanupExpired(): void {
-    const now = Date.now();
-    const expiredKeys: string[] = [];
+    // Prevent concurrent cleanups
+    if (this.isCleaningUp) {
+      return;
+    }
     
-    for (const [key, node] of this.cache) {
-      if (now > node.expires) {
-        expiredKeys.push(key);
+    this.isCleaningUp = true;
+    try {
+      this.evictExpired();
+      this.lastCleanup = Date.now();
+    } finally {
+      this.isCleaningUp = false;
+    }
+  }
+
+  // Additional public methods for enhanced functionality
+  public getKeys(): string[] {
+    return Array.from(this.cache.keys());
+  }
+
+  public getValues(): T[] {
+    return Array.from(this.cache.values()).map(node => node.value);
+  }
+
+  public getEntries(): Array<{ key: string; value: T; expires: number }> {
+    return Array.from(this.cache.entries()).map(([key, node]) => ({
+      key,
+      value: node.value,
+      expires: node.expires
+    }));
+  }
+
+  public getSize(): number {
+    return this.cache.size;
+  }
+
+  public getMemoryUsage(): number {
+    return this.memoryUsage;
+  }
+
+  public getEvictionPolicy(): 'lru' | 'lfu' | 'ttl' {
+    return this.evictionPolicy;
+  }
+
+  public setEvictionPolicy(policy: 'lru' | 'lfu' | 'ttl'): void {
+    this.evictionPolicy = policy;
+  }
+
+  public isFull(): boolean {
+    return this.cache.size >= this.maxSize;
+  }
+
+  public getLoadFactor(): number {
+    return this.cache.size / this.maxSize;
+  }
+
+  public getLastCleanupTime(): number {
+    return this.lastCleanup;
+  }
+
+  public updateConfig(options: Partial<CacheOptions>): void {
+    // Validate new configuration
+    this.validateConfig(options);
+    
+    if (options.maxSize !== undefined && options.maxSize !== this.maxSize) {
+      this.maxSize = options.maxSize;
+      // Evict if necessary
+      while (this.cache.size > this.maxSize) {
+        this.evict();
       }
     }
     
-    for (const key of expiredKeys) {
-      const node = this.cache.get(key);
-      if (node) {
-        this.removeNode(node);
-        this.cache.delete(key);
+    if (options.defaultTTL !== undefined && options.defaultTTL !== this.defaultTTL) {
+      this.defaultTTL = options.defaultTTL;
+      // Note: We don't invalidate existing entries with old TTL
+      // as they have their own expiration times set at creation
+    }
+    
+    if (options.cleanupInterval !== undefined && options.cleanupInterval !== this.cleanupInterval) {
+      this.cleanupInterval = options.cleanupInterval;
+      // Restart cleanup timer with new interval
+      this.startCleanup();
+    }
+    
+    if (options.enableStats !== undefined) {
+      this.enableStats = options.enableStats;
+    }
+    
+    if (options.enableMemoryTracking !== undefined) {
+      this.enableMemoryTracking = options.enableMemoryTracking;
+      if (!this.enableMemoryTracking) {
+        this.memoryUsage = 0; // Reset memory tracking if disabled
       }
     }
+    
+    if (options.evictionPolicy !== undefined) {
+      this.evictionPolicy = options.evictionPolicy;
+    }
+  }
+
+  // Generate secure cache keys to prevent collisions
+  private generateCacheKey(input: string): string {
+    // Simple hash function to generate consistent keys
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return `cache_${Math.abs(hash).toString(36)}`;
   }
 
   stop(): void {
@@ -310,6 +817,8 @@ export class AdvancedLRUCache<T> {
       clearInterval(this.cleanupTimer);
       this.cleanupTimer = undefined;
     }
+    
+    this.removeAllListeners();
   }
 }
 
@@ -369,9 +878,9 @@ export class AIOperationsManager extends EventEmitter {
     this.mutex = new Mutex();
     
     // Initialize advanced caches
-    this.insightsCache = new AdvancedLRUCache<AIInsight[]>(500, 300000); // 500 items, 5 min TTL
-    this.predictionsCache = new AdvancedLRUCache<any>(200, 600000); // 200 items, 10 min TTL
-    this.metricsCache = new AdvancedLRUCache<RealTimeMetrics[]>(100, 120000); // 100 items, 2 min TTL
+    this.insightsCache = new AdvancedLRUCache<AIInsight[]>({ maxSize: 500, defaultTTL: 300000 }); // 500 items, 5 min TTL
+    this.predictionsCache = new AdvancedLRUCache<any>({ maxSize: 200, defaultTTL: 600000 }); // 200 items, 10 min TTL
+    this.metricsCache = new AdvancedLRUCache<RealTimeMetrics[]>({ maxSize: 100, defaultTTL: 120000 }); // 100 items, 2 min TTL
     
     // Load config asynchronously
     this.loadConfig().catch(error => {
@@ -414,7 +923,7 @@ export class AIOperationsManager extends EventEmitter {
    * Submit a command to the AI operations manager with enhanced security and validation
    */
   async submitCommand(command: Omit<AICommand, 'id' | 'timestamp'>, clientIp?: string): Promise<string> {
-    return await this.mutex.run(async () => {
+    return await this.mutex.withLock(async () => {
       // Rate limiting
       if (clientIp && !this.checkRateLimit(clientIp)) {
         throw new Error('Rate limit exceeded');
@@ -458,8 +967,8 @@ export class AIOperationsManager extends EventEmitter {
     correlationId?: string;
     timeRange?: { start: number; end: number };
   }): AIInsight[] {
-    // Generate cache key based on filter
-    const cacheKey = JSON.stringify(filter || {});
+    // Generate secure cache key based on filter
+    const cacheKey = this.generateSecureCacheKey('insights', filter || {});
     
     // Try to get from cache first
     const cached = this.insightsCache.get(cacheKey);
@@ -518,6 +1027,21 @@ export class AIOperationsManager extends EventEmitter {
     this.insightsCache.set(cacheKey, result, 60000); // Cache for 1 minute
     
     return result;
+  }
+
+  /**
+   * Generate secure cache keys to prevent collisions
+   */
+  private generateSecureCacheKey(prefix: string, data: any): string {
+    // Create a deterministic hash from the data
+    const dataString = JSON.stringify(data, Object.keys(data).sort());
+    let hash = 0;
+    for (let i = 0; i < dataString.length; i++) {
+      const char = dataString.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return `${prefix}_${Math.abs(hash).toString(36)}`;
   }
 
   /**
@@ -691,7 +1215,7 @@ export class AIOperationsManager extends EventEmitter {
     correlationId?: string;
   }> {
     const correlationId = this.generateCorrelationId();
-    const cacheKey = `predict:${timeframe}:${correlationId}`;
+    const cacheKey = this.generateSecureCacheKey('predict', { timeframe, correlationId });
     
     // Try to get from cache first
     const cached = this.predictionsCache.get(cacheKey);
@@ -748,7 +1272,7 @@ export class AIOperationsManager extends EventEmitter {
    * Execute automated optimization with circuit breaker and enhanced monitoring
    */
   async executeOptimization(commandId: string): Promise<OptimizationResult> {
-    return await this.mutex.run(async () => {
+    return await this.mutex.withLock(async () => {
       const start = nanoseconds();
       const correlationId = this.generateCorrelationId();
       
@@ -1493,7 +2017,7 @@ export class AIOperationsManager extends EventEmitter {
    * Get real-time metrics history (cached)
    */
   getMetricsHistory(limit?: number): RealTimeMetrics[] {
-    const cacheKey = `metrics_history:${limit || 'all'}`;
+    const cacheKey = this.generateSecureCacheKey('metrics_history', { limit: limit || 'all' });
     
     // Try to get from cache first
     const cached = this.metricsCache.get(cacheKey);
