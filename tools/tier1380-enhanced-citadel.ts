@@ -215,8 +215,9 @@ export class Tier1380EnhancedCitadel {
           securityLevel: "high"
         }
       });
-    } catch (error) {
-      console.warn("⚠️ Could not generate signed URL:", error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.warn("⚠️ Could not generate signed URL:", errorMessage);
     }
     
     return {
@@ -328,8 +329,9 @@ export class Tier1380EnhancedCitadel {
         metadata: object.customMetadata 
       };
       
-    } catch (error) {
-      return { snapshot: null, isValid: false, error: error.message };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      return { snapshot: null, isValid: false, error: errorMessage };
     }
   }
 
@@ -492,10 +494,11 @@ export default {
           metadata: result.customMetadata
         });
         
-      } catch (error) {
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         return Response.json({
           success: false,
-          error: error.message
+          error: errorMessage
         }, { status: 500 });
       }
     }

@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "total": 42,
-    "categories": 5,
-    "generated": "2026-02-05T03:15:16.307Z",
+    "total": 55,
+    "categories": 7,
+    "generated": "2026-02-05T15:12:11.200Z",
     "version": "1.0.0"
   },
   "categories": {
@@ -11,57 +11,60 @@
       "pages": [
         {
           "title": "FILE SYSTEM: MAIN",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/main",
+          "url": "https://wiki.company.com/bun-utilities/file_system/main",
           "category": "file_system",
           "documentation": "https://bun.sh/docs/api/utils#file-system"
         },
         {
           "title": "FILE SYSTEM: READ FILE",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/read_file",
+          "url": "https://wiki.company.com/bun-utilities/file_system/read_file",
           "category": "file_system",
-          "documentation": "https://bun.sh/docs/api/utils#readfile"
+          "documentation": "https://bun.sh/docs/api/utils#readfile",
+          "example": "import { readFile } from 'bun';\nconst content = await readFile('package.json', 'utf-8');"
         },
         {
           "title": "FILE SYSTEM: WRITE FILE",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/write_file",
+          "url": "https://wiki.company.com/bun-utilities/file_system/write_file",
           "category": "file_system",
-          "documentation": "https://bun.sh/docs/api/utils#writefile"
+          "documentation": "https://bun.sh/docs/api/utils#writefile",
+          "example": "import { writeFile } from 'bun';\nawait writeFile('output.txt', 'Hello, Bun!');"
         },
         {
           "title": "FILE SYSTEM: READ DIR",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/read_dir",
+          "url": "https://wiki.company.com/bun-utilities/file_system/read_dir",
           "category": "file_system",
           "documentation": "https://bun.sh/docs/api/utils#readdir"
         },
         {
           "title": "FILE SYSTEM: STAT",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/stat",
+          "url": "https://wiki.company.com/bun-utilities/file_system/stat",
           "category": "file_system",
           "documentation": "https://bun.sh/docs/api/utils#stat"
         },
         {
           "title": "FILE SYSTEM: COPY FILE",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/copy_file",
+          "url": "https://wiki.company.com/bun-utilities/file_system/copy_file",
           "category": "file_system",
           "documentation": "https://bun.sh/docs/api/utils#copyfile"
         },
         {
           "title": "FILE SYSTEM: MOVE FILE",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/move_file",
+          "url": "https://wiki.company.com/bun-utilities/file_system/move_file",
           "category": "file_system",
           "documentation": "https://bun.sh/docs/api/utils#movefile"
         },
         {
           "title": "FILE SYSTEM: DELETE FILE",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/delete_file",
+          "url": "https://wiki.company.com/bun-utilities/file_system/delete_file",
           "category": "file_system",
           "documentation": "https://bun.sh/docs/api/utils#deletefile"
         },
         {
           "title": "FILE SYSTEM: FILE EXISTS",
-          "url": "https://wiki.ourcompany.com/bun-docs/file_system/file_exists",
+          "url": "https://wiki.company.com/bun-utilities/file_system/file_exists",
           "category": "file_system",
-          "documentation": "https://bun.sh/docs/api/utils#fileexists"
+          "documentation": "https://bun.sh/docs/api/utils#fileexists",
+          "example": "import { exists } from 'bun';\nconst fileExists = await exists('package.json');"
         }
       ]
     },
@@ -70,43 +73,43 @@
       "pages": [
         {
           "title": "NETWORKING: MAIN",
-          "url": "https://wiki.ourcompany.com/bun-docs/networking/main",
+          "url": "https://wiki.company.com/bun-utilities/networking/main",
           "category": "networking",
           "documentation": "https://bun.sh/docs/api/utils#networking"
         },
         {
           "title": "NETWORKING: FETCH",
-          "url": "https://wiki.ourcompany.com/bun-docs/networking/fetch",
+          "url": "https://wiki.company.com/bun-utilities/networking/fetch",
           "category": "networking",
           "documentation": "https://bun.sh/docs/api/utils#fetch-utility"
         },
         {
           "title": "NETWORKING: SERVE",
-          "url": "https://wiki.ourcompany.com/bun-docs/networking/serve",
+          "url": "https://wiki.company.com/bun-utilities/networking/serve",
           "category": "networking",
           "documentation": "https://bun.sh/docs/api/utils#serve"
         },
         {
           "title": "NETWORKING: WEBSOCKET",
-          "url": "https://wiki.ourcompany.com/bun-docs/networking/websocket",
+          "url": "https://wiki.company.com/bun-utilities/networking/websocket",
           "category": "networking",
           "documentation": "https://bun.sh/docs/api/utils#websocket"
         },
         {
           "title": "NETWORKING: TCP",
-          "url": "https://wiki.ourcompany.com/bun-docs/networking/tcp",
+          "url": "https://wiki.company.com/bun-utilities/networking/tcp",
           "category": "networking",
           "documentation": "https://bun.sh/docs/api/utils#tcp"
         },
         {
           "title": "NETWORKING: UDP",
-          "url": "https://wiki.ourcompany.com/bun-docs/networking/udp",
+          "url": "https://wiki.company.com/bun-utilities/networking/udp",
           "category": "networking",
           "documentation": "https://bun.sh/docs/api/utils#udp"
         },
         {
           "title": "NETWORKING: DNS",
-          "url": "https://wiki.ourcompany.com/bun-docs/networking/dns",
+          "url": "https://wiki.company.com/bun-utilities/networking/dns",
           "category": "networking",
           "documentation": "https://bun.sh/docs/api/utils#dns"
         }
@@ -117,43 +120,43 @@
       "pages": [
         {
           "title": "PROCESS: MAIN",
-          "url": "https://wiki.ourcompany.com/bun-docs/process/main",
+          "url": "https://wiki.company.com/bun-utilities/process/main",
           "category": "process",
           "documentation": "https://bun.sh/docs/api/utils#process"
         },
         {
           "title": "PROCESS: SPAWN",
-          "url": "https://wiki.ourcompany.com/bun-docs/process/spawn",
+          "url": "https://wiki.company.com/bun-utilities/process/spawn",
           "category": "process",
           "documentation": "https://bun.sh/docs/api/utils#spawn"
         },
         {
           "title": "PROCESS: EXEC",
-          "url": "https://wiki.ourcompany.com/bun-docs/process/exec",
+          "url": "https://wiki.company.com/bun-utilities/process/exec",
           "category": "process",
           "documentation": "https://bun.sh/docs/api/utils#exec"
         },
         {
           "title": "PROCESS: FORK",
-          "url": "https://wiki.ourcompany.com/bun-docs/process/fork",
+          "url": "https://wiki.company.com/bun-utilities/process/fork",
           "category": "process",
           "documentation": "https://bun.sh/docs/api/utils#fork"
         },
         {
           "title": "PROCESS: KILL",
-          "url": "https://wiki.ourcompany.com/bun-docs/process/kill",
+          "url": "https://wiki.company.com/bun-utilities/process/kill",
           "category": "process",
           "documentation": "https://bun.sh/docs/api/utils#kill"
         },
         {
           "title": "PROCESS: PID",
-          "url": "https://wiki.ourcompany.com/bun-docs/process/pid",
+          "url": "https://wiki.company.com/bun-utilities/process/pid",
           "category": "process",
           "documentation": "https://bun.sh/docs/api/utils#pid"
         },
         {
           "title": "PROCESS: SIGNALS",
-          "url": "https://wiki.ourcompany.com/bun-docs/process/signals",
+          "url": "https://wiki.company.com/bun-utilities/process/signals",
           "category": "process",
           "documentation": "https://bun.sh/docs/api/utils#signals"
         }
@@ -164,63 +167,65 @@
       "pages": [
         {
           "title": "VALIDATION: MAIN",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/main",
+          "url": "https://wiki.company.com/bun-utilities/validation/main",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#validation"
         },
         {
           "title": "VALIDATION: IS STRING",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_string",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_string",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#isstring"
         },
         {
           "title": "VALIDATION: IS NUMBER",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_number",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_number",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#isnumber"
         },
         {
           "title": "VALIDATION: IS BOOLEAN",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_boolean",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_boolean",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#isboolean"
         },
         {
           "title": "VALIDATION: IS ARRAY",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_array",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_array",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#isarray"
         },
         {
           "title": "VALIDATION: IS OBJECT",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_object",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_object",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#isobject"
         },
         {
           "title": "VALIDATION: IS FUNCTION",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_function",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_function",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#isfunction"
         },
         {
           "title": "VALIDATION: IS PROMISE",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_promise",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_promise",
           "category": "validation",
           "documentation": "https://bun.sh/docs/api/utils#ispromise"
         },
         {
           "title": "VALIDATION: IS BUFFER",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_buffer",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_buffer",
           "category": "validation",
-          "documentation": "https://bun.sh/docs/api/utils#isbuffer"
+          "documentation": "https://bun.sh/docs/api/utils#isbuffer",
+          "example": "import { isBuffer } from 'bun';\nconst buf = Buffer.from('hello');\nconsole.log(isBuffer(buf)); // true"
         },
         {
-          "title": "VALIDATION: IS TYPED_ARRAY",
-          "url": "https://wiki.ourcompany.com/bun-docs/validation/is_typed_array",
+          "title": "VALIDATION: IS TYPED ARRAY",
+          "url": "https://wiki.company.com/bun-utilities/validation/is_typed_array",
           "category": "validation",
-          "documentation": "https://bun.sh/docs/api/utils#istypedarray"
+          "documentation": "https://bun.sh/docs/api/utils#istypedarray",
+          "example": "import { isTypedArray } from 'bun';\nconst arr = new Uint8Array([1, 2, 3]);\nconsole.log(isTypedArray(arr)); // true"
         }
       ]
     },
@@ -229,57 +234,151 @@
       "pages": [
         {
           "title": "CONVERSION: MAIN",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/main",
+          "url": "https://wiki.company.com/bun-utilities/conversion/main",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#conversion"
         },
         {
           "title": "CONVERSION: TO BUFFER",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_buffer",
+          "url": "https://wiki.company.com/bun-utilities/conversion/to_buffer",
           "category": "conversion",
-          "documentation": "https://bun.sh/docs/api/utils#tobuffer"
+          "documentation": "https://bun.sh/docs/api/utils#tobuffer",
+          "example": "import { toBuffer } from 'bun';\nconst buffer = toBuffer('Hello'); // Convert string to Buffer"
         },
         {
           "title": "CONVERSION: TO STRING",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_string",
+          "url": "https://wiki.company.com/bun-utilities/conversion/to_string",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#tostring"
         },
         {
           "title": "CONVERSION: TO NUMBER",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_number",
+          "url": "https://wiki.company.com/bun-utilities/conversion/to_number",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#tonumber"
         },
         {
           "title": "CONVERSION: TO BOOLEAN",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_boolean",
+          "url": "https://wiki.company.com/bun-utilities/conversion/to_boolean",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#toboolean"
         },
         {
           "title": "CONVERSION: TO ARRAY",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_array",
+          "url": "https://wiki.company.com/bun-utilities/conversion/to_array",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#toarray"
         },
         {
           "title": "CONVERSION: TO OBJECT",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_object",
+          "url": "https://wiki.company.com/bun-utilities/conversion/to_object",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#toobject"
         },
         {
           "title": "CONVERSION: JSON PARSE",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/json_parse",
+          "url": "https://wiki.company.com/bun-utilities/conversion/json_parse",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#jsonparse"
         },
         {
           "title": "CONVERSION: JSON STRINGIFY",
-          "url": "https://wiki.ourcompany.com/bun-docs/conversion/json_stringify",
+          "url": "https://wiki.company.com/bun-utilities/conversion/json_stringify",
           "category": "conversion",
           "documentation": "https://bun.sh/docs/api/utils#jsonstringify"
+        }
+      ]
+    },
+    "performance": {
+      "count": 4,
+      "pages": [
+        {
+          "title": "PERFORMANCE: MAIN",
+          "url": "https://wiki.company.com/bun-utilities/performance/main",
+          "category": "performance",
+          "documentation": "https://bun.sh/docs/api/performance"
+        },
+        {
+          "title": "PERFORMANCE: GC",
+          "url": "https://wiki.company.com/bun-utilities/performance/gc",
+          "category": "performance",
+          "documentation": "https://bun.sh/docs/api/gc"
+        },
+        {
+          "title": "PERFORMANCE: PERFORMANCE NOW",
+          "url": "https://wiki.company.com/bun-utilities/performance/performance_now",
+          "category": "performance",
+          "documentation": "https://bun.sh/docs/api/performance"
+        },
+        {
+          "title": "PERFORMANCE: MEMORY USAGE",
+          "url": "https://wiki.company.com/bun-utilities/performance/memory_usage",
+          "category": "performance",
+          "documentation": "https://bun.sh/docs/api/performance"
+        }
+      ]
+    },
+    "color": {
+      "count": 9,
+      "pages": [
+        {
+          "title": "COLOR: MAIN",
+          "url": "https://wiki.company.com/bun-utilities/color/main",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color"
+        },
+        {
+          "title": "COLOR: COLOR",
+          "url": "https://wiki.company.com/bun-utilities/color/color",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#bun-color",
+          "example": "import { color } from 'bun';\nconst red = color('red', 'css'); // 'rgb(255, 0, 0)'\nconst ansi = color('#ff0000', 'ansi'); // ANSI escape code"
+        },
+        {
+          "title": "COLOR: ANSI",
+          "url": "https://wiki.company.com/bun-utilities/color/ansi",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#ansi",
+          "example": "import { color } from 'bun';\nconst code = color('blue', 'ansi'); // ANSI escape sequence\nconsole.log(code + 'Blue text' + '\\x1b[0m');"
+        },
+        {
+          "title": "COLOR: ANSI 16",
+          "url": "https://wiki.company.com/bun-utilities/color/ansi_16",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#ansi-16"
+        },
+        {
+          "title": "COLOR: ANSI 256",
+          "url": "https://wiki.company.com/bun-utilities/color/ansi_256",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#ansi-256",
+          "example": "import { color } from 'bun';\nconst code = color('#8b5cf6', 'ansi-256'); // 256-color ANSI"
+        },
+        {
+          "title": "COLOR: CSS",
+          "url": "https://wiki.company.com/bun-utilities/color/css",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#css"
+        },
+        {
+          "title": "COLOR: RGB",
+          "url": "https://wiki.company.com/bun-utilities/color/rgb",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#rgb",
+          "example": "import { color } from 'bun';\nconst [r, g, b] = color('coral', 'rgb'); // [255, 127, 80]"
+        },
+        {
+          "title": "COLOR: RGBA",
+          "url": "https://wiki.company.com/bun-utilities/color/rgba",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#rgba"
+        },
+        {
+          "title": "COLOR: HSL",
+          "url": "https://wiki.company.com/bun-utilities/color/hsl",
+          "category": "color",
+          "documentation": "https://bun.sh/docs/api/color#hsl",
+          "example": "import { color } from 'bun';\nconst [h, s, l] = color('#ff6347', 'hsl'); // [9, 100, 64]"
         }
       ]
     }
@@ -287,255 +386,344 @@
   "pages": [
     {
       "title": "FILE SYSTEM: MAIN",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/main",
+      "url": "https://wiki.company.com/bun-utilities/file_system/main",
       "category": "file_system",
       "documentation": "https://bun.sh/docs/api/utils#file-system"
     },
     {
       "title": "FILE SYSTEM: READ FILE",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/read_file",
+      "url": "https://wiki.company.com/bun-utilities/file_system/read_file",
       "category": "file_system",
-      "documentation": "https://bun.sh/docs/api/utils#readfile"
+      "documentation": "https://bun.sh/docs/api/utils#readfile",
+      "example": "import { readFile } from 'bun';\nconst content = await readFile('package.json', 'utf-8');"
     },
     {
       "title": "FILE SYSTEM: WRITE FILE",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/write_file",
+      "url": "https://wiki.company.com/bun-utilities/file_system/write_file",
       "category": "file_system",
-      "documentation": "https://bun.sh/docs/api/utils#writefile"
+      "documentation": "https://bun.sh/docs/api/utils#writefile",
+      "example": "import { writeFile } from 'bun';\nawait writeFile('output.txt', 'Hello, Bun!');"
     },
     {
       "title": "FILE SYSTEM: READ DIR",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/read_dir",
+      "url": "https://wiki.company.com/bun-utilities/file_system/read_dir",
       "category": "file_system",
       "documentation": "https://bun.sh/docs/api/utils#readdir"
     },
     {
       "title": "FILE SYSTEM: STAT",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/stat",
+      "url": "https://wiki.company.com/bun-utilities/file_system/stat",
       "category": "file_system",
       "documentation": "https://bun.sh/docs/api/utils#stat"
     },
     {
       "title": "FILE SYSTEM: COPY FILE",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/copy_file",
+      "url": "https://wiki.company.com/bun-utilities/file_system/copy_file",
       "category": "file_system",
       "documentation": "https://bun.sh/docs/api/utils#copyfile"
     },
     {
       "title": "FILE SYSTEM: MOVE FILE",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/move_file",
+      "url": "https://wiki.company.com/bun-utilities/file_system/move_file",
       "category": "file_system",
       "documentation": "https://bun.sh/docs/api/utils#movefile"
     },
     {
       "title": "FILE SYSTEM: DELETE FILE",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/delete_file",
+      "url": "https://wiki.company.com/bun-utilities/file_system/delete_file",
       "category": "file_system",
       "documentation": "https://bun.sh/docs/api/utils#deletefile"
     },
     {
       "title": "FILE SYSTEM: FILE EXISTS",
-      "url": "https://wiki.ourcompany.com/bun-docs/file_system/file_exists",
+      "url": "https://wiki.company.com/bun-utilities/file_system/file_exists",
       "category": "file_system",
-      "documentation": "https://bun.sh/docs/api/utils#fileexists"
+      "documentation": "https://bun.sh/docs/api/utils#fileexists",
+      "example": "import { exists } from 'bun';\nconst fileExists = await exists('package.json');"
     },
     {
       "title": "NETWORKING: MAIN",
-      "url": "https://wiki.ourcompany.com/bun-docs/networking/main",
+      "url": "https://wiki.company.com/bun-utilities/networking/main",
       "category": "networking",
       "documentation": "https://bun.sh/docs/api/utils#networking"
     },
     {
       "title": "NETWORKING: FETCH",
-      "url": "https://wiki.ourcompany.com/bun-docs/networking/fetch",
+      "url": "https://wiki.company.com/bun-utilities/networking/fetch",
       "category": "networking",
       "documentation": "https://bun.sh/docs/api/utils#fetch-utility"
     },
     {
       "title": "NETWORKING: SERVE",
-      "url": "https://wiki.ourcompany.com/bun-docs/networking/serve",
+      "url": "https://wiki.company.com/bun-utilities/networking/serve",
       "category": "networking",
       "documentation": "https://bun.sh/docs/api/utils#serve"
     },
     {
       "title": "NETWORKING: WEBSOCKET",
-      "url": "https://wiki.ourcompany.com/bun-docs/networking/websocket",
+      "url": "https://wiki.company.com/bun-utilities/networking/websocket",
       "category": "networking",
       "documentation": "https://bun.sh/docs/api/utils#websocket"
     },
     {
       "title": "NETWORKING: TCP",
-      "url": "https://wiki.ourcompany.com/bun-docs/networking/tcp",
+      "url": "https://wiki.company.com/bun-utilities/networking/tcp",
       "category": "networking",
       "documentation": "https://bun.sh/docs/api/utils#tcp"
     },
     {
       "title": "NETWORKING: UDP",
-      "url": "https://wiki.ourcompany.com/bun-docs/networking/udp",
+      "url": "https://wiki.company.com/bun-utilities/networking/udp",
       "category": "networking",
       "documentation": "https://bun.sh/docs/api/utils#udp"
     },
     {
       "title": "NETWORKING: DNS",
-      "url": "https://wiki.ourcompany.com/bun-docs/networking/dns",
+      "url": "https://wiki.company.com/bun-utilities/networking/dns",
       "category": "networking",
       "documentation": "https://bun.sh/docs/api/utils#dns"
     },
     {
       "title": "PROCESS: MAIN",
-      "url": "https://wiki.ourcompany.com/bun-docs/process/main",
+      "url": "https://wiki.company.com/bun-utilities/process/main",
       "category": "process",
       "documentation": "https://bun.sh/docs/api/utils#process"
     },
     {
       "title": "PROCESS: SPAWN",
-      "url": "https://wiki.ourcompany.com/bun-docs/process/spawn",
+      "url": "https://wiki.company.com/bun-utilities/process/spawn",
       "category": "process",
       "documentation": "https://bun.sh/docs/api/utils#spawn"
     },
     {
       "title": "PROCESS: EXEC",
-      "url": "https://wiki.ourcompany.com/bun-docs/process/exec",
+      "url": "https://wiki.company.com/bun-utilities/process/exec",
       "category": "process",
       "documentation": "https://bun.sh/docs/api/utils#exec"
     },
     {
       "title": "PROCESS: FORK",
-      "url": "https://wiki.ourcompany.com/bun-docs/process/fork",
+      "url": "https://wiki.company.com/bun-utilities/process/fork",
       "category": "process",
       "documentation": "https://bun.sh/docs/api/utils#fork"
     },
     {
       "title": "PROCESS: KILL",
-      "url": "https://wiki.ourcompany.com/bun-docs/process/kill",
+      "url": "https://wiki.company.com/bun-utilities/process/kill",
       "category": "process",
       "documentation": "https://bun.sh/docs/api/utils#kill"
     },
     {
       "title": "PROCESS: PID",
-      "url": "https://wiki.ourcompany.com/bun-docs/process/pid",
+      "url": "https://wiki.company.com/bun-utilities/process/pid",
       "category": "process",
       "documentation": "https://bun.sh/docs/api/utils#pid"
     },
     {
       "title": "PROCESS: SIGNALS",
-      "url": "https://wiki.ourcompany.com/bun-docs/process/signals",
+      "url": "https://wiki.company.com/bun-utilities/process/signals",
       "category": "process",
       "documentation": "https://bun.sh/docs/api/utils#signals"
     },
     {
       "title": "VALIDATION: MAIN",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/main",
+      "url": "https://wiki.company.com/bun-utilities/validation/main",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#validation"
     },
     {
       "title": "VALIDATION: IS STRING",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_string",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_string",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#isstring"
     },
     {
       "title": "VALIDATION: IS NUMBER",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_number",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_number",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#isnumber"
     },
     {
       "title": "VALIDATION: IS BOOLEAN",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_boolean",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_boolean",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#isboolean"
     },
     {
       "title": "VALIDATION: IS ARRAY",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_array",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_array",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#isarray"
     },
     {
       "title": "VALIDATION: IS OBJECT",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_object",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_object",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#isobject"
     },
     {
       "title": "VALIDATION: IS FUNCTION",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_function",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_function",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#isfunction"
     },
     {
       "title": "VALIDATION: IS PROMISE",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_promise",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_promise",
       "category": "validation",
       "documentation": "https://bun.sh/docs/api/utils#ispromise"
     },
     {
       "title": "VALIDATION: IS BUFFER",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_buffer",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_buffer",
       "category": "validation",
-      "documentation": "https://bun.sh/docs/api/utils#isbuffer"
+      "documentation": "https://bun.sh/docs/api/utils#isbuffer",
+      "example": "import { isBuffer } from 'bun';\nconst buf = Buffer.from('hello');\nconsole.log(isBuffer(buf)); // true"
     },
     {
-      "title": "VALIDATION: IS TYPED_ARRAY",
-      "url": "https://wiki.ourcompany.com/bun-docs/validation/is_typed_array",
+      "title": "VALIDATION: IS TYPED ARRAY",
+      "url": "https://wiki.company.com/bun-utilities/validation/is_typed_array",
       "category": "validation",
-      "documentation": "https://bun.sh/docs/api/utils#istypedarray"
+      "documentation": "https://bun.sh/docs/api/utils#istypedarray",
+      "example": "import { isTypedArray } from 'bun';\nconst arr = new Uint8Array([1, 2, 3]);\nconsole.log(isTypedArray(arr)); // true"
     },
     {
       "title": "CONVERSION: MAIN",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/main",
+      "url": "https://wiki.company.com/bun-utilities/conversion/main",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#conversion"
     },
     {
       "title": "CONVERSION: TO BUFFER",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_buffer",
+      "url": "https://wiki.company.com/bun-utilities/conversion/to_buffer",
       "category": "conversion",
-      "documentation": "https://bun.sh/docs/api/utils#tobuffer"
+      "documentation": "https://bun.sh/docs/api/utils#tobuffer",
+      "example": "import { toBuffer } from 'bun';\nconst buffer = toBuffer('Hello'); // Convert string to Buffer"
     },
     {
       "title": "CONVERSION: TO STRING",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_string",
+      "url": "https://wiki.company.com/bun-utilities/conversion/to_string",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#tostring"
     },
     {
       "title": "CONVERSION: TO NUMBER",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_number",
+      "url": "https://wiki.company.com/bun-utilities/conversion/to_number",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#tonumber"
     },
     {
       "title": "CONVERSION: TO BOOLEAN",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_boolean",
+      "url": "https://wiki.company.com/bun-utilities/conversion/to_boolean",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#toboolean"
     },
     {
       "title": "CONVERSION: TO ARRAY",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_array",
+      "url": "https://wiki.company.com/bun-utilities/conversion/to_array",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#toarray"
     },
     {
       "title": "CONVERSION: TO OBJECT",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/to_object",
+      "url": "https://wiki.company.com/bun-utilities/conversion/to_object",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#toobject"
     },
     {
       "title": "CONVERSION: JSON PARSE",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/json_parse",
+      "url": "https://wiki.company.com/bun-utilities/conversion/json_parse",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#jsonparse"
     },
     {
       "title": "CONVERSION: JSON STRINGIFY",
-      "url": "https://wiki.ourcompany.com/bun-docs/conversion/json_stringify",
+      "url": "https://wiki.company.com/bun-utilities/conversion/json_stringify",
       "category": "conversion",
       "documentation": "https://bun.sh/docs/api/utils#jsonstringify"
+    },
+    {
+      "title": "PERFORMANCE: MAIN",
+      "url": "https://wiki.company.com/bun-utilities/performance/main",
+      "category": "performance",
+      "documentation": "https://bun.sh/docs/api/performance"
+    },
+    {
+      "title": "PERFORMANCE: GC",
+      "url": "https://wiki.company.com/bun-utilities/performance/gc",
+      "category": "performance",
+      "documentation": "https://bun.sh/docs/api/gc"
+    },
+    {
+      "title": "PERFORMANCE: PERFORMANCE NOW",
+      "url": "https://wiki.company.com/bun-utilities/performance/performance_now",
+      "category": "performance",
+      "documentation": "https://bun.sh/docs/api/performance"
+    },
+    {
+      "title": "PERFORMANCE: MEMORY USAGE",
+      "url": "https://wiki.company.com/bun-utilities/performance/memory_usage",
+      "category": "performance",
+      "documentation": "https://bun.sh/docs/api/performance"
+    },
+    {
+      "title": "COLOR: MAIN",
+      "url": "https://wiki.company.com/bun-utilities/color/main",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color"
+    },
+    {
+      "title": "COLOR: COLOR",
+      "url": "https://wiki.company.com/bun-utilities/color/color",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#bun-color",
+      "example": "import { color } from 'bun';\nconst red = color('red', 'css'); // 'rgb(255, 0, 0)'\nconst ansi = color('#ff0000', 'ansi'); // ANSI escape code"
+    },
+    {
+      "title": "COLOR: ANSI",
+      "url": "https://wiki.company.com/bun-utilities/color/ansi",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#ansi",
+      "example": "import { color } from 'bun';\nconst code = color('blue', 'ansi'); // ANSI escape sequence\nconsole.log(code + 'Blue text' + '\\x1b[0m');"
+    },
+    {
+      "title": "COLOR: ANSI 16",
+      "url": "https://wiki.company.com/bun-utilities/color/ansi_16",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#ansi-16"
+    },
+    {
+      "title": "COLOR: ANSI 256",
+      "url": "https://wiki.company.com/bun-utilities/color/ansi_256",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#ansi-256",
+      "example": "import { color } from 'bun';\nconst code = color('#8b5cf6', 'ansi-256'); // 256-color ANSI"
+    },
+    {
+      "title": "COLOR: CSS",
+      "url": "https://wiki.company.com/bun-utilities/color/css",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#css"
+    },
+    {
+      "title": "COLOR: RGB",
+      "url": "https://wiki.company.com/bun-utilities/color/rgb",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#rgb",
+      "example": "import { color } from 'bun';\nconst [r, g, b] = color('coral', 'rgb'); // [255, 127, 80]"
+    },
+    {
+      "title": "COLOR: RGBA",
+      "url": "https://wiki.company.com/bun-utilities/color/rgba",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#rgba"
+    },
+    {
+      "title": "COLOR: HSL",
+      "url": "https://wiki.company.com/bun-utilities/color/hsl",
+      "category": "color",
+      "documentation": "https://bun.sh/docs/api/color#hsl",
+      "example": "import { color } from 'bun';\nconst [h, s, l] = color('#ff6347', 'hsl'); // [9, 100, 64]"
     }
   ],
   "api": {

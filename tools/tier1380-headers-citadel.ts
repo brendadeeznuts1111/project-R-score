@@ -221,8 +221,9 @@ export class Tier1380HeadersCitadel {
       
       return { snapshot, isValid: true };
       
-    } catch (error) {
-      return { snapshot: null, isValid: false, error: error.message };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      return { snapshot: null, isValid: false, error: errorMessage };
     }
   }
 

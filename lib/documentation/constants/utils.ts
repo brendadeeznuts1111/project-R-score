@@ -22,7 +22,8 @@ export enum UtilsCategory {
   CONVERSION = 'conversion',
   CRYPTOGRAPHY = 'cryptography',
   DATE = 'date',
-  PERFORMANCE = 'performance'
+  PERFORMANCE = 'performance',
+  COLOR = 'color'
 }
 
 /**
@@ -578,6 +579,18 @@ export const BUN_UTILS_URLS = {
     GC: '/docs/api/gc',
     PERFORMANCE_NOW: '/docs/api/performance',
     MEMORY_USAGE: '/docs/api/performance'
+  },
+
+  [UtilsCategory.COLOR]: {
+    MAIN: '/docs/api/color',
+    COLOR: '/docs/api/color#bun-color',
+    ANSI: '/docs/api/color#ansi',
+    ANSI_16: '/docs/api/color#ansi-16',
+    ANSI_256: '/docs/api/color#ansi-256',
+    CSS: '/docs/api/color#css',
+    RGB: '/docs/api/color#rgb',
+    RGBA: '/docs/api/color#rgba',
+    HSL: '/docs/api/color#hsl'
   }
 } as const;
 
@@ -607,6 +620,25 @@ console.log(isBuffer(buf)); // true`
   CONVERSION: {
     TO_BUFFER: `import { toBuffer } from 'bun';
 const buffer = toBuffer('Hello'); // Convert string to Buffer`
+  },
+
+  COLOR: {
+    COLOR: `import { color } from 'bun';
+const red = color('red', 'css'); // 'rgb(255, 0, 0)'
+const ansi = color('#ff0000', 'ansi'); // ANSI escape code`,
+
+    ANSI: `import { color } from 'bun';
+const code = color('blue', 'ansi'); // ANSI escape sequence
+console.log(code + 'Blue text' + '\\x1b[0m');`,
+
+    ANSI_256: `import { color } from 'bun';
+const code = color('#8b5cf6', 'ansi-256'); // 256-color ANSI`,
+
+    RGB: `import { color } from 'bun';
+const [r, g, b] = color('coral', 'rgb'); // [255, 127, 80]`,
+
+    HSL: `import { color } from 'bun';
+const [h, s, l] = color('#ff6347', 'hsl'); // [9, 100, 64]`
   }
 } as const;
 

@@ -64,9 +64,17 @@ function formatUtilityName(name: string): string {
 }
 
 function getExample(category: UtilsCategory, utilName: string): string | undefined {
-  const categoryExamples = BUN_UTILS_EXAMPLES[category as keyof typeof BUN_UTILS_EXAMPLES];
-  if (!categoryExamples) return undefined;
-  return categoryExamples[utilName as keyof typeof categoryExamples];
+  // Safe type mapping - ensure all enum values have corresponding examples
+  const categoryKey = category.toUpperCase() as keyof typeof BUN_UTILS_EXAMPLES;
+  const categoryExamples = BUN_UTILS_EXAMPLES[categoryKey];
+  
+  if (!categoryExamples) {
+    console.warn(`No examples found for category: ${category}`);
+    return undefined;
+  }
+  
+  const example = categoryExamples[utilName as keyof typeof categoryExamples];
+  return example || undefined;
 }
 
 function buildWikiUrl(config: WikiConfig, category: string, utilName: string): string {

@@ -182,6 +182,7 @@
     "@typescript-eslint/parser": "^8.54.0",
     "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-security": "^3.0.1",
     "jiti": "^2.6.1",
     "typescript-eslint": "^8.54.0"
   }

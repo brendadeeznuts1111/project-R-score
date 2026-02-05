@@ -40,6 +40,14 @@ import { RSSIntegrationService, RSSFeedItem } from '../services/rss-integration'
 // Import advanced cache management
 import { CacheFactory, CacheMiddleware } from '../lib/cache-management.ts';
 
+// Import security middleware
+import { 
+  SecurityMiddleware, 
+  SecurityPresets, 
+  createCORSHeaders,
+  createSecurityMiddleware 
+} from '../lib/rate-limiting-security.ts';
+
 // Initialize services
 const docsFetcher = new EnhancedDocsFetcher({
   ttl: 6 * 60 * 60 * 1000, // 6 hours
@@ -58,6 +66,56 @@ const rssService = new RSSIntegrationService();
 const responseCache = CacheFactory.createApiCache();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+// Initialize security middleware with error handling
+let securityMiddleware: SecurityMiddleware;
+let corsHeaders: Record<string, string>;
+
+try {
+  securityMiddleware = createSecurityMiddleware(
+    process.env.NODE_ENV === 'production' ? 'productionAPI' : 'development',
+    {
+      rateLimit: {
+        maxRequests: process.env.NODE_ENV === 'production' ? 100 : 1000
+      },
+      securityHeaders: {
+        customHeaders: {
+          'X-Server-Version': '1.0.0',
+          'X-Powered-By': 'Bun'
+        }
+      }
+    }
+  );
+} catch (error) {
+  console.error('❌ Failed to initialize security middleware:', error);
+  console.warn('⚠️ Running without security middleware - NOT RECOMMENDED FOR PRODUCTION');
+  // Create a no-op fallback middleware
+  securityMiddleware = {
+    apply: async (request: Request, handler: () => Promise<Response>) => {
+      console.warn('Security middleware bypassed due to initialization failure');
+      return await handler();
+    }
+  } as SecurityMiddleware;
+}
+
+// Initialize CORS headers with error handling
+try {
+  corsHeaders = createCORSHeaders(
+    process.env.NODE_ENV === 'production' ? 
+      ['https://bun.sh', 'https://bun.com'] : 
+      ['*'],
+    ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Client-Version']
+  );
+} catch (error) {
+  console.error('❌ Failed to initialize CORS headers:', error);
+  console.warn('⚠️ Using default CORS headers');
+  corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  };
+}
+
 // Unified server configuration
 const server = Bun.serve({
   port: 3000,
@@ -65,37 +123,37 @@ const server = Bun.serve({
     const url = new URL(request.url);
     const path = url.pathname;
     
-    // CORS headers for all responses
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-    };
-    
     // Handle OPTIONS requests for CORS
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      const response = new Response(null, { status: 200 });
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        response.headers.set(key, value);
+      });
+      return response;
     }
     
-    try {
-      // Route to appropriate handler
-      const handler = getRouteHandler(path);
-      if (handler) {
-        const response = await handler(request, url);
+    // Apply security middleware
+    return await securityMiddleware.apply(request, async () => {
+      try {
+        // Route to appropriate handler
+        const handler = getRouteHandler(path);
+        if (handler) {
+          const response = await handler(request, url);
+          
+          // Add CORS headers to all responses
+          Object.entries(corsHeaders).forEach(([key, value]) => {
+            response.headers.set(key, value);
+          });
+          
+          return response;
+        }
         
-        // Add CORS headers to all responses
-        Object.entries(corsHeaders).forEach(([key, value]) => {
-          response.headers.set(key, value);
-        });
-        
-        return response;
+        return handleNotFound(request, url);
+      } catch (error) {
+        console.error(`Server error for ${path}:`, error);
+        return handleError(error, request, url);
       }
-      
-      return handleNotFound(request, url);
-    } catch (error) {
-      console.error(`Server error for ${path}:`, error);
-      return handleError(error, request, url);
-    }
+    });
   },
 });
 

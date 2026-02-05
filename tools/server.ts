@@ -40,10 +40,22 @@ function simpleHmac(key: string, data: string): string {
   return Bun.hash.sha256(data + key).toString('hex').slice(0, 16);
 }
 
+// Get session secret from environment or generate a warning
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET || Bun.env.SESSION_SECRET;
+  if (!secret) {
+    console.warn('⚠️ WARNING: No SESSION_SECRET found in environment. Using insecure default!');
+    console.warn('Set SESSION_SECRET environment variable for production use.');
+    return 'insecure-default-secret-do-not-use-in-production';
+  }
+  return secret;
+}
+
 // Generate secure session cookie
 function createSessionCookie(sessionData: Record<string, any>): string {
   const payload = JSON.stringify(sessionData);
-  const hmac = simpleHmac('project-secret-key', payload);
+  const sessionSecret = getSessionSecret();
+  const hmac = simpleHmac(sessionSecret, payload);
   const encoded = btoa(payload)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
@@ -63,7 +75,7 @@ function verifySessionCookie(cookieHeader: string): Record<string, any> | null {
 
   try {
     const payload = atob(sessionCookie.replace(/-/g, '+').replace(/_/g, '/'));
-    const expectedHmac = simpleHmac('project-secret-key', payload);
+    const expectedHmac = simpleHmac(getSessionSecret(), payload);
 
     if (hmac !== expectedHmac) {
       console.warn(`Session HMAC mismatch in ${Bun.main}`);
@@ -287,8 +299,9 @@ Bun.serve({
           }
         });
         
-      } catch (error) {
-        console.error(`[${projectContext}] Proxy error:`, error);
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        console.error(`[${projectContext}] Proxy error:`, errorMessage);
         
         return new Response(`
           <!DOCTYPE html>

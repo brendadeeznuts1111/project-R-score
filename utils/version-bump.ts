@@ -14,6 +14,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
+import { logger } from "../lib/utils/logger.ts";
 
 const REGISTRY_FILE = join(import.meta.dir, "BUN_CONSTANTS_VERSION.json");
 const EXTRACT_SCRIPT = join(import.meta.dir, "scanner", "scripts", "extract-bun-constants.ts");
@@ -96,23 +97,24 @@ function validateIntegrity(): boolean {
     const match = extractContent.match(/export const BUN_CONSTANTS_VERSION = ['"]([^'"]+)['"];/);
     
     if (!match) {
-      console.error("❌ BUN_CONSTANTS_VERSION not found in extract script");
+      logger.error("❌ BUN_CONSTANTS_VERSION not found in extract script");
       return false;
     }
     
     const scriptVersion = match[1];
     if (scriptVersion !== registry.version) {
-      console.error(`❌ Version mismatch: registry=${registry.version}, script=${scriptVersion}`);
+      logger.error(`❌ Version mismatch: registry=${registry.version}, script=${scriptVersion}`);
       return false;
     }
     
-    console.log(`✅ Integrity validated: v${registry.version}`);
-    console.log(`✅ Tier-1380 Certified: ${registry.tier1380.compliant}`);
-    console.log(`✅ MCP Enabled: ${registry.mcpEnabled}`);
-    console.log(`✅ Schema Version: ${registry.schemaVersion}`);
+    logger.info(`✅ Integrity validated: v${registry.version}`);
+    logger.info(`✅ Tier-1380 Certified: ${registry.tier1380.compliant}`);
+    logger.info(`✅ MCP Enabled: ${registry.mcpEnabled}`);
+    logger.info(`✅ Schema Version: ${registry.schemaVersion}`);
     return true;
-  } catch (error) {
-    console.error(`❌ Validation failed: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    logger.error(`❌ Validation failed: ${errorMessage}`);
     return false;
   }
 }
@@ -120,13 +122,14 @@ function validateIntegrity(): boolean {
 function showCurrentVersion(): void {
   try {
     const registry: VersionRegistry = JSON.parse(readFileSync(REGISTRY_FILE, "utf-8"));
-    console.log(`Current Version: ${registry.version}`);
-    console.log(`Schema: ${registry.schemaVersion}`);
-    console.log(`Bun: ${registry.bunVersion}`);
-    console.log(`Tier-1380: ${registry.tier1380.compliant ? "✅ Certified" : "❌ Non-compliant"}`);
-    console.log(`Last Updated: ${registry.metadata.extractionTime}`);
-  } catch (error) {
-    console.error(`❌ Failed to read registry: ${error.message}`);
+    logger.info(`Current Version: ${registry.version}`);
+    logger.info(`Schema: ${registry.schemaVersion}`);
+    logger.info(`Bun: ${registry.bunVersion}`);
+    logger.info(`Tier-1380: ${registry.tier1380.compliant ? "✅ Certified" : "❌ Non-compliant"}`);
+    logger.info(`Last Updated: ${registry.metadata.extractionTime}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    logger.error(`❌ Failed to read registry: ${errorMessage}`);
     process.exit(1);
   }
 }
@@ -135,7 +138,7 @@ function main(): void {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log(`
+    logger.info(`
 🔧 Version Bump CLI - Tier-1380 Certified
 
 Usage:
@@ -169,7 +172,7 @@ Examples:
         
       case "--type": {
         if (!value || !["patch", "minor", "major"].includes(value)) {
-          console.error("❌ Invalid type. Use: patch, minor, or major");
+          logger.error("❌ Invalid type. Use: patch, minor, or major");
           process.exit(1);
         }
         
@@ -179,16 +182,16 @@ Examples:
         updateRegistry(registry, newVersion, `Automated ${value} bump`);
         updateExtractScript(newVersion);
         
-        console.log(`🚀 Version bumped: ${registry.version} -> ${newVersion}`);
-        console.log(`📝 Registry updated: ${REGISTRY_FILE}`);
-        console.log(`📝 Script updated: ${EXTRACT_SCRIPT}`);
-        console.log(`🏷️  Tag suggestion: git tag -a v${newVersion} -m "Tier-1380 Version ${newVersion}"`);
+        logger.info(`🚀 Version bumped: ${registry.version} -> ${newVersion}`);
+        logger.info(`📝 Registry updated: ${REGISTRY_FILE}`);
+        logger.info(`📝 Script updated: ${EXTRACT_SCRIPT}`);
+        logger.info(`🏷️  Tag suggestion: git tag -a v${newVersion} -m "Tier-1380 Version ${newVersion}"`);
         break;
       }
       
       case "--version": {
         if (!value || !/^\d+\.\d+\.\d+$/.test(value)) {
-          console.error("❌ Invalid version format. Use: x.y.z");
+          logger.error("❌ Invalid version format. Use: x.y.z");
           process.exit(1);
         }
         
@@ -197,18 +200,19 @@ Examples:
         updateRegistry(registry, value, `Manual version set to ${value}`);
         updateExtractScript(value);
         
-        console.log(`🚀 Version set: ${registry.version} -> ${value}`);
-        console.log(`📝 Registry updated: ${REGISTRY_FILE}`);
-        console.log(`📝 Script updated: ${EXTRACT_SCRIPT}`);
+        logger.info(`🚀 Version set: ${registry.version} -> ${value}`);
+        logger.info(`📝 Registry updated: ${REGISTRY_FILE}`);
+        logger.info(`📝 Script updated: ${EXTRACT_SCRIPT}`);
         break;
       }
       
       default:
-        console.error(`❌ Unknown flag: ${flag}`);
+        logger.error(`❌ Unknown flag: ${flag}`);
         process.exit(1);
     }
-  } catch (error) {
-    console.error(`❌ Operation failed: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    logger.error(`❌ Operation failed: ${errorMessage}`);
     process.exit(1);
   }
 }

@@ -5,6 +5,7 @@
 import { nanoseconds } from "bun";
 import { stat } from "fs/promises";
 import { PROJECT_PALETTE, getProjectStatusColor, renderProjectHeader } from "./project-colors";
+import { logger } from "../lib/utils/logger.ts";
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES — 20 Column Schema Alignment
@@ -78,6 +79,10 @@ interface FilteredOutput {
   throughput: ThroughputLedger[];
 }
 
+interface ParsedTomlObject {
+  [key: string]: string | number | boolean;
+}
+
 // ═══════════════════════════════════════════════════════════════
 // R-SCORE CALCULATION (Bun.nanoseconds precision)
 // ═══════════════════════════════════════════════════════════════
@@ -144,7 +149,7 @@ const parseTomlFast = async (
     const matches = [...cleanContent.matchAll(regex)];
     const list: T[] = [];
     for (const m of matches) {
-      const obj: any = {};
+      const obj: ParsedTomlObject = {};
       m[1].trim().split('\\n').forEach(line => {
         const [k, v] = line.split('=').map(s => s.trim());
         if (!k || !v) return;
@@ -202,7 +207,7 @@ const filterData = (
   });
   
   // Apply filter
-  const shouldInclude = (item: {risk_level?: string}) => {
+  const shouldInclude = (item: {risk_level?: string}): boolean => {
     if (filterLevel === "all") return true;
     return item.risk_level === filterLevel;
   };
@@ -235,7 +240,7 @@ const filterData = (
 
 const formatTable = (data: FilteredOutput, project: string): string => {
   const p = PROJECT_PALETTE[project] || PROJECT_PALETTE["legacy.cli"];
-  const colorFor = (risk?: string) => {
+  const colorFor = (risk?: string): string => {
     if (risk === "high") return getProjectStatusColor(project, "critical");
     if (risk === "medium") return getProjectStatusColor(project, "warning");
     if (risk === "low") return getProjectStatusColor(project, "success");
@@ -310,8 +315,8 @@ const formatToml = (data: FilteredOutput): string => {
 // CLI INTERFACE
 // ═══════════════════════════════════════════════════════════════
 
-const printHelp = () => {
-  console.log(`
+const printHelp = (): void => {
+  logger.info(`
 registry-color-channel-cli.ts — Tier-1380 Color Channel Risk Filter
 
 Usage:
@@ -369,7 +374,7 @@ if (import.meta.main) {
   const projectArg = args.find(a => a.startsWith("--project="))?.split("=")[1] || "com.tier1380.registry";
   
   if (!["high", "medium", "low", "all"].includes(effectiveFilter)) {
-    console.error(`Error: Invalid filter "${effectiveFilter}". Use: high, medium, low, all`);
+    logger.error(`Error: Invalid filter "${effectiveFilter}". Use: high, medium, low, all`);
     process.exit(1);
   }
   
@@ -421,13 +426,14 @@ if (import.meta.main) {
     
     if (outputArg) {
       await Bun.write(outputArg, output);
-      console.error(`Written to: ${outputArg}`);
+      logger.info(`Written to: ${outputArg}`);
     } else {
+      // Keep console.log for actual output to stdout
       console.log(output);
     }
     
     const totalLat = nanoseconds() - start;
-    console.error(`\x1b[90m[${totalLat}ns|${filtered.meta.filtered_channels + filtered.meta.filtered_throughput}items|R:${effectiveFilter}]\x1b[0m`);
+    logger.debug(`\x1b[90m[${totalLat}ns|${filtered.meta.filtered_channels + filtered.meta.filtered_throughput}items|R:${effectiveFilter}]\x1b[0m`);
     
     // Exit code based on risk detection (useful for CI)
     if (effectiveFilter !== "all" && (filtered.meta.filtered_channels > 0 || filtered.meta.filtered_throughput > 0)) {
@@ -436,8 +442,9 @@ if (import.meta.main) {
       process.exit(1); // No items found for filter
     }
     
-  } catch (err) {
-    console.error(`\x1b[31mError: ${(err as Error).message}\x1b[0m`);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+    logger.error(`\x1b[31mError: ${errorMessage}\x1b[0m`);
     process.exit(2);
   }
 }

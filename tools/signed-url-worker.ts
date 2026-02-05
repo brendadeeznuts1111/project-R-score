@@ -7,6 +7,7 @@
  */
 
 import { getSignedR2URL } from "./lib/r2/signed-url.ts";
+import { handleError, ErrorHandler } from "../lib/utils/error-handler.ts";
 
 /**
  * 🚀 Prefetch Optimizations
@@ -22,6 +23,7 @@ import { getSignedR2URL } from "./lib/r2/signed-url.ts";
 export default {
   async fetch(request: Request, env: { R2_BUCKET: R2_BUCKET }): Promise<Response> {
     const url = new URL(request.url);
+    const requestId = crypto.randomUUID().slice(0, 8);
     
     // Route: /signed - Generate signed URL for any key
     if (url.pathname === "/signed" && request.method === "GET") {
@@ -37,18 +39,30 @@ export default {
         });
       }
       
-      try {
-        const signed = await getSignedR2URL(env.R2_BUCKET, key, {
-          expiresInSeconds: 3600, // 1 hour default
-          customMetadata: {
-            requestedBy: request.headers.get("CF-Connecting-IP") || "unknown",
-            requestId: crypto.randomUUID().slice(0, 8),
-            userAgent: request.headers.get("user-agent") || "unknown",
-            variant: "production-live",
-            context: "tier1380-signed-urls"
-          }
-        });
-        
+      // Use standardized error handling
+      const result = await ErrorHandler.safeExecute(
+        async () => {
+          return await getSignedR2URL(env.R2_BUCKET, key, {
+            expiresInSeconds: 3600, // 1 hour default
+            customMetadata: {
+              requestedBy: request.headers.get("CF-Connecting-IP") || "unknown",
+              requestId,
+              userAgent: request.headers.get("user-agent") || "unknown",
+              variant: "production-live",
+              context: "tier1380-signed-urls"
+            }
+          });
+        },
+        {
+          module: 'signed-url-worker',
+          function: 'fetch',
+          operation: 'generate-signed-url',
+          requestId
+        }
+      );
+      
+      if (result.success) {
+        const signed = result.data;
         return Response.json({
           signedUrl: signed,
           key,
@@ -58,13 +72,11 @@ export default {
           usage: "GET /signed?key=<object-key>",
           "✅": "R2 Signed URL generated"
         });
-      } catch (error) {
-        return Response.json({
-          error: (error as Error).message,
-          code: "SIGNED_URL_ERROR"
-        }, { 
-          status: 500, 
-          headers: { "Content-Type: "application/json" }
+      } else {
+        const errorResponse = ErrorHandler.createErrorResponse(result.error, 500);
+        return Response.json(errorResponse.error, {
+          status: errorResponse.status,
+          headers: { "Content-Type": "application/json" }
         });
       }
     }
@@ -97,9 +109,10 @@ export default {
         
         // Redirect to signed URL
         return Response.redirect(signed.signedUrl, 302);
-      } catch (error) {
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         return Response.json({
-          error: (error as Error).message,
+          error: errorMessage,
           code: "SIGNED_URL_ERROR"
         }, { 
           status: 500, 
@@ -133,9 +146,10 @@ export default {
           usage: "GET /audit?key=<audit-key>",
           "✅": "Audit download URL generated"
         });
-      } catch (error) {
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         return Response.json({
-          error: (error as Error).message,
+          error: errorMessage,
           code: "AUDIT_URL_ERROR"
         }, { 
           status: 500, 

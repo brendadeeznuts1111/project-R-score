@@ -4,9 +4,9 @@
 
 ## Overview
 
-- **Total Utilities**: 46
-- **Categories**: 6
-- **Last Updated**: 2026-02-05T15:03:04.866Z
+- **Total Utilities**: 55
+- **Categories**: 7
+- **Last Updated**: 2026-02-05T15:11:25.472Z
 
 ## Categories
 
@@ -97,6 +97,22 @@
 | GC | [Wiki](https://wiki.company.com/bun-utilities/performance/gc) | [Docs](https://bun.sh/docs/api/gc) | No |
 | PERFORMANCE NOW | [Wiki](https://wiki.company.com/bun-utilities/performance/performance_now) | [Docs](https://bun.sh/docs/api/performance) | No |
 | MEMORY USAGE | [Wiki](https://wiki.company.com/bun-utilities/performance/memory_usage) | [Docs](https://bun.sh/docs/api/performance) | No |
+
+### COLOR
+
+9 utilities in this category.
+
+| Utility | Internal Wiki | Official Documentation | Example |
+|---------|---------------|----------------------|---------|
+| MAIN | [Wiki](https://wiki.company.com/bun-utilities/color/main) | [Docs](https://bun.sh/docs/api/color) | No |
+| COLOR | [Wiki](https://wiki.company.com/bun-utilities/color/color) | [Docs](https://bun.sh/docs/api/color#bun-color) | No |
+| ANSI | [Wiki](https://wiki.company.com/bun-utilities/color/ansi) | [Docs](https://bun.sh/docs/api/color#ansi) | No |
+| ANSI 16 | [Wiki](https://wiki.company.com/bun-utilities/color/ansi_16) | [Docs](https://bun.sh/docs/api/color#ansi-16) | No |
+| ANSI 256 | [Wiki](https://wiki.company.com/bun-utilities/color/ansi_256) | [Docs](https://bun.sh/docs/api/color#ansi-256) | No |
+| CSS | [Wiki](https://wiki.company.com/bun-utilities/color/css) | [Docs](https://bun.sh/docs/api/color#css) | No |
+| RGB | [Wiki](https://wiki.company.com/bun-utilities/color/rgb) | [Docs](https://bun.sh/docs/api/color#rgb) | No |
+| RGBA | [Wiki](https://wiki.company.com/bun-utilities/color/rgba) | [Docs](https://bun.sh/docs/api/color#rgba) | No |
+| HSL | [Wiki](https://wiki.company.com/bun-utilities/color/hsl) | [Docs](https://bun.sh/docs/api/color#hsl) | No |
 
 ## Detailed Pages
 
@@ -698,6 +714,123 @@
 
 ---
 
+### COLOR: MAIN
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/main](https://wiki.company.com/bun-utilities/color/main)
+**Official Documentation**: [https://bun.sh/docs/api/color](https://bun.sh/docs/api/color)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: COLOR
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/color](https://wiki.company.com/bun-utilities/color/color)
+**Official Documentation**: [https://bun.sh/docs/api/color#bun-color](https://bun.sh/docs/api/color#bun-color)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: ANSI
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/ansi](https://wiki.company.com/bun-utilities/color/ansi)
+**Official Documentation**: [https://bun.sh/docs/api/color#ansi](https://bun.sh/docs/api/color#ansi)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: ANSI 16
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/ansi_16](https://wiki.company.com/bun-utilities/color/ansi_16)
+**Official Documentation**: [https://bun.sh/docs/api/color#ansi-16](https://bun.sh/docs/api/color#ansi-16)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: ANSI 256
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/ansi_256](https://wiki.company.com/bun-utilities/color/ansi_256)
+**Official Documentation**: [https://bun.sh/docs/api/color#ansi-256](https://bun.sh/docs/api/color#ansi-256)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: CSS
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/css](https://wiki.company.com/bun-utilities/color/css)
+**Official Documentation**: [https://bun.sh/docs/api/color#css](https://bun.sh/docs/api/color#css)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: RGB
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/rgb](https://wiki.company.com/bun-utilities/color/rgb)
+**Official Documentation**: [https://bun.sh/docs/api/color#rgb](https://bun.sh/docs/api/color#rgb)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: RGBA
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/rgba](https://wiki.company.com/bun-utilities/color/rgba)
+**Official Documentation**: [https://bun.sh/docs/api/color#rgba](https://bun.sh/docs/api/color#rgba)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
+### COLOR: HSL
+
+**Internal Wiki**: [https://wiki.company.com/bun-utilities/color/hsl](https://wiki.company.com/bun-utilities/color/hsl)
+**Official Documentation**: [https://bun.sh/docs/api/color#hsl](https://bun.sh/docs/api/color#hsl)
+
+#### Related Links
+
+- [Category Overview](#color)
+- [All Utilities](#categories)
+- [Bun Official Documentation](https://bun.sh/docs/api/utils)
+
+---
+
 ## Usage Guide
 
 ### How to Use This Wiki
@@ -725,4 +858,4 @@ This wiki can be integrated with:
 
 ---
 
-*Generated by Bun Wiki URL Generator on 2026-02-05T15:03:04.869Z*
+*Generated by Bun Wiki URL Generator on 2026-02-05T15:11:25.474Z*

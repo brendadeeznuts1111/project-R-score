@@ -164,3 +164,6 @@ credentials/
 **/auth/
 **/credentials/.env.production
 .env.secret
+
+# Clawdbot - temporarily ignored
+clawdbot/

@@ -76,7 +76,7 @@ export class Tier1380ConfigManager {
       try {
         const data = readFileSync(this.configPath, "utf-8");
         return JSON.parse(data);
-      } catch (error) {
+      } catch (error: unknown) {
         console.warn(`⚠️ Could not load config from ${this.configPath}, creating new one`);
         return this.createDefaultConfig();
       }
@@ -223,8 +223,9 @@ export class Tier1380ConfigManager {
       }
 
       return { variants, weights };
-    } catch (error) {
-      console.warn(`⚠️ Error parsing config: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.warn(`⚠️ Error parsing config: ${errorMessage}`);
       return null;
     }
   }
@@ -369,8 +370,9 @@ export class Tier1380ConfigManager {
       
       writeFileSync(this.configPath, JSON.stringify(this.config, null, 2));
       console.log(`💾 Configuration saved to ${this.configPath}`);
-    } catch (error) {
-      console.error(`❌ Failed to save configuration: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.error(`❌ Failed to save configuration: ${errorMessage}`);
     }
   }
 

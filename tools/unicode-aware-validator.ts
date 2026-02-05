@@ -354,7 +354,8 @@ function validateURLUnicode(url: string): {
       warnings
     };
     
-  } catch (error) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       isValid: false,
       baseValid: false,
