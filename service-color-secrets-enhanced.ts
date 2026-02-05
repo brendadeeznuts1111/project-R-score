@@ -13,15 +13,23 @@ import {
 import { validateHost, validatePort, sanitizeEnvVar } from "./lib/utils/env-validator";
 
 // ──────────────────────────────────────────────────────────────────────────────
-// STATUS GLYPHS & FORMATTERS (HSL-powered)
+// STATUS GLYPHS & FORMATTERS (Advanced HSL-powered with perceptual adjustment)
 // ──────────────────────────────────────────────────────────────────────────────
+import {
+  getStatusAnsi,
+  getStatusColor,
+  generateStatusConfig,
+  STATUS_HUES,
+  HSL_SWEET_SPOTS,
+} from "./lib/utils/advanced-hsl-colors.js";
+
 const BUN_STATUS_GLYPHS = {
-  success: { glyph: "✓", baseHue: 120 },  // Green
-  warning: { glyph: "▵", baseHue: 45 },   // Yellow/Orange
-  error:   { glyph: "✗", baseHue: 0 }     // Red
+  success: { glyph: "✓", baseHue: STATUS_HUES.success },
+  warning: { glyph: "▵", baseHue: STATUS_HUES.warning },
+  error:   { glyph: "✗", baseHue: STATUS_HUES.error }
 };
 
-// CRITICAL FIX: Add missing applyHsl function
+// Advanced HSL formatter with perceptual brightness compensation
 const applyHsl = (h: number, s: number, l: number): string => {
   return Bun.color(`hsl(${h}, ${s}%, ${l}%)`, "ansi") || "";
 };
@@ -29,24 +37,58 @@ const applyHsl = (h: number, s: number, l: number): string => {
 const formatStatusCell = (
   status: "success" | "warning" | "error",
   config: { hueShift: number, saturationMod: number, lightnessMod: number },
-  width: number = 6
+  width: number = 6,
+  severity?: "low" | "medium" | "high"
 ): string => {
   const s = BUN_STATUS_GLYPHS[status];
-  const hue = (s.baseHue + config.hueShift) % 360;
-  const ansi = Bun.color(`hsl(${hue}, ${config.saturationMod * 100}%, ${config.lightnessMod * 100}%)`, "ansi") || "";
+  const baseHue = (s.baseHue + config.hueShift) % 360;
+  
+  // Use advanced status color with perceptual adjustment
+  const hsl = getStatusColor(
+    status,
+    config.lightnessMod * 100,
+    severity || "medium"
+  );
+  
+  // Apply config modifiers while respecting sweet spots
+  const adjustedHsl = {
+    h: baseHue,
+    s: Math.min(100, hsl.s * config.saturationMod),
+    l: Math.min(100, hsl.l * config.lightnessMod),
+  };
+  
+  const ansi = Bun.color(
+    `hsl(${adjustedHsl.h}, ${adjustedHsl.s}%, ${adjustedHsl.l}%)`,
+    "ansi"
+  ) || "";
+  
   return `${ansi}${s.glyph.padEnd(width - 2)}\x1b[0m`;
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
-// PROJECT CONFIG (per-profile HSL + project-specific tuning)
+// PROJECT CONFIG (per-profile HSL + project-specific tuning with sweet spots)
 // ──────────────────────────────────────────────────────────────────────────────
-const getProjectConfig = (profile: string, projectName?: string) => ({
-  hueShift: profile === "production" ? 120 : profile === "staging" ? 45 : 210,
-  saturationMod: projectName?.includes("critical") ? 1.2 : 1.0,  // Boost sat for high-risk projects
-  lightnessMod: projectName?.includes("legacy") ? 0.6 : 0.85,    // Darker for legacy
-  maxColumnWidth: 60,
-  projectName: projectName || profile
-});
+const getProjectConfig = (profile: string, projectName?: string) => {
+  // Use HSL sweet spots for better visual impact
+  const profileHues: Record<string, number> = {
+    production: HSL_SWEET_SPOTS.success.h[0] + 10, // ~130° (green)
+    staging: HSL_SWEET_SPOTS.warning.h[0] + 5,     // ~35° (amber)
+    default: HSL_SWEET_SPOTS.info.h[0] + 10,        // ~210° (blue)
+  };
+  
+  const isCritical = projectName?.includes("critical") || projectName?.includes("security");
+  const isLegacy = projectName?.includes("legacy");
+  
+  return {
+    hueShift: profileHues[profile] || profileHues.default,
+    saturationMod: isCritical ? 1.1 : 1.0,  // Boost sat for high-risk (within sweet spot)
+    lightnessMod: isLegacy ? 0.7 : 0.85,    // Slightly darker for legacy (still visible)
+    maxColumnWidth: 60,
+    projectName: projectName || profile,
+    // Generate status config for this profile
+    statusConfig: generateStatusConfig(isLegacy ? 55 : 65),
+  };
+};
 
 // ──────────────────────────────────────────────────────────────────────────────
 // TYPES & CONSTANTS

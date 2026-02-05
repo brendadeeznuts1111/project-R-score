@@ -48,6 +48,10 @@
     "dashboard:ansi": "bun run lib/ansi-dashboard.ts",
     "dashboard:live": "bun -e \"import('./lib/ansi-dashboard.ts').then(m=>m.startLiveDashboard())\"",
     "docs:scrape": "bun run lib/docs-scraper.ts",
+    "color:palette": "bun run lib/utils/color-palette-cli.ts",
+    "color:contrast": "bun run lib/utils/color-contrast-cli.ts",
+    "color:demo": "bun run lib/utils/advanced-hsl-demo.ts",
+    "color:examples": "bun run lib/utils/bun-color-examples.ts",
     "docs:validate": "bun -e \"import('./lib/docs-scraper.ts').then(m=>m.generateValidationReport().then(console.log))\"",
     "report:generate": "bun run lib/report-generator.ts",
     "markdown:ansi": "bun run lib/enhanced-markdown.ts README.md ansi",
@@ -58,6 +62,15 @@
     "url:localhost-to-example": "bun run scripts/localhost-to-example.ts convert",
     "standards:check": "bun run url:check && bun run lint && bun run type-check",
     "validate:bun-urls": "bun run validate-bun-urls.ts",
+    "validate:github": "bun run bun-github-validation.ts",
+    "info": "bun run bun-system-info.ts",
+    "quick-info": "bun run scripts/quick-info.ts",
+    "ai-demo": "bun run scripts/ai-demo.ts",
+    "mcp-monitor": "bun run scripts/mcp-monitor.ts",
+    "github-integration": "bun run scripts/github-integration.ts",
+    "deep-links": "bun run scripts/deep-links.ts",
+    "morning-ritual": "bun run bun-morning-ritual.ts",
+    "daily-demo": "bun run daily-dev-routine-demo.ts",
     "ci:validate": "bun run standards:check && bun run test:all",
     "markdown:styled": "bun run lib/enhanced-markdown.ts docs/styling-demo.md ansi",
     "markdown:html": "bun run lib/enhanced-markdown.ts README.md html",
@@ -190,5 +203,9 @@
     "eslint-plugin-security": "^3.0.1",
     "jiti": "^2.6.1",
     "typescript-eslint": "^8.54.0"
+  },
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }
