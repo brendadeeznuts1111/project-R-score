@@ -45,6 +45,7 @@
     "docs:analyze": "bun run cli/integrated-cli.ts analyze",
     "docs:sync:integrated": "bun run cli/integrated-cli.ts sync",
     "docs:publish": "bun run cli/integrated-cli.ts publish",
+    "promote": "bun run scripts/promote.ts",
     "release": "bun run scripts/release.ts",
     "deploy:staging": "bun run deployment/deploy-staging.sh",
     "deploy:production": "bun run deployment/deploy-production.sh",
