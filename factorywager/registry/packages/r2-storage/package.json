@@ -1,0 +1,16 @@
+{
+  "name": "@factorywager/r2-storage",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@factorywager/theme": "workspace:*",
+    "@factorywager/registry-core": "workspace:*"
+  },
+  "scripts": {
+    "test": "bun test"
+  }
+}

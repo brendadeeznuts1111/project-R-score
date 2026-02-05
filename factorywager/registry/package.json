@@ -1,0 +1,23 @@
+{
+  "name": "@factorywager/registry",
+  "version": "1.0.0",
+  "description": "Private NPM Registry with R2/CDN support",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "build": "bun run build --workspaces",
+    "dev": "bun run dev --workspaces",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {}
+}
