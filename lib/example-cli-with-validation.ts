@@ -95,7 +95,7 @@ async function example3() {
       console.log('⚡ Executing main logic...');
       
       // Simulate some work
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await Bun.sleep(100);
       
       return { status: 'success', data: 'CLI execution completed' };
     }
@@ -194,7 +194,7 @@ async function example5() {
         break;
       case 'test':
         console.log('🧪 Running tests...');
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await Bun.sleep(500);
         console.log('✅ Tests completed');
         break;
       case 'help':

@@ -126,7 +126,7 @@ class StabilityTests {
     console.log('=' .repeat(50));
 
     const server = new OptimizedServer(3003);
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
 
     // Simulate concurrent requests
     const promises = Array.from({ length: 10 }, () => 
@@ -178,7 +178,7 @@ class StabilityTests {
     console.log('=' .repeat(50));
 
     const server = new OptimizedServer(3004);
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
 
     try {
       // Clear cache to test null safety
@@ -207,7 +207,7 @@ class ErrorHandlingTests {
     console.log('=' .repeat(50));
 
     const server = new OptimizedServer(3005);
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
 
     try {
       // Request a non-existent endpoint that might cause an error

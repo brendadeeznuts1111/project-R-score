@@ -280,7 +280,7 @@ export async function safeAsyncWithRetry<T>(
       }
       
       // Wait before retry
-      await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+      await Bun.sleep(retryDelay * attempt);
     }
   }
   

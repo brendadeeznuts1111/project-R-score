@@ -280,7 +280,7 @@ async function demonstrateErrorHandling() {
         }
         
         // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await Bun.sleep(delay);
       }
     }
     

@@ -575,7 +575,7 @@ export const testUtils = {
   /**
    * Wait for specified time
    */
-  wait: (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms)),
+  wait: (ms: number): Promise<void> => Bun.sleep(ms),
   
   /**
    * Create fake data

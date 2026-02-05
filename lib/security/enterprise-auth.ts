@@ -149,7 +149,7 @@ export class Tier1380EnterpriseAuth {
     
     // Add delay to slow down brute force attempts
     const delay = Math.min(existing.attempts * 1000, 5000); // Max 5 seconds
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await Bun.sleep(delay);
   }
 
   /**

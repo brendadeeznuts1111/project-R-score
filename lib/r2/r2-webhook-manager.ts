@@ -396,7 +396,7 @@ export class R2WebhookManager {
       if (attempt < webhook.retryConfig.maxRetries) {
         const delay = webhook.retryConfig.initialDelay * 
           Math.pow(webhook.retryConfig.backoffMultiplier, attempt);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await Bun.sleep(delay);
       }
     }
 

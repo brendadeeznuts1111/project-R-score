@@ -389,7 +389,7 @@ export class SafeFileOperations {
    * Delay utility for retries
    */
   private static delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return Bun.sleep(ms);
   }
 }
 

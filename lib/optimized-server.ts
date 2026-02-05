@@ -412,7 +412,7 @@ class ServerBenchmark {
     for (const endpoint of endpoints) {
       await fetch(`${baseUrl}${endpoint}`);
     }
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
 
     // Benchmark each endpoint
     for (const endpoint of endpoints) {
@@ -482,7 +482,7 @@ async function main(): Promise<void> {
   const server = new OptimizedServer(projectPath);
   
   // Wait for server to start
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await Bun.sleep(100);
   
   console.log('✅ Server started successfully!');
   console.log('📊 Running performance benchmark...\n');
