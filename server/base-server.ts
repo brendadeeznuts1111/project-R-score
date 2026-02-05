@@ -152,7 +152,7 @@ const server = Bun.serve({
         
         return handleNotFound(request, url);
       } catch (error) {
-        console.error(`Server error for ${path}:`, error);
+        console.error(`❌ Server error for ${path}:`, error instanceof Error ? error.message : String(error));
         return handleError(error, request, url);
       }
     });
@@ -2297,7 +2297,7 @@ async function handlePerformanceTest(request: Request, url: URL): Promise<Respon
  * Error handler
  */
 function handleError(error: Error, request: Request, url: URL): Response {
-  console.error(`Error handling ${url.pathname}:`, error);
+  console.error(`❌ Error handling ${url.pathname}:`, error instanceof Error ? error.message : String(error));
   
   return new Response(JSON.stringify({
     error: 'Internal server error',

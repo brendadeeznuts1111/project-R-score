@@ -45,7 +45,9 @@ const server = Bun.serve({
         }
       }, { headers });
       
-      console.log(`✅ Health check - ${Date.now() - startTime}ms`);
+      if (process.env.DEBUG === '1') {
+        console.log(`✅ Health check - ${Date.now() - startTime}ms`);
+      }
       return response;
     }
 
@@ -76,7 +78,9 @@ const server = Bun.serve({
         }
 
         const response = Response.json(validation, { headers });
-        console.log(`✅ Validation test - ${Date.now() - startTime}ms`);
+        if (process.env.DEBUG === '1') {
+          console.log(`✅ Validation test - ${Date.now() - startTime}ms`);
+        }
         return response;
       } catch (error) {
         const response = Response.json({
@@ -84,7 +88,9 @@ const server = Bun.serve({
           message: 'Request body must be valid JSON'
         }, { status: 400, headers });
         
-        console.log(`❌ Validation test failed - ${Date.now() - startTime}ms`);
+        if (process.env.DEBUG === '1') {
+          console.log(`❌ Validation test failed - ${Date.now() - startTime}ms`);
+        }
         return response;
       }
     }
@@ -106,7 +112,9 @@ const server = Bun.serve({
         headers
       });
       
-      console.log(`⚠️ Error test (${errorType}) - ${Date.now() - startTime}ms`);
+      if (process.env.DEBUG === '1') {
+        console.log(`⚠️ Error test (${errorType}) - ${Date.now() - startTime}ms`);
+      }
       return response;
     }
 
@@ -126,7 +134,9 @@ const server = Bun.serve({
       }
     }, { headers });
 
-    console.log(`✅ Default response - ${Date.now() - startTime}ms`);
+    if (process.env.DEBUG === '1') {
+      console.log(`✅ Default response - ${Date.now() - startTime}ms`);
+    }
     return response;
   }
 });
@@ -134,7 +144,7 @@ const server = Bun.serve({
 console.log(`🎉 Staging Test Server running on http://${HOST}:${PORT}`);
 console.log(`🏥 Health check: http://${HOST}:${PORT}/health`);
 console.log(`🧪 Validation test: http://${HOST}:${PORT}/api/test-validation`);
-console.log(`⚠️ Error test: http://${HOST}:${PORT}/api/test-error`);
+console.log(`⚠️  Error test: http://${HOST}:${PORT}/api/test-error`);
 console.log(`📊 Environment: ${NODE_ENV}`);
 console.log(`🔒 Security: Enabled`);
-console.log(`📝 Logging: Active`);
+console.log(`📝 Logging: ${process.env.DEBUG === '1' ? 'Debug' : 'Standard'}`);

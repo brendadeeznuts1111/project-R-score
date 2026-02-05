@@ -615,7 +615,9 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
                   const testText = await testResponse.text();
                   result.innerHTML += '<div style="margin-top: 1rem; padding: 1rem; background: #c6f6d5; border-radius: 6px;">🎯 Direct fetch test: ' + testResponse.status + ' OK</div>';
                 } catch (error) {
-                  console.log('Direct fetch might be blocked by CORS');
+                  if (process.env.DEBUG === '1') {
+                    console.warn('⚠️ Direct fetch might be blocked by CORS');
+                  }
                 }
               }, 500);
               
@@ -980,7 +982,6 @@ async function handleRSSFeed(): Promise<Response> {
   try {
     // Using the exact pattern from Bun's fetch documentation
     const response = await fetch(RSS_URLS.BUN_BLOG);
-    console.log(`RSS fetch status: ${response.status}`);
       
     if (!response.ok) {
       throw new Error(`Failed to fetch RSS: ${response.status} ${response.statusText}`);
@@ -1002,7 +1003,7 @@ async function handleRSSFeed(): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('Error fetching RSS:', error);
+    console.error('❌ Error fetching RSS:', error instanceof Error ? error.message : String(error));
       
     // Return cached data even if stale, or error
     if (cached) {
@@ -1175,7 +1176,6 @@ async function handleBinaryData(): Promise<Response> {
     
   try {
     const response = await fetch(targetUrl);
-    console.log(`Binary data docs fetch status: ${response.status}`);
       
     if (response.ok) {
       const html = await response.text();
@@ -1609,4 +1609,4 @@ async function handleExecuteCommand(request: Request): Promise<Response> {
 
 console.log(`🚀 Bun TypedArray Documentation Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
 console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log(`📰 RSS Feed: /feed/rss`);
+console.log(`📰 RSS Feed: http://${SERVER_HOST}:${SERVER_PORT}/feed/rss`);

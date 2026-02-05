@@ -54,7 +54,6 @@ async function handleTypedArrayDocs(url: URL): Promise<Response> {
 async function handleBinaryData(url: URL): Promise<Response> {
     // Fetch from actual Bun docs
     const response = await fetch(`${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`);
-    console.log(`Binary data docs fetch status: ${response.status}`);
     
     const html = await response.text();
     
