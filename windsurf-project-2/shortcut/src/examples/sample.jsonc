@@ -1,0 +1,19 @@
+
+{
+  // This is a JSONC file - JSON with comments!
+  "app": {
+    "name": "Bun Loaders Demo", // App name
+    "version": "1.0.0",        // Version
+    "debug": true,              // Debug mode
+    "features": [               // Feature list
+      "loaders",
+      "bundler",
+      "runtime"
+    ]
+  },
+  "database": {
+    "path": "./data.db", // Database path
+    "timeout": 5000       // Connection timeout
+  }
+  // Note: trailing commas are allowed!
+}

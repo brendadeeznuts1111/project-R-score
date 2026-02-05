@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "bun",
+    "context7"
+  ]
+}

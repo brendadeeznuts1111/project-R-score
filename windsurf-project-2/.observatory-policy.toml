@@ -1,0 +1,109 @@
+# Observatory Policy Configuration
+# TOML Guard Security Policy Schema
+
+[secrets]
+# Allowed variable prefixes (order matters for matching)
+allowed_prefixes = [
+  "PUBLIC_",
+  "PRIVATE_",
+  "SECRET_",
+  "TRUSTED_"
+]
+
+# Blocked patterns (glob-style matching)
+blocked_patterns = [
+  "*PASSWORD*",
+  "*TOKEN*",
+  "*KEY*",
+  "*SECRET*",
+  "*CREDENTIAL*"
+]
+
+# Maximum secrets per file
+max_secrets_per_file = 50
+
+# Require encryption at rest for PRIVATE_ and SECRET_ vars
+require_encryption = true
+
+[validation]
+# Require default values for environment variables
+# Format: ${VAR:-default} mandatory
+require_defaults = true
+
+# Maximum line length for TOML values
+max_line_length = 4096
+
+# Scan TOML values for URL patterns
+scan_toml_values = true
+
+# Block patterns in URL values
+blocked_url_patterns = [
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0"
+]
+
+[optimization]
+# Strip comments during optimization
+strip_comments = true
+
+# Sort keys alphabetically
+sort_keys = true
+
+# Keep readable formatting (don't minify)
+minify = false
+
+# Preserve section order
+preserve_section_order = true
+
+[export]
+# Include audit trail in exported files
+include_audit_trail = true
+
+# Encrypt PRIVATE_ vars at rest in exports
+encrypt_private_vars = true
+
+# Mask sensitive values in output
+mask_sensitive_values = true
+
+# Export format: "toml" | "json" | "env"
+default_export_format = "toml"
+
+[audit]
+# Enable real-time audit logging
+enable_realtime_logging = true
+
+# Log retention period in days
+log_retention_days = 90
+
+# Require user attribution for edits
+require_user_attribution = true
+
+# Alert threshold for security score drop
+alert_score_threshold = 70
+
+[interactive]
+# Enable PTY-based interactive editing
+enable_pty_editor = true
+
+# Require confirmation before saving
+confirm_on_save = true
+
+# Show diff before saving
+show_diff_before_save = true
+
+# Auto-validate on save
+auto_validate_on_save = true
+
+[features]
+# Enable experimental features
+experimental = false
+
+# Enable verbose logging
+verbose_logging = false
+
+# Cache optimization results
+enable_caching = true
+
+# Cache TTL in seconds
+cache_ttl = 3600

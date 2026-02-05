@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Components Reference</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="bg-gray-900 text-white p-6">
+  <h1>Dashboard Components Reference</h1>
+  <p class="text-gray-400 mb-8">Copy-paste snippets for consistent component usage</p>
+  
+  <!-- ============================================ -->
+  <!-- === METRIC CARD COMPONENT === -->
+  <!-- ============================================ -->
+  <section class="mb-8">
+    <h2>Metric Card Component</h2>
+    <p class="text-gray-400 mb-4">Standard structure: <code>.metric-card > .metric-card__content > .metric-card__text (.metric-card__label + .metric-card__value) + .metric-card__icon</code></p>
+    
+    <article class="metric-card glass-effect rounded-lg p-6">
+      <div class="metric-card__content flex items-center justify-between">
+        <div class="metric-card__text">
+          <p class="metric-card__label text-gray-400 text-sm">Label Text</p>
+          <p class="metric-card__value text-3xl font-bold text-white" aria-live="polite">0</p>
+        </div>
+        <div class="metric-card__icon text-blue-400 text-4xl" aria-hidden="true">👥</div>
+      </div>
+    </article>
+    
+    <pre class="bg-gray-800 p-4 rounded mt-4 overflow-x-auto"><code>&lt;article class="metric-card glass-effect rounded-lg p-6"&gt;
+  &lt;div class="metric-card__content flex items-center justify-between"&gt;
+    &lt;div class="metric-card__text"&gt;
+      &lt;p class="metric-card__label text-gray-400 text-sm"&gt;Label Text&lt;/p&gt;
+      &lt;p class="metric-card__value text-3xl font-bold text-white" aria-live="polite"&gt;0&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="metric-card__icon text-blue-400 text-4xl" aria-hidden="true"&gt;👥&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+  </section>
+  
+  <!-- ============================================ -->
+  <!-- === TRANSACTION CARD COMPONENT === -->
+  <!-- ============================================ -->
+  <section class="mb-8">
+    <h2>Transaction Card Component</h2>
+    <p class="text-gray-400 mb-4">Standard structure: <code>.transaction-card > .transaction-card__label + .transaction-card__value + .transaction-card__meta</code></p>
+    
+    <article class="transaction-card p-4 bg-gray-800 rounded-lg">
+      <p class="transaction-card__label text-gray-400 text-sm mb-1">Label Text</p>
+      <p class="transaction-card__value text-2xl font-bold text-green-400" aria-live="polite">$0</p>
+      <p class="transaction-card__meta text-xs text-gray-500 mt-1">Meta text</p>
+    </article>
+    
+    <pre class="bg-gray-800 p-4 rounded mt-4 overflow-x-auto"><code>&lt;article class="transaction-card p-4 bg-gray-800 rounded-lg"&gt;
+  &lt;p class="transaction-card__label text-gray-400 text-sm mb-1"&gt;Label Text&lt;/p&gt;
+  &lt;p class="transaction-card__value text-2xl font-bold text-green-400" aria-live="polite"&gt;$0&lt;/p&gt;
+  &lt;p class="transaction-card__meta text-xs text-gray-500 mt-1"&gt;Meta text&lt;/p&gt;
+&lt;/article&gt;</code></pre>
+  </section>
+  
+  <!-- ============================================ -->
+  <!-- === BUTTON COMPONENT === -->
+  <!-- ============================================ -->
+  <section class="mb-8">
+    <h2>Button Component</h2>
+    <p class="text-gray-400 mb-4">Use <code>data-action</code> attribute for JS hooks, not class names</p>
+    
+    <div class="space-y-4">
+      <button data-action="clear-alerts" class="btn btn-secondary btn-sm" aria-label="Clear all alerts">
+        Secondary Button (Small)
+      </button>
+      
+      <button data-action="close-fraud-alert" class="btn btn-danger btn-full" aria-label="Acknowledge alert">
+        Danger Button (Full Width)
+      </button>
+    </div>
+    
+    <pre class="bg-gray-800 p-4 rounded mt-4 overflow-x-auto"><code>&lt;!-- Use data-action for JS hooks, not class names --&gt;
+&lt;button data-action="clear-alerts" class="btn btn-secondary btn-sm" aria-label="Clear all alerts"&gt;
+  Clear
+&lt;/button&gt;
+
+&lt;button data-action="close-fraud-alert" class="btn btn-danger btn-full" aria-label="Acknowledge alert"&gt;
+  Acknowledge Alert
+&lt;/button&gt;</code></pre>
+  </section>
+  
+  <!-- ============================================ -->
+  <!-- === SECTION MARKERS === -->
+  <!-- ============================================ -->
+  <section class="mb-8">
+    <h2>Section Markers</h2>
+    <p class="text-gray-400 mb-4">Use visual section comments for better code navigation</p>
+    
+    <pre class="bg-gray-800 p-4 rounded overflow-x-auto"><code>&lt;!-- ============================================ --&gt;
+&lt;!-- === SECTION NAME === --&gt;
+&lt;!-- ============================================ --&gt;</code></pre>
+  </section>
+  
+  <style>
+    pre {
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    }
+  </style>
+</body>
+</html>

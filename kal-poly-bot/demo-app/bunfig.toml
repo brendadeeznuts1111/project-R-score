@@ -1,0 +1,23 @@
+# bunfig.toml - Bun Configuration
+
+[run]
+# Demo app run configuration
+shell = "bun"
+bun = true
+silent = false
+
+[install]
+# Use latest versions
+registry = "https://registry.npmjs.org"
+
+[build]
+# Build configuration
+target = "bun"
+outdir = "dist"
+
+
+[serve]
+# MCP server configuration
+port = 8787
+hostname = "localhost"
+

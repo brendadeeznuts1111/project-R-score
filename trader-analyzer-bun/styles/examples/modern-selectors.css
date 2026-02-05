@@ -1,0 +1,181 @@
+/**
+ * Modern Selectors Examples
+ * 
+ * Demonstrates :is(), :not(), :dir(), and :lang() selectors
+ * 
+ * Note: Bun's CSS bundler automatically generates vendor-prefixed fallbacks
+ * (-webkit-any, -moz-any) for older browsers. You only need to write the
+ * modern :is() syntax.
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ */
+
+/* ==========================================================================
+   :is() Selector - Simplifying Complex Selectors
+   ========================================================================== */
+
+/* Instead of writing these separately */
+/* 
+.article h1,
+.article h2,
+.article h3 {
+  margin-top: 1.5em;
+}
+*/
+
+/* You can write this - Bun automatically adds fallbacks for older browsers */
+.article :is(h1, h2, h3) {
+	margin-block-start: 1.5em;
+}
+
+/* 
+ * Bun's CSS bundler automatically generates:
+ * 
+ * .article :-webkit-any(h1, h2, h3) { margin-block-start: 1.5em; }
+ * .article :-moz-any(h1, h2, h3) { margin-block-start: 1.5em; }
+ * .article :is(h1, h2, h3) { margin-block-start: 1.5em; }
+ */
+
+/* Complex example with multiple groups */
+:is(header, main, footer) :is(h1, h2, .title) {
+	font-family: "Heading Font", system-ui, sans-serif;
+	font-weight: 700;
+}
+
+/* Combining :is() with classes */
+:is(.card, .panel, .widget) :is(h1, h2, h3) {
+	color: var(--color-brand-primary);
+	margin-block-end: 1rem;
+}
+
+/* :is() with pseudo-classes */
+:is(.button, .link, .nav-item):hover {
+	color: var(--color-brand-primary-dark);
+	transform: translateY(-1px);
+}
+
+:is(.button, .link, .nav-item):focus-visible {
+	outline: 2px solid var(--color-brand-primary);
+	outline-offset: 2px;
+}
+
+/* :is() with :not() */
+:is(.card, .button, .badge):not(.disabled, .hidden) {
+	transition: transform 0.2s, opacity 0.2s;
+}
+
+/* ==========================================================================
+   :not() Selector - Multiple Arguments
+   ========================================================================== */
+
+/* Exclude multiple classes */
+.card:not(.disabled, .hidden, .loading) {
+	opacity: 1;
+}
+
+/* Combine with :is() */
+:is(.card, .status-item):not(.disabled, .hidden) {
+	transition: transform 0.2s;
+}
+
+/* :not() with pseudo-classes */
+.button:not(:disabled, .loading):hover {
+	background: var(--color-brand-primary-dark);
+}
+
+/* ==========================================================================
+   :dir() Selector - Direction-Aware Styles
+   ========================================================================== */
+
+/* Left-to-right (default) */
+:dir(ltr) .card {
+	text-align: left;
+	border-left: 4px solid var(--color-brand-primary);
+	padding-left: 1rem;
+}
+
+/* Right-to-left */
+:dir(rtl) .card {
+	text-align: right;
+	border-right: 4px solid var(--color-brand-primary);
+	padding-right: 1rem;
+	border-left: none;
+	padding-left: 0;
+}
+
+/* Direction-aware margins */
+:dir(ltr) .button {
+	margin-right: 0.5rem;
+}
+
+:dir(rtl) .button {
+	margin-left: 0.5rem;
+	margin-right: 0;
+}
+
+/* ==========================================================================
+   :lang() Selector - Language-Specific Styles
+   ========================================================================== */
+
+/* English, French, German */
+:lang(en, fr, de) h1 {
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+/* Japanese, Chinese */
+:lang(ja, zh) h1 {
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1.8;
+}
+
+/* Arabic, Hebrew */
+:lang(ar, he) {
+	direction: rtl;
+	text-align: right;
+}
+
+/* Language-specific font stacks */
+:lang(en) {
+	font-family: system-ui, -apple-system, sans-serif;
+}
+
+:lang(ja) {
+	font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
+
+:lang(zh) {
+	font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* ==========================================================================
+   Combined Examples
+   ========================================================================== */
+
+/* Complex selector combining multiple modern selectors */
+:is(header, main, footer) :is(h1, h2, h3):not(.hidden) {
+	font-family: "Heading Font", system-ui, sans-serif;
+	
+	:lang(en, fr, de) & {
+		font-weight: 600;
+	}
+	
+	:lang(ja, zh) & {
+		font-weight: 700;
+	}
+	
+	:dir(rtl) & {
+		text-align: right;
+	}
+}
+
+/* Interactive elements with modern selectors */
+:is(.button, .link, .card):not(.disabled):hover {
+	transform: translateY(-2px);
+}
+
+:is(.button, .link, .card):not(.disabled):focus-visible {
+	outline: 2px solid var(--color-brand-primary);
+	outline-offset: 2px;
+}

@@ -1,0 +1,9 @@
+# Test YAML with alias
+api:
+  key: VAULT:com.factory-wager.registry.registry.token
+
+database:
+  secret: VAULT:com.factory-wager.registry.r2.secret_alias
+
+ssl:
+  cert: VAULT:com.factory-wager.registry.domain.ssl_cert

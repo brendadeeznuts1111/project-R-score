@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailing Address Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .risk-high { border-left: 4px solid #ef4444; }
+        .risk-medium { border-left: 4px solid #f59e0b; }
+        .risk-low { border-left: 4px solid #22c55e; }
+        .deliverability-high { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .deliverability-medium { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .deliverability-low { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-envelope text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Mailing Address Intelligence</h1>
+                        <p class="text-green-100">USPS verification, NCOA updates & deliverability analytics</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">Last Updated: <span id="lastUpdated" class="font-mono"></span></span>
+                    <button onclick="refreshData()" class="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-green-50 transition">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Key Metrics -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">📬 Address Verification Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Deliverable Addresses</p>
+                            <p class="text-3xl font-bold text-green-600">94.3%</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 2.1% improvement
+                            </p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">USPS Verified</p>
+                            <p class="text-3xl font-bold text-blue-600">89.7%</p>
+                            <p class="text-xs text-blue-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 1.8% improvement
+                            </p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-usps text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">NCOA Updated</p>
+                            <p class="text-3xl font-bold text-purple-600">78.2%</p>
+                            <p class="text-xs text-purple-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 3.4% coverage
+                            </p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-exchange-alt text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Quality Score</p>
+                            <p class="text-3xl font-bold text-orange-600">87/100</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 5 points
+                            </p>
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-star text-orange-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Address Risk Breakdown -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">⚠️ Address Risk Breakdown</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🏠 Property Types</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Residential</span>
+                            <span class="text-sm font-bold text-green-600">85.3%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 85.3%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Commercial</span>
+                            <span class="text-sm font-bold text-blue-600">8.0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 8.0%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Vacant/Seasonal</span>
+                            <span class="text-sm font-bold text-orange-600">6.7%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-orange-600 h-2 rounded-full" style="width: 6.7%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🚨 Risk Categories</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Fraud Hotspots</span>
+                            <span class="text-sm font-bold text-red-600">3.3%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-red-600 h-2 rounded-full" style="width: 3.3%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Frequent Changes</span>
+                            <span class="text-sm font-bold text-orange-600">6.0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-orange-600 h-2 rounded-full" style="width: 6.0%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Mail Forwarding</span>
+                            <span class="text-sm font-bold text-yellow-600">4.7%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-yellow-600 h-2 rounded-full" style="width: 4.7%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">📊 Verification Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">USPS CASS Certified</span>
+                            <span class="text-sm font-bold text-green-600">94.7%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 94.7%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">DPV Confirmed</span>
+                            <span class="text-sm font-bold text-blue-600">91.2%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 91.2%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Suite Verified</span>
+                            <span class="text-sm font-bold text-purple-600">87.8%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: 87.8%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Address Quality Trends -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">📈 Address Quality Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="qualityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Geographic Distribution -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🗺️ Geographic Risk Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="geographicChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Address Changes -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🔄 Recent Address Changes</h2>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Old Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">New Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Change Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="addressChangesTable">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verification Services -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 Verification Services Status</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="deliverability-high w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-envelope text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">USPS</h3>
+                    <p class="text-sm text-gray-600 mb-2">CASS & DPV</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">Operational</span>
+                    <p class="text-xs text-gray-500 mt-2">99.8% uptime</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="deliverability-high w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-map-marked-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">SmartyStreets</h3>
+                    <p class="text-sm text-gray-600 mb-2">US & International</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">Operational</span>
+                    <p class="text-xs text-gray-500 mt-2">99.5% uptime</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="deliverability-medium w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mail-bulk text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">Lob</h3>
+                    <p class="text-sm text-gray-600 mb-2">Print & Mail</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Maintenance</span>
+                    <p class="text-xs text-gray-500 mt-2">Scheduled</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="deliverability-high w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-globe text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">Google Maps</h3>
+                    <p class="text-sm text-gray-600 mb-2">Geocoding</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">Operational</span>
+                    <p class="text-xs text-gray-500 mt-2">99.9% uptime</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- High Risk Addresses -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🚨 High Risk Address Alerts</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">📍 Fraud Hotspots</h3>
+                    <div class="space-y-3" id="fraudHotspots">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">⏰ Velocity Alerts</h3>
+                    <div class="space-y-3" id="velocityAlerts">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">Mailing Address Intelligence Dashboard • USPS Verification & NCOA Management</p>
+            <p class="text-xs text-gray-500 mt-2">Data refreshes every 30 seconds • Last sync: <span id="lastSync"></span></p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data generation
+        const mailingData = {
+            addressChanges: [
+                { user: 'user_45', oldAddress: '123 Main St, New York, NY 10001', newAddress: '456 Oak Ave, Los Angeles, CA 90001', changeDate: '2024-01-24', riskScore: 15, status: 'verified' },
+                { user: 'user_89', oldAddress: '789 Pine Rd, Chicago, IL 60601', newAddress: '321 Elm St, Houston, TX 77001', changeDate: '2024-01-23', riskScore: 28, status: 'pending' },
+                { user: 'user_123', oldAddress: '654 Maple Dr, Phoenix, AZ 85001', newAddress: '987 Cedar Ln, Philadelphia, PA 19101', changeDate: '2024-01-22', riskScore: 12, status: 'verified' },
+                { user: 'user_67', oldAddress: '147 Washington St, San Antonio, TX 78201', newAddress: '258 Jefferson Dr, San Diego, CA 92101', changeDate: '2024-01-21', riskScore: 35, status: 'investigating' },
+                { user: 'user_34', oldAddress: '369 Lincoln Ave, Dallas, TX 75201', newAddress: '741 Park Blvd, San Jose, CA 95101', changeDate: '2024-01-20', riskScore: 18, status: 'verified' }
+            ],
+            fraudHotspots: [
+                { address: '1000-1999 Main St, Detroit, MI 48201', riskScore: 89, incidents: 23, type: 'Synthetic Identity Cluster' },
+                { address: '500-599 Industrial Blvd, Miami, FL 33101', riskScore: 76, incidents: 15, type: 'Commercial Mail Receiving' },
+                { address: '200-299 Vacant Properties, Cleveland, OH 44101', riskScore: 82, incidents: 18, type: 'Vacant Property Fraud' }
+            ],
+            velocityAlerts: [
+                { user: 'user_89', changes: 3, timeframe: '30 days', riskScore: 42, pattern: 'Cross-state moving' },
+                { user: 'user_156', changes: 5, timeframe: '60 days', riskScore: 68, pattern: 'Frequent relocations' },
+                { user: 'user_234', changes: 2, timeframe: '7 days', riskScore: 35, pattern: 'Rapid address change' }
+            ]
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLastUpdated();
+            populateAddressChangesTable();
+            createQualityChart();
+            createGeographicChart();
+            populateFraudHotspots();
+            populateVelocityAlerts();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        });
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+            document.getElementById('lastSync').textContent = now.toLocaleString();
+        }
+
+        function populateAddressChangesTable() {
+            const tbody = document.getElementById('addressChangesTable');
+            tbody.innerHTML = '';
+            
+            mailingData.addressChanges.forEach(change => {
+                const riskClass = change.riskScore > 30 ? 'risk-high' : 
+                                 change.riskScore > 20 ? 'risk-medium' : 'risk-low';
+                
+                const statusBadge = change.status === 'verified' ? 
+                    '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Verified</span>' :
+                    change.status === 'pending' ? 
+                    '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>' :
+                    '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Investigating</span>';
+                
+                const row = `
+                    <tr class="${riskClass}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${change.user}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${change.oldAddress}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${change.newAddress}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${change.changeDate}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full ${getRiskBadgeClass(change.riskScore)}">${change.riskScore}/100</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function getRiskBadgeClass(score) {
+            if (score > 30) return 'bg-red-100 text-red-800';
+            if (score > 20) return 'bg-yellow-100 text-yellow-800';
+            return 'bg-green-100 text-green-800';
+        }
+
+        function createQualityChart() {
+            const ctx = document.getElementById('qualityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Deliverability %',
+                            data: [92.1, 92.8, 93.2, 93.7, 94.0, 94.3],
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'USPS Verification %',
+                            data: [87.2, 88.1, 88.5, 89.0, 89.4, 89.7],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Quality Score',
+                            data: [82, 83, 84, 85, 86, 87],
+                            borderColor: 'rgb(245, 158, 11)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 80,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function createGeographicChart() {
+            const ctx = document.getElementById('geographicChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Northeast', 'Southeast', 'Midwest', 'Southwest', 'West'],
+                    datasets: [{
+                        label: 'Average Risk Score',
+                        data: [12, 18, 15, 22, 14],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(34, 197, 94, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(34, 197, 94)',
+                            'rgb(239, 68, 68)',
+                            'rgb(34, 197, 94)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 30
+                        }
+                    }
+                }
+            });
+        }
+
+        function populateFraudHotspots() {
+            const container = document.getElementById('fraudHotspots');
+            container.innerHTML = '';
+            
+            mailingData.fraudHotspots.forEach((hotspot, _index) => {
+                const severityClass = hotspot.riskScore > 80 ? 'bg-red-50 border-red-200' : 
+                                   hotspot.riskScore > 70 ? 'bg-orange-50 border-orange-200' : 
+                                   'bg-yellow-50 border-yellow-200';
+                
+                const item = `
+                    <div class="p-4 rounded-lg border ${severityClass}">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${hotspot.address}</p>
+                                <p class="text-xs text-gray-500 mt-1">${hotspot.type}</p>
+                                <p class="text-xs text-gray-500">${hotspot.incidents} incidents</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-red-600">${hotspot.riskScore}/100</p>
+                                <p class="text-xs text-gray-500">risk score</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += item;
+            });
+        }
+
+        function populateVelocityAlerts() {
+            const container = document.getElementById('velocityAlerts');
+            container.innerHTML = '';
+            
+            mailingData.velocityAlerts.forEach((alert, _index) => {
+                const severityClass = alert.riskScore > 50 ? 'bg-red-50 border-red-200' : 
+                                   alert.riskScore > 30 ? 'bg-orange-50 border-orange-200' : 
+                                   'bg-yellow-50 border-yellow-200';
+                
+                const item = `
+                    <div class="p-4 rounded-lg border ${severityClass}">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${alert.user}</p>
+                                <p class="text-xs text-gray-500 mt-1">${alert.pattern}</p>
+                                <p class="text-xs text-gray-500">${alert.changes} changes in ${alert.timeframe}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-orange-600">${alert.riskScore}/100</p>
+                                <p class="text-xs text-gray-500">risk score</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += item;
+            });
+        }
+
+        function refreshData() {
+            // Simulate data refresh
+            updateLastUpdated();
+            
+            // Add loading animation
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(card => {
+                card.classList.add('animate-pulse-slow');
+            });
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                cards.forEach(card => {
+                    card.classList.remove('animate-pulse-slow');
+                });
+                
+                // Show success notification
+                showNotification('Address data refreshed successfully', 'success');
+            }, 1000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            } z-50`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

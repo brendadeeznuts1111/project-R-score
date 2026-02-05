@@ -1,0 +1,196 @@
+/**
+ * @fileoverview {{{fileoverview}}}
+ * @module {{{modulePath}}}
+ * @description {{{description}}}
+{{{authorInfo}}}
+ * @created {{{createdDate}}}
+{{{teamInfo}}}
+{{{depsInfo}}}
+{{{exportsInfo}}}
+ * @version 1.3.4
+ *
+ * {{{metadata}}}
+ *
+ * @ref {{{ref}}}
+ */
+
+import { h } from 'preact';
+import { useState, useEffect, useMemo } from 'preact/hooks';
+
+interface {{{pascalName}}}Data {
+	id: string;
+	name: string;
+	value: number;
+	status: 'active' | 'inactive' | 'pending';
+	createdAt: Date;
+}
+
+interface {{{pascalName}}}ComponentProps {
+	data?: {{{pascalName}}}Data[];
+	onDataChange?: (data: {{{pascalName}}}Data[]) => void;
+	filter?: string;
+	sortBy?: keyof {{{pascalName}}}Data;
+	sortOrder?: 'asc' | 'desc';
+}
+
+/**
+ * {{{pascalName}}} Component - Data Management Pattern
+ * {{{description}}}
+ */
+export function {{{pascalName}}}Component({
+	data = [],
+	onDataChange,
+	filter = '',
+	sortBy = 'name',
+	sortOrder = 'asc'
+}: {{{pascalName}}}ComponentProps) {
+	const [localData, setLocalData] = useState<{{{pascalName}}}Data[]>(data);
+	const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+
+	// AI-enhanced: Memoized filtered and sorted data
+	const processedData = useMemo(() => {
+		let filtered = localData.filter(item =>
+			item.name.toLowerCase().includes(filter.toLowerCase()) ||
+			item.status.toLowerCase().includes(filter.toLowerCase())
+		);
+
+		filtered.sort((a, b) => {
+			const aVal = a[sortBy];
+			const bVal = b[sortBy];
+
+			if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1;
+			if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1;
+			return 0;
+		});
+
+		return filtered;
+	}, [localData, filter, sortBy, sortOrder]);
+
+	// AI-enhanced: Computed statistics
+	const stats = useMemo(() => {
+		const total = localData.length;
+		const active = localData.filter(item => item.status === 'active').length;
+		const totalValue = localData.reduce((sum, item) => sum + item.value, 0);
+
+		return { total, active, totalValue };
+	}, [localData]);
+
+	useEffect(() => {
+		setLocalData(data);
+	}, [data]);
+
+	const handleItemSelect = (id: string, selected: boolean) => {
+		const newSelection = new Set(selectedItems);
+		if (selected) {
+			newSelection.add(id);
+		} else {
+			newSelection.delete(id);
+		}
+		setSelectedItems(newSelection);
+	};
+
+	const handleBulkAction = (action: 'activate' | 'deactivate' | 'delete') => {
+		const updatedData = localData.map(item => {
+			if (selectedItems.has(item.id)) {
+				switch (action) {
+					case 'activate':
+						return { ...item, status: 'active' as const };
+					case 'deactivate':
+						return { ...item, status: 'inactive' as const };
+					case 'delete':
+						return null; // Will be filtered out
+					default:
+						return item;
+				}
+			}
+			return item;
+		}).filter(Boolean) as {{{pascalName}}}Data[];
+
+		setLocalData(updatedData);
+		onDataChange?.(updatedData);
+		setSelectedItems(new Set());
+	};
+
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case 'active': return 'green';
+			case 'inactive': return 'gray';
+			case 'pending': return 'yellow';
+			default: return 'black';
+		}
+	};
+
+	return (
+		<div class="{{{camelName}}}-data-component">
+			<div class="stats-bar">
+				<span>Total: {stats.total}</span>
+				<span>Active: {stats.active}</span>
+				<span>Total Value: {stats.totalValue.toFixed(2)}</span>
+			</div>
+
+			<div class="controls">
+				<input
+					type="text"
+					placeholder="Filter items..."
+					value={filter}
+					onInput={(e) => {/* TODO: Implement filter */}}
+				/>
+
+				<select value={sortBy} onChange={(e) => {/* TODO: Implement sort */}}>
+					<option value="name">Name</option>
+					<option value="value">Value</option>
+					<option value="createdAt">Date</option>
+				</select>
+
+				<button onClick={() => {/* TODO: Implement sort order toggle */}}>
+					{sortOrder === 'asc' ? '↑' : '↓'}
+				</button>
+			</div>
+
+			{selectedItems.size > 0 && (
+				<div class="bulk-actions">
+					<span>{selectedItems.size} selected</span>
+					<button onClick={() => handleBulkAction('activate')}>Activate</button>
+					<button onClick={() => handleBulkAction('deactivate')}>Deactivate</button>
+					<button onClick={() => handleBulkAction('delete')}>Delete</button>
+				</div>
+			)}
+
+			<div class="data-table">
+				<div class="table-header">
+					<input
+						type="checkbox"
+						checked={selectedItems.size === processedData.length && processedData.length > 0}
+						onChange={(e) => {
+							if (e.target.checked) {
+								setSelectedItems(new Set(processedData.map(item => item.id)));
+							} else {
+								setSelectedItems(new Set());
+							}
+						}}
+					/>
+					<span>Name</span>
+					<span>Value</span>
+					<span>Status</span>
+					<span>Created</span>
+				</div>
+
+				{processedData.map(item => (
+					<div key={item.id} class="table-row">
+						<input
+							type="checkbox"
+							checked={selectedItems.has(item.id)}
+							onChange={(e) => handleItemSelect(item.id, e.target.checked)}
+						/>
+						<span>{item.name}</span>
+						<span>{item.value.toFixed(2)}</span>
+						<span style={{color: getStatusColor(item.status)}}>
+							{item.status}
+						</span>
+						<span>{item.createdAt.toLocaleDateString()}</span>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}

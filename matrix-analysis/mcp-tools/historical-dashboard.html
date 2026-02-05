@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tier-1380 Historical Compliance Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 8px;
+            border: 1px solid #2a2a3e;
+        }
+        
+        .header h1 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+        
+        .tenant-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .tenant-selector select {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        
+        .metric-card h3 {
+            color: #00ff88;
+            margin: 0 0 10px 0;
+            font-size: 0.9em;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .metric-change {
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        
+        .metric-change.positive {
+            color: #22c55e;
+        }
+        
+        .metric-change.negative {
+            color: #ef4444;
+        }
+        
+        .chart-container {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+            height: 400px;
+        }
+        
+        .chart-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-tab {
+            padding: 8px 16px;
+            background: #333;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chart-tab.active {
+            background: #00ff88;
+            color: #000;
+        }
+        
+        .chart-tab:hover {
+            background: #444;
+        }
+        
+        .chart-tab.active:hover {
+            background: #00cc6a;
+        }
+        
+        .violations-table {
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .violations-table h3 {
+            color: #00ff88;
+            margin: 0 0 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        th {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .severity-critical {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        
+        .severity-warning {
+            color: #f59e0b;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>📊 Tier-1380 Historical Compliance Dashboard</h1>
+            <div class="tenant-selector">
+                <label for="tenant-select">Tenant: </label>
+                <select id="tenant-select">
+                    <option value="tenant-a">Tenant A</option>
+                    <option value="tenant-b">Tenant B</option>
+                    <option value="tenant-c">Tenant C</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Average Compliance</h3>
+                <div class="metric-value" id="avg-compliance">-</div>
+                <div class="metric-change" id="compliance-trend">-</div>
+            </div>
+            <div class="metric-card">
+                <h3>Total Violations</h3>
+                <div class="metric-value" id="total-violations">-</div>
+                <div class="metric-change" id="violations-change">-</div>
+            </div>
+            <div class="metric-card">
+                <h3>Current Month</h3>
+                <div class="metric-value" id="current-compliance">-</div>
+                <div class="metric-change" id="current-status">-</div>
+            </div>
+            <div class="metric-card">
+                <h3>Months Tracked</h3>
+                <div class="metric-value" id="months-tracked">-</div>
+                <div class="metric-change">Historical data</div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-tabs">
+                <button class="chart-tab active" data-chart="compliance">Compliance Trend</button>
+                <button class="chart-tab" data-chart="violations">Violation Count</button>
+                <button class="chart-tab" data-chart="combined">Combined View</button>
+            </div>
+            <canvas id="historical-chart"></canvas>
+        </div>
+        
+        <div class="violations-table">
+            <h3>🚨 Recent Violations</h3>
+            <div id="violations-content">
+                <div class="loading">Loading violations...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        let currentChart = null;
+        let currentChartType = 'compliance';
+        let historicalData = null;
+        
+        // Chart configuration
+        const chartConfig = {
+            compliance: {
+                type: 'line',
+                label: 'Compliance %',
+                borderColor: '#00ff88',
+                backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                yAxisLabel: 'Compliance %',
+                dataKey: 'compliance'
+            },
+            violations: {
+                type: 'bar',
+                label: 'Violations',
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.5)',
+                yAxisLabel: 'Violation Count',
+                dataKey: 'violations'
+            },
+            combined: {
+                type: 'line',
+                label: 'Combined Metrics',
+                borderColor: '#00ff88',
+                backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                yAxisLabel: 'Value',
+                dataKey: 'compliance',
+                secondaryDataKey: 'violations'
+            }
+        };
+        
+        // Initialize dashboard
+        async function initDashboard() {
+            const tenantSelect = document.getElementById('tenant-select');
+            const chartTabs = document.querySelectorAll('.chart-tab');
+            
+            // Tenant change handler
+            tenantSelect.addEventListener('change', () => {
+                loadHistoricalData(tenantSelect.value);
+            });
+            
+            // Chart tab handlers
+            chartTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    chartTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentChartType = tab.dataset.chart;
+                    updateChart();
+                });
+            });
+            
+            // Load initial data
+            await loadHistoricalData('tenant-a');
+        }
+        
+        // Load historical data from API
+        async function loadHistoricalData(tenant) {
+            try {
+                showLoading();
+                
+                const response = await fetch(`http://localhost:3333/api/historical-compliance?months=12`, {
+                    headers: { 'x-tenant-id': tenant }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                historicalData = data;
+                
+                updateMetrics(data);
+                updateChart();
+                await loadRecentViolations(tenant);
+                
+            } catch (error) {
+                console.error('Failed to load historical data:', error);
+                showError(`Failed to load data: ${error.message}`);
+            }
+        }
+        
+        // Update metrics cards
+        function updateMetrics(data) {
+            const summary = data.summary;
+            
+            // Average compliance
+            document.getElementById('avg-compliance').textContent = 
+                `${summary.averageCompliance.toFixed(1)}%`;
+            
+            const complianceTrend = document.getElementById('compliance-trend');
+            if (summary.trend > 0) {
+                complianceTrend.textContent = `↑ +${summary.trend.toFixed(1)}%`;
+                complianceTrend.className = 'metric-change positive';
+            } else if (summary.trend < 0) {
+                complianceTrend.textContent = `↓ ${summary.trend.toFixed(1)}%`;
+                complianceTrend.className = 'metric-change negative';
+            } else {
+                complianceTrend.textContent = '→ 0.0%';
+                complianceTrend.className = 'metric-change';
+            }
+            
+            // Total violations
+            document.getElementById('total-violations').textContent = summary.totalViolations;
+            
+            // Current month
+            const currentMonth = data.data[data.data.length - 1];
+            if (currentMonth) {
+                document.getElementById('current-compliance').textContent = 
+                    `${currentMonth.compliance.toFixed(1)}%`;
+                
+                const currentStatus = document.getElementById('current-status');
+                if (currentMonth.compliance >= 95) {
+                    currentStatus.textContent = 'Excellent';
+                    currentStatus.className = 'metric-change positive';
+                } else if (currentMonth.compliance >= 90) {
+                    currentStatus.textContent = 'Good';
+                    currentStatus.className = 'metric-change';
+                } else {
+                    currentStatus.textContent = 'Needs Attention';
+                    currentStatus.className = 'metric-change negative';
+                }
+            }
+            
+            // Months tracked
+            document.getElementById('months-tracked').textContent = data.data.length;
+        }
+        
+        // Update chart
+        function updateChart() {
+            if (!historicalData) return;
+            
+            const ctx = document.getElementById('historical-chart').getContext('2d');
+            const config = chartConfig[currentChartType];
+            
+            // Destroy existing chart
+            if (currentChart) {
+                currentChart.destroy();
+            }
+            
+            const labels = historicalData.data.map(d => d.month);
+            const datasets = [];
+            
+            if (currentChartType === 'combined') {
+                // Combined view with two y-axes
+                datasets.push({
+                    label: 'Compliance %',
+                    data: historicalData.data.map(d => d.compliance),
+                    borderColor: '#00ff88',
+                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                    type: 'line',
+                    yAxisID: 'y'
+                });
+                
+                datasets.push({
+                    label: 'Violations',
+                    data: historicalData.data.map(d => d.violations),
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.5)',
+                    type: 'bar',
+                    yAxisID: 'y1'
+                });
+                
+                currentChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels, datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: '#e0e0e0' } }
+                        },
+                        scales: {
+                            x: { 
+                                ticks: { color: '#888' },
+                                grid: { color: '#333' }
+                            },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                ticks: { color: '#888' },
+                                grid: { color: '#333' },
+                                title: {
+                                    display: true,
+                                    text: 'Compliance %',
+                                    color: '#00ff88'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                ticks: { color: '#888' },
+                                grid: { drawOnChartArea: false },
+                                title: {
+                                    display: true,
+                                    text: 'Violations',
+                                    color: '#ef4444'
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Single metric view
+                datasets.push({
+                    label: config.label,
+                    data: historicalData.data.map(d => d[config.dataKey]),
+                    borderColor: config.borderColor,
+                    backgroundColor: config.backgroundColor,
+                    type: config.type,
+                    tension: 0.4,
+                    fill: config.type === 'line'
+                });
+                
+                currentChart = new Chart(ctx, {
+                    type: config.type,
+                    data: { labels, datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: '#e0e0e0' } }
+                        },
+                        scales: {
+                            x: { 
+                                ticks: { color: '#888' },
+                                grid: { color: '#333' }
+                            },
+                            y: {
+                                ticks: { color: '#888' },
+                                grid: { color: '#333' },
+                                title: {
+                                    display: true,
+                                    text: config.yAxisLabel,
+                                    color: '#e0e0e0'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Load recent violations
+        async function loadRecentViolations(tenant) {
+            try {
+                const response = await fetch(`http://localhost:3333/api/recent-violations?days=7`, {
+                    headers: { 'x-tenant-id': tenant }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                displayViolations(data.violations);
+                
+            } catch (error) {
+                console.error('Failed to load violations:', error);
+                document.getElementById('violations-content').innerHTML = 
+                    '<div class="error">Failed to load violations</div>';
+            }
+        }
+        
+        // Display violations in table
+        function displayViolations(violations) {
+            const container = document.getElementById('violations-content');
+            
+            if (violations.length === 0) {
+                container.innerHTML = '<div class="loading">No violations in the last 7 days</div>';
+                return;
+            }
+            
+            const table = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>File</th>
+                            <th>Line</th>
+                            <th>Column</th>
+                            <th>Severity</th>
+                            <th>Preview</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${violations.map(v => `
+                            <tr>
+                                <td>${v.date}</td>
+                                <td>${v.file}</td>
+                                <td>${v.line_number}</td>
+                                <td>${v.column_number}</td>
+                                <td class="severity-${v.severity}">${v.severity.toUpperCase()}</td>
+                                <td><code>${v.preview.slice(0, 50)}...</code></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = table;
+        }
+        
+        // UI helpers
+        function showLoading() {
+            document.getElementById('avg-compliance').textContent = 'Loading...';
+            document.getElementById('total-violations').textContent = 'Loading...';
+            document.getElementById('current-compliance').textContent = 'Loading...';
+            document.getElementById('months-tracked').textContent = 'Loading...';
+        }
+        
+        function showError(message) {
+            document.getElementById('avg-compliance').textContent = 'Error';
+            document.getElementById('total-violations').textContent = 'Error';
+            document.getElementById('current-compliance').textContent = 'Error';
+            document.getElementById('months-tracked').textContent = 'Error';
+            console.error(message);
+        }
+        
+        // Initialize on load
+        initDashboard();
+    </script>
+</body>
+</html>

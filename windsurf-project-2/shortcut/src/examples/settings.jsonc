@@ -1,0 +1,12 @@
+
+{
+  // JSONC file with comments
+  "theme": "dark",
+  "language": "typescript",
+  "editor": {
+    "tabSize": 2,
+    "wordWrap": true,
+    "minimap": false
+  },
+  // Trailing comma allowed!
+}

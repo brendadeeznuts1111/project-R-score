@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicode Text Display Demo - Grapheme Clustering</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="src/app.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .demo-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .demo-header p {
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .feature-description {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .demo-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .interactive-demo {
+            background: rgba(249, 250, 251, 0.8);
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(229, 231, 235, 0.6);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .example-card {
+            background: white;
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .example-card:hover {
+            background: rgba(59, 130, 246, 0.05);
+            border-color: #3b82f6;
+        }
+        
+        .example-text {
+            font-size: 18px;
+            margin-bottom: 8px;
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+        }
+        
+        .example-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .analysis-result {
+            background: white;
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .analysis-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(249, 250, 251, 0.8);
+            border-radius: 8px;
+        }
+        
+        .analysis-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 4px;
+        }
+        
+        .analysis-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .cluster-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 16px;
+        }
+        
+        .cluster-item {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 14px;
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+            position: relative;
+        }
+        
+        .cluster-item:hover::after {
+            content: attr(data-info);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(31, 41, 55, 0.95);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 4px;
+        }
+        
+        .environment-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .environment-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #059669;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+
+        // Grapheme clustering utility (simplified version for demo)
+        function hasIntlSegmenter() {
+            return typeof Intl !== 'undefined' && 'Segmenter' in Intl;
+        }
+
+        class FallbackSegmenter {
+            constructor() {
+                this.graphemeRegex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+                this.combiningRegex = /[\u0300-\u036f\u1ab0-\u1aff\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]/g;
+            }
+            
+            segment(text) {
+                const clusters = [];
+                let remaining = text;
+                
+                while (remaining.length > 0) {
+                    const emojiMatch = this.graphemeRegex.exec(remaining);
+                    if (emojiMatch && emojiMatch.index === 0) {
+                        const cluster = emojiMatch[0];
+                        clusters.push(this.createCluster(cluster));
+                        remaining = remaining.slice(cluster.length);
+                        this.graphemeRegex.lastIndex = 0;
+                        continue;
+                    }
+                    
+                    const codePoint = remaining.codePointAt(0);
+                    const char = remaining[0];
+                    let cluster = char;
+                    
+                    if (remaining.length > 1 && this.combiningRegex.test(remaining[1])) {
+                        cluster += remaining[1];
+                        clusters.push(this.createCluster(cluster));
+                        remaining = remaining.slice(2);
+                    } else if (codePoint && codePoint > 0xFFFF) {
+                        cluster = remaining.slice(0, 2);
+                        clusters.push(this.createCluster(cluster));
+                        remaining = remaining.slice(2);
+                    } else {
+                        clusters.push(this.createCluster(cluster));
+                        remaining = remaining.slice(1);
+                    }
+                }
+                
+                return clusters;
+            }
+            
+            getGraphemeCount(text) {
+                return this.segment(text).length;
+            }
+            
+            truncate(text, maxLength, suffix = '...') {
+                const clusters = this.segment(text);
+                if (clusters.length <= maxLength) {
+                    return text;
+                }
+                
+                const truncated = clusters.slice(0, maxLength).map(c => c.cluster).join('');
+                return truncated + suffix;
+            }
+            
+            createCluster(cluster) {
+                const isEmoji = this.graphemeRegex.test(cluster);
+                const isCombining = this.combiningRegex.test(cluster);
+                const displayWidth = isEmoji ? 2 : (cluster.length > 1 && cluster.codePointAt(0) > 0xFFFF ? 2 : 1);
+                
+                return {
+                    cluster,
+                    isEmoji,
+                    isCombining,
+                    displayWidth
+                };
+            }
+        }
+
+        class IntlSegmenter {
+            constructor(locale = 'en') {
+                this.segmenter = new Intl.Segmenter(locale, { granularity: 'grapheme' });
+            }
+            
+            segment(text) {
+                const clusters = [];
+                for (const segment of this.segmenter.segment(text)) {
+                    clusters.push(this.createCluster(segment.segment));
+                }
+                return clusters;
+            }
+            
+            getGraphemeCount(text) {
+                return [...this.segmenter.segment(text)].length;
+            }
+            
+            truncate(text, maxLength, suffix = '...') {
+                const segments = [...this.segmenter.segment(text)];
+                if (segments.length <= maxLength) {
+                    return text;
+                }
+                
+                const truncated = segments.slice(0, maxLength).map(s => s.segment).join('');
+                return truncated + suffix;
+            }
+            
+            createCluster(cluster) {
+                const emojiRegex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+                const combiningRegex = /[\u0300-\u036f\u1ab0-\u1aff\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]/;
+                
+                const isEmoji = emojiRegex.test(cluster);
+                const isCombining = combiningRegex.test(cluster);
+                const displayWidth = isEmoji ? 2 : (cluster.length > 1 && cluster.codePointAt(0) > 0xFFFF ? 2 : 1);
+                
+                return {
+                    cluster,
+                    isEmoji,
+                    isCombining,
+                    displayWidth
+                };
+            }
+        }
+
+        function createGraphemeSegmenter(locale = 'en') {
+            if (hasIntlSegmenter()) {
+                return new IntlSegmenter(locale);
+            } else {
+                return new FallbackSegmenter();
+            }
+        }
+
+        const defaultSegmenter = createGraphemeSegmenter();
+
+        function getGraphemeCount(text) {
+            return defaultSegmenter.getGraphemeCount(text);
+        }
+
+        function truncateText(text, maxLength, suffix) {
+            return defaultSegmenter.truncate(text, maxLength, suffix);
+        }
+
+        // Demo examples
+        const examples = [
+            { text: 'Hello, World!', label: 'Basic ASCII' },
+            { text: '👍🏽🎉🚀💻', label: 'Emoji with modifiers' },
+            { text: 'e\u0301 a\u0300 o\u0302', label: 'Combining marks' },
+            { text: '👨‍👩‍👧‍👦', label: 'Family emoji ZWJ' },
+            { text: '🇺🇸🇯🇵🇬🇧', label: 'Flag sequences' },
+            { text: '你好 こんにちは', label: 'CJK characters' },
+            { text: '∑∏∫∆∇∂√∞', label: 'Mathematical symbols' },
+            { text: 'H̴e̵l̴l̵o̴ ̵W̵o̴r̵l̴d̵', label: 'Zalgo text' }
+        ];
+
+        function UnicodeTextDisplay({ text, maxLength, showClusters = false }) {
+            const [showFullText, setShowFullText] = useState(false);
+            
+            const clusters = useMemo(() => {
+                return defaultSegmenter.segment(text);
+            }, [text]);
+            
+            const displayText = useMemo(() => {
+                if (!maxLength || showFullText) {
+                    return text;
+                }
+                return truncateText(text, maxLength);
+            }, [text, maxLength, showFullText]);
+            
+            const graphemeCount = useMemo(() => {
+                return getGraphemeCount(text);
+            }, [text]);
+            
+            const isTruncated = maxLength && graphemeCount > maxLength && !showFullText;
+            
+            return (
+                <div className="unicode-text-display">
+                    <div className="text-content">
+                        <span className="text">{displayText}</span>
+                        {isTruncated && (
+                            <button 
+                                className="expand-button"
+                                onClick={() => setShowFullText(true)}
+                            >
+                                …
+                            </button>
+                        )}
+                        {showFullText && maxLength && graphemeCount > maxLength && (
+                            <button 
+                                className="collapse-button"
+                                onClick={() => setShowFullText(false)}
+                            >
+                                ‹
+                            </button>
+                        )}
+                    </div>
+                    
+                    {showClusters && (
+                        <div className="cluster-visualization">
+                            <div className="cluster-header">
+                                <span className="cluster-count">Graphemes: {graphemeCount}</span>
+                                <span className="char-count">Chars: {text.length}</span>
+                            </div>
+                            <div className="cluster-display">
+                                {clusters.map((cluster, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="cluster-item"
+                                        data-info={`Index: ${index} | Width: ${cluster.displayWidth} | ${cluster.isEmoji ? 'Emoji' : cluster.isCombining ? 'Combining' : 'Text'}`}
+                                    >
+                                        {cluster.cluster}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function App() {
+            const [inputText, setInputText] = useState('Hello, World! 👋🌍');
+            const [showClusters, setShowClusters] = useState(true);
+            
+            const analysis = useMemo(() => {
+                const clusters = defaultSegmenter.segment(inputText);
+                return {
+                    graphemeCount: clusters.length,
+                    charCount: inputText.length,
+                    displayWidth: clusters.reduce((sum, c) => sum + c.displayWidth, 0),
+                    emojiCount: clusters.filter(c => c.isEmoji).length,
+                    combiningCount: clusters.filter(c => c.isCombining).length
+                };
+            }, [inputText]);
+            
+            return (
+                <div className="demo-container">
+                    <div className="demo-header">
+                        <h1>🌐 Unicode Text Display Demo</h1>
+                        <p>Advanced grapheme clustering for proper Unicode text handling</p>
+                    </div>
+                    
+                    <div className="environment-info">
+                        <span>✅ Environment: </span>
+                        <span className="environment-badge">
+                            {hasIntlSegmenter() ? 'Intl.Segmenter Available' : 'Using Fallback'}
+                        </span>
+                    </div>
+                    
+                    <div className="feature-grid">
+                        <div className="feature-card">
+                            <span className="feature-icon">🎯</span>
+                            <h3 className="feature-title">Accurate Grapheme Counting</h3>
+                            <p className="feature-description">
+                                Properly counts user-perceived characters, not just code points. 
+                                Emoji sequences are counted as single characters.
+                            </p>
+                        </div>
+                        
+                        <div className="feature-card">
+                            <span className="feature-icon">✂️</span>
+                            <h3 className="feature-title">Safe Text Truncation</h3>
+                            <p className="feature-description">
+                                Truncates text without breaking grapheme clusters, preventing 
+                                orphaned combining marks or incomplete emoji.
+                            </p>
+                        </div>
+                        
+                        <div className="feature-card">
+                            <span className="feature-icon">🔄</span>
+                            <h3 className="feature-title">Fallback Support</h3>
+                            <p className="feature-description">
+                                Automatically uses Intl.Segmenter when available, with a robust 
+                                fallback for older environments.
+                            </p>
+                        </div>
+                        
+                        <div className="feature-card">
+                            <span className="feature-icon">🔍</span>
+                            <h3 className="feature-title">Visual Analysis</h3>
+                            <p className="feature-description">
+                                Interactive visualization of grapheme clusters with detailed 
+                                information about each character.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div className="demo-section">
+                        <h2 className="section-title">
+                            <span>🎮</span> Interactive Demo
+                        </h2>
+                        
+                        <div className="interactive-demo">
+                            <div className="input-group">
+                                <label>Enter Unicode Text:</label>
+                                <input
+                                    type="text"
+                                    className="text-input"
+                                    value={inputText}
+                                    onChange={(e) => setInputText(e.target.value)}
+                                    placeholder="Try emoji, combining marks, or CJK text..."
+                                />
+                            </div>
+                            
+                            <div className="input-group">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={showClusters}
+                                        onChange={(e) => setShowClusters(e.target.checked)}
+                                    />
+                                    Show grapheme cluster analysis
+                                </label>
+                            </div>
+                            
+                            <div className="analysis-result">
+                                <div className="analysis-grid">
+                                    <div className="analysis-item">
+                                        <div className="analysis-value">{analysis.graphemeCount}</div>
+                                        <div className="analysis-label">Graphemes</div>
+                                    </div>
+                                    <div className="analysis-item">
+                                        <div className="analysis-value">{analysis.charCount}</div>
+                                        <div className="analysis-label">Characters</div>
+                                    </div>
+                                    <div className="analysis-item">
+                                        <div className="analysis-value">{analysis.displayWidth}</div>
+                                        <div className="analysis-label">Display Width</div>
+                                    </div>
+                                    <div className="analysis-item">
+                                        <div className="analysis-value">{analysis.emojiCount}</div>
+                                        <div className="analysis-label">Emoji</div>
+                                    </div>
+                                    <div className="analysis-item">
+                                        <div className="analysis-value">{analysis.combiningCount}</div>
+                                        <div className="analysis-label">Combining</div>
+                                    </div>
+                                </div>
+                                
+                                <UnicodeTextDisplay 
+                                    text={inputText}
+                                    maxLength={20}
+                                    showClusters={showClusters}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="demo-section">
+                        <h2 className="section-title">
+                            <span>📚</span> Example Texts
+                        </h2>
+                        
+                        <div className="examples-grid">
+                            {examples.map((example, index) => (
+                                <div 
+                                    key={index}
+                                    className="example-card"
+                                    onClick={() => setInputText(example.text)}
+                                >
+                                    <div className="example-text">{example.text}</div>
+                                    <div className="example-label">{example.label}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

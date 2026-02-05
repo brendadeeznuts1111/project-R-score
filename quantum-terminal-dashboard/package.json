@@ -1,0 +1,194 @@
+{
+  "name": "quantum-terminal-dashboard",
+  "version": "2.0.1",
+  "type": "module",
+  "description": "PTY-enabled financial terminal dashboard with Bun.Terminal integration",
+  "main": "src/quantum-app.ts",
+  "scripts": {
+    "dev": "bun run src/quantum-production-system.js start",
+    "dev:legacy": "bun run --hot scripts/start-terminal-dev.js",
+    "start": "NODE_ENV=production bun run src/quantum-production-system.js start",
+    "start:server": "bun run src/servers/http-server.js",
+    "start:terminal": "bun run src/servers/terminal-server.js",
+    "ticker": "bun run src/scripts/financial-ticker.js",
+    "monitor": "bun run src/scripts/market-monitor.js",
+    "dashboard": "bun run src/monitoring-dashboard.js",
+    "terminal": "bun run src/quantum-production-system.js terminal",
+    "terminal:ticker": "bun run src/quantum-production-system.js terminal ticker",
+    "terminal:monitor": "bun run src/quantum-production-system.js terminal monitor",
+    "terminal:network": "bun run src/quantum-production-system.js terminal network",
+    "build": "bun run src/quantum-production-system.js build universal",
+    "build:all": "bun run src/quantum-production-system.js build-all",
+    "build:universal": "bun run src/quantum-production-system.js build universal",
+    "build:terminal-only": "bun run src/quantum-production-system.js build terminal-only",
+    "build:lightweight": "bun run src/quantum-production-system.js build lightweight",
+    "build:dev": "bun run src/quantum-production-system.js build development",
+    "build:legacy": "bun run scripts/build-terminal.js --all",
+    "metrics": "bun run src/quantum-production-system.js metrics",
+    "health": "bun run src/quantum-production-system.js health",
+    "report": "bun run src/quantum-production-system.js report",
+    "deploy:staging": "./scripts/deploy.sh staging",
+    "deploy:production": "./scripts/deploy.sh production",
+    "deploy:canary": "./scripts/deploy.sh canary",
+    "simd:benchmark": "bun run src/quantum-simd-engine.js --benchmark",
+    "simd:test-buffer": "bun run src/quantum-simd-engine.js --test-buffer",
+    "simd:test-spawn": "bun run src/quantum-simd-engine.js --test-spawn",
+    "simd:collect-data": "bun run src/quantum-simd-engine.js --collect-data",
+    "simd:build": "./scripts/build-simd.sh build",
+    "simd:all": "./scripts/build-simd.sh all",
+    "perf:monitor": "bun run src/performance-monitor.js",
+    "perf:terminal": "bun run src/performance-monitor.js --terminal",
+    "test:features": "bun run scripts/build-terminal.js --test",
+    "test:unit": "bun test --grep '\\[DOMAIN\\]'",
+    "test:integ": "bun test --grep '\\[SCOPE\\]'",
+    "test:react": "bun test --grep '\\[REACT\\]'",
+    "test:headscale": "bun test test/headscale-integration.test.ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf builds dist .build-cache .deployments benchmarks reports node_modules/.cache",
+    "headscale:start": "bun run src/headscale-server.ts",
+    "headscale:cli": "bun run src/headscale-cli.ts",
+    "headscale:user:create": "bun run src/headscale-cli.ts user create",
+    "headscale:authkey": "bun run src/headscale-cli.ts authkey create",
+    "headscale:nodes": "bun run src/headscale-cli.ts node list"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.72.1",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/addon-web-links": "^0.12.0",
+    "@xterm/xterm": "^6.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.8",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "xterm": "",
+    "xterm-addon-fit": "",
+    "xterm-addon-web-links": "0.9.0",
+    "three": ""
+  },
+  "peerDependenciesMeta": {
+    "xterm": {
+      "optional": true
+    },
+    "xterm-addon-fit": {
+      "optional": true
+    },
+    "xterm-addon-web-links": {
+      "optional": true
+    },
+    "three": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "keywords": [
+    "bun",
+    "terminal",
+    "pty",
+    "dashboard",
+    "financial",
+    "react",
+    "websocket",
+    "xterm",
+    "simd",
+    "performance"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "features": {
+    "terminal": {
+      "description": "PTY terminal integration with Bun.Terminal",
+      "requires": [
+        "posix"
+      ],
+      "runtime": "bun >=1.0.0"
+    },
+    "webgl": {
+      "description": "WebGL visualizations with Three.js",
+      "runtime": "browser"
+    },
+    "premium": {
+      "description": "Premium features for advanced users",
+      "requires": [
+        "terminal",
+        "webgl"
+      ]
+    },
+    "pty_support": {
+      "description": "Full PTY support for interactive terminals",
+      "requires": [
+        "terminal"
+      ],
+      "platforms": [
+        "darwin",
+        "linux"
+      ]
+    }
+  },
+  "build": {
+    "profiles": {
+      "desktop-terminal": {
+        "features": [
+          "TERMINAL",
+          "WEBGL",
+          "PREMIUM",
+          "SIMD_ACCELERATED",
+          "PTY_SUPPORT"
+        ],
+        "terminal": true,
+        "dimensions": {
+          "cols": 120,
+          "rows": 40
+        }
+      },
+      "mobile-terminal": {
+        "features": [
+          "TERMINAL",
+          "WEBGL",
+          "MOBILE_OPTIMIZED"
+        ],
+        "terminal": true,
+        "dimensions": {
+          "cols": 60,
+          "rows": 20
+        }
+      },
+      "server-terminal": {
+        "features": [
+          "TERMINAL",
+          "PTY_SUPPORT",
+          "NETWORK_VISUALIZATION"
+        ],
+        "terminal": true,
+        "dimensions": {
+          "cols": 80,
+          "rows": 24
+        }
+      },
+      "no-terminal": {
+        "features": [
+          "WEBGL",
+          "SIMD_ACCELERATED"
+        ],
+        "terminal": false
+      }
+    }
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

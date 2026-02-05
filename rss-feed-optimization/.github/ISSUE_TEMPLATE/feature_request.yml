@@ -1,0 +1,104 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! This helps us improve the project.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: A brief summary of the feature you'd like to see.
+      placeholder: Briefly describe the feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What problem does this feature solve? Why is it needed?
+      placeholder: |
+        Is your feature request related to a problem? Please describe.
+        A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like.
+      placeholder: |
+        A clear and concise description of what you want to happen.
+        Please provide as much detail as possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered.
+      placeholder: |
+        A clear and concise description of any alternative solutions or features you've considered.
+        Why did you reject them?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact Assessment
+      description: How would this feature impact the project?
+      options:
+        - label: Would require breaking changes
+          required: false
+        - label: Would add new dependencies
+          required: false
+        - label: Would significantly increase complexity
+          required: false
+        - label: Would affect performance
+          required: false
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: If applicable, add examples of how this feature would be used.
+      placeholder: |
+        Provide code examples or use cases that demonstrate how this feature would work.
+        You may use markdown code blocks for examples.
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Ideas
+      description: Any ideas on how this feature could be implemented?
+      placeholder: |
+        Do you have any ideas on how this feature could be implemented?
+        Are you willing to help implement it?
+        Any technical details you think would be relevant?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Additional Information
+      description: Please check the following:
+      options:
+        - label: I have searched the existing issues and discussions
+          required: true
+        - label: This feature aligns with the project's goals
+          required: true
+        - label: I have provided sufficient detail
+          required: true

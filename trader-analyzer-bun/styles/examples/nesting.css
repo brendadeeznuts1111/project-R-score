@@ -1,0 +1,239 @@
+/**
+ * CSS Nesting Examples
+ * 
+ * Demonstrates CSS nesting features supported by Bun's CSS bundler.
+ * Bun automatically flattens nested selectors for browser compatibility.
+ * 
+ * Reference: https://bun.com/docs/bundler/css#nesting
+ */
+
+/* ==========================================================================
+   Basic Nesting
+   ========================================================================== */
+
+/* Element nesting */
+.card {
+	background: var(--bg-secondary);
+	padding: 25px;
+	
+	h2 {
+		color: var(--accent-cyan);
+		margin-bottom: 15px;
+	}
+	
+	p {
+		color: var(--text-primary);
+		line-height: 1.6;
+	}
+}
+
+/* Class nesting */
+.card {
+	background: var(--bg-secondary);
+	
+	.card-header {
+		padding: 20px;
+		border-bottom: 1px solid var(--border-color);
+	}
+	
+	.card-body {
+		padding: 20px;
+	}
+	
+	.card-footer {
+		padding: 20px;
+		border-top: 1px solid var(--border-color);
+	}
+}
+
+/* ==========================================================================
+   The & Selector
+   ========================================================================== */
+
+/* Pseudo-classes with & */
+.button {
+	background: var(--accent-purple);
+	color: white;
+	
+	&:hover {
+		background: color-mix(in srgb, var(--accent-purple) 80%, white);
+		transform: translateY(-1px);
+	}
+	
+	&:active {
+		transform: translateY(0);
+		background: color-mix(in srgb, var(--accent-purple) 80%, black);
+	}
+	
+	&:focus-visible {
+		outline: 2px solid var(--accent-purple);
+		outline-offset: 2px;
+	}
+	
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+/* Modifier classes with & */
+.button {
+	background: var(--accent-purple);
+	
+	&.primary {
+		background: var(--accent-cyan);
+	}
+	
+	&.secondary {
+		background: var(--accent-green);
+	}
+	
+	&.large {
+		padding: 16px 32px;
+		font-size: 1.2em;
+	}
+	
+	&.small {
+		padding: 8px 16px;
+		font-size: 0.9em;
+	}
+}
+
+/* Combining & with other selectors */
+.card {
+	background: var(--bg-secondary);
+	
+	/* Direct child */
+	> .card-header {
+		padding: 20px;
+	}
+	
+	/* Adjacent sibling */
+	+ .card {
+		margin-top: 20px;
+	}
+	
+	/* General sibling */
+	~ .card {
+		margin-left: 20px;
+	}
+	
+	/* Descendant with & */
+	& .content {
+		padding: 20px;
+	}
+}
+
+/* ==========================================================================
+   Nested Media Queries
+   ========================================================================== */
+
+.card {
+	padding: 20px;
+	
+	@media (width >= 768px) {
+		padding: 30px;
+		
+		h2 {
+			font-size: 2em;
+		}
+	}
+	
+	@media (width >= 1024px) {
+		padding: 40px;
+		
+		.card-body {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+}
+
+/* ==========================================================================
+   Complex Nesting Examples
+   ========================================================================== */
+
+/* Component with variants */
+.alert {
+	padding: 16px;
+	border-radius: 8px;
+	border: 1px solid;
+	
+	.alert-title {
+		font-weight: 700;
+		margin-bottom: 8px;
+	}
+	
+	.alert-content {
+		color: var(--text-secondary);
+	}
+	
+	/* Variants */
+	&.alert-success {
+		background: color-mix(in srgb, var(--color-success) 10%, transparent);
+		border-color: var(--color-success);
+		color: var(--color-success);
+		
+		.alert-title {
+			color: var(--color-success);
+		}
+	}
+	
+	&.alert-warning {
+		background: color-mix(in srgb, var(--color-warning) 10%, transparent);
+		border-color: var(--color-warning);
+		color: var(--color-warning);
+	}
+	
+	/* Responsive */
+	@media (width >= 768px) {
+		padding: 20px;
+		
+		.alert-title {
+			font-size: 1.25em;
+		}
+	}
+}
+
+/* Form elements */
+.form-group {
+	margin-bottom: 20px;
+	
+	label {
+		display: block;
+		margin-bottom: 8px;
+		font-weight: 600;
+	}
+	
+	input,
+	textarea,
+	select {
+		width: 100%;
+		padding: 10px;
+		border: 1px solid var(--border-color);
+		
+		&:focus {
+			outline: none;
+			border-color: var(--accent-cyan);
+		}
+		
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+	
+	.error-message {
+		color: var(--color-error);
+		font-size: 0.875em;
+		margin-top: 4px;
+	}
+	
+	&.has-error {
+		input,
+		textarea,
+		select {
+			border-color: var(--color-error);
+		}
+	}
+}

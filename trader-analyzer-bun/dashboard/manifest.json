@@ -1,0 +1,95 @@
+{
+  "name": "NEXUS Trading Platform Dev Dashboard",
+  "short_name": "NEXUS Dashboard",
+  "description": "Local development dashboard for NEXUS Trading Intelligence Platform - Cross-market arbitrage detection and trading analytics. Includes console depth debugging features (7.0.0.0.0.0.0) for enhanced development experience.",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0e27",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23667eea' width='100' height='100'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3EN%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23667eea' width='100' height='100'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3EN%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "developer", "utilities"],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "_features": {
+    "console_depth_debugging": {
+      "version": "7.0.0.0.0.0.0",
+      "description": "Bun console depth control and custom array inspection for enhanced debugging",
+      "documentation": "../docs/7.0.0.0.0.0.0-CONSOLE-DEPTH-DEBUGGING.md",
+      "cli_argument": "--console-depth=<N>",
+      "features": [
+        "Nested object depth control",
+        "Intelligent array formatting",
+        "Custom class inspection support"
+      ]
+    },
+    "bun_native_utils": {
+      "version": "7.0.0.0.0.0.0",
+      "description": "Bun Native Utilities Integration Hub - Centralized Bun.inspect.table, Bun.inspect, Bun.stringWidth, Bun.randomUUIDv7 with RFC-style documentation",
+      "documentation": "../src/runtime/bun-native-utils.ts",
+      "registry_endpoint": "/api/registry/bun-native-utils",
+      "features": [
+        "Tabular data visualization (Bun.inspect.table)",
+        "Deep object introspection (Bun.inspect)",
+        "Unicode-aware string width calculation (Bun.stringWidth)",
+        "Time-ordered UUID generation (Bun.randomUUIDv7)",
+        "Integrated diagnostic pipeline (HyperBunDiagnostics)",
+        "Cross-system traceability and audit trails"
+      ],
+      "utilities": [
+        {
+          "name": "inspectTable",
+          "version": "7.1.1.0.0.0.0",
+          "description": "Tabular data visualization with security sanitization"
+        },
+        {
+          "name": "inspectDeep",
+          "version": "7.1.2.0.0.0.0",
+          "description": "Deep object introspection with circular reference handling"
+        },
+        {
+          "name": "calculateDisplayWidth",
+          "version": "7.3.1.0.0.0.0",
+          "description": "Unicode-aware display width for Telegram tables"
+        },
+        {
+          "name": "formatTelegramTable",
+          "version": "7.3.1.2.0.0.0",
+          "description": "Telegram-compatible monospace table formatter"
+        },
+        {
+          "name": "HyperBunDiagnostics",
+          "version": "7.4.1.0.0.0.0",
+          "description": "Unified diagnostic logger for terminal and Telegram"
+        },
+        {
+          "name": "generateEventId",
+          "version": "7.2.1.0.0.0.0",
+          "description": "Time-ordered UUIDv7 for event correlation"
+        }
+      ],
+      "cross_references": {
+        "uicontext": "6.1.1.2.2.x.x",
+        "telegram": "9.1.1.x.x.x.x",
+        "audit_trail": "9.1.5.x.x.x.x"
+      },
+      "test_suite": "../test/bun-native-utils.spec.ts"
+    }
+  }
+}

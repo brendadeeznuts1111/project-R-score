@@ -1,0 +1,23 @@
+[install]
+exact = true
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+# Private registry for Dev HQ packages
+"@devhq" = { url = "https://registry.devhq.com", token = "$NPM_CONFIG_TOKEN" }
+
+[install.lockfile]
+# Use consistent lockfile
+path = "bun.lockb"
+
+[test]
+preload = ["./tests/happydom.ts", "./tests/test-setup.ts"]
+
+[packageManager]
+# Enforce Bun version
+bun = "1.0.x"
+
+[publish]
+registry = "https://npm.factory-wager.com"

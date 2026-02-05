@@ -1,0 +1,74 @@
+name: Feature Request
+description: Suggest a new feature for NEXUS
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # [ISSUE.FEATURE_REQUEST.RG] Feature Request Template
+        
+        **Metadata**: `[[TECH][MODULE][INSTANCE][META:{blueprint=BP-FEATURE-REQUEST@0.1.0;instance-id=FEATURE-REQUEST-001;version=0.1.0}][PROPERTIES:{template={value:"feature-request";@root:"ROOT-GIT";@chain:["BP-GITHUB","BP-ISSUES"];@version:"0.1.0"}}][CLASS:FeatureRequestTemplate][#REF:v-0.1.0.BP.FEATURE.REQUEST.1.0.A.1.1.GIT.1.1]]`
+        
+        Thanks for suggesting a feature for NEXUS!
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What area does this feature relate to?
+      options:
+        - Cross-Market Arbitrage
+        - New Exchange/Venue Integration
+        - Prediction Markets (Polymarket/Kalshi)
+        - Sports Betting (ORCA)
+        - Crypto Derivatives (Deribit)
+        - Portfolio Analytics
+        - Trader Profiling
+        - API Endpoints
+        - Performance/Caching
+        - Developer Experience
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like this to work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any other solutions you've thought about?
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Nice to have
+        - Important
+        - Critical for my use case
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to help implement this feature

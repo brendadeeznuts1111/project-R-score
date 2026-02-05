@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <title>📊 Line History Movement Ticks - 13-Byte Configuration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        @keyframes tick-fade {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
+        
+        .glow-effect {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        .tick-appear {
+            animation: tick-fade 0.3s ease-out;
+        }
+        
+        .movement-indicator {
+            transition: all 0.2s ease;
+        }
+        
+        .movement-up {
+            color: #10b981;
+            transform: translateY(-2px);
+        }
+        
+        .movement-down {
+            color: #ef4444;
+            transform: translateY(2px);
+        }
+        
+        .movement-same {
+            color: #6b7280;
+        }
+        
+        .tick-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .tick-dot:hover {
+            transform: scale(1.5);
+            z-index: 10;
+        }
+        
+        .pattern-overlay {
+            position: absolute;
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid #fbbf24;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+        
+        .timeline-cursor {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: #ef4444;
+            pointer-events: none;
+            z-index: 20;
+        }
+        
+        .line-track {
+            position: relative;
+            height: 30px;
+            border-bottom: 1px solid #374151;
+            overflow: hidden;
+        }
+        
+        .tick-track {
+            position: absolute;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+    </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Origin Dashboard",
+        "description": "Real-time performance monitoring and analytics dashboard",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any"
+    }
+</script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">Skip to main content</a>
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    Line History Movement Ticks
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-sm">
+                    <span id="tick-count" class="text-blue-400">0</span> ticks
+                </div>
+                <div class="text-sm">
+                    <span id="movement-count" class="text-green-400">0</span> movements
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm">Live</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Control Panel -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                    Movement Control Panel
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <button id="generate-random" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        Generate Random Movement
+                    </button>
+                    <button id="create-spike" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors">
+                        Create Spike Pattern
+                    </button>
+                    <button id="create-oscillation" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                        Create Oscillation
+                    </button>
+                    <button id="clear-history" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                        Clear History
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Line History Visualization -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                    </svg>
+                    Line Movement Timeline
+                </h2>
+                
+                <div class="relative bg-gray-900 rounded-lg p-4" style="height: 400px;">
+                    <canvas id="line-history-canvas" class="w-full h-full"></canvas>
+                    <div id="timeline-cursor" class="timeline-cursor" style="right: 0;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Individual Line Tracks -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    Individual Line Tracks
+                </h2>
+                
+                <div class="space-y-2" id="line-tracks">
+                    <!-- 13 line tracks will be generated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Movement Statistics -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Movement Statistics
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-blue-400" id="total-movements">0</div>
+                        <div class="text-sm text-gray-400">Total Movements</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-green-400" id="avg-magnitude">0.0</div>
+                        <div class="text-sm text-gray-400">Avg Magnitude</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-yellow-400" id="peak-velocity">0</div>
+                        <div class="text-sm text-gray-400">Peak Velocity</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-purple-400" id="most-active">L0</div>
+                        <div class="text-sm text-gray-400">Most Active Line</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pattern Detection -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Pattern Detection
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="pattern-cards">
+                    <!-- Pattern cards will be generated here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Line History Tracker Implementation
+        class LineHistoryTracker {
+            constructor() {
+                this.history = new Map();
+                this.startTime = Date.now();
+                this.maxHistorySize = 100;
+            }
+
+            recordLineChange(line, newValue) {
+                const now = Date.now();
+                const lineHistory = this.getOrCreateLineHistory(line);
+                
+                const previousValue = lineHistory.currentValue;
+                const movement = this.calculateMovement(previousValue, newValue);
+                const magnitude = Math.abs(newValue - previousValue);
+                
+                const tick = {
+                    timestamp: now,
+                    line,
+                    value: newValue,
+                    previousValue,
+                    movement,
+                    magnitude,
+                    velocity: magnitude,
+                    acceleration: 0
+                };
+
+                lineHistory.currentValue = newValue;
+                lineHistory.previousValue = previousValue;
+                lineHistory.ticks.push(tick);
+                lineHistory.totalMovements++;
+                lineHistory.lastMovementTime = now;
+
+                if (lineHistory.ticks.length > this.maxHistorySize) {
+                    lineHistory.ticks.shift();
+                }
+
+                return tick;
+            }
+
+            getOrCreateLineHistory(line) {
+                if (!this.history.has(line)) {
+                    this.history.set(line, {
+                        lineId: line,
+                        currentValue: 0,
+                        previousValue: 0,
+                        ticks: [],
+                        totalMovements: 0,
+                        lastMovementTime: Date.now(),
+                        averageVelocity: 0,
+                        peakVelocity: 0,
+                        trend: 'stable'
+                    });
+                }
+                return this.history.get(line);
+            }
+
+            calculateMovement(previous, current) {
+                if (current > previous) return 'up';
+                if (current < previous) return 'down';
+                return 'same';
+            }
+
+            getMovementVisualization() {
+                const timeline = [];
+                const heatmap = new Map();
+                const patterns = [];
+
+                for (const lineHistory of this.history.values()) {
+                    timeline.push(...lineHistory.ticks);
+                    const intensity = lineHistory.ticks.reduce((sum, tick) => sum + tick.magnitude, 0);
+                    heatmap.set(lineHistory.lineId, intensity);
+                }
+
+                timeline.sort((a, b) => a.timestamp - b.timestamp);
+
+                const summary = this.generateMovementSummary(timeline);
+
+                return { timeline, heatmap, patterns, summary };
+            }
+
+            generateMovementSummary(timeline) {
+                if (timeline.length === 0) {
+                    return {
+                        totalTicks: 0,
+                        totalMovements: 0,
+                        averageMagnitude: 0,
+                        peakMagnitude: 0,
+                        mostActiveLine: 0,
+                        movementFrequency: 0
+                    };
+                }
+
+                const totalTicks = timeline.length;
+                const movements = timeline.filter(t => t.movement !== 'same');
+                const totalMovements = movements.length;
+                const magnitudes = movements.map(t => t.magnitude);
+                const averageMagnitude = magnitudes.reduce((sum, m) => sum + m, 0) / magnitudes.length;
+                const peakMagnitude = Math.max(...magnitudes);
+
+                const lineMovements = new Map();
+                for (const tick of timeline) {
+                    lineMovements.set(tick.line, (lineMovements.get(tick.line) || 0) + 1);
+                }
+                const mostActiveLine = Array.from(lineMovements.entries())
+                    .reduce((max, [line, count]) => count > max.count ? {line, count} : max, {line: 0, count: 0})
+                    .line;
+
+                return {
+                    totalTicks,
+                    totalMovements,
+                    averageMagnitude,
+                    peakMagnitude,
+                    mostActiveLine,
+                    movementFrequency: totalMovements / 10 // Simplified
+                };
+            }
+
+            clearHistory() {
+                this.history.clear();
+                this.startTime = Date.now();
+            }
+        }
+
+        // Initialize tracker
+        const tracker = new LineHistoryTracker();
+        
+        // Initialize line tracks
+        function initializeLineTracks() {
+            const container = document.getElementById('line-tracks');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 13; i++) {
+                const track = document.createElement('div');
+                track.className = 'line-track';
+                track.innerHTML = `
+                    <div class="flex items-center justify-between px-4 py-2 bg-gray-900">
+                        <span class="text-sm font-mono text-gray-400">Line ${i}</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">Value:</span>
+                            <span id="line-${i}-value" class="text-sm font-mono text-blue-400">0</span>
+                            <span id="line-${i}-movement" class="movement-indicator text-xs">-</span>
+                        </div>
+                    </div>
+                    <div class="tick-track" id="line-${i}-ticks"></div>
+                `;
+                container.appendChild(track);
+            }
+        }
+
+        // Update line display
+        function updateLineDisplay(line, tick) {
+            const valueElement = document.getElementById(`line-${line}-value`);
+            const movementElement = document.getElementById(`line-${line}-movement`);
+            const ticksElement = document.getElementById(`line-${line}-ticks`);
+            
+            if (valueElement) {
+                valueElement.textContent = tick.value;
+            }
+            
+            if (movementElement) {
+                movementElement.textContent = tick.movement.toUpperCase();
+                movementElement.className = `movement-indicator text-xs movement-${tick.movement}`;
+            }
+            
+            if (ticksElement) {
+                const dot = document.createElement('span');
+                dot.className = 'tick-dot tick-appear';
+                
+                // Color based on movement
+                switch (tick.movement) {
+                    case 'up':
+                        dot.style.backgroundColor = '#10b981';
+                        break;
+                    case 'down':
+                        dot.style.backgroundColor = '#ef4444';
+                        break;
+                    default:
+                        dot.style.backgroundColor = '#6b7280';
+                }
+                
+                // Size based on magnitude
+                const size = Math.max(4, Math.min(12, tick.magnitude * 3));
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                
+                dotsElement.appendChild(dot);
+                
+                // Limit number of visible dots
+                while (ticksElement.children.length > 20) {
+                    ticksElement.removeChild(ticksElement.firstChild);
+                }
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const visualization = tracker.getMovementVisualization();
+            const summary = visualization.summary;
+            
+            document.getElementById('total-movements').textContent = summary.totalMovements;
+            document.getElementById('avg-magnitude').textContent = summary.averageMagnitude.toFixed(1);
+            document.getElementById('peak-velocity').textContent = summary.peakMagnitude.toFixed(0);
+            document.getElementById('most-active').textContent = `L${summary.mostActiveLine}`;
+            document.getElementById('tick-count').textContent = summary.totalTicks;
+            document.getElementById('movement-count').textContent = summary.totalMovements;
+        }
+
+        // Generate random movement
+        function generateRandomMovement() {
+            const line = Math.floor(Math.random() * 13);
+            const newValue = Math.floor(Math.random() * 256);
+            const tick = tracker.recordLineChange(line, newValue);
+            
+            updateLineDisplay(line, tick);
+            updateStatistics();
+            
+            // Update timeline cursor
+            const cursor = document.getElementById('timeline-cursor');
+            if (cursor) {
+                cursor.style.right = '0px';
+            }
+        }
+
+        // Create spike pattern
+        function createSpikePattern() {
+            const line = Math.floor(Math.random() * 13);
+            const baseValue = 128;
+            
+            // Create spike
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const spikeValue = baseValue + (Math.random() - 0.5) * 100;
+                    const tick = tracker.recordLineChange(line, Math.floor(spikeValue));
+                    updateLineDisplay(line, tick);
+                    updateStatistics();
+                }, i * 100);
+            }
+        }
+
+        // Create oscillation pattern
+        function createOscillationPattern() {
+            const line = Math.floor(Math.random() * 13);
+            let value = 128;
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    value = value + (Math.random() - 0.5) * 50;
+                    value = Math.max(0, Math.min(255, value));
+                    const tick = tracker.recordLineChange(line, Math.floor(value));
+                    updateLineDisplay(line, tick);
+                    updateStatistics();
+                }, i * 200);
+            }
+        }
+
+        // Clear history
+        function clearHistory() {
+            tracker.clearHistory();
+            initializeLineTracks();
+            updateStatistics();
+            
+            // Clear all tick displays
+            for (let i = 0; i < 13; i++) {
+                const ticksElement = document.getElementById(`line-${i}-ticks`);
+                if (ticksElement) {
+                    ticksElement.innerHTML = '';
+                }
+            }
+        }
+
+        // Event listeners
+        document.getElementById('generate-random').addEventListener('click', generateRandomMovement);
+        document.getElementById('create-spike').addEventListener('click', createSpikePattern);
+        document.getElementById('create-oscillation').addEventListener('click', createOscillationPattern);
+        document.getElementById('clear-history').addEventListener('click', clearHistory);
+
+        // Initialize
+        initializeLineTracks();
+        updateStatistics();
+
+        // Auto-generate movements for demo
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                generateRandomMovement();
+            }
+        }, 2000);
+
+        // Update timeline cursor
+        setInterval(() => {
+            const cursor = document.getElementById('timeline-cursor');
+            if (cursor) {
+                const now = Date.now();
+                const age = (now % 10000) / 10000; // 10 second cycle
+                cursor.style.right = `${age * 100}%`;
+            }
+        }, 100);
+    </script>
+</body>
+</html>

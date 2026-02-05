@@ -1,0 +1,32 @@
+# Bun configuration file
+# See https://bun.sh/docs/cli/bunfig
+
+[install]
+exact = true
+registry = "https://npm.factory-wager.com"
+# Use isolated linker to prevent phantom dependencies
+linker = "isolated"
+# Auto-install peer dependencies
+auto = true
+# Production mode (skip devDependencies)
+production = false
+# Trusted dependencies (for postinstall scripts)
+# trustedDependencies = []
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+# Scope-specific configuration
+# Example: "@myorg/*" = { token = "..." }
+
+[test]
+# Test configuration
+# timeout = 5000
+# preload = ["./test-setup.ts"]
+
+[run]
+# Runtime configuration
+# bun = "latest"
+
+[publish]
+registry = "https://npm.factory-wager.com"

@@ -1,0 +1,14 @@
+# Live Dashboard Configuration
+dashboard:
+  name: "Live Dashboard"
+  version: "v3.0"
+  refresh_interval: "500ms"
+  
+  metrics:
+    enabled: true
+    endpoint: "/metrics"
+    
+  features:
+    real_time: true
+    compression: "permessage-deflate"
+

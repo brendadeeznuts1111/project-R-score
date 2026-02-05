@@ -1,0 +1,10 @@
+{
+  // Hello World skill configuration
+  "enabled": true,
+  "priority": "low",
+  "tags": ["test", "example"],
+  "commands": {
+    "greet": "Say hello to someone",
+    "goodbye": "Say goodbye to someone"
+  }
+}

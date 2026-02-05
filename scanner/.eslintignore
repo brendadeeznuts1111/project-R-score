@@ -1,0 +1,21 @@
+# Build outputs
+dist/
+build/
+.bun/
+coverage/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Benchmarks (may use experimental syntax)
+benchmarks/
+
+# Generated files
+profiles/
+
+# Lock files
+bun.lockb
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

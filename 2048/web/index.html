@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2048 Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>2048</h1>
+      <div class="score-container">
+        <div class="score-box">
+          <span class="score-label">SCORE</span>
+          <span class="score" id="score">0</span>
+        </div>
+        <div class="score-box">
+          <span class="score-label">BEST</span>
+          <span class="score" id="best">0</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="game-container">
+      <div class="game-message" id="game-message">
+        <p></p>
+        <div class="lower">
+          <a class="retry-button" onclick="game.restart()">Try again</a>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+      </div>
+
+      <div class="tile-container" id="tile-container">
+      </div>
+    </div>
+
+    <div class="game-explanation">
+      <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
+      <p><strong>HOW TO PLAY:</strong> Use your <strong>arrow keys</strong> to move the tiles. Tiles with the same
+        number <strong>merge into one</strong> when they touch. Add them up to reach <strong>2048!</strong></p>
+    </div>
+
+    <div class="restart-button" onclick="game.restart()">New Game</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

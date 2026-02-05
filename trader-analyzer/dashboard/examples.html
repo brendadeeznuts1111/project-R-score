@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NEXUS API Examples - Code examples for key Bun APIs and integrations including Bun.serve() TypeScript generics, snapshot testing (Bun 1.3+), and breaking changes">
+    <meta name="keywords" content="Bun, API examples, Bun.serve TypeScript, Bun.Server generic, snapshot testing, bun:test, toMatchSnapshot, toMatchInlineSnapshot, Bun 1.3, breaking changes, TypeScript types">
+    <meta name="og:description" content="NEXUS API Examples - Code examples for Bun.serve() TypeScript generics, snapshot testing, and latest Bun features">
+    <meta name="theme-color" content="#667eea">
+    <meta name="color-scheme" content="dark">
+    <link rel="manifest" href="./manifest.json">
+    <title>NEXUS API Examples - Bun APIs & Snapshot Testing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: #1a1f3a;
+            border: 2px solid #667eea;
+            color: #00d4ff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 25px;
+        }
+
+        .example-card {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .example-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .example-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .example-title {
+            font-size: 1.3em;
+            color: #00d4ff;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .example-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 0.85em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .example-description {
+            color: #9ca3af;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .example-api {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #ffeb3b;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .example-code {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            border-left: 3px solid #667eea;
+        }
+
+        .example-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .example-code code {
+            color: #e0e0e0;
+        }
+
+        .example-code .comment {
+            color: #6a9955;
+        }
+
+        .example-code .keyword {
+            color: #569cd6;
+        }
+
+        .example-code .string {
+            color: #ce9178;
+        }
+
+        .example-code .function {
+            color: #dcdcaa;
+        }
+
+        .security-warning {
+            background: rgba(255, 23, 68, 0.1);
+            border-left: 3px solid #ff1744;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .security-warning strong {
+            color: #ff1744;
+        }
+
+        .example-output {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #00d4ff;
+            margin-top: 10px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        .example-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .example-link {
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .example-link:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .related-apis {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .related-apis-title {
+            color: #9ca3af;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .related-api-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: #667eea;
+            margin-right: 8px;
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding: 30px 20px;
+            background: #1a1f3a;
+            border-top: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .laymans-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .laymans-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .laymans-content {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid #667eea;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .laymans-content h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .laymans-content h3 {
+            color: #667eea;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .laymans-content p {
+            color: #e0e0e0;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .laymans-content code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffeb3b;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .laymans-content .close-btn {
+            float: right;
+            background: #ff1744;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .laymans-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .laymans-content table th,
+        .laymans-content table td {
+            padding: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            text-align: left;
+        }
+
+        .laymans-content table th {
+            background: rgba(102, 126, 234, 0.2);
+            color: #00d4ff;
+        }
+
+        .api-status {
+            padding: 15px;
+            background: rgba(255, 235, 59, 0.1);
+            border-left: 3px solid #ffeb3b;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .api-status.offline {
+            background: rgba(255, 23, 68, 0.1);
+            border-left-color: #ff1744;
+        }
+
+        .api-status a {
+            color: #00d4ff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Shared timezone utilities - Load in body to avoid execution context issues -->
+    <script src="./js/timezone-utils.js" onerror="console.error('Failed to load timezone-utils.js')"></script>
+    <div class="header" role="banner">
+        <h1 id="main-heading">📚 NEXUS API Examples</h1>
+        <p id="main-description">Code examples for key Bun APIs and integrations used in NEXUS Trading Platform</p>
+
+        <!-- Developer Workspace Navigation -->
+        <div class="header-nav" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
+            <a href="/api/changelog" target="_blank" style="color: #00d4ff; text-decoration: none; padding: 8px 16px; background: rgba(0, 212, 255, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(0, 212, 255, 0.3);" onmouseover="this.style.background='rgba(0, 212, 255, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(0, 212, 255, 0.1)'; this.style.transform='translateY(0)';">
+                📋 Changelog
+            </a>
+            <a href="/api/changelog?limit=50" target="_blank" style="color: #84cc16; text-decoration: none; padding: 8px 16px; background: rgba(132, 204, 22, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(132, 204, 22, 0.3);" onmouseover="this.style.background='rgba(132, 204, 22, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(132, 204, 22, 0.1)'; this.style.transform='translateY(0)';">
+                📜 Git Logs
+            </a>
+            <a href="/api/rss.xml" target="_blank" style="color: #f59e0b; text-decoration: none; padding: 8px 16px; background: rgba(245, 158, 11, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(245, 158, 11, 0.3);" onmouseover="this.style.background='rgba(245, 158, 11, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.transform='translateY(0)';">
+                📡 RSS Feed
+            </a>
+        </div>
+    </div>
+
+    <div id="apiStatus" class="api-status" style="display: none;" role="status" aria-live="polite"></div>
+
+    <nav class="controls" role="toolbar" aria-label="Example filters">
+        <button class="filter-btn active" onclick="filterExamples('all')" aria-label="Show all examples">All</button>
+    </nav>
+
+    <main id="examplesContainer" role="main">
+        <div class="loading">Loading examples...</div>
+    </main>
+
+    <!-- Layman's Terms Modal -->
+    <div id="laymansModal" class="laymans-modal" role="dialog" aria-labelledby="laymansTitle" aria-modal="true">
+        <div class="laymans-content">
+            <button class="close-btn" onclick="closeLaymansTerms()" aria-label="Close explanation">✕ Close</button>
+            <div id="laymansContent"></div>
+        </div>
+    </div>
+
+    <footer class="footer" role="contentinfo">
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(102, 126, 234, 0.2); color: #9ca3af; font-size: 0.9em;">
+                <p style="margin-bottom: 10px;">
+                    <strong style="color: #667eea;">NEXUS Trading Platform</strong> v1.0.0 | Built with Bun 1.3.x + Hono<br>
+                    System Time: <span id="headerSystemTime">--:--:--</span> | Last Update: <span id="headerLastUpdate">Never</span><br>
+                    <span style="font-size: 0.85em; opacity: 0.7;" id="headerTimezoneConstants">[$TZ][Etc/UTC][setSystemTime]</span>
+                </p>
+                <p style="margin-top: 10px; opacity: 0.7;">
+                    System Time: <span id="footerSystemTime">--:--:--</span> | Last Update: <span id="footerLastUpdate">Never</span><br>
+                    <span style="font-size: 0.85em;" id="footerTimezoneConstants">[$TZ][Etc/UTC][setSystemTime]</span>
+                </p>
+        </div>
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="./index.html">Dashboard</a> | 
+            <a href="./registry.html">Registry</a> | 
+            <a href="https://bun.com/reference" target="_blank">Bun Reference</a> |
+            <a href="/docs/URL-PARSING-EDGE-CASE.md" target="_blank">NEXUS Docs</a>
+        </p>
+    </footer>
+
+    <script>
+        // Ensure timezone utilities are loaded before proceeding
+        if (!window.timezoneUtils) {
+            console.warn('[Examples] timezone-utils.js not loaded, timezone features may not work');
+        }
+        
+        // Try to detect the API port from environment or use defaults
+        const API_BASE = 'http://localhost:' + (window.location.port === '3000' ? '3000' : '3001');
+        let allExamples = [];
+        let currentCategory = 'all';
+
+        // Fallback: Load examples from embedded data if API fails
+        async function loadExamples() {
+            const statusDiv = document.getElementById('apiStatus');
+            // Try both ports
+            const ports = ['3001', '3000'];
+            let lastError = null;
+            
+            for (const port of ports) {
+                try {
+                    const testBase = `http://localhost:${port}`;
+                    const response = await fetch(`${testBase}/api/examples`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    const data = await response.json();
+                    allExamples = data.examples || [];
+                    
+                    // Build category filters
+                    const categories = data.categories || [];
+                    buildCategoryFilters(categories);
+                    renderExamples();
+                    
+                    // Hide status if API is working
+                    statusDiv.style.display = 'none';
+                    console.log(`✅ Connected to API on port ${port}`);
+                    
+                    // Update lastUpdate times (using formatSystemTime for consistency)
+                    const refreshTime = formatSystemTime();
+                    const headerLastUpdateEl = document.getElementById('headerLastUpdate');
+                    const footerLastUpdate = document.getElementById('footerLastUpdate');
+                    if (headerLastUpdateEl) {
+                        headerLastUpdateEl.textContent = refreshTime;
+                    }
+                    if (footerLastUpdate) {
+                        footerLastUpdate.textContent = refreshTime;
+                    }
+                    
+                    return; // Success!
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Port ${port} failed:`, error.message);
+                    continue; // Try next port
+                }
+            }
+            
+            // All ports failed - use fallback
+            console.warn('API not available on any port, using embedded examples:', lastError);
+            
+            // Show status message
+            statusDiv.className = 'api-status offline';
+            statusDiv.innerHTML = `
+                <strong>⚠️ API Server Offline</strong><br>
+                Using embedded examples. To see all examples, start the API server:<br>
+                <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">bun run dev</code><br>
+                Server runs on port <strong>3001</strong> by default (or set PORT env var).<br>
+                Then refresh this page. <a href="./index.html">Return to Dashboard</a>
+            `;
+            statusDiv.style.display = 'block';
+            
+            // Fallback to embedded examples
+            await loadEmbeddedExamples();
+        }
+
+        async function loadEmbeddedExamples() {
+            try {
+                // Import examples from the API file (if available) or use embedded data
+                const response = await fetch(`${API_BASE}/api/examples`);
+                if (response.ok) {
+                    const data = await response.json();
+                    allExamples = data.examples || [];
+                } else {
+                    // Use minimal embedded examples as last resort
+                    allExamples = getEmbeddedExamples();
+                }
+                const categories = [...new Set(allExamples.map(ex => ex.category))];
+                buildCategoryFilters(categories);
+                renderExamples();
+            } catch (error) {
+                // Final fallback: use embedded examples
+                allExamples = getEmbeddedExamples();
+                const categories = [...new Set(allExamples.map(ex => ex.category))];
+                buildCategoryFilters(categories);
+                renderExamples();
+            }
+        }
+
+        function buildCategoryFilters(categories) {
+            const controls = document.querySelector('.controls');
+            // Clear existing filters except "All"
+            const allBtn = controls.querySelector('.filter-btn');
+            controls.innerHTML = '';
+            controls.appendChild(allBtn);
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.textContent = category;
+                btn.onclick = () => filterExamples(category);
+                btn.setAttribute('aria-label', `Filter by ${category}`);
+                controls.appendChild(btn);
+            });
+        }
+
+        function getEmbeddedExamples() {
+            // Embedded examples as fallback when API is unavailable
+            return [
+                {
+                    category: "Bun Runtime",
+                    name: "URLSearchParams",
+                    description: "Build and parse URL query parameters",
+                    api: "URLSearchParams",
+                    docsUrl: "https://bun.com/reference/globals/URLSearchParams",
+                    code: `const myURL = new URL('https://example.org/?a=b&c=d');
+myURL.searchParams.forEach((value, name) => {
+  console.log(name, value);
+});`,
+                    output: "a b\nc d",
+                    related: ["Bun.CookieMap", "fetch"]
+                },
+                {
+                    category: "Security & Research",
+                    name: "URLSearchParams HTML Entity Edge Case",
+                    description: "Critical discovery: HTML entities in URLs are parsed as parameter separators",
+                    api: "URLSearchParams",
+                    docsUrl: "https://bun.com/reference/globals/URLSearchParams",
+                    code: `// HTML entities are treated as parameter separators!
+const myURL = new URL('https://example.org/?a=b&#x26;c=d');
+myURL.searchParams.forEach((value, name) => {
+  console.log(name, value);
+});
+// Prints: "a" "b" AND "c" "d"`,
+                    output: "a b\nc d",
+                    related: ["URLSearchParams", "Bun.serve"]
+                }
+            ];
+        }
+
+        function filterExamples(category) {
+            currentCategory = category;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderExamples();
+        }
+
+        function renderExamples() {
+            const container = document.getElementById('examplesContainer');
+            const filtered = currentCategory === 'all' 
+                ? allExamples 
+                : allExamples.filter(ex => ex.category === currentCategory);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">No examples found for this category</div>';
+                return;
+            }
+
+            container.innerHTML = '<div class="examples-grid"></div>';
+            const grid = container.querySelector('.examples-grid');
+
+            filtered.forEach(example => {
+                const card = document.createElement('div');
+                card.className = 'example-card';
+                
+                const relatedTags = example.related 
+                    ? example.related.map(api => `<span class="related-api-tag">${api}</span>`).join('')
+                    : '';
+
+                const isSecurity = example.category === 'Security & Research';
+                const securityWarning = isSecurity ? `
+                    <div class="security-warning">
+                        <strong>⚠️ Security Note:</strong> This example demonstrates a critical edge case with security implications. Review carefully before implementing in production.
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <div class="example-header">
+                        <div>
+                            <div class="example-title">${example.name}</div>
+                            <span class="example-category">${example.category}</span>
+                        </div>
+                    </div>
+                    <div class="example-description">${example.description}</div>
+                    <div class="example-api">API: <code>${example.api}</code></div>
+                    ${securityWarning}
+                    <div class="example-code">
+                        <pre><code>${escapeHtml(example.code)}</code></pre>
+                    </div>
+                    ${example.output ? `
+                        <div class="example-output">
+                            <strong>Output:</strong><br>
+                            <pre>${escapeHtml(example.output)}</pre>
+                        </div>
+                    ` : ''}
+                    <div class="example-links">
+                        <a href="${example.docsUrl}" target="_blank" class="example-link">📖 Bun Docs</a>
+                        ${example.filePath ? `
+                            <a href="/docs/URL-PARSING-EDGE-CASE.md" target="_blank" class="example-link" style="background: rgba(102, 126, 234, 0.2);">
+                                📚 NEXUS Docs
+                            </a>
+                            <a href="javascript:void(0)" onclick="showLaymansTerms('${example.name}')" class="example-link" style="background: rgba(0, 212, 255, 0.2);">
+                                💡 Simple Explanation
+                            </a>
+                        ` : ''}
+                    </div>
+                    ${relatedTags ? `
+                        <div class="related-apis">
+                            <div class="related-apis-title">Related APIs:</div>
+                            ${relatedTags}
+                        </div>
+                    ` : ''}
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Layman's terms explanations
+        const laymansTerms = {
+            'URLSearchParams.forEach() - HTML Entity Parsing': {
+                title: 'URL Parsing Edge Case - Simple Explanation',
+                content: `
+                    <h2>🔍 What We Discovered</h2>
+                    <p><strong>In simple terms:</strong> When URLs contain special codes like <code>&amp;</code> (which means "&" in HTML), web browsers and URL parsers treat them as if they were actual <code>&</code> characters. This can cause unexpected behavior.</p>
+                    
+                    <h3>📖 The Problem Explained Simply</h3>
+                    <p><strong>Normal URL:</strong></p>
+                    <code>https://example.com/?team=Lakers&spread=5</code>
+                    <p>This has <strong>2 parameters</strong>: <code>team=Lakers</code> and <code>spread=5</code></p>
+                    
+                    <p><strong>Problem URL with HTML Entity:</strong></p>
+                    <code>https://example.com/?team=Lakers&amp;spread=5</code>
+                    <p>This <strong>also</strong> has 2 parameters, even though <code>&amp;</code> was meant to be part of the team name!</p>
+                    <p><strong>Why?</strong> Because <code>&amp;</code> is decoded as <code>&</code>, which acts as a separator between parameters.</p>
+                    
+                    <h3>🎯 Real-World Impact</h3>
+                    <p><strong>For Sports Betting Data Collection:</strong></p>
+                    <ol>
+                        <li><strong>Data Corruption:</strong> When we collect odds from bookmaker websites, URLs with HTML entities get split incorrectly</li>
+                        <li><strong>False Alerts:</strong> We might think a line moved when it didn't - it's just a parsing error</li>
+                        <li><strong>Security Risk:</strong> Malicious actors could inject extra parameters using HTML entities</li>
+                    </ol>
+                    
+                    <h3>🛡️ How We Fixed It</h3>
+                    <p><strong>1. Detection:</strong> We test each bookmaker's API to see if they use HTML entities in their URLs.</p>
+                    <p><strong>2. Protection:</strong> We scan URLs before using them and flag suspicious ones.</p>
+                    <p><strong>3. Correction:</strong> We fix URLs that have HTML entities so they parse correctly.</p>
+                `
+            },
+            'URLSearchParams + Database.run() - Malicious Query Detection': {
+                title: 'Malicious Query Detection - Simple Explanation',
+                content: `
+                    <h2>🛡️ How We Protect Against Bad URLs</h2>
+                    <p><strong>What it does:</strong> Before we use any URL from a bookmaker, we check if it contains suspicious HTML entity codes.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Scan:</strong> We look through the URL for patterns like <code>&amp;</code>, <code>&#x26;</code>, etc.</li>
+                        <li><strong>Count:</strong> We count how many suspicious patterns we find</li>
+                        <li><strong>Decide:</strong>
+                            <ul>
+                                <li>0 entities = ✅ Safe to use</li>
+                                <li>1-2 entities = ⚠️ Suspicious - log it but allow</li>
+                                <li>3+ entities = 🚫 Malicious - block it!</li>
+                            </ul>
+                        </li>
+                        <li><strong>Log:</strong> Everything gets saved to our security database for review</li>
+                    </ol>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Bad actors could try to inject extra parameters into URLs to manipulate our data. This system catches those attempts before they cause problems.</p>
+                `
+            },
+            'URLSearchParams + Map - Custom Entity Parser': {
+                title: 'Custom URL Parser - Simple Explanation',
+                content: `
+                    <h2>🔧 How We Fix Broken URLs</h2>
+                    <p><strong>The Problem:</strong> Some bookmaker URLs have HTML entities that get split incorrectly, creating fake parameters.</p>
+                    
+                    <h3>Our Solution - 3 Steps:</h3>
+                    <ol>
+                        <li><strong>Hide the Problem:</strong> We temporarily replace HTML entities with placeholders (like <code>__ENTITY__</code>)</li>
+                        <li><strong>Parse Normally:</strong> Now the URL parses correctly without the entities confusing things</li>
+                        <li><strong>Restore Values:</strong> We put the original HTML entities back into the parameter values (where they belong)</li>
+                    </ol>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Broken URL:</strong></p>
+                    <code>https://bookmaker.com/odds?event=123&amp;team=Lakers</code>
+                    <p>Gets incorrectly parsed as: <code>event=123</code>, <code>amp</code>, <code>team=Lakers</code> (3 parameters - wrong!)</p>
+                    
+                    <p><strong>After Our Fix:</strong></p>
+                    <p>Gets correctly parsed as: <code>event=123</code>, <code>team=Lakers&amp;</code> (2 parameters - correct!)</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>We get accurate data even when bookmakers send us URLs with HTML entities. This prevents false trading signals and corrupted logs.</p>
+                `
+            },
+            'Database.run() + JSON.stringify() - Bookmaker Registry Update': {
+                title: 'Bookmaker Registry Update - Simple Explanation',
+                content: `
+                    <h2>📝 Saving Bookmaker URL Behavior</h2>
+                    <p><strong>What it does:</strong> After we test a bookmaker's API, we save the results to our database so we remember how each bookmaker handles URLs.</p>
+                    
+                    <h3>What Gets Saved:</h3>
+                    <ul>
+                        <li><strong>URL Encoding Behavior:</strong> Does this bookmaker use HTML entities?</li>
+                        <li><strong>Security Risk Level:</strong> Low, Medium, or High risk</li>
+                        <li><strong>Requires Escaping:</strong> Do we need to fix their URLs before using them?</li>
+                        <li><strong>Last Tested:</strong> When we last checked this bookmaker</li>
+                    </ul>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Once we know how each bookmaker handles URLs, we can:</p>
+                    <ul>
+                        <li>Apply the right fixes automatically</li>
+                        <li>Flag high-risk bookmakers for extra security</li>
+                        <li>Skip unnecessary checks for low-risk bookmakers</li>
+                    </ul>
+                    
+                    <p><strong>Example:</strong> If DraftKings uses HTML entities, we automatically use our custom parser for all DraftKings URLs.</p>
+                `
+            },
+            'String.match() + RegExp - Alert Rule Evaluator': {
+                title: 'Alert System - Simple Explanation',
+                content: `
+                    <h2>🚨 Automatic Security Alerts</h2>
+                    <p><strong>What it does:</strong> Our system automatically watches for suspicious URLs and alerts us when it finds them.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Check Every URL:</strong> Every time we log a URL from a bookmaker, the alert system checks it</li>
+                        <li><strong>Count HTML Entities:</strong> It counts how many HTML entity codes (like <code>&amp;</code>) are in the URL</li>
+                        <li><strong>Check Risk Level:</strong> It checks if the bookmaker is marked as "high risk"</li>
+                        <li><strong>Alert If Suspicious:</strong> If it finds multiple entities AND the bookmaker is high-risk → ALERT!</li>
+                    </ol>
+                    
+                    <h3>What Happens When Alert Triggers:</h3>
+                    <ul>
+                        <li>🚫 <strong>Quarantine:</strong> The request is blocked immediately</li>
+                        <li>📢 <strong>Alert Trader:</strong> Urgent message sent to trading team</li>
+                        <li>📝 <strong>Log Event:</strong> Security event logged for investigation</li>
+                    </ul>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>We catch potential attacks in real-time before they can corrupt our data or create false trading signals.</p>
+                `
+            },
+            'Bun.shell ($) - Production Hardening Scripts': {
+                title: 'Production Hardening - Simple Explanation',
+                content: `
+                    <h2>🔒 Setting Up Security (Production Hardening)</h2>
+                    <p><strong>What it is:</strong> A checklist of scripts we run to make sure our system is secure and ready for production use.</p>
+                    
+                    <h3>The 5-Step Checklist:</h3>
+                    <ol>
+                        <li><strong>Audit Existing Logs:</strong> Check all our old logs for suspicious URLs we might have missed</li>
+                        <li><strong>Test Bookmakers:</strong> Test all bookmaker APIs to see which ones have URL encoding issues</li>
+                        <li><strong>Update Registry:</strong> Save the test results to our bookmaker database</li>
+                        <li><strong>Deploy Fixes:</strong> Install the corrected URL parser system</li>
+                        <li><strong>Enable Alerts:</strong> Turn on automatic security alerts</li>
+                    </ol>
+                    
+                    <h3>How We Run It:</h3>
+                    <p>We use Bun's built-in shell commands (<code>Bun.shell</code>) to run each script automatically. This means:</p>
+                    <ul>
+                        <li>✅ No manual steps - everything runs automatically</li>
+                        <li>✅ Fast execution - Bun is very fast</li>
+                        <li>✅ Safe - Each script runs in isolation</li>
+                    </ul>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Before going live, we make sure everything is secure and working correctly. This checklist ensures we don't miss anything.</p>
+                `
+            },
+            'Array.filter() + String.includes() - Pattern Detection': {
+                title: 'Pattern Detection - Simple Explanation',
+                content: `
+                    <h2>🔍 Finding Patterns in Trading Data</h2>
+                    <p><strong>What it does:</strong> Looks through our trading data to find patterns caused by URL encoding bugs.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Look Through Data:</strong> Examines all line movement records</li>
+                        <li><strong>Find Suspicious URLs:</strong> Filters for URLs containing HTML entities like <code>&amp;</code></li>
+                        <li><strong>Check Percentage:</strong> If more than 10% of movements have this issue → Pattern detected!</li>
+                        <li><strong>Create Pattern Record:</strong> Saves the pattern with details about what causes it</li>
+                    </ol>
+                    
+                    <h3>What Patterns Tell Us:</h3>
+                    <ul>
+                        <li><strong>Which Bookmaker:</strong> Which bookmaker has this problem?</li>
+                        <li><strong>What to Expect:</strong> What kind of false signals will this create?</li>
+                        <li><strong>How Often:</strong> How frequently does this happen?</li>
+                        <li><strong>Confidence Level:</strong> How sure are we this is a real pattern?</li>
+                    </ul>
+                    
+                    <h3>Example Pattern:</h3>
+                    <p><strong>Pattern Name:</strong> "URL Entity Artifact - Duplicate Moves"</p>
+                    <p><strong>What It Means:</strong> When a bookmaker uses HTML entities, we see duplicate line movements that didn't actually happen.</p>
+                    <p><strong>Expected Outcome:</strong> Two identical line movements within 100 milliseconds (impossible in real trading!)</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>By detecting these patterns, we can:</p>
+                    <ul>
+                        <li>Filter out false signals automatically</li>
+                        <li>Focus on real trading opportunities</li>
+                        <li>Improve our trading algorithm accuracy</li>
+                    </ul>
+                `
+            },
+            'Bun.shell ($) + Bun.file() - Native Log Viewer': {
+                title: 'Log Viewer - Simple Explanation',
+                content: `
+                    <h2>📋 Reading Log Files</h2>
+                    <p><strong>What it does:</strong> Reads and searches through log files to find errors, warnings, or specific messages.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Read Log File:</strong> Uses Bun's built-in shell commands to read the last N lines</li>
+                        <li><strong>Filter by Level:</strong> Can filter for errors, warnings, info, or debug messages</li>
+                        <li><strong>Search:</strong> Can search for specific text in log messages</li>
+                        <li><strong>Count:</strong> Counts how many errors, warnings, etc. are in the log</li>
+                    </ol>
+                    
+                    <h3>Real-World Use:</h3>
+                    <ul>
+                        <li><strong>Find Errors:</strong> "Show me all errors from the last hour"</li>
+                        <li><strong>Debug Issues:</strong> "Search for 'connection failed' in logs"</li>
+                        <li><strong>Monitor Health:</strong> "Count how many warnings we got today"</li>
+                    </ul>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>When something goes wrong, we can quickly find what happened by searching through logs. This helps us fix problems faster.</p>
+                `
+            },
+            'Bun.file() + Bun.write() - JSONL Logging': {
+                title: 'Structured Logging - Simple Explanation',
+                content: `
+                    <h2>📝 Saving Logs in Structured Format</h2>
+                    <p><strong>What it does:</strong> Saves log entries to files in JSONL format (one JSON object per line).</p>
+                    
+                    <h3>JSONL Format:</h3>
+                    <p>Each line is a complete JSON object, making it easy to:</p>
+                    <ul>
+                        <li>Read one entry at a time</li>
+                        <li>Search and filter efficiently</li>
+                        <li>Process with tools</li>
+                    </ul>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Create Log File:</strong> Creates a file named by date (e.g., <code>telegram-2025-01-15.jsonl</code>)</li>
+                        <li><strong>Write Entry:</strong> Each log entry is written as a JSON line</li>
+                        <li><strong>Read History:</strong> Can read back all entries or filter by thread/topic</li>
+                    </ol>
+                    
+                    <h3>Example Log Entry:</h3>
+                    <code>{"timestamp":1705276800000,"threadId":12345,"messageId":67890,"text":"Hello!"}</code>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Structured logs make it easy to:</p>
+                    <ul>
+                        <li>Track all Telegram messages sent</li>
+                        <li>Find messages by thread or topic</li>
+                        <li>Audit what happened when</li>
+                    </ul>
+                `
+            },
+            'Bun.nanoseconds() + benchmark() - Performance Benchmarking': {
+                title: 'Performance Benchmarking - Simple Explanation',
+                content: `
+                    <h2>⚡ Measuring How Fast Code Runs</h2>
+                    <p><strong>What it does:</strong> Measures how long code takes to execute, down to the nanosecond (billionth of a second).</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Start Timer:</strong> Records the start time using <code>Bun.nanoseconds()</code></li>
+                        <li><strong>Run Code:</strong> Executes the code you want to measure</li>
+                        <li><strong>Stop Timer:</strong> Records the end time</li>
+                        <li><strong>Calculate:</strong> End time - Start time = How long it took</li>
+                        <li><strong>Repeat:</strong> Runs many times to get average performance</li>
+                    </ol>
+                    
+                    <h3>What We Measure:</h3>
+                    <ul>
+                        <li><strong>Average Time:</strong> How long it takes on average</li>
+                        <li><strong>Operations Per Second:</strong> How many operations can run per second</li>
+                        <li><strong>Total Throughput:</strong> How much work gets done</li>
+                    </ul>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Benchmark:</strong> Processing 10,000 trading ticks</p>
+                    <p><strong>Result:</strong> Average 50 nanoseconds per tick = 20 million ticks per second!</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>We need to know if our code is fast enough for real-time trading. Slow code means missed opportunities.</p>
+                `
+            },
+            'SeededRandom + generateTestData() - Deterministic Tests': {
+                title: 'Deterministic Testing - Simple Explanation',
+                content: `
+                    <h2>🎲 Reproducible Test Data</h2>
+                    <p><strong>What it does:</strong> Creates test data that's random-looking but always the same when you use the same "seed" number.</p>
+                    
+                    <h3>What is a Seed?</h3>
+                    <p>A <strong>seed</strong> is like a starting number. When you use the same seed, you get the same sequence of "random" numbers every time.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Set Seed:</strong> Start with a number (e.g., 42)</li>
+                        <li><strong>Generate Numbers:</strong> Use a math formula to create "random" numbers from the seed</li>
+                        <li><strong>Same Seed = Same Numbers:</strong> Using seed 42 always gives the same sequence</li>
+                    </ol>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Seed 42:</strong> Generates: 123, 456, 789, 234...</p>
+                    <p><strong>Seed 42 again:</strong> Generates: 123, 456, 789, 234... (same!)</p>
+                    <p><strong>Seed 99:</strong> Generates: 567, 890, 123, 456... (different!)</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>In testing:</p>
+                    <ul>
+                        <li>✅ Tests always produce the same results</li>
+                        <li>✅ Easy to debug - same data every time</li>
+                        <li>✅ Can share test cases - everyone gets same results</li>
+                    </ul>
+                    
+                    <h3>Usage:</h3>
+                    <p><code>bun test --seed=42</code> - Run tests with seed 42 for reproducibility</p>
+                `
+            },
+            'bench() + group() - Mitata Benchmark Runner': {
+                title: 'Benchmark Runner - Simple Explanation',
+                content: `
+                    <h2>🏃 Running Performance Tests</h2>
+                    <p><strong>What it does:</strong> Runs multiple performance tests and shows you which code is fastest.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Group Tests:</strong> Organize tests into groups (e.g., "URL operations", "Database operations")</li>
+                        <li><strong>Define Benchmarks:</strong> Each benchmark tests one specific operation</li>
+                        <li><strong>Run All:</strong> Executes all benchmarks and measures how long each takes</li>
+                        <li><strong>Show Results:</strong> Displays results showing which is fastest</li>
+                    </ol>
+                    
+                    <h3>Example Output:</h3>
+                    <pre>
+URLSearchParams operations:
+  new URLSearchParams()     → 50 ns/op
+  URLSearchParams.get()     → 25 ns/op
+  URLSearchParams.forEach() → 100 ns/op
+
+Database operations:
+  Database.query()          → 500 ns/op
+  Database.prepare()        → 200 ns/op
+                    </pre>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>We can compare different ways of doing the same thing and pick the fastest one. This helps us write faster code.</p>
+                    
+                    <h3>Usage:</h3>
+                    <p><code>bun run bench</code> - Run all benchmarks</p>
+                    <p><code>bun run bench:sqlite</code> - Run only SQLite benchmarks</p>
+                `
+            },
+            'Bun.serve() - HTTP + WebSocket Server': {
+                title: 'HTTP + WebSocket Server - Simple Explanation',
+                content: `
+                    <h2>🌐 Creating a Web Server</h2>
+                    <p><strong>What it does:</strong> Creates a web server that can handle both regular web requests and real-time WebSocket connections.</p>
+                    
+                    <h3>Two Types of Connections:</h3>
+                    <ul>
+                        <li><strong>HTTP:</strong> Regular web requests (like loading a webpage)</li>
+                        <li><strong>WebSocket:</strong> Real-time two-way communication (like chat or live updates)</li>
+                    </ul>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Start Server:</strong> Server starts listening on a port (e.g., 3001)</li>
+                        <li><strong>Handle HTTP:</strong> When someone visits a URL, handle the request</li>
+                        <li><strong>Handle WebSocket:</strong> When someone wants real-time connection, upgrade HTTP to WebSocket</li>
+                        <li><strong>Send Messages:</strong> WebSocket allows sending messages back and forth instantly</li>
+                    </ol>
+                    
+                    <h3>Real-World Use:</h3>
+                    <ul>
+                        <li>HTTP: API endpoints, web pages, file downloads</li>
+                        <li>WebSocket: Live trading data, chat messages, real-time notifications</li>
+                    </ul>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>We need both types: HTTP for regular API calls, WebSocket for real-time trading data updates.</p>
+                `
+            },
+            'Bun.build() - Bundler & Compiler': {
+                title: 'Code Bundling - Simple Explanation',
+                content: `
+                    <h2>📦 Packaging Code for Production</h2>
+                    <p><strong>What it does:</strong> Takes your TypeScript/JavaScript code and packages it into optimized files ready for production.</p>
+                    
+                    <h3>What Bundling Does:</h3>
+                    <ul>
+                        <li><strong>Combines Files:</strong> Merges multiple files into fewer files</li>
+                        <li><strong>Minifies:</strong> Removes whitespace and shortens variable names</li>
+                        <li><strong>Optimizes:</strong> Removes unused code</li>
+                        <li><strong>Compiles:</strong> Converts TypeScript to JavaScript</li>
+                    </ul>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Before (development):</strong></p>
+                    <ul>
+                        <li>src/index.ts (100 lines)</li>
+                        <li>src/api/routes.ts (500 lines)</li>
+                        <li>src/utils/helpers.ts (200 lines)</li>
+                    </ul>
+                    
+                    <p><strong>After (production):</strong></p>
+                    <ul>
+                        <li>dist/index.js (600 lines, minified)</li>
+                    </ul>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Smaller files load faster, which is critical for production. Bundling makes our code ready to deploy.</p>
+                `
+            },
+            'Bun.hash() + Bun.CryptoHasher - Hashing': {
+                title: 'Data Hashing - Simple Explanation',
+                content: `
+                    <h2>🔐 Converting Data to Unique Fingerprints</h2>
+                    <p><strong>What it does:</strong> Converts any data (text, files, etc.) into a unique "fingerprint" called a hash.</p>
+                    
+                    <h3>What is Hashing?</h3>
+                    <p>Hashing is like creating a unique ID for data. Same input always produces same hash, but you can't reverse it to get the original data.</p>
+                    
+                    <h3>Two Types:</h3>
+                    <ul>
+                        <li><strong>Quick Hash:</strong> Fast, simple hash (good for caching, quick checks)</li>
+                        <li><strong>Secure Hash:</strong> Cryptographic hash (good for passwords, security)</li>
+                    </ul>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Input:</strong> "Hello World"</p>
+                    <p><strong>Quick Hash:</strong> 1234567890 (number)</p>
+                    <p><strong>Secure Hash (SHA256):</strong> "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e" (hex string)</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>We use hashing to:</p>
+                    <ul>
+                        <li>Verify file integrity (did file get corrupted?)</li>
+                        <li>Create cache keys (same data = same hash = same cache)</li>
+                        <li>Secure passwords (store hash, not password)</li>
+                    </ul>
+                `
+            },
+            'Bun.randomUUIDv7() - UUID Generation': {
+                title: 'UUID Generation - Simple Explanation',
+                content: `
+                    <h2>🆔 Creating Unique IDs</h2>
+                    <p><strong>What it does:</strong> Generates unique identifiers (UUIDs) for things like trades, users, or events.</p>
+                    
+                    <h3>Two Types of UUIDs:</h3>
+                    <ul>
+                        <li><strong>UUID v7:</strong> Time-ordered (newer = higher number) - good for sorting</li>
+                        <li><strong>UUID v5:</strong> Deterministic (same input = same UUID) - good for matching</li>
+                    </ul>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>UUID v7 (Time-Ordered):</strong></p>
+                    <code>018f1234-5678-7890-abcd-ef1234567890</code>
+                    <p>Generated at: 2025-01-15 10:30:00</p>
+                    
+                    <p><strong>UUID v5 (Deterministic):</strong></p>
+                    <p>Input: "nexus" + "trade-123"</p>
+                    <p>Always produces: <code>550e8400-e29b-41d4-a716-446655440000</code></p>
+                    <p>Same input = same UUID every time!</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>We use UUIDs to:</p>
+                    <ul>
+                        <li>Identify trades uniquely across different systems</li>
+                        <li>Match the same game from different bookmakers (deterministic UUID)</li>
+                        <li>Sort events by time (time-ordered UUID)</li>
+                    </ul>
+                `
+            },
+            'Bun.sleep() - Async Delays': {
+                title: 'Async Delays - Simple Explanation',
+                content: `
+                    <h2>⏱️ Waiting Without Blocking</h2>
+                    <p><strong>What it does:</strong> Waits for a specified amount of time without freezing the program.</p>
+                    
+                    <h3>Why Use Bun.sleep() Instead of setTimeout?</h3>
+                    <ul>
+                        <li>✅ More efficient - uses Bun's native timing</li>
+                        <li>✅ Better for async/await code</li>
+                        <li>✅ More precise timing</li>
+                    </ul>
+                    
+                    <h3>Example Use Cases:</h3>
+                    <ul>
+                        <li><strong>Rate Limiting:</strong> Wait between API calls to avoid hitting limits</li>
+                        <li><strong>Retry Logic:</strong> Wait before retrying a failed operation</li>
+                        <li><strong>Exponential Backoff:</strong> Wait longer each retry (100ms, 200ms, 400ms...)</li>
+                    </ul>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Retry with Backoff:</strong></p>
+                    <ol>
+                        <li>Try API call → fails</li>
+                        <li>Wait 100ms</li>
+                        <li>Try again → fails</li>
+                        <li>Wait 200ms</li>
+                        <li>Try again → succeeds!</li>
+                    </ol>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Instead of immediately retrying (which might fail again), we wait a bit. This gives the server time to recover and increases our chances of success.</p>
+                `
+            },
+            'Bun.inspect() - Object Inspection': {
+                title: 'Object Inspection - Simple Explanation',
+                content: `
+                    <h2>🔍 Pretty Printing Objects</h2>
+                    <p><strong>What it does:</strong> Formats objects and data structures so they're easy to read in the console.</p>
+                    
+                    <h3>What It Does:</h3>
+                    <ul>
+                        <li>Adds colors to make different parts stand out</li>
+                        <li>Indents nested objects</li>
+                        <li>Sorts keys alphabetically</li>
+                        <li>Shows data types clearly</li>
+                    </ul>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Without Bun.inspect():</strong></p>
+                    <code>{name:"NEXUS",version:"1.0.0",config:{port:3001,features:["arbitrage","analytics"]}}</code>
+                    <p>Hard to read!</p>
+                    
+                    <p><strong>With Bun.inspect():</strong></p>
+                    <pre>
+{
+  config: {
+    features: [ 'arbitrage', 'analytics' ],
+    port: 3001
+  },
+  name: 'NEXUS',
+  version: '1.0.0'
+}
+                    </pre>
+                    <p>Much easier to read!</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>When debugging, readable output helps us find problems faster. Colors and formatting make it easy to spot issues.</p>
+                `
+            },
+            'Bun.peek() - Promise Peeking': {
+                title: 'Promise Peeking - Simple Explanation',
+                content: `
+                    <h2>👀 Checking If Data Is Ready</h2>
+                    <p><strong>What it does:</strong> Checks if a promise (async operation) has already finished without waiting for it.</p>
+                    
+                    <h3>What is a Promise?</h3>
+                    <p>A promise is like a "ticket" for data that's being fetched. You can check if the data is ready without waiting.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Start Operation:</strong> Begin fetching data (get a promise)</li>
+                        <li><strong>Peek:</strong> Check if it's done yet</li>
+                        <li><strong>If Ready:</strong> Use the value immediately</li>
+                        <li><strong>If Not Ready:</strong> Wait for it normally</li>
+                    </ol>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Scenario:</strong> We're fetching the same data in two places</p>
+                    <ol>
+                        <li>First place starts fetching</li>
+                        <li>Second place checks: "Is it done?"</li>
+                        <li>If yes → use it immediately (no duplicate fetch!)</li>
+                        <li>If no → wait for the first fetch to finish</li>
+                    </ol>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>This prevents duplicate API calls. If data is already being fetched, we reuse it instead of fetching again.</p>
+                `
+            },
+            'Bun.deepEquals() - Deep Equality': {
+                title: 'Deep Equality - Simple Explanation',
+                content: `
+                    <h2>🔍 Comparing Complex Objects</h2>
+                    <p><strong>What it does:</strong> Compares two objects to see if they're exactly the same, even if they have nested structures.</p>
+                    
+                    <h3>Regular Comparison vs Deep Comparison:</h3>
+                    <p><strong>Regular (==):</strong> Only checks if it's the same object in memory</p>
+                    <p><strong>Deep:</strong> Checks all properties and nested properties</p>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Object 1:</strong></p>
+                    <code>{ a: 1, b: { c: 2 } }</code>
+                    
+                    <p><strong>Object 2:</strong></p>
+                    <code>{ a: 1, b: { c: 2 } }</code>
+                    
+                    <p><strong>Regular comparison:</strong> false (different objects in memory)</p>
+                    <p><strong>Deep comparison:</strong> true (same values)</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>In trading, we need to check if two trades are the same even if they come from different sources. Deep comparison helps us match identical trades.</p>
+                `
+            },
+            'Bun.Glob - File Pattern Matching': {
+                title: 'File Pattern Matching - Simple Explanation',
+                content: `
+                    <h2>🔍 Finding Files by Pattern</h2>
+                    <p><strong>What it does:</strong> Finds files that match a pattern, like "all TypeScript files" or "all test files".</p>
+                    
+                    <h3>What are Patterns?</h3>
+                    <p>Patterns use special characters:</p>
+                    <ul>
+                        <li><code>*</code> - matches anything (e.g., <code>*.ts</code> = all .ts files)</li>
+                        <li><code>**</code> - matches across directories (e.g., <code>**/*.test.ts</code> = all test files anywhere)</li>
+                    </ul>
+                    
+                    <h3>Examples:</h3>
+                    <ul>
+                        <li><code>**/*.ts</code> → All TypeScript files</li>
+                        <li><code>**/*.test.ts</code> → All test files</li>
+                        <li><code>src/**/*.ts</code> → All TypeScript files in src folder</li>
+                    </ul>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Instead of manually listing files, we can use patterns to find all files we need. This is useful for:</p>
+                    <ul>
+                        <li>Running all tests</li>
+                        <li>Processing all data files</li>
+                        <li>Finding all configuration files</li>
+                    </ul>
+                `
+            },
+            'Bun.generateHeapSnapshot() - Memory Profiling': {
+                title: 'Memory Profiling - Simple Explanation',
+                content: `
+                    <h2>📊 Taking a Picture of Memory</h2>
+                    <p><strong>What it does:</strong> Takes a "snapshot" of what's using memory in your program at a specific moment.</p>
+                    
+                    <h3>What is Memory?</h3>
+                    <p>Memory is where your program stores data while it's running. Too much memory usage can slow things down.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Take Snapshot:</strong> Capture what's in memory right now</li>
+                        <li><strong>Do Something:</strong> Run your code</li>
+                        <li><strong>Take Another Snapshot:</strong> See what changed</li>
+                        <li><strong>Compare:</strong> Find what's using more memory</li>
+                    </ol>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Before processing:</strong> 50 MB memory</p>
+                    <p><strong>After processing:</strong> 200 MB memory</p>
+                    <p><strong>Problem:</strong> Memory increased by 150 MB!</p>
+                    <p><strong>Solution:</strong> Look at snapshot to find what's using the extra memory</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>If our program uses too much memory, it can crash or slow down. Snapshots help us find and fix memory problems.</p>
+                `
+            },
+            'new Worker() - Parallel Processing': {
+                title: 'Worker Threads - Simple Explanation',
+                content: `
+                    <h2>⚡ Running Code in Parallel</h2>
+                    <p><strong>What it does:</strong> Runs code in a separate "worker thread" so it doesn't slow down the main program.</p>
+                    
+                    <h3>What is a Worker?</h3>
+                    <p>A worker is like hiring an assistant. You give them a task, they work on it separately, and tell you when they're done.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Create Worker:</strong> Start a new worker thread</li>
+                        <li><strong>Send Task:</strong> Give the worker something to do</li>
+                        <li><strong>Worker Processes:</strong> Worker does the work in parallel</li>
+                        <li><strong>Get Result:</strong> Worker sends result back when done</li>
+                    </ol>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Main Program:</strong> Handling web requests</p>
+                    <p><strong>Worker:</strong> Processing large dataset</p>
+                    <p>Both run at the same time! Web requests don't slow down while data is processing.</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Heavy computations (like processing thousands of trades) can block the main program. Workers let us do heavy work without slowing down everything else.</p>
+                `
+            },
+            'bun:test - Test Framework': {
+                title: 'Testing - Simple Explanation',
+                content: `
+                    <h2>✅ Making Sure Code Works</h2>
+                    <p><strong>What it does:</strong> Runs tests to verify that your code does what it's supposed to do.</p>
+                    
+                    <h3>What are Tests?</h3>
+                    <p>Tests are like quality checks. You write code that checks if your main code works correctly.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>Write Test:</strong> Describe what the code should do</li>
+                        <li><strong>Run Code:</strong> Execute the code you're testing</li>
+                        <li><strong>Check Result:</strong> Verify it did what you expected</li>
+                        <li><strong>Pass or Fail:</strong> Test either passes (✅) or fails (❌)</li>
+                    </ol>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Test:</strong> "When I add 2 + 2, I should get 4"</p>
+                    <p><strong>Code:</strong> <code>add(2, 2)</code></p>
+                    <p><strong>Result:</strong> 4 ✅ Test passes!</p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Tests catch bugs before they reach production. If we change code and tests fail, we know something broke.</p>
+                    
+                    <h3>Usage:</h3>
+                    <p><code>bun test</code> - Run all tests</p>
+                    <p><code>bun test --seed=42</code> - Run with seed for reproducible results</p>
+                `
+            },
+            'Snapshot Testing - toMatchSnapshot & toMatchInlineSnapshot': {
+                title: 'Snapshot Testing - Simple Explanation',
+                content: `
+                    <h2>📸 Capturing Expected Output</h2>
+                    <p><strong>What it does:</strong> Takes a "snapshot" (picture) of your code's output and saves it. Later, it checks if the output matches the saved snapshot.</p>
+                    
+                    <h3>What are Snapshots?</h3>
+                    <p>Snapshots are like taking a photo of what your code produces. You save the photo, and later tests check if the output still matches the photo.</p>
+                    
+                    <h3>How It Works:</h3>
+                    <ol>
+                        <li><strong>First Run:</strong> Code runs and creates a snapshot file (saves the "photo")</li>
+                        <li><strong>Later Runs:</strong> Code runs again and compares output to the saved snapshot</li>
+                        <li><strong>Match:</strong> If output matches snapshot → ✅ Test passes</li>
+                        <li><strong>Mismatch:</strong> If output changed → ❌ Test fails (shows what changed)</li>
+                    </ol>
+                    
+                    <h3>Two Types of Snapshots:</h3>
+                    <ul>
+                        <li><strong>File Snapshots:</strong> Stored in <code>__snapshots__/</code> folder (good for large/complex data)</li>
+                        <li><strong>Inline Snapshots:</strong> Stored right in the test file (good for small values, easier to read)</li>
+                    </ul>
+                    
+                    <h3>Example:</h3>
+                    <p><strong>Test:</strong> Check if user object looks correct</p>
+                    <p><strong>Code:</strong> <code>expect(user).toMatchSnapshot()</code></p>
+                    <p><strong>First Run:</strong> Saves snapshot: <code>{ name: "Alice", age: 30 }</code></p>
+                    <p><strong>Later Run:</strong> Compares new output to saved snapshot</p>
+                    <p><strong>If Changed:</strong> Shows what changed: <code>age: 30 → 31</code></p>
+                    
+                    <h3>Why This Matters:</h3>
+                    <p>Snapshots catch unexpected changes in complex output (like API responses, UI components, or data structures). If something changes, you'll know immediately.</p>
+                    
+                    <h3>Bun 1.3+ Features:</h3>
+                    <ul>
+                        <li>✅ <strong>Automatic Indentation:</strong> Snapshots automatically align with your code</li>
+                        <li>✅ <strong>Better Diffs:</strong> Shows exactly what changed with color highlighting</li>
+                        <li>✅ <strong>Variable Substitution:</strong> Use <code>$variable</code> in test names</li>
+                    </ul>
+                    
+                    <h3>Usage:</h3>
+                    <p><code>bun test test/snapshot-examples.test.ts</code> - Run snapshot tests</p>
+                    <p><code>bun test --update-snapshots</code> - Update snapshots when output intentionally changes</p>
+                    <p><code>bun test -u</code> - Short form for updating snapshots</p>
+                    
+                    <h3>Where Snapshots Are Stored:</h3>
+                    <ul>
+                        <li><strong>File Snapshots:</strong> <code>test/__snapshots__/snapshot-examples.test.ts.snap</code></li>
+                        <li><strong>Inline Snapshots:</strong> Right in the test file itself</li>
+                    </ul>
+                `
+            }
+        };
+
+        function showLaymansTerms(exampleName) {
+            const modal = document.getElementById('laymansModal');
+            const content = document.getElementById('laymansContent');
+            const terms = laymansTerms[exampleName];
+            
+            if (terms) {
+                content.innerHTML = `
+                    <h2 id="laymansTitle">${terms.title}</h2>
+                    ${terms.content}
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(102, 126, 234, 0.3);">
+                        <p><strong>Want more technical details?</strong></p>
+                        <p>Check out the <a href="/docs/URL-PARSING-EDGE-CASE.md" target="_blank" style="color: #00d4ff;">full NEXUS documentation</a> or the <a href="https://bun.com/reference/globals/URLSearchParams" target="_blank" style="color: #00d4ff;">Bun API reference</a>.</p>
+                    </div>
+                `;
+                modal.classList.add('active');
+                modal.focus();
+            }
+        }
+
+        function closeLaymansTerms() {
+            const modal = document.getElementById('laymansModal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLaymansTerms();
+            }
+        });
+
+        // Close modal on background click
+        document.getElementById('laymansModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'laymansModal') {
+                closeLaymansTerms();
+            }
+        });
+
+        /**
+         * Format system time (matches Bun CLI dashboard format)
+         * Uses toLocaleTimeString() to match test runner and CLI output
+         */
+        function formatSystemTime(date) {
+            if (!date) {
+                date = new Date();
+            }
+            return date.toLocaleTimeString();
+        }
+
+        // Update header system time and last update
+        function updateHeaderTime() {
+            const timeStr = formatSystemTime();
+            const headerTimeEl = document.getElementById('headerSystemTime');
+            const headerLastUpdateEl = document.getElementById('headerLastUpdate');
+            if (headerTimeEl) {
+                headerTimeEl.textContent = timeStr;
+            }
+            if (headerLastUpdateEl && headerLastUpdateEl.textContent === 'Never') {
+                headerLastUpdateEl.textContent = timeStr;
+            }
+        }
+        
+        // Update footer times
+        function updateFooterTimes() {
+            const timeStr = formatSystemTime();
+            const footerSystemTime = document.getElementById('footerSystemTime');
+            const footerLastUpdate = document.getElementById('footerLastUpdate');
+            if (footerSystemTime) {
+                footerSystemTime.textContent = timeStr;
+            }
+            if (footerLastUpdate) {
+                footerLastUpdate.textContent = timeStr;
+            }
+            if (window.timezoneUtils) {
+                window.timezoneUtils.updateTimezoneConstantsDisplay();
+            }
+        }
+        
+        // Update header time every second
+        setInterval(updateHeaderTime, 1000);
+        updateHeaderTime(); // Initial update
+        
+        // Update footer times every second
+        setInterval(updateFooterTimes, 1000);
+        updateFooterTimes(); // Initial update
+        
+        // Load examples on page load
+        loadExamples();
+    </script>
+</body>
+</html>

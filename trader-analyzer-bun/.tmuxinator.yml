@@ -1,0 +1,140 @@
+# config/.tmuxinator.yml
+
+# 1.7.0.0.0.0.0: Unified Tmuxinator Workspace for HyperBun MLGS
+# [DoD][CONFIG:Tmuxinator][SCOPE:UnifiedWorkspace]
+# This configuration defines a structured tmux workspace with multiple windows and panes
+# pre-configured for server operation, dashboard access, real-time monitoring, and logging.
+#
+# @see {@link docs/1.0.0.0.0.0.0-API-DASHBOARD-PORTAL-INTEGRATION.md|API-Dashboard-Portal Integration Documentation}
+#
+# Ripgrep Pattern: 1\.7\.0\.0\.0\.0\.0|tmuxinator|hyperbun-mlgs
+#
+# Install: gem install tmuxinator
+# Usage: tmuxinator start hyperbun-mlgs
+# Cross-reference: docs/11.0.0.0.0.0.0-TERMINAL-ENVIRONMENT.md
+
+name: hyperbun-mlgs
+root: .
+
+windows:
+  # 1.7.1.0.0.0.0: Server Window
+  # Runs the main HyperBun MLGS server with live reload.
+  # Cross-reference: 1.6.0.0.0.0.0 Server Integration
+  # Cross-reference: 1.1.1.1.0.0.0 Request Logging
+  - server:
+      layout: main-vertical
+      panes:
+        - cmd: bun run dev # Starts the Bun server, typically with --hot for live reload (Bun CLI)
+          # ripgrep: "1.6.0.0.0.0.0" (for server)
+        - cmd: tail -f logs/engine.log | jq -c '. | select(.code | startswith("HB"))' # Filters HyperBun logs (Linux CLI)
+          # ripgrep: "1.1.1.1.0.0.0" (for request logging)
+
+  # 1.7.2.0.0.0.0: Dashboard Window
+  # Launches the dashboard development server and a Chromium instance in kiosk mode.
+  # Cross-reference: 1.4.0.0.0.0.0 Dashboard Portal
+  - dashboard:
+      layout: tiled
+      panes:
+        - cmd: bun run dashboard:serve # Starts dashboard development server (Bun CLI)
+        - cmd: chromium --app=http://localhost:3000 # Kiosk mode for dedicated dashboard view (Linux CLI)
+          # ripgrep: "1.4.0.0.0.0.0" (for dashboard HTML)
+
+  # 1.7.3.0.0.0.0: Monitoring Window
+  # Provides real-time insights into API metrics, WebSocket connections, and Bun system metrics.
+  # Cross-reference: 1.1.7.0.0.0.0 Metrics Collection
+  # Cross-reference: 1.3.5.0.0.0.0 WebSocket Health
+  # Cross-reference: 1.10.0.0.0.0.0 Bun System Metrics
+  # Cross-reference: 1.5.8.0.0.0.0 Dashboard Client Polling
+  - monitoring:
+      layout: main-horizontal
+      panes:
+        - cmd: |
+            # 1.7.3.1.0.0.0: Real-time API metrics (Cross-reference: 1.1.7.0.0.0.0 Metrics Collection)
+            while true; do
+              curl -s http://localhost:3000/api/v1/metrics?range=1m | jq .
+              sleep 2
+            done
+            # ripgrep: "1.5.8.0.0.0.0" (for dashboard client polling)
+        - cmd: |
+            # 1.7.3.2.0.0.0: WebSocket connection monitor (Cross-reference: 1.3.5.0.0.0.0 WebSocket Health)
+            while true; do
+              echo "Active dashboards: $(curl -s http://localhost:3000/health | jq .connections)"
+              sleep 5
+            done
+        - cmd: |
+            # 1.7.3.3.0.0.0: Bun system metrics (Cross-reference: 1.10.0.0.0.0.0 Bun System Metrics)
+            while true; do
+              bun -e "console.log('Memory:', (Bun.memoryUsage().heapUsed / 1024 / 1024).toFixed(2), 'MB')" # Bun CLI for executing JS
+              sleep 10
+            done
+            # ripgrep: "1.10.0.0.0.0.0" (for Bun system metrics setup)
+
+  # 1.7.4.0.0.0.0: Logs Window
+  # Provides filtered views of various log streams.
+  # Cross-reference: 1.1.3.0.0.0.0 Error Handler
+  # Cross-reference: LOG_CODES for security events
+  # Cross-reference: 1.1.1.1.0.0.0 Request Logging
+  - logs:
+      layout: main-vertical
+      panes:
+        - cmd: |
+            # 1.7.4.1.0.0.0: Filtered error logs (Cross-reference: 1.1.3.0.0.0.0 Error Handler)
+            tail -f logs/engine.log | jq -c '. | select(.level == "ERROR" or .level == "CRITICAL")'
+        - cmd: |
+            # 1.7.4.2.0.0.0: Security logs (Cross-reference: LOG_CODES for security events)
+            tail -f logs/security.log | grep -E "HBSE|HBCK|auth"
+        - cmd: |
+            # 1.7.4.3.0.0.0: API access logs (Cross-reference: 1.1.1.1.0.0.0 Request Logging)
+            tail -f logs/access.log | jq -c '. | select(.code | startswith("HBAPI"))'
+
+  # 1.7.5.0.0.0.0: API Interactive Console Window
+  # Provides an interactive Bun shell for live API testing and secrets management.
+  # Cross-reference: 1.2.0.0.0.0.0 API Routes
+  # Cross-reference: 9.1.1.1.1.1.0 Bun.secrets
+  # Cross-reference: 1.2.2.0.0.0.0 Secrets API Route
+  - api:
+      layout: main-vertical
+      panes:
+        - cmd: |
+            # 1.7.5.1.0.0.0: API interactive console (Bun CLI)
+            bun -i
+            # Usage Example: await fetch('http://localhost:3000/api/v1/graph?eventId=NFL-20241207-1345')
+            # ripgrep: "1.2.0.0.0.0.0" (for API routes)
+        - cmd: |
+            # 1.7.5.2.0.0.0: Secrets management (Cross-reference: 9.1.1.1.1.1.0 Bun.secrets)
+            while true; do
+              echo "Secrets status:"
+              bun run secrets:list # Custom Bun script (CLI)
+              sleep 60
+            done
+            # ripgrep: "1.2.2.0.0.0.0" (for Secrets API route)
+
+  # 1.7.6.0.0.0.0: Multi-Layer Graph System Development Window
+  # Provides development environment for multi-layer graph system.
+  # Cross-reference: 1.1.1.1.4 Multi-Layer Graph System
+  - Multi-Layer-Graph:
+      layout: main-vertical
+      panes:
+        - cmd: clear && echo "🌐 Multi-Layer Graph System Development (1.1.1.1.4)"
+        - cmd: echo "📊 Graph Builders & Algorithms" && echo "Run: bun test tests/profiling/multilayer-performance.test.ts"
+        - cmd: watch -n 5 'find src/graphs/multilayer -name "*.ts" -type f | wc -l | xargs echo "Graph files:"'
+
+  # 1.7.7.0.0.0.0: CPU Profiling Tools Window
+  # Provides CPU profiling and analysis tools for performance monitoring.
+  # Cross-reference: 1.1.1.1.5.0.0 CPU Profiling
+  - Profiling:
+      layout: even-horizontal
+      panes:
+        - cmd: echo "🔧 CPU Profiling Tools (1.1.1.1.5.0.0)" && echo "Run: bun --cpu-prof scripts/profiling/run-profiled-analysis.ts"
+        - cmd: echo "📈 Profile Analysis" && echo "Run: bun run scripts/analyze-profile.ts <profile.cpuprofile>"
+        - cmd: tail -f logs/hyper-bun-$(date +%Y-%m-%d).log 2>/dev/null | jq -c 'select(.source | contains("profiling") or .source | contains("multilayer"))' || echo "No profiling logs found"
+
+  # 1.7.8.0.0.0.0: HyperTick Analysis System Window
+  # Provides HyperTick analysis system development and benchmarking.
+  # Cross-reference: 6.1.1.2.2.8.1.1.2.9 HyperTick Analysis System
+  - Tick-Analysis:
+      layout: main-vertical
+      panes:
+        - cmd: clear && echo "📊 HyperTick Analysis System (6.1.1.2.2.8.1.1.2.9)"
+        - cmd: bun run examples/hypertick-demo.ts 2>&1 | head -30 || echo "Run: bun run examples/hypertick-demo.ts"
+        - cmd: echo "📈 Performance Benchmarks" && echo "Run: bun test src/tick-analysis/benchmarks/performance.test.ts"

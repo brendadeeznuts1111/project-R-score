@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bun Documentation Matrix v2",
+  "description": "Enhanced schema with Tier-1380 traceability fields for production readiness",
+  "type": "object",
+  "properties": {
+    "term": {
+      "type": "string",
+      "description": "The API term or identifier",
+      "examples": ["Bun.color", "Bun.write", "Bun.password"]
+    },
+    "path": {
+      "type": "string",
+      "description": "Documentation path",
+      "examples": ["/runtime/color", "/runtime/write-file", "/runtime/password"]
+    },
+    "bunMinVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Minimum Bun version required (semantic versioning)",
+      "examples": ["1.0.0", "1.1.0", "1.2.0"]
+    },
+    "stability": {
+      "type": "string",
+      "enum": ["experimental", "stable", "deprecated"],
+      "description": "API stability level",
+      "default": "stable"
+    },
+    "breakingChanges": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      },
+      "description": "Versions that introduced breaking changes",
+      "examples": [["1.2.0", "1.3.0"]]
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["darwin", "linux", "win32"]
+      },
+      "minItems": 1,
+      "description": "Supported platforms",
+      "examples": [["darwin", "linux"], ["darwin", "linux", "win32"]]
+    },
+    "perfProfile": {
+      "type": "object",
+      "properties": {
+        "opsSec": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Operations per second"
+        },
+        "baseline": {
+          "type": "string",
+          "description": "Performance baseline comparison",
+          "examples": ["7.9x vs ioredis", "4.62x vs console.log", "2x vs Node.js"]
+        },
+        "memoryMB": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Memory usage in MB"
+        }
+      },
+      "required": ["opsSec", "baseline"],
+      "additionalProperties": false
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Security classification level"
+        },
+        "requiresRoot": {
+          "type": "boolean",
+          "description": "Whether root privileges are required",
+          "default": false
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Security scope categories",
+          "examples": [["crypto"], ["io"], ["network", "http"]]
+        }
+      },
+      "required": ["classification"],
+      "additionalProperties": false
+    },
+    "cliFlags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional CLI flags",
+      "examples": [["--smol"], ["--experimental-vm"]]
+    },
+    "requiredFlags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required CLI flags for the API to work",
+      "examples": [["--experimental-jsc"], ["--experimental-webgpu"]]
+    },
+    "changelogFeed": {
+      "type": "string",
+      "format": "uri",
+      "description": "RSS/Atom feed URL for changelog updates",
+      "examples": ["feed://bun.sh/blog/rss.xml#tag/sqlite"]
+    },
+    "crossRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Related API terms for graph traversal",
+      "examples": [["Bun.file", "Bun.write"], ["Bun.serve", "Bun.password"]]
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Searchable tags",
+      "examples": [["color", "ansi"], ["crypto", "security"], ["experimental"]]
+    }
+  },
+  "required": [
+    "term",
+    "path",
+    "bunMinVersion",
+    "stability",
+    "platforms",
+    "security",
+    "lastUpdated"
+  ],
+  "additionalProperties": false
+}

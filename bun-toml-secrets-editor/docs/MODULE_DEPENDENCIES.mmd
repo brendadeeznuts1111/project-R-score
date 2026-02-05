@@ -1,0 +1,42 @@
+graph TD
+    subgraph "Published Packages"
+        CORE[@golden/core<br/>50KB, 0 deps]
+        RSS[@golden/rss<br/>30KB + fast-xml]
+        CLI[@golden/cli<br/>40KB]
+        TEMPLATES[@golden/templates<br/>Assets only]
+        UI[@golden/ui<br/>20KB]
+    end
+    
+    subgraph "Applications"
+        FULL[golden-template<br/>Full bundle]
+    end
+    
+    subgraph "User Install Options"
+        MINIMAL[Minimal: @golden/core]
+        RSS_ONLY[RSS: core + rss]
+        CLI_FULL[CLI: all packages]
+    end
+    
+    CORE --> RSS
+    CORE --> CLI
+    CORE --> TEMPLATES
+    CORE --> UI
+    
+    RSS --> CLI
+    UI --> CLI
+    TEMPLATES --> CLI
+    
+    CORE --> FULL
+    RSS --> FULL
+    CLI --> FULL
+    TEMPLATES --> FULL
+    UI --> FULL
+    
+    MINIMAL --> CORE
+    RSS_ONLY --> CORE
+    RSS_ONLY --> RSS
+    CLI_FULL --> CLI
+    
+    style CORE fill:#4ade80,stroke:#16a34a,stroke-width:2px
+    style CLI fill:#60a5fa,stroke:#2563eb,stroke-width:2px
+    style FULL fill:#f472b6,stroke:#db2777,stroke-width:2px

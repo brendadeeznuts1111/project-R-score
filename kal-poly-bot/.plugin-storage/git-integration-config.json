@@ -1,0 +1,11 @@
+{
+  "scanInterval": 30000,
+  "excludedPaths": [
+    "node_modules",
+    ".git",
+    "dist",
+    "build"
+  ],
+  "showNotifications": true,
+  "maxRepositories": 20
+}

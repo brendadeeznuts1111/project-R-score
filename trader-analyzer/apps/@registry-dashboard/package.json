@@ -1,0 +1,27 @@
+{
+  "name": "@nexus/registry-dashboard",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir ./dist"
+  },
+  "dependencies": {
+    "@graph/types": "workspace:*",
+    "@graph/telegram": "workspace:*",
+    "elysia": "^0.8.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.internal.yourcompany.com",
+    "access": "restricted"
+  },
+  "team": {
+    "lead": "mike.rodriguez@yourcompany.com",
+    "maintainers": ["ryan.gupta@yourcompany.com"],
+    "telegram_topic": 5
+  }
+}

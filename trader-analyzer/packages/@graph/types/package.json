@@ -1,0 +1,23 @@
+{
+  "name": "@graph/types",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    "./market": "./src/market.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.internal.yourcompany.com",
+    "access": "restricted"
+  },
+  "team": {
+    "lead": "mike.rodriguez@yourcompany.com",
+    "maintainers": ["david.kim@yourcompany.com"],
+    "telegram_topic": 5
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "name": "@your-org/crc32-sql-toolkit",
+  "version": "2.0.0",
+  "description": "CRC32 SQL integration toolkit with audit trail and batch processing",
+  "main": "utils/crc32-sql-helper.ts",
+  "types": "utils/crc32-sql-helper.ts",
+  "bin": {
+    "quantum-cli": "./scripts/cli.ts",
+    "crc32-archive": "./tools/export-crc32-archive.ts",
+    "crc32-benchmark": "./demos/demo-simd-benchmark.ts",
+    "crc32-sql-test": "./scripts/test-crc32-sql.ts",
+    "crc32-self-healing": "./system/crc32-self-healing.ts",
+    "crc32-dashboard": "./src/performance/performance-dashboard.ts",
+    "crc32-batch": "./workers/crc32-intelligent-batch.ts",
+    "crc32-analytics": "./analytics/crc32-ml-analytics.ts",
+    "crc32-health": "./src/health-checkpoint.ts",
+    "crc32-archive-gen": "./src/archive/archive-handler.ts",
+    "crc32-profile": "./src/performance/profile-analyzer.ts"
+  },
+  "files": [
+    "utils/",
+    "tools/",
+    "scripts/",
+    "*.md",
+    "*.json"
+  ],
+  "scripts": {
+    "perf:build": "bun build src/performance/*.ts --outdir=dist/performance --target=browser",
+    "self-healing": "bun run system/crc32-self-healing.ts",
+    "health": "bun run src/health-checkpoint.ts",
+    "dashboard": "bun run src/performance/performance-dashboard.ts",
+    "batch:test": "bun run workers/crc32-intelligent-batch.ts",
+    "analytics:predict": "bun run analytics/crc32-ml-analytics.ts predict",
+    "analytics:anomalies": "bun run analytics/crc32-ml-analytics.ts anomalies",
+    "analytics:report": "bun run analytics/crc32-ml-analytics.ts report",
+    "analytics:train": "bun run analytics/crc32-ml-analytics.ts train",
+    "deploy:enhanced": "bun run migrations/002_enhanced_audit_system.sql && echo 'Enhanced audit system deployed'",
+    "demo:enhanced": "bun run demos/demo-enhanced-features.ts complete",
+    "demo:self-healing": "bun run demos/demo-enhanced-features.ts self-healing",
+    "demo:dashboard": "bun run demos/demo-enhanced-features.ts dashboard",
+    "demo:batch": "bun run demos/demo-enhanced-features.ts batch",
+    "demo:analytics": "bun run demos/demo-enhanced-features.ts analytics",
+    "demo:simple": "bun run demos/demo-simple-enhanced.ts",
+    "test:enhanced": "bun run test-enhanced-features.ts",
+    "build": "bun build scripts/script.js --outdir=dist --target=browser --minify && cp web/index.html web/style.css dist/",
+    "dev": "bun --console-depth 4 scripts/dev.js",
+    "serve": "bun --console-depth 2 scripts/serve.js",
+    "test": "bun test",
+    "test:crc32-sql-insert": "bun scripts/test-crc32-sql.ts",
+    "install-theme": "chmod +x scripts/install-theme.sh && bash scripts/install-theme.sh",
+    "test-theme": "bun run test/syntax-highlighting-demo.ts",
+    "theme-demo": "bun run demo/theme-interactive-demo.ts",
+    "theme-preview": "bun run test/syntax-highlighting-demo.ts",
+    "migrate:up": "bun scripts/migrate.ts up",
+    "migrate:down": "bun scripts/migrate.ts down",
+    "publish": "bun scripts/publish.ts",
+    "prepublishOnly": "bun run test:crc32-sql-insert && bun run demos/demo-simd-benchmark.ts"
+  },
+  "keywords": [
+    "crc32",
+    "sql",
+    "audit",
+    "batch",
+    "validation",
+    "integrity",
+    "bun",
+    "typescript",
+    "database",
+    "checksum"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/crc32-sql-toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/crc32-sql-toolkit/issues"
+  },
+  "homepage": "https://github.com/your-org/crc32-sql-toolkit#readme",
+  "engines": {
+    "bun": ">=1.3.8",
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.factory-wager.com"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.19.30",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "bun": "1.3.8"
+  },
+  "trustedDependencies": [
+    "bun"
+  ]
+}

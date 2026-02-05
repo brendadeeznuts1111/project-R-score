@@ -1,0 +1,23 @@
+# FactoryWager Generated Artifacts
+*.html            # HTML reports (generated)
+*.csv             # Audit exports (generated)
+*.json            # Benchmark reports (generated) — except config
+!*.config.json    # Keep config JSONs
+!package.json     # Keep package.json
+reports/*.html
+reports/*.json
+audit-export-*
+benchmark-report-*
+enhanced-archive-report-*
+native-html-test.html
+test-native-html.html
+release-*.html
+
+# Directories
+releases/         # Build artifacts
+.DS_Store
+node_modules/
+
+# Parent directory bleed (shouldn't be here)
+../.claude/
+../factory-wager/  # If this exists, structure is wrong

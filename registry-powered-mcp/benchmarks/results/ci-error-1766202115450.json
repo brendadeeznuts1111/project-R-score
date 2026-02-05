@@ -1,0 +1,12 @@
+{
+  "status": "error",
+  "error": "Performance regression threshold exceeded",
+  "timestamp": "2025-12-20T03:41:55.450Z",
+  "config": {
+    "benchmarkCommand": "bun run urlpattern-vs-regex.ts",
+    "regressionCommand": "bun run performance-regression.ts",
+    "dashboardCommand": "bun run dashboard-generator.ts",
+    "failureThreshold": "critical",
+    "notifyOnRegression": true
+  }
+}

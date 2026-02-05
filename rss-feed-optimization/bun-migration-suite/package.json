@@ -1,0 +1,35 @@
+{
+	"name": "bun-api-explorer-pro",
+	"version": "2.0.0",
+	"description": "Enhanced Bun API exploration and migration suite with intelligent analysis",
+	"type": "module",
+	"main": "scripts/cli/migration-cli.js",
+	"scripts": {
+		"start": "bun run scripts/cli/migration-cli.js",
+		"explore": "bun run scripts/explore/parallel-explorer.js",
+		"explore:detailed": "bun run scripts/explore/detailed-analysis.js",
+		"benchmark": "bun run scripts/benchmark/adaptive-benchmark.js",
+		"benchmark:compare": "bun run scripts/benchmark/comparison-matrix.js",
+		"migrate:analyze": "bun run scripts/migrate/smart-migrator.js analyze",
+		"migrate:plan": "bun run scripts/migrate/smart-migrator.js plan",
+		"migrate:execute": "bun run scripts/migrate/smart-migrator.js execute",
+		"generate:report": "bun run scripts/reports/comprehensive-report.js",
+		"timeline": "bun run scripts/releases/full-timeline.js",
+		"timeline:visual": "bun run scripts/visualize/api-evolution.js",
+		"compatibility:matrix": "bun run scripts/compatibility/release-matrix.js",
+		"compatibility:check": "bun run scripts/compatibility/release-matrix.js",
+		"deps:analyze": "bun run scripts/analyze/dependency-mapper.js",
+		"test": "bun test"
+	},
+	"keywords": [
+		"bun",
+		"migration",
+		"api",
+		"explorer",
+		"benchmark",
+		"performance"
+	],
+	"author": "",
+	"license": "MIT",
+	"dependencies": {}
+}

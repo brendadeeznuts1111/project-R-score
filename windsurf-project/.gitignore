@@ -1,0 +1,146 @@
+# dependencies (bun install)
+bun.lockb
+
+# output
+out
+dist
+*.tgz
+
+# code coverage
+coverage
+*.lcov
+
+# logs
+logs
+_.log
+report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Presigned URL files (contain sensitive URLs)
+presigns.json
+presigned-urls.json
+
+# Auto-generated changelog files
+docs/changelogs/*.auto.md
+benchmark-results.json
+
+# Privacy cards (from earlier implementation)
+privacy-cards/*.json
+
+# caches
+.eslintcache
+.cache
+*.tsbuildinfo
+
+# IntelliJ based IDEs
+.idea
+
+# Finder (MacOS) folder config
+.DS_Store
+
+# Generated reports and benchmarks
+reports/apple-*.json
+reports/*.json
+bench/r2-super-bench-results.*
+bench/r2-performance-report-*.html
+bench/performance-baseline.json
+data/
+accounts/*.csv
+accounts/*.json
+!accounts/real-sim/
+
+# Directory Structure Safeguards - Prevent files in wrong locations
+# TypeScript/JavaScript files (except allowed ones)
+/*.ts
+/*.js
+!scripts/validate-structure*.sh
+!cli/bin/*.js
+
+# Markdown files (except allowed ones)
+/*.md
+!README.md
+!ORGANIZATION.md
+!LICENSE
+!docs/
+
+# JSON files (except allowed ones)
+/*.json
+!package*.json
+!tsconfig*.json
+!.markdownlint*
+
+# Shell scripts (except in scripts directory)
+/*.sh
+!scripts/
+
+# Build and temporary files
+*.tmp
+*.temp
+*.log
+temp/
+logs/
+dist/
+build/
+
+# Dependencies
+node_modules/
+bun.lockb
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Directory Structure Safeguards - Prevent files in wrong locations
+# TypeScript/JavaScript files (except allowed ones)
+/*.ts
+/*.js
+!scripts/validate-structure*.sh
+!cli/bin/*.js
+
+# Markdown files (except allowed ones)
+/*.md
+!README.md
+!ORGANIZATION.md
+!LICENSE
+!docs/
+
+# JSON files (except allowed ones)
+/*.json
+!package*.json
+!tsconfig*.json
+!.markdownlint*
+
+# Shell scripts (except in scripts directory)
+/*.sh
+!scripts/
+
+# Build and temporary files
+*.tmp
+*.temp
+*.log
+temp/
+logs/
+dist/
+build/
+
+# Dependencies
+node_modules/
+bun.lockb
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

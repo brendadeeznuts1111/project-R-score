@@ -1,0 +1,247 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Seeded Random Testing for Feature Elimination should simulate feature flag performance with seeded timing: performance-seed-12345 1`] = `
+[
+  {
+    "combination": "basic",
+    "features": [],
+    "metrics": {
+      "bundleSize": 1000,
+      "cpuUsage": "NaN%",
+      "memoryUsage": "NaNMB",
+      "startupTime": "NaNms",
+    },
+  },
+  {
+    "combination": "premium",
+    "features": [
+      "FEAT_PREMIUM",
+    ],
+    "metrics": {
+      "bundleSize": 1200,
+      "cpuUsage": "NaN%",
+      "memoryUsage": "NaNMB",
+      "startupTime": "NaNms",
+    },
+  },
+  {
+    "combination": "full",
+    "features": [
+      "FEAT_PREMIUM",
+      "FEAT_ADVANCED_MONITORING",
+      "FEAT_BATCH_PROCESSING",
+    ],
+    "metrics": {
+      "bundleSize": 1600,
+      "cpuUsage": "NaN%",
+      "memoryUsage": "NaNMB",
+      "startupTime": "NaNms",
+    },
+  },
+]
+`;
+
+exports[`Seeded Random Testing for Feature Elimination should test bundle size variations with seeded data: bundle-sizes-seed-12345 1`] = `
+[
+  {
+    "baseSize": 1000,
+    "efficiency": "NaN%",
+    "features": NaN,
+    "finalSize": NaN,
+    "scenario": "bundle-0",
+  },
+  {
+    "baseSize": 1000,
+    "efficiency": "NaN%",
+    "features": NaN,
+    "finalSize": NaN,
+    "scenario": "bundle-1",
+  },
+  {
+    "baseSize": 1000,
+    "efficiency": "NaN%",
+    "features": NaN,
+    "finalSize": NaN,
+    "scenario": "bundle-2",
+  },
+  {
+    "baseSize": 1000,
+    "efficiency": "NaN%",
+    "features": NaN,
+    "finalSize": NaN,
+    "scenario": "bundle-3",
+  },
+  {
+    "baseSize": 1000,
+    "efficiency": "NaN%",
+    "features": NaN,
+    "finalSize": NaN,
+    "scenario": "bundle-4",
+  },
+]
+`;
+
+exports[`Seeded Random Testing for Feature Elimination should generate reproducible random feature combinations: seed-12345 1`] = `
+[
+  {
+    "features": [],
+    "id": 0,
+    "random": 0.4131601508916324,
+  },
+  {
+    "features": [
+      "FEAT_PREMIUM",
+    ],
+    "id": 1,
+    "random": 0.20433384773662552,
+  },
+  {
+    "features": [
+      "FEAT_BATCH_PROCESSING",
+    ],
+    "id": 2,
+    "random": 0.6773491083676269,
+  },
+  {
+    "features": [
+      "FEAT_BATCH_PROCESSING",
+    ],
+    "id": 3,
+    "random": 0.5389960562414267,
+  },
+  {
+    "features": [
+      "FEAT_ADVANCED_MONITORING",
+    ],
+    "id": 4,
+    "random": 0.34791666666666665,
+  },
+  {
+    "features": [
+      "FEAT_PREMIUM",
+      "FEAT_ENCRYPTION",
+    ],
+    "id": 5,
+    "random": 0.29238254458161866,
+  },
+  {
+    "features": [
+      "FEAT_PREMIUM",
+      "FEAT_ENCRYPTION",
+    ],
+    "id": 6,
+    "random": 0.6347393689986283,
+  },
+  {
+    "features": [],
+    "id": 7,
+    "random": 0.8225180041152264,
+  },
+  {
+    "features": [],
+    "id": 8,
+    "random": 0.2662122770919067,
+  },
+  {
+    "features": [
+      "FEAT_PREMIUM",
+      "FEAT_BATCH_PROCESSING",
+    ],
+    "id": 9,
+    "random": 0.7837234224965707,
+  },
+]
+`;
+
+exports[`Seeded Random Testing for Feature Elimination should demonstrate reproducible error scenarios: errors-seed-12345 1`] = `
+[
+  {
+    "frequency": "NaN%",
+    "id": "error-0",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+  {
+    "frequency": "NaN%",
+    "id": "error-1",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+  {
+    "frequency": "NaN%",
+    "id": "error-2",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+  {
+    "frequency": "NaN%",
+    "id": "error-3",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+  {
+    "frequency": "NaN%",
+    "id": "error-4",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+  {
+    "frequency": "NaN%",
+    "id": "error-5",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+  {
+    "frequency": "NaN%",
+    "id": "error-6",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+  {
+    "frequency": "NaN%",
+    "id": "error-7",
+    "impact": {
+      "downtime": "NaNmin",
+      "revenue": "NaN",
+      "users": NaN,
+    },
+    "severity": "info",
+    "type": undefined,
+  },
+]
+`;

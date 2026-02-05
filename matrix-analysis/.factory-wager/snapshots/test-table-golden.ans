@@ -1,0 +1,5 @@
+#    | Key                  | Value                            | Type       | Version     | Author         | Status       | Modified           
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+1    | factory-wager        | Unicode Governance v4.4          | config     | v4.4        | System         | ACTIVE       | 2026-02-01         
+2    | responsive-engine    | Terminal width detection         | feature    | v4.4        | System         | ACTIVE       | 2026-02-01         
+3    | visual-regression    | Pixel-perfect diffs              | feature    | v4.4        | System         | ACTIVE       | 2026-02-01         

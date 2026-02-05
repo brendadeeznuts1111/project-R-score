@@ -1,0 +1,66 @@
+name: New Venue Integration
+description: Request integration with a new exchange, bookmaker, or prediction market
+title: "[VENUE]: "
+labels: ["integration", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # [ISSUE.VENUE_INTEGRATION.RG] Venue Integration Request Template
+        
+        **Metadata**: `[[TECH][MODULE][INSTANCE][META:{blueprint=BP-VENUE-INTEGRATION@0.1.0;instance-id=VENUE-INTEGRATION-001;version=0.1.0}][PROPERTIES:{template={value:"venue-integration";@root:"ROOT-GIT";@chain:["BP-GITHUB","BP-ISSUES"];@version:"0.1.0"}}][CLASS:VenueIntegrationTemplate][#REF:v-0.1.0.BP.VENUE.INTEGRATION.1.0.A.1.1.GIT.1.1]]`
+        
+        Request a new venue integration for NEXUS
+
+  - type: dropdown
+    id: venue-type
+    attributes:
+      label: Venue Type
+      options:
+        - Crypto Exchange (Spot)
+        - Crypto Exchange (Derivatives)
+        - Prediction Market
+        - Sports Bookmaker
+        - Options Exchange
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: venue-name
+    attributes:
+      label: Venue Name
+      placeholder: "e.g., Betfair, Metaculus, GMX"
+    validations:
+      required: true
+
+  - type: input
+    id: api-docs
+    attributes:
+      label: API Documentation URL
+      placeholder: "https://docs.example.com/api"
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this venue?
+      description: Why is this integration valuable for arbitrage/analytics?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: features
+    attributes:
+      label: Requested Features
+      options:
+        - label: Real-time price streaming
+        - label: Historical data
+        - label: Order placement
+        - label: Portfolio sync
+        - label: Canonical UUID mapping (ORCA)
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Any API quirks, rate limits, or other relevant info

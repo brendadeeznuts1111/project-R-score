@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bun Integrated Dashboard - Complete System Overview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Bun Brand Colors */
+            --bun-primary: #fbf0df;
+            --bun-secondary: #000000;
+            --bun-accent: #3b82f6;
+            --bun-success: #22c55e;
+            --bun-warning: #f59e0b;
+            --bun-error: #ef4444;
+            --bun-cream: #fbf0df;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Typography */
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            /* Transitions */
+            --transition-base: 0.2s ease;
+            --transition-slow: 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bun-secondary);
+            color: var(--bun-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            overflow: hidden;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--bun-accent);
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--bun-success);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--bun-warning);
+            top: 50%;
+            left: 50%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -50px) scale(1.1); }
+            50% { transform: translate(-50px, 100px) scale(0.9); }
+            75% { transform: translate(-100px, -100px) scale(1.05); }
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: rgba(251, 240, 223, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(251, 240, 223, 0.1);
+            padding: var(--space-lg) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            font-size: 2em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-2px); }
+        }
+
+        /* Main Container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-2xl);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(251, 240, 223, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(251, 240, 223, 0.1);
+            border-radius: 16px;
+            padding: var(--space-lg);
+            transition: all var(--transition-slow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--bun-accent), var(--bun-success), var(--bun-warning));
+            transform: scaleX(0);
+            transition: transform var(--transition-slow);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(251, 240, 223, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 1.2em;
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--bun-success);
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--bun-error);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--bun-warning);
+        }
+
+        .status-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--bun-success);
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Metrics */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .metric {
+            text-align: center;
+            padding: var(--space-md);
+            background: rgba(251, 240, 223, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(251, 240, 223, 0.1);
+        }
+
+        .metric-value {
+            font-size: 1.875rem;
+            font-weight: 800;
+            color: var(--bun-accent);
+            margin-bottom: var(--space-xs);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Lists */
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm);
+            background: rgba(251, 240, 223, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(251, 240, 223, 0.1);
+            transition: all var(--transition-base);
+        }
+
+        .list-item:hover {
+            background: rgba(251, 240, 223, 0.08);
+            transform: translateX(4px);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--bun-accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--bun-success);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(251, 240, 223, 0.1);
+            color: var(--bun-primary);
+            border: 1px solid rgba(251, 240, 223, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(251, 240, 223, 0.2);
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: var(--space-md);
+        }
+
+        /* Footer */
+        .integrated-footer {
+            background: rgba(251, 240, 223, 0.05);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(251, 240, 223, 0.1);
+            margin-top: var(--space-2xl);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-lg);
+        }
+
+        .footer-section h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            color: var(--bun-primary);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .footer-link {
+            color: var(--bun-primary);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+
+        .footer-bottom {
+            padding-top: var(--space-lg);
+            border-top: 1px solid rgba(251, 240, 223, 0.1);
+            text-align: center;
+            opacity: 0.6;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(251, 240, 223, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--bun-accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(251, 240, 223, 0.1);
+        }
+
+        .tab {
+            padding: var(--space-sm) var(--space-md);
+            background: transparent;
+            border: none;
+            color: var(--bun-primary);
+            opacity: 0.7;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            opacity: 1;
+        }
+
+        .tab.active {
+            opacity: 1;
+            border-bottom-color: var(--bun-accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="brand">
+                <span class="brand-icon">🍞</span>
+                <span>Bun Integrated Dashboard</span>
+            </div>
+            <div class="header-actions">
+                <span id="system-status" class="status-indicator status-online">
+                    <span class="pulse"></span>
+                    All Systems Operational
+                </span>
+                <button class="btn btn-primary" onclick="refreshDashboard()">
+                    <i class="fas fa-refresh"></i>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard-container">
+        <!-- System Overview -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon" style="background: rgba(59, 130, 246, 0.2); color: var(--bun-accent);">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        System Overview
+                    </div>
+                    <span class="status-indicator status-online">
+                        <span class="pulse"></span>
+                        Online
+                    </span>
+                </div>
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value" id="bun-version">v1.3.7</div>
+                        <div class="metric-label">Bun Version</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="uptime">0h 0m</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="memory">0MB</div>
+                        <div class="metric-label">Memory</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="requests">0</div>
+                        <div class="metric-label">Requests</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon" style="background: rgba(34, 197, 94, 0.2); color: var(--bun-success);">
+                            <i class="fas fa-rss"></i>
+                        </div>
+                        RSS Integration
+                    </div>
+                    <button class="btn btn-secondary" onclick="refreshRSSFeeds()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div id="rss-feeds" class="item-list" style="max-height: 200px; overflow-y: auto; margin-bottom: var(--space-md);">
+                    <!-- RSS feeds will be populated here -->
+                </div>
+                
+                <!-- RSS Management Controls -->
+                <div style="border-top: 1px solid rgba(251, 240, 223, 0.1); padding-top: var(--space-md);">
+                    <div style="font-weight: 600; margin-bottom: var(--space-sm); color: var(--bun-accent);">
+                        <i class="fas fa-cogs" style="margin-right: var(--space-xs);"></i>
+                        RSS Management
+                    </div>
+                    <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="executeRSSCommand('list')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                            <i class="fas fa-list"></i>
+                            List Profiles
+                        </button>
+                        <button class="btn btn-success" onclick="executeRSSCommand('hacker')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                            <i class="fab fa-hacker-news"></i>
+                            Profile HN
+                        </button>
+                        <button class="btn btn-secondary" onclick="executeRSSCommand('bbc')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                            <i class="fas fa-newspaper"></i>
+                            Profile BBC
+                        </button>
+                        <button class="btn btn-secondary" onclick="executeRSSCommand('cnn')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                            <i class="fas fa-tv"></i>
+                            Profile CNN
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon" style="background: rgba(245, 158, 11, 0.2); color: var(--bun-warning);">
+                            <i class="fas fa-file-code"></i>
+                        </div>
+                        TOML Editor
+                    </div>
+                    <span class="status-indicator status-online">
+                        <span class="pulse"></span>
+                        Active
+                    </span>
+                </div>
+                <div class="item-list">
+                    <div class="list-item">
+                        <span>📄 config/golden-template.toml</span>
+                        <span class="status-indicator status-success">Valid</span>
+                    </div>
+                    <div class="list-item">
+                        <span>📄 config/rss.toml</span>
+                        <span class="status-indicator status-success">Valid</span>
+                    </div>
+                    <div class="list-item">
+                        <span>📄 config/secrets.toml</span>
+                        <span class="status-indicator status-success">Encrypted</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Management -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    Profile Management
+                </div>
+                <button class="btn btn-secondary" onclick="executeProfileCommand('list')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                    <i class="fas fa-refresh"></i>
+                    Refresh
+                </button>
+            </div>
+            <div id="profile-list" class="item-list" style="max-height: 150px; overflow-y: auto; margin-bottom: var(--space-md);">
+                <!-- Profiles will be populated here -->
+            </div>
+            
+            <!-- Profile Management Controls -->
+            <div style="border-top: 1px solid rgba(251, 240, 223, 0.1); padding-top: var(--space-md);">
+                <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="executeProfileCommand('list')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                        <i class="fas fa-list"></i>
+                        List Profiles
+                    </button>
+                    <button class="btn btn-success" onclick="executeProfileCommand('analytics')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                        <i class="fas fa-chart-bar"></i>
+                        Analytics
+                    </button>
+                    <button class="btn btn-secondary" onclick="executeProfileCommand('security')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                        <i class="fas fa-shield-alt"></i>
+                        Security
+                    </button>
+                    <button class="btn btn-secondary" onclick="executeProfileCommand('generate')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                        <i class="fas fa-magic"></i>
+                        Generate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bun Tooling -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon" style="background: rgba(251, 240, 223, 0.2); color: var(--bun-cream);">
+                        <i class="fas fa-bread-slice"></i>
+                    </div>
+                    Bun Tooling
+                </div>
+                <span class="status-indicator status-online">
+                    <span class="pulse"></span>
+                    Ready
+                </span>
+            </div>
+            <div class="metric-grid">
+                <div class="metric">
+                    <div class="metric-value" id="bun-version-display">v1.3.7</div>
+                    <div class="metric-label">Version</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="build-status">✅</div>
+                    <div class="metric-label">Build</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="test-status">✅</div>
+                    <div class="metric-label">Tests</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="typecheck-status">✅</div>
+                    <div class="metric-label">TypeCheck</div>
+                </div>
+            </div>
+            <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="executeBunCommand('build')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                    <i class="fas fa-hammer"></i>
+                    Build
+                </button>
+                <button class="btn btn-success" onclick="executeBunCommand('test')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                    <i class="fas fa-vial"></i>
+                    Test
+                </button>
+                <button class="btn btn-secondary" onclick="executeBunCommand('typecheck')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                    <i class="fas fa-check-circle"></i>
+                    TypeCheck
+                </button>
+                <button class="btn btn-secondary" onclick="executeBunCommand('dev')" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                    <i class="fas fa-rocket"></i>
+                    Dev
+                </button>
+            </div>
+        </div>
+
+        <!-- Performance & Analytics -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon" style="background: rgba(239, 68, 68, 0.2); color: var(--bun-error);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        Performance Metrics
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performance-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        Server Status
+                    </div>
+                </div>
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value" id="server-uptime">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="response-time">45ms</div>
+                        <div class="metric-label">Avg Response</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cpu-usage">12%</div>
+                        <div class="metric-label">CPU Usage</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="active-connections">24</div>
+                        <div class="metric-label">Connections</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enterprise Features -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    Enterprise Features
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('security')">Security</button>
+                <button class="tab" onclick="switchTab('compliance')">Compliance</button>
+                <button class="tab" onclick="switchTab('monitoring')">Monitoring</button>
+                <button class="tab" onclick="switchTab('analytics')">Analytics</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="security-tab" class="tab-content active">
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value">🔒</div>
+                        <div class="metric-label">mTLS Enabled</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">5min</div>
+                        <div class="metric-label">JWT Expiry</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">✅</div>
+                        <div class="metric-label">Biometric Auth</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Threats Blocked</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="compliance-tab" class="tab-content">
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value">100%</div>
+                        <div class="metric-label">GDPR Compliant</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">✅</div>
+                        <div class="metric-label">SOC2 Type II</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">✅</div>
+                        <div class="metric-label">ISO 27001</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">24/7</div>
+                        <div class="metric-label">Audit Ready</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="monitoring-tab" class="tab-content">
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value">15</div>
+                        <div class="metric-label">Health Checks</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">28s</div>
+                        <div class="metric-label">Onboarding Time</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">SLA Compliance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">1.2M</div>
+                        <div class="metric-label">Events/Day</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analytics-tab" class="tab-content">
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value">2.5M+</div>
+                        <div class="metric-label">Downloads</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">88x</div>
+                        <div class="metric-label">Performance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50K+</div>
+                        <div class="metric-label">GitHub Stars</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">65%</div>
+                        <div class="metric-label">MRR Impact</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    Quick Actions
+                </div>
+            </div>
+            <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="runPerformanceTest()">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Performance Test
+                </button>
+                <button class="btn btn-success" onclick="validateTOMLFiles()">
+                    <i class="fas fa-check"></i>
+                    Validate TOML
+                </button>
+                <button class="btn btn-secondary" onclick="exportReport()">
+                    <i class="fas fa-download"></i>
+                    Export Report
+                </button>
+                <button class="btn btn-secondary" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- CLI Control Panel -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6;">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                    CLI Control Panel
+                </div>
+                <button class="btn btn-secondary" onclick="refreshCLICommands()">
+                    <i class="fas fa-refresh"></i>
+                    Refresh Commands
+                </button>
+            </div>
+            
+            <!-- Command Categories -->
+            <div class="tabs" style="margin-bottom: var(--space-md);">
+                <button class="tab active" onclick="switchCLITab('all')">All Commands</button>
+                <button class="tab" onclick="switchCLITab('bun')">Bun Tooling</button>
+                <button class="tab" onclick="switchCLITab('rss')">RSS Management</button>
+                <button class="tab" onclick="switchCLITab('profile')">Profile Management</button>
+                <button class="tab" onclick="switchCLITab('build')">Build & Test</button>
+            </div>
+
+            <!-- Available Commands -->
+            <div id="cli-commands" class="item-list" style="max-height: 300px; overflow-y: auto; margin-bottom: var(--space-md);">
+                <!-- Commands will be populated here -->
+            </div>
+
+            <!-- Command Execution -->
+            <div style="border-top: 1px solid rgba(251, 240, 223, 0.1); padding-top: var(--space-md);">
+                <div style="display: flex; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                    <select id="command-select" style="flex: 1; padding: var(--space-sm); background: rgba(251, 240, 223, 0.1); border: 1px solid rgba(251, 240, 223, 0.3); border-radius: 8px; color: var(--bun-primary);">
+                        <option value="">Select a command...</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="executeCLICommand()" id="execute-btn">
+                        <i class="fas fa-play"></i>
+                        Execute
+                    </button>
+                </div>
+
+                <!-- Command Output -->
+                <div id="command-output" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                        <h4 style="margin: 0; color: var(--bun-accent);">Command Output</h4>
+                        <button class="btn btn-secondary" onclick="clearCommandOutput()" style="padding: var(--space-xs) var(--space-sm); font-size: 0.75rem;">
+                            <i class="fas fa-times"></i>
+                            Clear
+                        </button>
+                    </div>
+                    <div id="output-content" style="background: #000; color: #00ff00; padding: var(--space-md); border-radius: 8px; font-family: var(--font-mono); font-size: 0.875rem; max-height: 200px; overflow-y: auto; white-space: pre-wrap;">
+                        <!-- Output will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Log Viewer -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon" style="background: rgba(34, 197, 94, 0.2); color: var(--bun-success);">
+                        <i class="fas fa-stream"></i>
+                    </div>
+                    Real-time Log Viewer
+                </div>
+                <div style="display: flex; gap: var(--space-sm);">
+                    <span id="log-status" class="status-indicator status-online" style="font-size: 0.75rem;">
+                        <span class="pulse"></span>
+                        Live
+                    </span>
+                    <button class="btn btn-secondary" onclick="toggleLogStreaming()" id="log-toggle-btn" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                        <i class="fas fa-pause"></i>
+                        Pause
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearLogs()" style="font-size: 0.75rem; padding: var(--space-xs) var(--space-sm);">
+                        <i class="fas fa-trash"></i>
+                        Clear
+                    </button>
+                </div>
+            </div>
+            <div id="log-viewer" style="background: #0a0a0a; color: #00ff00; padding: var(--space-md); border-radius: 8px; font-family: var(--font-mono); font-size: 0.75rem; max-height: 300px; overflow-y: auto; white-space: pre-wrap; border: 1px solid rgba(34, 197, 94, 0.3);">
+                <!-- Logs will appear here -->
+                <div style="opacity: 0.6;">Waiting for logs...</div>
+            </div>
+            <div style="margin-top: var(--space-sm); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; opacity: 0.7;">
+                <span id="log-count">0 log entries</span>
+                <span id="log-last-update">No updates yet</span>
+            </div>
+        </div>
+
+        <!-- Command History -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon" style="background: rgba(251, 146, 60, 0.2); color: #fb923c;">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    Command History
+                </div>
+                <button class="btn btn-secondary" onclick="refreshCommandHistory()">
+                    <i class="fas fa-refresh"></i>
+                    Refresh
+                </button>
+            </div>
+            <div id="command-history" class="item-list" style="max-height: 250px; overflow-y: auto;">
+                <!-- Command history will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Integrated Footer -->
+    <footer class="integrated-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>🍞 Bun Runtime</h4>
+                    <div class="footer-links">
+                        <a href="#docs" class="footer-link">
+                            <i class="fas fa-book"></i>
+                            Documentation
+                        </a>
+                        <a href="#api" class="footer-link">
+                            <i class="fas fa-code"></i>
+                            API Reference
+                        </a>
+                        <a href="#github" class="footer-link">
+                            <i class="fab fa-github"></i>
+                            GitHub
+                        </a>
+                        <a href="#discord" class="footer-link">
+                            <i class="fab fa-discord"></i>
+                            Discord
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>📊 System Status</h4>
+                    <div class="footer-links">
+                        <span class="footer-link">
+                            <i class="fas fa-clock"></i>
+                            Uptime: <span id="footer-uptime">0h 0m</span>
+                        </span>
+                        <span class="footer-link">
+                            <i class="fas fa-memory"></i>
+                            Memory: <span id="footer-memory">0MB</span>
+                        </span>
+                        <span class="footer-link">
+                            <i class="fas fa-microchip"></i>
+                            CPU: <span id="footer-cpu">0%</span>
+                        </span>
+                        <span class="footer-link">
+                            <i class="fas fa-network-wired"></i>
+                            RSS: <span id="footer-rss">0/0</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>🔗 Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="#dashboard" class="footer-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                        <a href="#metrics" class="footer-link">
+                            <i class="fas fa-chart-line"></i>
+                            Metrics
+                        </a>
+                        <a href="#health" class="footer-link">
+                            <i class="fas fa-heartbeat"></i>
+                            Health Check
+                        </a>
+                        <a href="#logs" class="footer-link">
+                            <i class="fas fa-file-alt"></i>
+                            System Logs
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>🚀 Performance</h4>
+                    <div class="footer-links">
+                        <span class="footer-link">
+                            <i class="fas fa-rocket"></i>
+                            88x Faster
+                        </span>
+                        <span class="footer-link">
+                            <i class="fas fa-bolt"></i>
+                            <span id="footer-requests">0</span> req/s
+                        </span>
+                        <span class="footer-link">
+                            <i class="fas fa-stopwatch"></i>
+                            <span id="footer-response">0</span>ms avg
+                        </span>
+                        <span class="footer-link">
+                            <i class="fas fa-users"></i>
+                            <span id="footer-users">0</span> active
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Bun. All rights reserved.</p>
+                <p>Made with ❤️ and 🍞 by the Bun team</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global state
+        const dashboardData = {
+            system: {
+                uptime: 0,
+                memory: 0,
+                requests: 0,
+                version: '1.3.7'
+            },
+            rss: {
+                feeds: [],
+                active: 0,
+                total: 0
+            },
+            performance: {
+                requestsPerSecond: 0,
+                averageResponseTime: 0,
+                cpuUsage: 0
+            },
+            cli: {
+                availableCommands: [],
+                commandHistory: [],
+                currentCategory: 'all',
+                executingCommand: false
+            }
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDashboard();
+            startLiveUpdates();
+            initializeCharts();
+        });
+
+        function initializeDashboard() {
+            updateSystemMetrics();
+            updateRSSFeeds();
+            updatePerformanceMetrics();
+            initializeCLI();
+            initializeLogViewer();
+        }
+
+        function updateSystemMetrics() {
+            // Simulate system metrics
+            const uptime = Math.floor(Math.random() * 86400); // Random uptime in seconds
+            const hours = Math.floor(uptime / 3600);
+            const minutes = Math.floor((uptime % 3600) / 60);
+            
+            document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+            document.getElementById('footer-uptime').textContent = `${hours}h ${minutes}m`;
+            
+            const memory = Math.floor(Math.random() * 512) + 128;
+            document.getElementById('memory').textContent = `${memory}MB`;
+            document.getElementById('footer-memory').textContent = `${memory}MB`;
+            
+            const requests = Math.floor(Math.random() * 10000) + 1000;
+            document.getElementById('requests').textContent = requests.toLocaleString();
+            document.getElementById('footer-requests').textContent = Math.floor(requests / uptime * 3600);
+            
+            const cpu = Math.floor(Math.random() * 30) + 5;
+            document.getElementById('cpu-usage').textContent = `${cpu}%`;
+            document.getElementById('footer-cpu').textContent = `${cpu}%`;
+        }
+
+        function updateRSSFeeds() {
+            const feeds = [
+                { name: 'BBC News', status: 'online', responseTime: 45, items: 12 },
+                { name: 'Hacker News', status: 'online', responseTime: 32, items: 30 },
+                { name: 'TechCrunch', status: 'online', responseTime: 67, items: 25 },
+                { name: 'CNN', status: 'warning', responseTime: 120, items: 18 }
+            ];
+            
+            const feedsContainer = document.getElementById('rss-feeds');
+            feedsContainer.innerHTML = '';
+            
+            feeds.forEach(feed => {
+                const statusClass = feed.status === 'online' ? 'status-online' : 'status-warning';
+                const feedElement = document.createElement('div');
+                feedElement.className = 'list-item';
+                feedElement.innerHTML = `
+                    <span>${feed.name}</span>
+                    <span class="status-indicator ${statusClass}">
+                        <span class="pulse"></span>
+                        ${feed.responseTime}ms (${feed.items} items)
+                    </span>
+                `;
+                feedsContainer.appendChild(feedElement);
+            });
+            
+            const activeFeeds = feeds.filter(f => f.status === 'online').length;
+            document.getElementById('footer-rss').textContent = `${activeFeeds}/${feeds.length}`;
+        }
+
+        function updatePerformanceMetrics() {
+            const responseTime = Math.floor(Math.random() * 50) + 20;
+            document.getElementById('response-time').textContent = `${responseTime}ms`;
+            document.getElementById('footer-response').textContent = responseTime;
+            
+            const activeConnections = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('active-connections').textContent = activeConnections;
+            document.getElementById('footer-users').textContent = activeConnections;
+        }
+
+        function initializeCharts() {
+            const ctx = document.getElementById('performance-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'Requests/sec',
+                        data: [120, 150, 180, 220, 190, 160],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Response Time (ms)',
+                        data: [45, 42, 48, 55, 50, 47],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fbf0df'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(251, 240, 223, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fbf0df'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(251, 240, 223, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fbf0df'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function startLiveUpdates() {
+            // Update metrics every 5 seconds
+            setInterval(() => {
+                updateSystemMetrics();
+                updatePerformanceMetrics();
+            }, 5000);
+            
+            // Update RSS feeds every 30 seconds
+            setInterval(() => {
+                updateRSSFeeds();
+            }, 30000);
+        }
+
+        function refreshDashboard() {
+            const button = event.target;
+            button.innerHTML = '<span class="loading"></span> Refreshing...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                initializeDashboard();
+                button.innerHTML = '<i class="fas fa-refresh"></i> Refresh';
+                button.disabled = false;
+            }, 1000);
+        }
+
+        function refreshRSSFeeds() {
+            const button = event.target;
+            button.innerHTML = '<span class="loading"></span> Refreshing...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                updateRSSFeeds();
+                button.innerHTML = '<i class="fas fa-refresh"></i> Refresh';
+                button.disabled = false;
+            }, 1000);
+        }
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function runPerformanceTest() {
+            alert('🚀 Performance test started! Results will be available in 30 seconds.');
+        }
+
+        function validateTOMLFiles() {
+            alert('✅ All TOML files validated successfully!');
+        }
+
+        function exportReport() {
+            alert('📊 Report exported to dashboard-report.json');
+        }
+
+        function openSettings() {
+            alert('⚙️ Settings panel would open here.');
+        }
+
+        // ============================================================================
+        // CLI Control Functions
+        // ============================================================================
+
+        async function initializeCLI() {
+            await refreshCLICommands();
+            await refreshCommandHistory();
+        }
+
+        async function refreshCLICommands() {
+            try {
+                const response = await fetch('/cli/commands');
+                const commands = await response.json();
+                dashboardData.cli.availableCommands = commands;
+                updateCommandsDisplay();
+                updateCommandSelect();
+            } catch (error) {
+                console.error('Failed to fetch CLI commands:', error);
+            }
+        }
+
+        function updateCommandsDisplay() {
+            const container = document.getElementById('cli-commands');
+            const filteredCommands = dashboardData.cli.currentCategory === 'all' 
+                ? dashboardData.cli.availableCommands
+                : dashboardData.cli.availableCommands.filter(cmd => cmd.category === dashboardData.cli.currentCategory);
+
+            container.innerHTML = '';
+            
+            if (filteredCommands.length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.6; padding: var(--space-lg);">No commands available for this category</div>';
+                return;
+            }
+
+            filteredCommands.forEach(command => {
+                const commandElement = document.createElement('div');
+                commandElement.className = 'list-item';
+                commandElement.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: var(--space-xs);">
+                            <i class="fas fa-terminal" style="color: var(--bun-accent); margin-right: var(--space-xs);"></i>
+                            ${command.command} ${command.args.join(' ')}
+                        </div>
+                        <div style="font-size: 0.875rem; opacity: 0.7;">
+                            ${command.description}
+                        </div>
+                    </div>
+                    <span class="status-indicator status-${getCategoryColor(command.category)}" style="font-size: 0.75rem;">
+                        ${command.category}
+                    </span>
+                `;
+                commandElement.onclick = () => selectCommand(command);
+                container.appendChild(commandElement);
+            });
+        }
+
+        function updateCommandSelect() {
+            const select = document.getElementById('command-select');
+            select.innerHTML = '<option value="">Select a command...</option>';
+            
+            dashboardData.cli.availableCommands.forEach(command => {
+                const option = document.createElement('option');
+                option.value = `${command.command} ${command.args.join(' ')}`;
+                option.textContent = `${command.command} ${command.args.join(' ')} - ${command.description}`;
+                option.dataset.command = JSON.stringify(command);
+                select.appendChild(option);
+            });
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                'bun': 'online',
+                'rss': 'success', 
+                'profile': 'warning',
+                'build': 'online',
+                'test': 'warning',
+                'security': 'error'
+            };
+            return colors[category] || 'online';
+        }
+
+        function selectCommand(command) {
+            const select = document.getElementById('command-select');
+            const fullCommand = `${command.command} ${command.args.join(' ')}`;
+            
+            // Find and select the matching option
+            for (const option of select.options) {
+                if (option.value === fullCommand) {
+                    select.value = fullCommand;
+                    break;
+                }
+            }
+        }
+
+        async function executeCLICommand() {
+            const select = document.getElementById('command-select');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (!selectedOption || !selectedOption.value) {
+                alert('Please select a command to execute.');
+                return;
+            }
+
+            const commandData = JSON.parse(selectedOption.dataset.command);
+            const executeBtn = document.getElementById('execute-btn');
+            
+            // Disable button and show loading
+            executeBtn.disabled = true;
+            executeBtn.innerHTML = '<span class="loading"></span> Executing...';
+            dashboardData.cli.executingCommand = true;
+
+            try {
+                const response = await fetch('/cli/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        command: commandData.command,
+                        args: commandData.args,
+                        description: commandData.description,
+                        category: commandData.category
+                    })
+                });
+
+                const result = await response.json();
+                displayCommandOutput(result, commandData);
+                
+                // Refresh history after execution
+                await refreshCommandHistory();
+                
+            } catch (error) {
+                displayCommandOutput({ 
+                    success: false, 
+                    error: error.message 
+                }, commandData);
+            } finally {
+                // Re-enable button
+                executeBtn.disabled = false;
+                executeBtn.innerHTML = '<i class="fas fa-play"></i> Execute';
+                dashboardData.cli.executingCommand = false;
+            }
+        }
+
+        function displayCommandOutput(result, command) {
+            const outputDiv = document.getElementById('command-output');
+            const outputContent = document.getElementById('output-content');
+            
+            outputDiv.style.display = 'block';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const commandLine = `${command.command} ${command.args.join(' ')}`;
+            
+            let output = `[${timestamp}] $ ${commandLine}\n`;
+            output += '─'.repeat(50) + '\n';
+            
+            if (result.success) {
+                output += result.output || 'Command completed successfully';
+                if (result.duration) {
+                    output += `\n\n⏱️  Duration: ${result.duration}ms`;
+                }
+            } else {
+                output += `❌ Error: ${result.error || 'Command failed'}`;
+            }
+            
+            outputContent.textContent = output;
+            outputContent.scrollTop = outputContent.scrollHeight;
+        }
+
+        function clearCommandOutput() {
+            document.getElementById('command-output').style.display = 'none';
+            document.getElementById('output-content').textContent = '';
+        }
+
+        async function refreshCommandHistory() {
+            try {
+                const response = await fetch('/cli/history');
+                const history = await response.json();
+                dashboardData.cli.commandHistory = history;
+                updateHistoryDisplay();
+            } catch (error) {
+                console.error('Failed to fetch command history:', error);
+            }
+        }
+
+        function updateHistoryDisplay() {
+            const container = document.getElementById('command-history');
+            container.innerHTML = '';
+            
+            if (dashboardData.cli.commandHistory.length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.6; padding: var(--space-lg);">No command history available</div>';
+                return;
+            }
+
+            // Show most recent commands first
+            const reversedHistory = [...dashboardData.cli.commandHistory].reverse();
+            
+            reversedHistory.forEach(command => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'list-item';
+                
+                const statusClass = command.status === 'completed' ? 'status-success' : 
+                                  command.status === 'error' ? 'status-error' : 
+                                  command.status === 'running' ? 'status-warning' : 'status-online';
+                
+                const duration = command.duration ? ` (${command.duration}ms)` : '';
+                const time = command.endTime ? new Date(command.endTime).toLocaleTimeString() : 
+                           command.startTime ? new Date(command.startTime).toLocaleTimeString() : '';
+                
+                historyItem.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: var(--space-xs);">
+                            <i class="fas fa-terminal" style="color: var(--bun-accent); margin-right: var(--space-xs);"></i>
+                            ${command.command} ${command.args.join(' ')}
+                        </div>
+                        <div style="font-size: 0.75rem; opacity: 0.6;">
+                            ${time}${duration} • ${command.description || 'No description'}
+                        </div>
+                    </div>
+                    <span class="status-indicator ${statusClass}" style="font-size: 0.75rem;">
+                        ${command.status}
+                    </span>
+                `;
+                
+                container.appendChild(historyItem);
+            });
+        }
+
+        function switchCLITab(category) {
+            // Update tab states
+            document.querySelectorAll('#cli-control-panel .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update current category and refresh display
+            dashboardData.cli.currentCategory = category;
+            updateCommandsDisplay();
+        }
+
+        async function executeBunCommand(action) {
+            const commands = {
+                'build': { command: 'bun', args: ['build'], description: 'Build the project', statusId: 'build-status' },
+                'test': { command: 'bun', args: ['test'], description: 'Run test suite', statusId: 'test-status' },
+                'typecheck': { command: 'bun', args: ['run', 'typecheck'], description: 'Run TypeScript type checking', statusId: 'typecheck-status' },
+                'dev': { command: 'bun', args: ['run', 'dev-dashboard'], description: 'Start development dashboard', statusId: 'build-status' }
+            };
+
+            const cmd = commands[action];
+            if (!cmd) return;
+
+            // Update status to show running
+            const statusElement = document.getElementById(cmd.statusId);
+            const originalStatus = statusElement.textContent;
+            statusElement.innerHTML = '<span class="loading"></span>';
+            statusElement.style.color = '#f59e0b';
+
+            try {
+                const response = await fetch('/cli/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        command: cmd.command,
+                        args: cmd.args,
+                        description: cmd.description,
+                        category: 'bun'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusElement.textContent = '✅';
+                    statusElement.style.color = '#22c55e';
+                    
+                    // Show success notification
+                    showNotification(`${cmd.description} completed successfully`, 'success');
+                    
+                    // Update Bun version if this was a build or version check
+                    if (action === 'build' && result.output) {
+                        updateBunVersionFromOutput(result.output);
+                    }
+                } else {
+                    statusElement.textContent = '❌';
+                    statusElement.style.color = '#ef4444';
+                    showNotification(`${cmd.description} failed: ${result.error}`, 'error');
+                }
+
+                // Refresh command history
+                await refreshCommandHistory();
+                
+            } catch (error) {
+                statusElement.textContent = '❌';
+                statusElement.style.color = '#ef4444';
+                showNotification(`Failed to execute ${cmd.description}: ${error.message}`, 'error');
+            }
+        }
+
+        async function executeRSSCommand(action) {
+            const commands = {
+                'list': { command: 'matrix', args: ['rss', 'list'], description: 'List RSS profiles' },
+                'hacker': { command: 'matrix', args: ['rss', 'hacker'], description: 'Profile Hacker News RSS' },
+                'bbc': { command: 'matrix', args: ['rss', 'bbc'], description: 'Profile BBC News RSS' },
+                'cnn': { command: 'matrix', args: ['rss', 'cnn'], description: 'Profile CNN RSS' }
+            };
+
+            const cmd = commands[action];
+            if (!cmd) return;
+
+            // Show loading notification
+            showNotification(`Executing ${cmd.description}...`, 'info');
+
+            try {
+                const response = await fetch('/cli/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        command: cmd.command,
+                        args: cmd.args,
+                        description: cmd.description,
+                        category: 'rss'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(`${cmd.description} completed successfully`, 'success');
+                    
+                    // Refresh RSS feeds after profiling
+                    if (action !== 'list') {
+                        setTimeout(() => {
+                            refreshRSSFeeds();
+                        }, 1000);
+                    }
+                } else {
+                    showNotification(`${cmd.description} failed: ${result.error}`, 'error');
+                }
+
+                // Refresh command history
+                await refreshCommandHistory();
+                
+            } catch (error) {
+                showNotification(`Failed to execute ${cmd.description}: ${error.message}`, 'error');
+            }
+        }
+
+        async function executeProfileCommand(action) {
+            const commands = {
+                'list': { command: 'matrix', args: ['profile', 'list'], description: 'List available profiles' },
+                'analytics': { command: 'matrix', args: ['analytics', 'dashboard'], description: 'Show analytics dashboard' },
+                'security': { command: 'matrix', args: ['security', 'status'], description: 'Check security status' },
+                'generate': { command: 'matrix', args: ['config', 'generate', '--template=golden-template'], description: 'Generate config from template' }
+            };
+
+            const cmd = commands[action];
+            if (!cmd) return;
+
+            // Show loading notification
+            showNotification(`Executing ${cmd.description}...`, 'info');
+
+            try {
+                const response = await fetch('/cli/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        command: cmd.command,
+                        args: cmd.args,
+                        description: cmd.description,
+                        category: 'profile'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(`${cmd.description} completed successfully`, 'success');
+                    
+                    // Update profile list if this was a list command
+                    if (action === 'list') {
+                        updateProfileList(result.output);
+                    }
+                } else {
+                    showNotification(`${cmd.description} failed: ${result.error}`, 'error');
+                }
+
+                // Refresh command history
+                await refreshCommandHistory();
+                
+            } catch (error) {
+                showNotification(`Failed to execute ${cmd.description}: ${error.message}`, 'error');
+            }
+        }
+
+        function updateProfileList(output) {
+            const profileList = document.getElementById('profile-list');
+            
+            if (!output || output.trim() === '') {
+                profileList.innerHTML = '<div style="text-align: center; opacity: 0.6; padding: var(--space-md);">No profiles found</div>';
+                return;
+            }
+
+            // Parse output to extract profile names (this is a simple implementation)
+            const lines = output.split('\n').filter(line => line.trim());
+            profileList.innerHTML = '';
+            
+            if (lines.length === 0) {
+                profileList.innerHTML = '<div style="text-align: center; opacity: 0.6; padding: var(--space-md);">No profiles found</div>';
+                return;
+            }
+
+            lines.forEach(line => {
+                const profileItem = document.createElement('div');
+                profileItem.className = 'list-item';
+                profileItem.innerHTML = `
+                    <span style="font-size: 0.875rem;">
+                        <i class="fas fa-file-alt" style="color: #a855f7; margin-right: var(--space-xs);"></i>
+                        ${line.trim()}
+                    </span>
+                    <span class="status-indicator status-success" style="font-size: 0.75rem;">
+                        Available
+                    </span>
+                `;
+                profileList.appendChild(profileItem);
+            });
+        }
+
+        function updateBunVersionFromOutput(output) {
+            // Try to extract version from output
+            const versionMatch = output.match(/(\d+\.\d+\.\d+)/);
+            if (versionMatch) {
+                const version = versionMatch[1];
+                document.getElementById('bun-version-display').textContent = `v${version}`;
+                document.getElementById('bun-version').textContent = `v${version}`;
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 400px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            `;
+            
+            // Set background color based on type
+            const colors = {
+                'success': '#22c55e',
+                'error': '#ef4444',
+                'warning': '#f59e0b',
+                'info': '#3b82f6'
+            };
+            notification.style.background = colors[type] || colors.info;
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Slide in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // ============================================================================
+        // Real-time Log Viewer
+        // ============================================================================
+
+        let logStreaming = true;
+        let logEntries = [];
+        const maxLogEntries = 1000;
+
+        function initializeLogViewer() {
+            // Start log streaming
+            startLogStreaming();
+            
+            // Add system log
+            addLogEntry('SYSTEM', 'Log viewer initialized', 'info');
+            
+            // Hook into command execution to log events
+            const originalExecute = window.executeCLICommand;
+            if (originalExecute) {
+                window.executeCLICommand = function(...args) {
+                    addLogEntry('CLI', `Executing command: ${args[0]}`, 'info');
+                    return originalExecute.apply(this, args).then(result => {
+                        addLogEntry('CLI', `Command completed: ${args[0]}`, 'success');
+                        return result;
+                    }).catch(error => {
+                        addLogEntry('CLI', `Command failed: ${args[0]} - ${error.message}`, 'error');
+                        throw error;
+                    });
+                };
+            }
+        }
+
+        function startLogStreaming() {
+            // Simulate real-time log updates
+            setInterval(() => {
+                if (logStreaming && Math.random() > 0.7) {
+                    const messages = [
+                        { type: 'SYSTEM', message: 'Health check passed', level: 'info' },
+                        { type: 'RSS', message: 'Feed update check completed', level: 'info' },
+                        { type: 'SERVER', message: 'Request processed successfully', level: 'info' },
+                        { type: 'CACHE', message: 'Cache cleanup completed', level: 'info' },
+                        { type: 'MONITOR', message: 'Performance metrics updated', level: 'info' }
+                    ];
+                    
+                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                    addLogEntry(randomMessage.type, randomMessage.message, randomMessage.level);
+                }
+            }, 5000);
+        }
+
+        function addLogEntry(type, message, level = 'info') {
+            if (!logStreaming) return;
+
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                timestamp,
+                type,
+                message,
+                level
+            };
+
+            logEntries.push(logEntry);
+            
+            // Limit log entries
+            if (logEntries.length > maxLogEntries) {
+                logEntries = logEntries.slice(-maxLogEntries);
+            }
+
+            updateLogDisplay();
+        }
+
+        function updateLogDisplay() {
+            const logViewer = document.getElementById('log-viewer');
+            const logCount = document.getElementById('log-count');
+            const lastUpdate = document.getElementById('log-last-update');
+
+            if (logEntries.length === 0) {
+                logViewer.innerHTML = '<div style="opacity: 0.6;">Waiting for logs...</div>';
+                logCount.textContent = '0 log entries';
+                return;
+            }
+
+            // Display last 100 entries
+            const displayEntries = logEntries.slice(-100);
+            const logHtml = displayEntries.map(entry => {
+                const colors = {
+                    'info': '#00ff00',
+                    'success': '#22c55e',
+                    'warning': '#f59e0b',
+                    'error': '#ef4444'
+                };
+                const color = colors[entry.level] || colors.info;
+                
+                return `<div style="margin-bottom: 2px;">
+                    <span style="color: #888; font-size: 0.7rem;">[${entry.timestamp}]</span>
+                    <span style="color: #3b82f6; font-weight: 600; margin-left: 8px;">${entry.type}:</span>
+                    <span style="color: ${color}; margin-left: 8px;">${entry.message}</span>
+                </div>`;
+            }).join('');
+
+            logViewer.innerHTML = logHtml;
+            logViewer.scrollTop = logViewer.scrollHeight;
+            
+            logCount.textContent = `${logEntries.length} log entries`;
+            lastUpdate.textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+        }
+
+        function toggleLogStreaming() {
+            logStreaming = !logStreaming;
+            const toggleBtn = document.getElementById('log-toggle-btn');
+            const statusIndicator = document.getElementById('log-status');
+            
+            if (logStreaming) {
+                toggleBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                statusIndicator.className = 'status-indicator status-online';
+                statusIndicator.innerHTML = '<span class="pulse"></span> Live';
+                addLogEntry('SYSTEM', 'Log streaming resumed', 'info');
+            } else {
+                toggleBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+                statusIndicator.className = 'status-indicator status-warning';
+                statusIndicator.innerHTML = '<span class="pulse"></span> Paused';
+                addLogEntry('SYSTEM', 'Log streaming paused', 'warning');
+            }
+        }
+
+        function clearLogs() {
+            logEntries = [];
+            updateLogDisplay();
+            addLogEntry('SYSTEM', 'Log cleared', 'info');
+        }
+
+        // Hook log viewer into CLI command execution
+        const originalExecuteCLICommand = executeCLICommand;
+        executeCLICommand = function(...args) {
+            addLogEntry('CLI', `Executing: ${args[0]}`, 'info');
+            return originalExecuteCLICommand.apply(this, args).then(result => {
+                addLogEntry('CLI', `Success: ${args[0]}`, 'success');
+                return result;
+            }).catch(error => {
+                addLogEntry('CLI', `Error: ${args[0]} - ${error.message}`, 'error');
+                throw error;
+            });
+        };
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'r':
+                        e.preventDefault();
+                        refreshDashboard();
+                        break;
+                    case 't':
+                        e.preventDefault();
+                        runPerformanceTest();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        openSettings();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

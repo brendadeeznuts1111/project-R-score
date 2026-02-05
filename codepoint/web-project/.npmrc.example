@@ -1,0 +1,21 @@
+# Private Registry Configuration
+# Copy this file to .npmrc and update with your registry details
+
+# Your private registry URL
+registry=https://registry.your-org.com
+
+# Authentication token (get this from your registry admin)
+//registry.your-org.com/:_authToken=${NPM_AUTH_TOKEN}
+
+# Always use auth for this registry
+//registry.your-org.com/:always-auth=true
+
+# Bun-specific configuration
+@your-org:registry=https://registry.your-org.com
+
+# Optional: Configure scoped packages
+@your-org:registry=https://registry.your-org.com
+
+# Optional: Configure other registries for dependencies
+@types:registry=https://registry.npmjs.org/
+registry=https://registry.your-org.com

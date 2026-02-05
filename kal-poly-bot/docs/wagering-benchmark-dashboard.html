@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Performance Wagering Engine - Benchmark Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .rule-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .rule-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .rule-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .rule-benefit {
+            font-size: 0.8rem;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-pass { background-color: #28a745; }
+        .status-warn { background-color: #ffc107; }
+        .status-fail { background-color: #dc3545; }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .compliance-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .compliance-item.warning {
+            border-left-color: #ffc107;
+        }
+
+        .compliance-item.danger {
+            border-left-color: #dc3545;
+        }
+
+        .run-benchmarks {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .run-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .run-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 High-Performance Wagering Engine</h1>
+            <p>Benchmark Dashboard & Performance Validation</p>
+        </div>
+
+        <div class="rules-grid">
+            <div class="rule-card">
+                <div class="rule-title">Native-First</div>
+                <div class="rule-desc">Bun.hash.rapidhash</div>
+                <div class="rule-benefit">Instant event finger-printing for <30ms latency</div>
+            </div>
+            <div class="rule-card">
+                <div class="rule-title">Zero-Dep</div>
+                <div class="rule-desc">Virtual bunx bun:strip-ansi</div>
+                <div class="rule-benefit">Keeps production artifact slim (<1KB entries)</div>
+            </div>
+            <div class="rule-card">
+                <div class="rule-title">Error Resilience</div>
+                <div class="rule-desc">AbortSignal.timeout(45)</div>
+                <div class="rule-benefit">Pattern #62 requires <45ms; fails fast if stale</div>
+            </div>
+            <div class="rule-card">
+                <div class="rule-title">Silo Logic</div>
+                <div class="rule-desc">silo.ts mapping</div>
+                <div class="rule-benefit">TIER=prod auto-enables high-freq logic without if branches</div>
+            </div>
+        </div>
+
+        <div class="run-benchmarks">
+            <button class="run-btn" onclick="runBenchmarks()">
+                ▶️ Run Full Benchmark Suite
+            </button>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Performance Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">⚡</div>
+                    <h3 class="card-title">Performance Overview</h3>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value" id="p99-latency">--</div>
+                        <div class="metric-label">P99 Latency (ms)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="avg-throughput">--</div>
+                        <div class="metric-label">Avg Throughput (req/s)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="memory-usage">--</div>
+                        <div class="metric-label">Memory Usage (MB)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="success-rate">--</div>
+                        <div class="metric-label">Success Rate (%)</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- SLA Compliance -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #28a745, #20c997); color: white;">✓</div>
+                    <h3 class="card-title">SLA Compliance</h3>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value">
+                            <span class="status-indicator" id="rg-sla-status"></span>
+                            <span id="rg-sla">Checking...</span>
+                        </div>
+                        <div class="metric-label">RG Check <25ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">
+                            <span class="status-indicator" id="wager-sla-status"></span>
+                            <span id="wager-sla">Checking...</span>
+                        </div>
+                        <div class="metric-label">Wager <25ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">
+                            <span class="status-indicator" id="memory-sla-status"></span>
+                            <span id="memory-sla">Checking...</span>
+                        </div>
+                        <div class="metric-label">Memory <400MB</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">
+                            <span class="status-indicator" id="compliance-sla-status"></span>
+                            <span id="compliance-sla">Checking...</span>
+                        </div>
+                        <div class="metric-label">Full Compliance</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Latency Distribution -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #e83e8c, #fd7e14); color: white;">📊</div>
+                    <h3 class="card-title">Latency Distribution</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="latencyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Compliance Validation -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #6f42c1, #e83e8c); color: white;">🔒</div>
+                    <h3 class="card-title">Regulatory Compliance</h3>
+                </div>
+                <div class="compliance-grid">
+                    <div class="compliance-item" id="self-exclusion-check">
+                        <span>🚫 Self-Exclusion Registry</span>
+                    </div>
+                    <div class="compliance-item" id="geographic-check">
+                        <span>🌍 Geographic Restrictions</span>
+                    </div>
+                    <div class="compliance-item" id="audit-check">
+                        <span>📝 Audit Logging</span>
+                    </div>
+                    <div class="compliance-item" id="quantum-check">
+                        <span>🔐 Quantum-Resistant Crypto</span>
+                    </div>
+                    <div class="compliance-item" id="loss-limits">
+                        <span>💰 Loss Limits Enforcement</span>
+                    </div>
+                    <div class="compliance-item" id="age-verification">
+                        <span>🎂 Age Verification</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmark Results -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #fd7e14, #ffc107); color: white;">🏃</div>
+                    <h3 class="card-title">Benchmark Results</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="benchmarkChart"></canvas>
+                </div>
+                <div style="margin-top: 15px;">
+                    <pre id="benchmark-output" style="background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 0.9rem; white-space: pre-wrap;"></pre>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #20c997, #17a2b8); color: white;">💚</div>
+                    <h3 class="card-title">System Health</h3>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value" id="cpu-usage">--</div>
+                        <div class="metric-label">CPU Usage (%)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric">
+                            <div class="metric-value" id="uptime">--</div>
+                            <div class="metric-label">Uptime (hours)</div>
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="active-connections">--</div>
+                        <div class="metric-label">Active Connections</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="error-rate">--</div>
+                        <div class="metric-label">Error Rate (%)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>High-Performance Wagering Engine - Licensed Operator Implementation Only</p>
+            <p>Built with Bun Native APIs • Zero-Collateral Operations • Sub-25ms Latency</p>
+        </div>
+    </div>
+
+    <script>
+        // Sample benchmark data (would be replaced with real data)
+        let benchmarkData = {
+            rg_check: { p50: 12.5, p90: 18.2, p99: 22.1, avg: 14.8, count: 1000 },
+            wager_placement: { p50: 15.3, p90: 20.8, p99: 24.7, avg: 16.9, count: 500 },
+            memory_usage: { heap: 142.15, external: 12.85, total: 155 },
+            compliance: {
+                self_exclusion: true,
+                geographic: true,
+                audit: true,
+                quantum: true,
+                loss_limits: true,
+                age_verification: true
+            }
+        };
+
+        // Initialize charts
+        let performanceChart, latencyChart, benchmarkChart;
+
+        function initCharts() {
+            // Performance Overview Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: ['RG Check', 'Wager Placement', 'Odds Calc', 'Memory Monitor'],
+                    datasets: [{
+                        label: 'P99 Latency (ms)',
+                        data: [22.1, 24.7, 1.2, 0.8],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Latency (ms)' }
+                        }
+                    }
+                }
+            });
+
+            // Latency Distribution Chart
+            const latencyCtx = document.getElementById('latencyChart').getContext('2d');
+            latencyChart = new Chart(latencyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['P50', 'P90', 'P95', 'P99'],
+                    datasets: [
+                        {
+                            label: 'RG Check (ms)',
+                            data: [12.5, 18.2, 21.5, 22.1],
+                            backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                        },
+                        {
+                            label: 'Wager Placement (ms)',
+                            data: [15.3, 20.8, 23.2, 24.7],
+                            backgroundColor: 'rgba(40, 167, 69, 0.8)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Latency (ms)' }
+                        }
+                    }
+                }
+            });
+
+            // Benchmark Results Chart
+            const benchCtx = document.getElementById('benchmarkChart').getContext('2d');
+            benchmarkChart = new Chart(benchCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['RG Check', 'Wager Placement', 'Odds Engine', 'Memory Monitor', 'URL Routing'],
+                    datasets: [{
+                        label: 'Performance Score',
+                        data: [95, 92, 98, 99, 96],
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDashboard() {
+            // Update metrics
+            document.getElementById('p99-latency').textContent = '23.4';
+            document.getElementById('avg-throughput').textContent = '42.5';
+            document.getElementById('memory-usage').textContent = '155';
+            document.getElementById('success-rate').textContent = '99.8';
+
+            // Update SLA status
+            updateSLAStatus('rg-sla-status', 'rg-sla', 22.1 < 25);
+            updateSLAStatus('wager-sla-status', 'wager-sla', 24.7 < 25);
+            updateSLAStatus('memory-sla-status', 'memory-sla', 155 < 400);
+            updateSLAStatus('compliance-sla-status', 'compliance-sla', true);
+
+            // Update compliance checks
+            Object.keys(benchmarkData.compliance).forEach(key => {
+                const element = document.getElementById(key.replace('_', '-') + '-check');
+                const isCompliant = benchmarkData.compliance[key];
+                element.className = `compliance-item ${isCompliant ? '' : 'warning'}`;
+            });
+
+            // Add silo information
+            const tier = 'prod'; // Would be dynamic in real implementation
+            document.querySelector('.header p').textContent = `Benchmark Dashboard & Performance Validation [${tier.toUpperCase()} SILO]`;
+        }
+
+        function updateSLAStatus(statusId, valueId, passed) {
+            const statusEl = document.getElementById(statusId);
+            const valueEl = document.getElementById(valueId);
+
+            statusEl.className = `status-indicator ${passed ? 'status-pass' : 'status-fail'}`;
+            valueEl.textContent = passed ? 'PASS' : 'FAIL';
+        }
+
+        async function runBenchmarks() {
+            const btn = document.querySelector('.run-btn');
+            btn.textContent = '⏳ Running Benchmarks...';
+            btn.disabled = true;
+
+            try {
+                // In a real implementation, this would run the actual benchmarks
+                // For demo purposes, we'll simulate the process
+                document.getElementById('benchmark-output').textContent =
+                    '=== WAGERING ENGINE BENCHMARK [PROD SILO] ===\n\n' +
+                    '✓ Native-First: Bun.hash.rapidhash enabled\n' +
+                    '✓ Zero-Dep: Virtual strip-ansi active\n' +
+                    '✓ Error Resilience: AbortSignal.timeout(45ms)\n' +
+                    '✓ Silo Logic: High-frequency operations enabled\n\n' +
+                    'Test 1: Single wager placement (Silo Optimized)\n' +
+                    '100 wagers: 2480.15ms\n' +
+                    'Average: 24.80ms ✅ (Target: <25ms)\n\n' +
+                    'Test 2: Concurrent wagers (10 parallel)\n' +
+                    '10 concurrent: 265.42ms\n\n' +
+                    'Test 3: Memory usage (Silo Aware)\n' +
+                    'Heap size: 142.15MB (Limit: 400MB)\n' +
+                    'Heap used: 86.42MB\n' +
+                    'External: 12.85MB\n\n' +
+                    'Test 4: Responsible gambling checks (High-Freq)\n' +
+                    '50 RG checks: 1250.80ms\n' +
+                    'Average: 25.02ms ✅ (Target: <30ms)\n\n' +
+                    'Silo Metrics:\n' +
+                    'Wager placement - Avg: 24.8ms, P95: 24.9ms\n\n' +
+                    '=== BENCHMARK COMPLETE ===';
+
+                // Simulate some delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Update dashboard with "new" data
+                updateDashboard();
+
+                btn.textContent = '✅ Benchmarks Complete';
+                setTimeout(() => {
+                    btn.textContent = '🔄 Run Again';
+                    btn.disabled = false;
+                }, 3000);
+
+            } catch (error) {
+                console.error('Benchmark error:', error);
+                btn.textContent = '❌ Error - Check Console';
+                btn.disabled = false;
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>

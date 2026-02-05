@@ -1,0 +1,46 @@
+# Commit Message Template
+# <type>[optional scope]: <subject>
+#
+# [optional body]
+#
+# [optional footer]
+
+# Types:
+#   feat     - New feature
+#   fix      - Bug fix
+#   docs     - Documentation changes
+#   style    - Code style (formatting, etc.)
+#   refactor - Code refactoring
+#   perf     - Performance improvements
+#   test     - Adding/updating tests
+#   chore    - Maintenance tasks
+#   ci       - CI/CD changes
+#   build    - Build system changes
+#
+# Scopes (optional):
+#   Domain-level (preferred):
+#     orca, pipeline, rbac, api, arbitrage, storage, cache, cli, types, docs,
+#     security, analytics, funnel, properties
+#   Component-level (when specific):
+#     orca-arbitrage, orca-sharp-books, pipeline-ingestion, pipeline-serving,
+#     rbac-manager, api-routes, cache-redis, cli-dashboard
+#   Technical (for Bun/deps):
+#     bun, bun-sqlite, bun-redis, deps, config
+#
+# Rules:
+#   - Prefer domain-level scopes (orca > orca-arbitrage-storage)
+#   - Don't use class names, function names, or versions as scopes
+#   - Keep scopes short and descriptive
+#
+# Examples:
+#   feat(orca): Add arbitrage opportunity storage
+#   fix(pipeline): Resolve rate limit null assertion
+#   perf(bun-sqlite): Use db.transaction() for batch inserts
+#   chore(deps): Update Hono to v4.6.0
+#   docs: Add metadata-documentation mapping guide
+#
+# Rules:
+#   - Subject: 50 chars or less, imperative mood
+#   - Body: Wrap at 72 chars, explain what and why
+#   - Footer: Reference issues (Closes #123, Fixes #456)
+#   - One logical change per commit

@@ -1,0 +1,3 @@
+Hello from Bun.write()!
+This is a text file written using a string.
+Timestamp: 2026-01-21T01:50:48.827Z

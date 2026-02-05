@@ -1,0 +1,143 @@
+#!/bin/bash
+# opr - Headscale + Cloudflare + Tailscale Operations (Bun-native)
+
+set -e
+
+COMMAND="${1:-help}"
+SUBCOMMAND="${2:-}"
+
+case $COMMAND in
+  # Deploy to Cloudflare
+  cf:deploy)
+    echo "🌐 Deploying to Cloudflare Workers..."
+    wrangler deploy --env production
+    echo "✅ Deployed successfully"
+    ;;
+
+  # Configure Cloudflare Access
+  cf:access)
+    echo "🔐 Setting up Cloudflare Access..."
+    echo "Note: Manual setup required via Cloudflare dashboard"
+    echo "1. Go to Zero Trust > Access > Applications"
+    echo "2. Create new application for api.example.com"
+    echo "3. Set policy to require email: your-email@example.com"
+    ;;
+
+  # Start Headscale (Bun-native)
+  headscale:start)
+    echo "🚀 Starting Headscale server (Bun)..."
+    bun run src/headscale-server.ts
+    ;;
+
+  # Create user
+  user:create)
+    if [ -z "$SUBCOMMAND" ]; then
+      echo "❌ Usage: opr user:create <username>"
+      exit 1
+    fi
+    echo "👤 Creating user: $SUBCOMMAND"
+    bun run src/headscale-cli.ts user create "$SUBCOMMAND"
+    ;;
+
+  # Register new node
+  node:register)
+    echo "🔗 Generating registration command..."
+    AUTHKEY=$(bun run src/headscale-cli.ts authkey create admin --reusable --expiration 24h 2>/dev/null || echo "ERROR")
+
+    if [ "$AUTHKEY" = "ERROR" ]; then
+      echo "❌ Failed to generate auth key"
+      exit 1
+    fi
+
+    echo "✅ Registration command:"
+    echo "tailscale up --login-server=https://api.example.com --authkey=$AUTHKEY"
+    ;;
+
+  # Health check
+  health:full)
+    echo "🔍 Full health check..."
+
+    echo ""
+    echo "📡 Cloudflare Worker:"
+    curl -s https://api.example.com/health 2>/dev/null | jq . || echo "❌ Unreachable"
+
+    echo ""
+    echo "🎯 Headscale API:"
+    curl -s http://localhost:8080/health 2>/dev/null | jq . || echo "❌ Unreachable"
+
+    echo ""
+    echo "📊 Metrics:"
+    curl -s http://localhost:9090/metrics 2>/dev/null | head -5 || echo "❌ Unreachable"
+    ;;
+
+  # List users
+  users:list)
+    echo "👥 Listing users..."
+    curl -s -H "Authorization: Bearer ${HEADSCALE_API_KEY}" \
+      http://localhost:8080/api/v1/users | jq .
+    ;;
+
+  # List nodes
+  nodes:list)
+    if [ -z "$SUBCOMMAND" ]; then
+      echo "❌ Usage: opr nodes:list <user_id>"
+      exit 1
+    fi
+    echo "🖥️  Listing nodes for user: $SUBCOMMAND"
+    curl -s -H "Authorization: Bearer ${HEADSCALE_API_KEY}" \
+      http://localhost:8080/api/v1/users/$SUBCOMMAND | jq .
+    ;;
+
+  # View metrics
+  metrics)
+    echo "📊 Headscale Metrics:"
+    curl -s http://localhost:9090/metrics
+    ;;
+
+  # WebSocket test
+  ws:test)
+    echo "🔌 Testing WebSocket connection..."
+    if command -v wscat &> /dev/null; then
+      wscat -c "wss://api.example.com/derp"
+    else
+      echo "⚠️  wscat not installed. Install with: npm install -g wscat"
+    fi
+    ;;
+
+  # Help
+  help|--help|-h)
+    cat << 'EOF'
+opr - Headscale + Cloudflare + Tailscale Operations (Bun-native)
+
+Usage: opr <command> [subcommand]
+
+Commands:
+  cf:deploy          Deploy to Cloudflare Workers
+  cf:access          Setup Cloudflare Access
+  headscale:start    Start Headscale server (Bun)
+  user:create        Create new user
+  node:register      Generate node registration command
+  users:list         List all users
+  nodes:list         List nodes for user
+  health:full        Full health check
+  metrics            View Prometheus metrics
+  ws:test            Test WebSocket connection
+  help               Show this help message
+
+Examples:
+  opr cf:deploy
+  opr headscale:start
+  opr user:create admin
+  opr node:register
+  opr health:full
+  opr metrics
+EOF
+    ;;
+
+  *)
+    echo "❌ Unknown command: $COMMAND"
+    echo "Run 'opr help' for usage information"
+    exit 1
+    ;;
+esac
+

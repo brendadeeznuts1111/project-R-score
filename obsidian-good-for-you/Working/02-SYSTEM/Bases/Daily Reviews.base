@@ -1,0 +1,80 @@
+---
+views:
+  - type: table
+    name: Daily Performance Metrics
+    filters:
+      - "file.folder == '03 - REVIEWS/DAILY NOTES'"
+    properties:
+      - date
+      - mood
+      - energy
+      - focus
+      - day-of-week
+    formulas:
+      - name: Productivity Score
+        formula: "(energy == 'high' ? 3 : energy == 'medium' ? 2 : 1) + (focus == 'high' ? 3 : focus == 'medium' ? 2 : 1)"
+      - name: Energy Numeric
+        formula: "energy == 'high' ? 3 : energy == 'medium' ? 2 : 1"
+      - name: Focus Numeric
+        formula: "focus == 'high' ? 3 : focus == 'medium' ? 2 : 1"
+    sort:
+      - property: date
+      direction: desc
+    summaries:
+      - type: count
+        label: Total Days Tracked
+      - type: average
+        property: Energy Numeric
+        label: Average Energy
+      - type: average
+        property: Focus Numeric
+        label: Average Focus
+      - type: average
+        property: Productivity Score
+        label: Average Productivity
+
+  - type: cards
+    name: High Energy Days
+    filters:
+      - "energy == 'high'"
+    properties:
+      - date
+      - mood
+      - focus
+      - day-of-week
+    card:
+      title: "{{date}}"
+      subtitle: "{{day-of-week}}"
+      body: "Mood: {{mood}} | Focus: {{focus}}"
+
+  - type: table
+    name: Weekly Performance Summary
+    filters:
+      - "file.folder == '03 - REVIEWS/DAILY NOTES'"
+    properties:
+      - date
+      - day-of-week
+      - mood
+      - energy
+      - focus
+    formulas:
+      - name: Week Number
+        formula: "date(date).week"
+      - name: Performance Rating
+        formula: "(energy == 'high' ? 3 : energy == 'medium' ? 2 : 1) + (focus == 'high' ? 3 : focus == 'medium' ? 2 : 1)"
+    sort:
+      - property: date
+        direction: desc
+
+  - type: list
+    name: Productive Days
+    filters:
+      - "energy == 'high' and focus == 'high'"
+    properties:
+      - date
+      - mood
+      - day-of-week
+    sort:
+      - property: date
+      direction: desc
+---

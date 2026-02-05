@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edge-Suite Dashboard</title>
+  <link rel="stylesheet" href="css/suite.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="js/router.js" defer></script>
+  <script src="js/plugins.js" defer></script>
+  <script src="js/suite.js" defer></script>
+</head>
+<body>
+  <div hx-get="components/header.html" hx-trigger="load" hx-swap="innerHTML"></div>
+
+  <main>
+    <!-- Content loaded via router -->
+  </main>
+
+  <div hx-get="components/footer.html" hx-trigger="load" hx-swap="innerHTML"></div>
+
+  <!-- Command Palette -->
+  <div id="palette">
+    <input placeholder="Search command…" oninput="filterCmd(this.value)">
+    <ul></ul>
+  </div>
+</body>
+</html>
+

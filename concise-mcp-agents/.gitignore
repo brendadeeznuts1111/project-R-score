@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+bun.lockb
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+.secrets.json
+.secrets.rotated.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+*.exe
+datapipe.exe
+datapipe-mac
+datapipe-win.exe
+ws-live.exe
+
+# Temporary files
+tmp/
+temp/
+
+# Config files with secrets
+config/users.json
+config/permissions.json
+
+# Audit logs (keep locally but don't commit)
+logs/audit/

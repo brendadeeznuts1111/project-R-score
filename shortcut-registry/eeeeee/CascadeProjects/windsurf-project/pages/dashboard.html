@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- ============================================ -->
+  <!-- === PERFMASTER PABLO: DNS & CONNECTION PRE-WARMING === -->
+  <!-- ============================================ -->
+  <!-- Performance Hierarchy:
+       1. preconnect: Critical domains (DNS + TCP + TLS)
+       2. dns-prefetch: Less critical or fallback (DNS only)
+  -->
+  
+  <!-- Critical: Chart.js CDN - preconnect does DNS + TCP + TLS -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  
+  <!-- WebSocket server preconnect (for production deployments) -->
+  <!-- Critical: Preconnect for real-time WebSocket connection -->
+  <!-- Uncomment and update when deploying to production:
+  <link rel="preconnect" href="wss://api.factory-wager.com">
+  -->
+  
+  <!-- API endpoint preconnect (if different subdomain in production) -->
+  <!-- Critical: Preconnect for API calls -->
+  <!-- Uncomment when deploying:
+  <link rel="preconnect" href="https://api.factory-wager.com" crossorigin>
+  -->
+  
+  <!-- Font preconnect (if using Google Fonts or custom fonts) -->
+  <!-- Critical: Preconnect for font loading to prevent CLS -->
+  <!-- Uncomment if adding custom fonts:
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  -->
+  
+  <!-- Less Critical: dns-prefetch for analytics or third-party scripts -->
+  <!-- Use dns-prefetch (DNS only) for non-critical resources -->
+  <!-- Example (uncomment if adding):
+  <link rel="dns-prefetch" href="https://www.google-analytics.com">
+  <link rel="dns-prefetch" href="https://cdn.segment.com">
+  -->
+  
+  <title>Factory Wager – Fraud Detection Dashboard</title>
+  <meta name="description" content="Real-time fraud detection and risk analysis dashboard for Factory Wager payment processing system">
+  
+  <!-- Configuration -->
+  <script>
+    // Configuration - can be modified during deployment
+    const CONFIG = {
+      HOST: 'localhost', // Set to your host or use environment variable
+      PORT: '3001',      // Set to your port or use environment variable
+      VERSION: '2.1.0',  // Dashboard version
+    };
+    
+    // Construct URLs
+    const WS_URL = `ws://${CONFIG.HOST}:${CONFIG.PORT}/ws/risk-live`;
+    const API_BASE = `http://${CONFIG.HOST}:${CONFIG.PORT}`;
+    
+    // Badge colors using Bun.color() compatible values
+    // These will be converted to CSS at build time if using Bun macros
+    const BADGE_COLORS = {
+      version: '#3b82f6',      // Blue-500
+      cookie: '#eab308',      // Yellow-500
+      demo: '#9333ea',        // Purple-600
+      connected: '#22c55e',   // Green-500
+    };
+  </script>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="typography--color-white">
+  
+  <header class="dashboard-header" role="banner">
+    <nav class="dashboard-header__navigation" aria-label="Main navigation">
+      <div class="dashboard-header__branding">
+        <h1 class="dashboard-header__title">Factory Wager – Fraud Detection Dashboard</h1>
+        <span id="versionBadge" class="badge badge--version" title="Dashboard Version" style="background-color: #3b82f6;">
+          v<span id="versionText">2.1.0</span>
+        </span>
+        <span id="cookieBadge" class="badge badge--cookie" title="Cookie Consent - Click to manage" style="background-color: #eab308;">
+          🍪 Cookies
+        </span>
+      </div>
+      <div class="dashboard-header__controls">
+        <span id="connectionStatus" class="badge badge--status badge--status--connected" role="status" aria-live="polite">
+          <span aria-hidden="true">●</span> Connected
+        </span>
+        <span id="lastUpdate" class="timestamp-display" aria-live="polite">
+          Last Update: <time id="lastUpdateTime" class="timestamp-display__time">--</time>
+        </span>
+      </div>
+    </nav>
+  </header>
+
+  <main id="content" class="spacing--padding-xlarge" role="main">
+    
+    <!-- ============================================ -->
+    <!-- === KEY METRICS SECTION === -->
+    <!-- ============================================ -->
+    <section aria-labelledby="metrics-heading" class="spacing--margin-bottom-xlarge">
+      <h2 id="metrics-heading" class="sr-only">Key Performance Metrics</h2>
+      <div class="layout-grid layout-grid--columns-1 layout-grid--md-columns-2 layout-grid--lg-columns-4 layout-grid--gap-large">
+        <!-- Metric Card Component: metric-card > metric-card__content > metric-card__label + metric-card__value + metric-card__icon -->
+        <article class="metric-card">
+          <div class="metric-card__content">
+            <div class="metric-card__text">
+              <p class="metric-card__label typography--color-gray-medium typography--size-sm">Active Sessions</p>
+              <p id="activeSessions" class="metric-card__value metric-card__value--primary typography--size-2xl typography--weight-bold" aria-live="polite">0</p>
+            </div>
+            <div class="metric-card__icon metric-card__icon--primary" aria-hidden="true">👥</div>
+          </div>
+        </article>
+        
+        <article class="metric-card">
+          <div class="metric-card__content">
+            <div class="metric-card__text">
+              <p class="metric-card__label typography--color-gray-medium typography--size-sm">Blocked Sessions</p>
+              <p id="blockedSessions" class="metric-card__value metric-card__value--danger typography--size-2xl typography--weight-bold" aria-live="polite">0</p>
+            </div>
+            <div class="metric-card__icon metric-card__icon--danger" aria-hidden="true">🚫</div>
+          </div>
+        </article>
+        
+        <article class="metric-card">
+          <div class="metric-card__content">
+            <div class="metric-card__text">
+              <p class="metric-card__label typography--color-gray-medium typography--size-sm">Avg Risk Score</p>
+              <p id="avgRiskScore" class="metric-card__value metric-card__value--warning typography--size-2xl typography--weight-bold" aria-live="polite">0.00</p>
+            </div>
+            <div class="metric-card__icon metric-card__icon--warning" aria-hidden="true">⚡</div>
+          </div>
+        </article>
+        
+        <article class="metric-card">
+          <div class="metric-card__content">
+            <div class="metric-card__text">
+              <p class="metric-card__label typography--color-gray-medium typography--size-sm">Detection Rate</p>
+              <p id="detectionRate" class="metric-card__value metric-card__value--success typography--size-2xl typography--weight-bold" aria-live="polite">98.7%</p>
+            </div>
+            <div class="metric-card__icon metric-card__icon--success" aria-hidden="true">🎯</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- === RISK VISUALIZATION SECTION === -->
+    <!-- ============================================ -->
+    <section aria-labelledby="risk-viz-heading" class="spacing--margin-bottom-xlarge">
+      <h2 id="risk-viz-heading" class="sr-only">Risk Visualization</h2>
+      <div class="layout-grid layout-grid--columns-1 layout-grid--lg-columns-2 layout-grid--gap-large">
+        <article class="visualization-panel">
+          <h3 class="visualization-panel__title">Real-Time Risk Heatmap</h3>
+          <canvas id="riskHeatmap" class="visualization-panel__canvas" width="400" height="300" aria-label="Risk heatmap visualization"></canvas>
+          <div class="visualization-panel__footer">
+            <span>Live fraud pattern visualization</span>
+            <span id="heatmapPoints">0 points</span>
+          </div>
+        </article>
+        
+        <article class="visualization-panel">
+          <h3 class="visualization-panel__title">Risk Distribution</h3>
+          <canvas id="riskChart" class="visualization-panel__canvas" width="400" height="300" aria-label="Risk distribution chart"></canvas>
+          <div class="visualization-panel__footer">
+            <span>Risk level breakdown</span>
+            <span id="chartUpdateTime">--</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- === ALERTS SECTION === -->
+    <!-- ============================================ -->
+    <section aria-labelledby="alerts-heading" class="spacing--margin-bottom-xlarge">
+      <div class="visualization-panel">
+        <div class="alert-list__header">
+          <h2 id="alerts-heading" class="alert-list__title">Recent Fraud Alerts</h2>
+          <div class="flex items-center spacing--margin-right-small">
+            <span id="alertStats" class="alert-list__stats" aria-live="polite">0 total | 0 blocked</span>
+            <button id="clearAlertsBtn" data-action="clear-alerts" class="button button--small button--secondary button--hidden" aria-label="Clear all alerts">
+              Clear
+            </button>
+          </div>
+        </div>
+        <div id="alertsContainer" class="alert-list" role="log" aria-live="polite" aria-label="Fraud alerts">
+          <p class="typography--color-gray-medium typography--align-center spacing--padding-y-xlarge">No alerts yet. Waiting for data...</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ============================================ -->
+    <!-- === ACTIVITY TIMELINE & GEOGRAPHIC SECTION === -->
+    <!-- ============================================ -->
+    <section aria-labelledby="activity-heading" class="spacing--margin-bottom-xlarge">
+      <h2 id="activity-heading" class="sr-only">Activity Timeline and Geographic Distribution</h2>
+      <div class="layout-grid layout-grid--columns-1 layout-grid--lg-columns-2 layout-grid--gap-large">
+        <article class="visualization-panel">
+          <h3 class="visualization-panel__title">Activity Timeline</h3>
+          <div id="timelineContainer" class="timeline" role="log" aria-live="polite" aria-label="Activity timeline">
+            <p class="typography--color-gray-medium typography--align-center spacing--padding-y-xlarge typography--size-sm">Activity feed will appear here...</p>
+          </div>
+        </article>
+        
+        <article class="visualization-panel">
+          <h3 class="visualization-panel__title">Geographic Risk Distribution</h3>
+          <div id="geoContainer" class="geographic-distribution">
+            <div class="geographic-distribution__grid">
+              <div class="geographic-distribution__panel">
+                <div class="geographic-distribution__header">
+                  <span class="geographic-distribution__label">🌍 Region</span>
+                  <span class="geographic-distribution__count geographic-distribution__count--total typography--size-xs" id="geoTotal" aria-live="polite">0</span>
+                </div>
+                <div id="geoList" class="geographic-distribution__list" role="list" aria-label="Geographic regions">
+                  <p class="typography--color-gray-dark">Loading...</p>
+                </div>
+              </div>
+              <div class="geographic-distribution__panel">
+                <div class="geographic-distribution__header">
+                  <span class="geographic-distribution__label">⚠️ High Risk</span>
+                  <span class="geographic-distribution__count geographic-distribution__count--high-risk typography--size-xs" id="geoHighRisk" aria-live="polite">0</span>
+                </div>
+                <div id="geoRiskList" class="geographic-distribution__list" role="list" aria-label="High risk regions">
+                  <p class="typography--color-gray-dark">Loading...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    
+    <!-- ============================================ -->
+    <!-- === TRANSACTION ANALYTICS SECTION === -->
+    <!-- ============================================ -->
+    <section aria-labelledby="transaction-heading" class="spacing--margin-bottom-xlarge">
+      <div class="visualization-panel">
+        <h2 id="transaction-heading" class="visualization-panel__title spacing--margin-bottom-large">Transaction Analytics</h2>
+        <div class="layout-grid layout-grid--columns-1 layout-grid--md-columns-4 layout-grid--gap-medium">
+          <!-- Transaction Card Component: transaction-card > transaction-card__label + transaction-card__value + transaction-card__meta -->
+          <article class="transaction-card">
+            <p class="transaction-card__label typography--color-gray-medium typography--size-sm spacing--margin-bottom-tiny">Total Volume</p>
+            <p id="totalVolume" class="transaction-card__value transaction-card__value--success typography--size-xl typography--weight-bold" aria-live="polite">$0</p>
+            <p class="transaction-card__meta typography--size-xs typography--color-gray-dark spacing--margin-top-tiny">Last 24h</p>
+          </article>
+          <article class="transaction-card">
+            <p class="transaction-card__label typography--color-gray-medium typography--size-sm spacing--margin-bottom-tiny">Avg Transaction</p>
+            <p id="avgTransaction" class="transaction-card__value transaction-card__value--primary typography--size-xl typography--weight-bold" aria-live="polite">$0</p>
+            <p class="transaction-card__meta typography--size-xs typography--color-gray-dark spacing--margin-top-tiny">Per session</p>
+          </article>
+          <article class="transaction-card">
+            <p class="transaction-card__label typography--color-gray-medium typography--size-sm spacing--margin-bottom-tiny">Blocked Amount</p>
+            <p id="blockedAmount" class="transaction-card__value transaction-card__value--danger typography--size-xl typography--weight-bold" aria-live="polite">$0</p>
+            <p class="transaction-card__meta typography--size-xs typography--color-gray-dark spacing--margin-top-tiny">Prevented fraud</p>
+          </article>
+          <article class="transaction-card">
+            <p class="transaction-card__label typography--color-gray-medium typography--size-sm spacing--margin-bottom-tiny">Savings Rate</p>
+            <p id="savingsRate" class="transaction-card__value transaction-card__value--warning typography--size-xl typography--weight-bold" aria-live="polite">0%</p>
+            <p class="transaction-card__meta typography--size-xs typography--color-gray-dark spacing--margin-top-tiny">Fraud prevented</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- === FEATURE ANALYSIS SECTION === -->
+    <!-- ============================================ -->
+    <section aria-labelledby="analysis-heading">
+      <h2 id="analysis-heading" class="sr-only">Feature Analysis and Performance</h2>
+      <div class="layout-grid layout-grid--columns-1 layout-grid--lg-columns-3 layout-grid--gap-large">
+        <article class="visualization-panel">
+          <h3 class="visualization-panel__title">Feature Contributions</h3>
+          <canvas id="featureChart" width="300" height="200" aria-label="Feature contributions chart"></canvas>
+        </article>
+        
+        <article class="visualization-panel">
+          <h3 class="visualization-panel__title">Performance</h3>
+          <dl class="performance-metrics">
+            <div class="performance-metrics__item">
+              <dt class="performance-metrics__label">Inference Latency</dt>
+              <dd id="inferenceLatency" class="performance-metrics__value performance-metrics__value--success" aria-live="polite">0.4ms</dd>
+            </div>
+            <div class="performance-metrics__item">
+              <dt class="performance-metrics__label">WebSocket Latency</dt>
+              <dd id="wsLatency" class="performance-metrics__value performance-metrics__value--success" aria-live="polite">38ms</dd>
+            </div>
+            <div class="performance-metrics__item">
+              <dt class="performance-metrics__label">Sessions/sec</dt>
+              <dd id="sessionsPerSec" class="performance-metrics__value performance-metrics__value--primary" aria-live="polite">4096</dd>
+            </div>
+            <div class="performance-metrics__item">
+              <dt class="performance-metrics__label">Memory Usage</dt>
+              <dd id="memoryUsage" class="performance-metrics__value performance-metrics__value--warning" aria-live="polite">45MB</dd>
+            </div>
+          </dl>
+        </article>
+        
+        <article class="visualization-panel">
+          <h3 class="visualization-panel__title">System Status</h3>
+          <dl class="system-status">
+            <div class="system-status__item">
+              <dt class="system-status__label">GNN Oracle</dt>
+              <dd><span class="system-status__badge system-status__badge--online">ONLINE</span></dd>
+            </div>
+            <div class="system-status__item">
+              <dt class="system-status__label">Ghost Shield</dt>
+              <dd><span class="system-status__badge system-status__badge--online">ACTIVE</span></dd>
+            </div>
+            <div class="system-status__item">
+              <dt class="system-status__label">Pattern Detector</dt>
+              <dd><span class="system-status__badge system-status__badge--online">RUNNING</span></dd>
+            </div>
+            <div class="system-status__item">
+              <dt class="system-status__label">WebSocket Server</dt>
+              <dd><span class="system-status__badge system-status__badge--online">LISTENING</span></dd>
+            </div>
+          </dl>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================ -->
+  <!-- === FRAUD ALERT MODAL === -->
+  <!-- ============================================ -->
+  <dialog id="fraudAlertModal" class="modal modal--hidden" role="alertdialog" aria-labelledby="fraud-alert-title" aria-modal="true">
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <div class="modal__icon" aria-hidden="true">🚨</div>
+        <h3 id="fraud-alert-title" class="modal__title">Critical Fraud Alert</h3>
+      </div>
+      <div id="fraudAlertContent" class="modal__content">
+        <!-- Alert content will be inserted here -->
+      </div>
+      <div class="modal__footer">
+        <button data-action="close-fraud-alert" class="button button--danger button--full-width" aria-label="Acknowledge and close alert">
+          Acknowledge Alert
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <!-- Non-critical scripts loaded at end of body with defer -->
+  <!-- Chart.js: Preconnected above, loads faster -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="shortcuts.js" defer></script>
+  <script type="module" src="assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empire Pro Advanced Dashboard - Power Features & Profile Routes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/keyboard-shortcuts-lite@latest/dist/index.js"></script>
+    <style>
+        @keyframes power-pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.6); }
+            50% { box-shadow: 0 0 60px rgba(168, 85, 247, 0.9); }
+        }
+        
+        @keyframes route-flow {
+            0% { transform: translateX(-100%); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes profile-glow {
+            0%, 100% { border-color: rgba(168, 85, 247, 0.5); }
+            50% { border-color: rgba(168, 85, 247, 1); }
+        }
+        
+        .power-header {
+            background: linear-gradient(135deg, #7c3aed, #4c1d95);
+            animation: power-pulse 3s ease-in-out infinite;
+        }
+        
+        .profile-card {
+            background: rgba(17, 24, 39, 0.9);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #a855f7, transparent);
+            animation: route-flow 4s ease-in-out infinite;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 85, 247, 0.8);
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+        }
+        
+        .profile-active {
+            animation: profile-glow 2s ease-in-out infinite;
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+        }
+        
+        .shortcut-key {
+            background: linear-gradient(135deg, #4c1d95, #7c3aed);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .power-metric {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .power-metric:hover {
+            transform: scale(1.05);
+            border-color: rgba(168, 85, 247, 0.6);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+        }
+        
+        .route-indicator {
+            width: 4px;
+            height: 4px;
+            background: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+            animation: power-pulse 1s ease-in-out infinite;
+        }
+        
+        .profile-theme-dark-pro { background: linear-gradient(135deg, #1f2937, #111827); }
+        .profile-theme-dark-blue { background: linear-gradient(135deg, #1e3a8a, #1e40af); }
+        .profile-theme-dark-purple { background: linear-gradient(135deg, #581c87, #6b21a8); }
+        .profile-theme-dark-green { background: linear-gradient(135deg, #14532d, #166534); }
+        .profile-theme-dark-orange { background: linear-gradient(135deg, #7c2d12, #9a3412); }
+        
+        .feature-panel {
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-panel:hover {
+            border-color: rgba(168, 85, 247, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .command-display {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #a855f7;
+            transition: all 0.3s ease;
+        }
+        
+        .command-display.active {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: #a855f7;
+            color: #10b981;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen profile-theme-dark-pro">
+    <!-- Power Header with Profile Routes -->
+    <header class="power-header shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="route-indicator"></div>
+                        <div>
+                            <h1 class="text-2xl font-bold">Empire Pro Advanced Dashboard</h1>
+                            <p class="text-sm text-purple-200">Power Features & Profile Routes Unleashed</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-purple-200">Current Profile:</span>
+                        <span id="current-profile" class="text-lg font-bold text-purple-300">System Administrator</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="command-display" id="command-display">$ ready</div>
+                    <button onclick="showProfileSwitcher()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-all">
+                        <i class="fas fa-user-circle mr-2"></i>Switch Profile
+                    </button>
+                    <button onclick="showShortcutHelp()" class="bg-violet-600 hover:bg-violet-700 px-4 py-2 rounded-lg transition-all">
+                        <i class="fas fa-keyboard mr-2"></i>Shortcuts
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Profile Navigation Bar -->
+    <div class="bg-gray-800 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex space-x-2">
+                    <button onclick="switchProfile('admin')" class="profile-btn px-4 py-2 rounded-lg text-sm transition-all bg-purple-600 text-white">
+                        <i class="fas fa-crown mr-1"></i>Admin
+                    </button>
+                    <button onclick="switchProfile('operator')" class="profile-btn px-4 py-2 rounded-lg text-sm transition-all bg-gray-700 hover:bg-gray-600">
+                        <i class="fas fa-headset mr-1"></i>Operator
+                    </button>
+                    <button onclick="switchProfile('analyst')" class="profile-btn px-4 py-2 rounded-lg text-sm transition-all bg-gray-700 hover:bg-gray-600">
+                        <i class="fas fa-chart-line mr-1"></i>Analyst
+                    </button>
+                    <button onclick="switchProfile('developer')" class="profile-btn px-4 py-2 rounded-lg text-sm transition-all bg-gray-700 hover:bg-gray-600">
+                        <i class="fas fa-code mr-1"></i>Developer
+                    </button>
+                    <button onclick="switchProfile('power-user')" class="profile-btn px-4 py-2 rounded-lg text-sm transition-all bg-gray-700 hover:bg-gray-600">
+                        <i class="fas fa-bolt mr-1"></i>Power User
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-400">Active Shortcuts:</span>
+                    <span id="shortcut-count" class="text-sm font-bold text-purple-400">7</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Power Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
+            <div class="power-metric p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xl font-bold text-purple-400">2.1ms</div>
+                        <div class="text-xs text-gray-400">Latency</div>
+                    </div>
+                    <i class="fas fa-tachometer-alt text-xl text-purple-400 opacity-50"></i>
+                </div>
+            </div>
+            
+            <div class="power-metric p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xl font-bold text-blue-400">19,574</div>
+                        <div class="text-xs text-gray-400">Req/s</div>
+                    </div>
+                    <i class="fas fa-rocket text-xl text-blue-400 opacity-50"></i>
+                </div>
+            </div>
+            
+            <div class="power-metric p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xl font-bold text-green-400">3310%</div>
+                        <div class="text-xs text-gray-400">ROI</div>
+                    </div>
+                    <i class="fas fa-dollar-sign text-xl text-green-400 opacity-50"></i>
+                </div>
+            </div>
+            
+            <div class="power-metric p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xl font-bold text-yellow-400">$11.02</div>
+                        <div class="text-xs text-gray-400">Cost/1k</div>
+                    </div>
+                    <i class="fas fa-coins text-xl text-yellow-400 opacity-50"></i>
+                </div>
+            </div>
+            
+            <div class="power-metric p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xl font-bold text-red-400">47</div>
+                        <div class="text-xs text-gray-400">Healings</div>
+                    </div>
+                    <i class="fas fa-medkit text-xl text-red-400 opacity-50"></i>
+                </div>
+            </div>
+            
+            <div class="power-metric p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xl font-bold text-purple-400">18</div>
+                        <div class="text-xs text-gray-400">Shortcuts</div>
+                    </div>
+                    <i class="fas fa-keyboard text-xl text-purple-400 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile-Specific Features -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Admin Features -->
+            <div id="feature-admin" class="feature-panel">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-crown mr-2 text-purple-400"></i>
+                    Administrative Controls
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="openSystemControl()" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-cogs mr-2"></i>System Control Panel
+                        <span class="text-xs text-purple-300 block">Ctrl+Alt+S</span>
+                    </button>
+                    <button onclick="openUserManagement()" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-users mr-2"></i>User Management
+                        <span class="text-xs text-purple-300 block">Ctrl+Alt+U</span>
+                    </button>
+                    <button onclick="openConfigManager()" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-sliders-h mr-2"></i>Configuration Manager
+                        <span class="text-xs text-purple-300 block">Ctrl+Alt+C</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Operator Features -->
+            <div id="feature-operator" class="feature-panel" style="display: none;">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-headset mr-2 text-blue-400"></i>
+                    Operations Center
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="openBulkOperations()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-tasks mr-2"></i>Bulk Phone Operations
+                        <span class="text-xs text-blue-300 block">Ctrl+Alt+B</span>
+                    </button>
+                    <button onclick="openRoutingRules()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-route mr-2"></i>Advanced Routing Rules
+                        <span class="text-xs text-blue-300 block">Ctrl+Alt+R</span>
+                    </button>
+                    <button onclick="openMonitoringDashboard()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-chart-bar mr-2"></i>Monitoring Dashboard
+                        <span class="text-xs text-blue-300 block">Ctrl+Alt+M</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analyst Features -->
+            <div id="feature-analyst" class="feature-panel" style="display: none;">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-chart-line mr-2 text-green-400"></i>
+                    Analytics Suite
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="openAdvancedAnalytics()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-analytics mr-2"></i>Advanced Analytics
+                        <span class="text-xs text-green-300 block">Ctrl+Alt+A</span>
+                    </button>
+                    <button onclick="openFinancialReports()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-file-invoice-dollar mr-2"></i>Financial Reports
+                        <span class="text-xs text-green-300 block">Ctrl+Alt+F</span>
+                    </button>
+                    <button onclick="openTrendAnalysis()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg text-left transition-all">
+                        <i class="fas fa-chart-area mr-2"></i>Trend Analysis
+                        <span class="text-xs text-green-300 block">Ctrl+Alt+T</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unleashed Shortcuts Panel -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Current Profile Shortcuts -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-keyboard mr-2 text-purple-400"></i>
+                    Current Profile Shortcuts
+                </h2>
+                <div id="current-shortcuts" class="space-y-2">
+                    <!-- Shortcuts will be populated here -->
+                </div>
+            </div>
+
+            <!-- Route Activity Feed -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-route mr-2 text-purple-400"></i>
+                        Route Activity Feed
+                    </h2>
+                    <button onclick="clearActivityLog()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition-all">
+                        <i class="fas fa-trash mr-1"></i>Clear
+                    </button>
+                </div>
+                <div class="space-y-2" id="activityFeed">
+                    <!-- Activity items will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Power Features Grid -->
+        <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-bolt mr-2 text-yellow-400"></i>
+                Unleashed Power Features
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-all cursor-pointer" onclick="toggleFeature('real-time-sync')">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-medium">Real-time Sync</h4>
+                        <i class="fas fa-sync text-green-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Live data synchronization across all profiles</p>
+                </div>
+                
+                <div class="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-all cursor-pointer" onclick="toggleFeature('ai-assistant')">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-medium">AI Assistant</h4>
+                        <i class="fas fa-robot text-purple-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Intelligent command suggestions and automation</p>
+                </div>
+                
+                <div class="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-all cursor-pointer" onclick="toggleFeature('voice-control')">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-medium">Voice Control</h4>
+                        <i class="fas fa-microphone text-blue-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Voice-activated commands and navigation</p>
+                </div>
+                
+                <div class="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-all cursor-pointer" onclick="toggleFeature('gesture-control')">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-medium">Gesture Control</h4>
+                        <i class="fas fa-hand-pointer text-yellow-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Hand gesture recognition for dashboard control</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Profile Switcher Modal -->
+    <div id="profile-switcher" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">Switch Profile</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="profile-card profile-active p-4 cursor-pointer" onclick="switchProfile('admin')">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-crown text-2xl text-purple-400"></i>
+                        <div>
+                            <h4 class="font-semibold">System Administrator</h4>
+                            <p class="text-sm text-gray-400">Full system control and user management</p>
+                            <div class="text-xs text-purple-300 mt-1">10 shortcuts available</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-card p-4 cursor-pointer" onclick="switchProfile('operator')">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-headset text-2xl text-blue-400"></i>
+                        <div>
+                            <h4 class="font-semibold">Phone Intelligence Operator</h4>
+                            <p class="text-sm text-gray-400">Phone operations and campaign routing</p>
+                            <div class="text-xs text-blue-300 mt-1">7 shortcuts available</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-card p-4 cursor-pointer" onclick="switchProfile('analyst')">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-chart-line text-2xl text-green-400"></i>
+                        <div>
+                            <h4 class="font-semibold">Business Intelligence Analyst</h4>
+                            <p class="text-sm text-gray-400">Analytics, reports, and financial insights</p>
+                            <div class="text-xs text-green-300 mt-1">7 shortcuts available</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-card p-4 cursor-pointer" onclick="switchProfile('developer')">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-code text-2xl text-yellow-400"></i>
+                        <div>
+                            <h4 class="font-semibold">System Developer</h4>
+                            <p class="text-sm text-gray-400">Pattern design, workflow building, debugging</p>
+                            <div class="text-xs text-yellow-300 mt-1">7 shortcuts available</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-card p-4 cursor-pointer" onclick="switchProfile('power-user')">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-bolt text-2xl text-orange-400"></i>
+                        <div>
+                            <h4 class="font-semibold">Power User</h4>
+                            <p class="text-sm text-gray-400">Quick actions, custom widgets, reports</p>
+                            <div class="text-xs text-orange-300 mt-1">7 shortcuts available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="hideProfileSwitcher()" class="mt-4 w-full bg-red-600 hover:bg-red-700 p-3 rounded transition-all">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Advanced Profile Route Manager
+        class AdvancedProfileManager {
+            constructor() {
+                this.currentProfile = 'admin';
+                this.profiles = {
+                    admin: {
+                        name: 'System Administrator',
+                        theme: 'dark-pro',
+                        shortcuts: [
+                            { key: 'Ctrl+Shift+P', desc: 'Sanitize Phone', action: 'sanitizePhone' },
+                            { key: 'Ctrl+Shift+M', desc: 'Start Monitoring', action: 'startMonitoring' },
+                            { key: 'Ctrl+Shift+H', desc: 'Health Check', action: 'runHealthCheck' },
+                            { key: 'Ctrl+Shift+A', desc: 'Autonomic Loop', action: 'startAutonomicLoop' },
+                            { key: 'Ctrl+Alt+S', desc: 'System Control Panel', action: 'openSystemControl' },
+                            { key: 'Ctrl+Alt+U', desc: 'User Management', action: 'openUserManagement' },
+                            { key: 'Ctrl+Alt+C', desc: 'Configuration Manager', action: 'openConfigManager' },
+                            { key: 'Ctrl+Shift+/', desc: 'Show Help', action: 'showHelp' },
+                            { key: 'Ctrl+Shift+L', desc: 'Clear Activity', action: 'clearActivity' },
+                            { key: 'Ctrl+Shift+Escape', desc: 'Emergency Stop', action: 'emergencyStop' }
+                        ]
+                    },
+                    operator: {
+                        name: 'Phone Intelligence Operator',
+                        theme: 'dark-blue',
+                        shortcuts: [
+                            { key: 'Ctrl+Shift+P', desc: 'Sanitize Phone', action: 'sanitizePhone' },
+                            { key: 'Ctrl+Shift+M', desc: 'Start Monitoring', action: 'startMonitoring' },
+                            { key: 'Ctrl+Shift+F', desc: 'Farm Process', action: 'farmProcess' },
+                            { key: 'Ctrl+Shift+O', desc: 'Provision Numbers', action: 'provisionNumbers' },
+                            { key: 'Ctrl+Shift+R', desc: 'Retire Numbers', action: 'retireNumbers' },
+                            { key: 'Ctrl+Shift+C', desc: 'Route Campaign', action: 'routeCampaign' },
+                            { key: 'Ctrl+Alt+B', desc: 'Bulk Operations', action: 'openBulkOperations' }
+                        ]
+                    },
+                    analyst: {
+                        name: 'Business Intelligence Analyst',
+                        theme: 'dark-purple',
+                        shortcuts: [
+                            { key: 'Ctrl+Shift+H', desc: 'Health Check', action: 'runHealthCheck' },
+                            { key: 'Ctrl+Shift+D', desc: 'Generate Report', action: 'generateReport' },
+                            { key: 'Ctrl+Alt+A', desc: 'Advanced Analytics', action: 'openAdvancedAnalytics' },
+                            { key: 'Ctrl+Alt+F', desc: 'Financial Reports', action: 'openFinancialReports' },
+                            { key: 'Ctrl+Alt+T', desc: 'Trend Analysis', action: 'openTrendAnalysis' },
+                            { key: 'Ctrl+Shift+L', desc: 'Clear Activity', action: 'clearActivity' },
+                            { key: 'Ctrl+Shift+/', desc: 'Show Help', action: 'showHelp' }
+                        ]
+                    },
+                    developer: {
+                        name: 'System Developer',
+                        theme: 'dark-green',
+                        shortcuts: [
+                            { key: 'Ctrl+Shift+H', desc: 'Health Check', action: 'runHealthCheck' },
+                            { key: 'Ctrl+Alt+D', desc: 'Pattern Designer', action: 'openPatternDesigner' },
+                            { key: 'Ctrl+Alt+W', desc: 'Workflow Builder', action: 'openWorkflowBuilder' },
+                            { key: 'Ctrl+Alt+E', desc: 'Debug Console', action: 'openDebugConsole' },
+                            { key: 'Ctrl+Shift+A', desc: 'Autonomic Loop', action: 'startAutonomicLoop' },
+                            { key: 'Ctrl+Shift+L', desc: 'Clear Activity', action: 'clearActivity' },
+                            { key: 'Ctrl+Shift+/', desc: 'Show Help', action: 'showHelp' }
+                        ]
+                    },
+                    'power-user': {
+                        name: 'Power User',
+                        theme: 'dark-orange',
+                        shortcuts: [
+                            { key: 'Ctrl+Shift+P', desc: 'Sanitize Phone', action: 'sanitizePhone' },
+                            { key: 'Ctrl+Shift+M', desc: 'Start Monitoring', action: 'startMonitoring' },
+                            { key: 'Ctrl+Shift+H', desc: 'Health Check', action: 'runHealthCheck' },
+                            { key: 'Ctrl+Alt+Q', desc: 'Quick Actions', action: 'openQuickActions' },
+                            { key: 'Ctrl+Alt+W', desc: 'Custom Widgets', action: 'openCustomWidgets' },
+                            { key: 'Ctrl+Alt+R', desc: 'Custom Reports', action: 'openCustomReports' },
+                            { key: 'Ctrl+Shift+/', desc: 'Show Help', action: 'showHelp' }
+                        ]
+                    }
+                };
+                
+                this.initializeShortcuts();
+                this.updateProfileDisplay();
+            }
+            
+            initializeShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.shiftKey) {
+                        const key = this.getShortcutKey(e);
+                        const shortcut = this.findShortcut(key);
+                        if (shortcut) {
+                            e.preventDefault();
+                            this.executeAction(shortcut.action);
+                        }
+                    } else if (e.ctrlKey && e.altKey) {
+                        const key = this.getAltShortcutKey(e);
+                        const shortcut = this.findShortcut(key);
+                        if (shortcut) {
+                            e.preventDefault();
+                            this.executeAction(shortcut.action);
+                        }
+                    }
+                });
+            }
+            
+            getShortcutKey(e) {
+                return `Ctrl+Shift+${e.key.toUpperCase()}`;
+            }
+            
+            getAltShortcutKey(e) {
+                return `Ctrl+Alt+${e.key.toUpperCase()}`;
+            }
+            
+            findShortcut(key) {
+                const profile = this.profiles[this.currentProfile];
+                return profile.shortcuts.find(s => s.key === key);
+            }
+            
+            executeAction(action) {
+                this.showCommand(action, `Executing ${action}...`);
+                this.addActivity(`${action} executed via shortcut`, 'success');
+                
+                // Execute the action
+                switch(action) {
+                    case 'sanitizePhone':
+                        this.sanitizePhone();
+                        break;
+                    case 'startMonitoring':
+                        this.startMonitoring();
+                        break;
+                    case 'runHealthCheck':
+                        this.runHealthCheck();
+                        break;
+                    case 'startAutonomicLoop':
+                        this.startAutonomicLoop();
+                        break;
+                    case 'openSystemControl':
+                        this.openSystemControl();
+                        break;
+                    case 'openUserManagement':
+                        this.openUserManagement();
+                        break;
+                    case 'openConfigManager':
+                        this.openConfigManager();
+                        break;
+                    case 'farmProcess':
+                        this.farmProcess();
+                        break;
+                    case 'provisionNumbers':
+                        this.provisionNumbers();
+                        break;
+                    case 'retireNumbers':
+                        this.retireNumbers();
+                        break;
+                    case 'routeCampaign':
+                        this.routeCampaign();
+                        break;
+                    case 'openBulkOperations':
+                        this.openBulkOperations();
+                        break;
+                    case 'generateReport':
+                        this.generateReport();
+                        break;
+                    case 'openAdvancedAnalytics':
+                        this.openAdvancedAnalytics();
+                        break;
+                    case 'openFinancialReports':
+                        this.openFinancialReports();
+                        break;
+                    case 'openTrendAnalysis':
+                        this.openTrendAnalysis();
+                        break;
+                    case 'openPatternDesigner':
+                        this.openPatternDesigner();
+                        break;
+                    case 'openWorkflowBuilder':
+                        this.openWorkflowBuilder();
+                        break;
+                    case 'openDebugConsole':
+                        this.openDebugConsole();
+                        break;
+                    case 'openQuickActions':
+                        this.openQuickActions();
+                        break;
+                    case 'openCustomWidgets':
+                        this.openCustomWidgets();
+                        break;
+                    case 'openCustomReports':
+                        this.openCustomReports();
+                        break;
+                    case 'showHelp':
+                        this.showHelp();
+                        break;
+                    case 'clearActivity':
+                        this.clearActivity();
+                        break;
+                    case 'emergencyStop':
+                        this.emergencyStop();
+                        break;
+                }
+            }
+            
+            switchProfile(profileId) {
+                this.currentProfile = profileId;
+                const profile = this.profiles[profileId];
+                
+                // Apply theme
+                document.body.className = `bg-gray-900 text-white min-h-screen profile-theme-${profile.theme}`;
+                
+                // Update UI
+                this.updateProfileDisplay();
+                this.updateShortcutsDisplay();
+                this.updateFeatures();
+                this.addActivity(`Switched to ${profile.name} profile`, 'info');
+                
+                // Hide profile switcher
+                hideProfileSwitcher();
+            }
+            
+            updateProfileDisplay() {
+                const profile = this.profiles[this.currentProfile];
+                document.getElementById('current-profile').textContent = profile.name;
+                document.getElementById('shortcut-count').textContent = profile.shortcuts.length;
+                
+                // Update navigation buttons
+                document.querySelectorAll('.profile-btn').forEach(btn => {
+                    btn.classList.remove('bg-purple-600', 'text-white');
+                    btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                });
+                
+                const activeBtn = document.querySelector(`.profile-btn[onclick="switchProfile('${this.currentProfile}')"]`);
+                if (activeBtn) {
+                    activeBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                    activeBtn.classList.add('bg-purple-600', 'text-white');
+                }
+            }
+            
+            updateShortcutsDisplay() {
+                const profile = this.profiles[this.currentProfile];
+                const shortcutsDiv = document.getElementById('current-shortcuts');
+                
+                shortcutsDiv.innerHTML = profile.shortcuts.map(shortcut => `
+                    <div class="flex justify-between items-center p-2 bg-gray-700 rounded">
+                        <span class="text-sm">${shortcut.desc}</span>
+                        <span class="shortcut-key">${shortcut.key}</span>
+                    </div>
+                `).join('');
+            }
+            
+            updateFeatures() {
+                // Hide all feature panels
+                document.querySelectorAll('[id^="feature-"]').forEach(panel => {
+                    panel.style.display = 'none';
+                });
+                
+                // Show current profile features
+                const features = {
+                    admin: ['admin'],
+                    operator: ['operator'],
+                    analyst: ['analyst'],
+                    developer: ['developer', 'admin'], // Developers get admin features too
+                    'power-user': ['admin', 'operator'] // Power users get admin and operator features
+                };
+                
+                const currentFeatures = features[this.currentProfile] || [];
+                currentFeatures.forEach(feature => {
+                    const panel = document.getElementById(`feature-${feature}`);
+                    if (panel) {
+                        panel.style.display = 'block';
+                    }
+                });
+            }
+            
+            // Action implementations
+            sanitizePhone() {
+                this.showCommand('phone sanitize +14155552671 --ipqs', 'Sanitizing phone...');
+            }
+            
+            startMonitoring() {
+                this.showCommand('phone monitor start +14155552671 --interval=1h', 'Starting monitoring...');
+            }
+            
+            runHealthCheck() {
+                this.showCommand('autonomic status', 'Running health check...');
+                setTimeout(() => {
+                    this.addActivity('✅ All systems healthy', 'success');
+                }, 2000);
+            }
+            
+            startAutonomicLoop() {
+                this.showCommand('autonomic start', 'Starting autonomic loop...');
+                setTimeout(() => {
+                    this.addActivity('🛠️ Cache HEALED (enabled-prefetch)', 'success');
+                }, 2000);
+                setTimeout(() => {
+                    this.addActivity('🛠️ Pool HEALED (provisioned-+14155552673)', 'success');
+                }, 4000);
+                setTimeout(() => {
+                    this.addActivity('✅ Router OK', 'success');
+                }, 6000);
+            }
+            
+            openSystemControl() {
+                this.showFeaturePanel('System Control', ['System Status', 'Performance Tuning', 'Security Settings']);
+            }
+            
+            openUserManagement() {
+                this.showFeaturePanel('User Management', ['User List', 'Role Assignment', 'Permission Manager']);
+            }
+            
+            openConfigManager() {
+                this.showFeaturePanel('Configuration', ['System Config', 'Pattern Settings', 'Workflow Rules']);
+            }
+            
+            farmProcess() {
+                this.showCommand('phone farm --file=phones.txt --concurrency=1000', 'Processing phones...');
+            }
+            
+            provisionNumbers() {
+                this.showCommand('phone pool provision --name=marketing --size=1000', 'Provisioning numbers...');
+            }
+            
+            retireNumbers() {
+                this.showCommand('phone pool retire --name=marketing', 'Retiring numbers...');
+            }
+            
+            routeCampaign() {
+                this.showCommand('phone campaign route --id=summer --phone=+14155552671', 'Routing campaign...');
+            }
+            
+            openBulkOperations() {
+                this.showFeaturePanel('Bulk Operations', ['Bulk Sanitize', 'Pool Management', 'Campaign Routing']);
+            }
+            
+            generateReport() {
+                this.showCommand('system metrics', 'Generating report...');
+                setTimeout(() => {
+                    this.addActivity('📊 Report generated: empire-pro-report.json', 'success');
+                }, 1500);
+            }
+            
+            openAdvancedAnalytics() {
+                this.showFeaturePanel('Advanced Analytics', ['ROI Analysis', 'Performance Trends', 'Cost Breakdown']);
+            }
+            
+            openFinancialReports() {
+                this.showFeaturePanel('Financial Reports', ['Revenue Reports', 'Cost Analysis', 'Profit Margins']);
+            }
+            
+            openTrendAnalysis() {
+                this.showFeaturePanel('Trend Analysis', ['Usage Patterns', 'Growth Metrics', 'Forecasting']);
+            }
+            
+            openPatternDesigner() {
+                this.showFeaturePanel('Pattern Designer', ['Create Pattern', 'Test Pattern', 'Deploy Pattern']);
+            }
+            
+            openWorkflowBuilder() {
+                this.showFeaturePanel('Workflow Builder', ['Design Workflow', 'Test Workflow', 'Deploy Workflow']);
+            }
+            
+            openDebugConsole() {
+                this.showFeaturePanel('Debug Console', ['System Logs', 'Error Tracking', 'Performance Profiler']);
+            }
+            
+            openQuickActions() {
+                this.showFeaturePanel('Quick Actions', ['Favorite Commands', 'Recent Tasks', 'Custom Shortcuts']);
+            }
+            
+            openCustomWidgets() {
+                this.showFeaturePanel('Custom Widgets', ['Add Widget', 'Configure Layout', 'Save Dashboard']);
+            }
+            
+            openCustomReports() {
+                this.showFeaturePanel('Custom Reports', ['Create Report', 'Schedule Reports', 'Export Data']);
+            }
+            
+            showHelp() {
+                const profile = this.profiles[this.currentProfile];
+                const helpText = `
+⌨️ ${profile.name} Shortcuts:
+
+${profile.shortcuts.map(s => `  ${s.key} - ${s.desc}`).join('\n')}
+
+🎯 Powered by keyboard-shortcuts-lite
+🚀 Profile: ${profile.name}
+⚡ ${profile.shortcuts.length} shortcuts active
+                `;
+                alert(helpText);
+            }
+            
+            clearActivity() {
+                const feed = document.getElementById('activityFeed');
+                if (feed) {
+                    feed.innerHTML = '';
+                    this.addActivity('Activity log cleared', 'info');
+                }
+            }
+            
+            emergencyStop() {
+                this.addActivity('🚨 EMERGENCY STOP ACTIVATED', 'error');
+                this.addActivity('All systems stopping...', 'warning');
+            }
+            
+            showCommand(command, message) {
+                console.log(`⌨️ ${command}: ${message}`);
+                const commandDisplay = document.getElementById('command-display');
+                if (commandDisplay) {
+                    commandDisplay.textContent = `$ ${command}`;
+                    commandDisplay.classList.add('active');
+                    setTimeout(() => {
+                        commandDisplay.classList.remove('active');
+                    }, 2000);
+                }
+            }
+            
+            showFeaturePanel(title, features) {
+                const panel = document.createElement('div');
+                panel.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                panel.innerHTML = `
+                    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+                        <h3 class="text-xl font-bold mb-4">${title}</h3>
+                        <div class="space-y-2">
+                            ${features.map(feature => `
+                                <button class="w-full bg-gray-700 hover:bg-gray-600 p-3 rounded text-left transition-all">
+                                    ${feature}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <button onclick="this.closest('.fixed').remove()" class="mt-4 w-full bg-red-600 hover:bg-red-700 p-3 rounded transition-all">
+                            Close
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(panel);
+            }
+            
+            addActivity(message, type = 'info') {
+                const feed = document.getElementById('activityFeed');
+                if (!feed) return;
+
+                const item = document.createElement('div');
+                item.className = `flex items-center space-x-3 p-2 rounded-lg ${
+                    type === 'success' ? 'bg-green-900/30' : 
+                    type === 'warning' ? 'bg-yellow-900/30' : 
+                    type === 'error' ? 'bg-red-900/30' : 
+                    'bg-blue-900/30'
+                }`;
+                
+                item.innerHTML = `
+                    <i class="fas ${
+                        type === 'success' ? 'fa-check-circle text-green-400' : 
+                        type === 'warning' ? 'fa-exclamation-triangle text-yellow-400' : 
+                        type === 'error' ? 'fa-times-circle text-red-400' : 
+                        'fa-info-circle text-blue-400'
+                    }"></i>
+                    <span class="flex-1">${message}</span>
+                    <span class="text-xs text-gray-500">Just now</span>
+                    <span class="text-xs text-purple-400">⌨️</span>
+                `;
+                
+                feed.insertBefore(item, feed.firstChild);
+                
+                // Keep only last 10 items
+                while (feed.children.length > 10) {
+                    feed.removeChild(feed.lastChild);
+                }
+            }
+        }
+
+        // Initialize the advanced profile manager
+        let profileManager;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            profileManager = new AdvancedProfileManager();
+            
+            // Make it globally available
+            window.profileManager = profileManager;
+            
+            console.log('🚀 Empire Pro Advanced Dashboard Initialized');
+            console.log('⌨️ Keyboard Shortcuts: Unleashed');
+            console.log('👤 Profile Routes: Active');
+            console.log('🎯 Power Features: Enabled');
+        });
+
+        // Global functions
+        function switchProfile(profileId) {
+            profileManager.switchProfile(profileId);
+        }
+
+        function showProfileSwitcher() {
+            document.getElementById('profile-switcher').style.display = 'flex';
+        }
+
+        function hideProfileSwitcher() {
+            document.getElementById('profile-switcher').style.display = 'none';
+        }
+
+        function showShortcutHelp() {
+            profileManager.showHelp();
+        }
+
+        function clearActivityLog() {
+            profileManager.clearActivity();
+        }
+
+        // Feature panel functions
+        function openSystemControl() { profileManager.openSystemControl(); }
+        function openUserManagement() { profileManager.openUserManagement(); }
+        function openConfigManager() { profileManager.openConfigManager(); }
+        function openBulkOperations() { profileManager.openBulkOperations(); }
+        function openAdvancedAnalytics() { profileManager.openAdvancedAnalytics(); }
+        function openFinancialReports() { profileManager.openFinancialReports(); }
+        function openTrendAnalysis() { profileManager.openTrendAnalysis(); }
+        function openPatternDesigner() { profileManager.openPatternDesigner(); }
+        function openWorkflowBuilder() { profileManager.openWorkflowBuilder(); }
+        function openDebugConsole() { profileManager.openDebugConsole(); }
+        function openQuickActions() { profileManager.openQuickActions(); }
+        function openCustomWidgets() { profileManager.openCustomWidgets(); }
+        function openCustomReports() { profileManager.openCustomReports(); }
+
+        function toggleFeature(feature) {
+            console.log(`🔧 Toggling feature: ${feature}`);
+            profileManager.addActivity(`${feature} toggled`, 'info');
+        }
+
+        // Add initial activity
+        setTimeout(() => {
+            if (profileManager) {
+                profileManager.addActivity('🚀 Advanced Dashboard initialized', 'success');
+                profileManager.addActivity('⌨️ Keyboard shortcuts unleashed', 'info');
+                profileManager.addActivity('👤 Profile routes activated', 'info');
+                profileManager.addActivity('🎯 Power features enabled', 'success');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

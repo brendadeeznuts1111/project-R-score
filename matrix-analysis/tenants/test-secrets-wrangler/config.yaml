@@ -1,0 +1,8 @@
+tenant:
+  id: test-secrets-wrangler
+  name: Tenant test-secrets-wrangler
+  created: 2026-02-01T03:57:03.060Z
+
+settings:
+  theme: dark
+  timezone: UTC

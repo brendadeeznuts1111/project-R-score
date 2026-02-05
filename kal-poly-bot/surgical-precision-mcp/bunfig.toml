@@ -1,0 +1,30 @@
+[run]
+# Auto-alias node to bun for scripts with #!/usr/bin/env node shebang
+autoAlias.nodeToBun = true
+
+# [DEPRECATED] Old [define] for bun --define (pre-v1.3.5)
+# Migrated to bun:bundle feature() API for runtime/build-time flags
+# Usage: bun run --feature=SURGICAL_DEBUG surgical-precision-bench.ts
+# Build: bun build --feature=SURGICAL_PRODUCTION index.ts --outdir dist
+#
+# Reference: https://bun.sh/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination
+# [define]
+# "__SURGICAL_DEBUG__" = "true"
+# "__SURGICAL_PRODUCTION__" = "false"
+# "__SURGICAL_VERSION__" = '"1.0.3"'
+
+[test]
+# Default timeout for individual tests (5 seconds)
+timeout = 5000
+# Enable concurrent test execution by default for faster test runs
+concurrent = true
+# Quiet mode - reduce test runner verbosity
+quiet = true
+# Enable coverage collection
+coverage = false
+# Skip test files instead of failing when not found
+skip = false
+
+[install]
+# Project-specific: Enable optional peer dependencies for enhanced surgical precision compatibility
+enableOptionalPeerDependencies = true

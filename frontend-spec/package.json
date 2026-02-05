@@ -1,0 +1,143 @@
+{
+  "name": "quantum-dashboard",
+  "version": "2.0.0-rc.1",
+  "description": "Quantum Dashboard v2.0 - Integrated Production System with Bun native features",
+  "type": "module",
+  "main": "quantum-production-system.js",
+  "scripts": {
+    "start": "bun run start-quantum.sh",
+    "dev": "bun run quantum-production-system.js start",
+    "build": "bun run quantum-production-system.js build",
+    "build-all": "bun run quantum-production-system.js build-all",
+    "deploy": "bun run deploy.sh",
+    "monitor": "bun run monitoring-dashboard.js",
+    "terminal": "bun run quantum-production-system.js terminal",
+    "metrics": "bun run quantum-production-system.js metrics",
+    "report": "bun run quantum-production-system.js report",
+    "test": "bun test",
+    "clean": "rm -rf dist logs builds deployments",
+    "setup": "chmod +x *.sh && mkdir -p {dist,logs,data,builds,deployments,scripts,reports}",
+    "legacy:dev": "vite",
+    "legacy:build": "tsc && vite build",
+    "legacy:preview": "vite preview",
+    "tension:dev": "cd 02-session && bun run dev",
+    "tension:build": "cd 02-session && bun run bundle",
+    "simd": "bun run quantum-simd-engine.js",
+    "simd:benchmark": "bun run quantum-simd-engine.js --benchmark",
+    "simd:test-buffer": "bun run quantum-simd-engine.js --test-buffer",
+    "simd:test-spawn": "bun run quantum-simd-engine.js --test-spawn",
+    "simd:collect-data": "bun run quantum-simd-engine.js --collect-data",
+    "simd:monitor": "bun run performance-monitor.js",
+    "simd:build": "./build-simd.sh",
+    "simd:clean": "./build-simd.sh --clean"
+  },
+  "dependencies": {
+    "@types/keyboardjs": "^2.5.3",
+    "@types/three": "^0.182.0",
+    "gsap": "^3.14.2",
+    "keyboardjs": "^2.7.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "three": "^0.182.0",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^5.1.3",
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "engines": {
+    "bun": ">=1.3.8",
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "quantum",
+    "dashboard",
+    "bun",
+    "terminal",
+    "monitoring",
+    "production",
+    "deployment",
+    "real-time",
+    "financial",
+    "analytics",
+    "quantum-lattice",
+    "tension-engine",
+    "typescript",
+    "threejs",
+    "webgl",
+    "visualization",
+    "keyboard-controls",
+    "simd",
+    "performance",
+    "optimization",
+    "buffer",
+    "spawn",
+    "ipc",
+    "websocket",
+    "metrics",
+    "benchmark"
+  ],
+  "author": "Quantum Systems",
+  "license": "MIT",
+  "bin": {
+    "quantum": "./quantum-production-system.js",
+    "quantum-monitor": "./monitoring-dashboard.js",
+    "quantum-deploy": "./deploy.sh",
+    "quantum-start": "./start-quantum.sh",
+    "quantum-simd": "./quantum-simd-engine.js",
+    "quantum-perf": "./performance-monitor.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantum-systems/dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quantum-systems/dashboard/issues"
+  },
+  "homepage": "https://quantum.cash",
+  "config": {
+    "ports": {
+      "dashboard": 3000,
+      "terminal": 3001,
+      "monitoring": 3002,
+      "performance": 3003,
+      "websocket": 3002
+    },
+    "features": [
+      "TERMINAL",
+      "WEBGL",
+      "REACT_FAST_REFRESH",
+      "SIMD",
+      "BUNDLE",
+      "PERFORMANCE_MONITORING",
+      "FAST_SPAWN",
+      "IPC_OPTIMIZATION",
+      "BUFFER_ACCELERATION"
+    ],
+    "performance": {
+      "simd_enabled": true,
+      "fast_spawn": true,
+      "fast_ipc": true,
+      "buffer_optimization": true,
+      "target_bun_version": "1.3.5+"
+    }
+  },
+  "bun": {
+    "allowLiveReload": true,
+    "allowModuleExports": true,
+    "allowTopLevelAwait": true
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  },
+  "trustedDependencies": [
+    "esbuild",
+    "fsevents",
+    "rollup"
+  ]
+}

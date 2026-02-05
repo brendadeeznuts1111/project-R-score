@@ -1,0 +1,112 @@
+# Bun Configuration for Global Trading System
+# Optimized for ultra-fast package management and deployment
+
+[install]
+registry = "https://npm.factory-wager.com"
+# Use Bun's ultra-fast package manager with caching
+cache = true
+frozenLockfile = false
+exact = true
+
+# Enable peer dependencies for trading system packages
+peer = true
+
+# Prefer production builds for deployment
+production = false
+
+# Enable aggressive caching for faster builds
+enable = true
+dir = ".bun-cache"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+# Configure registry for trading packages
+"@trading" = "https://registry.npmjs.org"
+
+[build]
+# Optimize builds for global deployment
+target = "bun"
+minify = true
+sourcemap = "external"
+splitting = true
+
+# Enable tree-shaking for smaller bundles
+treeShaking = true
+
+# Optimize for performance
+define = {
+  "process.env.NODE_ENV" = "\"production\""
+}
+
+[run]
+# Configure Bun runtime for trading system
+shell = "system"
+silent = false
+
+[test]
+# Configure test runner for trading system
+# preload = ["./test/setup.ts"] # Disabled for now
+coverage = true
+coverageDir = "./coverage"
+
+[serve]
+# Development server configuration
+port = 3000
+static = "./public"
+ws = true
+
+# Performance optimizations for 13-byte config system
+[optimize]
+# Enable advanced optimizations
+deadCodeElimination = true
+constantFolding = true
+inlineFunctions = true
+
+# Specific optimizations for trading modules
+["@trading/core"]
+minify = true
+treeshake = true
+
+["@trading/integrations"]
+minify = true
+splitting = true
+
+["@trading/platforms"]
+minify = true
+parallel = true
+
+# Lockfile configuration
+[lockfile]
+# Save exact versions for reproducible builds
+save = true
+print = "yarn"
+
+# Enable Bun's lockfile for maximum performance
+path = "bun.lockb"
+
+# Environment-specific settings
+[environments.development]
+install.production = false
+build.minify = false
+
+[environments.production]
+install.production = true
+build.minify = true
+build.sourcemap = false
+
+# Plugin configuration for trading system
+[plugins]
+# Enable TypeScript plugin with optimizations
+typescript = {
+  tsconfig = "./tsconfig.json"
+}
+
+# Enable WASM support for config acceleration
+wasm = true
+
+# Enable native addons for platform optimization
+native = true
+
+[publish]
+registry = "https://npm.factory-wager.com"

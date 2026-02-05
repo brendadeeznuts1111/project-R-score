@@ -1,0 +1,27 @@
+
+# TOML configuration file
+[app]
+name = "Bun Loaders Demo"
+version = "1.0.0"
+debug = true
+
+[database]
+path = "./data.db"
+timeout = 5000
+pool_size = 10
+
+[features]
+loaders = true
+bundler = true
+runtime = true
+performance = "high"
+
+[[servers]]
+name = "api"
+host = "localhost"
+port = 3000
+
+[[servers]]
+name = "static"
+host = "localhost"
+port = 8080

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortcut Manager</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>⌨️ Shortcut Manager</h1>
+                <div class="header-controls">
+                    <select id="profile-select" class="profile-select"></select>
+                    <button id="settings-btn" class="btn btn-secondary">⚙️ Settings</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" data-tab="shortcuts">
+                <span class="nav-icon">⌨️</span>
+                <span class="nav-text">Shortcuts</span>
+            </button>
+            <button class="nav-btn" data-tab="profiles">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">Profiles</span>
+            </button>
+            <button class="nav-btn" data-tab="conflicts">
+                <span class="nav-icon">⚠️</span>
+                <span class="nav-text">Conflicts</span>
+                <span class="conflict-count" id="conflict-count">0</span>
+            </button>
+            <button class="nav-btn" data-tab="stats">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Analytics</span>
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Shortcuts Tab -->
+            <div class="tab-content active" id="shortcuts-tab">
+                <div class="tab-header">
+                    <h2>Keyboard Shortcuts</h2>
+                    <div class="tab-actions">
+                        <button id="add-shortcut-btn" class="btn btn-primary">+ Add Shortcut</button>
+                        <button id="import-btn" class="btn btn-secondary">📥 Import</button>
+                        <button id="export-btn" class="btn btn-secondary">📤 Export</button>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="category-filter">Category:</label>
+                        <select id="category-filter">
+                            <option value="">All Categories</option>
+                            <option value="general">General</option>
+                            <option value="ui">UI</option>
+                            <option value="developer">Developer</option>
+                            <option value="navigation">Navigation</option>
+                            <option value="ide">IDE</option>
+                            <option value="browser">Browser</option>
+                            <option value="window">Window</option>
+                            <option value="theme">Theme</option>
+                            <option value="telemetry">Telemetry</option>
+                            <option value="emulator">Emulator</option>
+                            <option value="compliance">Compliance</option>
+                            <option value="logs">Logs</option>
+                            <option value="accessibility">Accessibility</option>
+                            <option value="data">Data</option>
+                            <option value="payment">Payment</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="scope-filter">Scope:</label>
+                        <select id="scope-filter">
+                            <option value="">All Scopes</option>
+                            <option value="global">Global</option>
+                            <option value="panel">Panel</option>
+                            <option value="component">Component</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <input type="text" id="search-input" placeholder="Search shortcuts..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="shortcuts-grid" id="shortcuts-grid">
+                    <!-- Shortcuts will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Profiles Tab -->
+            <div class="tab-content" id="profiles-tab">
+                <div class="tab-header">
+                    <h2>Shortcut Profiles</h2>
+                    <button id="create-profile-btn" class="btn btn-primary">+ Create Profile</button>
+                </div>
+
+                <div class="profiles-list" id="profiles-list">
+                    <!-- Profiles will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Conflicts Tab -->
+            <div class="tab-content" id="conflicts-tab">
+                <div class="tab-header">
+                    <h2>Shortcut Conflicts</h2>
+                    <button id="scan-conflicts-btn" class="btn btn-primary">🔍 Scan for Conflicts</button>
+                </div>
+
+                <div class="conflicts-container" id="conflicts-container">
+                    <div class="no-conflicts" id="no-conflicts">
+                        <div class="no-conflicts-icon">✅</div>
+                        <h3>No Conflicts Detected</h3>
+                        <p>All shortcuts are working properly!</p>
+                    </div>
+                    <!-- Conflicts will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div class="tab-content" id="stats-tab">
+                <div class="tab-header">
+                    <h2>Usage Analytics</h2>
+                    <select id="stats-period">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                    </select>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Shortcuts</h3>
+                        <div class="stat-value" id="total-shortcuts">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Profile</h3>
+                        <div class="stat-value" id="active-profile-name">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Usage</h3>
+                        <div class="stat-value" id="total-usage">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Most Used</h3>
+                        <div class="stat-value" id="most-used">-</div>
+                    </div>
+                </div>
+
+                <div class="stats-charts">
+                    <div class="chart-container">
+                        <h3>Usage Over Time</h3>
+                        <canvas id="usage-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Top Shortcuts</h3>
+                        <canvas id="top-shortcuts-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <div class="modal-overlay" id="modal-overlay"></div>
+
+        <!-- Add/Edit Shortcut Modal -->
+        <div class="modal" id="shortcut-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="shortcut-modal-title">Add Shortcut</h3>
+                    <button class="modal-close" id="shortcut-modal-close">&times;</button>
+                </div>
+                <form id="shortcut-form">
+                    <div class="form-group">
+                        <label for="shortcut-id">ID:</label>
+                        <input type="text" id="shortcut-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-action">Action:</label>
+                        <input type="text" id="shortcut-action" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-description">Description:</label>
+                        <input type="text" id="shortcut-description" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-category">Category:</label>
+                        <select id="shortcut-category" required>
+                            <option value="general">General</option>
+                            <option value="ui">UI</option>
+                            <option value="developer">Developer</option>
+                            <option value="theme">Theme</option>
+                            <option value="telemetry">Telemetry</option>
+                            <option value="emulator">Emulator</option>
+                            <option value="compliance">Compliance</option>
+                            <option value="logs">Logs</option>
+                            <option value="accessibility">Accessibility</option>
+                            <option value="data">Data</option>
+                            <option value="payment">Payment</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-primary">Primary Key:</label>
+                        <input type="text" id="shortcut-primary" placeholder="Ctrl+S" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-secondary">Secondary Key (optional):</label>
+                        <input type="text" id="shortcut-secondary" placeholder="Cmd+S">
+                    </div>
+                    <div class="form-group">
+                        <label for="shortcut-scope">Scope:</label>
+                        <select id="shortcut-scope" required>
+                            <option value="global">Global</option>
+                            <option value="panel">Panel</option>
+                            <option value="component">Component</option>
+                        </select>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="shortcut-enabled">
+                            <span class="checkmark"></span>
+                            Enabled
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="shortcut-confirmation">
+                            <span class="checkmark"></span>
+                            Requires Confirmation
+                        </label>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="shortcut-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="shortcut-save">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Create Profile Modal -->
+        <div class="modal" id="profile-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create Profile</h3>
+                    <button class="modal-close" id="profile-modal-close">&times;</button>
+                </div>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="profile-name">Name:</label>
+                        <input type="text" id="profile-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-description">Description:</label>
+                        <textarea id="profile-description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-based-on">Based On:</label>
+                        <select id="profile-based-on">
+                            <option value="">None (blank profile)</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="profile-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="profile-create">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Key Recording Modal -->
+        <div class="modal" id="key-record-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Record Key Combination</h3>
+                    <button class="modal-close" id="key-record-modal-close">&times;</button>
+                </div>
+                <div class="key-record-content">
+                    <p>Press the key combination you want to assign:</p>
+                    <div class="key-display" id="key-display">Waiting for keys...</div>
+                    <div class="recorded-keys" id="recorded-keys"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="key-record-cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="key-record-save">Use This Key</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button class="modal-close" id="settings-modal-close">&times;</button>
+                </div>
+                <form id="settings-form">
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enable-sounds">
+                            <span class="checkmark"></span>
+                            Enable Sound Effects
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enable-hints">
+                            <span class="checkmark"></span>
+                            Show Keyboard Hints
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enable-training">
+                            <span class="checkmark"></span>
+                            Enable Training Mode
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="auto-resolve-conflicts">
+                            <span class="checkmark"></span>
+                            Auto-resolve Conflicts
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="keyboard-layout">Keyboard Layout:</label>
+                        <select id="keyboard-layout">
+                            <option value="us">US QWERTY</option>
+                            <option value="uk">UK QWERTY</option>
+                            <option value="de">German QWERTZ</option>
+                            <option value="fr">French AZERTY</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="settings-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="settings-save">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toast-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

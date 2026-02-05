@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <title>🤖 Line History with AI Analysis & Tooltips</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        @keyframes tick-fade {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
+        
+        .glow-effect {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        .tick-appear {
+            animation: tick-fade 0.3s ease-out;
+        }
+        
+        .movement-indicator {
+            transition: all 0.2s ease;
+        }
+        
+        .movement-up {
+            color: #10b981;
+            transform: translateY(-2px);
+        }
+        
+        .movement-down {
+            color: #ef4444;
+            transform: translateY(2px);
+        }
+        
+        .movement-same {
+            color: #6b7280;
+        }
+        
+        .tick-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tick-dot:hover {
+            transform: scale(1.5);
+            z-index: 10;
+        }
+        
+        .pattern-overlay {
+            position: absolute;
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid #fbbf24;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+        
+        .timeline-cursor {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: #ef4444;
+            pointer-events: none;
+            z-index: 20;
+        }
+        
+        .line-track {
+            position: relative;
+            height: 30px;
+            border-bottom: 1px solid #374151;
+            overflow: hidden;
+        }
+        
+        .tick-track {
+            position: absolute;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+        
+        .ai-insight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px 0;
+            color: white;
+        }
+        
+        .ai-chat {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 16px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        
+        .ai-message {
+            margin: 8px 0;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        
+        .ai-question {
+            background: #374151;
+            color: #f3f4f6;
+        }
+        
+        .ai-answer {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .tooltip-target {
+            cursor: help;
+            border-bottom: 1px dotted #6b7280;
+        }
+    </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Origin Dashboard",
+        "description": "Real-time performance monitoring and analytics dashboard",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any"
+    }
+</script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">Skip to main content</a>
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    Line History with AI Analysis
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-sm">
+                    <span id="tick-count" class="text-blue-400">0</span> ticks
+                </div>
+                <div class="text-sm">
+                    <span id="pattern-count" class="text-green-400">0</span> patterns
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm">AI Active</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- AI Configuration -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    AI Configuration
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">OpenAI API Key</label>
+                        <input type="password" id="api-key" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="sk-...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Model</label>
+                        <select id="ai-model" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="local">Local Analysis</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="save-ai-config" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                            Save Configuration
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control Panel -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                    Movement Control Panel
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <button id="generate-random" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        Generate Random Movement
+                    </button>
+                    <button id="create-spike" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors">
+                        Create Spike Pattern
+                    </button>
+                    <button id="create-oscillation" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                        Create Oscillation
+                    </button>
+                    <button id="clear-history" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                        Clear History
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Insights Panel -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    AI Insights
+                </h2>
+                
+                <div id="ai-insights" class="space-y-4">
+                    <div class="text-gray-400 text-center py-8">
+                        AI insights will appear here when patterns are detected...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Line History Visualization -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                    </svg>
+                    Line Movement Timeline
+                    <span class="ml-2 text-sm text-gray-400">(Hover over ticks for details)</span>
+                </h2>
+                
+                <div class="relative bg-gray-900 rounded-lg p-4" style="height: 400px;">
+                    <canvas id="line-history-canvas" class="w-full h-full"></canvas>
+                    <div id="timeline-cursor" class="timeline-cursor" style="right: 0;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Individual Line Tracks -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    Individual Line Tracks
+                    <span class="ml-2 text-sm text-gray-400">(Click on ticks for AI analysis)</span>
+                </h2>
+                
+                <div class="space-y-2" id="line-tracks">
+                    <!-- 13 line tracks will be generated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Chat Assistant -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    AI Assistant
+                </h2>
+                
+                <div class="ai-chat" id="ai-chat">
+                    <div class="ai-message ai-answer">
+                        👋 Hello! I'm your AI configuration assistant. Ask me anything about patterns, optimizations, or system behavior.
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex space-x-2">
+                    <input type="text" id="ai-question" class="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ask about patterns, optimization, or system behavior...">
+                    <button id="ask-ai" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        Ask AI
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Tooltip Manager Implementation
+        class TooltipManager {
+            constructor() {
+                this.tooltip = null;
+                this.currentTarget = null;
+                this.showTimeout = null;
+                this.hideTimeout = null;
+                this.createTooltip();
+            }
+
+            createTooltip() {
+                this.tooltip = document.createElement('div');
+                this.tooltip.id = 'line-history-tooltip';
+                this.tooltip.style.cssText = `
+                    position: absolute;
+                    z-index: 9999;
+                    background: #1f2937;
+                    color: #f3f4f6;
+                    border: 1px solid #4b5563;
+                    border-radius: 6px;
+                    padding: 8px 12px;
+                    font-size: 12px;
+                    max-width: 300px;
+                    pointer-events: none;
+                    opacity: 0;
+                    transition: opacity 0.2s ease;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                `;
+                document.body.appendChild(this.tooltip);
+            }
+
+            show(target, content, x, y) {
+                this.clearTimeouts();
+                
+                this.currentTarget = target;
+                this.showTimeout = setTimeout(() => {
+                    if (this.tooltip) {
+                        this.updateContent(content);
+                        this.position(x, y);
+                        this.tooltip.style.opacity = '1';
+                    }
+                }, 300);
+            }
+
+            hide() {
+                this.clearTimeouts();
+                
+                this.hideTimeout = setTimeout(() => {
+                    if (this.tooltip) {
+                        this.tooltip.style.opacity = '0';
+                    }
+                    this.currentTarget = null;
+                }, 100);
+            }
+
+            updateContent(content) {
+                if (!this.tooltip) return;
+
+                let html = `<div style="font-weight: bold; margin-bottom: 4px;">${content.title}</div>`;
+                
+                content.content.forEach(line => {
+                    html += `<div style="margin: 2px 0;">${line}</div>`;
+                });
+
+                if (content.actions && content.actions.length > 0) {
+                    html += '<div style="margin-top: 8px; border-top: 1px solid #4b5563; padding-top: 6px;">';
+                    content.actions.forEach(action => {
+                        html += `<button class="tooltip-action" style="
+                            background: #374151;
+                            color: #f3f4f6;
+                            border: 1px solid #4b5563;
+                            border-radius: 4px;
+                            padding: 4px 8px;
+                            margin: 2px;
+                            font-size: 11px;
+                            cursor: pointer;
+                        " data-action="${action.label}">${action.label}</button>`;
+                    });
+                    html += '</div>';
+                }
+
+                this.tooltip.innerHTML = html;
+
+                // Add action listeners
+                this.tooltip.querySelectorAll('.tooltip-action').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const actionLabel = e.target.getAttribute('data-action');
+                        const action = content.actions.find(a => a.label === actionLabel);
+                        if (action) {
+                            action.action();
+                        }
+                    });
+                });
+            }
+
+            position(x, y) {
+                if (!this.tooltip) return;
+
+                const rect = this.tooltip.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+                let left = x + 10;
+                let top = y - rect.height - 10;
+
+                // Adjust horizontal position if needed
+                if (left + rect.width > viewportWidth) {
+                    left = x - rect.width - 10;
+                }
+
+                // Adjust vertical position if needed
+                if (top < 0) {
+                    top = y + 10;
+                }
+
+                this.tooltip.style.left = `${left}px`;
+                this.tooltip.style.top = `${top}px`;
+            }
+
+            clearTimeouts() {
+                if (this.showTimeout) {
+                    clearTimeout(this.showTimeout);
+                    this.showTimeout = null;
+                }
+                if (this.hideTimeout) {
+                    clearTimeout(this.hideTimeout);
+                    this.hideTimeout = null;
+                }
+            }
+        }
+
+        // AI Pattern Analyzer Implementation
+        class PatternAnalyzer {
+            constructor() {
+                this.apiKey = '';
+                this.model = 'local';
+            }
+
+            setCredentials(apiKey, model) {
+                this.apiKey = apiKey;
+                this.model = model;
+            }
+
+            async analyzePattern(pattern, context) {
+                // Local analysis simulation
+                const insights = [];
+
+                switch (pattern.type) {
+                    case 'spike':
+                        insights.push({
+                            type: 'anomaly',
+                            title: 'Sudden Spike Detected',
+                            description: `A sudden spike of intensity ${pattern.intensity.toFixed(1)} was detected on line ${pattern.startLine}.`,
+                            confidence: pattern.confidence,
+                            impact: pattern.intensity > 100 ? 'high' : 'medium',
+                            actions: [
+                                {
+                                    label: 'Investigate',
+                                    execute: () => this.showInvestigationDialog(pattern)
+                                }
+                            ]
+                        });
+                        break;
+
+                    case 'oscillation':
+                        insights.push({
+                            type: 'prediction',
+                            title: 'Oscillating Behavior',
+                            description: `Oscillating pattern detected with intensity ${pattern.intensity.toFixed(1)}.`,
+                            confidence: pattern.confidence,
+                            impact: 'medium',
+                            actions: [
+                                {
+                                    label: 'Stabilize',
+                                    execute: () => this.showStabilizationDialog(pattern)
+                                }
+                            ]
+                        });
+                        break;
+                }
+
+                return {
+                    insights,
+                    summary: `Analysis of ${pattern.type} pattern with ${pattern.intensity.toFixed(1)} intensity.`,
+                    recommendations: ['Continue monitoring', 'Consider automated responses'],
+                    confidence: pattern.confidence
+                };
+            }
+
+            async askQuestion(question, context) {
+                const lowerQuestion = question.toLowerCase();
+                
+                if (lowerQuestion.includes('spike')) {
+                    return 'Spikes in configuration values can indicate conflicts, external triggers, or system events. I recommend investigating the cause and setting up alerts for future occurrences.';
+                }
+                
+                if (lowerQuestion.includes('optimize')) {
+                    return 'To optimize configuration performance, consider reducing update frequency, batching changes, and implementing predictive patterns based on historical data.';
+                }
+                
+                if (lowerQuestion.includes('pattern')) {
+                    return 'Configuration patterns help identify system behavior trends. Common patterns include spikes (sudden changes), gradual changes (drift), and oscillations (instability).';
+                }
+                
+                return `Based on the current configuration state, I recommend continuing monitoring and implementing automated responses for detected patterns.`;
+            }
+
+            showInvestigationDialog(pattern) {
+                alert(`Investigating spike on line ${pattern.startLine}:\n\n- Intensity: ${pattern.intensity.toFixed(1)}\n- Confidence: ${(pattern.confidence * 100).toFixed(0)}%\n- Duration: ${pattern.duration}ms\n\nRecommended actions:\n1. Check for configuration conflicts\n2. Review recent system events\n3. Set up monitoring alerts`);
+            }
+
+            showStabilizationDialog(pattern) {
+                alert(`Stabilizing oscillation on line ${pattern.startLine}:\n\n- Intensity: ${pattern.intensity.toFixed(1)}\n- Confidence: ${(pattern.confidence * 100).toFixed(0)}%\n- Duration: ${pattern.duration}ms\n\nRecommended actions:\n1. Identify competing processes\n2. Apply damping mechanisms\n3. Implement feedback control`);
+            }
+        }
+
+        // Initialize components
+        const tooltipManager = new TooltipManager();
+        const patternAnalyzer = new PatternAnalyzer();
+        
+        // Line History Tracker Implementation
+        class LineHistoryTracker {
+            constructor() {
+                this.history = new Map();
+                this.startTime = Date.now();
+                this.maxHistorySize = 100;
+            }
+
+            recordLineChange(line, newValue) {
+                const now = Date.now();
+                const lineHistory = this.getOrCreateLineHistory(line);
+                
+                const previousValue = lineHistory.currentValue;
+                const movement = this.calculateMovement(previousValue, newValue);
+                const magnitude = Math.abs(newValue - previousValue);
+                
+                const tick = {
+                    timestamp: now,
+                    line,
+                    value: newValue,
+                    previousValue,
+                    movement,
+                    magnitude,
+                    velocity: magnitude * 1000, // Simplified velocity
+                    acceleration: 0
+                };
+
+                lineHistory.currentValue = newValue;
+                lineHistory.previousValue = previousValue;
+                lineHistory.ticks.push(tick);
+                lineHistory.totalMovements++;
+                lineHistory.lastMovementTime = now;
+
+                if (lineHistory.ticks.length > this.maxHistorySize) {
+                    lineHistory.ticks.shift();
+                }
+
+                return tick;
+            }
+
+            getOrCreateLineHistory(line) {
+                if (!this.history.has(line)) {
+                    this.history.set(line, {
+                        lineId: line,
+                        currentValue: 0,
+                        previousValue: 0,
+                        ticks: [],
+                        totalMovements: 0,
+                        lastMovementTime: Date.now(),
+                        averageVelocity: 0,
+                        peakVelocity: 0,
+                        trend: 'stable'
+                    });
+                }
+                return this.history.get(line);
+            }
+
+            calculateMovement(previous, current) {
+                if (current > previous) return 'up';
+                if (current < previous) return 'down';
+                return 'same';
+            }
+
+            getMovementVisualization() {
+                const timeline = [];
+                const heatmap = new Map();
+                const patterns = [];
+
+                for (const lineHistory of this.history.values()) {
+                    timeline.push(...lineHistory.ticks);
+                    const intensity = lineHistory.ticks.reduce((sum, tick) => sum + tick.magnitude, 0);
+                    heatmap.set(lineHistory.lineId, intensity);
+
+                    // Simple pattern detection
+                    if (lineHistory.ticks.length >= 3) {
+                        const recentTicks = lineHistory.ticks.slice(-3);
+                        const avgMagnitude = recentTicks.reduce((sum, t) => sum + t.magnitude, 0) / recentTicks.length;
+                        
+                        if (recentTicks[1].magnitude > avgMagnitude * 1.2) {
+                            patterns.push({
+                                type: 'spike',
+                                startLine: lineHistory.lineId,
+                                endLine: lineHistory.lineId,
+                                duration: recentTicks[2].timestamp - recentTicks[0].timestamp,
+                                intensity: recentTicks[1].magnitude,
+                                confidence: 0.8
+                            });
+                        }
+                    }
+                }
+
+                timeline.sort((a, b) => a.timestamp - b.timestamp);
+
+                const summary = this.generateMovementSummary(timeline);
+
+                return { timeline, heatmap, patterns, summary };
+            }
+
+            generateMovementSummary(timeline) {
+                if (timeline.length === 0) {
+                    return {
+                        totalTicks: 0,
+                        totalMovements: 0,
+                        averageMagnitude: 0,
+                        peakMagnitude: 0,
+                        mostActiveLine: 0,
+                        movementFrequency: 0
+                    };
+                }
+
+                const totalTicks = timeline.length;
+                const movements = timeline.filter(t => t.movement !== 'same');
+                const totalMovements = movements.length;
+                const magnitudes = movements.map(t => t.magnitude);
+                const averageMagnitude = magnitudes.reduce((sum, m) => sum + m, 0) / magnitudes.length;
+                const peakMagnitude = Math.max(...magnitudes);
+
+                const lineMovements = new Map();
+                for (const tick of timeline) {
+                    lineMovements.set(tick.line, (lineMovements.get(tick.line) || 0) + 1);
+                }
+                const mostActiveLine = Array.from(lineMovements.entries())
+                    .reduce((max, [line, count]) => count > max.count ? {line, count} : max, {line: 0, count: 0})
+                    .line;
+
+                return {
+                    totalTicks,
+                    totalMovements,
+                    averageMagnitude,
+                    peakMagnitude,
+                    mostActiveLine,
+                    movementFrequency: totalMovements * 1000
+                };
+            }
+
+            clearHistory() {
+                this.history.clear();
+                this.startTime = Date.now();
+            }
+        }
+
+        // Initialize tracker
+        const tracker = new LineHistoryTracker();
+        
+        // Initialize line tracks
+        function initializeLineTracks() {
+            const container = document.getElementById('line-tracks');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 13; i++) {
+                const track = document.createElement('div');
+                track.className = 'line-track';
+                track.innerHTML = `
+                    <div class="flex items-center justify-between px-4 py-2 bg-gray-900">
+                        <span class="text-sm font-mono text-gray-400">Line ${i}</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">Value:</span>
+                            <span id="line-${i}-value" class="text-sm font-mono text-blue-400">0</span>
+                            <span id="line-${i}-movement" class="movement-indicator text-xs">-</span>
+                        </div>
+                    </div>
+                    <div class="tick-track" id="line-${i}-ticks"></div>
+                `;
+                container.appendChild(track);
+            }
+        }
+
+        // Update line display with tooltips
+        function updateLineDisplay(line, tick) {
+            const valueElement = document.getElementById(`line-${line}-value`);
+            const movementElement = document.getElementById(`line-${line}-movement`);
+            const ticksElement = document.getElementById(`line-${line}-ticks`);
+            
+            if (valueElement) {
+                valueElement.textContent = tick.value;
+            }
+            
+            if (movementElement) {
+                movementElement.textContent = tick.movement.toUpperCase();
+                movementElement.className = `movement-indicator text-xs movement-${tick.movement}`;
+            }
+            
+            if (ticksElement) {
+                const dot = document.createElement('span');
+                dot.className = 'tick-dot tick-appear tooltip-target';
+                
+                // Color based on movement
+                switch (tick.movement) {
+                    case 'up':
+                        dot.style.backgroundColor = '#10b981';
+                        break;
+                    case 'down':
+                        dot.style.backgroundColor = '#ef4444';
+                        break;
+                    default:
+                        dot.style.backgroundColor = '#6b7280';
+                }
+                
+                // Size based on magnitude
+                const size = Math.max(4, Math.min(12, tick.magnitude * 3));
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                
+                // Add tooltip
+                dot.addEventListener('mouseenter', (e) => {
+                    const content = {
+                        title: `Line ${line} Movement`,
+                        content: [
+                            `Value: ${tick.value}`,
+                            `Previous: ${tick.previousValue}`,
+                            `Movement: ${tick.movement}`,
+                            `Magnitude: ${tick.magnitude.toFixed(1)}`,
+                            `Velocity: ${tick.velocity.toFixed(1)}`,
+                            `Time: ${new Date(tick.timestamp).toLocaleTimeString()}`
+                        ],
+                        actions: [
+                            {
+                                label: 'Analyze',
+                                action: () => analyzeTick(tick)
+                            }
+                        ]
+                    };
+                    
+                    tooltipManager.show(dot, content, e.clientX, e.clientY);
+                });
+                
+                dot.addEventListener('mouseleave', () => {
+                    tooltipManager.hide();
+                });
+                
+                dot.addEventListener('click', () => {
+                    analyzeTick(tick);
+                });
+                
+                ticksElement.appendChild(dot);
+                
+                // Limit number of visible dots
+                while (ticksElement.children.length > 20) {
+                    ticksElement.removeChild(ticksElement.firstChild);
+                }
+            }
+        }
+
+        // Analyze tick with AI
+        async function analyzeTick(tick) {
+            const question = `What does this movement on line ${tick.line} indicate? Value changed from ${tick.previousValue} to ${tick.value} with magnitude ${tick.magnitude.toFixed(1)}.`;
+            
+            addAIMessage(question, 'question');
+            
+            const context = {
+                line: tick.line,
+                movement: tick.movement,
+                magnitude: tick.magnitude,
+                velocity: tick.velocity
+            };
+            
+            const answer = await patternAnalyzer.askQuestion(question, context);
+            addAIMessage(answer, 'answer');
+        }
+
+        // Add AI message to chat
+        function addAIMessage(message, type) {
+            const chat = document.getElementById('ai-chat');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ai-message ai-${type}`;
+            messageDiv.textContent = message;
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const visualization = tracker.getMovementVisualization();
+            const summary = visualization.summary;
+            
+            document.getElementById('tick-count').textContent = summary.totalTicks;
+            document.getElementById('pattern-count').textContent = visualization.patterns.length;
+        }
+
+        // Update AI insights
+        async function updateAIInsights() {
+            const visualization = tracker.getMovementVisualization();
+            const insightsContainer = document.getElementById('ai-insights');
+            
+            if (visualization.patterns.length === 0) {
+                insightsContainer.innerHTML = '<div class="text-gray-400 text-center py-8">No patterns detected yet. Generate some movements to see AI insights...</div>';
+                return;
+            }
+            
+            insightsContainer.innerHTML = '';
+            
+            for (const pattern of visualization.patterns) {
+                const context = {
+                    metrics: visualization.summary,
+                    timeframe: 10000,
+                    lineHistory: Array.from(tracker.history.values())
+                };
+                
+                const analysis = await patternAnalyzer.analyzePattern(pattern, context);
+                
+                const insightDiv = document.createElement('div');
+                insightDiv.className = 'ai-insight';
+                insightDiv.innerHTML = `
+                    <h3 class="font-bold text-lg mb-2">${analysis.insights[0]?.title || 'Pattern Detected'}</h3>
+                    <p class="mb-3">${analysis.insights[0]?.description || 'Pattern analysis available'}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm opacity-75">Confidence: ${(analysis.confidence * 100).toFixed(0)}%</span>
+                        <button class="px-3 py-1 bg-white bg-opacity-20 rounded hover:bg-opacity-30 transition-colors text-sm" onclick="analyzePattern('${pattern.type}')">
+                            Analyze with AI
+                        </button>
+                    </div>
+                `;
+                insightsContainer.appendChild(insightDiv);
+            }
+        }
+
+        // Generate random movement
+        function generateRandomMovement() {
+            const line = Math.floor(Math.random() * 13);
+            const newValue = Math.floor(Math.random() * 256);
+            const tick = tracker.recordLineChange(line, newValue);
+            
+            updateLineDisplay(line, tick);
+            updateStatistics();
+            updateAIInsights();
+            
+            // Update timeline cursor
+            const cursor = document.getElementById('timeline-cursor');
+            if (cursor) {
+                cursor.style.right = '0px';
+            }
+        }
+
+        // Create spike pattern
+        function createSpikePattern() {
+            const line = Math.floor(Math.random() * 13);
+            const baseValue = 128;
+            
+            // Create spike
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const spikeValue = baseValue + (Math.random() - 0.5) * 100;
+                    const tick = tracker.recordLineChange(line, Math.floor(spikeValue));
+                    updateLineDisplay(line, tick);
+                    updateStatistics();
+                    updateAIInsights();
+                }, i * 100);
+            }
+        }
+
+        // Create oscillation pattern
+        function createOscillationPattern() {
+            const line = Math.floor(Math.random() * 13);
+            let value = 128;
+            
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    value = value + (Math.random() - 0.5) * 50;
+                    value = Math.max(0, Math.min(255, value));
+                    const tick = tracker.recordLineChange(line, Math.floor(value));
+                    updateLineDisplay(line, tick);
+                    updateStatistics();
+                    updateAIInsights();
+                }, i * 200);
+            }
+        }
+
+        // Clear history
+        function clearHistory() {
+            tracker.clearHistory();
+            initializeLineTracks();
+            updateStatistics();
+            updateAIInsights();
+            
+            // Clear all tick displays
+            for (let i = 0; i < 13; i++) {
+                const ticksElement = document.getElementById(`line-${i}-ticks`);
+                if (ticksElement) {
+                    ticksElement.innerHTML = '';
+                }
+            }
+        }
+
+        // Analyze pattern with AI
+        window.analyzePattern = function(patternType) {
+            const question = `What are the implications of a ${patternType} pattern in our configuration system?`;
+            addAIMessage(question, 'question');
+            
+            patternAnalyzer.askQuestion(question, {}).then(answer => {
+                addAIMessage(answer, 'answer');
+            });
+        };
+
+        // Event listeners
+        document.getElementById('generate-random').addEventListener('click', generateRandomMovement);
+        document.getElementById('create-spike').addEventListener('click', createSpikePattern);
+        document.getElementById('create-oscillation').addEventListener('click', createOscillationPattern);
+        document.getElementById('clear-history').addEventListener('click', clearHistory);
+
+        // AI configuration
+        document.getElementById('save-ai-config').addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key').value;
+            const model = document.getElementById('ai-model').value;
+            
+            patternAnalyzer.setCredentials(apiKey, model);
+            
+            // Show confirmation
+            const button = document.getElementById('save-ai-config');
+            const originalText = button.textContent;
+            button.textContent = 'Configuration Saved!';
+            button.className = 'px-4 py-2 bg-green-600 rounded-lg transition-colors';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.className = 'px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors';
+            }, 2000);
+        });
+
+        // AI chat
+        document.getElementById('ask-ai').addEventListener('click', () => {
+            const question = document.getElementById('ai-question').value;
+            if (!question.trim()) return;
+            
+            addAIMessage(question, 'question');
+            document.getElementById('ai-question').value = '';
+            
+            const context = {
+                metrics: tracker.getMovementVisualization().summary,
+                patterns: tracker.getMovementVisualization().patterns
+            };
+            
+            patternAnalyzer.askQuestion(question, context).then(answer => {
+                addAIMessage(answer, 'answer');
+            });
+        });
+
+        // Enter key support for AI chat
+        document.getElementById('ai-question').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('ask-ai').click();
+            }
+        });
+
+        // Initialize
+        initializeLineTracks();
+        updateStatistics();
+        updateAIInsights();
+
+        // Auto-generate movements for demo
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                generateRandomMovement();
+            }
+        }, 3000);
+
+        // Update timeline cursor
+        setInterval(() => {
+            const cursor = document.getElementById('timeline-cursor');
+            if (cursor) {
+                const now = Date.now();
+                const age = (now % 10000) / 10000; // 10 second cycle
+                cursor.style.right = `${age * 100}%`;
+            }
+        }, 100);
+    </script>
+</body>
+</html>

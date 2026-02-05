@@ -1,0 +1,164 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Test and Benchmark
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+        
+    - name: Install dependencies
+      run: bun install
+      
+    - name: Setup test environment
+      run: |
+        echo "NODE_ENV=test" >> .env.test
+        echo "DEPLOYMENT=test" >> .env.test
+        echo "GEMINI_API_KEY=test-key-123" >> .env.test
+        echo "OPENAI_API_KEY=test-key-456" >> .env.test
+        echo "ANALYTICS_API_KEY=test-analytics-key" >> .env.test
+        echo "SECURITY_API_KEY=test-security-key" >> .env.test
+        echo "JWT_SECRET=test-jwt-secret-123" >> .env.test
+        echo "ADB_PATH=/usr/local/bin/adb" >> .env.test
+        echo "DUOPLUS_PACKAGE=com.duoplus.family" >> .env.test
+        echo "GOOGLE_CLOUD_KEY=test-google-cloud-key" >> .env.test
+        echo "ADMIN_WEBHOOK_URL=https://hooks.slack.com/services/test" >> .env.test
+        echo "ADMIN_DASHBOARD_URL=https://admin.test.duoplus.app" >> .env.test
+        echo "KYC_DB_PATH=:memory:" >> .env.test
+        
+    - name: Run linting
+      run: bun test --lint
+      
+    - name: Run unit tests
+      run: bun test src/__tests__/enhanced-modal-settings.test.ts src/__tests__/kyc-failsafe.test.ts --coverage --coverage-reporter=json
+      
+    - name: Run integration tests
+      run: bun test src/__tests__/integration/ --verbose
+      
+    - name: Run benchmarks
+      run: bun test src/__tests__/benchmarks/ --timeout 60000
+      
+    - name: Generate coverage report
+      run: bun test --coverage --coverage-reporter=html --coverage-reporter=lcov
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        
+    - name: Archive coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage/
+        
+    - name: Archive test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: |
+          test-results.xml
+          benchmark-results.json
+
+  performance:
+    name: Performance Regression Test
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      
+    - name: Install dependencies
+      run: bun install
+      
+    - name: Setup test environment
+      run: |
+        echo "NODE_ENV=test" >> .env.test
+        echo "DEPLOYMENT=test" >> .env.test
+        
+    - name: Run performance benchmarks
+      run: |
+        bun test src/__tests__/benchmarks/ --timeout 60000 --reporter=json > benchmark-results.json
+        
+    - name: Check performance regression
+      run: |
+        # Parse benchmark results and check for regressions
+        node -e "
+        const fs = require('fs');
+        const results = JSON.parse(fs.readFileSync('benchmark-results.json', 'utf8'));
+        
+        // Define performance thresholds (in milliseconds)
+        const thresholds = {
+          'TOML Parsing': 50,
+          'Device Integrity Check': 1000,
+          'Document Capture': 4000,
+          'Full KYC Failsafe Cycle': 10000
+        };
+        
+        let regressions = [];
+        
+        results.tests.forEach(test => {
+          const threshold = thresholds[test.name];
+          if (threshold && test.mean > threshold) {
+            regressions.push(\`\${test.name}: \${test.mean}ms (threshold: \${threshold}ms)\`);
+          }
+        });
+        
+        if (regressions.length > 0) {
+          console.error('Performance regressions detected:');
+          regressions.forEach(reg => console.error('  -', reg));
+          process.exit(1);
+        } else {
+          console.log('No performance regressions detected');
+        }
+        "
+        
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v3
+      with:
+        name: benchmark-results
+        path: benchmark-results.json
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      
+    - name: Install dependencies
+      run: bun install
+      
+    - name: Run security audit
+      run: bun audit
+      
+    - name: Run security tests
+      run: bun test src/__tests__/ --grep "security" --grep "Security"

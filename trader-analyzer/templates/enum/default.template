@@ -1,0 +1,41 @@
+/**
+ * @fileoverview {{{fileoverview}}}
+ * @module {{{modulePath}}}
+ * @description {{{description}}}
+{{{authorInfo}}}
+ * @created {{{createdDate}}}
+{{{depsInfo}}}
+{{{exportsInfo}}}
+ *
+ * {{{metadata}}}
+ *
+ * @ref {{{ref}}}
+ */
+
+/**
+ * {{{enumName}}} enum
+ * {{{description}}}
+ */
+export enum {{{enumName}}} {
+	// TODO: Define enum values
+	VALUE_ONE = 'value_one',
+	VALUE_TWO = 'value_two',
+	VALUE_THREE = 'value_three',
+}
+
+/**
+ * {{{enumName}}} type alias
+ */
+export type {{{enumName}}}Type = keyof typeof {{{enumName}}};
+
+/**
+ * {{{enumName}}} values array
+ */
+export const {{{enumName}}}Values = Object.values({{{enumName}}}) as {{{enumName}}}Type[];
+
+/**
+ * Check if value is a valid {{{enumName}}}
+ */
+export function is{{{enumName}}}(value: unknown): value is {{{enumName}}} {
+	return typeof value === 'string' && Object.values({{{enumName}}}).includes(value as {{{enumName}}});
+}

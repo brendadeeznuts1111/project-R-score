@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-01-09T09:43:04.902Z",
+  "directories": 4,
+  "files": 26,
+  "structure": {
+    "docs": {
+      "description": "Documentation and guides",
+      "fileCount": 11,
+      "files": [
+        "README.md",
+        "README.html",
+        "ADVANCED_BLOB_API_DOCUMENTATION.md",
+        "BLOB_API_QUICK_START.md",
+        "BUN_INSPECT_API_GUIDE.md",
+        "BUN_INSPECT_CHEATSHEET.md",
+        "BUN_INSPECT_GUIDE.md",
+        "BUN_INSPECT_PRACTICAL_GUIDE.md",
+        "BUN_INSPECT_TABLE_GUIDE.md",
+        "REVOLUTIONARY_ARCHITECTURES.md",
+        "REVOLUTIONARY_BUN_FEATURE_FLAGS.md"
+      ]
+    },
+    "scripts": {
+      "description": "Shell scripts and utilities",
+      "fileCount": 2,
+      "files": [
+        "test-blob-api.sh",
+        "test-enhanced-blob-api.sh"
+      ]
+    },
+    "examples": {
+      "description": "Example implementations and demos",
+      "fileCount": 10,
+      "files": [
+        "advanced-blob-server-enhanced.ts",
+        "advanced-blob-server.ts",
+        "bun-inspect-example.ts",
+        "bun-proxy-complete-demo.ts",
+        "bun-proxy-crypto-demo.ts",
+        "bun-proxy-demo.ts",
+        "bun-proxy-executable-demo.ts",
+        "bun-proxy-streaming-demo.ts",
+        "revolutionary-architectures.ts",
+        "revolutionary-demo.ts"
+      ]
+    },
+    "config": {
+      "description": "Configuration files",
+      "fileCount": 3,
+      "files": [
+        "package.json",
+        "bun.lock",
+        ".gitignore"
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "chromprofile-testing",
+  "version": "0.1.0",
+  "author": "mike.hunt@factory.wager.com",
+  "license": "MIT",
+  "description": "",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

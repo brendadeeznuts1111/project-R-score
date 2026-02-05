@@ -1,0 +1,80 @@
+{
+  "name": "Profile Deployment Pipeline",
+  "description": "Automated profile deployment with validation and security checks",
+  "triggers": [
+    {
+      "type": "manual",
+      "config": {}
+    }
+  ],
+  "steps": [
+    {
+      "id": "validate",
+      "name": "Validate Profile",
+      "type": "validation",
+      "action": "validate_profile",
+      "timeout": 30000,
+      "onSuccess": [
+        "deploy"
+      ],
+      "onFailure": [
+        "notify_failure"
+      ]
+    },
+    {
+      "id": "deploy",
+      "name": "Deploy Profile",
+      "type": "deployment",
+      "action": "deploy_profile",
+      "timeout": 60000,
+      "onSuccess": [
+        "security_scan"
+      ],
+      "onFailure": [
+        "rollback"
+      ]
+    },
+    {
+      "id": "security_scan",
+      "name": "Security Scan",
+      "type": "security",
+      "action": "security_scan",
+      "timeout": 45000,
+      "onSuccess": [
+        "notify_success"
+      ]
+    },
+    {
+      "id": "notify_success",
+      "name": "Notify Success",
+      "type": "notification",
+      "action": "echo \"Deployment successful\"",
+      "timeout": 5000
+    },
+    {
+      "id": "notify_failure",
+      "name": "Notify Failure",
+      "type": "notification",
+      "action": "echo \"Deployment failed\"",
+      "timeout": 5000
+    },
+    {
+      "id": "rollback",
+      "name": "Rollback",
+      "type": "deployment",
+      "action": "echo \"Rollback initiated\"",
+      "timeout": 30000
+    }
+  ],
+  "variables": {
+    "environment": "production",
+    "backupEnabled": true
+  },
+  "enabled": true,
+  "metadata": {
+    "category": "deployment",
+    "author": "system"
+  },
+  "id": "workflow_1769553695536_sq26dur1m",
+  "version": "1.0.0"
+}

@@ -1,0 +1,121 @@
+# Bun Configuration File
+# Copy this file to bunfig.toml and update with your settings
+# Official Bun registry configuration: https://bun.com/docs/guides/install/custom-registry
+# Environment variables are automatically loaded from: .env.local, .env.[NODE_ENV], and .env
+# Isolated installs: https://bun.com/docs/pm/isolated-installs
+
+# Configuration version - 1 enables isolated installs by default (recommended)
+# 0 = hoisted installs (npm/yarn style), 1 = isolated installs (pnpm style)
+configVersion = 1
+
+[install]
+# Default registry for all packages
+# For this demo, we'll use the public npm registry
+registry = "https://registry.npmjs.org/"
+
+# Scoped packages configuration (if needed)
+# scopes = { "@your-org" = "https://registry.your-org.com" }
+
+# Isolated installs (recommended for better dependency management)
+# Similar to pnpm's strict dependency isolation
+# Options: "isolated" (recommended), "hoisted" (npm/yarn style)
+linker = "isolated"
+
+# Isolated installs specific configuration
+[install.isolated]
+# Backend strategy for file operations (auto-detected by default)
+# Options: "clonefile" (macOS CoW), "hardlink" (Linux/Windows), "copyfile" (fallback)
+backend = "auto"
+
+# Enable verbose logging for debugging isolated installs
+verbose = false
+
+# Cache configuration
+cache = true
+cacheDir = ".bun-cache"
+
+# Lockfile configuration
+lockfile = true
+lockfileSave = true
+
+# Exact version matching for reproducible builds
+exact = true
+
+# Prefer offline mode when possible
+prefer = "offline"
+
+[test]
+# Test Discovery
+root = "."
+preload = ["./happydom.ts", "./test-setup.ts", "./global-mocks.ts"]
+
+# Execution Settings
+timeout = 10000
+smol = true
+randomize = true
+seed = 2444615283
+rerunEach = 1
+
+# Coverage Configuration
+coverage = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "./coverage"
+coverageThreshold = { lines = 0.85, functions = 0.90, statements = 0.80, branches = 0.75 }
+coverageSkipTestFiles = true
+coveragePathIgnorePatterns = [
+  "**/*.spec.ts",
+  "**/*.test.ts",
+  "**/*.e2e.ts",
+  "*.config.js",
+  "*.config.ts",
+  "webpack.config.*",
+  "vite.config.*",
+  "dist/**",
+  "build/**",
+  ".next/**",
+  "generated/**",
+  "**/*.generated.ts",
+  "vendor/**",
+  "third-party/**",
+  "src/utils/constants.ts",
+  "src/types/**"
+]
+coverageIgnoreSourcemaps = false
+
+# Concurrent Execution
+concurrentTestGlob = "**/concurrent-*.test.ts"
+
+# Reporter Configuration
+[test.reporter]
+junit = "./reports/junit.xml"
+
+# CI-specific configuration
+[test.ci]
+coverage = true
+coverageThreshold = { lines = 0.90, functions = 0.95, statements = 0.85, branches = 0.80 }
+timeout = 30000
+rerunEach = 3
+smol = false
+
+[run]
+# Default runtime configuration
+bun = true
+shell = "system"
+
+[build]
+# Build configuration
+target = "node"
+format = "esm"
+minify = false
+sourcemap = true
+
+# Environment-specific configurations
+[install.development]
+registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
+linker = "isolated"
+cache = true
+
+[install.production]
+registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
+linker = "isolated"
+cache = false

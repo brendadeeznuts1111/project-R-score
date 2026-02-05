@@ -1,0 +1,36 @@
+{
+  "id": "market-analysis-baseline",
+  "name": "Market Analysis Baseline",
+  "description": "Baseline performance for market analysis feature",
+  "createdAt": "2025-12-08T18:23:36.739Z",
+  "gitCommit": "c0c74b4",
+  "gitBranch": "merge/workspace-onboarding-to-main",
+  "system": {
+    "os": "darwin",
+    "arch": "arm64",
+    "nodeVersion": "bun/1.3.4",
+    "cpu": "Apple M4",
+    "memory": "16GB"
+  },
+  "profile": {
+    "type": "cpu",
+    "file": "cpu-profiles/market-analysis-baseline.cpuprofile",
+    "durationMs": 42.1835,
+    "sampleCount": 32
+  },
+  "analysis": {
+    "file": "analysis/market-analysis-baseline_analysis.json",
+    "hotspots": [
+      "computeRecursiveCorrelations"
+    ],
+    "recommendations": [
+      "🚨 Optimize recursive function computeRecursiveCorrelations (0.10ms) - consider memoization or iterative approach",
+      "⏱️  Total execution time 42.18s is high - consider batching or streaming data processing"
+    ]
+  },
+  "tags": [
+    "production",
+    "market-analysis",
+    "v1.2.0"
+  ]
+}

@@ -1,0 +1,460 @@
+#!/usr/bin/env bun
+
+// ai/dashboard.html - Nebula-Flow™ AI Dashboard
+// Real-time monitoring and visualization of anomaly detection
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula-Flow™ AI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-red {
+            0%, 100% { background-color: rgb(239 68 68); }
+            50% { background-color: rgb(220 38 38); }
+        }
+        .alert-critical { animation: pulse-red 2s infinite; }
+        .metric-card { transition: all 0.3s ease; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .anomaly-item { transition: all 0.2s ease; }
+        .anomaly-item:hover { transform: translateX(-5px); }
+        .score-high { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .score-medium { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .score-low { background: linear-gradient(135deg, #10b981, #059669); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-brain text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Nebula-Flow™ AI</h1>
+                        <p class="text-sm opacity-90">Real-time Anomaly Detection</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm opacity-90">System Status</p>
+                        <p class="font-semibold" id="system-status">HEALTHY</p>
+                    </div>
+                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse" id="status-indicator"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Key Metrics -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">System Performance</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="metric-card bg-gray-800 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-chart-line text-2xl text-blue-500"></i>
+                        <span class="text-sm text-gray-400">Avg Risk Score</span>
+                    </div>
+                    <h3 class="text-3xl font-bold" id="avg-risk-score">0.42</h3>
+                    <p class="text-sm text-gray-400 mt-1">Current Average</p>
+                </div>
+
+                <div class="metric-card bg-gray-800 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-red-500"></i>
+                        <span class="text-sm text-gray-400">Blocked Today</span>
+                    </div>
+                    <h3 class="text-3xl font-bold" id="blocked-count">12</h3>
+                    <p class="text-sm text-gray-400 mt-1">High Risk Legs</p>
+                </div>
+
+                <div class="metric-card bg-gray-800 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-bullseye text-2xl text-green-500"></i>
+                        <span class="text-sm text-gray-400">Accuracy</span>
+                    </div>
+                    <h3 class="text-3xl font-bold" id="accuracy">94.7%</h3>
+                    <p class="text-sm text-gray-400 mt-1">Model Performance</p>
+                </div>
+
+                <div class="metric-card bg-gray-800 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-tachometer-alt text-2xl text-purple-500"></i>
+                        <span class="text-sm text-gray-400">Inference Time</span>
+                    </div>
+                    <h3 class="text-3xl font-bold" id="inference-time">12ms</h3>
+                    <p class="text-sm text-gray-400 mt-1">Average Latency</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Analytics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Risk Score Distribution -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Risk Score Distribution</h3>
+                    <canvas id="risk-chart" width="400" height="200"></canvas>
+                </div>
+
+                <!-- Processing Volume -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Processing Volume</h3>
+                    <canvas id="volume-chart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Anomalies -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Recent Anomalies</h2>
+            <div class="bg-gray-800 rounded-lg">
+                <div class="p-6">
+                    <div id="anomaly-list" class="space-y-3">
+                        <!-- Anomalies will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls -->
+        <section>
+            <h2 class="text-xl font-semibold mb-4">System Controls</h2>
+            <div class="bg-gray-800 rounded-lg p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="retrainModel()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Retrain Model</span>
+                    </button>
+                    <button onclick="exportData()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+                        <i class="fas fa-download"></i>
+                        <span>Export Data</span>
+                    </button>
+                    <button onclick="toggleRealTime()" id="realtime-btn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+                        <i class="fas fa-play"></i>
+                        <span>Start Real-time</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        class NebulaAIDashboard {
+            constructor() {
+                this.anomalies = [];
+                this.charts = {};
+                this.realTimeEnabled = false;
+                this.updateInterval = null;
+                
+                this.init();
+            }
+
+            async init() {
+                await this.loadInitialData();
+                this.initCharts();
+                this.setupEventListeners();
+                this.startRealTimeUpdates();
+            }
+
+            async loadInitialData() {
+                try {
+                    // Load system stats
+                    const statsResponse = await fetch('/api/ai/stats');
+                    const stats = await statsResponse.json();
+                    
+                    if (stats.success) {
+                        this.updateMetrics(stats.data);
+                    }
+
+                    // Load recent anomalies
+                    await this.loadRecentAnomalies();
+                } catch (error) {
+                    console.error('Failed to load initial data:', error);
+                }
+            }
+
+            updateMetrics(data) {
+                document.getElementById('avg-risk-score').textContent = data.avgRiskScore?.toFixed(2) || '0.42';
+                document.getElementById('blocked-count').textContent = data.blockedToday || 12;
+                document.getElementById('accuracy').textContent = `${(data.accuracy * 100).toFixed(1)}%` || '94.7%';
+                document.getElementById('inference-time').textContent = data.inferenceTime || '12ms';
+                
+                // Update system status
+                const status = data.modelLoaded ? 'HEALTHY' : 'DEGRADED';
+                const indicator = document.getElementById('status-indicator');
+                
+                document.getElementById('system-status').textContent = status;
+                indicator.className = `w-3 h-3 rounded-full animate-pulse ${
+                    status === 'HEALTHY' ? 'bg-green-400' : 'bg-yellow-400'
+                }`;
+            }
+
+            initCharts() {
+                // Risk Score Distribution Chart
+                const riskCtx = document.getElementById('risk-chart').getContext('2d');
+                this.charts.risk = new Chart(riskCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Low Risk (0-0.7)', 'Medium Risk (0.7-0.9)', 'High Risk (0.9-1.0)'],
+                        datasets: [{
+                            data: [70, 20, 10],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#fff' }
+                            }
+                        }
+                    }
+                });
+
+                // Processing Volume Chart
+                const volumeCtx = document.getElementById('volume-chart').getContext('2d');
+                this.charts.volume = new Chart(volumeCtx, {
+                    type: 'line',
+                    data: {
+                        labels: this.generateTimeLabels(24),
+                        datasets: [{
+                            label: 'Processed Legs',
+                            data: this.generateRandomData(24, 50, 200),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: '#374151' },
+                                ticks: { color: '#9ca3af' }
+                            },
+                            y: {
+                                grid: { color: '#374151' },
+                                ticks: { color: '#9ca3af' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            generateTimeLabels(hours) {
+                const labels = [];
+                const now = new Date();
+                for (let i = hours - 1; i >= 0; i--) {
+                    const time = new Date(now - i * 60 * 60 * 1000);
+                    labels.push(time.getHours() + ':00');
+                }
+                return labels;
+            }
+
+            generateRandomData(count, min, max) {
+                return Array.from({ length: count }, () => 
+                    Math.floor(Math.random() * (max - min + 1)) + min
+                );
+            }
+
+            async loadRecentAnomalies() {
+                try {
+                    // Mock data - in production, fetch from API
+                    const mockAnomalies = [
+                        {
+                            deviceId: 'device_1234',
+                            score: 0.95,
+                            nebulaCode: 'N-AI-B',
+                            reasons: ['HIGH_RISK', 'VELOCITY_HIGH', 'IP_VOLATILITY'],
+                            amount: 8500,
+                            timestamp: new Date().toISOString()
+                        },
+                        {
+                            deviceId: 'device_5678',
+                            score: 0.78,
+                            nebulaCode: 'N-AI-T',
+                            reasons: ['MEDIUM_RISK', 'WALLET_NEW'],
+                            amount: 3200,
+                            timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString()
+                        },
+                        {
+                            deviceId: 'device_9012',
+                            score: 0.45,
+                            nebulaCode: 'N-00',
+                            reasons: ['LOW_RISK'],
+                            amount: 1200,
+                            timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString()
+                        }
+                    ];
+
+                    this.updateAnomalyList(mockAnomalies);
+                } catch (error) {
+                    console.error('Failed to load anomalies:', error);
+                }
+            }
+
+            updateAnomalyList(anomalies) {
+                const container = document.getElementById('anomaly-list');
+                
+                if (anomalies.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center">No recent anomalies</p>';
+                    return;
+                }
+
+                container.innerHTML = anomalies.map(anomaly => {
+                    const scoreClass = anomaly.score > 0.9 ? 'score-high' : 
+                                     anomaly.score > 0.7 ? 'score-medium' : 'score-low';
+                    
+                    return `
+                        <div class="anomaly-item bg-gray-700 rounded-lg p-4 border-l-4 ${
+                            anomaly.score > 0.9 ? 'border-red-500' : 
+                            anomaly.score > 0.7 ? 'border-yellow-500' : 'border-green-500'
+                        }">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-3">
+                                    <span class="font-mono text-sm">${anomaly.deviceId}</span>
+                                    <span class="${scoreClass} text-white px-2 py-1 rounded text-xs font-bold">
+                                        ${anomaly.score.toFixed(2)}
+                                    </span>
+                                    <span class="text-xs bg-gray-600 px-2 py-1 rounded">
+                                        ${anomaly.nebulaCode}
+                                    </span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm font-semibold">$${anomaly.amount.toLocaleString()}</div>
+                                    <div class="text-xs text-gray-400">${new Date(anomaly.timestamp).toLocaleTimeString()}</div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-300">
+                                ${anomaly.reasons.join(' • ')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            startRealTimeUpdates() {
+                // Update charts every 30 seconds
+                setInterval(() => {
+                    this.updateCharts();
+                }, 30000);
+
+                // Load new anomalies every 10 seconds
+                setInterval(() => {
+                    if (this.realTimeEnabled) {
+                        this.loadRecentAnomalies();
+                    }
+                }, 10000);
+            }
+
+            updateCharts() {
+                // Update risk distribution
+                const riskData = this.generateRandomData(3, 10, 80);
+                this.charts.risk.data.datasets[0].data = riskData;
+                this.charts.risk.update('none');
+
+                // Update volume chart
+                const volumeData = this.generateRandomData(24, 50, 200);
+                this.charts.volume.data.datasets[0].data = volumeData;
+                this.charts.volume.update('none');
+            }
+
+            setupEventListeners() {
+                // Auto-refresh stats every 5 seconds
+                setInterval(async () => {
+                    try {
+                        const response = await fetch('/api/ai/stats');
+                        const stats = await response.json();
+                        if (stats.success) {
+                            this.updateMetrics(stats.data);
+                        }
+                    } catch (error) {
+                        console.error('Failed to update stats:', error);
+                    }
+                }, 5000);
+            }
+        }
+
+        // Global functions
+        async function retrainModel() {
+            try {
+                const response = await fetch('/api/ai/train', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Model retraining started. This may take a few minutes.');
+                } else {
+                    alert('Retraining failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('Retraining failed: ' + error.message);
+            }
+        }
+
+        async function exportData() {
+            try {
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const response = await fetch(`/api/ai/export?startDate=${startDate}&endDate=${endDate}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `nebula-anomaly-export-${endDate}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Export failed');
+                }
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+
+        function toggleRealTime() {
+            const btn = document.getElementById('realtime-btn');
+            const dashboard = window.nebulaDashboard;
+            
+            dashboard.realTimeEnabled = !dashboard.realTimeEnabled;
+            
+            if (dashboard.realTimeEnabled) {
+                btn.innerHTML = '<i class="fas fa-pause"></i><span>Pause Real-time</span>';
+                btn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                btn.classList.add('bg-red-600', 'hover:bg-red-700');
+            } else {
+                btn.innerHTML = '<i class="fas fa-play"></i><span>Start Real-time</span>';
+                btn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                btn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.nebulaDashboard = new NebulaAIDashboard();
+        });
+    </script>
+</body>
+</html>

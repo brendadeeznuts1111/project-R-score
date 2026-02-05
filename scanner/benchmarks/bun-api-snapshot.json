@@ -1,0 +1,1641 @@
+{
+	"generated": "2026-02-03T15:45:20.508Z",
+	"previous_generated": "2026-02-03T15:45:12.179Z",
+	"file": "scan.ts",
+	"runtime": {
+		"name": "bun",
+		"version": "1.3.9",
+		"revision": "eba4da23e69977dee763e296779d913e09e73251",
+		"platform": "darwin arm64"
+	},
+	"member": {
+		"key": "nolarose",
+		"name": "Nola Rose",
+		"timezone": "America/Chicago",
+		"notes": "M3 Max, performance mode",
+		"machine": {
+			"os": "darwin",
+			"arch": "arm64",
+			"cpu": "Apple M4",
+			"cores": 10,
+			"memory_gb": 16,
+			"bun_version": "1.3.9"
+		}
+	},
+	"metrics": {
+		"file.size_bytes": 201015,
+		"file.lines": 4416,
+		"runtime.available_apis": 104,
+		"runtime.used_apis": 23,
+		"apis.unique": 23,
+		"apis.total_call_sites": 127,
+		"unicode.full": 12,
+		"unicode.passthrough": 4,
+		"unicode.binary": 1,
+		"unicode.n_a": 6,
+		"unicode.handled_total": 17,
+		"legacy.response_wrapper": 0,
+		"legacy.url_pathname": 0,
+		"legacy.strip_ansi_regex": 0,
+		"spawn.sites_async": 15,
+		"spawn.sites_sync": 1,
+		"spawn.sites_total": 16,
+		"spawn.options_available": 17,
+		"spawn.options_used": 5,
+		"spawn.members_available": 16,
+		"spawn.members_used": 4,
+		"spawn.sync_members_available": 8,
+		"signals.available": 37,
+		"signals.used": 2,
+		"signals.sites": 6,
+		"terminal.options_available": 6,
+		"terminal.options_used": 0,
+		"terminal.members_available": 6,
+		"terminal.members_used": 0,
+		"resource_usage.call_sites": 0,
+		"resource_usage.fields_available": 8,
+		"resource_usage.fields_used": 0,
+		"signals.ctx.process.removeListener": 1,
+		"signals.ctx.process.on": 3,
+		"signals.ctx.process.off": 2,
+		"api.Bun.file.calls": 31,
+		"api.Bun.spawn.calls": 18,
+		"api.Bun.write.calls": 17,
+		"api.Bun.env.calls": 14,
+		"api.proc.stderr.text().calls": 9,
+		"api.Bun.nanoseconds.calls": 7,
+		"api.proc.stdout.text().calls": 6,
+		"api.Bun.inspect.table.calls": 4,
+		"api.Bun.version.calls": 3,
+		"api.Bun.stringWidth.calls": 2,
+		"api.Bun.semver.order.calls": 2,
+		"api.Bun.hash.*.calls": 2,
+		"api.import.meta.dir.calls": 2,
+		"api.Bun.argv.calls": 1,
+		"api.Bun.semver.satisfies.calls": 1,
+		"api.Bun.stripANSI.calls": 1,
+		"api.Bun.revision.calls": 1,
+		"api.Bun.spawnSync.calls": 1,
+		"api.Bun.fileURLToPath.calls": 1,
+		"api.Bun.Glob.calls": 1,
+		"api.Bun.openInEditor.calls": 1,
+		"api.import.meta.url.calls": 1,
+		"api.import.meta.main.calls": 1,
+		"category.Shell & Process.used": 4,
+		"category.Utilities.used": 6,
+		"category.Streaming.used": 0,
+		"category.Hashing & Security.used": 1,
+		"category.Routing.used": 0,
+		"category.Databases.used": 0,
+		"category.Build & Bundling.used": 0,
+		"category.Advanced.used": 0,
+		"category.HTTP & Networking.used": 0,
+		"category.Compression.used": 0,
+		"category.Configuration.used": 3,
+		"category.File I/O.used": 5,
+		"category.Semver.used": 1,
+		"category.Shell & Process.available": 8,
+		"category.Utilities.available": 35,
+		"category.Streaming.available": 2,
+		"category.Hashing & Security.available": 11,
+		"category.Routing.available": 1,
+		"category.Databases.available": 6,
+		"category.Build & Bundling.available": 5,
+		"category.Advanced.available": 6,
+		"category.HTTP & Networking.available": 6,
+		"category.Compression.available": 4,
+		"category.Configuration.available": 4,
+		"category.File I/O.available": 15,
+		"category.Semver.available": 1,
+		"signal_cat.Error signals.used": 0,
+		"signal_cat.Termination signals.used": 2,
+		"signal_cat.User signals.used": 0,
+		"signal_cat.Child signals.used": 0,
+		"signal_cat.Input signals.used": 0,
+		"signal_cat.Operation signals.used": 0,
+		"signal_cat.Job control.used": 0,
+		"signal_cat.Misc.used": 0
+	},
+	"delta": {
+		"has_baseline": true,
+		"total_metrics": 92,
+		"changed_count": 0,
+		"unchanged_count": 92,
+		"changes": []
+	},
+	"coverage": {
+		"runtime_apis": "22.1%",
+		"spawn_options": "29.4%",
+		"spawn_members": "25.0%",
+		"signals": "5.4%",
+		"terminal_options": "0.0%",
+		"terminal_members": "0.0%",
+		"resource_usage": "0.0%",
+		"unicode": "73.9%"
+	},
+	"heatmap": [
+		{
+			"surface": "Runtime APIs",
+			"pct": 22.115384615384613
+		},
+		{
+			"surface": "Spawn Options",
+			"pct": 29.411764705882355
+		},
+		{
+			"surface": "Subprocess Props",
+			"pct": 25
+		},
+		{
+			"surface": "Signals",
+			"pct": 5.405405405405405
+		},
+		{
+			"surface": "Terminal",
+			"pct": 0
+		},
+		{
+			"surface": "ResourceUsage",
+			"pct": 0
+		},
+		{
+			"surface": "Unicode",
+			"pct": 73.91304347826086
+		}
+	],
+	"summary": {
+		"surface_table": [
+			{
+				"surface": "Bun Runtime APIs",
+				"used": 23,
+				"available": 104,
+				"coverage": "22.1%"
+			},
+			{
+				"surface": "API Call Sites",
+				"used": 127,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Spawn Options",
+				"used": 5,
+				"available": 17,
+				"coverage": "29.4%"
+			},
+			{
+				"surface": "Subprocess Members",
+				"used": 4,
+				"available": 16,
+				"coverage": "25.0%"
+			},
+			{
+				"surface": "Spawn Sites (async)",
+				"used": 15,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Spawn Sites (sync)",
+				"used": 1,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Signals",
+				"used": 2,
+				"available": 37,
+				"coverage": "5.4%"
+			},
+			{
+				"surface": "Signal Sites",
+				"used": 6,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Terminal Options",
+				"used": 0,
+				"available": 6,
+				"coverage": "0.0%"
+			},
+			{
+				"surface": "Terminal Members",
+				"used": 0,
+				"available": 6,
+				"coverage": "0.0%"
+			},
+			{
+				"surface": "ResourceUsage Calls",
+				"used": 0,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "ResourceUsage Fields",
+				"used": 0,
+				"available": 8,
+				"coverage": "0.0%"
+			},
+			{
+				"surface": "Unicode: full",
+				"used": 12,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Unicode: passthrough",
+				"used": 4,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Unicode: binary",
+				"used": 1,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Unicode: n/a",
+				"used": 6,
+				"available": null,
+				"coverage": null
+			},
+			{
+				"surface": "Legacy Patterns",
+				"used": 0,
+				"available": null,
+				"coverage": null
+			}
+		],
+		"min_bun_version": "1.0.0",
+		"file_size_bytes": 201015,
+		"file_lines": 4416
+	},
+	"api_categories": {
+		"Shell & Process": {
+			"used": ["argv", "env", "spawn", "spawnSync"],
+			"unused": ["$", "sleep", "sleepSync", "which"],
+			"available": 8,
+			"used_count": 4,
+			"coverage": "50.0%"
+		},
+		"Utilities": {
+			"used": ["Glob", "inspect", "nanoseconds", "openInEditor", "stringWidth", "stripANSI"],
+			"unused": [
+				"Archive",
+				"CSRF",
+				"Cookie",
+				"CookieMap",
+				"FFI",
+				"JSON5",
+				"JSONC",
+				"JSONL",
+				"TOML",
+				"Terminal",
+				"YAML",
+				"color",
+				"deepEquals",
+				"deepMatch",
+				"embeddedFiles",
+				"escapeHTML",
+				"isMainThread",
+				"markdown",
+				"pathToFileURL",
+				"postgres",
+				"randomUUIDv5",
+				"randomUUIDv7",
+				"secrets",
+				"sha",
+				"wrapAnsi",
+				"zstdCompress",
+				"zstdCompressSync",
+				"zstdDecompress",
+				"zstdDecompressSync"
+			],
+			"available": 35,
+			"used_count": 6,
+			"coverage": "17.1%"
+		},
+		"Streaming": {
+			"used": [],
+			"unused": ["ArrayBufferSink", "concatArrayBuffers"],
+			"available": 2,
+			"used_count": 0,
+			"coverage": "0.0%"
+		},
+		"Hashing & Security": {
+			"used": ["hash"],
+			"unused": [
+				"CryptoHasher",
+				"MD4",
+				"MD5",
+				"SHA1",
+				"SHA224",
+				"SHA256",
+				"SHA384",
+				"SHA512",
+				"SHA512_256",
+				"password"
+			],
+			"available": 11,
+			"used_count": 1,
+			"coverage": "9.1%"
+		},
+		"Routing": {
+			"used": [],
+			"unused": ["FileSystemRouter"],
+			"available": 1,
+			"used_count": 0,
+			"coverage": "0.0%"
+		},
+		"Databases": {
+			"used": [],
+			"unused": ["RedisClient", "S3Client", "SQL", "redis", "s3", "sql"],
+			"available": 6,
+			"used_count": 0,
+			"coverage": "0.0%"
+		},
+		"Build & Bundling": {
+			"used": [],
+			"unused": ["Transpiler", "build", "plugin", "resolve", "resolveSync"],
+			"available": 5,
+			"used_count": 0,
+			"coverage": "0.0%"
+		},
+		"Advanced": {
+			"used": [],
+			"unused": ["allocUnsafe", "gc", "generateHeapSnapshot", "peek", "shrink", "unsafe"],
+			"available": 6,
+			"used_count": 0,
+			"coverage": "0.0%"
+		},
+		"HTTP & Networking": {
+			"used": [],
+			"unused": ["connect", "dns", "fetch", "listen", "serve", "udpSocket"],
+			"available": 6,
+			"used_count": 0,
+			"coverage": "0.0%"
+		},
+		"Compression": {
+			"used": [],
+			"unused": ["deflateSync", "gunzipSync", "gzipSync", "inflateSync"],
+			"available": 4,
+			"used_count": 0,
+			"coverage": "0.0%"
+		},
+		"Configuration": {
+			"used": ["main", "revision", "version"],
+			"unused": ["enableANSIColors"],
+			"available": 4,
+			"used_count": 3,
+			"coverage": "75.0%"
+		},
+		"File I/O": {
+			"used": ["file", "fileURLToPath", "stderr", "stdout", "write"],
+			"unused": [
+				"indexOfLine",
+				"mmap",
+				"readableStreamToArray",
+				"readableStreamToArrayBuffer",
+				"readableStreamToBlob",
+				"readableStreamToBytes",
+				"readableStreamToFormData",
+				"readableStreamToJSON",
+				"readableStreamToText",
+				"stdin"
+			],
+			"available": 15,
+			"used_count": 5,
+			"coverage": "33.3%"
+		},
+		"Semver": {
+			"used": ["semver"],
+			"unused": [],
+			"available": 1,
+			"used_count": 1,
+			"coverage": "100.0%"
+		}
+	},
+	"signal_categories": {
+		"Error signals": {
+			"used": 0,
+			"available": 5,
+			"coverage": "0.0%",
+			"used_signals": []
+		},
+		"Termination signals": {
+			"used": 2,
+			"available": 5,
+			"coverage": "40.0%",
+			"used_signals": ["SIGTERM", "SIGINT"]
+		},
+		"User signals": {
+			"used": 0,
+			"available": 2,
+			"coverage": "0.0%",
+			"used_signals": []
+		},
+		"Child signals": {
+			"used": 0,
+			"available": 1,
+			"coverage": "0.0%",
+			"used_signals": []
+		},
+		"Input signals": {
+			"used": 0,
+			"available": 2,
+			"coverage": "0.0%",
+			"used_signals": []
+		},
+		"Operation signals": {
+			"used": 0,
+			"available": 6,
+			"coverage": "0.0%",
+			"used_signals": []
+		},
+		"Job control": {
+			"used": 0,
+			"available": 4,
+			"coverage": "0.0%",
+			"used_signals": []
+		},
+		"Misc": {
+			"used": 0,
+			"available": 12,
+			"coverage": "0.0%",
+			"used_signals": []
+		}
+	},
+	"subprocess_per_site": {
+		"pid": {
+			"type": "number",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"exited": {
+			"type": "Promise<number>",
+			"used": true,
+			"sites_using": 14,
+			"total_sites": 15,
+			"ratio": "14/15"
+		},
+		"exitCode": {
+			"type": "number",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"signalCode": {
+			"type": "NodeJS.Signals",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"killed": {
+			"type": "boolean",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"stdin": {
+			"type": "FileSink",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"stdout": {
+			"type": "ReadableStream",
+			"used": true,
+			"sites_using": 8,
+			"total_sites": 15,
+			"ratio": "8/15"
+		},
+		"stderr": {
+			"type": "ReadableStream",
+			"used": true,
+			"sites_using": 9,
+			"total_sites": 15,
+			"ratio": "9/15"
+		},
+		"readable": {
+			"type": "ReadableStream",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"terminal": {
+			"type": "Terminal",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"kill": {
+			"type": "method",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"ref": {
+			"type": "method",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"unref": {
+			"type": "method",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"send": {
+			"type": "method",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"disconnect": {
+			"type": "method",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		},
+		"resourceUsage": {
+			"type": "method",
+			"used": false,
+			"sites_using": 0,
+			"total_sites": 15,
+			"ratio": "0/15"
+		}
+	},
+	"spawn_option_matrix": [
+		{
+			"option": "cwd",
+			"status": "Used",
+			"sites": 8
+		},
+		{
+			"option": "env",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "stdio",
+			"status": "Used",
+			"sites": 1
+		},
+		{
+			"option": "stdin",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "stdout",
+			"status": "Used",
+			"sites": 15
+		},
+		{
+			"option": "stderr",
+			"status": "Used",
+			"sites": 15
+		},
+		{
+			"option": "onExit",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "ipc",
+			"status": "Used",
+			"sites": 1
+		},
+		{
+			"option": "serialization",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "windowsHide",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "windowsVerbatimArguments",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "argv0",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "signal",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "timeout",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "killSignal",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "maxBuffer",
+			"status": "Unused",
+			"sites": 0
+		},
+		{
+			"option": "terminal",
+			"status": "Unused",
+			"sites": 0
+		}
+	],
+	"apis": [
+		{
+			"api": "Bun.file",
+			"doc": "https://bun.com/docs/api/file-io#reading-files-bun-file",
+			"since": "≤1.0.0",
+			"lines": [
+				871, 929, 1036, 1136, 1142, 1152, 1153, 1158, 1168, 1174, 1316, 1844, 2054, 2257, 2463, 2559, 2600,
+				2635, 2652, 2668, 2697, 2750, 2845, 2900, 2920, 2976, 3055, 3079, 3743, 4140, 4231
+			],
+			"calls": 31,
+			"unicode": "full",
+			"note": "Lazy file reference; .text() returns UTF-8; .json() parses; .exists() checks"
+		},
+		{
+			"api": "Bun.spawn",
+			"doc": "https://bun.com/docs/api/spawn",
+			"since": "≤1.0.0",
+			"lines": [
+				657, 685, 689, 705, 724, 1363, 1389, 1398, 1427, 2514, 3123, 3237, 3364, 3509, 3537, 3590, 3635, 3647
+			],
+			"calls": 18,
+			"unicode": "passthrough",
+			"note": "Async subprocess; stdout→pipe (ReadableStream), stderr→inherit (undefined) [docs]"
+		},
+		{
+			"api": "Bun.write",
+			"doc": "https://bun.com/docs/api/file-io#writing-files-bun-write",
+			"since": "≤1.0.0",
+			"lines": [
+				867, 2475, 2510, 2572, 2614, 2710, 2780, 2790, 2855, 2858, 2910, 2966, 2986, 2996, 3081, 4198, 4235
+			],
+			"calls": 17,
+			"unicode": "full",
+			"note": "Atomic file write; accepts string (UTF-8) or Uint8Array"
+		},
+		{
+			"api": "Bun.env",
+			"doc": "https://bun.com/docs/runtime/env",
+			"since": "≤1.0.0",
+			"lines": [76, 77, 579, 795, 818, 1325, 1503, 1798, 2001, 2254, 2255, 3766, 3891, 4401],
+			"calls": 14,
+			"unicode": "passthrough",
+			"note": "Environment variable access; returns string|undefined"
+		},
+		{
+			"api": "proc.stderr.text()",
+			"doc": "https://bun.com/docs/api/spawn#reading-stdout",
+			"since": "≤1.0.0",
+			"lines": [662, 694, 710, 2519, 3512, 3551, 3592, 3638, 3650],
+			"calls": 9,
+			"unicode": "full",
+			"note": "Requires stderr:'pipe'; defaults to inherit (undefined) if not set [docs]"
+		},
+		{
+			"api": "Bun.nanoseconds",
+			"doc": "https://bun.com/docs/api/utils#bun-nanoseconds",
+			"since": "≤1.0.0",
+			"lines": [3882, 3890, 3894, 3905, 3965, 3978, 4339],
+			"calls": 7,
+			"unicode": "n/a",
+			"note": "High-precision timer; nanoseconds since process start [docs]"
+		},
+		{
+			"api": "proc.stdout.text()",
+			"doc": "https://bun.com/docs/api/spawn#reading-stdout",
+			"since": "≤1.0.0",
+			"lines": [667, 728, 3125, 3239, 3637, 3649],
+			"calls": 6,
+			"unicode": "full",
+			"note": "ReadableStream from Bun.spawn stdout; .text() reads full stream as UTF-8 string [docs]"
+		},
+		{
+			"api": "Bun.inspect.table",
+			"doc": "https://bun.com/docs/api/utils#bun-inspect-table",
+			"since": "1.1.31",
+			"lines": [1673, 1829, 3964, 4381],
+			"calls": 4,
+			"unicode": "full",
+			"note": "Formatted table output with ANSI colors; uses Bun.stringWidth for alignment"
+		},
+		{
+			"api": "Bun.version",
+			"doc": "https://bun.com/docs/runtime/configuration#version",
+			"since": "≤1.0.0",
+			"lines": [636, 2539, 4344],
+			"calls": 3,
+			"unicode": "n/a",
+			"note": "Semver string of running Bun"
+		},
+		{
+			"api": "Bun.stringWidth",
+			"doc": "https://bun.com/docs/api/utils#bun-stringwidth",
+			"since": "1.0.29",
+			"lines": [95, 96],
+			"calls": 2,
+			"unicode": "full",
+			"note": "~6,756x faster string-width alternative; implemented in Zig with optimized SIMD instructions [docs]"
+		},
+		{
+			"api": "Bun.semver.order",
+			"doc": "https://bun.com/docs/api/utils#bun-semver",
+			"since": "1.0.11",
+			"lines": [320, 338],
+			"calls": 2,
+			"unicode": "n/a",
+			"note": "Semver comparison; returns -1|0|1"
+		},
+		{
+			"api": "Bun.hash.*",
+			"doc": "https://bun.com/docs/api/hashing#bun-hash",
+			"since": "≤1.0.0",
+			"lines": [1159, 1169],
+			"calls": 2,
+			"unicode": "binary",
+			"note": "Fast non-crypto hash; input treated as raw bytes (rapidhash added 1.2.16) [blog]"
+		},
+		{
+			"api": "import.meta.dir",
+			"doc": "https://bun.com/docs/api/import-meta",
+			"since": "≤1.0.0",
+			"lines": [850, 4402],
+			"calls": 2,
+			"unicode": "full",
+			"note": "Directory of current file; handles unicode paths"
+		},
+		{
+			"api": "Bun.argv",
+			"doc": "https://bun.com/docs/runtime/configuration#argv",
+			"since": "≤1.0.0",
+			"lines": [13],
+			"calls": 1,
+			"unicode": "passthrough",
+			"note": "CLI arg parsing; passes raw strings"
+		},
+		{
+			"api": "Bun.semver.satisfies",
+			"doc": "https://bun.com/docs/api/utils#bun-semver",
+			"since": "1.0.11",
+			"lines": [333],
+			"calls": 1,
+			"unicode": "n/a",
+			"note": "Semver range matching; ASCII-only input"
+		},
+		{
+			"api": "Bun.stripANSI",
+			"doc": "https://bun.com/docs/api/utils#bun-stripansi",
+			"since": "1.2.21",
+			"lines": [342],
+			"calls": 1,
+			"unicode": "full",
+			"note": "SIMD-accelerated [blog]; ~6-57x faster strip-ansi alternative (vs npm package) [docs]"
+		},
+		{
+			"api": "Bun.revision",
+			"doc": "https://bun.com/docs/runtime/configuration#revision",
+			"since": "≤1.0.0",
+			"lines": [4344],
+			"calls": 1,
+			"unicode": "n/a",
+			"note": "Git SHA of running Bun build"
+		},
+		{
+			"api": "Bun.spawnSync",
+			"doc": "https://bun.com/docs/api/spawn#blocking-api-bun-spawnsync",
+			"since": "≤1.0.0",
+			"lines": [1120],
+			"calls": 1,
+			"unicode": "passthrough",
+			"note": "Sync subprocess; returns Buffer for stdout/stderr [docs]"
+		},
+		{
+			"api": "Bun.fileURLToPath",
+			"doc": "https://bun.com/docs/api/utils#bun-fileurltopath",
+			"since": "≤1.0.0",
+			"lines": [1358],
+			"calls": 1,
+			"unicode": "full",
+			"note": "Converts file:// URL to absolute path; accepts string or URL object [docs]"
+		},
+		{
+			"api": "Bun.Glob",
+			"doc": "https://bun.com/docs/api/glob",
+			"since": "1.0.14",
+			"lines": [1475],
+			"calls": 1,
+			"unicode": "full",
+			"note": "Native glob matching; handles unicode filenames"
+		},
+		{
+			"api": "Bun.openInEditor",
+			"doc": "https://bun.com/docs/api/utils#bun-openineditor",
+			"since": "≤1.0.0",
+			"lines": [2355],
+			"calls": 1,
+			"unicode": "full",
+			"note": "Opens file in configured editor"
+		},
+		{
+			"api": "import.meta.url",
+			"doc": "https://bun.com/docs/api/import-meta",
+			"since": "≤1.0.0",
+			"lines": [1358],
+			"calls": 1,
+			"unicode": "full",
+			"note": "file:// URL of current file"
+		},
+		{
+			"api": "import.meta.main",
+			"doc": "https://bun.com/docs/api/import-meta",
+			"since": "≤1.0.0",
+			"lines": [4410],
+			"calls": 1,
+			"unicode": "n/a",
+			"note": "true if file is direct entry point"
+		}
+	],
+	"spawn": {
+		"doc": "https://bun.com/docs/api/spawn",
+		"type_ref": "https://bun.com/docs/runtime/child-process#reference",
+		"totals": {
+			"spawn_sites": 15,
+			"spawnSync_sites": 1,
+			"options_used": 5,
+			"options_available": 17,
+			"members_used": 4,
+			"members_available": 16
+		},
+		"option_coverage": {
+			"cwd": {
+				"used": true,
+				"sites": 8
+			},
+			"env": {
+				"used": false,
+				"sites": 0
+			},
+			"stdio": {
+				"used": true,
+				"sites": 1
+			},
+			"stdin": {
+				"used": false,
+				"sites": 0
+			},
+			"stdout": {
+				"used": true,
+				"sites": 15
+			},
+			"stderr": {
+				"used": true,
+				"sites": 15
+			},
+			"onExit": {
+				"used": false,
+				"sites": 0
+			},
+			"ipc": {
+				"used": true,
+				"sites": 1
+			},
+			"serialization": {
+				"used": false,
+				"sites": 0
+			},
+			"windowsHide": {
+				"used": false,
+				"sites": 0
+			},
+			"windowsVerbatimArguments": {
+				"used": false,
+				"sites": 0
+			},
+			"argv0": {
+				"used": false,
+				"sites": 0
+			},
+			"signal": {
+				"used": false,
+				"sites": 0
+			},
+			"timeout": {
+				"used": false,
+				"sites": 0
+			},
+			"killSignal": {
+				"used": false,
+				"sites": 0
+			},
+			"maxBuffer": {
+				"used": false,
+				"sites": 0
+			},
+			"terminal": {
+				"used": false,
+				"sites": 0
+			}
+		},
+		"member_coverage": {
+			"pid": {
+				"used": false,
+				"sites": 0
+			},
+			"exited": {
+				"used": true,
+				"sites": 18
+			},
+			"exitCode": {
+				"used": false,
+				"sites": 0
+			},
+			"signalCode": {
+				"used": false,
+				"sites": 0
+			},
+			"killed": {
+				"used": false,
+				"sites": 0
+			},
+			"stdin": {
+				"used": false,
+				"sites": 0
+			},
+			"stdout": {
+				"used": true,
+				"sites": 10
+			},
+			"stderr": {
+				"used": true,
+				"sites": 11
+			},
+			"readable": {
+				"used": false,
+				"sites": 0
+			},
+			"terminal": {
+				"used": false,
+				"sites": 0
+			},
+			"kill": {
+				"used": false,
+				"sites": 0
+			},
+			"ref": {
+				"used": false,
+				"sites": 0
+			},
+			"unref": {
+				"used": false,
+				"sites": 0
+			},
+			"send": {
+				"used": false,
+				"sites": 0
+			},
+			"disconnect": {
+				"used": false,
+				"sites": 0
+			},
+			"resourceUsage": {
+				"used": false,
+				"sites": 0
+			}
+		},
+		"sites": [
+			{
+				"line": 657,
+				"cmd": "security find-generic-password -s service -a name -w",
+				"sync": false,
+				"options": {
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [660],
+					"stdout": [667],
+					"stderr": [662]
+				}
+			},
+			{
+				"line": 685,
+				"cmd": "security delete-generic-password -s service -a name",
+				"sync": false,
+				"options": {
+					"stdout": "\"ignore\"",
+					"stderr": "\"ignore\""
+				},
+				"subprocessAccess": {
+					"exited": [688]
+				}
+			},
+			{
+				"line": 689,
+				"cmd": "security add-generic-password -s service -a name -w value -U -j `stored:${new Date().toISOString()}`",
+				"sync": false,
+				"options": {
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [692, 708],
+					"stderr": [694, 710]
+				}
+			},
+			{
+				"line": 705,
+				"cmd": "security delete-generic-password -s service -a name",
+				"sync": false,
+				"options": {
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [708, 727],
+					"stdout": [728],
+					"stderr": [710]
+				}
+			},
+			{
+				"line": 724,
+				"cmd": "security find-generic-password -s service -a name",
+				"sync": false,
+				"options": {
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [727],
+					"stdout": [728]
+				}
+			},
+			{
+				"line": 1120,
+				"cmd": "git remote get-url origin",
+				"sync": true,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"pipe\"",
+					"stderr": "\"ignore\""
+				},
+				"subprocessAccess": {
+					"stdout": [1122],
+					"success": [1121]
+				}
+			},
+			{
+				"line": 1427,
+				"cmd": "bun workerPath",
+				"sync": false,
+				"options": {
+					"stdio": "[\"ignore\"",
+					"ipc": "function"
+				},
+				"subprocessAccess": {}
+			},
+			{
+				"line": 2514,
+				"cmd": "bun install",
+				"sync": false,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [2515],
+					"stderr": [2519]
+				}
+			},
+			{
+				"line": 3123,
+				"cmd": "dynamic",
+				"sync": false,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3124],
+					"stdout": [3125]
+				}
+			},
+			{
+				"line": 3237,
+				"cmd": "dynamic",
+				"sync": false,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3238],
+					"stdout": [3239]
+				}
+			},
+			{
+				"line": 3364,
+				"cmd": "bun outdated",
+				"sync": false,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3365],
+					"stdout": [3366]
+				}
+			},
+			{
+				"line": 3509,
+				"cmd": "dynamic",
+				"sync": false,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"inherit\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3510, 3538],
+					"stderr": [3512]
+				}
+			},
+			{
+				"line": 3537,
+				"cmd": "dynamic",
+				"sync": false,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"inherit\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3538],
+					"stderr": [3551]
+				}
+			},
+			{
+				"line": 3590,
+				"cmd": "bun install --frozen-lockfile",
+				"sync": false,
+				"options": {
+					"cwd": "dir",
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3591],
+					"stderr": [3592]
+				}
+			},
+			{
+				"line": 3635,
+				"cmd": "dynamic",
+				"sync": false,
+				"options": {
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3636, 3648],
+					"stdout": [3637, 3649],
+					"stderr": [3638, 3650]
+				}
+			},
+			{
+				"line": 3647,
+				"cmd": "bun info pkg --json",
+				"sync": false,
+				"options": {
+					"stdout": "\"pipe\"",
+					"stderr": "\"pipe\""
+				},
+				"subprocessAccess": {
+					"exited": [3648],
+					"stdout": [3649],
+					"stderr": [3650]
+				}
+			}
+		]
+	},
+	"signals": {
+		"doc": "https://bun.com/docs/runtime/child-process#reference",
+		"total_available": 37,
+		"total_used": 2,
+		"contexts": {
+			"process.removeListener": 1,
+			"process.on": 3,
+			"process.off": 2
+		},
+		"coverage": {
+			"SIGABRT": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGALRM": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGBUS": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGCHLD": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGCONT": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGFPE": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGHUP": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGILL": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGINT": {
+				"used": true,
+				"sites": 4
+			},
+			"SIGIO": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGIOT": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGKILL": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGPIPE": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGPOLL": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGPROF": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGPWR": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGQUIT": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGSEGV": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGSTKFLT": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGSTOP": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGSYS": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGTERM": {
+				"used": true,
+				"sites": 2
+			},
+			"SIGTRAP": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGTSTP": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGTTIN": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGTTOU": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGUNUSED": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGURG": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGUSR1": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGUSR2": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGVTALRM": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGWINCH": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGXCPU": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGXFSZ": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGBREAK": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGLOST": {
+				"used": false,
+				"sites": 0
+			},
+			"SIGINFO": {
+				"used": false,
+				"sites": 0
+			}
+		},
+		"sites": [
+			{
+				"signal": "SIGINT",
+				"line": 1376,
+				"context": "process.removeListener"
+			},
+			{
+				"signal": "SIGINT",
+				"line": 1451,
+				"context": "process.on"
+			},
+			{
+				"signal": "SIGINT",
+				"line": 3459,
+				"context": "process.on"
+			},
+			{
+				"signal": "SIGTERM",
+				"line": 3460,
+				"context": "process.on"
+			},
+			{
+				"signal": "SIGINT",
+				"line": 3558,
+				"context": "process.off"
+			},
+			{
+				"signal": "SIGTERM",
+				"line": 3559,
+				"context": "process.off"
+			}
+		]
+	},
+	"terminal": {
+		"doc": "https://bun.com/docs/api/spawn#terminal",
+		"type_ref": "TerminalOptions, Terminal",
+		"options_available": 6,
+		"options_used": 0,
+		"members_available": 6,
+		"members_used": 0,
+		"option_coverage": {
+			"cols": {
+				"used": false,
+				"sites": 0
+			},
+			"rows": {
+				"used": false,
+				"sites": 0
+			},
+			"name": {
+				"used": false,
+				"sites": 0
+			},
+			"data": {
+				"used": false,
+				"sites": 0
+			},
+			"exit": {
+				"used": false,
+				"sites": 0
+			},
+			"drain": {
+				"used": false,
+				"sites": 0
+			}
+		},
+		"member_coverage": {
+			"write": {
+				"used": false,
+				"sites": 0
+			},
+			"resize": {
+				"used": false,
+				"sites": 0
+			},
+			"setRawMode": {
+				"used": false,
+				"sites": 0
+			},
+			"ref": {
+				"used": false,
+				"sites": 0
+			},
+			"unref": {
+				"used": false,
+				"sites": 0
+			},
+			"close": {
+				"used": false,
+				"sites": 0
+			}
+		},
+		"option_sites": [],
+		"member_sites": []
+	},
+	"resource_usage": {
+		"doc": "https://bun.com/docs/api/spawn#resourceusage",
+		"type_ref": "ResourceUsage",
+		"call_sites": 0,
+		"fields_available": 8,
+		"fields_used": 0,
+		"field_coverage": {
+			"contextSwitches": {
+				"used": false,
+				"sites": 0
+			},
+			"cpuTime": {
+				"used": false,
+				"sites": 0
+			},
+			"maxRSS": {
+				"used": false,
+				"sites": 0
+			},
+			"messages": {
+				"used": false,
+				"sites": 0
+			},
+			"ops": {
+				"used": false,
+				"sites": 0
+			},
+			"shmSize": {
+				"used": false,
+				"sites": 0
+			},
+			"signalCount": {
+				"used": false,
+				"sites": 0
+			},
+			"swapCount": {
+				"used": false,
+				"sites": 0
+			}
+		},
+		"sub_fields": {
+			"cpuTime": ["user", "system", "total"],
+			"contextSwitches": ["voluntary", "involuntary"],
+			"messages": ["sent", "received"],
+			"ops": ["in", "out"]
+		},
+		"sites": []
+	},
+	"unused_bun_apis": [
+		"$",
+		"Archive",
+		"ArrayBufferSink",
+		"CSRF",
+		"Cookie",
+		"CookieMap",
+		"CryptoHasher",
+		"FFI",
+		"FileSystemRouter",
+		"JSON5",
+		"JSONC",
+		"JSONL",
+		"MD4",
+		"MD5",
+		"RedisClient",
+		"S3Client",
+		"SHA1",
+		"SHA224",
+		"SHA256",
+		"SHA384",
+		"SHA512",
+		"SHA512_256",
+		"SQL",
+		"TOML",
+		"Terminal",
+		"Transpiler",
+		"YAML",
+		"allocUnsafe",
+		"build",
+		"color",
+		"concatArrayBuffers",
+		"connect",
+		"deepEquals",
+		"deepMatch",
+		"deflateSync",
+		"dns",
+		"embeddedFiles",
+		"enableANSIColors",
+		"escapeHTML",
+		"fetch",
+		"gc",
+		"generateHeapSnapshot",
+		"gunzipSync",
+		"gzipSync",
+		"indexOfLine",
+		"inflateSync",
+		"isMainThread",
+		"listen",
+		"markdown",
+		"mmap",
+		"password",
+		"pathToFileURL",
+		"peek",
+		"plugin",
+		"postgres",
+		"randomUUIDv5",
+		"randomUUIDv7",
+		"readableStreamToArray",
+		"readableStreamToArrayBuffer",
+		"readableStreamToBlob",
+		"readableStreamToBytes",
+		"readableStreamToFormData",
+		"readableStreamToJSON",
+		"readableStreamToText",
+		"redis",
+		"resolve",
+		"resolveSync",
+		"s3",
+		"secrets",
+		"serve",
+		"sha",
+		"shrink",
+		"sleep",
+		"sleepSync",
+		"sql",
+		"stdin",
+		"udpSocket",
+		"unsafe",
+		"which",
+		"wrapAnsi",
+		"zstdCompress",
+		"zstdCompressSync",
+		"zstdDecompress",
+		"zstdDecompressSync"
+	]
+}

@@ -1,0 +1,125 @@
+#!/bin/bash
+
+echo "🚀 PRE-PUSH SECURITY VALIDATION v2.11"
+echo "====================================="
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+FAILED_CHECKS=0
+
+# Run full security enforcement
+echo "🔒 Running security enforcement..."
+if command -v bun &> /dev/null; then
+    bun run gov:security >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ Security enforcement passed${NC}"
+    else
+        echo -e "${RED}❌ Security violations detected${NC}"
+        echo "   Run: bun gov:security"
+        FAILED_CHECKS=$((FAILED_CHECKS + 1))
+    fi
+else
+    echo -e "${YELLOW}⚠️  Bun not found - skipping security enforcement${NC}"
+fi
+
+# Run access control enforcement
+echo ""
+echo "🔐 Running access control enforcement..."
+if command -v bun &> /dev/null; then
+    bun run gov:access >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ Access control enforcement passed${NC}"
+    else
+        echo -e "${RED}❌ Access control violations detected${NC}"
+        echo "   Run: bun gov:access"
+        FAILED_CHECKS=$((FAILED_CHECKS + 1))
+    fi
+else
+    echo -e "${YELLOW}⚠️  Bun not found - skipping access enforcement${NC}"
+fi
+
+# Check for large files
+echo ""
+echo "📁 Checking for large files..."
+LARGE_FILES=$(find . -type f -size +50M -not -path "./.git/*" -not -path "./node_modules/*" 2>/dev/null)
+if [ -n "$LARGE_FILES" ]; then
+    echo -e "${RED}❌ Large files detected:${NC}"
+    echo "$LARGE_FILES"
+    FAILED_CHECKS=$((FAILED_CHECKS + 1))
+else
+    echo -e "${GREEN}✅ No large files found${NC}"
+fi
+
+# Check for sensitive data in committed files
+echo ""
+echo "🔍 Scanning for sensitive data patterns..."
+SENSITIVE_PATTERNS=(
+    "password.*="
+    "secret.*="
+    "key.*="
+    "token.*="
+    "api_key.*="
+    "private_key"
+    "BEGIN.*PRIVATE"
+)
+
+for pattern in "${SENSITIVE_PATTERNS[@]}"; do
+    MATCHES=$(git grep -l "$pattern" -- . ":(exclude).git/*" ":(exclude)node_modules/*" ":(exclude)*.log" 2>/dev/null || true)
+    if [ -n "$MATCHES" ]; then
+        echo -e "${RED}❌ Potential sensitive data found with pattern '$pattern':${NC}"
+        echo "$MATCHES"
+        FAILED_CHECKS=$((FAILED_CHECKS + 1))
+    fi
+done
+
+if [ $FAILED_CHECKS -eq 0 ]; then
+    echo -e "${GREEN}✅ No sensitive patterns detected${NC}"
+fi
+
+# Verify audit log integrity
+echo ""
+echo "📋 Checking audit log integrity..."
+if [ -d "logs/audit" ]; then
+    TODAY=$(date +%Y-%m-%d)
+    AUDIT_FILE="logs/audit/${TODAY}.audit.json"
+    HASH_FILE="logs/audit/${TODAY}.audit.sha256"
+
+    if [ -f "$AUDIT_FILE" ] && [ -f "$HASH_FILE" ]; then
+        # Run audit integrity check
+        if command -v bun &> /dev/null; then
+            bun run secrets-manager.ts audit-verify "$TODAY" >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}✅ Audit log integrity verified${NC}"
+            else
+                echo -e "${RED}❌ Audit log integrity compromised${NC}"
+                FAILED_CHECKS=$((FAILED_CHECKS + 1))
+            fi
+        fi
+    else
+        echo -e "${YELLOW}⚠️  No audit logs for today${NC}"
+    fi
+else
+    echo -e "${YELLOW}⚠️  No audit directory found${NC}"
+fi
+
+# Final summary
+echo ""
+echo "📊 PRE-PUSH VALIDATION SUMMARY"
+echo "=============================="
+
+if [ $FAILED_CHECKS -eq 0 ]; then
+    echo -e "${GREEN}🎉 All pre-push checks passed! Push authorized.${NC}"
+    exit 0
+else
+    echo -e "${RED}🚨 $FAILED_CHECKS validation check(s) failed. Push blocked.${NC}"
+    echo ""
+    echo "🔧 To bypass this check (for emergencies only):"
+    echo "   git push --no-verify"
+    echo ""
+    echo "⚠️  WARNING: Bypassing security checks may compromise system integrity"
+    exit 1
+fi

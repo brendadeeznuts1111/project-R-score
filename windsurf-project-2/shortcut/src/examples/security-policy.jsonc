@@ -1,0 +1,103 @@
+{
+  // URLPattern Security Policy v1.3.6
+  // Comment-friendly configuration with Bun.JSONC
+  
+  "riskLevels": {
+    // Critical risks that will always fail builds
+    "critical": [
+      "localhost",
+      "127.0.0.1",
+      "file://",
+      "../",
+      "%2e%2e"
+    ],
+    
+    // High risks requiring explicit approval
+    "high": [
+      "internal",
+      "private",
+      "192.168.",
+      "10.",
+      "172.16."
+    ],
+    
+    // Medium risks with warnings
+    "medium": [
+      "://*",
+      "://*.",
+      "**/admin"
+    ],
+    
+    // Low risks for informational purposes
+    "low": [
+      "http://",
+      "ftp://",
+      "ws://"
+    ]
+  },
+  
+  // Custom security rules
+  "rules": [
+    {
+      // Block all localhost access
+      "name": "block-localhost",
+      "pattern": "http://localhost:*",
+      "action": "block"
+    },
+    
+    {
+      // Warn on admin patterns
+      "name": "warn-admin",
+      "pattern": "*/admin/*",
+      "action": "warn"
+    },
+    
+    {
+      // Log internal network access
+      "name": "log-internal",
+      "pattern": "http://192.168.*/*",
+      "action": "log"
+    },
+    
+    {
+      // Block file protocol
+      "name": "block-file",
+      "pattern": "file://*",
+      "action": "block"
+    }
+  ],
+  
+  // Performance and rate limiting
+  "limits": {
+    "maxPatternLength": 1000,
+    "maxAnalysisTime": 1000,
+    "rateLimitPerMinute": 60
+  },
+  
+  // Backup and retention
+  "backup": {
+    "enabled": true,
+    "retentionDays": 30,
+    "compressionLevel": 9,
+    "integrityCheck": true
+  },
+  
+  // Notification settings
+  "notifications": {
+    "critical": {
+      "email": true,
+      "slack": true,
+      "webhook": true
+    },
+    "high": {
+      "email": true,
+      "slack": false,
+      "webhook": true
+    },
+    "medium": {
+      "email": false,
+      "slack": true,
+      "webhook": false
+    }
+  }
+}

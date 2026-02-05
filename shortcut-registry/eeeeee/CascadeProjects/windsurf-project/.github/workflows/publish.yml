@@ -1,0 +1,44 @@
+name: Publish to NPM
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish (alpha, beta, latest)'
+        required: true
+        default: 'alpha'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build package
+        run: bun run build
+
+      - name: Publish to NPM
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            bun publish --tag ${{ github.event.inputs.tag }}
+          else
+            bun publish --tag latest
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

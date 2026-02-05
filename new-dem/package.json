@@ -1,0 +1,88 @@
+{
+  "name": "t3-lattice-registry",
+  "version": "3.4.0",
+  "description": "T3-Lattice v3.4 Market Microstructure Analyzer with VPIN, Quantum Operations, and MCP Integration",
+  "main": "cli/t3.ts",
+  "scripts": {
+    "dev": "bun run cli/t3.ts",
+    "dashboard": "bun run web/dashboard-server.ts",
+    "dashboard:enterprise": "bun run web/advanced-dashboard.ts",
+    "demo": "bun run examples/demo.ts",
+    "persona": "bun run persona/persona-runner.ts",
+    "persona:cli": "bun run persona/persona-cli.ts",
+    "build": "bun build cli/t3.ts",
+    "test": "bun test",
+    "test:unit": "bun test test/unit",
+    "test:integration": "bun test test/integration",
+    "test:e2e": "bun test test/e2e",
+    "check": "bun run cli/t3.ts --help > /dev/null && echo '✅ CLI syntax OK' && bun run web/dashboard-server.ts --help 2>/dev/null && echo '✅ Server syntax OK'",
+    "enterprise": "bun run web/advanced-dashboard.ts",
+    "flow": "bun run web/unified-flow.ts",
+    "mcp": "bun run src/mcp/t3lattice-mcp-config.ts",
+    "mcp:dev": "bun run --watch src/mcp/t3lattice-mcp-config.ts",
+    "mcp:health": "bun -e \"import('./src/mcp/t3lattice-mcp-config.ts').then(m => m.t3LatticeMCPServer.healthCheck().then(console.log))\"",
+    "mcp:test": "bun -e \"import('./src/mcp/t3lattice-mcp-config.ts').then(async (m) => { const server = new m.T3LatticeMCPServer(); console.log(await server.executeTool('vpin_calculator', {ticks: [{price:100, volume:1000, timestamp:Date.now(), source:'test'}]})); })\"",
+    "workers": "bun run src/bun-worker-offloading.ts",
+    "workers:benchmark": "bun -e \"import('./src/bun-worker-offloading.ts').then(async (m) => { const tasks = new m.T3LatticeWorkerTasks(m.workerPoolManager); console.log(await tasks.benchmarkWorkers(50)); })\"",
+    "quantum": "bun run src/ml-kem-768-quantum.ts",
+    "redis": "bun run src/redis-streams-integration.ts",
+    "start:full": "bun run src/mcp/t3lattice-mcp-config.ts & bun run web/advanced-dashboard.ts & bun run persona/persona-runner.ts",
+    "dev:full": "concurrently \"bun run mcp:dev\" \"bun run dashboard:enterprise\" \"bun run persona\"",
+    "lint": "bun --bun eslint . --ext .ts,.js",
+    "lint:fix": "bun --bun eslint . --ext .ts,.js --fix",
+    "format": "bun --bun prettier --write .",
+    "type-check": "bun --bun tsc --noEmit",
+    "clean": "rm -rf node_modules bun.lockb dist logs",
+    "fresh": "bun run clean && bun install && bun run build"
+  },
+  "keywords": [
+    "registry",
+    "components",
+    "bun",
+    "typescript",
+    "dashboard",
+    "mcp",
+    "vpin",
+    "quantum",
+    "market-microstructure"
+  ],
+  "author": "T3-Lattice Team",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "bin": {
+    "t3": "./cli/t3.ts",
+    "t3-mcp": "./src/mcp/t3lattice-mcp-config.ts"
+  },
+  "files": [
+    "src",
+    "cli",
+    "web",
+    "examples",
+    "docs",
+    "config.toml",
+    "bun.yaml"
+  ],
+  "dependencies": {
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.30",
+    "typescript": "^5.9.3",
+    "eslint": "^8.57.1",
+    "prettier": "^3.8.1",
+    "concurrently": "^8.2.2"
+  },
+  "bun": {
+    "allowJS": true,
+    "target": "bun",
+    "module": "esnext",
+    "loader": {
+      ".ts": "ts"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

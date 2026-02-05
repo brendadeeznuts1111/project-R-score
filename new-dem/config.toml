@@ -1,0 +1,93 @@
+# T3-Lattice Configuration
+version = "3.3.0"
+name = "T3-Lattice Registry"
+
+[server]
+port = 8080
+host = "localhost"
+timeout = 30000
+cors = true
+
+[server.headers]
+X-Powered-By = "T3-Lattice"
+X-Version = "3.3.0"
+Access-Control-Allow-Origin = "*"
+
+[registry]
+base_url = "https://api.example.com"
+scope = "@scoped/lattice-registry"
+cache_enabled = true
+cache_max_age = 3600
+timeout = 30000
+
+[registry.headers]
+Accept = "application/json"
+Content-Type = "application/json"
+X-Lattice-Scope = "@scoped/lattice-registry"
+
+[components]
+total = 24
+categories = 17
+stable = 21
+beta = 2
+experimental = 1
+
+[[components.list]]
+id = 1
+name = "TOML Config"
+category = "Config"
+status = "stable"
+bun_version = ">=1.0.0"
+
+[[components.list]]
+id = 2
+name = "DNS Prefetch"
+category = "Network"
+status = "stable"
+bun_version = ">=1.0.0"
+
+[[components.list]]
+id = 3
+name = "Secrets"
+category = "Security"
+status = "stable"
+bun_version = ">=1.0.0"
+
+[[components.list]]
+id = 6
+name = "SQLite"
+category = "Storage"
+status = "stable"
+bun_version = ">=1.0.0"
+
+[[components.list]]
+id = 24
+name = "Versioning"
+category = "Meta"
+status = "stable"
+bun_version = "any"
+
+[views]
+overview = [1, 3, 6, 24]
+detail = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+expert = "all"
+
+[colors]
+primary = "#6366f1"
+secondary = "#06b6d4"
+accent = "#f59e0b"
+success = "#10b981"
+warning = "#f59e0b"
+error = "#ef4444"
+
+[monitoring]
+enabled = true
+interval = 5000
+threshold = 80
+log_level = "info"
+
+[prefetch]
+dns_enabled = true
+db_enabled = true
+dns_hosts = ["api.github.com", "registry.npmjs.org", "bun.sh", "api.example.com"]
+db_connections = ["sqlite:main.db", "redis:localhost:6379", "postgres:localhost:5432"]

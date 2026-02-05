@@ -1,0 +1,132 @@
+# Enhanced Bun Configuration Template
+# Comprehensive CLI options integration for enterprise development
+
+[install]
+# Auto-install configuration
+auto = true
+cache = true
+frozenLockfile = true
+lockfile = true
+
+# Registry and scopes
+registry = "https://registry.npmjs.org"
+trustedDependencies = ["@systems-dashboard/*", "react", "react-dom"]
+scopes."@systems-dashboard" = "https://npm.pkg.github.com/"
+
+# Package management
+preferOffline = false
+preferLatest = false
+
+[build]
+# Build optimization
+target = "bun"
+outdir = "dist"
+minify = true
+splitting = true
+sourcemap = "linked"
+
+# Build defines
+define = {
+  "process.env.NODE_ENV" = "\"development\"",
+  "process.env.APP_VERSION" = "\"1.0.0\"",
+  "process.env.BUN_VERSION" = "\"${Bun.version}\""
+}
+
+# External dependencies
+external = ["react", "react-dom"]
+
+[dev]
+# Development server
+port = 3000
+hostname = "localhost"
+open = true
+watch = true
+hot = true
+
+# Source maps and debugging
+sourcemap = true
+breakOnStart = false
+
+[test]
+# Test configuration
+timeout = "30s"
+coverage = true
+verbose = true
+runner = "bun:test"
+reporter = "dot"
+
+[runtime]
+# Runtime behavior
+consoleDepth = 4
+smol = false
+exposeGc = false
+unhandledRejections = "warn"
+zeroFillBuffers = true
+
+[debug]
+# Debugging configuration
+editor = "vscode"
+breakOnStart = false
+preload = []
+
+[define]
+# Environment variables and build-time constants
+process.env.NODE_ENV = "\"development\""
+process.env.APP_VERSION = "\"1.0.0\""
+process.env.BUILD_TIMESTAMP = "\"${new Date().toISOString()}\""
+
+[loaders]
+# File extension handling
+".js" = "jsx"
+".jsx" = "jsx"
+".ts" = "ts"
+".tsx" = "tsx"
+".json" = "json"
+".toml" = "toml"
+".txt" = "text"
+".wasm" = "wasm"
+".css" = "css"
+".svg" = "file"
+
+[jsx]
+# JSX configuration
+runtime = "automatic"
+importSource = "react"
+factory = "React.createElement"
+fragment = "React.Fragment"
+development = true
+
+[macro]
+# Macros (experimental)
+enabled = true
+
+[bundle]
+# Package bundling
+packages = ["@systems-dashboard/*"]
+external = ["react", "react-dom", "vite"]
+format = "esm"
+
+[serve]
+# Server configuration
+maxRequestBodySize = 104857600  # 100MB
+idleTimeout = 30
+
+[run]
+# Script execution
+shell = "system"
+env = { NODE_ENV = "development" }
+hot = true
+
+# Pre-connection options
+sqlPreconnect = false
+redisPreconnect = false
+
+# Network and security
+useSystemCa = false
+maxHeaderSize = 16384
+dnsTimeout = "5s"
+
+# Performance
+smol = false
+exposeGc = false
+zeroFillBuffers = true

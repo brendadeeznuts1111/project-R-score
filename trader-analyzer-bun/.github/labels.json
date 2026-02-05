@@ -1,0 +1,82 @@
+[
+  {
+    "name": "enhancement",
+    "color": "00d4ff",
+    "description": "New features, improvements"
+  },
+  {
+    "name": "bug",
+    "color": "ff1744",
+    "description": "Bug fixes, critical issues"
+  },
+  {
+    "name": "documentation",
+    "color": "00ff88",
+    "description": "Docs, guides, references"
+  },
+  {
+    "name": "refactoring",
+    "color": "667eea",
+    "description": "Code cleanup, restructuring"
+  },
+  {
+    "name": "api",
+    "color": "00d4ff",
+    "description": "API routes, endpoints"
+  },
+  {
+    "name": "dashboard",
+    "color": "667eea",
+    "description": "Dashboard, UI components"
+  },
+  {
+    "name": "telegram",
+    "color": "9c27b0",
+    "description": "Telegram integration"
+  },
+  {
+    "name": "mcp-tools",
+    "color": "ff00ff",
+    "description": "MCP tools, registry"
+  },
+  {
+    "name": "registry",
+    "color": "ff1744",
+    "description": "Registry system"
+  },
+  {
+    "name": "error-logs",
+    "color": "ff6b00",
+    "description": "Error handling, logs"
+  },
+  {
+    "name": "configuration",
+    "color": "9c27b0",
+    "description": "Config, constants, env vars"
+  },
+  {
+    "name": "constants",
+    "color": "9c27b0",
+    "description": "Constants, hardcoded values"
+  },
+  {
+    "name": "ports",
+    "color": "9c27b0",
+    "description": "Port configuration"
+  },
+  {
+    "name": "ready-for-review",
+    "color": "00ff88",
+    "description": "PR ready for review"
+  },
+  {
+    "name": "needs-testing",
+    "color": "ff6b00",
+    "description": "Requires testing"
+  },
+  {
+    "name": "blocked",
+    "color": "ff1744",
+    "description": "Blocked by dependencies"
+  }
+]

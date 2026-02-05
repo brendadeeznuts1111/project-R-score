@@ -1,0 +1,16 @@
+{
+  "name": "@dev-hq/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": {
+    "dev-hq": "./src/index.ts"
+  },
+  "dependencies": {
+    "commander": "^11.1.0"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "test": "bun test test/cli.test.ts"
+  }
+}

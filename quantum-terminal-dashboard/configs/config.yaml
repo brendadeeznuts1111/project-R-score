@@ -1,0 +1,199 @@
+# Quantum Cash Flow Lattice Configuration
+# Environment-based configuration with YAML support
+
+defaults: &defaults
+  # Server configuration
+  server:
+    host: "api.example.com"
+    port: 443
+    timeout: 5000
+    retries: 3
+
+  # Database configuration
+  database:
+    host: "db.example.com"
+    port: 5432
+    name: "quantum_lattice"
+    pool_size: 10
+    
+  # Cache configuration
+  cache:
+    enabled: true
+    ttl: 3600
+    provider: "redis"
+    
+  # Security configuration
+  security:
+    jwt_secret: "${JWT_SECRET}"
+    session_timeout: 86400
+    cors_enabled: true
+    
+  # Performance configuration
+  performance:
+    simd_enabled: true
+    worker_threads: 4
+    memory_limit: "512MB"
+    
+  # Logging configuration
+  logging:
+    level: "info"
+    format: "json"
+    
+  # Feature flags
+  features:
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 50
+      allowedUsers:
+        - admin@example.com
+        - beta@example.com
+    experimentalAPI:
+      enabled: false
+      endpoints:
+        - /api/v2/experimental
+        - /api/v2/beta
+    darkMode:
+      enabled: true
+      default: "auto"
+
+# Development environment
+development:
+  <<: *defaults
+  server:
+    <<: *defaults.server
+    host: "127.0.0.1"
+    port: 
+  database:
+    <<: *defaults.database
+    host: "127.0.0.1"
+    name: "quantum_lattice_dev"
+  cache:
+    <<: *defaults.cache
+    ttl: 300
+  security:
+    <<: *defaults.security
+    jwt_secret: "dev_secret_12345"
+  logging:
+    <<: *defaults.logging
+    level: "debug"
+    format: "pretty"
+  features:
+    <<: *defaults.features
+    quantumTerminal:
+      enabled: true
+      rolloutPercentage: 100
+    realTimeMonitoring:
+      enabled: true
+      rolloutPercentage: 100
+
+# Staging environment
+staging:
+  <<: *defaults
+  server:
+    <<: *defaults.server
+    host: "staging.quantum-lattice.com"
+    port: 443
+  database:
+    <<: *defaults.database
+    host: "${STAGING_DB_HOST}"
+    name: "quantum_lattice_staging"
+  cache:
+    <<: *defaults.cache
+    ttl: 1800
+  security:
+    <<: *defaults.security
+    jwt_secret: "${STAGING_JWT_SECRET}"
+  logging:
+    <<: *defaults.logging
+    level: "info"
+    format: "json"
+  features:
+    <<: *defaults.features
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 25
+    quantumTerminal:
+      enabled: true
+      rolloutPercentage: 50
+
+# Production environment
+production:
+  <<: *defaults
+  server:
+    <<: *defaults.server
+    host: "api.quantum-lattice.com"
+    port: 443
+    timeout: 10000
+  database:
+    <<: *defaults.database
+    host: "${PROD_DB_HOST}"
+    name: "quantum_lattice_prod"
+    pool_size: 20
+  cache:
+    <<: *defaults.cache
+    ttl: 86400
+    provider: "redis-cluster"
+  security:
+    <<: *defaults.security
+    jwt_secret: "${PROD_JWT_SECRET}"
+    session_timeout: 3600
+  performance:
+    <<: *defaults.performance
+    worker_threads: 8
+    memory_limit: "2GB"
+  logging:
+    <<: *defaults.logging
+    level: "error"
+    format: "json"
+  features:
+    <<: *defaults.features
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 100
+    experimentalAPI:
+      enabled: false
+      endpoints:
+        - /api/v2/experimental
+        - /api/v2/beta
+    quantumTerminal:
+      enabled: true
+      rolloutPercentage: 100
+    realTimeMonitoring:
+      enabled: true
+      rolloutPercentage: 75
+    predictiveAnalytics:
+      enabled: false
+      rolloutPercentage: 0
+
+# Testing environment
+test:
+  <<: *defaults
+  server:
+    <<: *defaults.server
+    host: "127.0.0.1"
+    port: 3001
+  database:
+    <<: *defaults.database
+    host: "127.0.0.1"
+    name: "quantum_lattice_test"
+    pool_size: 5
+  cache:
+    <<: *defaults.cache
+    enabled: false
+  security:
+    <<: *defaults.security
+    jwt_secret: "test_secret_12345"
+    session_timeout: 3600
+  logging:
+    <<: *defaults.logging
+    level: "silent"
+  features:
+    <<: *defaults.features
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 100
+    experimentalAPI:
+      enabled: true
+      rolloutPercentage: 100
+    darkMode:
+      enabled: false

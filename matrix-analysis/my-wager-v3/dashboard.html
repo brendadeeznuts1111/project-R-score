@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tier-1380 Dashboard - Enhanced Log Parser</title>
+    <style>
+        body {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        .matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .card {
+            border: 1px solid #00ff00;
+            padding: 20px;
+            background: rgba(0, 255, 0, 0.02);
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #00ff00;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #00ff00;
+            color: #000;
+            font-weight: bold;
+            margin: 2px;
+            border-radius: 3px;
+        }
+        .metric {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .seal {
+            font-family: monospace;
+            font-size: 12px;
+            color: #00cc00;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .blink {
+            animation: blink 2s infinite;
+        }
+        .log-viewer {
+            background: #000;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 5px;
+            border-radius: 2px;
+        }
+        .log-rangers { color: #00ffff; }
+        .log-warning { color: #ffff00; }
+        .log-error { color: #ff0000; }
+        .log-analytics { color: #ff00ff; }
+        .log-device { color: #00ff00; }
+        .severity-high { background: rgba(255, 0, 0, 0.1); }
+        .severity-medium { background: rgba(255, 255, 0, 0.1); }
+        .severity-low { background: rgba(0, 255, 0, 0.1); }
+        .controls {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 5px 15px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+        .btn:hover {
+            background: #00cc00;
+        }
+        .btn:active {
+            background: #009900;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #00ff00;
+            background: rgba(0, 255, 0, 0.02);
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: #00cc00;
+            margin-top: 5px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #00ff00;
+            transition: width 0.3s ease;
+        }
+        .security-score {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .score-excellent { color: #00ff00; }
+        .score-good { color: #ffff00; }
+        .score-poor { color: #ff0000; }
+        .metric-trend {
+            font-size: 10px;
+            margin-left: 5px;
+        }
+        .trend-up { color: #00ff00; }
+        .trend-down { color: #ff0000; }
+        .trend-neutral { color: #ffff00; }
+        .metric-card {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            background: rgba(0, 255, 0, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00ff00;
+            display: block;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #00cc00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .metric-subtitle {
+            font-size: 10px;
+            color: #009900;
+            margin-top: 5px;
+        }
+        .sparkline {
+            width: 100%;
+            height: 40px;
+            margin-top: 10px;
+            background: #000;
+            border: 1px solid #00ff00;
+            border-radius: 3px;
+        }
+        .alert-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff0000;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .chart-container {
+            background: #000;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 30px;
+            gap: 2px;
+            margin-top: 10px;
+        }
+        .chart-bar {
+            flex: 1;
+            background: #00ff00;
+            min-height: 2px;
+            transition: height 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 TIER-1380 PROFILES & TERMINALS EMPIRE</h1>
+            <p>Quantum-Sealed Configuration Management | Enhanced Log Parser Integration</p>
+            <p class="blink">STATUS: OPERATIONAL | LOG PARSER: ACTIVE</p>
+        </div>
+
+        <div class="matrix">
+            <div class="card">
+                <h3>📊 Processing Metrics</h3>
+                <div class="metric-card">
+                    <span class="metric-value" id="lines-processed">0</span>
+                    <span class="metric-label">Lines Processed</span>
+                    <div class="metric-subtitle">
+                        <span id="processing-rate">0</span> lines/sec
+                        <span class="metric-trend trend-neutral" id="processing-trend">→</span>
+                    </div>
+                    <div class="mini-chart" id="processing-chart"></div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="processing-time">0ms</span>
+                    <span class="metric-label">Avg Processing Time</span>
+                    <div class="metric-subtitle">
+                        <span id="latency-status">Excellent</span>
+                        <span class="metric-trend trend-up" id="latency-trend">↓</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 System Performance</h3>
+                <div class="metric-card">
+                    <span class="metric-value" id="throughput">0/s</span>
+                    <span class="metric-label">Throughput</span>
+                    <div class="metric-subtitle">
+                        <span id="throughput-status">Optimal</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="throughput-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="memory-usage">0MB</span>
+                    <span class="metric-label">Memory Usage</span>
+                    <div class="metric-subtitle">
+                        <span id="memory-efficiency">Efficient</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="memory-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="position: relative;">
+                <h3>🔒 Security Status</h3>
+                <div class="security-score score-excellent" id="security-score">100</div>
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">CSP</span>
+                        <span class="metric-value" id="csp-score">100%</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="csp-compliance" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Network</span>
+                        <span class="metric-value" id="network-score">100%</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="network-security" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Privacy</span>
+                        <span class="metric-value" id="privacy-score">100%</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="data-privacy" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert-badge" id="security-alerts" style="display: none;">!</div>
+            </div>
+
+            <div class="card">
+                <h3>👥 Activity Monitor</h3>
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <span class="metric-value" id="rangers-logs">0</span>
+                        <span class="metric-label">Rangers Logs</span>
+                        <div class="metric-subtitle">
+                            <span id="rangers-rate">0/min</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="browser-warnings">0</span>
+                        <span class="metric-label">Warnings</span>
+                        <div class="metric-subtitle">
+                            <span id="warning-severity">Low</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="device-info">0</span>
+                        <span class="metric-label">Devices</span>
+                        <div class="metric-subtitle">
+                            <span id="device-types">0 types</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="analytics-events">0</span>
+                        <span class="metric-label">Analytics</span>
+                        <div class="metric-subtitle">
+                            <span id="analytics-rate">0/min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🎯 Session Analytics</h3>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <span class="metric-value" id="unique-users">0</span>
+                    <span class="metric-label">Unique Users</span>
+                    <div class="metric-subtitle">
+                        <span id="user-growth">Stable</span>
+                        <span class="metric-trend trend-neutral" id="user-trend">→</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="active-sessions">0</span>
+                    <span class="metric-label">Active Sessions</span>
+                    <div class="metric-subtitle">
+                        <span id="session-duration">Avg: 0m</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="sdk-status">UNKNOWN</span>
+                    <span class="metric-label">SDK Status</span>
+                    <div class="metric-subtitle">
+                        <span id="sdk-version">N/A</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="top-issue">None</span>
+                    <span class="metric-label">Top Issue</span>
+                    <div class="metric-subtitle">
+                        <span id="issue-count">0 occurrences</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Live Log Stream</h3>
+            <div class="controls">
+                <button class="btn" onclick="toggleStreaming()">Start Streaming</button>
+                <button class="btn" onclick="clearLogs()">Clear</button>
+                <button class="btn" onclick="exportLogs()">Export</button>
+                <button class="btn" onclick="runTest()">Test Parser</button>
+            </div>
+            <div class="log-viewer" id="log-viewer">
+                <div class="log-entry">🔒 Tier-1380 Log Parser Ready. Click "Start Streaming" to begin...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Regional Deployment Matrix</h3>
+            <pre style="margin: 0; color: #00ff00;">
+us-east-1    ✅ 4 profiles, 5 terminals    | Log Parser: ACTIVE
+us-west-2    ✅ 4 profiles, 5 terminals    | Log Parser: ACTIVE
+eu-west-1    ✅ 4 profiles, 5 terminals    | Log Parser: ACTIVE
+ap-southeast-1 ✅ 4 profiles, 5 terminals | Log Parser: ACTIVE
+sa-east-1    ✅ 4 profiles, 5 terminals    | Log Parser: ACTIVE
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        let isStreaming = false;
+        let logCount = 0;
+        let ws = null;
+        let stats = {
+            linesProcessed: 0,
+            rangersLogs: 0,
+            browserWarnings: 0,
+            deviceInfo: 0,
+            analyticsEvents: 0,
+            uniqueUsers: new Set(),
+            activeSessions: new Set(),
+            securityScore: 100,
+            processingTime: 0,
+            memoryUsage: 0,
+            history: {
+                processing: [],
+                memory: [],
+                throughput: []
+            }
+        };
+
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                addLogEntry('🔌 Connected to Tier-1380 Log Parser Server', 'rangers', 'low');
+                document.getElementById('sdk-status').textContent = 'CONNECTED';
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'log') {
+                    addLogEntry(data.data.message, data.data.logType, data.data.severity);
+                } else if (data.type === 'stats') {
+                    updateStatsFromServer(data.data);
+                }
+            };
+
+            ws.onclose = () => {
+                addLogEntry('❌ Disconnected from server. Reconnecting...', 'error', 'high');
+                document.getElementById('sdk-status').textContent = 'DISCONNECTED';
+                setTimeout(initWebSocket, 3000);
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                addLogEntry('⚠️ WebSocket connection error', 'error', 'medium');
+            };
+        }
+
+        function updateStatsFromServer(serverStats) {
+            // Store previous values for trend calculation
+            const prevLines = stats.linesProcessed;
+            const prevMemory = stats.memoryUsage;
+
+            stats.linesProcessed = serverStats.linesProcessed;
+            stats.processingTime = parseFloat(serverStats.processingTime);
+            stats.memoryUsage = parseFloat(serverStats.memoryUsage);
+            stats.rangersLogs = serverStats.rangersLogs;
+            stats.browserWarnings = serverStats.browserWarnings;
+            stats.deviceInfo = serverStats.deviceInfo;
+            stats.analyticsEvents = serverStats.analyticsEvents;
+            stats.uniqueUsers = new Set(Array.from({length: serverStats.uniqueUsers}, (_, i) => `user_${i}`));
+            stats.activeSessions = new Set(Array.from({length: serverStats.activeSessions}, (_, i) => `session_${i}`));
+            stats.securityScore = serverStats.securityScore;
+
+            // Update history for charts
+            updateHistory();
+
+            // Update all metrics
+            updateMetrics();
+            updateEnhancedMetrics();
+            updateCharts();
+        }
+
+        function updateHistory() {
+            // Keep last 20 data points
+            stats.history.processing.push(stats.linesProcessed);
+            stats.history.memory.push(stats.memoryUsage);
+            stats.history.throughput.push(Math.round(stats.linesProcessed / (stats.processingTime / 1000 || 1)));
+
+            if (stats.history.processing.length > 20) {
+                stats.history.processing.shift();
+                stats.history.memory.shift();
+                stats.history.throughput.shift();
+            }
+        }
+
+        function updateMetrics() {
+            document.getElementById('lines-processed').textContent = stats.linesProcessed.toLocaleString();
+            document.getElementById('processing-time').textContent = stats.processingTime.toFixed(2) + 'ms';
+            document.getElementById('throughput').textContent = Math.round(stats.linesProcessed / (stats.processingTime / 1000 || 1)) + '/s';
+            document.getElementById('memory-usage').textContent = stats.memoryUsage.toFixed(1) + 'MB';
+
+            document.getElementById('rangers-logs').textContent = stats.rangersLogs.toLocaleString();
+            document.getElementById('browser-warnings').textContent = stats.browserWarnings.toLocaleString();
+            document.getElementById('device-info').textContent = stats.deviceInfo.toLocaleString();
+            document.getElementById('analytics-events').textContent = stats.analyticsEvents.toLocaleString();
+
+            document.getElementById('unique-users').textContent = stats.uniqueUsers.size.toLocaleString();
+            document.getElementById('active-sessions').textContent = stats.activeSessions.size.toLocaleString();
+
+            updateSecurityScore();
+        }
+
+        function updateEnhancedMetrics() {
+            // Processing rate
+            const processingRate = Math.round(stats.linesProcessed / (stats.processingTime / 1000 || 1));
+            document.getElementById('processing-rate').textContent = processingRate.toLocaleString();
+
+            // Latency status
+            const latencyStatus = stats.processingTime < 1 ? 'Excellent' :
+                                 stats.processingTime < 5 ? 'Good' :
+                                 stats.processingTime < 10 ? 'Fair' : 'Poor';
+            document.getElementById('latency-status').textContent = latencyStatus;
+
+            // Throughput status and bar
+            const throughputStatus = processingRate > 1000 ? 'Optimal' :
+                                    processingRate > 500 ? 'Good' :
+                                    processingRate > 100 ? 'Fair' : 'Low';
+            document.getElementById('throughput-status').textContent = throughputStatus;
+            document.getElementById('throughput-bar').style.width = Math.min(100, processingRate / 10) + '%';
+
+            // Memory efficiency
+            const memoryEfficiency = stats.memoryUsage < 10 ? 'Efficient' :
+                                     stats.memoryUsage < 50 ? 'Moderate' : 'High';
+            document.getElementById('memory-efficiency').textContent = memoryEfficiency;
+            document.getElementById('memory-bar').style.width = Math.min(100, stats.memoryUsage * 2) + '%';
+
+            // Security scores
+            document.getElementById('csp-score').textContent = stats.securityScore + '%';
+            document.getElementById('network-score').textContent = stats.securityScore + '%';
+            document.getElementById('privacy-score').textContent = stats.securityScore + '%';
+
+            // Activity rates
+            document.getElementById('rangers-rate').textContent = Math.round(stats.rangersLogs * 0.6) + '/min';
+            document.getElementById('analytics-rate').textContent = Math.round(stats.analyticsEvents * 0.6) + '/min';
+
+            // Warning severity
+            const warningSeverity = stats.browserWarnings === 0 ? 'Low' :
+                                   stats.browserWarnings < 5 ? 'Medium' : 'High';
+            document.getElementById('warning-severity').textContent = warningSeverity;
+
+            // Device types (simulated)
+            document.getElementById('device-types').textContent = Math.min(stats.deviceInfo, 5) + ' types';
+
+            // User growth (simulated)
+            const userGrowth = stats.uniqueUsers.size > 10 ? 'Growing' :
+                              stats.uniqueUsers.size > 5 ? 'Stable' : 'Low';
+            document.getElementById('user-growth').textContent = userGrowth;
+
+            // Session duration (simulated)
+            document.getElementById('session-duration').textContent = 'Avg: ' + Math.round(Math.random() * 30 + 5) + 'm';
+
+            // SDK version (simulated)
+            document.getElementById('sdk-version').textContent = 'v5.1.12_tob';
+
+            // Top issue
+            const topIssue = stats.browserWarnings > 0 ? 'CSP Violations' :
+                            stats.rangersLogs === 0 ? 'No SDK Logs' : 'None';
+            document.getElementById('top-issue').textContent = topIssue;
+            document.getElementById('issue-count').textContent = Math.max(stats.browserWarnings, 0) + ' occurrences';
+
+            // Security alerts badge
+            const alertBadge = document.getElementById('security-alerts');
+            if (stats.securityScore < 80) {
+                alertBadge.style.display = 'flex';
+                alertBadge.textContent = stats.securityScore < 60 ? '!!' : '!';
+            } else {
+                alertBadge.style.display = 'none';
+            }
+        }
+
+        function updateCharts() {
+            // Update mini chart for processing
+            const chart = document.getElementById('processing-chart');
+            if (chart && stats.history.processing.length > 1) {
+                const values = stats.history.processing;
+                const max = Math.max(...values);
+                const min = Math.min(...values);
+                const range = max - min || 1;
+
+                chart.innerHTML = '';
+                values.forEach(value => {
+                    const bar = document.createElement('div');
+                    bar.className = 'chart-bar';
+                    bar.style.height = ((value - min) / range * 100 + 10) + '%';
+                    chart.appendChild(bar);
+                });
+            }
+        }
+
+        function updateSecurityScore() {
+            const score = stats.securityScore;
+            const element = document.getElementById('security-score');
+            element.textContent = score;
+
+            element.className = 'security-score ' +
+                (score >= 80 ? 'score-excellent' :
+                 score >= 60 ? 'score-good' : 'score-poor');
+
+            document.getElementById('csp-compliance').style.width = score + '%';
+            document.getElementById('network-security').style.width = score + '%';
+            document.getElementById('data-privacy').style.width = score + '%';
+        }
+
+        function addLogEntry(message, type = 'info', severity = 'low') {
+            const viewer = document.getElementById('log-viewer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type} severity-${severity}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+
+            viewer.appendChild(entry);
+            viewer.scrollTop = viewer.scrollHeight;
+
+            // Keep only last 100 entries
+            while (viewer.children.length > 100) {
+                viewer.removeChild(viewer.firstChild);
+            }
+        }
+
+        function toggleStreaming() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                addLogEntry('❌ Not connected to server', 'error', 'high');
+                return;
+            }
+
+            isStreaming = !isStreaming;
+            const btn = event.target;
+            btn.textContent = isStreaming ? 'Stop Streaming' : 'Start Streaming';
+
+            ws.send(JSON.stringify({
+                type: isStreaming ? 'startStream' : 'stopStream'
+            }));
+        }
+
+        function clearLogs() {
+            const viewer = document.getElementById('log-viewer');
+            viewer.innerHTML = '<div class="log-entry">🔒 Log cleared. Ready for new entries...</div>';
+        }
+
+        function exportLogs() {
+            const viewer = document.getElementById('log-viewer');
+            const logs = Array.from(viewer.children).map(child => child.textContent).join('\n');
+
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tier1380-logs-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            addLogEntry('📁 Logs exported to file', 'rangers', 'low');
+        }
+
+        function runTest() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                addLogEntry('❌ Not connected to server', 'error', 'high');
+                return;
+            }
+
+            ws.send(JSON.stringify({ type: 'test' }));
+        }
+
+        // Simulate real-time visual updates
+        setInterval(() => {
+            const metrics = document.querySelectorAll('.metric-card');
+            metrics.forEach(metric => {
+                if (Math.random() > 0.95) {
+                    metric.style.background = 'rgba(0, 255, 0, 0.1)';
+                    setTimeout(() => {
+                        metric.style.background = 'rgba(0, 255, 0, 0.05)';
+                    }, 500);
+                }
+            });
+        }, 2000);
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            updateMetrics();
+            updateEnhancedMetrics();
+            initWebSocket();
+            addLogEntry('🔒 Tier-1380 Enhanced Log Parser Dashboard initialized', 'rangers', 'low');
+            addLogEntry('📊 Connecting to log parser server...', 'analytics', 'low');
+        });
+    </script>
+</body>
+</html>

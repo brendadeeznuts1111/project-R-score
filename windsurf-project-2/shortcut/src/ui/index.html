@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Shortcut System</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <h1>Lightning Shortcuts</h1>
+                </div>
+                <div class="header-actions">
+                    <select id="profile-selector" class="profile-selector">
+                        <option value="">Loading profiles...</option>
+                    </select>
+                    <button id="add-shortcut" class="btn btn-primary">
+                        <span>+</span> Add Shortcut
+                    </button>
+                    <button id="settings-btn" class="btn btn-secondary">
+                        ⚙️ Settings
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="nav">
+                    <a href="#shortcuts" class="nav-link active" data-section="shortcuts">
+                        ⌨️ Shortcuts
+                    </a>
+                    <a href="#profiles" class="nav-link" data-section="profiles">
+                        👥 Profiles
+                    </a>
+                    <a href="#analytics" class="nav-link" data-section="analytics">
+                        📊 Analytics
+                    </a>
+                    <a href="#conflicts" class="nav-link" data-section="conflicts">
+                        ⚠️ Conflicts
+                    </a>
+                    <a href="#training" class="nav-link" data-section="training">
+                        🎯 Training
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Shortcuts Section -->
+                <section id="shortcuts-section" class="section active">
+                    <div class="section-header">
+                        <h2>Keyboard Shortcuts</h2>
+                        <div class="search-box">
+                            <input type="text" id="search-input" placeholder="Search shortcuts...">
+                            <button id="search-btn" class="btn btn-small">🔍</button>
+                        </div>
+                    </div>
+                    
+                    <div class="shortcuts-grid" id="shortcuts-grid">
+                        <!-- Shortcuts will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Profiles Section -->
+                <section id="profiles-section" class="section">
+                    <div class="section-header">
+                        <h2>Profiles</h2>
+                        <button id="create-profile" class="btn btn-primary">
+                            <span>+</span> Create Profile
+                        </button>
+                    </div>
+                    
+                    <div class="profiles-grid" id="profiles-grid">
+                        <!-- Profiles will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Analytics Section -->
+                <section id="analytics-section" class="section">
+                    <div class="section-header">
+                        <h2>Usage Analytics</h2>
+                        <select id="analytics-period" class="period-selector">
+                            <option value="7">Last 7 days</option>
+                            <option value="30" selected>Last 30 days</option>
+                            <option value="90">Last 90 days</option>
+                        </select>
+                    </div>
+                    
+                    <div class="analytics-content">
+                        <div class="stats-grid" id="stats-grid">
+                            <!-- Stats will be populated here -->
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h3>Usage Trends</h3>
+                            <canvas id="usage-chart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Conflicts Section -->
+                <section id="conflicts-section" class="section">
+                    <div class="section-header">
+                        <h2>Shortcut Conflicts</h2>
+                        <button id="detect-conflicts" class="btn btn-secondary">
+                            🔍 Detect Conflicts
+                        </button>
+                    </div>
+                    
+                    <div class="conflicts-list" id="conflicts-list">
+                        <!-- Conflicts will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Training Section -->
+                <section id="training-section" class="section">
+                    <div class="section-header">
+                        <h2>Shortcut Training</h2>
+                        <button id="start-training" class="btn btn-primary">
+                            🎯 Start Training
+                        </button>
+                    </div>
+                    
+                    <div class="training-content">
+                        <div class="training-progress" id="training-progress">
+                            <!-- Training progress will be shown here -->
+                        </div>
+                        
+                        <div class="training-lessons" id="training-lessons">
+                            <!-- Training lessons will be listed here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Modal Title</h3>
+                <button id="modal-close" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-content" id="modal-content">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container">
+        <!-- Toast notifications will appear here -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+bun.lockb
+
+# Build outputs
+dist/
+lib/
+bin/
+zig-cache/
+zig-out/
+
+# Test artifacts
+test-bun.lockb
+test-write.lockb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+

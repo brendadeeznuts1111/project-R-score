@@ -1,0 +1,21 @@
+{
+  "name": "@devhq/cli",
+  "version": "1.2.0",
+  "description": "Dev HQ Ultimate PTY CLI",
+  "main": "index.ts",
+  "types": "index.ts",
+  "type": "module",
+  "dependencies": {
+    "commander": "catalog:"
+  },
+  "publishConfig": {
+    "registry": "https://registry.devhq.com"
+  },
+  "bin": {
+    "dev-hq": "index.ts"
+  },
+  "files": [
+    "*.ts",
+    "README.md"
+  ]
+}

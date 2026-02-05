@@ -1,0 +1,12 @@
+[build]
+target = "browser"
+minify = true
+splitting = false
+format = "esm"
+
+[install]
+registry = "https://registry.npmjs.org"
+saveTextLockfile = true
+
+[run]
+hot = true

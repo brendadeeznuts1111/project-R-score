@@ -1,0 +1,62 @@
+{
+  "name": "bun-stream-dashboard",
+  "version": "1.0.0",
+  "description": "Interactive WebSocket dashboard for Bun stream management (stdin, stdout, stderr)",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot --watch server.ts",
+    "start": "bun server.ts",
+    "hot": "bun --hot server.ts",
+    "watch": "bun --watch server.ts",
+    "build": "bun build ./src/index.tsx --outdir ./dist --target browser --minify --sourcemap",
+    "build:dev": "bun build ./src/index.tsx --outdir ./dist --target browser --sourcemap",
+    "stdin-demo": "echo 'Hello from stdin!' | bun --hot server.ts",
+    "open": "open http://localhost:$(cat .port 2>/dev/null || echo 'Check server output for port')",
+    "bun:integration": "bun src/bun/demo.tsx",
+    "bun:simple": "bun src/bun/simple-demo.tsx",
+    "bun:build": "bun src/bun/build.ts",
+    "bun:build:dev": "bun src/bun/build.ts build development",
+    "bun:build:prod": "bun src/bun/build.ts build production",
+    "bun:build:all": "bun src/bun/build.ts build-all",
+    "bun:watch": "bun src/bun/build.ts watch development",
+    "bun:analyze": "bun src/bun/build.ts analyze development",
+    "bun:production": "bun src/bun/build.ts production"
+  },
+  "keywords": [
+    "bun",
+    "websocket",
+    "streams",
+    "stdin",
+    "stdout",
+    "stderr",
+    "dashboard",
+    "real-time"
+  ],
+  "author": "Dev HQ",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "trustedDependencies": [],
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.965.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/jest": "30.0.0",
+    "@types/react": "18.3.27",
+    "@types/react-dom": "18.3.7",
+    "@types/ws": "8.18.1",
+    "atomics": "1.0.0",
+    "fast-check": "4.5.3",
+    "typescript": "5.9.3"
+  },
+  "workspaces": [
+    "packages/**"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

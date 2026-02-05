@@ -1,0 +1,25 @@
+
+# YAML configuration file
+app:
+  name: Bun Loaders Demo
+  version: 1.0.0
+  debug: true
+
+database:
+  path: ./data.db
+  timeout: 5000
+  pool_size: 10
+
+features:
+  - loaders
+  - bundler
+  - runtime
+  - performance
+
+servers:
+  - name: api
+    host: localhost
+    port: 3000
+  - name: static
+    host: localhost
+    port: 8080

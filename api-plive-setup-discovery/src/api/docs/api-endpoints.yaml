@@ -1,0 +1,1114 @@
+paths:
+  /workflows:
+    get:
+      summary: Get workflows with filtering and pagination
+      description: |
+        Retrieve workflows with advanced filtering, sorting, and pagination options.
+
+        **Supported Filters:**
+        - `status`: pending, in_progress, completed, rejected, cancelled
+        - `type`: content_publishing, line_change_approval, odds_update_approval, promotion_approval
+        - `priority`: low, medium, high, critical
+        - `startDate`/`endDate`: ISO 8601 date range
+        - `assignee`: User ID or 'current' for authenticated user
+        - `bettingCategory`: Specific betting platform categories
+        - `financialImpactMin`/`financialImpactMax`: Financial impact range filtering
+      tags:
+        - Workflows
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of items per page
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, in_progress, completed, rejected, cancelled]
+          description: Filter by workflow status
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [content_publishing, line_change_approval, odds_update_approval, promotion_approval]
+          description: Filter by workflow type
+        - in: query
+          name: priority
+          schema:
+            type: string
+            enum: [low, medium, high, critical]
+          description: Filter by priority level
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+          description: Filter workflows created after this date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+          description: Filter workflows created before this date
+        - in: query
+          name: assignee
+          schema:
+            type: string
+          description: Filter by assigned user
+      responses:
+        '200':
+          description: Successfully retrieved workflows
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PaginatedWorkflowList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create new workflow
+      description: |
+        Create a new workflow instance with specified type and data.
+
+        **Supported Workflow Types:**
+        - `content_publishing`: Content review and publishing workflows
+        - `line_change_approval`: Betting line change approvals
+        - `odds_update_approval`: Odds update approvals
+        - `promotion_approval`: Marketing promotion approvals
+      tags:
+        - Workflows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowRequest'
+            examples:
+              contentPublishing:
+                summary: Content Publishing Workflow
+                value:
+                  workflowType: 'content_publishing'
+                  priority: 'high'
+                  data:
+                    title: 'New Premier League Featured Bets'
+                    contentType: 'featured_bets'
+                    jurisdiction: 'UK'
+                    financialImpact: 25000
+                    contentId: 'pl-featured-bets-001'
+              lineChange:
+                summary: Line Change Approval
+                value:
+                  workflowType: 'line_change_approval'
+                  priority: 'critical'
+                  data:
+                    lineId: 'line-12345'
+                    eventName: 'Manchester United vs Liverpool'
+                    oldOdds: '2.50'
+                    newOdds: '2.20'
+                    marketType: 'match_winner'
+                    reason: 'Injury to key player'
+      responses:
+        '201':
+          description: Workflow created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkflowResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}:
+    get:
+      summary: Get workflow by ID
+      description: Retrieve detailed information about a specific workflow instance
+      tags:
+        - Workflows
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      responses:
+        '200':
+          description: Workflow found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkflowResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      summary: Update workflow
+      description: Update workflow data and metadata
+      tags:
+        - Workflows
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  description: Updated workflow data
+                priority:
+                  type: string
+                  enum: [low, medium, high, critical]
+                metadata:
+                  type: object
+                  description: Updated metadata
+      responses:
+        '200':
+          description: Workflow updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    delete:
+      summary: Delete workflow
+      description: Permanently delete a workflow instance (admin only)
+      tags:
+        - Workflows
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      responses:
+        '200':
+          description: Workflow deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/approve:
+    post:
+      summary: Approve workflow step
+      description: Approve the current step in a workflow with optional comments
+      tags:
+        - Workflow Actions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comments:
+                  type: string
+                  maxLength: 1000
+                  description: Approval comments
+                stepId:
+                  type: string
+                  description: Specific step ID (optional, defaults to current step)
+                approvalType:
+                  type: string
+                  enum: [standard, emergency, conditional]
+                  default: standard
+            example:
+              comments: 'Approved after reviewing content quality and compliance'
+              approvalType: 'standard'
+      responses:
+        '200':
+          description: Approval successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/reject:
+    post:
+      summary: Reject workflow step
+      description: Reject the current step in a workflow with required comments
+      tags:
+        - Workflow Actions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comments]
+              properties:
+                comments:
+                  type: string
+                  maxLength: 1000
+                  description: Rejection reason (required)
+                stepId:
+                  type: string
+                  description: Specific step ID (optional, defaults to current step)
+            example:
+              comments: 'Content does not meet compliance standards'
+      responses:
+        '200':
+          description: Rejection successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/cancel:
+    post:
+      summary: Cancel workflow
+      description: Cancel a workflow with reason
+      tags:
+        - Workflow Actions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  maxLength: 500
+                  description: Cancellation reason
+            example:
+              reason: 'Event cancelled by league'
+      responses:
+        '200':
+          description: Cancellation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/start:
+    post:
+      summary: Start workflow
+      description: Start execution of a pending workflow
+      tags:
+        - Workflow Actions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      responses:
+        '200':
+          description: Workflow started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/escalate:
+    post:
+      summary: Escalate workflow
+      description: Escalate a workflow to higher authority with reason and priority
+      tags:
+        - Workflow Actions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason, priority]
+              properties:
+                reason:
+                  type: string
+                  maxLength: 500
+                  description: Escalation reason
+                priority:
+                  type: string
+                  enum: [high, critical]
+                  description: Escalation priority level
+                escalateTo:
+                  type: array
+                  items:
+                    type: string
+                  description: Specific users/roles to escalate to
+                notificationChannels:
+                  type: array
+                  items:
+                    type: string
+                    enum: [email, slack, telegram]
+                  description: Notification channels to use
+            example:
+              reason: 'Critical financial impact requires executive approval'
+              priority: 'critical'
+              escalateTo: ['management', 'trading_team']
+              notificationChannels: ['email', 'slack']
+      responses:
+        '200':
+          description: Workflow escalated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/delegate:
+    post:
+      summary: Delegate workflow
+      description: Delegate workflow to another user with permissions and deadline
+      tags:
+        - Workflow Actions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [delegateTo, reason]
+              properties:
+                delegateTo:
+                  type: string
+                  description: User ID or email to delegate to
+                reason:
+                  type: string
+                  maxLength: 500
+                  description: Delegation reason
+                permissions:
+                  type: array
+                  items:
+                    type: string
+                  description: Specific permissions to grant
+                deadline:
+                  type: string
+                  format: date-time
+                  description: Delegation deadline
+            example:
+              delegateTo: 'senior-analyst@company.com'
+              reason: 'Delegating for specialized technical review'
+              permissions: ['approve', 'reject']
+              deadline: '2024-01-15T17:00:00.000Z'
+      responses:
+        '200':
+          description: Workflow delegated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/status:
+    get:
+      summary: Get workflow status
+      description: Get current status and progress of a workflow
+      tags:
+        - Monitoring
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      responses:
+        '200':
+          description: Status retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          id: { type: 'string' }
+                          status: { type: 'string' }
+                          currentStep: { type: 'string' }
+                          progress: { type: 'integer', minimum: 0, maximum: 100 }
+                          lastUpdated: { type: 'string', format: 'date-time' }
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /workflows/{id}/analytics:
+    get:
+      summary: Get workflow analytics
+      description: Get detailed analytics and performance metrics for a workflow
+      tags:
+        - Analytics
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+        - in: query
+          name: period
+          schema:
+            type: string
+            enum: ['1h', '24h', '7d', '30d']
+            default: '7d'
+          description: Analytics time period
+        - in: query
+          name: metrics
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [performance, approval_rate, timeline, bottlenecks]
+          description: Specific metrics to include
+      responses:
+        '200':
+          description: Analytics retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkflowAnalytics'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/{id}/timeline:
+    get:
+      summary: Get workflow timeline
+      description: Get complete timeline of events for a workflow
+      tags:
+        - Analytics
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Workflow instance ID
+      responses:
+        '200':
+          description: Timeline retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkflowTimeline'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /workflows/bulk/approve:
+    post:
+      summary: Bulk approve workflows
+      description: |
+        Approve multiple workflows in a single operation.
+
+        **Limits:**
+        - Maximum 100 workflows per request
+        - All workflows must be in approvable states
+        - User must have approval permissions for all workflows
+      tags:
+        - Bulk Operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [workflowIds]
+              properties:
+                workflowIds:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  maxItems: 100
+                  description: Array of workflow IDs to approve
+                comments:
+                  type: string
+                  maxLength: 1000
+                  description: Optional approval comments for all workflows
+                approvalType:
+                  type: string
+                  enum: [standard, emergency]
+                  default: standard
+            example:
+              workflowIds: ['wf-123', 'wf-456', 'wf-789']
+              comments: 'Bulk approved for weekend maintenance'
+              approvalType: 'standard'
+      responses:
+        '200':
+          description: Bulk approval completed
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BulkOperationResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/bulk/cancel:
+    post:
+      summary: Bulk cancel workflows
+      description: Cancel multiple workflows with a common reason
+      tags:
+        - Bulk Operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [workflowIds, reason]
+              properties:
+                workflowIds:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  maxItems: 50
+                  description: Array of workflow IDs to cancel
+                reason:
+                  type: string
+                  maxLength: 500
+                  description: Cancellation reason
+            example:
+              workflowIds: ['wf-123', 'wf-456']
+              reason: 'Event postponed due to weather conditions'
+      responses:
+        '200':
+          description: Bulk cancellation completed
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BulkOperationResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /workflows/bulk/export:
+    post:
+      summary: Export workflows
+      description: Export workflows in various formats (JSON, CSV, Excel)
+      tags:
+        - Bulk Operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [format]
+              properties:
+                format:
+                  type: string
+                  enum: [json, csv, xlsx]
+                  description: Export format
+                filters:
+                  type: object
+                  description: Optional filters to apply before export
+                columns:
+                  type: array
+                  items:
+                    type: string
+                  description: Specific columns to include (CSV/Excel only)
+            examples:
+              jsonExport:
+                summary: JSON Export
+                value:
+                  format: 'json'
+                  filters:
+                    status: 'completed'
+                    startDate: '2024-01-01T00:00:00.000Z'
+              csvExport:
+                summary: CSV Export
+                value:
+                  format: 'csv'
+                  columns: ['id', 'status', 'createdBy', 'createdAt']
+                  filters:
+                    status: 'completed'
+      responses:
+        '200':
+          description: Export successful - file returned in response
+          content:
+            application/json:
+              schema:
+                type: string
+              description: JSON export data
+            text/csv:
+              schema:
+                type: string
+              description: CSV export data
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+              description: Excel export data
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /betting/content/submit:
+    post:
+      summary: Submit content for review
+      description: Submit betting platform content for review and approval
+      tags:
+        - Betting Platform
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contentType, contentData, jurisdiction]
+              properties:
+                contentType:
+                  type: string
+                  enum: [lines, featured_bets, free_bets, promotions, live_events]
+                  description: Type of betting content
+                contentData:
+                  type: object
+                  description: Content-specific data
+                jurisdiction:
+                  type: string
+                  enum: [UK, DE, ES, IT, FR, US, global]
+                  description: Geographic jurisdiction
+                financialImpact:
+                  type: number
+                  minimum: 0
+                  description: Expected financial impact
+                contentId:
+                  type: string
+                  description: Unique content identifier
+            example:
+              contentType: 'featured_bets'
+              contentData:
+                title: 'Premier League Weekend Specials'
+                markets: ['match_winner', 'over_under', 'both_teams_to_score']
+                stake: 50
+              jurisdiction: 'UK'
+              financialImpact: 25000
+              contentId: 'pl-weekend-specials-001'
+      responses:
+        '201':
+          description: Content submitted successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkflowResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /betting/lines/change:
+    post:
+      summary: Submit line change for approval
+      description: Submit betting line changes for approval with financial impact analysis
+      tags:
+        - Betting Platform
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [lineId, oldOdds, newOdds, eventName, marketType, reason]
+              properties:
+                lineId:
+                  type: string
+                  description: Unique line identifier
+                eventName:
+                  type: string
+                  description: Event name
+                oldOdds:
+                  type: string
+                  pattern: '^\d+\.\d{2}$'
+                  description: Current odds (format: X.XX)
+                newOdds:
+                  type: string
+                  pattern: '^\d+\.\d{2}$'
+                  description: Proposed odds (format: X.XX)
+                marketType:
+                  type: string
+                  enum: [match_winner, over_under, both_teams_to_score, correct_score, asian_handicap]
+                  description: Betting market type
+                reason:
+                  type: string
+                  maxLength: 500
+                  description: Reason for line change
+                sport:
+                  type: string
+                  description: Sport name
+                league:
+                  type: string
+                  description: League/competition name
+            example:
+              lineId: 'line-manutd-liv-12345'
+              eventName: 'Manchester United vs Liverpool'
+              oldOdds: '2.50'
+              newOdds: '2.20'
+              marketType: 'match_winner'
+              reason: 'Injury to key player - Bruno Fernandes unavailable'
+              sport: 'football'
+              league: 'Premier League'
+      responses:
+        '201':
+          description: Line change submitted successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkflowResponse'
+                      metadata:
+                        type: object
+                        properties:
+                          financialImpact:
+                            type: number
+                            description: Calculated financial impact
+                          riskLevel:
+                            type: string
+                            enum: [low, medium, high]
+                            description: Risk assessment level
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /betting/odds/update:
+    post:
+      summary: Submit odds update for approval
+      description: Submit odds updates for approval with impact analysis
+      tags:
+        - Betting Platform
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [eventId, oldOdds, newOdds, marketType, reason]
+              properties:
+                eventId:
+                  type: string
+                  description: Event identifier
+                eventName:
+                  type: string
+                  description: Event name
+                oldOdds:
+                  type: object
+                  description: Current odds by selection
+                newOdds:
+                  type: object
+                  description: Proposed odds by selection
+                marketType:
+                  type: string
+                  description: Market type
+                financialImpact:
+                  type: number
+                  minimum: 0
+                  description: Expected financial impact
+                reason:
+                  type: string
+                  maxLength: 500
+                  description: Reason for odds update
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: When the odds change should take effect
+      responses:
+        '201':
+          description: Odds update submitted successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkflowResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /betting/workflows/active:
+    get:
+      summary: Get active betting workflows
+      description: Get all active betting platform workflows with advanced filtering
+      tags:
+        - Betting Platform
+      parameters:
+        - in: query
+          name: bettingCategory
+          schema:
+            type: string
+            enum: [content, lines, odds, promotions]
+          description: Betting platform category filter
+        - in: query
+          name: riskLevel
+          schema:
+            type: string
+            enum: [low, medium, high]
+          description: Risk level filter
+        - in: query
+          name: financialImpactMin
+          schema:
+            type: number
+            minimum: 0
+          description: Minimum financial impact
+        - in: query
+          name: financialImpactMax
+          schema:
+            type: number
+            minimum: 0
+          description: Maximum financial impact
+        - in: query
+          name: urgency
+          schema:
+            type: string
+            enum: [normal, urgent, critical]
+          description: Urgency level
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+          description: Items per page
+      responses:
+        '200':
+          description: Active betting workflows retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PaginatedWorkflowList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /betting/health:
+    get:
+      summary: Check betting platform health
+      description: |
+        Check the health and connectivity of the betting platform integration.
+
+        Tests multiple endpoints simultaneously and provides detailed status information
+        including response times, configuration validation, and individual endpoint status.
+      tags:
+        - Betting Platform
+        - Monitoring
+      responses:
+        '200':
+          description: Health check completed
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            enum: [healthy, unhealthy]
+                            description: Overall platform health status
+                          responseTime:
+                            type: number
+                            description: Total health check response time in milliseconds
+                          timestamp:
+                            type: number
+                            description: Health check timestamp
+                          config:
+                            type: object
+                            properties:
+                              baseUrl:
+                                type: string
+                                description: Platform base URL
+                              hasAuthToken:
+                                type: boolean
+                                description: Whether auth token is configured
+                              timeout:
+                                type: number
+                                description: Request timeout in milliseconds
+                          endpoints:
+                            type: object
+                            properties:
+                              liveEvents:
+                                type: boolean
+                                description: Live events endpoint status
+                              totalBets:
+                                type: boolean
+                                description: Total bets endpoint status
+                              sportsVolume:
+                                type: boolean
+                                description: Sports volume endpoint status
+                          error:
+                            type: string
+                            description: Error message if unhealthy
+            example:
+              success: true
+              data:
+                status: 'healthy'
+                responseTime: 245
+                timestamp: 1703123456789
+                config:
+                  baseUrl: 'https://plive.sportswidgets.pro'
+                  hasAuthToken: true
+                  timeout: 30000
+                endpoints:
+                  liveEvents: true
+                  totalBets: true
+                  sportsVolume: true
+              message: 'Betting platform health check completed'
+              timestamp: '2023-12-20T22:30:56.789Z'
+        '403':
+          $ref: '#/components/responses/Forbidden'

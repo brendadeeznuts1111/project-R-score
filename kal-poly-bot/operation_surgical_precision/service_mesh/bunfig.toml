@@ -1,0 +1,120 @@
+[run]
+# Service mesh run configuration - optimized for microservices coordination
+shell = "bun"
+bun = true
+silent = false
+
+[install]
+registry = "https://registry.npmjs.org"
+
+[install.cache]
+# Global cache directory with optimized backend configurations
+dir = "~/.bun/install/cache"
+
+# Advanced cache backend optimization for service mesh performance
+# clonefile: Copy-on-write for instant operations (macOS optimized)
+# hardlink: Zero additional disk usage for shared packages
+# copyfile: Universal compatibility with safe operations
+backend = "clonefile"  # Use clonefile for macOS performance
+fallback = "hardlink"  # Fallback to hardlink for compatibility
+
+[test]
+# Root directory for test files
+root = "./__tests__"
+# Default timeout for tests (in milliseconds) - aligned with memorandum standards
+timeout = 30000
+# Preload modules for service mesh testing
+preload = ["./__tests__/setup.ts"]
+# Enable experimental features for service mesh tests
+smol = true
+# Enable comprehensive coverage reporting
+coverage = true
+# Coverage failure threshold (90%)
+coverageThreshold = { line = 0.85, function = 0.9, statement = 0.88 }
+# Skip test files in coverage (to avoid self-coverage)
+coverageSkipTestFiles = true
+# Exclude generated and external files from coverage
+coveragePathIgnorePatterns = [
+  "**/*.config.ts",
+  "**/*.config.js",
+  "dist/**",
+  "build/**",
+  "coverage/**",
+  "**/*.generated.*",
+  "**/*.spec.ts",
+  "**/*.test.ts"
+]
+# Multiple coverage reporters for different needs
+coverageReporter = ["text", "lcov", "html"]
+# Custom coverage output directory
+coverageDir = "coverage"
+# Run tests in random order to catch interdependencies
+randomize = true
+# Reproducible randomization for CI debugging
+seed = 2444615283
+# Re-run flaky tests multiple times
+rerunEach = 2
+# Auto-enable concurrency for performance-critical service mesh tests
+concurrentTestGlob = ["**/*performance*.test.ts"]
+# Show only failures to reduce output noise
+onlyFailures = false
+
+[test.reporter]
+# Enable compact dots reporter for fast feedback
+dots = true
+# Enable JUnit XML for CI integrations
+junit = "test-results.xml"
+
+[build]
+# Output directory for builds
+outdir = "./dist"
+# Source map generation for service mesh debugging
+sourcemap = "linked"
+# Optimize for service mesh performance
+minify = true
+
+[runtime]
+# Enable experimental features for service mesh
+experimental = true
+# Optimize for low-latency service mesh operations
+optimize = "speed"
+
+# Service Mesh specific configurations
+[service-mesh]
+# Istio version alignment
+istio-version = "1.20.0"
+# SMI specification version
+smi-version = "v1alpha3"
+# Performance monitoring intervals
+health-check-interval = 30000
+# Control plane timeout
+control-plane-timeout = 300000
+# Traffic policy enforcement level
+traffic-policy-level = "strict"
+
+# Development workflow configurations
+[dev]
+# Hot reload for service mesh development
+hot = true
+# Watch service mesh files for changes
+watch = ["./**/*.ts", "../bootstrap/**/*.ts", "../component-coordination.db"]
+# Reload components on configuration changes
+reload = "instant"
+
+# Production configurations
+[prod]
+# Disable development features
+hot = false
+# Enable production optimizations
+optimize = "size-speed"
+# Strict security enforcement
+security = "strict"
+
+# Performance benchmarks (memorandum-aligned)
+[performance]
+# Target cold start time (<0.89s)
+cold-start-target = 0.89
+# Target warm performance (<30ms)
+warm-performance-target = 30
+# Target zero-collateral precision
+precision-target = 99.95

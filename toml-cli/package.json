@@ -1,0 +1,44 @@
+{
+  "name": "quantum-navigator",
+  "version": "1.0.0",
+  "description": "Quantum Navigator - Navigate the Infinite Data Stream",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun run build:enterprise",
+    "build:dev": "bun build --feature=DEBUG --feature=MOCK_API src/index.ts --outdir=dist --target=browser",
+    "build:enterprise": "bun build --feature=ENTERPRISE --feature=PREMIUM_SECRETS --feature=R2_STORAGE src/index.ts --outdir=dist --target=browser --minify",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
+    "test:integration": "bun test tests/integration",
+    "test:e2e": "bun test tests/e2e",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit",
+    "preview": "bun run dist/index.js"
+  },
+  "dependencies": {
+    "three": "^0.158.0",
+    "gsap": "^3.14.2",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@types/three": "^0.158.3",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "author": "mike.hunt@factory.wager.com",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  },
+  "trustedDependencies": [
+    "@sentry/cli",
+    "fsevents",
+    "rollup"
+  ]
+}

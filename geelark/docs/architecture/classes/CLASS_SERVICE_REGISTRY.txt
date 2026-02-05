@@ -1,0 +1,737 @@
+================================================================================
+                          CLASS SERVICE REGISTRY
+                      Geelark Project - Complete Reference
+================================================================================
+
+LAST UPDATED: January 9, 2026
+PURPOSE: Comprehensive registry of all major classes and their characteristics
+STATUS: Complete and Production-Ready
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. Core Service Classes
+2. Utility Classes
+3. Processing Classes
+4. Registry & Factory Classes
+5. Configuration Classes
+6. Error/Exception Classes
+7. Type Definitions
+8. Inter-Class Dependencies
+9. Quick Reference Table
+
+================================================================================
+SECTION 1: CORE SERVICE CLASSES
+================================================================================
+
+CLASS: Logger
+────────────────────────────────────────────────────────────────────────────
+File:                    src/Logger.ts
+Type:                    Service
+Access:                  export class Logger
+Scope:                   Singleton (typically)
+Instantiation:           ✓ Exportable instance: can be instantiated multiple times
+
+Purpose:
+  Provide application-wide logging with format control and color support
+  
+Key Methods:
+  - log(level: string, message: string, ...args: any[]): void
+  - info(message: string, ...args: any[]): void
+  - warn(message: string, ...args: any[]): void
+  - error(message: string, ...args: any[]): void
+  - debug(message: string, ...args: any[]): void
+  - setLevel(level: string): void
+  - getLevel(): string
+
+Properties:
+  - level: string                  Current logging level
+  - formatter: LogFormatter        Format handler
+  - outputs: Output[]              Output destinations
+
+Dependencies:
+  → AnsiColorUtility (for color codes)
+  → No external service dependencies
+
+Used By:
+  → Dashboard (logs UI events)
+  → MemoryManager (logs memory events)
+  → FeatureRegistry (logs feature changes)
+  → ConcurrentProcessor (logs batch progress)
+  → All services generally
+
+Lifecycle:
+  - Initialize early in boot sequence
+  - Configure logging level from environment
+  - Available throughout application lifetime
+  - Teardown on application exit
+
+Configuration:
+  - NODE_ENV: Changes default log level
+  - LOG_LEVEL: Override environment variable
+  - DEBUG: Namespace patterns for debug output
+  - VERBOSE: Enable verbose mode
+
+Patterns Used:
+  ✓ Singleton if exported from module
+  ✓ Multiple instances if created per-module
+  ✓ Static methods for convenience (if designed that way)
+
+Real-World Usage:
+  const logger = new Logger();
+  logger.setLevel('debug');
+  logger.info('Application started');
+  logger.warn('Memory usage high');
+  logger.error('Failed to connect', error);
+
+────────────────────────────────────────────────────────────────────────────
+
+CLASS: Dashboard
+────────────────────────────────────────────────────────────────────────────
+File:                    src/Dashboard.ts
+Type:                    Service
+Access:                  export class Dashboard
+Scope:                   Singleton (typically)
+
+Purpose:
+  Render and maintain real-time system monitoring dashboard display
+  
+Key Methods:
+  - render(): void
+  - update(metrics: Metrics): void
+  - clear(): void
+  - addComponent(name: string, component: Component): void
+  - refresh(): Promise<void>
+  - setTheme(theme: Theme): void
+
+Properties:
+  - width: number                 Display width in characters
+  - height: number                Display height in lines
+  - components: Component[]       UI components
+  - metrics: Metrics              Current metrics
+  - isActive: boolean             Is dashboard rendering
+
+Dependencies:
+  → Logger (for status messages)
+  → MemoryManager (for memory metrics)
+  → AnsiColorUtility (for styling)
+  → StringWidth (for text measurement)
+
+Used By:
+  → CLI commands for monitoring
+  → Server health monitoring
+  → Performance dashboards
+
+Lifecycle:
+  - Initialize after Logger and MemoryManager
+  - Start rendering on demand
+  - Subscribe to metric updates
+  - Stop rendering on shutdown
+
+Configuration:
+  - DASHBOARD_WIDTH: Display width
+  - DASHBOARD_REFRESH_MS: Refresh interval
+  - DASHBOARD_THEME: Color theme
+
+Patterns Used:
+  ✓ Singleton pattern
+  ✓ State management (internal)
+  ✓ Plugin system (for components)
+  ✓ Observer pattern (subscribes to metrics)
+
+Real-World Usage:
+  const dashboard = new Dashboard();
+  dashboard.render();
+  memoryManager.on('update', (metrics) => {
+    dashboard.update(metrics);
+  });
+
+────────────────────────────────────────────────────────────────────────────
+
+CLASS: MemoryManager
+────────────────────────────────────────────────────────────────────────────
+File:                    src/MemoryManager.ts
+Type:                    Service/Manager
+Access:                  export class MemoryManager
+Scope:                   Singleton
+
+Purpose:
+  Monitor and manage application memory usage, detect leaks, provide stats
+  
+Key Methods:
+  - getStats(): MemoryStats
+  - trackAllocation(size: number): void
+  - trackDeallocation(size: number): void
+  - detectLeak(): boolean
+  - triggerGC(): Promise<void>
+  - on(event: string, callback: Function): void
+  - getInstance(): MemoryManager (static)
+
+Properties:
+  - currentUsage: number          Current memory in bytes
+  - peakUsage: number             Peak memory in bytes
+  - threshold: number             Alert threshold in bytes
+  - allocations: Map              Tracked allocations
+  - leakDetected: boolean         Leak detection state
+
+Dependencies:
+  → Logger (for memory events)
+  → SystemDefaults constants (for thresholds)
+
+Used By:
+  → Dashboard (displays memory metrics)
+  → Performance monitoring
+  → Optimization tools
+
+Lifecycle:
+  - Initialize singleton on startup
+  - Begin monitoring immediately
+  - Periodic leak detection
+  - Report to Logger and Dashboard
+  - Cleanup on exit
+
+Configuration:
+  - MEMORY_LIMIT_MB: Alert threshold
+  - MEMORY_THRESHOLD_MB: From constants
+  - NODE_OPTIONS: --expose-gc for GC control
+
+Patterns Used:
+  ✓ Singleton pattern (getInstance)
+  ✓ Observer pattern (events)
+  ✓ Metrics collection
+
+Real-World Usage:
+  const manager = MemoryManager.getInstance();
+  const stats = manager.getStats();
+  console.log(`Memory: ${stats.usedMB}MB / ${stats.totalMB}MB`);
+  manager.on('threshold-exceeded', () => {
+    logger.warn('Memory threshold exceeded');
+  });
+
+────────────────────────────────────────────────────────────────────────────
+
+CLASS: FeatureRegistry
+────────────────────────────────────────────────────────────────────────────
+File:                    src/FeatureRegistry.ts
+Type:                    Registry
+Access:                  export class FeatureRegistry
+Scope:                   Singleton
+
+Purpose:
+  Manage runtime feature flags, capabilities detection, and feature metadata
+  
+Key Methods:
+  - registerFeature(name: string, metadata: FeatureMetadata): void
+  - isFeatureEnabled(name: string): boolean
+  - getFeatureMetadata(name: string): FeatureMetadata | null
+  - listAvailableFeatures(): string[]
+  - getFeatureDependencies(name: string): string[]
+  - enableFeature(name: string): void
+  - disableFeature(name: string): void
+  - on(event: string, callback: Function): void
+
+Properties:
+  - features: Map<string, Feature>  Registered features
+  - enabled: Set<string>            Enabled features
+  - metadata: Map<string, Meta>     Feature metadata
+  - dependencies: Map               Feature dependencies
+
+Dependencies:
+  → Logger (for feature events)
+  → Configuration system (for feature flags)
+  → Constants (COMPILE_TIME_FEATURES)
+
+Used By:
+  → CLI commands (feature introspection)
+  → Services (capability checks)
+  → Build system (dead code elimination)
+
+Lifecycle:
+  - Initialize after ConfigManager
+  - Register all features at startup
+  - Query features throughout application
+  - Update enabled/disabled features dynamically
+
+Configuration:
+  - FEAT_PREMIUM: Enable premium features
+  - FEAT_*: Individual feature flags
+  - BUN_FEATURE_*: Runtime feature flags
+
+Patterns Used:
+  ✓ Singleton pattern
+  ✓ Registry pattern
+  ✓ Observer pattern (for feature changes)
+  ✓ Dependency injection (features depend on each other)
+
+Real-World Usage:
+  const features = new FeatureRegistry();
+  features.registerFeature('ADVANCED_MONITORING', {
+    enabled: true,
+    dependencies: ['LOGGING'],
+    version: '1.0.0'
+  });
+  
+  if (features.isFeatureEnabled('ADVANCED_MONITORING')) {
+    // Use advanced monitoring
+  }
+
+────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+SECTION 2: UTILITY CLASSES
+================================================================================
+
+CLASS: StringWidth
+────────────────────────────────────────────────────────────────────────────
+File:                    src/StringWidth.ts
+Type:                    Utility
+Access:                  export class StringWidth
+Scope:                   Stateless utility (static methods)
+
+Purpose:
+  Calculate true visual width of strings accounting for wide characters
+  and ANSI escape codes
+  
+Key Methods:
+  - static calculate(str: string): number
+  - static measureWithColors(str: string): number
+  - static stripColors(str: string): string
+  - static padToWidth(str: string, width: number): string
+  - static truncateToWidth(str: string, width: number): string
+
+Dependencies:
+  → None (no external dependencies)
+
+Used By:
+  → Dashboard (for text layout)
+  → Table formatting
+  → Terminal UI components
+
+Patterns Used:
+  ✓ Static utility class
+  ✓ Pure functions
+
+Real-World Usage:
+  const width = StringWidth.calculate("Hello");  // 5
+  const width2 = StringWidth.calculate("你好");   // 4 (wide chars)
+  const padded = StringWidth.padToWidth("Hi", 10); // Pads to visual width 10
+
+────────────────────────────────────────────────────────────────────────────
+
+CLASS: AnsiColorUtility
+────────────────────────────────────────────────────────────────────────────
+File:                    src/utils/AnsiColorUtility.ts
+Type:                    Utility
+Access:                  export class AnsiColorUtility
+Scope:                   Stateless utility (mostly static methods)
+
+Purpose:
+  Generate and manipulate ANSI color codes for terminal output styling
+  
+Key Methods:
+  - static colorize(text: string, color: string): string
+  - static bold(text: string): string
+  - static underline(text: string): string
+  - static strikethrough(text: string): string
+  - static parseColor(color: string): number
+  - static rgbToAnsi(r: number, g: number, b: number): string
+  - static hex Color (text: string, hex: string): string
+
+Properties:
+  - COLORS: Record<string, number>    Color codes
+  - STYLES: Record<string, number>    Style codes
+  - RESET: string                     Reset code
+
+Dependencies:
+  → None (no external dependencies)
+
+Used By:
+  → Logger (styling log messages)
+  → Dashboard (styling UI elements)
+  → CLI output formatting
+
+Patterns Used:
+  ✓ Static utility class
+  ✓ Facade pattern (hides complexity of ANSI codes)
+
+Real-World Usage:
+  const red = AnsiColorUtility.colorize("Error", 'red');
+  const bold = AnsiColorUtility.bold("Important");
+  const hex = AnsiColorUtility.hexColor("Custom", '#FF5733');
+
+────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+SECTION 3: PROCESSING CLASSES
+================================================================================
+
+CLASS: ConcurrentProcessor
+────────────────────────────────────────────────────────────────────────────
+File:                    src/ConcurrentProcessor.ts
+Type:                    Processor
+Access:                  export class ConcurrentProcessor
+Scope:                   Created per batch operation
+
+Purpose:
+  Handle concurrent data processing with progress tracking and error handling
+  
+Key Methods:
+  - process<T>(items: T[], processor: Function, options?: Options): Promise<Result[]>
+  - getProgress(): Progress
+  - getStats(): Stats
+  - cancel(): void
+  - on(event: string, callback: Function): void
+  - addWorker(): void
+  - removeWorker(): void
+
+Properties:
+  - items: Array                  Items to process
+  - processed: number             Count processed
+  - failed: number                Count failed
+  - workers: Worker[]             Active workers
+  - batchSize: number             Items per batch
+  - maxWorkers: number            Maximum workers
+
+Dependencies:
+  → Logger (progress updates)
+  → SystemDefaults (batch configuration)
+
+Used By:
+  → Batch operations
+  → Parallel processing
+  → Pipeline stages
+
+Lifecycle:
+  - Create new instance per operation
+  - Process items concurrently
+  - Track progress
+  - Report completion
+  - Clean up workers
+
+Configuration:
+  - CONCURRENT_BATCH_SIZE: Batch size
+  - CONCURRENT_MAX_WORKERS: Worker count
+
+Patterns Used:
+  ✓ Worker pool pattern
+  ✓ Observer pattern (progress events)
+  ✓ Error handling strategy
+
+Real-World Usage:
+  const processor = new ConcurrentProcessor();
+  const results = await processor.process(items, (item) => {
+    return processItem(item);
+  }, { batchSize: 10, maxWorkers: 4 });
+
+────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+SECTION 4: REGISTRY & FACTORY CLASSES
+================================================================================
+
+All classes in this category follow the Registry or Factory pattern, providing
+centralized creation and management of other objects.
+
+Category: Feature & Service Registry
+  - FeatureRegistry: Manages runtime features and capabilities
+
+Category: Object Factories
+  - ServiceFactory: Creates service instances
+  (others would follow <Domain>Factory naming pattern)
+
+================================================================================
+SECTION 5: CONFIGURATION CLASSES
+================================================================================
+
+CLASS: ConfigManager (if exists, or use config.ts)
+Type:                    Service
+Purpose:                 Load and validate application configuration
+Scope:                   Singleton
+Key Responsibilities:
+  - Load configuration from files (bunfig.toml, config.json)
+  - Parse environment variables
+  - Validate configuration
+  - Provide typed configuration interface
+  - Watch for config changes
+
+Dependencies:
+  → Logger (for config messages)
+  → InputValidation (for validation)
+  → Constants (for defaults)
+
+================================================================================
+SECTION 6: ERROR/EXCEPTION CLASSES
+================================================================================
+
+Pattern: <Error>Error or <Error>Exception extending Error
+
+Examples:
+  - ValidationError extends Error
+    Purpose: Input/configuration validation failures
+    
+  - ConfigurationError extends Error
+    Purpose: Configuration loading/parsing issues
+    
+  - TimeoutError extends Error
+    Purpose: Operation timeout
+    
+  - AuthenticationError extends Error
+    Purpose: Authentication failures
+    
+  - NetworkError extends Error
+    Purpose: Network/connection errors
+
+Naming Convention:
+  ✓ Extends native Error class
+  ✓ Named with Error suffix: <Domain>Error
+  ✓ PascalCase
+  ✓ Descriptive domain
+
+Usage Pattern:
+  throw new ValidationError('Invalid input format');
+  throw new ConfigurationError('Missing required config: DATABASE_URL');
+
+================================================================================
+SECTION 7: TYPE DEFINITIONS
+================================================================================
+
+Exported from src/types.ts and src/constants/index.ts:
+
+Common Types:
+  - LogLevel: 'debug' | 'info' | 'warn' | 'error'
+  - Environment: 'development' | 'staging' | 'production' | 'test'
+  - FeatureFlag: string (various flags)
+  - MetricType: 'cpu' | 'memory' | 'network' | 'disk'
+  - HealthScore: 'healthy' | 'degraded' | 'impaired' | 'critical'
+  - AlertSeverity: 'info' | 'warning' | 'error' | 'critical'
+
+From Constants:
+  - InstallMode: 'auto' | 'fallback' | 'force' | 'no-install'
+  - Target: 'bun' | 'node' | 'browser'
+  - DnsOrder: 'verbatim' | 'ipv4first' | 'ipv6first'
+  - CaStore: 'system' | 'openssl' | 'bun'
+  - JsxRuntime: 'automatic' | 'classic'
+  - DeprecationMode: 'strict' | 'throw' | 'warn' | 'none' | 'warn-with-error-code'
+
+Usage:
+  type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+  const level: LogLevel = 'info';
+
+================================================================================
+SECTION 8: INTER-CLASS DEPENDENCIES
+================================================================================
+
+Dependency Graph (Request Chain):
+
+Application Entry Point
+  ↓
+  ├─→ Initialize Constants
+  ├─→ Initialize ConfigManager
+  ├─→ Initialize Logger
+  │    ├─→ Initialize AnsiColorUtility
+  │    └─→ Configure from environment
+  ├─→ Initialize MemoryManager
+  │    └─→ Report to Logger
+  ├─→ Initialize FeatureRegistry
+  │    └─→ Load features from constants
+  ├─→ Initialize Dashboard
+  │    ├─→ Use Logger
+  │    ├─→ Subscribe to MemoryManager
+  │    └─→ Use StringWidth and AnsiColorUtility
+  ├─→ Initialize CLI
+  │    ├─→ Use Logger
+  │    └─→ Register commands
+  └─→ Start Application
+
+Direct Dependencies (Import Relationships):
+
+Logger:
+  ← Dashboard, MemoryManager, FeatureRegistry, ConcurrentProcessor
+  ← CLI, ConfigManager, All Services
+  → AnsiColorUtility (for colors)
+
+Dashboard:
+  ← CLI commands
+  → Logger, MemoryManager, StringWidth, AnsiColorUtility
+
+MemoryManager:
+  ← Dashboard
+  → Logger, SystemDefaults constants
+
+FeatureRegistry:
+  ← CLI, Services (for feature checking)
+  → Logger, Constants
+
+ConcurrentProcessor:
+  ← batch operations, services
+  → Logger, SystemDefaults constants
+
+Utility Classes (Dependencies):
+  StringWidth ← Dashboard, table formatting
+    → None (standalone)
+  
+  AnsiColorUtility ← Logger, Dashboard
+    → None (standalone)
+
+Dependency Rules:
+  1. No circular dependencies
+  2. Lower-level services have few dependencies
+  3. Higher-level services may depend on lower-level
+  4. Utils have zero external dependencies
+  5. Singleton services initialized once and reused
+
+================================================================================
+SECTION 9: QUICK REFERENCE TABLE
+================================================================================
+
+Name                Type           Scope       Dependencies          Used By
+─────────────────────────────────────────────────────────────────────────────
+Logger              Service        Singleton   AnsiColorUtility      All
+Dashboard           Service        Singleton   Logger, Memory, Util  CLI
+MemoryManager       Service        Singleton   Logger, Constants     Dashboard
+FeatureRegistry     Registry       Singleton   Logger, Constants     CLI, Services
+ConcurrentProcessor Processor      Per-batch   Logger, Constants     Batch Ops
+StringWidth         Utility        Static      None                  Dashboard, UI
+AnsiColorUtility    Utility        Static      None                  Logger, UI
+ConfigManager       Service        Singleton   Logger, Validation    App Boot
+ServiceFactory      Factory        Singleton   Logger, Services      CLI
+(Error Classes)     Exception      -           Error (native)        Everywhere
+
+================================================================================
+SECTION 10: INITIALIZATION SEQUENCE
+================================================================================
+
+Recommended Boot Order:
+
+1. Load Constants
+   └─ From src/constants/
+   └─ Compile-time features
+   └─ System defaults
+   └─ Type definitions
+
+2. Initialize ConfigManager
+   └─ Load bunfig.toml
+   └─ Load .env files
+   └─ Validate configuration
+
+3. Initialize Logger
+   └─ Set log level from config
+   └─ Initialize ansi utilities
+   └─ Prepare output destinations
+
+4. Initialize MemoryManager
+   └─ Set memory thresholds
+   └─ Start monitoring
+   └─ Report initial stats to Logger
+
+5. Initialize FeatureRegistry
+   └─ Register all features
+   └─ Check feature dependencies
+   └─ Report to Logger
+
+6. Initialize Dashboard
+   └─ Set up components
+   └─ Subscribe to updates
+   └─ Configure theme
+
+7. Initialize CLI or Servers
+   └─ Register commands/routes
+   └─ Bind to services
+   └─ Start listening
+
+8. Start Application
+   └─ Begin processing requests
+   └─ Continuous monitoring
+   └─ Error handling active
+
+================================================================================
+SECTION 11: BEST PRACTICES & GUIDELINES
+================================================================================
+
+When Creating Services:
+  1. Extend appropriate base class or pattern
+  2. Use single responsibility
+  3. Document public interface
+  4. Inject dependencies explicitly
+  5. Implement error handling
+  6. Use TypeScript for type safety
+  7. Add JSDoc comments
+  8. Test in isolation
+
+When Using Services:
+  1. Inject instead of creating globally
+  2. Use singletons for application-wide services
+  3. Create new instances for operation-specific processors
+  4. Subscribe to events for updates
+  5. Handle errors appropriately
+  6. Log important operations
+  7. Clean up resources on shutdown
+
+When Adding New Services:
+  1. Identify the pattern (Manager, Service, Processor, Registry, etc.)
+  2. Follow naming conventions (ClassName)
+  3. Create in appropriate directory
+  4. Define interfaces/types
+  5. Implement error handling
+  6. Add to initialization sequence
+  7. Document in this registry
+  8. Add to dependency graph
+
+When Refactoring Services:
+  1. Maintain public interface compatibility
+  2. Update dependents
+  3. Update documentation
+  4. Add deprecation warnings if needed
+  5. Run full test suite
+  6. Update this registry
+  7. Update CHANGELOG.md
+
+================================================================================
+SECTION 12: COMMON PATTERNS
+================================================================================
+
+Singleton Pattern:
+  Often used for: Logger, Dashboard, MemoryManager, FeatureRegistry
+  Implementation: Static getInstance() or single export
+  Benefit: Single instance throughout application
+  Trade-off: Global state, testing challenges
+
+Factory Pattern:
+  Used for: ServiceFactory, specialized object creation
+  Implementation: Static methods creating new instances
+  Benefit: Centralized creation logic
+  Trade-off: Additional abstraction layer
+
+Registry Pattern:
+  Used for: FeatureRegistry, service discovery
+  Implementation: Central storage with lookup methods
+  Benefit: Dynamic registration, plugin-like systems
+  Trade-off: Storage overhead
+
+Observer Pattern:
+  Used for: Event systems, metrics subscriptions
+  Implementation: on(), emit() methods
+  Benefit: Decoupled communication
+  Trade-off: Hidden dependencies
+
+Processor/Pipeline Pattern:
+  Used for: ConcurrentProcessor, data transformation
+  Implementation: Process method accepting handler
+  Benefit: Reusable processing logic
+  Trade-off: Abstraction complexity
+
+================================================================================
+END OF REGISTRY
+================================================================================
+
+For questions about specific classes:
+  - CLASS_NAMING_GUIDE.md: Naming conventions
+  - CLASS_ARCHITECTURE_PATTERNS.md: Architecture details
+  - CONSTANTS_ENV_MATRIX.txt: Constants and environment variables
+  - Individual source files: Detailed implementation
+  - NAMING_STANDARDS.md: General standards
+
+Last Verified: January 9, 2026
+Version: 1.0
+Status: Complete and Production-Ready

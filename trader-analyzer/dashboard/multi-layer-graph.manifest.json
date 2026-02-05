@@ -1,0 +1,178 @@
+{
+  "name": "Multi-Layer Correlation Graph Dashboard",
+  "short_name": "MLGS Graph",
+  "description": "Interactive visualization dashboard for multi-layer correlation graph analysis",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "start_url": "/multi-layer-graph.html",
+  "display": "standalone",
+  "background_color": "#0a0e27",
+  "theme_color": "#667eea",
+  "orientation": "landscape",
+  "scope": "/dashboard/",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["developer", "analytics", "visualization"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Load Graph",
+      "short_name": "Load",
+      "description": "Load multi-layer correlation graph",
+      "url": "/multi-layer-graph.html?action=load",
+      "icons": []
+    },
+    {
+      "name": "Developer Dashboard",
+      "short_name": "Dev",
+      "description": "Open developer dashboard",
+      "url": "/mlgs-developer-dashboard.html",
+      "icons": []
+    }
+  ],
+  "permissions": [],
+  "content_scripts": [],
+  "web_accessible_resources": [
+    {
+      "resources": ["multi-layer-graph.html", "mlgs-developer-dashboard.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "modules": {
+    "multi-layer-graph": {
+      "entry": "./multi-layer-graph.html",
+      "type": "html",
+      "dependencies": [
+        {
+          "name": "vis-network",
+          "version": "latest",
+          "type": "cdn",
+          "url": "https://unpkg.com/vis-network@latest/dist/vis-network.min.js"
+        }
+      ],
+      "exports": [
+        "initNetwork",
+        "loadGraph",
+        "renderGraph",
+        "startStreaming",
+        "stopStreaming",
+        "exportJSON",
+        "exportGraphML",
+        "refreshSystemStatus",
+        "showConnectionPoolStats",
+        "hideConnectionPoolStats"
+      ],
+      "types": "./multi-layer-graph.types.ts",
+      "properties": "./multi-layer-graph.properties.json",
+      "sourcemap": "./multi-layer-graph.js.map"
+    }
+  },
+  "api": {
+    "endpoints": {
+      "mcpHealth": {
+        "path": "/api/v17/mcp/health",
+        "method": "GET",
+        "description": "MCP server health check",
+        "responseType": "application/json"
+      },
+      "buildGraph": {
+        "path": "/api/mcp/tools/research-build-multi-layer-graph",
+        "method": "POST",
+        "description": "Build multi-layer graph",
+        "requestType": "application/json",
+        "responseType": "application/json"
+      },
+      "generateVisualization": {
+        "path": "/api/mcp/tools/research-generate-visualization",
+        "method": "POST",
+        "description": "Generate graph visualization",
+        "requestType": "application/json",
+        "responseType": "application/json"
+      },
+      "connectionPools": {
+        "path": "/api/v17/monitoring/connection-pools",
+        "method": "GET",
+        "description": "Connection pool statistics",
+        "responseType": "application/json",
+        "status": "planned"
+      }
+    }
+  },
+  "features": {
+    "graphVisualization": {
+      "enabled": true,
+      "library": "vis-network",
+      "version": "latest"
+    },
+    "layerFiltering": {
+      "enabled": true,
+      "layers": [1, 2, 3, 4]
+    },
+    "confidenceFiltering": {
+      "enabled": true,
+      "min": 0,
+      "max": 1,
+      "default": 0.5,
+      "step": 0.01
+    },
+    "streaming": {
+      "enabled": true,
+      "interval": 5000,
+      "unit": "milliseconds"
+    },
+    "export": {
+      "enabled": true,
+      "formats": ["json", "graphml"]
+    },
+    "systemStatus": {
+      "enabled": true,
+      "endpoints": ["/api/v17/mcp/health"],
+      "refreshInterval": 5000
+    },
+    "connectionPoolMonitoring": {
+      "enabled": true,
+      "bookmakers": ["draftkings", "fanduel", "bet365"],
+      "refreshInterval": 15000
+    },
+    "developerDashboardLink": {
+      "enabled": true,
+      "url": "/mlgs-developer-dashboard.html"
+    }
+  },
+  "state": {
+    "persistent": false,
+    "storage": "sessionStorage",
+    "keys": [
+      "eventId",
+      "confidenceThreshold",
+      "enabledLayers",
+      "lastGraphData"
+    ]
+  },
+  "build": {
+    "sourcemap": true,
+    "minify": false,
+    "target": "browser",
+    "browsers": [
+      "chrome >= 90",
+      "firefox >= 88",
+      "safari >= 14",
+      "edge >= 90"
+    ]
+  },
+  "metadata": {
+    "author": "Hyper-Bun Team",
+    "license": "MIT",
+    "repository": "https://github.com/hyper-bun/trader-analyzer",
+    "documentation": "/docs/MULTI-LAYER-GRAPH-DASHBOARD-INTEGRATION.md",
+    "lastUpdated": "2025-12-08",
+    "bunVersion": "1.3.4"
+  }
+}

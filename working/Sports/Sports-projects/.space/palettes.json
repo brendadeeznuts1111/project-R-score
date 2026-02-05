@@ -1,0 +1,25 @@
+{
+  "palette-1763236936914": {
+    "id": "palette-1763236936914",
+    "name": "BANG",
+    "path": "assets/color-palettes/BANG",
+    "type": "colorpalette",
+    "colors": [
+      {
+        "name": "Color1",
+        "value": "#3b82f6",
+        "category": "custom"
+      }
+    ],
+    "gradients": [],
+    "designSystemMapping": {
+      "baseTokens": {},
+      "semanticTokens": {}
+    },
+    "tags": [],
+    "category": "custom",
+    "description": "",
+    "created": 1763236936914,
+    "modified": 1763236936914
+  }
+}

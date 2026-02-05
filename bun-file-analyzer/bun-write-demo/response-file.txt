@@ -1,0 +1,2 @@
+This is response content!
+Written using Bun.write()

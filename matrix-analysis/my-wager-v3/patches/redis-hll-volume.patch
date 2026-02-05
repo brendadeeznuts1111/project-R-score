@@ -1,0 +1,54 @@
+--- a/node_modules/redis/dist/index.js
++++ b/node_modules/redis/dist/index.js
+@@ -1000,6 +1000,45 @@
+ class RedisClient {
+   constructor(options) {
+     this.options = options;
++    // Tension Field HLL Extensions
++    this.hllVolumeCache = new Map();
++    this.hllVolumeThreshold = 1000;
+   }
+   
++  // Factory Wager Tension Field: HLL Volume Operations
++  async hllAddVolume(key, items, volume = 1) {
++    const pipeline = this.pipeline();
++    for (const item of items) {
++      pipeline.hlladd(key, item);
++    }
++    await pipeline.exec();
++    
++    // Cache volume for tension calculations
++    const current = this.hllVolumeCache.get(key) || 0;
++    this.hllVolumeCache.set(key, current + (items.length * volume));
++    
++    return { added: items.length, volume: current + (items.length * volume) };
++  }
++  
++  async hllGetVolume(key) {
++    if (this.hllVolumeCache.has(key)) {
++      return this.hllVolumeCache.get(key);
++    }
++    
++    // Estimate volume from HLL cardinality
++    const count = await this.hllcount(key);
++    const volume = count * this.hllVolumeThreshold;
++    this.hllVolumeCache.set(key, volume);
++    return volume;
++  }
++  
++  async hllMergeVolume(destKey, sourceKeys, tensionFactor = 1.0) {
++    // Merge HLLs and calculate combined volume
++    await this.hllmerge(destKey, sourceKeys);
++    
++    let totalVolume = 0;
++    for (const key of sourceKeys) {
++      totalVolume += await this.hllGetVolume(key);
++    }
++    
++    this.hllVolumeCache.set(destKey, totalVolume * tensionFactor);
++    return totalVolume * tensionFactor;
++  }
++  
+   async get(key) {
+     return this.sendCommand('GET', [key]);
+   }

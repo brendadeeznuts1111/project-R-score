@@ -1,0 +1,7 @@
+[install]
+# Auto-install peer dependencies
+auto = true
+
+[test]
+# Test configuration
+timeout = 30000

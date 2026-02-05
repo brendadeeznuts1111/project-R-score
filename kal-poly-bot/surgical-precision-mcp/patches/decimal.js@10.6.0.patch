@@ -1,0 +1,13 @@
+diff --git a/decimal.js b/decimal.js
+index 23295c6acc56fc0a311848fea9270d2317c59249..07b9356000322a44090971fe87795407a5745b6b 100644
+--- a/decimal.js
++++ b/decimal.js
+@@ -1,6 +1,8 @@
+ ;(function (globalScope) {
+   'use strict';
+ 
++  // DEMONSTRATION PATCH: Added console log to verify patch is active
++  console.log('[PATCHED] decimal.js loaded with precision enhancements');
+ 
+   /*!
+    *  decimal.js v10.6.0

@@ -1,0 +1,58 @@
+{
+  "name": "@skills/bun-native-mastery",
+  "version": "1.0.0",
+  "description": "Bun-Native Mastery Curriculum - Interactive learning system for mastering Bun.js performance patterns",
+  "type": "module",
+  "main": "packages/cli/index.ts",
+  "scripts": {
+    "skills": "bun run packages/cli/index.ts",
+    "init": "bun run packages/cli/index.ts init --with-annotations",
+    "exercise": "bun run packages/cli/index.ts exercise",
+    "scan": "bun run packages/cli/index.ts scan",
+    "benchmark": "bun run packages/cli/index.ts benchmark",
+    "dashboard": "bun run packages/cli/index.ts dashboard",
+    "dev": "bun --watch packages/cli/index.ts",
+    "build": "bun build packages/cli/index.ts --outdir ./dist --target bun",
+    "test": "bun test",
+    "lint": "bunx biome check .",
+    "format": "bunx biome format . --write"
+  },
+  "keywords": [
+    "bun",
+    "bun.js",
+    "performance",
+    "learning",
+    "curriculum",
+    "file-io",
+    "concurrency",
+    "optimization",
+    "security",
+    "testing"
+  ],
+  "author": "Bun-Native Skills Team",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.4.0",
+    "@types/node": "^20.0.0",
+    "bun-types": "latest"
+  },
+  "workspaces": [
+    "packages/*",
+    "packages/exercises/*"
+  ],
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skills/bun-native-mastery"
+  },
+  "bugs": {
+    "url": "https://github.com/skills/bun-native-mastery/issues"
+  },
+  "homepage": "https://github.com/skills/bun-native-mastery#readme"
+}

@@ -1,0 +1,354 @@
+/* themes.module.css - Dynamic theming with CSS color functions */
+
+/* Light theme with color-mix() for variations */
+.light-theme {
+  /* Primary colors */
+  --primary-hue: 217;
+  --primary-saturation: 91%;
+  --primary-lightness: 60%;
+  
+  --primary: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+  --primary-light: color-mix(in hsl, var(--primary) 80%, white);
+  --primary-dark: color-mix(in hsl, var(--primary) 80%, black);
+  --primary-transparent: color-mix(in srgb, var(--primary) 10%, transparent);
+  
+  /* Secondary colors */
+  --secondary-hue: 262;
+  --secondary-saturation: 83%;
+  --secondary-lightness: 58%;
+  
+  --secondary: hsl(var(--secondary-hue) var(--secondary-saturation) var(--secondary-lightness));
+  --secondary-light: color-mix(in hsl, var(--secondary) 80%, white);
+  --secondary-dark: color-mix(in hsl, var(--secondary) 80%, black);
+  
+  /* Accent colors */
+  --accent-hue: 48;
+  --accent-saturation: 96%;
+  --accent-lightness: 53%;
+  
+  --accent: hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness));
+  --accent-light: color-mix(in hsl, var(--accent) 80%, white);
+  --accent-dark: color-mix(in hsl, var(--accent) 80%, black);
+  
+  /* Status colors */
+  --success: hsl(142 76% 36%); /* #16a34a */
+  --success-light: color-mix(in hsl, var(--success) 80%, white);
+  --success-dark: color-mix(in hsl, var(--success) 80%, black);
+  --success-transparent: color-mix(in srgb, var(--success) 10%, transparent);
+  
+  --warning: hsl(38 92% 50%); /* #f59e0b */
+  --warning-light: color-mix(in hsl, var(--warning) 80%, white);
+  --warning-dark: color-mix(in hsl, var(--warning) 80%, black);
+  --warning-transparent: color-mix(in srgb, var(--warning) 10%, transparent);
+  
+  --error: hsl(0 84% 60%); /* #dc2626 */
+  --error-light: color-mix(in hsl, var(--error) 80%, white);
+  --error-dark: color-mix(in hsl, var(--error) 80%, black);
+  --error-transparent: color-mix(in srgb, var(--error) 10%, transparent);
+  
+  --info: hsl(217 91% 60%); /* #3b82f6 */
+  --info-light: color-mix(in hsl, var(--info) 80%, white);
+  --info-dark: color-mix(in hsl, var(--info) 80%, black);
+  --info-transparent: color-mix(in srgb, var(--info) 10%, transparent);
+  
+  /* Neutral colors */
+  --white: #ffffff;
+  --black: #000000;
+  
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  
+  /* Semantic colors */
+  --background: var(--white);
+  --foreground: var(--gray-900);
+  --card: var(--white);
+  --card-foreground: var(--gray-900);
+  --popover: var(--white);
+  --popover-foreground: var(--gray-900);
+  --primary-foreground: var(--white);
+  --secondary-foreground: var(--white);
+  --accent-foreground: var(--white);
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-600);
+  --border: var(--gray-200);
+  --input: var(--gray-200);
+  --ring: var(--primary);
+  
+  /* Light/dark function for automatic switching */
+  --surface: light-dark(var(--gray-50), var(--gray-900));
+  --surface-foreground: light-dark(var(--gray-900), var(--gray-50));
+}
+
+/* Dark theme with adjusted color values */
+.dark-theme {
+  /* Primary colors - adjusted for dark mode */
+  --primary-hue: 217;
+  --primary-saturation: 91%;
+  --primary-lightness: 65%; /* Lighter for dark backgrounds */
+  
+  --primary: hsl(var(--primary-hue) var(--primary-saturation) var(--primary-lightness));
+  --primary-light: color-mix(in hsl, var(--primary) 90%, white);
+  --primary-dark: color-mix(in hsl, var(--primary) 70%, black);
+  --primary-transparent: color-mix(in srgb, var(--primary) 20%, transparent);
+  
+  /* Secondary colors */
+  --secondary-hue: 262;
+  --secondary-saturation: 83%;
+  --secondary-lightness: 65%;
+  
+  --secondary: hsl(var(--secondary-hue) var(--secondary-saturation) var(--secondary-lightness));
+  --secondary-light: color-mix(in hsl, var(--secondary) 90%, white);
+  --secondary-dark: color-mix(in hsl, var(--secondary) 70%, black);
+  
+  /* Accent colors */
+  --accent-hue: 48;
+  --accent-saturation: 96%;
+  --accent-lightness: 58%;
+  
+  --accent: hsl(var(--accent-hue) var(--accent-saturation) var(--accent-lightness));
+  --accent-light: color-mix(in hsl, var(--accent) 90%, white);
+  --accent-dark: color-mix(in hsl, var(--accent) 70%, black);
+  
+  /* Status colors - adjusted for visibility */
+  --success: hsl(142 70% 45%); /* Slightly lighter */
+  --success-light: color-mix(in hsl, var(--success) 90%, white);
+  --success-dark: color-mix(in hsl, var(--success) 70%, black);
+  --success-transparent: color-mix(in srgb, var(--success) 20%, transparent);
+  
+  --warning: hsl(38 92% 55%); /* Slightly lighter */
+  --warning-light: color-mix(in hsl, var(--warning) 90%, white);
+  --warning-dark: color-mix(in hsl, var(--warning) 70%, black);
+  --warning-transparent: color-mix(in srgb, var(--warning) 20%, transparent);
+  
+  --error: hsl(0 84% 65%); /* Slightly lighter */
+  --error-light: color-mix(in hsl, var(--error) 90%, white);
+  --error-dark: color-mix(in hsl, var(--error) 70%, black);
+  --error-transparent: color-mix(in srgb, var(--error) 20%, transparent);
+  
+  --info: hsl(217 91% 65%); /* Slightly lighter */
+  --info-light: color-mix(in hsl, var(--info) 90%, white);
+  --info-dark: color-mix(in hsl, var(--info) 70%, black);
+  --info-transparent: color-mix(in srgb, var(--info) 20%, transparent);
+  
+  /* Neutral colors - inverted for dark mode */
+  --white: #ffffff;
+  --black: #000000;
+  
+  --gray-50: #0f172a; /* Darker */
+  --gray-100: #1e293b; /* Darker */
+  --gray-200: #334155; /* Darker */
+  --gray-300: #475569; /* Darker */
+  --gray-400: #64748b; /* Lighter */
+  --gray-500: #94a3b8; /* Lighter */
+  --gray-600: #cbd5e1; /* Lighter */
+  --gray-700: #e2e8f0; /* Lighter */
+  --gray-800: #f1f5f9; /* Lighter */
+  --gray-900: #f8fafc; /* Lighter */
+  
+  /* Semantic colors - inverted */
+  --background: var(--gray-900);
+  --foreground: var(--gray-100);
+  --card: var(--gray-800);
+  --card-foreground: var(--gray-100);
+  --popover: var(--gray-800);
+  --popover-foreground: var(--gray-100);
+  --primary-foreground: var(--white);
+  --secondary-foreground: var(--white);
+  --accent-foreground: var(--gray-900);
+  --muted: var(--gray-800);
+  --muted-foreground: var(--gray-400);
+  --border: var(--gray-700);
+  --input: var(--gray-700);
+  --ring: var(--primary);
+  
+  /* Surface colors */
+  --surface: light-dark(var(--gray-900), var(--gray-50));
+  --surface-foreground: light-dark(var(--gray-100), var(--gray-900));
+}
+
+/* High contrast theme */
+.high-contrast-theme {
+  /* Enhanced contrast ratios */
+  --primary: hsl(217 100% 50%);
+  --primary-light: hsl(217 100% 70%);
+  --primary-dark: hsl(217 100% 30%);
+  
+  --secondary: hsl(262 100% 50%);
+  --secondary-light: hsl(262 100% 70%);
+  --secondary-dark: hsl(262 100% 30%);
+  
+  --success: hsl(142 100% 40%);
+  --warning: hsl(38 100% 50%);
+  --error: hsl(0 100% 50%);
+  --info: hsl(217 100% 50%);
+  
+  /* High contrast neutrals */
+  --background: var(--white);
+  --foreground: var(--black);
+  --card: var(--white);
+  --card-foreground: var(--black);
+  --border: var(--black);
+  --input: var(--black);
+  --ring: var(--black);
+}
+
+/* Color blind friendly theme */
+.colorblind-theme {
+  /* Use patterns and shapes instead of just color */
+  --success: hsl(210 100% 45%); /* Blue instead of green */
+  --warning: hsl(45 100% 50%); /* Orange/yellow */
+  --error: hsl(0 100% 45%); /* Red (maintained) */
+  --info: hsl(280 100% 50%); /* Purple instead of blue */
+  
+  /* Enhanced patterns */
+  --success-pattern: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    color-mix(in srgb, var(--success) 10%, transparent) 10px,
+    color-mix(in srgb, var(--success) 10%, transparent) 20px
+  );
+  
+  --warning-pattern: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 5px,
+    color-mix(in srgb, var(--warning) 10%, transparent) 5px,
+    color-mix(in srgb, var(--warning) 10%, transparent) 10px
+  );
+  
+  --error-pattern: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 8px,
+    color-mix(in srgb, var(--error) 10%, transparent) 8px,
+    color-mix(in srgb, var(--error) 10%, transparent) 16px
+  );
+}
+
+/* Terminal-specific theme */
+.terminal-theme {
+  /* Monospace-friendly colors */
+  --primary: hsl(120 80% 50%); /* Green for terminal */
+  --secondary: hsl(195 80% 50%); /* Cyan for terminal */
+  --accent: hsl(45 80% 50%); /* Yellow for terminal */
+  
+  /* High contrast for readability */
+  --background: hsl(0 0% 10%);
+  --foreground: hsl(0 0% 90%);
+  --card: hsl(0 0% 15%);
+  --card-foreground: hsl(0 0% 90%);
+  
+  /* Monospace font stack */
+  --font-mono: ui-monospace, 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  --font-size: clamp(12px, 1.5vw, 16px);
+  --line-height: 1.4;
+  
+  /* Terminal-specific colors */
+  --terminal-black: hsl(0 0% 0%);
+  --terminal-red: hsl(0 80% 50%);
+  --terminal-green: hsl(120 80% 50%);
+  --terminal-yellow: hsl(60 80% 50%);
+  --terminal-blue: hsl(240 80% 50%);
+  --terminal-magenta: hsl(300 80% 50%);
+  --terminal-cyan: hsl(180 80% 50%);
+  --terminal-white: hsl(0 0% 90%);
+}
+
+/* Dynamic theme switching using CSS variables */
+:root {
+  /* Default to light theme */
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  /* Apply dark theme variables */
+  --primary: hsl(217 91% 65%);
+  --secondary: hsl(262 83% 65%);
+  --accent: hsl(48 96% 58%);
+  --background: var(--gray-900);
+  --foreground: var(--gray-100);
+}
+
+[data-theme="high-contrast"] {
+  /* Apply high contrast theme */
+  --primary: hsl(217 100% 50%);
+  --secondary: hsl(262 100% 50%);
+  --success: hsl(142 100% 40%);
+  --warning: hsl(38 100% 50%);
+  --error: hsl(0 100% 50%);
+  --background: var(--white);
+  --foreground: var(--black);
+}
+
+[data-theme="colorblind"] {
+  /* Apply colorblind-friendly theme */
+  --success: hsl(210 100% 45%);
+  --warning: hsl(45 100% 50%);
+  --error: hsl(0 100% 45%);
+  --info: hsl(280 100% 50%);
+}
+
+[data-theme="terminal"] {
+  /* Apply terminal theme */
+  --primary: hsl(120 80% 50%);
+  --secondary: hsl(195 80% 50%);
+  --accent: hsl(45 80% 50%);
+  --background: hsl(0 0% 10%);
+  --foreground: hsl(0 0% 90%);
+  font-family: ui-monospace, 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+/* System preference support */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    /* Apply dark theme when system prefers dark */
+    color-scheme: dark;
+    --primary: hsl(217 91% 65%);
+    --secondary: hsl(262 83% 65%);
+    --accent: hsl(48 96% 58%);
+    --background: var(--gray-900);
+    --foreground: var(--gray-100);
+  }
+}
+
+/* Accessibility preferences */
+@media (prefers-contrast: high) {
+  :root:not([data-theme]) {
+    /* Apply high contrast when system prefers high contrast */
+    --primary: hsl(217 100% 50%);
+    --secondary: hsl(262 100% 50%);
+    --success: hsl(142 100% 40%);
+    --warning: hsl(38 100% 50%);
+    --error: hsl(0 100% 50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  [data-theme] {
+    --background: white;
+    --foreground: black;
+    --primary: black;
+    --secondary: black;
+    background: white !important;
+    color: black !important;
+  }
+}

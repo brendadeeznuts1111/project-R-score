@@ -1,0 +1,32 @@
+
+/* CSS loader with @import and url() support */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: url("./background.jpg") center/cover;
+}
+
+h1 {
+  color: #ff6b6b;
+  font-family: 'Inter', sans-serif;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Nested CSS is supported */
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}

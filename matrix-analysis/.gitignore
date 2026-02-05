@@ -1,0 +1,411 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+.output/
+
+# Bun
+*.lockb
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp files
+tmp/
+.tmp/
+*.tmp
+
+# A/B variant snapshots (runtime)
+ab-snapshots.db
+
+# Generated indexes
+.options.index
+
+# Cache and build directories
+.biome/
+.cache/
+.npm/
+.zai/
+/bin/
+
+# OS and Editor files
+.Trash/
+*.backup
+
+# Bun specific
+.bun/
+.bun-create/
+.bun-secrets-index.json
+.bunfig.toml
+.bunx-dev-aliases
+.bunx/
+bunfig.toml
+
+# Claude config (but allow examples)
+# NOTE: .claude/.gitignore contains ENHANCED exclusions for agent/MCP/ACP performance
+# See .claude/.gitignore for detailed exclusions of high-duplication directories
+.claude/*
+!.claude/examples/
+!.claude/examples/**
+!.claude/.gitignore
+!.claude/AGENTS.md
+!.claude/QUICKREF.md
+!.claude/README.md
+!.claude/OMEGA_SNIPPET_BIBLE.md
+!.claude/OMEGA_SNIPPET_CHEATSHEET.md
+!.claude/docs/
+!.claude/docs/**
+!.claude/src/
+!.claude/src/**
+!.claude/tests/
+!.claude/tests/**
+!.claude/tools/
+!.claude/tools/**
+!.claude/core/
+!.claude/core/**
+!.claude/.agents/
+!.claude/.agents/**
+!.claude/api/
+!.claude/api/**
+!.claude/commands/
+!.claude/commands/**
+!.claude/matrix/
+!.claude/matrix/**
+.claude.json*
+
+# Development tool configs
+.cursor/
+.wrangler/
+
+# Skills (allow .claude/skills)
+skills/
+!.claude/skills/
+!.claude/skills/*.md
+!.claude/.agents/skills/
+!.claude/.agents/skills/**
+/test/
+
+# Test reports and benchmarks
+reports/junit.xml
+reports/*.json
+*.heapsnapshot
+Heap-*
+
+# Generated test/benchmark artifacts
+test-*.txt
+bench-*.json
+*-results.json
+demo-*.js
+test-transpiled-*.js
+matrix-v*.lock
+
+# Advanced test examples (submodule)
+my-wager-v3/examples/advanced-tests/
+
+# Large and sensitive files - never commit
+.openclaw/
+tier1380-standalone
+*.tar
+*.tar.gz
+*.cdx.json
+
+# Database files
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Generated history/analysis
+.omega-cols-history
+analysis.md
+bundle-analysis.md
+meta.md
+BUN-V138-IMPLEMENTATION-SUMMARY.md
+
+# One-off test/benchmark scripts
+bun-v138-*.ts
+
+# Example entry points
+examples/
+
+# Security reports
+security/
+
+# Standalone tools
+tools/cdn-purge.ts
+tools/telemetry-overview.ts
+tools/tier1380-diagnostic.ts
+
+# Separate projects and external directories
+clawd/
+openclaw/
+
+# FactoryWager v4.4 - Enhanced Security & Governance
+# ===================================================
+
+# FactoryWager sensitive data and backups
+.factory-wager/backups/
+.factory-wager/secrets/
+.factory-wager/audit/*.jsonl
+.factory-wager/cleanup/
+.factory-wager/deployment-credentials.json
+.factory-wager/emergency-*.ts
+.factory-wager/vault-metadata.json
+.factory-wager/config.vault*.yaml
+.factory-wager/config.original.yaml
+
+# FactoryWager reports and analysis (keep structure, exclude content)
+.factory-wager/reports/*.json
+.factory-wager/reports/*.html
+!.factory-wager/reports/.gitkeep
+
+# FactoryWager registry build artifacts
+.factory-wager/factory-wager-registry/dist/
+.factory-wager/factory-wager-registry/node_modules/
+.factory-wager/factory-wager-registry/.wrangler/
+
+# FactoryWager snapshots and visual regression
+.factory-wager/snapshots/*-current.ans
+!.factory-wager/snapshots/*-golden.ans
+!.factory-wager/snapshots/.gitkeep
+
+# FactoryWager monitoring and logs
+.factory-wager/monitor-*.ts
+.factory-wager/live-dashboard.ts
+.factory-wager/cleanup-log.json
+
+# FactoryWager organized scripts (temporary files)
+.factory-wager/organized/scripts-&-tools/*-backup.*
+.factory-wager/organized/scripts-&-logs/
+
+# Enterprise Vault Security
+# ==========================
+audit-*.jsonl
+audit-enhanced-vault.jsonl
+audit-vault.jsonl
+
+# Visual Regression Artifacts
+# ==========================
+*-current.ans
+*-diff.png
+*-comparison.html
+
+# Unicode Test Artifacts
+# =====================
+unicode-test-results.json
+unicode-validation-report.json
+
+# Responsive Layout Test Outputs
+# =============================
+layout-test-*.json
+responsive-debug.log
+
+# Sixel Graphics Test Outputs
+# ===========================
+sixel-test-*.ans
+graphics-debug.log
+
+# Pre-commit Hook Caches
+# =====================
+.pre-commit-*.cache
+unicode-test-cache/
+
+# FactoryWager Development Logs
+# =============================
+fw-*.log
+factory-wager-*.debug
+governance-*.json
+
+# Temporary deployment files
+# =========================
+deploy-*.tmp
+release-*.draft
+*.release-backup
+
+# Performance benchmarks
+# =======================
+benchmark-results-*.json
+perf-*.profile
+memory-*.heap
+
+# Security scan results
+# =====================
+security-scan-*.json
+vulnerability-report-*.json
+secret-scan-*.json
+
+# Configuration validation caches
+# ===============================
+config-validation-*.cache
+schema-check-*.tmp
+
+# Multi-language test artifacts
+# ============================
+rtl-test-*.log
+cjk-test-*.json
+unicode-compliance-*.report
+
+# Enterprise tenant configurations
+# ===============================
+tenants/*/config.local.yaml
+tenants/*/secrets.local.json
+tenants/*/deployment.local.env
+
+# Registry and CDN cache files
+# ============================
+.registry-cache/
+cdn-cache-*.json
+r2-temp-*/
+
+# Monitoring and telemetry data
+# ==============================
+telemetry-*.json
+metrics-*.db
+monitoring-*.log
+
+# Build and bundler artifacts
+# ==========================
+.bun-build-cache/
+bundle-*.stats.json
+webpack-*.stats.json
+
+# Documentation build artifacts
+# ============================
+docs/build/
+docs/.vitepress/
+docs/.docusaurus
+
+# Linting and formatting cache
+# ============================
+.biome-cache/
+.eslintcache
+.stylelintcache
+
+# Type checking cache
+# ===================
+.tsbuildinfo
+*.tsbuildinfo
+
+# Testing artifacts
+# ==================
+test-results/
+coverage-*.lcov
+nyc-output/
+playwright-report/
+test-results-*.json
+
+# Development server files
+# ========================
+.dev-server/
+.vite/
+.next/
+.nuxt/
+.svelte-kit/
+
+# Package manager locks (keep bun.lock, exclude others)
+# ===================================================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Cloud provider credentials
+# ==========================
+.aws/
+.aws-credentials
+.azure/
+.google-credentials
+cloudflare-credentials.json
+
+# Container and Docker artifacts
+# ==============================
+.dockerignore
+Dockerfile.*
+docker-compose.override.yml
+
+# CI/CD pipeline artifacts
+# =========================
+.github/workflows/*.tmp
+.gitlab-ci.yml.local
+.vercel/local.*
+
+# Local development overrides
+# ===========================
+*.local.*
+*.dev.*
+*.development.*
+override-*
+local-*
+
+# Backup and archive files
+# ========================
+*.backup.*
+*.old.*
+*.orig.*
+*.bak.*
+*~
+
+# Crash dumps and core files
+# =========================
+core.*
+*.core
+*.dump
+*.dmp
+
+# System and process files
+# ========================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Network and proxy configurations
+# ================================
+proxy-*.json
+network-*.config
+*.pac
+
+# Database migrations and seeds
+# =============================
+migrations/tmp/
+seeds/local/
+db-*.sql.local
+
+# API documentation and specs
+# ===========================
+api-docs/local/
+swagger.local.json
+openapi.local.yaml
+
+# Localization and i18n build artifacts
+# =====================================
+locales/compiled/
+i18n/.cache/
+
+# Asset optimization and build artifacts
+# ======================================
+assets/dist/
+images/optimized/
+fonts/subset/
+
+# Environment-specific configurations
+# ===================================
+config/production.local.yaml
+config/staging.local.yaml
+config/development.local.yaml

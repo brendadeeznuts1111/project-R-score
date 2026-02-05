@@ -1,0 +1,39 @@
+{
+	"name": "@bun-toml/logger",
+	"version": "1.0.0",
+	"description": "Enhanced logging system for bun-toml platform",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "bun build src/index.ts --outdir dist --target bun",
+		"dev": "bun --watch src/index.ts",
+		"test": "bun test",
+		"typecheck": "bun tsc --noEmit"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"bun": "./dist/index.js"
+		},
+		"./enhanced": {
+			"types": "./dist/enhanced.d.ts",
+			"bun": "./dist/enhanced.js"
+		}
+	},
+	"files": [
+		"dist/**/*",
+		"src/**/*"
+	],
+	"keywords": [
+		"bun",
+		"logging",
+		"enhanced",
+		"structured"
+	],
+	"author": "Bun Secrets Editor",
+	"license": "MIT",
+	"devDependencies": {
+		"bun-types": "1.3.7"
+	}
+}

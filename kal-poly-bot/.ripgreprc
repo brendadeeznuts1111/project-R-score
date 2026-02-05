@@ -1,0 +1,49 @@
+# .ripgreprc - Optimized ripgrep config for Bun projects
+# Ignore generated files
+--ignore-file=.gitignore
+
+# Bun-specific ignores
+--ignore-file=.bunignore
+
+# Performance optimizations
+--max-filesize=10M
+--max-files=10000
+--threads=8
+
+# Bun ecosystem file types
+--type-add
+bun:*.bun
+
+# TypeScript/React patterns
+--type-add
+tsx:*.tsx
+
+# Markdown with code blocks
+--type-add
+md:*.md
+
+# JSON with comments (Bun allows this)
+--type-add
+jsonc:*.json
+
+# Default search settings
+--context=2
+--max-count=50
+--json
+--no-heading
+--line-number
+--column
+
+# Smart globbing (avoid common large directories)
+--glob=!node_modules/**
+--glob=!.git/**
+--glob=!dist/**
+--glob=!build/**
+--glob=!coverage/**
+--glob=!*.log
+
+# Case insensitive for common terms
+--ignore-case
+
+# Word boundaries for symbol search
+--word-regexp

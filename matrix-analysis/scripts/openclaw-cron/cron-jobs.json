@@ -1,0 +1,30 @@
+{
+  "_comment": "OpenClaw cron jobs - run via system cron until native support",
+  "jobs": [
+    {
+      "name": "compact-audits",
+      "schedule": "0 3 * * *",
+      "command": "cd ~ && bun ~/.matrix/scripts/compact-audits.ts >> ~/.matrix/logs/cron.log 2>&1",
+      "description": "Nightly audit log compaction (3 AM CST)"
+    },
+    {
+      "name": "refresh-rss-feeds",
+      "schedule": "*/30 * * * *",
+      "command": "cd ~ && bun ~/.matrix/scripts/refresh-rss.ts >> ~/.matrix/logs/cron.log 2>&1",
+      "description": "RSS feed refresh every 30 min"
+    },
+    {
+      "name": "session-cleanup",
+      "schedule": "0 2 * * *",
+      "command": "cd ~ && bun ~/.matrix/scripts/cleanup-sessions.ts >> ~/.matrix/logs/cron.log 2>&1",
+      "description": "Clean stale sessions daily (2 AM)"
+    },
+    {
+      "name": "openclaw-health-check",
+      "schedule": "*/5 * * * *",
+      "command": "cd ~ && export OPENCLAW_GATEWAY_TOKEN=\$(bun -e 'const t=await Bun.secrets.get({service:\"com.openclaw.gateway\",name:\"gateway_token\"});console.log(t)') && curl -s http://127.0.0.1:18789/health > /dev/null || openclaw gateway --port 18789 &",
+      "description": "Health check every 5 min"
+    }
+  ],
+  "_install_instructions": "Add to crontab: crontab ~/.matrix/cron-jobs.txt"
+}

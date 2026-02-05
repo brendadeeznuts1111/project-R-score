@@ -1,0 +1,113 @@
+{
+  "name": "bun-enhanced-file-analyzer",
+  "version": "1.0.0",
+  "description": "Bun v1.3.6+ Enhanced File Analyzer with Virtual Files, Configuration Matrix, and Professional Dashboard",
+  "type": "module",
+  "homepage": "https://github.com/brendadeeznuts1111/bun-enhanced-file-analyzer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/bun-enhanced-file-analyzer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/bun-enhanced-file-analyzer/issues"
+  },
+  "author": {
+    "name": "Brendan Development",
+    "email": "brendadeeznuts1111@gmail.com",
+    "url": "https://github.com/brendadeeznuts1111"
+  },
+  "keywords": [
+    "bun",
+    "file-analyzer",
+    "react",
+    "typescript",
+    "virtual-files",
+    "hmr",
+    "cookie-map",
+    "urlpattern",
+    "dashboard",
+    "v1.3.6"
+  ],
+  "scripts": {
+    "setup": "./scripts/setup-bun.sh",
+    "setup:basic": "./scripts/setup.sh",
+    "start": "bun run dev",
+    "dev": "bun run --watch api/index.ts & bun build --watch --react-fast-refresh ./src/index.tsx --outdir ./public & bun --hot tools/serve.ts",
+    "dev:full": "./scripts/dev.sh",
+    "dev:api": "bun run --watch api/index.ts",
+    "dev:frontend": "bun build --watch --react-fast-refresh ./src/index.tsx --outdir ./public",
+    "dev:serve": "bun --hot tools/serve.ts",
+    "build": "bun run build:prod",
+    "build:dev": "PORT=3879 API_PORT=3007 NODE_ENV=development bun build --react-fast-refresh ./src/index.tsx --outdir ./public",
+    "build:prod": "bun build --minify --no-sourcemap ./src/index.tsx --outdir ./public",
+    "build:hooks": "bun scripts/build-hooks.ts --output=./public",
+    "build:analyze": "bun build --metafile ./src/index.tsx --outdir ./public && bun run build:hooks",
+    "build:report": "bun build ./src/index.tsx --outdir ./public && bun scripts/build-hooks.ts --output=./public --create-reports",
+    "monitoring:demo": "bun examples/monitoring-demo.ts",
+    "monitoring:standalone": "bun examples/monitoring-standalone.ts",
+    "monitoring:test": "bun test test/monitoring.test.ts",
+    "examples:list": "bun examples/index.ts list",
+    "examples:run": "bun examples/index.ts run",
+    "examples:test": "bun examples/test-realtime-monitoring.ts",
+    "examples:monitoring": "bun examples/realtime-monitoring.ts",
+    "examples:analyzer": "bun examples/bundle-analyzer.ts",
+    "examples:benchmark": "bun examples/performance-benchmark.ts",
+    "examples:compare": "bun examples/build-comparator.ts",
+    "examples:all": "bun examples/index.ts run-all",
+    "examples:check": "bun examples/index.ts check-deps",
+    "examples:demo": "bun examples/demo.ts",
+    "examples:demo:quick": "bun examples/demo.ts quick",
+    "examples:bucket": "bun examples/bucket-viewer.ts",
+    "examples:integrated": "bun examples/integrated-dashboard.ts",
+    "build:compare": "bun run examples/build-examples.ts",
+    "build:files": "bun run examples/build-files-demo.ts",
+    "build:virtual": "bun -e \"import { buildVirtualApp } from './examples/build-files-demo.ts'; buildVirtualApp();\"",
+    "build:overrides": "bun -e \"import { buildWithOverrides } from './examples/build-files-demo.ts'; buildWithOverrides();\"",
+    "build:generated": "bun -e \"import { buildWithGeneratedCode } from './examples/build-files-demo.ts'; buildWithGeneratedCode();\"",
+    "compile": "bun scripts/compile.ts",
+    "compile:linux": "bun scripts/compile.ts --target bun-linux-x64",
+    "compile:macos": "bun scripts/compile.ts --target bun-darwin-arm64",
+    "compile:macos-intel": "bun scripts/compile.ts --target bun-darwin-x64",
+    "compile:windows": "bun scripts/compile.ts --target bun-windows-x64",
+    "compile:debug": "bun scripts/compile.ts --no-minify --sourcemap --verbose",
+    "compile:production": "bun scripts/compile.ts --level 12 --define NODE_ENV=production --metafile",
+    "compile:clean": "bun scripts/compile.ts --clean --verbose",
+    "compile:dry-run": "bun scripts/compile.ts --dry-run --verbose",
+    "perf:test": "bun -e \"import { handlePerfComparison } from './api/performance.ts'; handlePerfComparison().then(console.log);\"",
+    "serve": "bun tools/serve.ts",
+    "start:prod": "NODE_ENV=production bun tools/serve.ts",
+    "deploy": "./scripts/deploy.sh",
+    "setup:prod": "./scripts/deploy.sh",
+    "monitor": "./scripts/monitor.sh",
+    "clean": "./scripts/clean.sh",
+    "clean:all": "rm -rf public/ dist/ .bun-cache/ temp/ logs/",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "validate:colors": "bun scripts/validate-colors.ts",
+    "validate:theme": "bun scripts/validate-colors.ts",
+    "build:theme": "bun scripts/build-theme.ts",
+    "demo:fetch": "bun examples/fetch-advanced-demo.ts",
+    "demo:fetch-server": "bun examples/fetch-server-demo.ts",
+    "demo:cookie-ecosystem": "bun examples/cookie-fetch-ecosystem.ts"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "hono": "^3.12.12"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "concurrently": "^7.6.0",
+    "eslint": "^8.57.1",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "nba-swarm-governance",
+  "version": "1.0.0",
+  "description": "Governance rules for NBA Swarm codebase",
+  "rules": {
+    "naming": {
+      "fileNaming": "kebab-case",
+      "className": "PascalCase",
+      "functionName": "camelCase",
+      "variableName": "camelCase",
+      "constantName": "UPPER_SNAKE_CASE",
+      "interfaceName": "PascalCase",
+      "typeName": "PascalCase"
+    },
+    "documentation": {
+      "requirePublicFunctionDocs": true,
+      "requirePublicClassDocs": true,
+      "requirePublicInterfaceDocs": true,
+      "minDocLength": 20,
+      "requireParamTags": true,
+      "requireReturnsTag": true,
+      "requireExampleForComplex": true
+    },
+    "bloat": {
+      "maxFileSize": 524288,
+      "maxLinesPerFile": 1000,
+      "maxFunctionLines": 100,
+      "maxComplexity": 15,
+      "maxParameters": 7,
+      "maxNestingDepth": 4,
+      "warnFileSize": 314572
+    }
+  },
+  "exclusions": {
+    "files": [
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/node_modules/**",
+      "**/dist/**"
+    ],
+    "patterns": [
+      "generated",
+      "legacy"
+    ]
+  }
+}
+

@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  unified-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.bun
+    image: quantum-t3/unified-server:v4.0
+    ports:
+      - "3003:3003"
+      - "3004:3004"
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+      QUANTUM_KEY: default
+      ENABLE_HSL: "true"
+      PLANCK_THRESHOLD: "1e-35"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+    networks:
+      - quantum-network
+
+  quantum-weaver:
+    image: node:18-alpine
+    ports:
+      - "8080:8080"
+    environment:
+      MODE: "stabilization"
+      TENSION_THRESHOLDS: '{"critical":0.8,"high":0.6,"medium":0.4}'
+    command: sh -c "echo 'Quantum Weaver mock service' && nc -l -p 8080"
+    networks:
+      - quantum-network
+
+  redis:
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --save 60 1
+    networks:
+      - quantum-network
+
+  mermaid-server:
+    image: node:18-alpine
+    ports:
+      - "3002:3002"
+    command: sh -c "echo 'Mermaid mock service' && nc -l -p 3002"
+    networks:
+      - quantum-network
+
+  dashboard:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./dashboard.html:/usr/share/nginx/html/index.html
+    networks:
+      - quantum-network
+
+networks:
+  quantum-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+
+volumes:
+  redis-data:

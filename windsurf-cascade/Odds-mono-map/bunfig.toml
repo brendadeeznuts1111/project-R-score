@@ -1,0 +1,73 @@
+# Bun Configuration File
+# Enhanced for Odds Protocol Vault Development
+
+[debug]
+# When navigating to a blob: or src: link, open the file in your editor
+# If not, it tries $EDITOR or $VISUAL
+# If that still fails, it will try Visual Studio Code, then Sublime Text, then a few others
+# This is used by Bun.openInEditor()
+editor = "code"
+
+# List of available editors:
+# - "subl", "sublime"     - Sublime Text
+# - "vscode", "code"       - Visual Studio Code
+# - "textmate", "mate"     - TextMate
+# - "idea"                 - IntelliJ IDEA
+# - "webstorm"             - WebStorm
+# - "nvim", "neovim"       - Neovim
+# - "vim","vi"             - Vim
+# - "emacs"                - Emacs
+
+[install]
+# Cache installation in global location
+cache = true
+
+# Install packages as devDependencies by default
+dev = false
+
+# Don't install optionalDependencies by default
+optional = false
+
+# Don't install peerDependencies by default
+peer = false
+
+# Exact versions by default
+exact = false
+
+[test]
+# Enable test coverage
+coverage = true
+
+# Preload test files
+preload = ["./tests/setup.ts"]
+
+# Test timeout in milliseconds
+timeout = 5000
+
+[run]
+# Shell to use for bun run (only 'bun' and 'system' are supported)
+shell = "system"
+
+# Load environment variables from .env file
+envfile = ".env"
+
+# Enable hot reload by default
+hot = true
+
+[build]
+# Target environment
+target = "bun"
+
+# Output directory
+outdir = "./dist"
+
+# Source map generation
+sourcemap = true
+
+# Minify in production
+minify = false
+
+# Define global constants
+define = {
+  NODE_ENV = "\"development\""
+}

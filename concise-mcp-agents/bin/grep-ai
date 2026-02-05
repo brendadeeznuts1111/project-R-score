@@ -1,0 +1,129 @@
+#!/usr/bin/env bun
+
+// bin/grep-ai
+// AI-Powered Header Search CLI
+
+import { spawnSync } from "bun";
+
+const query = process.argv[2];
+
+if (!query) {
+  console.error("Usage: grep-ai <query>");
+  console.error("Examples:");
+  console.error("  grep-ai setup      # Find setup sections");
+  console.error("  grep-ai core        # Find core implementations");
+  console.error("  grep-ai mcp         # Find MCP-related content");
+  console.error("  grep-ai experimental # Find experimental features");
+  console.error("  grep-ai v2          # Find v2.0 content");
+  process.exit(1);
+}
+
+const patterns: Record<string, string> = {
+  // Domain searches
+  "setup": `\\[SETUP\\].*\\[REQUIRED\\]`,
+  "config": `\\[CONFIG\\]`,
+  "code": `\\[CODE\\]`,
+  "deploy": `\\[DEPLOY\\]`,
+  "usage": `\\[USAGE\\]`,
+  "monitor": `\\[MONITOR\\]`,
+  "extend": `\\[EXTEND\\]`,
+  "arch": `\\[ARCHITECTURE\\]`,
+
+  // Priority searches
+  "required": `\\[REQUIRED\\]`,
+  "optional": `\\[OPTIONAL\\]`,
+  "advanced": `\\[ADVANCED\\]`,
+  "core": `\\[CORE\\]`,
+  "meta": `\\[META\\]`,
+
+  // Content type searches
+  "guide": `\\[GUIDE\\]`,
+  "implementation": `\\[IMPLEMENTATION\\]`,
+  "interface": `\\[INTERFACE\\]`,
+  "example": `\\[EXAMPLE\\]`,
+
+  // Combined searches
+  "setup-required": `\\[SETUP\\].*\\[REQUIRED\\]`,
+  "code-core": `\\[CODE\\].*\\[CORE\\]`,
+  "code-impl": `\\[CODE\\].*\\[IMPLEMENTATION\\]`,
+  "deploy-optional": `\\[DEPLOY\\].*\\[OPTIONAL\\]`,
+  "monitor-advanced": `\\[MONITOR\\].*\\[ADVANCED\\]`,
+  "extend-advanced": `\\[EXTEND\\].*\\[ADVANCED\\]`,
+
+  // Special queries
+  "mcp": `\\[MCP\\]`,
+  "pool": `\\[POOL\\]`,
+  "telegram": `\\[TELEGRAM\\]`,
+  "experimental": `\\[EXPERIMENTAL\\]`,
+  "deprecated": `\\[DEPRECATED\\]`,
+  "v2": `\\[v2\\.`,
+  "active": `\\[ACTIVE\\]`,
+  "stable": `\\[STABLE\\]`,
+
+  // Composite queries
+  "production-ready": `\\[.*\\]\\[REQUIRED\\].*\\[STABLE\\].*\\[v2\\.`,
+  "experimental-features": `\\[.*\\]\\[EXPERIMENTAL\\]`,
+  "deprecated-warnings": `\\[.*\\]\\[DEPRECATED\\]`,
+  "version-upgrades": `\\[.*\\]\\[v1\\.[0-9]\\]`,
+};
+
+const normalizedQuery = query.toLowerCase().trim();
+const pattern = patterns[normalizedQuery];
+
+if (!pattern) {
+  // Fuzzy matching for partial queries
+  const matches = Object.keys(patterns)
+    .filter(key => key.includes(normalizedQuery) || normalizedQuery.includes(key))
+    .slice(0, 3); // Limit to top 3 matches
+
+  if (matches.length > 0) {
+    console.log(`\x1b[33m[AMBIGUOUS]\x1b[0m "${query}" matches:`);
+    matches.forEach(match => {
+      console.log(`  → ${match}: grep "${patterns[match]}" guide.md`);
+    });
+    console.log(`\n\x1b[36m[SUGGEST]\x1b[0m Try: grep-ai ${matches[0]}`);
+    process.exit(1);
+  }
+
+  console.error(`\x1b[31m[UNKNOWN]\x1b[0m Query "${query}" not recognized.`);
+  console.error(`\x1b[36m[HELP]\x1b[0m Available queries: ${Object.keys(patterns).slice(0, 10).join(', ')}...`);
+  console.error(`\x1b[36m[HELP]\x1b[0m Use 'grep-ai list' to see all options.`);
+  process.exit(1);
+}
+
+// Execute grep with line numbers and color
+console.log(`\n\x1b[36m[SEARCH]\x1b[0m ${query} → grep "${pattern}" guide.md\n`);
+
+const result = spawnSync(["grep", "-n", pattern, "guide.md"]);
+
+if (result.exitCode === 0) {
+  const output = result.stdout.toString();
+
+  if (output.trim()) {
+    // Count matches
+    const lines = output.split('\n').filter(l => l.trim());
+    console.log(`\x1b[32m[FOUND]\x1b[0m ${lines.length} matches:\n`);
+
+    // Display results with syntax highlighting
+    console.log(output);
+  } else {
+    console.log(`\x1b[33m[NO MATCHES]\x1b[0m No content found for "${query}"`);
+  }
+} else {
+  console.error(`\x1b[31m[ERROR]\x1b[0m Grep execution failed`);
+  process.exit(1);
+}
+
+// Show related queries
+const related = Object.keys(patterns)
+  .filter(key => key !== normalizedQuery && (
+    key.includes(normalizedQuery.split('-')[0]) ||
+    normalizedQuery.includes(key.split('-')[0])
+  ))
+  .slice(0, 3);
+
+if (related.length > 0) {
+  console.log(`\n\x1b[36m[RELATED]\x1b[0m Try also: ${related.join(', ')}`);
+}
+
+console.log(`\n\x1b[36m[PRO TIP]\x1b[0m Use 'grep-ai list' for all available queries`);

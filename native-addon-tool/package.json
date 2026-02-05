@@ -1,0 +1,32 @@
+{
+  "name": "native-addon-tool",
+  "version": "1.0.0",
+  "description": "Native module builder with Bun",
+  "main": "build.ts",
+  "scripts": {
+    "build": "cargo build",
+    "typecheck": "bun cli-resolver.ts typecheck"
+  },
+  "dependencies": {
+    "ffi-napi": "^4.0.3",
+    "ref-napi": "^3.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "bun",
+    "native",
+    "addon",
+    "builder"
+  ],
+  "author": "ashley",
+  "license": "Apache-2.0",
+  "private": true,
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

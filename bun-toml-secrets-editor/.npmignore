@@ -1,0 +1,55 @@
+# Source files (only include compiled binaries)
+src/
+*.ts
+!*.d.ts
+
+# Development files
+__tests__/
+*.test.ts
+*.spec.ts
+examples/
+scripts/build-cross-platform.ts
+
+# Build artifacts (keep dist/)
+*.log
+*.tmp
+
+# Config files (keep essential ones)
+config/secrets*.toml
+config/vulnerable-secrets.toml
+.observatory-policy.toml
+
+# Logs
+logs/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CI/CD (if not needed in package)
+.github/
+
+# Documentation (keep README)
+*.md
+!README.md
+
+# Lock files
+bun.lockb
+package-lock.json
+yarn.lock
+
+# Test files
+coverage/
+.nyc_output/

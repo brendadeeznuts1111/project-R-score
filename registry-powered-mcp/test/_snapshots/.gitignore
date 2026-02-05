@@ -1,0 +1,5 @@
+# Snapshot files are version controlled
+# Only ignore temp files
+*.tmp
+*.swp
+.DS_Store

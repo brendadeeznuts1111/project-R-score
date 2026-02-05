@@ -1,0 +1,28 @@
+
+{
+  "dashboards": {
+    "phone-intelligence": {
+      "title": "Empire Pro Phone Intelligence & Autonomic Dash",
+      "metrics": [
+        "§Filter:89.latency",
+        "§Query:91.cache_hit_rate",
+        "§Workflow:97.health_score",
+        "§Workflow:98.pool_utilization",
+        "§Workflow:99.campaign_roi",
+        "§Workflow:100.healing_actions"
+      ],
+      "alerts": [
+        "health_score < 50",
+        "cache_miss_rate > 0.2",
+        "setup_score < 0.96"
+      ],
+      "layout": {
+        "panels": [
+          { "id": "sanitize-perf", "type": "gauge", "unit": "ms", "target": 0.08 },
+          { "id": "autonomic-status", "type": "status-grid", "subsystems": ["cache", "pool", "router"] },
+          { "id": "roi-tracking", "type": "timeseries", "metric": "campaign_roi" }
+        ]
+      }
+    }
+  }
+}

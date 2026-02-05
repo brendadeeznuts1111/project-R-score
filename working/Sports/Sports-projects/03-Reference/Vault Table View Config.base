@@ -1,0 +1,46 @@
+summaries:
+  Total Files: length(rows)
+  By Type: rows.file.ext
+  By Folder: rows.file.folder
+views:
+  - type: table
+    name: Vault File Inventory
+    order:
+      - file.backlinks
+      - file.ctime
+      - file.basename
+      - canvas
+      - cacheControl
+      - bun_runtime_version
+      - bun_cli_version
+      - browserVersion
+      - browserName
+      - browser
+      - bookmakers
+      - awayTeam
+      - attendees
+      - active_projects
+    sort:
+      - property: file.folder
+        direction: DESC
+      - property: file.name
+        direction: DESC
+      - property: created
+        direction: DESC
+      - property: file.mtime
+        direction: DESC
+    summaries: {}
+    columnSize:
+      file.name: 220
+      file.ext: 50
+      file.folder: 293
+      file.size: -45
+      file.mtime: 298
+      file.ctime: 140
+      file.embeds: 136
+      note.type: 287
+      note.date: 266
+  - type: cards
+    name: VAULT
+    cardSize: 520
+    image: note.topic

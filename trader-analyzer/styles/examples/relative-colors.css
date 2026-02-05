@@ -1,0 +1,208 @@
+/**
+ * Relative Colors Examples
+ * 
+ * CSS allows you to modify individual components of a color using relative
+ * color syntax. Bun's CSS bundler computes these at build time when values
+ * are constants, generating static color values for browser compatibility.
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ */
+
+/* ==========================================================================
+   Basic Relative Colors
+   ========================================================================== */
+
+.theme-color {
+	/* Start with a base color and increase lightness by 15% */
+	--accent: lch(from purple calc(l + 15%) c h);
+	
+	/* Take brand blue and make a desaturated version */
+	--subtle-blue: oklch(from var(--brand-blue) l calc(c * 0.8) h);
+}
+
+/* Bun computes these at build time (when brand-blue is a constant):
+ * --accent: lch(69.32% 58.34 328.37);
+ * --subtle-blue: oklch(60.92% 0.112 240.01);
+ */
+
+/* ==========================================================================
+   Lightness Variations
+   ========================================================================== */
+
+:root {
+	--base-color: #00d4ff;
+	
+	/* Lighter variants */
+	--light-10: lch(from var(--base-color) calc(l + 10%) c h);
+	--light-20: lch(from var(--base-color) calc(l + 20%) c h);
+	--light-30: lch(from var(--base-color) calc(l + 30%) c h);
+	
+	/* Darker variants */
+	--dark-10: lch(from var(--base-color) calc(l - 10%) c h);
+	--dark-20: lch(from var(--base-color) calc(l - 20%) c h);
+	--dark-30: lch(from var(--base-color) calc(l - 30%) c h);
+}
+
+/* ==========================================================================
+   Saturation Variations
+   ========================================================================== */
+
+.saturation-examples {
+	--base: #667eea;
+	
+	/* More saturated */
+	--saturated: lch(from var(--base) l calc(c + 0.1) h);
+	--very-saturated: lch(from var(--base) l calc(c * 1.5) h);
+	
+	/* Less saturated */
+	--desaturated: lch(from var(--base) l calc(c * 0.8) h);
+	--muted: lch(from var(--base) l calc(c * 0.5) h);
+	--gray: lch(from var(--base) l 0 h); /* No saturation = gray */
+}
+
+/* ==========================================================================
+   Hue Shifts
+   ========================================================================== */
+
+.hue-examples {
+	--base: #00d4ff;
+	
+	/* Shift hue */
+	--shifted-30: lch(from var(--base) l c calc(h + 30));
+	--shifted-60: lch(from var(--base) l c calc(h + 60));
+	--shifted-120: lch(from var(--base) l c calc(h + 120));
+	
+	/* Complementary color (180 degree shift) */
+	--complementary: lch(from var(--base) l c calc(h + 180));
+}
+
+/* ==========================================================================
+   Combined Modifications
+   ========================================================================== */
+
+.combined-examples {
+	--base: #667eea;
+	
+	/* Lighter and more saturated */
+	--vibrant-light: lch(from var(--base) calc(l + 15%) calc(c + 0.1) h);
+	
+	/* Darker and less saturated */
+	--muted-dark: lch(from var(--base) calc(l - 15%) calc(c * 0.7) h);
+	
+	/* Shift hue and adjust lightness */
+	--shifted-light: lch(from var(--base) calc(l + 10%) c calc(h + 30));
+}
+
+/* ==========================================================================
+   Color Scales (Theme Generation)
+   ========================================================================== */
+
+/* Generate a complete color scale from a base color */
+.color-scale {
+	--base: #667eea;
+	
+	/* 50-900 scale (like Tailwind) */
+	--50: lch(from var(--base) calc(l + 40%) calc(c * 0.3) h);
+	--100: lch(from var(--base) calc(l + 30%) calc(c * 0.4) h);
+	--200: lch(from var(--base) calc(l + 20%) calc(c * 0.5) h);
+	--300: lch(from var(--base) calc(l + 10%) calc(c * 0.6) h);
+	--400: lch(from var(--base) calc(l + 5%) calc(c * 0.8) h);
+	--500: var(--base); /* Base color */
+	--600: lch(from var(--base) calc(l - 5%) calc(c * 0.9) h);
+	--700: lch(from var(--base) calc(l - 10%) c h);
+	--800: lch(from var(--base) calc(l - 20%) c h);
+	--900: lch(from var(--base) calc(l - 30%) c h);
+}
+
+/* ==========================================================================
+   Accessible Color Variants
+   ========================================================================== */
+
+.accessible-colors {
+	--primary: #667eea;
+	
+	/* Ensure sufficient contrast for text */
+	--text-on-primary: lch(from var(--primary) calc(l - 50%) c h);
+	
+	/* Hover state - slightly lighter */
+	--primary-hover: lch(from var(--primary) calc(l + 5%) c h);
+	
+	/* Active state - slightly darker */
+	--primary-active: lch(from var(--primary) calc(l - 5%) c h);
+	
+	/* Disabled state - desaturated and lighter */
+	--primary-disabled: lch(from var(--primary) calc(l + 20%) calc(c * 0.3) h);
+}
+
+/* ==========================================================================
+   OKLCH Relative Colors
+   ========================================================================== */
+
+.oklch-examples {
+	--base: oklch(60% 0.2 250);
+	
+	/* Lightness variations */
+	--light: oklch(from var(--base) calc(l + 10%) c h);
+	--dark: oklch(from var(--base) calc(l - 10%) c h);
+	
+	/* Chroma (saturation) variations */
+	--vibrant: oklch(from var(--base) l calc(c + 0.1) h);
+	--muted: oklch(from var(--base) l calc(c * 0.5) h);
+	
+	/* Hue variations */
+	--shifted: oklch(from var(--base) l c calc(h + 30));
+}
+
+/* ==========================================================================
+   RGB Relative Colors
+   ========================================================================== */
+
+.rgb-relative {
+	--base: rgb(102, 126, 234);
+	
+	/* Modify individual channels */
+	--more-red: rgb(from var(--base) calc(r + 20) g b);
+	--more-green: rgb(from var(--base) r calc(g + 20) b);
+	--more-blue: rgb(from var(--base) r g calc(b + 20));
+	
+	/* Scale all channels */
+	--brighter: rgb(from var(--base) calc(r * 1.2) calc(g * 1.2) calc(b * 1.2));
+	--darker: rgb(from var(--base) calc(r * 0.8) calc(g * 0.8) calc(b * 0.8));
+}
+
+/* ==========================================================================
+   HSL Relative Colors
+   ========================================================================== */
+
+.hsl-relative {
+	--base: hsl(250, 50%, 60%);
+	
+	/* Modify hue */
+	--shifted-hue: hsl(from var(--base) calc(h + 30) s l);
+	
+	/* Modify saturation */
+	--more-saturated: hsl(from var(--base) h calc(s + 20%) l);
+	--less-saturated: hsl(from var(--base) h calc(s * 0.7) l);
+	
+	/* Modify lightness */
+	--lighter: hsl(from var(--base) h s calc(l + 10%));
+	--darker: hsl(from var(--base) h s calc(l - 10%));
+}
+
+/* ==========================================================================
+   Build-Time vs Runtime
+   ========================================================================== */
+
+/* Build-time computation (when base is a constant) */
+.build-time {
+	--base: #667eea; /* Constant */
+	--computed: lch(from var(--base) calc(l + 15%) c h);
+	/* Bun computes: lch(69.32% 58.34 328.37) */
+}
+
+/* Runtime computation (when base is a CSS variable) */
+.runtime {
+	--base: var(--user-theme-color); /* Variable */
+	--computed: lch(from var(--base) calc(l + 15%) c h);
+	/* Computed at runtime by the browser */
+}

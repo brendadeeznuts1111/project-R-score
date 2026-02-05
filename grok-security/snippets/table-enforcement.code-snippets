@@ -1,0 +1,186 @@
+{
+  "Bun Table - Enterprise Compliant": {
+    "prefix": "bun-table-enterprise",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{COLUMNS:6}][#REF:${1:entity}]{BUN-API}",
+      "${2:Bun.inspect}.table(${3:data}, {",
+      "  properties: [",
+      "    ${4|'name', 'email', 'role', 'department', 'status', 'lastLogin'|}",
+      "  ],",
+      "  format: {",
+      "    ${5|columns: {",
+      "      name: { color: 'blue' },",
+      "      email: { color: 'gray' },",
+      "      role: { color: 'green' },",
+      "      department: { color: 'yellow' },",
+      "      status: { color: 'cyan' },",
+      "      lastLogin: { color: 'magenta' }",
+      "    }|}",
+      "  }",
+      "})"
+    ],
+    "description": "Create a Bun.inspect.table() with 6+ meaningful columns for enterprise use"
+  },
+
+  "Bun Table - User Management": {
+    "prefix": "bun-table-users",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{DOMAIN:user-management}][#REF:users]{BUN-API}",
+      "${1:Bun.inspect}.table(${2:users}, {",
+      "  properties: [",
+      "    'name',",
+      "    'email',",
+      "    'role',",
+      "    'department',",
+      "    'status',",
+      "    'lastLogin'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create a user management table with standard columns"
+  },
+
+  "Bun Table - E-Commerce": {
+    "prefix": "bun-table-products",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{DOMAIN:e-commerce}][#REF:products]{BUN-API}",
+      "${1:Bun.inspect}.table(${2:products}, {",
+      "  properties: [",
+      "    'productName',",
+      "    'category',",
+      "    'price',",
+      "    'stock',",
+      "    'supplier',",
+      "    'status'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create a product catalog table with standard columns"
+  },
+
+  "Bun Table - Analytics": {
+    "prefix": "bun-table-analytics",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{DOMAIN:analytics}][#REF:metrics]{BUN-API}",
+      "${1:Bun.inspect}.table(${2:metrics}, {",
+      "  properties: [",
+      "    'metric',",
+      "    'value',",
+      "    'period',",
+      "    'category',",
+      "    'source',",
+      "    'trend'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create an analytics metrics table with standard columns"
+  },
+
+  "Bun Table - CRM": {
+    "prefix": "bun-table-crm",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{DOMAIN:crm}][#REF:deals]{BUN-API}",
+      "${1:Bun.inspect}.table(${2:deals}, {",
+      "  properties: [",
+      "    'company',",
+      "    'contact',",
+      "    'stage',",
+      "    'value',",
+      "    'owner',",
+      "    'priority'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create a CRM deals table with standard columns"
+  },
+
+  "Bun Table - Orders": {
+    "prefix": "bun-table-orders",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{DOMAIN:orders}][#REF:orders]{BUN-API}",
+      "${1:Bun.inspect}.table(${2:orders}, {",
+      "  properties: [",
+      "    'orderId',",
+      "    'customer',",
+      "    'items',",
+      "    'total',",
+      "    'status',",
+      "    'payment'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create an orders table with standard columns"
+  },
+
+  "Bun Table - Tasks": {
+    "prefix": "bun-table-tasks",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{DOMAIN:tasks}][#REF:tasks]{BUN-API}",
+      "${1:Bun.inspect}.table(${2:tasks}, {",
+      "  properties: [",
+      "    'title',",
+      "    'status',",
+      "    'priority',",
+      "    'assignee',",
+      "    'dueDate',",
+      "    'project'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create a tasks table with standard columns"
+  },
+
+  "Bun Table - Custom": {
+    "prefix": "bun-table-custom",
+    "body": [
+      "// [ENFORCEMENT][TABLE][META:{COLUMNS:6}][#REF:${1:custom}]{BUN-API}",
+      "${2:Bun.inspect}.table(${3:data}, {",
+      "  properties: [",
+      "    '${4:column1}',",
+      "    '${5:column2}',",
+      "    '${6:column3}',",
+      "    '${7:column4}',",
+      "    '${8:column5}',",
+      "    '${9:column6}'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create a custom table with 6 columns (fill in your own)"
+  },
+
+  "Bun Table Markdown": {
+    "prefix": "bun-table-md",
+    "body": [
+      "// [ENFORCEMENT][TABLE][FORMAT:markdown][#REF:${1:data}]{BUN-API}",
+      "${2:tableMarkdown}(${3:data}, {",
+      "  properties: [",
+      "    '${4:col1}',",
+      "    '${5:col2}',",
+      "    '${6:col3}',",
+      "    '${7:col4}',",
+      "    '${8:col5}',",
+      "    '${9:col6}'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create a markdown-formatted table with 6+ columns"
+  },
+
+  "Bun Table CSV": {
+    "prefix": "bun-table-csv",
+    "body": [
+      "// [ENFORCEMENT][TABLE][FORMAT:csv][#REF:${1:data}]{BUN-API}",
+      "${2:tableCsv}(${3:data}, {",
+      "  properties: [",
+      "    '${4:col1}',",
+      "    '${5:col2}',",
+      "    '${6:col3}',",
+      "    '${7:col4}',",
+      "    '${8:col5}',",
+      "    '${9:col6}'",
+      "  ]",
+      "})"
+    ],
+    "description": "Create a CSV-formatted table with 6+ columns"
+  }
+}

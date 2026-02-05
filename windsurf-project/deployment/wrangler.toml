@@ -1,0 +1,27 @@
+name = "apple-id-dashboards"
+main = "src/index.js"
+compatibility_date = "2024-01-12"
+
+[env.production]
+name = "apple-id-dashboards-prod"
+routes = [
+  { pattern = "apple.factory-wager.com/*", zone_name = "factory-wager.com" }
+]
+
+[env.staging]
+name = "apple-id-dashboards-staging"
+routes = [
+  { pattern = "staging.apple.factory-wager.com/*", zone_name = "factory-wager.com" }
+]
+
+[env.production.vars]
+DOMAIN = "apple.factory-wager.com"
+ENVIRONMENT = "production"
+
+[env.staging.vars]
+DOMAIN = "apple.factory-wager.com"
+ENVIRONMENT = "staging"
+
+[vars]
+DOMAIN = "apple.factory-wager.com"
+ENVIRONMENT = "staging"

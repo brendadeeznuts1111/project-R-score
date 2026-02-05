@@ -1,0 +1,44 @@
+/**
+ * Bun.color CSS Formatting Examples
+ * 
+ * Demonstrates using Bun.color to format colors as CSS
+ * Reference: https://bun.com/docs/runtime/color#format-colors-as-css
+ */
+
+/* Example: Generate CSS variables using Bun.color
+ * 
+ * In TypeScript:
+ * ```ts
+ * import { cssBundler } from "../src/utils/css-bundler";
+ * 
+ * const cssVars = cssBundler.generateColorVariables({
+ *   "accent-cyan": "#00d4ff",
+ *   "accent-purple": "#667eea",
+ * });
+ * ```
+ * 
+ * Bun.color formats colors as CSS automatically:
+ * - "#00d4ff" → "rgb(0, 212, 255)"
+ * - "#667eea" → "rgb(102, 126, 234)"
+ */
+
+:root {
+	/* Colors formatted using Bun.color CSS format */
+	--accent-cyan: rgb(0, 212, 255);
+	--accent-purple: rgb(102, 126, 234);
+	--accent-green: rgb(16, 185, 129);
+	
+	/* With alpha using formatColorAsCSS(color, alpha) */
+	--accent-cyan-alpha: rgba(0, 212, 255, 0.8);
+	--accent-purple-alpha: rgba(102, 126, 234, 0.6);
+}
+
+/* Usage in styles */
+.button {
+	background: var(--accent-cyan);
+	color: white;
+	
+	&:hover {
+		background: var(--accent-cyan-alpha);
+	}
+}

@@ -1,0 +1,163 @@
+# Dependencies
+node_modules/
+bun.lockb
+.bun-cache/
+.bun/install/cache/
+.pnpm-store/
+.yarn/
+.yarn/cache/
+
+# Absolute path caches (from embedded projects)
+**/$HOME/
+*/.bun/install/cache/
+**/bun/install/cache/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vite/
+.cache/
+*.js
+*.js.map
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# IDE-specific configs
+.claude/
+.cursor/
+.windsurf/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.*
+.env.production
+.env.secret
+.env.enc
+
+# Test coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Project-specific
+profiles/
+*.profile.json
+*-profile-*.json
+
+# Large data and cache directories
+cache/
+logs/
+performance-results/
+reports/
+.archive/
+*.archive/
+
+# Working directories
+scratch/
+temp/
+tmp/
+data/
+output/
+download/
+archive/
+
+# Generated and temporary content
+*.scratch.*
+*.temp.*
+*.cache.*
+*.output.*
+*.download.*
+
+# Test outputs
+test-results/
+coverage/
+.nyc_output/
+
+# Temporary and example files
+example*-*
+test*-*
+*.tmp
+*.temp
+
+# Generated files
+*.generated.*
+*.auto.*
+*.build.*
+*.dist.*
+
+# Build artifacts and large binaries
+*.bun-build
+*.tar.gz
+*.tgz
+
+# Development artifacts
+*.local.*
+*.dev.*
+*.debug.*
+
+# Native addons
+*.node
+*.so
+*.dylib
+
+# Cache
+.cache/
+.nyc_output/
+
+# Session data
+sessions/
+cookies/
+
+# Deployment artifacts
+deploy/
+.deploy/
+
+# Uploads
+uploads/
+public/uploads/
+
+# Misc
+bun.lockb
+
+# Projects without tokens or sensitive configurations
+*config/
+*secrets/
+*.token
+*.key
+*.pem
+*.p12
+*.pfx
+auth/
+credentials/
+.tokens/
+.secrets/
+.sensitive/
+
+# Project directories that might contain sensitive data
+**/config/
+**/secrets/
+**/auth/
+**/credentials/

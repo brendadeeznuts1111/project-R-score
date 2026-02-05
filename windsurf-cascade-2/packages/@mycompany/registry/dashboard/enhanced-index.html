@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>🚀 Enhanced Bun Registry Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="/_dashboard/websocket-client.js"></script>
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    :root {
+      --primary: #00ff88;
+      --secondary: #00ccff;
+      --accent: #ff00ff;
+      --success: #4ade80;
+      --warning: #fbbf24;
+      --error: #f87171;
+      --dark: #0a0a0a;
+      --dark-secondary: #1a1a1a;
+      --dark-tertiary: #2a2a2a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --border: #333333;
+      --shadow: rgba(0, 255, 136, 0.1);
+    }
+    
+    body { 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark-secondary) 50%, var(--dark-tertiary) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 204, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
+      animation: backgroundShift 20s ease-in-out infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    @keyframes backgroundShift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-20px, -20px) scale(1.1); }
+      66% { transform: translate(20px, -10px) scale(0.9); }
+    }
+    
+    /* Header */
+    .header {
+      background: rgba(26, 26, 26, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid var(--primary);
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Navigation */
+    .nav {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .nav-item {
+      padding: 0.5rem 1rem;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .nav-item:hover {
+      background: rgba(0, 255, 136, 0.2);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    
+    .nav-item.active {
+      background: rgba(0, 255, 136, 0.3);
+      border-color: var(--primary);
+    }
+    
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    
+    /* Cards */
+    .card {
+      background: rgba(26, 26, 26, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      animation: shimmer 3s linear infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0, 255, 136, 0.2);
+      border-color: var(--primary);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(0, 255, 136, 0.1);
+      color: var(--primary);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    
+    .icon-btn:hover {
+      background: rgba(0, 255, 136, 0.2);
+      transform: scale(1.1);
+    }
+    
+    /* 13-Byte Config Visualization */
+    .config-visualizer {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .bytes-grid {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .byte {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--dark-tertiary), var(--dark-secondary));
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .byte::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(circle, var(--primary), transparent);
+      transition: all 0.3s ease;
+      transform: translate(-50%, -50%);
+    }
+    
+    .byte:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .byte:hover {
+      transform: scale(1.1);
+      border-color: var(--primary);
+      color: var(--primary);
+      z-index: 10;
+    }
+    
+    .byte.updating {
+      animation: byteUpdate 0.6s ease-out;
+    }
+    
+    @keyframes byteUpdate {
+      0% { 
+        transform: scale(1); 
+        background: var(--dark-tertiary); 
+      }
+      50% { 
+        transform: scale(1.2); 
+        background: var(--primary); 
+        color: var(--dark); 
+      }
+      100% { 
+        transform: scale(1); 
+        background: var(--dark-tertiary); 
+      }
+    }
+    
+    .byte-tooltip {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: var(--text-primary);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 100;
+      border: 1px solid var(--border);
+    }
+    
+    .byte:hover .byte-tooltip {
+      opacity: 1;
+    }
+    
+    /* Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .metric {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 204, 255, 0.1));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .metric:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 255, 136, 0.2);
+    }
+    
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .metric-change {
+      font-size: 0.7rem;
+      margin-top: 0.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+    }
+    
+    .metric-change.positive {
+      color: var(--success);
+    }
+    
+    .metric-change.negative {
+      color: var(--error);
+    }
+    
+    /* Feature Flags */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .feature-card {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    
+    .feature-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .feature-toggle {
+      position: relative;
+      width: 48px;
+      height: 24px;
+      background: var(--dark-tertiary);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-toggle.active {
+      background: var(--primary);
+    }
+    
+    .feature-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-toggle.active::after {
+      left: 26px;
+    }
+    
+    .feature-description {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Terminal */
+    .terminal-container {
+      background: #000000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    
+    .terminal-header {
+      background: var(--dark);
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .terminal-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .terminal-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .terminal-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .terminal-btn.close { background: var(--error); }
+    .terminal-btn.minimize { background: var(--warning); }
+    .terminal-btn.maximize { background: var(--success); }
+    
+    .terminal-body {
+      height: 300px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: var(--primary);
+    }
+    
+    .terminal-input {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid var(--border);
+      background: var(--dark);
+    }
+    
+    .terminal-prompt {
+      color: var(--primary);
+      margin-right: 0.5rem;
+    }
+    
+    .terminal-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    
+    /* Charts */
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-top: 1rem;
+    }
+    
+    /* Activity Feed */
+    .activity-feed {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: start;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+    
+    .activity-item:hover {
+      background: rgba(0, 255, 136, 0.05);
+    }
+    
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .activity-icon.success { background: rgba(74, 222, 128, 0.2); color: var(--success); }
+    .activity-icon.warning { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
+    .activity-icon.error { background: rgba(248, 113, 113, 0.2); color: var(--error); }
+    .activity-icon.info { background: rgba(0, 204, 255, 0.2); color: var(--secondary); }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    
+    .activity-description {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.2rem;
+    }
+    
+    .activity-time {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+    
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--dark);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 255, 136, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(0, 255, 136, 0.1);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .bytes-grid {
+        grid-template-columns: repeat(7, 1fr);
+      }
+      
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+    
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top: 2px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+    }
+    
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: var(--text-primary);
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      border: 1px solid var(--border);
+      z-index: 1000;
+    }
+    
+    .tooltip:hover::after {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <i data-lucide="rocket"></i>
+        Enhanced Bun Registry
+      </div>
+      <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span>Registry Online</span>
+        <span id="uptime">0s</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-item active" data-section="overview">
+      <i data-lucide="layout-dashboard"></i>
+      Overview
+    </div>
+    <div class="nav-item" data-section="config">
+      <i data-lucide="settings"></i>
+      Configuration
+    </div>
+    <div class="nav-item" data-section="packages">
+      <i data-lucide="package"></i>
+      Packages
+    </div>
+    <div class="nav-item" data-section="monitoring">
+      <i data-lucide="activity"></i>
+      Monitoring
+    </div>
+    <div class="nav-item" data-section="terminal">
+      <i data-lucide="terminal"></i>
+      Terminal
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Overview Section -->
+    <div id="overview" class="section">
+      <div class="dashboard-grid">
+        <!-- System Status Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="cpu"></i>
+              System Status
+            </div>
+            <div class="card-actions">
+              <button class="icon-btn tooltip" data-tooltip="Refresh" onclick="refreshSystemStatus()">
+                <i data-lucide="refresh-cw"></i>
+              </button>
+            </div>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric">
+              <div class="metric-value" id="cpu-usage">12%</div>
+              <div class="metric-label">CPU Usage</div>
+              <div class="metric-change positive">
+                <i data-lucide="trending-down"></i>
+                -3%
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-value" id="memory-usage">64MB</div>
+              <div class="metric-label">Memory</div>
+              <div class="metric-change positive">
+                <i data-lucide="minus"></i>
+                Stable
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-value" id="active-connections">8</div>
+              <div class="metric-label">Connections</div>
+              <div class="metric-change positive">
+                <i data-lucide="trending-up"></i>
+                +2
+              </div>
+            </div>
+            <div class="metric">
+              <div class="metric-value" id="response-time">45ns</div>
+              <div class="metric-label">Response Time</div>
+              <div class="metric-change positive">
+                <i data-lucide="zap"></i>
+                Optimal
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 13-Byte Config Visualizer -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="binary"></i>
+              13-Byte Configuration
+            </div>
+            <div class="card-actions">
+              <button class="icon-btn tooltip" data-tooltip="Edit Config" onclick="openConfigEditor()">
+                <i data-lucide="edit"></i>
+              </button>
+              <button class="icon-btn tooltip" data-tooltip="Export" onclick="exportConfig()">
+                <i data-lucide="download"></i>
+              </button>
+            </div>
+          </div>
+          <div class="config-visualizer">
+            <div class="bytes-grid" id="bytes-grid">
+              <!-- Bytes will be populated by JavaScript -->
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                <i data-lucide="info"></i>
+                Click any byte to edit • Total size: 13 bytes
+              </div>
+              <div style="font-family: monospace; font-size: 0.8rem;" id="config-hex">
+                0x02785634120700000001305000
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Chart -->
+        <div class="card full-width">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="trending-up"></i>
+              Performance Metrics
+            </div>
+            <div class="card-actions">
+              <button class="icon-btn tooltip" data-tooltip="Toggle View" onclick="toggleChartView()">
+                <i data-lucide="bar-chart"></i>
+              </button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="performance-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="activity"></i>
+              Recent Activity
+            </div>
+            <div class="card-actions">
+              <button class="icon-btn tooltip" data-tooltip="Clear" onclick="clearActivity()">
+                <i data-lucide="trash-2"></i>
+              </button>
+            </div>
+          </div>
+          <div class="activity-feed" id="activity-feed">
+            <!-- Activity items will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="zap"></i>
+              Quick Actions
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn" onclick="publishPackage()">
+              <i data-lucide="upload"></i>
+              Publish Package
+            </button>
+            <button class="btn btn-secondary" onclick="syncRegistry()">
+              <i data-lucide="refresh-cw"></i>
+              Sync Registry
+            </button>
+            <button class="btn btn-secondary" onclick="viewLogs()">
+              <i data-lucide="file-text"></i>
+              View Logs
+            </button>
+            <button class="btn btn-secondary" onclick="openSettings()">
+              <i data-lucide="settings"></i>
+              Settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configuration Section -->
+    <div id="config" class="section" style="display: none;">
+      <div class="dashboard-grid">
+        <!-- Feature Flags -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="toggle-left"></i>
+              Feature Flags
+            </div>
+          </div>
+          <div class="feature-grid" id="feature-grid">
+            <!-- Feature flags will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Environment Variables -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i data-lucide="database"></i>
+              Environment Variables
+            </div>
+          </div>
+          <div id="env-vars" style="font-family: monospace; font-size: 0.9rem;">
+            <!-- Environment variables will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal Section -->
+    <div id="terminal" class="section" style="display: none;">
+      <div class="card">
+        <div class="terminal-container">
+          <div class="terminal-header">
+            <div class="terminal-title">
+              <i data-lucide="terminal"></i>
+              Registry Terminal
+              <span id="connection-status" style="color: var(--error);">● Disconnected</span>
+            </div>
+            <div class="terminal-controls">
+              <button class="terminal-btn close"></button>
+              <button class="terminal-btn minimize"></button>
+              <button class="terminal-btn maximize"></button>
+            </div>
+          </div>
+          <div class="terminal-body" id="terminal-output">
+            Welcome to Enhanced Bun Registry Terminal v2.0
+            Type 'help' for available commands.
+            
+            $
+          </div>
+          <div class="terminal-input">
+            <span class="terminal-prompt">$</span>
+            <input type="text" class="terminal-field" id="terminal-input" placeholder="Enter command..." />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Global state
+    let configData = {};
+    let performanceChart = null;
+    let ws = null;
+    let currentSection = 'overview';
+
+    // Initialize dashboard
+    async function init() {
+      await updateConfig();
+      await updateSystemStatus();
+      await updateActivity();
+      initializeChart();
+      initializeNavigation();
+      initializeTerminal();
+      
+      // Start real-time updates
+      setInterval(updateSystemStatus, 1000);
+      setInterval(updateActivity, 5000);
+      setInterval(updateConfig, 100);
+    }
+
+    // Navigation
+    function initializeNavigation() {
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const section = item.dataset.section;
+          showSection(section);
+          
+          navItems.forEach(nav => nav.classList.remove('active'));
+          item.classList.add('active');
+        });
+      });
+    }
+
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => {
+        section.style.display = section.id === sectionId ? 'block' : 'none';
+      });
+      currentSection = sectionId;
+    }
+
+    // Update 13-byte config display
+    async function updateConfig() {
+      try {
+        const res = await fetch('/_dashboard/api/config');
+        configData = await res.json();
+        
+        updateBytesGrid();
+        updateFeatureFlags();
+        updateEnvironmentVariables();
+      } catch (error) {
+        console.error('Failed to update config:', error);
+      }
+    }
+
+    function updateBytesGrid() {
+      const bytesGrid = document.getElementById('bytes-grid');
+      const hexHash = configData.registryHash?.replace('0x', '') || '00000000';
+      
+      const bytes = [
+        { value: configData.configVersion?.toString(16).padStart(2, '0') || '01', title: 'Version', offset: 0 },
+        { value: hexHash.slice(0, 2), title: 'Registry Hash[0]', offset: 1 },
+        { value: hexHash.slice(2, 4), title: 'Registry Hash[1]', offset: 2 },
+        { value: hexHash.slice(4, 6), title: 'Registry Hash[2]', offset: 3 },
+        { value: hexHash.slice(6, 8), title: 'Registry Hash[3]', offset: 4 },
+        { value: getFeatureByte(configData.features), title: 'Feature Flags', offset: 5 },
+        { value: '00', title: 'Reserved', offset: 6 },
+        { value: '00', title: 'Reserved', offset: 7 },
+        { value: '00', title: 'Reserved', offset: 8 },
+        { value: (configData.terminal?.mode === 'raw' ? '02' : '01'), title: 'Terminal Mode', offset: 9 },
+        { value: configData.terminal?.rows?.toString(16).padStart(2, '0') || '18', title: 'Rows', offset: 10 },
+        { value: configData.terminal?.cols?.toString(16).padStart(2, '0') || '50', title: 'Cols', offset: 11 },
+        { value: '00', title: 'Checksum', offset: 12 }
+      ];
+      
+      bytesGrid.innerHTML = bytes.map((byte, i) => `
+        <div class="byte" data-offset="${byte.offset}" onclick="editByte(${byte.offset})">
+          0x${byte.value}
+          <div class="byte-tooltip">${byte.title} (Offset ${byte.offset})</div>
+        </div>
+      `).join('');
+      
+      // Update hex display
+      const hexString = bytes.map(b => b.value).join('');
+      document.getElementById('config-hex').textContent = `0x${hexString}`;
+    }
+
+    function getFeatureByte(features) {
+      let byte = 0;
+      if (features?.PRIVATE_REGISTRY) byte |= 0x02;
+      if (features?.PREMIUM_TYPES) byte |= 0x01;
+      if (features?.DEBUG) byte |= 0x04;
+      return byte.toString(16).padStart(2, '0');
+    }
+
+    function updateFeatureFlags() {
+      const featureGrid = document.getElementById('feature-grid');
+      const features = [
+        { name: 'PRIVATE_REGISTRY', label: 'Private Registry', description: 'Enable private package registry', enabled: configData.features?.PRIVATE_REGISTRY },
+        { name: 'PREMIUM_TYPES', label: 'Premium Types', description: 'Enable TypeScript premium types', enabled: configData.features?.PREMIUM_TYPES },
+        { name: 'DEBUG', label: 'Debug Mode', description: 'Enable debug logging and features', enabled: configData.features?.DEBUG },
+        { name: 'CACHE_ENABLED', label: 'Cache', description: 'Enable package caching', enabled: configData.features?.CACHE_ENABLED },
+        { name: 'METRICS', label: 'Metrics', description: 'Enable performance metrics', enabled: configData.features?.METRICS },
+        { name: 'LOGGING', label: 'Logging', description: 'Enable detailed logging', enabled: configData.features?.LOGGING }
+      ];
+      
+      featureGrid.innerHTML = features.map(feature => `
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="feature-name">${feature.label}</span>
+            <div class="feature-toggle ${feature.enabled ? 'active' : ''}" onclick="toggleFeature('${feature.name}', this)"></div>
+          </div>
+          <div class="feature-description">${feature.description}</div>
+        </div>
+      `).join('');
+    }
+
+    function updateEnvironmentVariables() {
+      const envVars = [
+        { name: 'BUN_CONFIG_VERSION', value: configData.configVersion || 1 },
+        { name: 'BUN_REGISTRY_HASH', value: configData.registryHash || '0x12345678' },
+        { name: 'BUN_FEATURE_PRIVATE_REGISTRY', value: configData.features?.PRIVATE_REGISTRY ? '1' : '0' },
+        { name: 'BUN_FEATURE_PREMIUM_TYPES', value: configData.features?.PREMIUM_TYPES ? '1' : '0' },
+        { name: 'BUN_FEATURE_DEBUG', value: configData.features?.DEBUG ? '1' : '0' },
+        { name: 'BUN_TERMINAL_MODE', value: configData.terminal?.mode || 'raw' },
+        { name: 'BUN_TERMINAL_ROWS', value: configData.terminal?.rows || 24 },
+        { name: 'BUN_TERMINAL_COLS', value: configData.terminal?.cols || 80 },
+        { name: 'NODE_ENV', value: 'development' },
+        { name: 'PORT', value: 4873 },
+        { name: 'REGISTRY_URL', value: 'http://localhost:4873' },
+        { name: 'CONFIG_SIZE', value: '13 bytes' },
+        { name: 'PERFORMANCE_TARGET', value: '<60ns' }
+      ];
+      
+      const container = document.getElementById('env-vars');
+      container.innerHTML = envVars.map(envVar => `
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+          <span style="color: var(--secondary);">${envVar.name}</span>
+          <span style="color: var(--primary);">${envVar.value}</span>
+        </div>
+      `).join('');
+    }
+
+    // System Status
+    async function updateSystemStatus() {
+      try {
+        const res = await fetch('/_dashboard/api/config');
+        const data = await res.json();
+        
+        // Update metrics with simulated data
+        document.getElementById('cpu-usage').textContent = `${Math.floor(Math.random() * 20 + 10)}%`;
+        document.getElementById('memory-usage').textContent = `${Math.floor(Math.random() * 32 + 48)}MB`;
+        document.getElementById('active-connections').textContent = Math.floor(Math.random() * 10 + 5);
+        document.getElementById('response-time').textContent = `${Math.floor(Math.random() * 30 + 30)}ns`;
+        document.getElementById('uptime').textContent = `${Math.floor(data.uptime || 0)}s`;
+        
+        // Update performance chart
+        updatePerformanceChart();
+      } catch (error) {
+        console.error('Failed to update system status:', error);
+      }
+    }
+
+    // Performance Chart
+    function initializeChart() {
+      const ctx = document.getElementById('performance-chart').getContext('2d');
+      performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Response Time (ns)',
+            data: [],
+            borderColor: '#00ff88',
+            backgroundColor: 'rgba(0, 255, 136, 0.1)',
+            tension: 0.4
+          }, {
+            label: 'CPU Usage (%)',
+            data: [],
+            borderColor: '#00ccff',
+            backgroundColor: 'rgba(0, 204, 255, 0.1)',
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#ffffff'
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: '#333333'
+              },
+              ticks: {
+                color: '#a0a0a0'
+              }
+            },
+            y: {
+              grid: {
+                color: '#333333'
+              },
+              ticks: {
+                color: '#a0a0a0'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updatePerformanceChart() {
+      if (!performanceChart) return;
+      
+      const now = new Date().toLocaleTimeString();
+      const responseTime = Math.floor(Math.random() * 30 + 30);
+      const cpuUsage = Math.floor(Math.random() * 20 + 10);
+      
+      performanceChart.data.labels.push(now);
+      performanceChart.data.datasets[0].data.push(responseTime);
+      performanceChart.data.datasets[1].data.push(cpuUsage);
+      
+      // Keep only last 20 data points
+      if (performanceChart.data.labels.length > 20) {
+        performanceChart.data.labels.shift();
+        performanceChart.data.datasets[0].data.shift();
+        performanceChart.data.datasets[1].data.shift();
+      }
+      
+      performanceChart.update('none');
+    }
+
+    // Activity Feed
+    async function updateActivity() {
+      const activities = [
+        { type: 'success', title: 'Package Published', description: '@mycompany/utils v2.1.0 published successfully', time: '2 min ago' },
+        { type: 'info', title: 'Config Updated', description: 'Feature flag DEBUG enabled', time: '5 min ago' },
+        { type: 'warning', title: 'High Memory Usage', description: 'Memory usage approaching threshold', time: '8 min ago' },
+        { type: 'success', title: 'Sync Completed', description: 'Registry synchronized with remote', time: '15 min ago' },
+        { type: 'info', title: 'New Connection', description: 'Client connected from localhost', time: '20 min ago' }
+      ];
+      
+      const feed = document.getElementById('activity-feed');
+      feed.innerHTML = activities.map(activity => `
+        <div class="activity-item">
+          <div class="activity-icon ${activity.type}">
+            ${activity.type === 'success' ? '<i data-lucide="check"></i>' :
+              activity.type === 'warning' ? '<i data-lucide="alert-triangle"></i>' :
+              activity.type === 'error' ? '<i data-lucide="x"></i>' :
+              '<i data-lucide="info"></i>'}
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">${activity.title}</div>
+            <div class="activity-description">${activity.description}</div>
+            <div class="activity-time">${activity.time}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      // Re-initialize icons for new content
+      lucide.createIcons();
+    }
+
+    // Terminal
+    function initializeTerminal() {
+      const input = document.getElementById('terminal-input');
+      const output = document.getElementById('terminal-output');
+      
+      // Connect to WebSocket for terminal
+      if (wsClient && !wsClient.isConnected) {
+        wsClient.connect();
+      }
+      
+      // Update connection status
+      function updateConnectionStatus() {
+        const statusElement = document.getElementById('connection-status');
+        if (statusElement) {
+          if (wsClient && wsClient.isConnected) {
+            statusElement.textContent = '● Connected';
+            statusElement.style.color = '#4ade80';
+          } else {
+            statusElement.textContent = '● Disconnected';
+            statusElement.style.color = '#f87171';
+          }
+        }
+      }
+      
+      // Update status initially and when connection changes
+      updateConnectionStatus();
+      if (wsClient) {
+        wsClient.on('connection_change', updateConnectionStatus);
+      }
+      
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const command = input.value.trim();
+          if (command) {
+            output.textContent += `\n$ ${command}\n`;
+            
+            // Send command via WebSocket if connected
+            if (wsClient && wsClient.isConnected) {
+              wsClient.send({
+                type: 'terminal_command',
+                command: command
+              });
+            } else {
+              // Fallback to local processing
+              processTerminalCommand(command);
+            }
+            
+            input.value = '';
+          }
+        }
+      });
+    }
+
+    function processTerminalCommand(command) {
+      const output = document.getElementById('terminal-output');
+      
+      switch (command.toLowerCase()) {
+        case 'help':
+          output.textContent += `Available commands:
+  config         - Show current configuration
+  packages       - List available packages
+  publish <name> - Publish a package
+  enable <flag>  - Enable feature flag
+  disable <flag> - Disable feature flag
+  status         - Show system status
+  clear          - Clear terminal
+  help           - Show this help
+`;
+          break;
+        case 'config':
+          output.textContent += `Current Configuration:
+  Version: ${configData.configVersion || 1}
+  Registry Hash: ${configData.registryHash || '0x12345678'}
+  Features: ${Object.keys(configData.features || {}).filter(f => configData.features[f]).join(', ') || 'None'}
+  Terminal: ${configData.terminal?.mode || 'raw'} ${configData.terminal?.rows || 24}x${configData.terminal?.cols || 80}
+`;
+          break;
+        case 'status':
+          output.textContent += `System Status:
+  CPU: ${document.getElementById('cpu-usage').textContent}
+  Memory: ${document.getElementById('memory-usage').textContent}
+  Connections: ${document.getElementById('active-connections').textContent}
+  Response Time: ${document.getElementById('response-time').textContent}
+  Uptime: ${document.getElementById('uptime').textContent}
+`;
+          break;
+        case 'clear':
+          output.textContent = 'Terminal cleared.\n$ ';
+          return;
+        default:
+          if (command.startsWith('enable ')) {
+            const feature = command.substring(7).toUpperCase();
+            output.textContent += `Enabling feature: ${feature}\n`;
+            // Simulate feature enable
+            setTimeout(() => {
+              output.textContent += `Feature ${feature} enabled successfully.\n$ `;
+              output.scrollTop = output.scrollHeight;
+            }, 500);
+          } else if (command.startsWith('disable ')) {
+            const feature = command.substring(8).toUpperCase();
+            output.textContent += `Disabling feature: ${feature}\n`;
+            // Simulate feature disable
+            setTimeout(() => {
+              output.textContent += `Feature ${feature} disabled successfully.\n$ `;
+              output.scrollTop = output.scrollHeight;
+            }, 500);
+          } else {
+            output.textContent += `Unknown command: ${command}\nType 'help' for available commands.\n`;
+          }
+      }
+      
+      output.textContent += '$ ';
+      output.scrollTop = output.scrollHeight;
+    }
+
+    // Interactive Functions
+    function editByte(offset) {
+      const currentValue = prompt(`Enter new hex value for byte at offset ${offset}:`);
+      if (currentValue && /^[0-9A-Fa-f]{2}$/.test(currentValue)) {
+        // Animate the byte update
+        const bytes = document.querySelectorAll('.byte');
+        bytes[offset].classList.add('updating');
+        setTimeout(() => {
+          bytes[offset].classList.remove('updating');
+          bytes[offset].innerHTML = `0x${currentValue}<div class="byte-tooltip">Updated (Offset ${offset})</div>`;
+        }, 600);
+        
+        addActivity('success', 'Config Updated', `Byte at offset ${offset} changed to 0x${currentValue}`);
+      }
+    }
+
+    function toggleFeature(featureName, element) {
+      element.classList.toggle('active');
+      const isEnabled = element.classList.contains('active');
+      addActivity('info', 'Feature Toggled', `${featureName} ${isEnabled ? 'enabled' : 'disabled'}`);
+    }
+
+    function openConfigEditor() {
+      showSection('config');
+      document.querySelector('[data-section="config"]').click();
+    }
+
+    function exportConfig() {
+      const config = {
+        version: configData.configVersion || 1,
+        registryHash: configData.registryHash || '0x12345678',
+        features: configData.features || {},
+        terminal: configData.terminal || { mode: 'raw', rows: 24, cols: 80 }
+      };
+      
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bun-registry-config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      addActivity('success', 'Config Exported', 'Configuration exported to file');
+    }
+
+    function refreshSystemStatus() {
+      updateSystemStatus();
+      addActivity('info', 'Status Refreshed', 'System status updated');
+    }
+
+    function toggleChartView() {
+      if (performanceChart.config.type === 'line') {
+        performanceChart.config.type = 'bar';
+      } else {
+        performanceChart.config.type = 'line';
+      }
+      performanceChart.update();
+    }
+
+    function clearActivity() {
+      document.getElementById('activity-feed').innerHTML = '';
+      addActivity('info', 'Activity Cleared', 'Activity feed has been cleared');
+    }
+
+    function publishPackage() {
+      addActivity('info', 'Publish Started', 'Package publishing initiated...');
+      setTimeout(() => {
+        addActivity('success', 'Package Published', 'Package published successfully');
+      }, 2000);
+    }
+
+    function syncRegistry() {
+      addActivity('info', 'Sync Started', 'Registry synchronization started...');
+      setTimeout(() => {
+        addActivity('success', 'Sync Completed', 'Registry synchronized successfully');
+      }, 3000);
+    }
+
+    function viewLogs() {
+      addActivity('info', 'Logs Opened', 'System logs viewer opened');
+    }
+
+    function openSettings() {
+      addActivity('info', 'Settings Opened', 'Settings panel opened');
+    }
+
+    function addActivity(type, title, description) {
+      const feed = document.getElementById('activity-feed');
+      const time = 'Just now';
+      const newActivity = document.createElement('div');
+      newActivity.className = 'activity-item';
+      newActivity.innerHTML = `
+        <div class="activity-icon ${type}">
+          ${type === 'success' ? '<i data-lucide="check"></i>' :
+            type === 'warning' ? '<i data-lucide="alert-triangle"></i>' :
+            type === 'error' ? '<i data-lucide="x"></i>' :
+            '<i data-lucide="info"></i>'}
+        </div>
+        <div class="activity-content">
+          <div class="activity-title">${title}</div>
+          <div class="activity-description">${description}</div>
+          <div class="activity-time">${time}</div>
+        </div>
+      `;
+      
+      feed.insertBefore(newActivity, feed.firstChild);
+      lucide.createIcons();
+      
+      // Keep only last 10 activities
+      while (feed.children.length > 10) {
+        feed.removeChild(feed.lastChild);
+      }
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

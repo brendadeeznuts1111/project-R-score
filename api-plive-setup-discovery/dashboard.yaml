@@ -1,0 +1,18 @@
+# Dashboard Configuration
+dashboard:
+  name: "Betting Platform Dashboard"
+  version: "v2.9"
+  refresh_interval: "1000ms"
+  
+  metrics:
+    enabled: true
+    endpoint: "${METRICS_ENDPOINT:-/metrics}"
+    
+  api:
+    base_url: "${API_BASE_URL:-http://localhost:3000}"
+    timeout: 30000
+    
+  secrets:
+    api_key: "${API_KEY}"
+    jwt_secret: "${JWT_SECRET}"
+

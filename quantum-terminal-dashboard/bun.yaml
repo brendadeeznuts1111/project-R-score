@@ -1,0 +1,39 @@
+# bun.yaml - Bun runtime configuration
+# Auto-loaded by Bun runtime
+
+api:
+  base: https://api.example.com
+  timeout: 5000          # ms
+  retries: 2
+  cookie:
+    name: __quantum
+    httpOnly: true
+    secure: true
+    sameSite: strict
+    maxAge: 86400        # 24 hours
+
+server:
+  host: 0.0.0.0
+  port: 3000
+  workers: 4
+
+database:
+  host: ${DB_HOST:-127.0.0.1}
+  port: ${DB_PORT:-5432}
+  name: quantum_lattice
+  pool_size: 10
+
+cache:
+  enabled: true
+  provider: redis
+  ttl: 3600
+
+logging:
+  level: info
+  format: json
+
+security:
+  encryption: aes-256-gcm
+  session_timeout: 3600
+  rate_limit: 1000
+

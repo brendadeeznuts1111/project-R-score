@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSS Feed Widget Gallery - Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      background: #f5f5f5;
+      padding: 40px 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { text-align: center; margin-bottom: 10px; color: #333; }
+    .subtitle { text-align: center; color: #666; margin-bottom: 40px; }
+    
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 20px;
+      margin-bottom: 40px;
+      border-radius: 4px;
+    }
+    .info-box h3 { margin-bottom: 10px; color: #1976d2; }
+    .info-box code {
+      background: rgba(255,255,255,0.7);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .widget-demo {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .widget-header {
+      background: #333;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .widget-header h3 { font-size: 16px; }
+    .theme-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .widget-preview {
+      padding: 20px;
+      min-height: 200px;
+      background: #f8f9fa;
+    }
+    .widget-code {
+      background: #f8f9fa;
+      padding: 15px 20px;
+      border-top: 1px solid #e9ecef;
+    }
+    .widget-code code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+    }
+    
+    .embed-section {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .embed-section h2 { margin-bottom: 20px; color: #333; }
+    .embed-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .embed-tab {
+      padding: 10px 20px;
+      border: none;
+      background: #e9ecef;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .embed-tab.active {
+      background: #007bff;
+      color: white;
+    }
+    .embed-content {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 4px;
+    }
+    .embed-content pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    
+    .api-section {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .api-section h2 { margin-bottom: 20px; color: #333; }
+    .api-section code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    .endpoint-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .endpoint-table th,
+    .endpoint-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .endpoint-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: #666;
+    }
+    footer a { color: #007bff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📰 RSS Feed Widget Gallery</h1>
+    <p class="subtitle">Embeddable widgets for your website</p>
+    
+    <div class="info-box">
+      <h3>🚀 Live Widget Demo</h3>
+      <p>Below are working widget examples with mock data.</p>
+      <p style="margin-top: 10px;">To see real data, start the server: <code>bun run src/server.js</code></p>
+    </div>
+    
+    <div class="gallery">
+      <div class="widget-demo">
+        <div class="widget-header">
+          <h3>Light Theme</h3>
+          <span class="theme-badge">Light</span>
+        </div>
+        <div class="widget-preview" id="widget-light"></div>
+        <div class="widget-code">
+          <code>/widgets/light/3</code>
+        </div>
+      </div>
+      
+      <div class="widget-demo">
+        <div class="widget-header">
+          <h3>Dark Theme</h3>
+          <span class="theme-badge">Dark</span>
+        </div>
+        <div class="widget-preview" id="widget-dark"></div>
+        <div class="widget-code">
+          <code>/widgets/dark/3</code>
+        </div>
+      </div>
+      
+      <div class="widget-demo">
+        <div class="widget-header">
+          <h3>Minimal Theme</h3>
+          <span class="theme-badge">Minimal</span>
+        </div>
+        <div class="widget-preview" id="widget-minimal"></div>
+        <div class="widget-code">
+          <code>/widgets/minimal/3</code>
+        </div>
+      </div>
+      
+      <div class="widget-demo">
+        <div class="widget-header">
+          <h3>Card Theme</h3>
+          <span class="theme-badge">Card</span>
+        </div>
+        <div class="widget-preview" id="widget-card"></div>
+        <div class="widget-code">
+          <code>/widgets/card/3</code>
+        </div>
+      </div>
+    </div>
+    
+    <div class="embed-section">
+      <h2>Widget Endpoints</h2>
+      <table class="endpoint-table">
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Description</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>GET /widgets/feed</code></td>
+            <td>Widget with query params</td>
+            <td><code>/widgets/feed?theme=light&max=5</code></td>
+          </tr>
+          <tr>
+            <td><code>GET /widgets/:theme</code></td>
+            <td>Pretty URL (default 5 posts)</td>
+            <td><code>/widgets/light</code></td>
+          </tr>
+          <tr>
+            <td><code>GET /widgets/:theme/:max</code></td>
+            <td>Pretty URL with count</td>
+            <td><code>/widgets/dark/3</code></td>
+          </tr>
+          <tr>
+            <td><code>GET /widgets/script</code></td>
+            <td>JavaScript embed</td>
+            <td><code>/widgets/script?theme=dark</code></td>
+          </tr>
+          <tr>
+            <td><code>GET /widgets/config</code></td>
+            <td>Configuration JSON</td>
+            <td><code>/widgets/config</code></td>
+          </tr>
+          <tr>
+            <td><code>GET /widgets/gallery</code></td>
+            <td>This demo page</td>
+            <td><code>/widgets/gallery</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="embed-section">
+      <h2>Quick Embed Examples</h2>
+      <div class="embed-tabs">
+        <button class="embed-tab active" onclick="showTab('iframe')">Iframe (Query)</button>
+        <button class="embed-tab" onclick="showTab('pretty')">Iframe (Pretty URL)</button>
+        <button class="embed-tab" onclick="showTab('script')">Script</button>
+        <button class="embed-tab" onclick="showTab('json')">JSON API</button>
+      </div>
+      
+      <div class="embed-content">
+        <div id="iframe-tab">
+          <pre><iframe 
+  src="http://localhost:3000/widgets/feed?theme=light&max=5"
+  width="100%"
+  style="border: none; min-height: 400px;"
+  scrolling="no">
+</iframe></pre>
+        </div>
+        <div id="pretty-tab" style="display: none;">
+          <pre><iframe 
+  src="http://localhost:3000/widgets/light/5"
+  width="100%"
+  style="border: none; min-height: 400px;"
+  scrolling="no">
+</iframe></pre>
+        </div>
+        <div id="script-tab" style="display: none;">
+          <pre><div id="rss-feed-widget">
+  <script src="http://localhost:3000/widgets/script?theme=light&max=5"></script>
+</div></pre>
+        </div>
+        <div id="json-tab" style="display: none;">
+          <pre>fetch('http://localhost:3000/widgets/feed?format=json&max=5')
+  .then(res => res.json())
+  .then(data => {
+    console.log('Posts:', data.items);
+    // Render custom widget
+  });</pre>
+        </div>
+      </div>
+    </div>
+    
+    <div class="embed-section">
+      <h2>Available Themes</h2>
+      <table class="endpoint-table">
+        <thead>
+          <tr>
+            <th>Theme</th>
+            <th>Description</th>
+            <th>Example URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>light</code></td>
+            <td>Clean white background with dark text</td>
+            <td><code>/widgets/light</code></td>
+          </tr>
+          <tr>
+            <td><code>dark</code></td>
+            <td>Dark background with light text</td>
+            <td><code>/widgets/dark</code></td>
+          </tr>
+          <tr>
+            <td><code>minimal</code></td>
+            <td>Simple text-only design</td>
+            <td><code>/widgets/minimal</code></td>
+          </tr>
+          <tr>
+            <td><code>card</code></td>
+            <td>Card-based layout with shadows</td>
+            <td><code>/widgets/card</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="api-section">
+      <h2>Query Parameters</h2>
+      <table class="endpoint-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>theme</code></td>
+            <td>string</td>
+            <td>light</td>
+            <td>Widget theme: light, dark, minimal, card</td>
+          </tr>
+          <tr>
+            <td><code>max</code></td>
+            <td>number</td>
+            <td>5</td>
+            <td>Maximum posts to display (1-20)</td>
+          </tr>
+          <tr>
+            <td><code>tag</code></td>
+            <td>string</td>
+            <td>-</td>
+            <td>Filter posts by tag</td>
+          </tr>
+          <tr>
+            <td><code>format</code></td>
+            <td>string</td>
+            <td>html</td>
+            <td>Response format: html, json, jsonp</td>
+          </tr>
+          <tr>
+            <td><code>callback</code></td>
+            <td>string</td>
+            <td>rssWidgetCallback</td>
+            <td>JSONP callback function name</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <footer>
+      <p>Powered by <a href="https://bun.sh">Bun</a> and RSS Feed Optimization</p>
+      <p><a href="docs/api-reference/widgets.md">View Documentation</a></p>
+    </footer>
+  </div>
+  
+  <script>
+    // Mock data for widget demos
+    const mockPosts = [
+      {
+        title: "Getting Started with Bun.js",
+        slug: "getting-started-with-bun",
+        excerpt: "Learn how to use Bun.js for high-performance JavaScript applications...",
+        publishedAt: "2025-01-25T10:00:00Z",
+        author: "Sarah Chen",
+        tags: ["bun", "javascript", "performance"]
+      },
+      {
+        title: "RSS Feed Optimization Techniques",
+        slug: "rss-optimization",
+        excerpt: "Discover advanced techniques for optimizing RSS feed delivery...",
+        publishedAt: "2025-01-24T14:30:00Z",
+        author: "Mike Johnson",
+        tags: ["rss", "optimization"]
+      },
+      {
+        title: "Cloudflare R2 Storage Guide",
+        slug: "r2-storage-guide",
+        excerpt: "A comprehensive guide to using Cloudflare R2 for object storage...",
+        publishedAt: "2025-01-23T09:15:00Z",
+        author: "Alex Rivera",
+        tags: ["cloudflare", "r2", "storage"]
+      }
+    ];
+
+    const themes = {
+      light: {
+        bg: '#fff',
+        text: '#212529',
+        headerBg: '#f8f9fa',
+        border: '#e9ecef',
+        link: '#007bff',
+        meta: '#6c757d',
+        tagBg: '#e9ecef'
+      },
+      dark: {
+        bg: '#1a1a2e',
+        text: '#eaeaea',
+        headerBg: '#16213e',
+        border: '#0f3460',
+        link: '#00d9ff',
+        meta: '#a0a0a0',
+        tagBg: '#0f3460'
+      },
+      minimal: {
+        bg: '#fff',
+        text: '#333',
+        headerBg: 'transparent',
+        border: '#eee',
+        link: '#333',
+        meta: '#999',
+        tagBg: 'transparent'
+      },
+      card: {
+        bg: '#f5f5f5',
+        text: '#333',
+        headerBg: '#fff',
+        border: 'transparent',
+        link: '#333',
+        meta: '#888',
+        tagBg: '#f0f0f0'
+      }
+    };
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, '&')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '"');
+    }
+
+    function renderWidget(containerId, themeName, posts) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      const theme = themes[themeName];
+      const style = themeName === 'minimal' ? 'minimal' : themeName === 'card' ? 'card' : 'standard';
+      
+      let html = `<div class="rss-widget-${style}" style="font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; background: ${theme.bg}; color: ${theme.text}; padding: 16px;">`;
+      
+      // Header
+      if (style !== 'minimal') {
+        html += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid ${theme.border};">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 600;">RSS Feed</h2>
+          <a href="#" style="color: ${theme.link}; text-decoration: none; font-size: 14px;">View All →</a>
+        </div>`;
+      } else {
+        html += `<h2 style="margin: 0 0 12px 0; font-size: 16px; font-weight: normal; font-style: italic;">RSS Feed</h2>`;
+      }
+      
+      // Posts
+      html += `<div style="display: flex; flex-direction: column; gap: ${style === 'card' ? '16px' : '16px'};">`;
+      
+      posts.forEach(post => {
+        if (style === 'card') {
+          html += `<article style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 12px 0; font-size: 18px;">
+              <a href="#" style="color: ${theme.link}; text-decoration: none;">${escapeHtml(post.title)}</a>
+            </h3>
+            <div style="font-size: 13px; color: ${theme.meta}; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+              ${formatDate(post.publishedAt)}
+            </div>
+            <p style="margin: 0; font-size: 14px; color: ${theme.meta}; line-height: 1.6;">${escapeHtml(post.excerpt)}</p>
+            ${post.tags.length ? `<div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+              ${post.tags.slice(0, 3).map(tag => `<span style="font-size: 11px; background: ${theme.tagBg}; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;">${escapeHtml(tag)}</span>`).join('')}
+            </div>` : ''}
+          </article>`;
+        } else if (style === 'minimal') {
+          html += `<article style="padding: 8px 0; border-bottom: 1px solid ${theme.border};">
+            <h3 style="margin: 0 0 4px 0; font-size: 15px;">
+              <a href="#" style="color: ${theme.link}; text-decoration: none;">${escapeHtml(post.title)}</a>
+            </h3>
+            <div style="font-size: 12px; color: ${theme.meta}; font-style: italic;">
+              ${formatDate(post.publishedAt)}${post.author ? ` by ${escapeHtml(post.author)}` : ''}
+            </div>
+          </article>`;
+        } else {
+          html += `<article style="padding: 12px; background: ${themeName === 'light' ? '#f8f9fa' : theme.headerBg}; border-radius: 8px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 16px;">
+              <a href="#" style="color: ${theme.link}; text-decoration: none;">${escapeHtml(post.title)}</a>
+            </h3>
+            <div style="font-size: 13px; color: ${theme.meta}; margin-bottom: 8px;">
+              <time>${formatDate(post.publishedAt)}</time>
+              ${post.author ? `<span style="margin-left: 8px;">by ${escapeHtml(post.author)}</span>` : ''}
+            </div>
+            <p style="margin: 0; font-size: 14px; color: ${theme.meta}; line-height: 1.5;">${escapeHtml(post.excerpt)}</p>
+            ${post.tags.length ? `<div style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+              ${post.tags.slice(0, 3).map(tag => `<span style="font-size: 12px; background: ${theme.tagBg}; padding: 2px 8px; border-radius: 12px;">${escapeHtml(tag)}</span>`).join('')}
+            </div>` : ''}
+          </article>`;
+        }
+      });
+      
+      html += `</div>`;
+      
+      // Footer
+      if (style !== 'minimal') {
+        html += `<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid ${theme.border}; text-align: center;">
+          <span style="font-size: 12px; color: ${theme.meta};">Powered by RSS Feed Optimization</span>
+        </div>`;
+      }
+      
+      html += `</div>`;
+      
+      container.innerHTML = html;
+    }
+
+    // Render all widgets on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderWidget('widget-light', 'light', mockPosts);
+      renderWidget('widget-dark', 'dark', mockPosts);
+      renderWidget('widget-minimal', 'minimal', mockPosts);
+      renderWidget('widget-card', 'card', mockPosts);
+    });
+
+    function showTab(tab) {
+      document.querySelectorAll('.embed-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('[id$="-tab"]').forEach(t => t.style.display = 'none');
+      
+      event.target.classList.add('active');
+      document.getElementById(tab + '-tab').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

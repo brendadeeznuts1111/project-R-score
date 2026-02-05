@@ -1,0 +1,20 @@
+{
+  "id": "test-secrets-wrangler",
+  "name": "Tenant test-secrets-wrangler",
+  "config": {
+    "theme": "dark",
+    "timezone": "UTC",
+    "features": [
+      "analytics",
+      "reporting",
+      "api-access"
+    ]
+  },
+  "data": {
+    "users": 912,
+    "projects": 71,
+    "storage": 731742
+  },
+  "createdAt": "2026-02-01T03:57:03.060Z",
+  "updatedAt": "2026-02-01T03:57:03.060Z"
+}

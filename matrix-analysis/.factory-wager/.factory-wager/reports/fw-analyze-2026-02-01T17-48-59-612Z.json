@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-02-01T17:48:59.611Z",
+  "file": "config.yaml",
+  "stats": {
+    "docs": 1,
+    "anchors": 0,
+    "aliases": 0,
+    "interpolations": 0
+  },
+  "inheritance": [],
+  "riskScore": 19,
+  "rows": [
+    {
+      "doc": 1,
+      "key": "api",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.registry",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.registry.token",
+      "value": "demo-registry-token-12345678901234567890",
+      "type": "string",
+      "status": "active",
+      "riskScore": 50
+    },
+    {
+      "doc": 1,
+      "key": "api.r2",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.r2.secret",
+      "value": "demo-r2-secret-key-123456789012345678901234567890",
+      "type": "string",
+      "status": "active",
+      "riskScore": 50
+    },
+    {
+      "doc": 1,
+      "key": "api.domain",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.domain.cert",
+      "value": "demo-ssl-certificate-12345678901234567890123456...",
+      "type": "string",
+      "status": "active",
+      "riskScore": 30
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "id": 50249,
+    "pointer": "/Users/nolarose/Projects/docs/BUN_MAIN_GUIDE.md",
+    "conceptual": "Bun documentation",
+    "category": "DOCUMENTATION",
+    "protocol": "file:",
+    "status": "OK",
+    "details": "Size: 10339 bytes (pooled @ ptr 21746)"
+  },
+  {
+    "id": 3173,
+    "pointer": "/Users/nolarose/Projects/guide-cli.ts",
+    "conceptual": "CLI tooling",
+    "category": "CLI_TOOLS",
+    "protocol": "file:",
+    "status": "OK",
+    "details": "Size: 12208 bytes (pooled @ ptr 2199)"
+  },
+  {
+    "id": 96743,
+    "pointer": "/Users/nolarose/Projects/overseer-cli.ts",
+    "conceptual": "CLI tooling",
+    "category": "CLI_TOOLS",
+    "protocol": "file:",
+    "status": "OK",
+    "details": "Size: 2199 bytes (pooled @ ptr 0)"
+  },
+  {
+    "id": 13986,
+    "pointer": "/Users/nolarose/Projects/server.ts",
+    "conceptual": "Server runtime",
+    "category": "CLI_TOOLS",
+    "protocol": "file:",
+    "status": "OK",
+    "details": "Size: 4511 bytes (pooled @ ptr 14407)"
+  },
+  {
+    "id": 25590,
+    "pointer": "/Users/nolarose/Projects/shared/tools/entry-guard.ts",
+    "conceptual": "Entry guard",
+    "category": "SHARED_UTILS",
+    "protocol": "file:",
+    "status": "OK",
+    "details": "Size: 1270 bytes (pooled @ ptr 20476)"
+  },
+  {
+    "id": 50293,
+    "pointer": "/Users/nolarose/Projects/terminal-tool.ts",
+    "conceptual": "Terminal tool",
+    "category": "CLI_TOOLS",
+    "protocol": "file:",
+    "status": "OK",
+    "details": "Size: 1558 bytes (pooled @ ptr 18918)"
+  },
+  {
+    "id": 1006,
+    "pointer": "http://localhost:3000",
+    "conceptual": "System resource",
+    "category": "DEV_SERVERS",
+    "protocol": "http:",
+    "status": "OK",
+    "details": "Status: 200 (hardened TLS)"
+  },
+  {
+    "id": 11,
+    "pointer": "https://bun.sh/blog",
+    "conceptual": "Bun blog",
+    "category": "BUN_DOCS",
+    "protocol": "https:",
+    "status": "ERROR",
+    "details": "HTTP/2 error: Connection closed"
+  },
+  {
+    "id": 10,
+    "pointer": "https://bun.sh/docs",
+    "conceptual": "Bun reference docs",
+    "category": "BUN_DOCS",
+    "protocol": "https:",
+    "status": "ERROR",
+    "details": "HTTP/2 error: Connection closed"
+  },
+  {
+    "id": 8,
+    "pointer": "https://bun.sh/docs/api/utils",
+    "conceptual": "Bun deep equals utility",
+    "category": "BUN_API",
+    "protocol": "https:",
+    "status": "ERROR",
+    "details": "HTTP/2 error: Connection closed"
+  },
+  {
+    "id": 9,
+    "pointer": "https://bun.sh/docs/cli/bunx",
+    "conceptual": "Bun package manager (bunx)",
+    "category": "BUN_CLI",
+    "protocol": "https:",
+    "status": "ERROR",
+    "details": "HTTP/2 error: Connection closed"
+  },
+  {
+    "id": 12,
+    "pointer": "https://bun.sh/docs/runtime/shell",
+    "conceptual": "Bun shell runtime",
+    "category": "BUN_API",
+    "protocol": "https:",
+    "status": "ERROR",
+    "details": "HTTP/2 error: Connection closed"
+  }
+]

@@ -1,0 +1,28 @@
+---
+title: Untitled
+type: project-management
+status: active
+version: 1.0.0
+created: 2025-11-14
+updated: 2025-11-14
+modified: 2025-11-14
+category: project-management
+description: Documentation for System
+assignee: Sports Analytics Team
+author: Sports Analytics Team
+canvas: []
+deprecated: false
+due_date: ""
+estimated_hours: 0
+feed_integration: false
+priority: medium
+progress: 0
+project: ""
+related_projects: []
+replaces: ""
+tags: []
+usage: ""
+VIZ-06: []
+---
+
+{"content":"# Dashboard Field Mapping System\n\n## 🎯 Overview\n\nComplete field mapping system for dashboard configuration with Pre/Post transformations, Meta Tags, and HSL color coding.\n\n**Status**: ✅ Singularity Injected (100% Full Feed - 9/9 fields mapped)\n\n## 📊 Field Mapping Table\n\n| # | Field | Pre | Post | Meta Tag | HSL Color | Color Name |\n|---|-------|-----|------|----------|-----------|------------|\n| 1 | `id` | N/A | `\"asia-sports-feed\"` | `[META: DOMAIN]` | `#3A86FF` | Core Blue |\n| 2 | `path` | Static | `$env:DASH_ROOT/dashboard` | `[META: DYNAMIC]` | `#00FFFF` | Command CH1 |\n| 3 | `template` | Absolute | `$env:DASH_ROOT/src/templates/...` | `[META: RELATIVE]` | `#FB5607` | Data Orange |\n| 4 | `status` | N/A | `\"active\"` | `[META: ACTIVE]` | `#FF00FF` | Event CH3 |\n| 5 | `category` | N/A | `\"core\"` | `[META: CATEGORY]` | `#8338EC` | Category Purple |\n| 6 | `version` | N/A | `\"1.8.0\"` | `[META: VERSION]` | `#06FFA5` | Version Teal |\n| 7 | `name` | N/A | `\"Asia Sports Feed\"` | `[META: DOMAIN]` | `#3A86FF` | Core Blue |\n| 8 | `description` | N/A | `\"Dev Dashboard...\"` | `[META: DESCRIPTION]` | `#FFBE0B` | Description Yellow |\n| 9 | `tags` | N/A | `[\"sports\", \"core\"]` | `[META: TAGS]` | `#FF006E` | Tags Pink |\n\n## 🔄 Transformation Flow\n\n```mermaid\ngraph TD\n    A[Dashboard Config Load] --> B{Field Type?}\n    B -->|id| C[DOMAIN Meta Tag]\n    B -->|path| D[DYNAMIC Meta Tag]\n    B -->|template| E[RELATIVE Meta Tag]\n    B -->|status| F[ACTIVE Meta Tag]\n    \n    C --> G[Apply Core Blue [[3A86FF]]]\n    D --> H[Substitute $env:DASH_ROOT]\n    H --> I[Apply Command CH1 [[00FFFF]]]\n    E --> J[Substitute $env:DASH_ROOT]\n    J --> K[Apply Data Orange [[FB5607]]]\n    F --> L[Apply Event CH3 [[FF00FF]]]\n    \n    G --> M[Enhanced Dashboard Object]\n    I --> M\n    K --> M\n    L --> M\n    \n    M --> N[MCP Tool Response]\n    M --> O[UI Rendering with Colors]\n```\n\n## 🎨 HSL Color Flow\n\n```mermaid\ngraph LR\n    A[Dashboard Field] --> B{Meta Tag}\n    B -->|DOMAIN| C[Core Blue [[3A86FF]]]\n    B -->|DYNAMIC| D[Command CH1 [[00FFFF]]]\n    B -->|RELATIVE| E[Data Orange [[FB5607]]]\n    B -->|ACTIVE| F[Event CH3 [[FF00FF]]]\n    B -->|CATEGORY| G[Category Purple [[8338EC]]]\n    B -->|VERSION| H[Version Teal [[06FFA5]]]\n    B -->|DESCRIPTION| I[Description Yellow [[FFBE0B]]]\n    B -->|TAGS| J[Tags Pink [[FF006E]]]\n    \n    C --> K[CSS Variable]\n    D --> K\n    E --> K\n    F --> K\n    G --> K\n    H --> K\n    I --> K\n    J --> K\n    \n    K --> L[UI Component]\n```\n\n## 📋 Field Processing Pipeline\n\n```mermaid\nsequenceDiagram\n    participant Config as dashboards.json\n    participant Manager as DashboardManager\n    participant Mapping as Field Mapping\n    participant Transform as Transform Engine\n    participant MCP as MCP Tool\n    participant UI as UI Component\n    \n    Config->>Manager: Load dashboard config\n    Manager->>Mapping: Get field mapping\n    Mapping->>Transform: Transform Pre → Post\n    Transform->>Transform: Substitute $env:DASH_ROOT\n    Transform->>Mapping: Get HSL color\n    Mapping->>MCP: Enhanced dashboard object\n    MCP->>UI: Render with color coding\n```\n\n## 🔧 Implementation Details\n\n### Code Location\n- **Mapping Config**: `config/dashboard-field-mapping.ts`\n- **Tests**: `config/dashboard-field-mapping.test.ts`\n- **MCP Integration**: `server/local-server.ts`\n- **Documentation**: `.dashboard-field-mapping-guide.md`\n\n### Key Functions\n\n```typescript\n// Get field mapping\ngetFieldMapping('id') → {\n  field: \"id\",\n  metaTag: \"[META: DOMAIN]\",\n  hslColor: \"#3A86FF\",\n  hslName: \"Core Blue\"\n}\n\n// Transform with env vars\ntransformFieldValue('path', '/dashboard', {DASH_ROOT: '/feed'})\n→ '/feed/dashboard'\n\n// Get color\ngetFieldColor('status') → \"#FF00FF\"\n```\n\n## 📈 Statistics\n\n- **Total Fields**: 9/9 mapped\n- **Coverage**: 100% (Full Feed)\n- **Meta Tags**: 8 unique types\n- **HSL Colors**: 9 unique colors\n- **Tests**: 9/9 passing ✅\n\n## 🎯 Usage Examples\n\n### MCP Tool Query\n```bash\nnpx mcporter call \"local-tools.get_dashboard_info(dashboardId: 'asia-sports-feed')\"\n```\n\nReturns enhanced dashboard with `_fieldMappings`:\n```json\n{\n  \"id\": \"asia-sports-feed\",\n  \"path\": \"/dashboard\",\n  \"status\": \"active\",\n  \"_fieldMappings\": {\n    \"id\": {\n      \"color\": \"#3A86FF\",\n      \"metaTag\": \"[META: DOMAIN]\"\n    },\n    \"path\": {\n      \"color\": \"#00FFFF\",\n      \"metaTag\": \"[META: DYNAMIC]\"\n    },\n    \"status\": {\n      \"color\": \"#FF00FF\",\n      \"metaTag\": \"[META: ACTIVE]\"\n    }\n  }\n}\n```\n\n### UI Integration\n```typescript\nimport { getFieldColor } from './config/dashboard-field-mapping';\n\nconst idColor = getFieldColor('id'); // \"#3A86FF\"\n<div style={{ borderColor: idColor }}>Dashboard ID</div>\n```\n\n## 🏷️ Tags\n\n#dashboard [[field-mapping]] [[meta-tags]] [[hsl-colors]] [[mcp-tools]] [[visualization]]\n"}

@@ -1,0 +1,12 @@
+# [issue.config]
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions
+    url: https://github.com/brendadeeznuts1111/trader-analyzer-bun/discussions
+    about: Ask questions and share ideas
+  - name: API Documentation
+    url: http://localhost:3001/docs
+    about: View the OpenAPI documentation (when running locally)
+  - name: Team Page
+    url: https://github.com/brendadeeznuts1111/trader-analyzer-bun/blob/main/.github/TEAM.md
+    about: View team structure and departments

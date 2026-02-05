@@ -1,0 +1,197 @@
+{
+  "timestamp": "2026-01-22T22:27:15.773Z",
+  "totalPatterns": 18,
+  "risks": [
+    {
+      "pattern": "https://registry.${USER}.com/:pkg/*",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 5,
+      "column": 12
+    },
+    {
+      "pattern": "https://webhooks/:service/callback",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 6,
+      "column": 11
+    },
+    {
+      "pattern": "http://localhost:3000/admin/*",
+      "risk": "critical",
+      "issues": [
+        "SSRF risk - localhost access",
+        "Wildcard admin access",
+        "Insecure protocol (non-HTTPS)"
+      ],
+      "file": "config/routes.toml",
+      "line": 7,
+      "column": 12
+    },
+    {
+      "pattern": "http://127.0.0.1:9229/json",
+      "risk": "critical",
+      "issues": [
+        "SSRF risk - localhost access",
+        "Insecure protocol (non-HTTPS)"
+      ],
+      "file": "config/routes.toml",
+      "line": 8,
+      "column": 9
+    },
+    {
+      "pattern": "https://api.stripe.com/v1/:resource",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 11,
+      "column": 10
+    },
+    {
+      "pattern": "https://api.github.com/repos/:owner/:repo",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 12,
+      "column": 10
+    },
+    {
+      "pattern": "http://internal-service:8080/webhook",
+      "risk": "high",
+      "issues": [
+        "Internal network access",
+        "Insecure protocol (non-HTTPS)"
+      ],
+      "file": "config/routes.toml",
+      "line": 13,
+      "column": 12
+    },
+    {
+      "pattern": "https://cdn.example.com/uploads/*",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 16,
+      "column": 10
+    },
+    {
+      "pattern": "https://storage.googleapis.com/:bucket/:path",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 17,
+      "column": 12
+    },
+    {
+      "pattern": "https://app.example.com/admin/*",
+      "risk": "high",
+      "issues": [
+        "Wildcard admin access"
+      ],
+      "file": "config/routes.toml",
+      "line": 21,
+      "column": 9
+    },
+    {
+      "pattern": "https://app.example.com/admin/users/:id",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 22,
+      "column": 9
+    },
+    {
+      "pattern": "https://app.example.com/admin/*/settings",
+      "risk": "high",
+      "issues": [
+        "Wildcard admin access"
+      ],
+      "file": "config/routes.toml",
+      "line": 23,
+      "column": 12
+    },
+    {
+      "pattern": "https://app.example.com/auth/:provider/callback",
+      "risk": "low",
+      "issues": [
+        "No significant risks detected"
+      ],
+      "file": "config/routes.toml",
+      "line": 26,
+      "column": 12
+    },
+    {
+      "pattern": "https://*:3000/redirect",
+      "risk": "medium",
+      "issues": [
+        "Open redirect risk"
+      ],
+      "file": "config/routes.toml",
+      "line": 27,
+      "column": 8
+    },
+    {
+      "pattern": "https://evil.com/../admin",
+      "risk": "critical",
+      "issues": [
+        "Path traversal vulnerability"
+      ],
+      "file": "config/routes.toml",
+      "line": 28,
+      "column": 10
+    },
+    {
+      "pattern": "http://insecure.example.com/api/:version",
+      "risk": "low",
+      "issues": [
+        "Insecure protocol (non-HTTPS)"
+      ],
+      "file": "config/routes.toml",
+      "line": 31,
+      "column": 13
+    },
+    {
+      "pattern": "https://api.example.com/v1/**/very/long/pattern/that/might/cause/redis",
+      "risk": "medium",
+      "issues": [
+        "Complex pattern - potential ReDoS"
+      ],
+      "file": "config/routes.toml",
+      "line": 32,
+      "column": 11
+    },
+    {
+      "pattern": "https://192.168.1.100:8080/internal",
+      "risk": "high",
+      "issues": [
+        "Internal network access",
+        "Private network range"
+      ],
+      "file": "config/routes.toml",
+      "line": 33,
+      "column": 15
+    }
+  ],
+  "summary": {
+    "critical": 3,
+    "high": 4,
+    "medium": 2,
+    "low": 9
+  }
+}

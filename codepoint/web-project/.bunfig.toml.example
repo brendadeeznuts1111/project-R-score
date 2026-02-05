@@ -1,0 +1,70 @@
+# Bun Configuration File
+# Copy this file to bunfig.toml and update with your settings
+# Official Bun registry configuration: https://bun.com/docs/guides/install/custom-registry
+# Environment variables are automatically loaded from: .env.local, .env.[NODE_ENV], and .env
+# Isolated installs: https://bun.com/docs/pm/isolated-installs
+
+# Configuration version - 1 enables isolated installs by default (recommended)
+# 0 = hoisted installs (npm/yarn style), 1 = isolated installs (pnpm style)
+configVersion = 1
+
+[install]
+# Default registry for all packages
+# Bun automatically expands $NPM_AUTH_TOKEN from .env files
+registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
+
+# Alternative: Registry with username/password
+# registry = "https://username:password@registry.your-org.com"
+
+# Scoped packages configuration
+scopes = { "@your-org" = "https://registry.your-org.com" }
+
+# Isolated installs (recommended for better dependency management)
+# Similar to pnpm's strict dependency isolation
+# Options: "isolated" (recommended), "hoisted" (npm/yarn style)
+linker = "isolated"
+
+# Isolated installs specific configuration
+[install.isolated]
+# Backend strategy for file operations (auto-detected by default)
+# Options: "clonefile" (macOS CoW), "hardlink" (Linux/Windows), "copyfile" (fallback)
+backend = "auto"
+
+# Enable verbose logging for debugging isolated installs
+verbose = false
+
+# Cache configuration
+cache = true
+cacheDir = ".bun-cache"
+
+# Lockfile configuration
+lockfile = true
+lockfileSave = true
+
+[run]
+# Default runtime configuration
+bun = true
+shell = "sh"
+
+[test]
+# Test configuration
+preload = []
+coverage = true
+
+[build]
+# Build configuration
+target = "node"
+format = "esm"
+minify = false
+sourcemap = true
+
+# Environment-specific configurations
+[install.development]
+registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
+linker = "isolated"
+cache = true
+
+[install.production]
+registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
+linker = "isolated"
+cache = false

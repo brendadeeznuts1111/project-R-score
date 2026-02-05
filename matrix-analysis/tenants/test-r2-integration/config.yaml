@@ -1,0 +1,8 @@
+tenant:
+  id: test-r2-integration
+  name: Tenant test-r2-integration
+  created: 2026-02-01T03:55:40.334Z
+
+settings:
+  theme: dark
+  timezone: UTC

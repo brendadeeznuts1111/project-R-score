@@ -1,0 +1,31 @@
+/**
+ * Modern Selectors Examples
+ */
+
+/* :is() selector */
+:is(.card, .status-item).active {
+  opacity: 1;
+}
+
+/* :not() with multiple arguments */
+.card:not(.disabled, .hidden, .loading) {
+  opacity: 1;
+}
+
+/* :dir() selector */
+:dir(ltr) .card {
+  text-align: left;
+}
+
+:dir(rtl) .card {
+  text-align: right;
+}
+
+/* :lang() selector */
+:lang(en) .card h2 {
+  font-weight: 600;
+}
+
+:lang(fr, de) .card h2 {
+  font-weight: 700;
+}

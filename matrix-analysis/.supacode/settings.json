@@ -1,0 +1,27 @@
+{
+  "global" : {
+    "appearanceMode" : "dark",
+    "confirmBeforeQuit" : true,
+    "deleteBranchOnArchive" : true,
+    "githubIntegrationEnabled" : true,
+    "inAppNotificationsEnabled" : true,
+    "notificationSoundEnabled" : true,
+    "updatesAutomaticallyCheckForUpdates" : true,
+    "updatesAutomaticallyDownloadUpdates" : false
+  },
+  "pinnedWorktreeIDs" : [
+
+  ],
+  "repositories" : {
+    "\/Users\/nolarose\/" : {
+      "copyIgnoredOnWorktreeCreate" : false,
+      "copyUntrackedOnWorktreeCreate" : false,
+      "openActionID" : "ghostty",
+      "runScript" : "echo \"Configure run script in Settings, default hot key is CMD+R and CMD + . to stop\"",
+      "setupScript" : "echo \"Setup your startup script in repo settings\""
+    }
+  },
+  "repositoryRoots" : [
+    "\/Users\/nolarose\/"
+  ]
+}

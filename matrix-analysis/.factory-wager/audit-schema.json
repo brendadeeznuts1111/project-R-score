@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FactoryWager Audit Log Schema",
+  "description": "Structured audit logging schema for FactoryWager workflows",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp in UTC"
+    },
+    "workflow": {
+      "type": "string",
+      "enum": ["fw-analyze", "fw-validate", "fw-changelog", "fw-deploy", "fw-nexus-status", "fw-release"],
+      "description": "Workflow name that generated the audit entry"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Workflow version (semantic versioning)"
+    },
+    "exit_code": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255,
+      "description": "Process exit code (0=success, 1=validation, 2=execution, 127=missing)"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Workflow execution duration in seconds"
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["development", "staging", "production"],
+      "description": "Target environment for the workflow"
+    },
+    "config_file": {
+      "type": "string",
+      "description": "Path to configuration file processed"
+    },
+    "risk_score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Calculated risk score (0=safe, 100=critical)"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Workflow-specific metadata",
+      "properties": {
+        "gates_passed": {
+          "type": "integer",
+          "description": "Number of validation gates passed (fw-validate)"
+        },
+        "gates_total": {
+          "type": "integer", 
+          "description": "Total number of validation gates (fw-validate)"
+        },
+        "changes_detected": {
+          "type": "integer",
+          "description": "Number of changes detected (fw-changelog)"
+        },
+        "risk_delta": {
+          "type": "integer",
+          "description": "Risk score change from previous version (fw-changelog)"
+        },
+        "deployment_phase": {
+          "type": "string",
+          "enum": ["development", "staging", "production", "rollback"],
+          "description": "Deployment phase (fw-deploy)"
+        },
+        "health_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Infrastructure health score (fw-nexus-status)"
+        },
+        "artifacts_created": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of artifact files created"
+        },
+        "git_tag": {
+          "type": "string",
+          "description": "Git tag created (if applicable)"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "description": "Error details (exit_code != 0)",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["validation", "execution", "infrastructure", "security", "network"],
+          "description": "Error category"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "code": {
+          "type": "string",
+          "description": "Machine-readable error code"
+        },
+        "context": {
+          "type": "object",
+          "description": "Additional error context"
+        }
+      },
+      "required": ["type", "message"]
+    }
+  },
+  "required": ["timestamp", "workflow", "exit_code"],
+  "additionalProperties": false
+}

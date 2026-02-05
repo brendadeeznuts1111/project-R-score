@@ -1,0 +1,53 @@
+[install]
+registry = "https://npm.factory-wager.com"
+# Resolve from node_modules or auto-install on the fly (auto | force | disable | fallback)
+auto = "auto"
+# Use exact versions in package.json when adding packages
+exact = true
+
+[test]
+# Test timeout (ms)
+timeout = 30000
+
+[env]
+# Environment-specific configurations
+development = ".env.development"
+production = ".env.production"
+test = ".env.test"
+
+# Disable automatic .env loading in production (security best practice)
+# Use --env-file to explicitly specify environment files
+env = false
+
+# Enable verbose output for development
+verbose = true
+
+[serve]
+# Custom hostname support
+hostname = "${CUSTOM_HOSTNAME}"
+port = 3000
+
+[fetch]
+# Preconnect configuration for RSS optimization
+preconnect = [
+  "https://feeds.feedburner.com",
+  "https://medium.com",
+  "https://rss.cnn.com",
+  "https://feeds.bbci.co.uk",
+  "https://news.ycombinator.com"
+]
+timeout = 30000
+keepalive = true
+
+[network]
+# Network optimization settings
+maxHttpRequests = 512
+dnsCacheTTL = 30000
+preconnectTTL = 300000
+
+[publish]
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }

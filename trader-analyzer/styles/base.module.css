@@ -1,0 +1,11 @@
+/**
+ * Base CSS Module
+ * Base styles for composition
+ */
+
+.base {
+	padding: 1rem;
+	border-radius: 8px;
+	transition: all 0.2s;
+	font-family: system-ui, sans-serif;
+}

@@ -1,0 +1,39 @@
+# bun.yaml - Unified GOV + Dashboard Config v3.0
+
+rules:
+  header:
+    schema:
+      scope: [GOV, SEC, OPS, ALERT, GIT, DATA, WS, TG, DASHBOARD]
+      type: [RULES, SUMMARY, STATS, FULL, TABLE, EXAMPLES, TEMPLATER, QUICKADD, FILTERS]
+      variant: [EXPANDED, BASH, EXAMPLE, BUTTON, PRESET]
+      id:
+        pattern: '^[A-Z]{3}-[A-Z]{3,4}-[0-9]{3}$'
+      version:
+        semver: '^v[0-9]+\.[0-9]+$'
+      status: [ACTIVE, DRAFT, DEPRECATED, STABLE]
+    defaults:
+      scope: GOV
+      type: RULES
+      version: v2.9
+      status: ACTIVE
+    grep:
+      patterns:
+        all-tags: "\\[([A-Z]+)-([A-Z]+)-([A-Z]+)-([A-Z]{3}-[A-Z0-9-]+)-([vV][0-9]+\\.[0-9]+)-\\[([A-Z]+)\\]\\]"
+        by-scope: "\\[(GOV|DASHBOARD)\\-[A-Z]+\\-[A-Z]+\\-"
+      rg-flags: "--type md --no-heading --with-filename --colors match:fg:yellow:style:bold"
+
+  dashboard:
+    schema:
+      filters: { type: array, items: { type: object } }
+      security: { type: object, properties: { csrf: { type: string }, cookies: { type: object } } }
+      features: { type: array, items: { type: string } }
+    interpolate:
+      env: ['prod', 'staging', 'dev']
+      vault: ['dashboard/*', 'gov/*']
+      date: ['ISO', 'YYYY-MM-DD']
+  validate:
+    hooks:
+      - parse-headers: true
+      - grep-index: true
+      - dashboard-schema: true
+      - interpolate-yaml: true

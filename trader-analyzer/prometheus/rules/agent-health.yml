@@ -1,0 +1,106 @@
+# Connection Pool Health Alert Rules
+# Prometheus alerting rules for http.Agent connection monitoring
+# Based on Bun v1.3.51.1 connection reuse fixes
+
+groups:
+  - name: connection-pool-health
+    rules:
+      # Alert when connection pool is exhausted
+      - alert: ConnectionPoolExhaustion
+        expr: bookmaker_sockets_active / bookmaker_sockets_total > 0.95
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+          category: connection-pool
+        annotations:
+          summary: "Connection pool exhaustion for {{ $labels.bookmaker }}"
+          description: "Active sockets: {{ $value | humanizePercentage }} of total pool (threshold: 95%)"
+          impact: "New requests will create new connections, increasing latency"
+          action: "Check for connection leaks or increase maxSockets limit"
+
+      # Alert on low connection reuse rate
+      - alert: LowConnectionReuseRate
+        expr: rate(bookmaker_reused_connections[5m]) / rate(bookmaker_total_requests[5m]) < 0.8
+        for: 10m
+        labels:
+          severity: warning
+          team: infrastructure
+          category: connection-reuse
+        annotations:
+          summary: "Low connection reuse rate for {{ $labels.bookmaker }}"
+          description: "Reuse rate: {{ $value | humanizePercentage }} (threshold: 80%)"
+          impact: "Increased latency and server load due to new TCP handshakes"
+          action: "Verify keepAlive configuration and check for premature connection closures"
+
+      # Alert on high connection error rate
+      - alert: HighConnectionErrorRate
+        expr: rate(bookmaker_connection_errors[5m]) / rate(bookmaker_total_requests[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          team: infrastructure
+          category: connection-errors
+        annotations:
+          summary: "High connection error rate for {{ $labels.bookmaker }}"
+          description: "Error rate: {{ $value | humanizePercentage }} (threshold: 1%)"
+          impact: "Data collection failures and stale market data"
+          action: "Check network connectivity, SSL certificates, and server responses"
+
+      # Alert on socket leak detection
+      - alert: SocketLeakDetected
+        expr: increase(bookmaker_sockets_total[10m]) > 50
+        for: 15m
+        labels:
+          severity: warning
+          team: infrastructure
+          category: resource-leak
+        annotations:
+          summary: "Socket leak detected for {{ $labels.bookmaker }}"
+          description: "Created {{ $value }} new sockets in 10 minutes"
+          impact: "Potential file descriptor exhaustion and memory leaks"
+          action: "Ensure agent.destroy() is called on shutdown and check for connection leaks"
+
+      # Critical alert for complete connection failure
+      - alert: BookmakerConnectionFailure
+        expr: up{job="bookmaker-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: trading
+          category: connectivity
+        annotations:
+          summary: "Complete connection failure to {{ $labels.bookmaker }}"
+          description: "All connection attempts failing for 2+ minutes"
+          impact: "No market data collection, potential trading halt"
+          action: "Check bookmaker API status, network connectivity, and API credentials"
+
+  - name: performance-regression
+    rules:
+      # Alert on latency regression (compared to post-fix baseline)
+      - alert: ConnectionLatencyRegression
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="bookmaker-api"}[5m])) > 0.045
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+          category: performance
+        annotations:
+          summary: "Connection latency regression detected"
+          description: "95th percentile latency: {{ $value }}s (threshold: 45ms)"
+          impact: "Slower market data, potential arbitrage misses"
+          action: "Check connection reuse metrics and verify Bun v1.3.51.1+ is deployed"
+
+      # Alert on sudden drop in connection reuse
+      - alert: ConnectionReuseDrop
+        expr: (rate(bookmaker_reused_connections[1m]) / rate(bookmaker_total_requests[1m])) < 0.5
+        for: 2m
+        labels:
+          severity: critical
+          team: infrastructure
+          category: connection-reuse
+        annotations:
+          summary: "Sudden drop in connection reuse rate"
+          description: "Reuse rate dropped to {{ $value | humanizePercentage }}"
+          impact: "Immediate latency increase and server load spike"
+          action: "Check for server-side connection limits or keep-alive header issues"

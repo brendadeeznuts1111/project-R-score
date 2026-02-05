@@ -1,0 +1,13 @@
+
+app:
+  name: "Dynamic Import Demo"
+  debug: true
+  
+server:
+  host: "localhost"
+  port: 8080
+  
+features:
+  - hot_reload
+  - auto_save
+  - error_tracking

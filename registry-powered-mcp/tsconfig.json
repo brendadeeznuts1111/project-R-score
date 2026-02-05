@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext"],
+    "types": ["bun-types"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "paths": {
+      "harness": ["./test/_harness/index.ts"],
+      "@fixtures/*": ["./test/_fixtures/*"]
+    }
+  },
+  "include": ["packages/**/*", "test/**/*", "env.d.ts"],
+  "exclude": ["node_modules", "dist", ".cursor"]
+}

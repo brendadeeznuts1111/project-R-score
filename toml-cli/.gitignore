@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.bun/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Build & Dist
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Benchmark artifacts
+benchmark-temp*.toml
+test-*.toml
+final-test.toml
+
+# Scoping Matrix Configuration
+data/scopingMatrix.json

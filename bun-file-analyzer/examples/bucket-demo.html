@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🪣 Bundle Bucket Viewer - Accessible Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .bucket-tile {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .bucket-tile:hover,
+        .bucket-tile:focus {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .bucket-tile:focus {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .metric-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease;
+        }
+        .metric-card:hover,
+        .metric-card:focus {
+            transform: translateY(-2px);
+        }
+        .metric-card:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #3b82f6;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 6px;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        .focus-visible:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        /* Theme Variables */
+        :root {
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --border-primary: #e5e7eb;
+            --border-secondary: #d1d5db;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-indigo: #6366f1;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --border-primary: #334155;
+            --border-secondary: #475569;
+            --accent-primary: #60a5fa;
+            --accent-secondary: #34d399;
+            --accent-warning: #fbbf24;
+            --accent-danger: #f87171;
+            --accent-purple: #a78bfa;
+            --accent-pink: #f472b6;
+            --accent-indigo: #818cf8;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Ocean Theme */
+        [data-theme="ocean"] {
+            --bg-primary: #0c4a6e;
+            --bg-secondary: #075985;
+            --bg-tertiary: #0284c7;
+            --text-primary: #f0f9ff;
+            --text-secondary: #bae6fd;
+            --text-tertiary: #7dd3fc;
+            --border-primary: #0284c7;
+            --border-secondary: #0ea5e9;
+            --accent-primary: #38bdf8;
+            --accent-secondary: #2dd4bf;
+            --accent-warning: #fbbf24;
+            --accent-danger: #f87171;
+            --accent-purple: #a78bfa;
+            --accent-pink: #f472b6;
+            --accent-indigo: #818cf8;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+        }
+        
+        /* Forest Theme */
+        [data-theme="forest"] {
+            --bg-primary: #14532d;
+            --bg-secondary: #166534;
+            --bg-tertiary: #15803d;
+            --text-primary: #f0fdf4;
+            --text-secondary: #bbf7d0;
+            --text-tertiary: #86efac;
+            --border-primary: #15803d;
+            --border-secondary: #16a34a;
+            --accent-primary: #22c55e;
+            --accent-secondary: #14b8a6;
+            --accent-warning: #fbbf24;
+            --accent-danger: #f87171;
+            --accent-purple: #a78bfa;
+            --accent-pink: #f472b6;
+            --accent-indigo: #818cf8;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+        }
+        
+        /* Sunset Theme */
+        [data-theme="sunset"] {
+            --bg-primary: #431407;
+            --bg-secondary: #7c2d12;
+            --bg-tertiary: #c2410c;
+            --text-primary: #fff7ed;
+            --text-secondary: #fed7aa;
+            --text-tertiary: #fdba74;
+            --border-primary: #c2410c;
+            --border-secondary: #ea580c;
+            --accent-primary: #fb923c;
+            --accent-secondary: #fbbf24;
+            --accent-warning: #fbbf24;
+            --accent-danger: #f87171;
+            --accent-purple: #a78bfa;
+            --accent-pink: #f472b6;
+            --accent-indigo: #818cf8;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+        }
+        
+        /* Theme-aware base styles */
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .bg-white {
+            background-color: var(--bg-secondary) !important;
+        }
+        
+        .bg-gray-50 {
+            background-color: var(--bg-tertiary) !important;
+        }
+        
+        .text-gray-800 {
+            color: var(--text-primary) !important;
+        }
+        
+        .text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+        
+        .text-gray-500 {
+            color: var(--text-tertiary) !important;
+        }
+        
+        .border-gray-200 {
+            border-color: var(--border-primary) !important;
+        }
+        
+        .border-gray-300 {
+            border-color: var(--border-secondary) !important;
+        }
+        
+        .shadow-lg {
+            box-shadow: var(--shadow-lg) !important;
+        }
+        
+        .shadow-md {
+            box-shadow: var(--shadow-md) !important;
+        }
+        
+        .shadow-sm {
+            box-shadow: var(--shadow-sm) !important;
+        }
+        
+        /* Accessibility Toggle Active States */
+        .accessibility-toggle.active {
+            background-color: var(--accent-primary) !important;
+            color: white !important;
+            border-color: var(--accent-primary) !important;
+        }
+        
+        .accessibility-toggle:hover {
+            background-color: var(--bg-tertiary) !important;
+        }
+        
+        .accessibility-toggle.active:hover {
+            background-color: var(--accent-primary) !important;
+            opacity: 0.8;
+        }
+        
+        /* High Contrast Mode */
+        [data-feature="high-contrast"].active {
+            filter: contrast(1.5);
+        }
+        
+        [data-feature="high-contrast"].active * {
+            border-width: 2px !important;
+        }
+        
+        /* Large Text Mode */
+        [data-feature="large-text"].active {
+            font-size: 120% !important;
+        }
+        
+        [data-feature="large-text"].active * {
+            font-size: inherit !important;
+        }
+        
+        /* Reduced Motion */
+        [data-feature="reduced-motion"].active *,
+        [data-feature="reduced-motion"].active *::before,
+        [data-feature="reduced-motion"].active *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        @media (prefers-color-scheme: dark) {
+            .dark-mode {
+                background-color: #1f2937;
+                color: #f9fafb;
+            }
+            .dark-mode .bg-white {
+                background-color: #374151 !important;
+            }
+            .dark-mode .text-gray-800 {
+                color: #f9fafb !important;
+            }
+            .dark-mode .text-gray-600 {
+                color: #d1d5db !important;
+            }
+            .dark-mode .border-gray-200 {
+                border-color: #4b5563 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Skip to main content link for screen readers -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Accessibility announcement region -->
+    <div aria-live="polite" aria-atomic="true" class="sr-only" id="announcements"></div>
+    
+    <!-- Enhanced Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200" role="banner">
+        <!-- Top Bar -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            <div class="container mx-auto px-4 py-2">
+                <div class="flex justify-between items-center text-sm">
+                    <!-- Breadcrumb Navigation -->
+                    <nav aria-label="Breadcrumb" class="flex items-center space-x-2">
+                        <ol class="flex items-center space-x-2" role="list">
+                            <li>
+                                <a href="#" class="hover:text-blue-200 transition-colors" aria-label="Home">🏠 Home</a>
+                            </li>
+                            <li aria-hidden="true">/</li>
+                            <li>
+                                <a href="#" class="hover:text-blue-200 transition-colors" aria-label="Dashboard">📊 Dashboard</a>
+                            </li>
+                            <li aria-hidden="true">/</li>
+                            <li aria-current="page">🪣 Bundle Viewer</li>
+                        </ol>
+                    </nav>
+                    
+                    <!-- Quick Status -->
+                    <div class="flex items-center space-x-4">
+                        <span class="flex items-center space-x-1">
+                            <span class="status-indicator w-2 h-2 bg-green-400 rounded-full" aria-hidden="true"></span>
+                            <span class="text-xs">Live</span>
+                        </span>
+                        <span class="flex items-center space-x-1">
+                            <span aria-hidden="true">📅</span>
+                            <span id="current-date" class="text-xs"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Header -->
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg" aria-hidden="true">
+                        <span class="text-white font-bold text-xl">🪣</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Bundle Bucket Viewer</h1>
+                        <p class="text-sm text-gray-500">Accessibility-Focused Web Performance Dashboard</p>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Controls -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Search Bar -->
+                    <div class="relative">
+                        <input type="search" 
+                               id="header-search"
+                               placeholder="🔍 Search..."
+                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus-visible:focus w-48 lg:w-64"
+                               aria-label="Search dashboard content"
+                               onkeydown="handleSearch(event)">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" aria-hidden="true">🔍</span>
+                    </div>
+                    
+                    <!-- Theme Switcher with Preview -->
+                    <div class="relative group">
+                        <button onclick="toggleThemeDropdown()" 
+                                class="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:focus transition-colors"
+                                aria-label="Select theme"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                id="theme-button">
+                            <span id="current-theme-icon">💡</span>
+                            <span class="text-sm text-gray-700">Theme</span>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <!-- Theme Dropdown -->
+                        <div id="theme-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50" role="menu">
+                            <button onclick="switchTheme('light'); toggleThemeDropdown()" class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2" role="menuitem">
+                                <span>💡</span><span>Light</span>
+                            </button>
+                            <button onclick="switchTheme('dark'); toggleThemeDropdown()" class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2" role="menuitem">
+                                <span>🌙</span><span>Dark</span>
+                            </button>
+                            <button onclick="switchTheme('ocean'); toggleThemeDropdown()" class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2" role="menuitem">
+                                <span>🌊</span><span>Ocean</span>
+                            </button>
+                            <button onclick="switchTheme('forest'); toggleThemeDropdown()" class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2" role="menuitem">
+                                <span>🌲</span><span>Forest</span>
+                            </button>
+                            <button onclick="switchTheme('sunset'); toggleThemeDropdown()" class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2" role="menuitem">
+                                <span>🌅</span><span>Sunset</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Accessibility Quick Toggles -->
+                    <div class="flex items-center space-x-2 border-l border-gray-300 pl-4">
+                        <button onclick="toggleHighContrast()" 
+                                class="accessibility-toggle px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:focus transition-colors"
+                                aria-label="Toggle high contrast mode"
+                                title="High Contrast (Shift+1)"
+                                data-feature="high-contrast">
+                            🔳
+                        </button>
+                        <button onclick="toggleLargeText()" 
+                                class="accessibility-toggle px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:focus transition-colors"
+                                aria-label="Toggle large text mode"
+                                title="Large Text (Shift+2)"
+                                data-feature="large-text">
+                            🔍
+                        </button>
+                        <button onclick="toggleReducedMotion()" 
+                                class="accessibility-toggle px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:focus transition-colors"
+                                aria-label="Toggle reduced motion"
+                                title="Reduced Motion (Shift+3)"
+                                data-feature="reduced-motion">
+                            ⏸️
+                        </button>
+                        <button onclick="toggleDarkMode()" 
+                                class="accessibility-toggle px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 focus-visible:focus transition-colors"
+                                aria-label="Toggle dark mode"
+                                title="Dark Mode (Shift+4)"
+                                data-feature="dark-mode">
+                            🌙
+                        </button>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex items-center space-x-2">
+                        <button onclick="refreshData()" 
+                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus-visible:focus flex items-center space-x-2"
+                                aria-label="Refresh bundle data (R)"
+                                accesskey="r">
+                            <span>🔄</span>
+                            <span>Refresh</span>
+                        </button>
+                        <button onclick="changeView()" 
+                                class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all duration-200 focus-visible:focus flex items-center space-x-2 transform hover:scale-105 active:scale-95" 
+                                aria-label="Change visualization view. Current view: Treemap (V)" 
+                                accesskey="v"
+                                data-tooltip="Cycle through visualization types"
+                                id="change-view-btn">
+                            <span id="view-icon" class="transition-transform duration-200">📊</span>
+                            <span id="view-text">Change View</span>
+                        </button>
+                        <button onclick="toggleAccessibilityHelp()" 
+                                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors focus-visible:focus flex items-center space-x-2"
+                                aria-label="Show accessibility help (H)"
+                                accesskey="h">
+                            <span>⌨️</span>
+                            <span>Help</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Secondary Navigation Bar -->
+    <nav class="bg-gray-50 border-b border-gray-200" aria-label="Secondary navigation">
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex items-center space-x-1 overflow-x-auto">
+                <a href="#main-content" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg transition-colors focus-visible:focus" aria-current="page">
+                    📊 Overview
+                </a>
+                <a href="#bucket-details" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:focus">
+                    🪣 Buckets
+                </a>
+                <a href="#cookie-management" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:focus">
+                    🍪 Cookies
+                </a>
+                <a href="#analytics" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:focus">
+                    📈 Analytics
+                </a>
+                <a href="#settings" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:focus">
+                    ⚙️ Settings
+                </a>
+                <div class="flex-1"></div>
+                <span class="px-3 py-2 text-xs text-gray-500">
+                    Last updated: <span id="last-updated">Just now</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container mx-auto px-4 py-8" role="main">
+        <!-- Accessibility Controls -->
+        <section class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-6 shadow-lg" aria-labelledby="accessibility-controls">
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="accessibility-controls" class="text-lg font-semibold text-blue-800 flex items-center gap-2">
+                    <span class="text-2xl">♿</span>
+                    Accessibility Controls
+                    <span class="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded-full" id="active-controls-count">0 active</span>
+                </h2>
+                <button onclick="resetAccessibilitySettings()" 
+                        class="px-3 py-1 bg-gray-200 text-gray-600 rounded text-sm hover:bg-gray-300 focus-visible:focus transition-colors"
+                        aria-label="Reset all accessibility settings to default">
+                    🔄 Reset All
+                </button>
+            </div>
+            
+            <!-- Primary Controls -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <button onclick="toggleHighContrast()" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle high contrast mode. Currently disabled"
+                        data-feature="high-contrast">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">🔳</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">High Contrast</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+                
+                <button onclick="toggleLargeText()" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle large text mode. Currently disabled"
+                        data-feature="large-text">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">🔍</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">Large Text</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+                
+                <button onclick="toggleReducedMotion()" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle reduced motion. Currently disabled"
+                        data-feature="reduced-motion">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">⏸️</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">Reduced Motion</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+                
+                <button onclick="toggleDarkMode()" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle dark mode. Currently disabled"
+                        data-feature="dark-mode">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">🌙</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">Dark Mode</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <!-- Advanced Controls -->
+            <div class="border-t border-blue-200 pt-4">
+                <h3 class="text-sm font-semibold text-blue-700 mb-3 flex items-center gap-2">
+                    <span>⚙️</span> Advanced Options
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-center justify-between bg-white rounded-lg p-3 border border-gray-200">
+                        <label for="focus-indicator" class="text-sm font-medium text-gray-700 cursor-pointer">Focus Indicator</label>
+                        <select id="focus-indicator" 
+                                onchange="updateFocusIndicator(this.value)"
+                                class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                aria-label="Choose focus indicator style">
+                            <option value="default">Default</option>
+                            <option value="thick">Thick</option>
+                            <option value="high-contrast">High Contrast</option>
+                            <option value="animated">Animated</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-white rounded-lg p-3 border border-gray-200">
+                        <label for="reading-mode" class="text-sm font-medium text-gray-700 cursor-pointer">Reading Mode</label>
+                        <select id="reading-mode" 
+                                onchange="updateReadingMode(this.value)"
+                                class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                aria-label="Choose reading mode">
+                            <option value="normal">Normal</option>
+                            <option value="dyslexic">Dyslexic Font</option>
+                            <option value="line-spacing">Line Spacing</option>
+                            <option value="focus">Focus Mode</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-white rounded-lg p-3 border border-gray-200">
+                        <label for="color-blindness" class="text-sm font-medium text-gray-700 cursor-pointer">Color Blindness</label>
+                        <select id="color-blindness" 
+                                onchange="updateColorBlindnessMode(this.value)"
+                                class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                aria-label="Choose color blindness mode">
+                            <option value="none">None</option>
+                            <option value="protanopia">Protanopia</option>
+                            <option value="deuteranopia">Deuteranopia</option>
+                            <option value="tritanopia">Tritanopia</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="mt-4 p-3 bg-blue-100 rounded-lg">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-blue-700" id="accessibility-status">All accessibility features are disabled</span>
+                    <button onclick="exportAccessibilitySettings()" 
+                            class="text-blue-600 hover:text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+                            aria-label="Export current accessibility settings">
+                        📤 Export Settings
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics Overview -->
+        <section aria-labelledby="metrics-overview">
+            <h2 id="metrics-overview" class="sr-only">Bundle Metrics Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="metric-card bg-white rounded-xl p-6 shadow-lg" 
+                     role="region" 
+                     aria-labelledby="total-size-label"
+                     tabindex="0">
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="total-size-label" class="text-gray-500 text-sm">Total Size</span>
+                        <span class="text-green-500 text-xs" aria-label="Size decreased by 2.3 percent">▼ 2.3%</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-800" aria-live="polite">84 KB</div>
+                    <div class="text-xs text-gray-500 mt-1">5 buckets</div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl p-6 shadow-lg" 
+                     role="region" 
+                     aria-labelledby="chunks-label"
+                     tabindex="0">
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="chunks-label" class="text-gray-500 text-sm">Chunks</span>
+                        <span class="text-blue-500 text-xs" aria-label="3 chunks">● 3</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-800" aria-live="polite">3</div>
+                    <div class="text-xs text-gray-500 mt-1">Main, Vendor, Styles</div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl p-6 shadow-lg" 
+                     role="region" 
+                     aria-labelledby="dependencies-label"
+                     tabindex="0">
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="dependencies-label" class="text-gray-500 text-sm">Dependencies</span>
+                        <span class="text-purple-500 text-xs" aria-label="2 dependencies">● 2</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-800" aria-live="polite">2</div>
+                    <div class="text-xs text-gray-500 mt-1">React, React-DOM</div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl p-6 shadow-lg" 
+                     role="region" 
+                     aria-labelledby="optimization-label"
+                     tabindex="0">
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="optimization-label" class="text-gray-500 text-sm">Optimization</span>
+                        <span class="text-green-500 text-xs" aria-label="Optimization status good">✓ Good</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-800" aria-live="polite">85%</div>
+                    <div class="text-xs text-gray-500 mt-1">Score</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Visualization -->
+        <section aria-labelledby="visualization-heading">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Bucket Visualization -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 id="visualization-heading" class="text-xl font-semibold text-gray-800">Bundle Composition</h2>
+                            <div class="flex gap-2" role="group" aria-labelledby="view-controls">
+                                <span id="view-controls" class="sr-only">Visualization view controls</span>
+                                <button onclick="setView('treemap')" 
+                                        id="treemap-btn" 
+                                        class="view-btn px-3 py-1 bg-blue-500 text-white rounded text-sm focus-visible:focus"
+                                        aria-pressed="true"
+                                        aria-label="Show treemap view">
+                                    Treemap
+                                </button>
+                                <button onclick="setView('pie')" 
+                                        id="pie-btn" 
+                                        class="view-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm focus-visible:focus"
+                                        aria-pressed="false"
+                                        aria-label="Show pie chart view">
+                                    Pie
+                                </button>
+                                <button onclick="setView('bars')" 
+                                        id="bars-btn" 
+                                        class="view-btn px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm focus-visible:focus"
+                                        aria-pressed="false"
+                                        aria-label="Show bar chart view">
+                                    Bars
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative" style="height: 400px;" role="img" aria-label="Bundle composition visualization">
+                            <canvas id="bucketChart" aria-label="Interactive bundle composition chart"></canvas>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            <p>Use Tab to navigate between buckets, Enter or Space to view details, Arrow keys to navigate chart elements.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Panel -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl p-6 shadow-lg mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Bundle Statistics</h3>
+                        <div class="space-y-3" role="list" aria-label="Bundle statistics">
+                            <div class="flex justify-between" role="listitem">
+                                <span class="text-gray-600">Total Size:</span>
+                                <span class="font-semibold" aria-live="polite">84 KB</span>
+                            </div>
+                            <div class="flex justify-between" role="listitem">
+                                <span class="text-gray-600">Buckets:</span>
+                                <span class="font-semibold" aria-live="polite">5</span>
+                            </div>
+                            <div class="flex justify-between" role="listitem">
+                                <span class="text-gray-600">Largest:</span>
+                                <span class="font-semibold" aria-live="polite">main.js</span>
+                            </div>
+                            <div class="flex justify-between" role="listitem">
+                                <span class="text-gray-600">Optimized:</span>
+                                <span class="font-semibold text-green-600" aria-live="polite">4/5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Legend</h3>
+                        <div class="space-y-2" role="list" aria-label="Color legend for bucket types">
+                            <div class="flex items-center gap-2" role="listitem">
+                                <div class="w-4 h-4 rounded" style="background-color: #3b82f6" aria-hidden="true"></div>
+                                <span class="text-sm text-gray-700">Chunks (3)</span>
+                            </div>
+                            <div class="flex items-center gap-2" role="listitem">
+                                <div class="w-4 h-4 rounded" style="background-color: #f59e0b" aria-hidden="true"></div>
+                                <span class="text-sm text-gray-700">Dependencies (2)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bucket Details -->
+        <section aria-labelledby="bucket-details-heading">
+            <h2 id="bucket-details-heading" class="sr-only">Detailed Bucket Information</h2>
+            <div class="mt-6 bg-white rounded-xl p-6 shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Bucket Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="bucketDetails" role="list" aria-label="Interactive bucket cards">
+                    <!-- Bucket cards will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Cookie Management Section -->
+        <section aria-labelledby="cookie-management-heading">
+            <h2 id="cookie-management-heading" class="sr-only" tabindex="-1">Cookie Management Dashboard</h2>
+            <header class="bg-white shadow-sm border-b border-gray-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <h1 class="text-2xl font-bold text-gray-800">Bundle Bucket Viewer</h1>
+                            <span class="text-sm text-gray-500">Accessibility-Focused Web Performance</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <!-- Theme Switcher -->
+                            <div class="flex items-center space-x-2">
+                                <label for="theme-selector" class="text-sm font-medium text-gray-700">Theme:</label>
+                                <select id="theme-selector" 
+                                        class="px-3 py-1 border border-gray-300 rounded text-sm focus-visible:focus"
+                                        onchange="switchTheme(this.value)"
+                                        aria-label="Select visual theme">
+                                    <option value="light">💡 Light</option>
+                                    <option value="dark">🌙 Dark</option>
+                                    <option value="ocean">🌊 Ocean</option>
+                                    <option value="forest">🌲 Forest</option>
+                                    <option value="sunset">🌅 Sunset</option>
+                                </select>
+                            </div>
+                            <button onclick="refreshData()" 
+                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus-visible:focus"
+                                    aria-label="Refresh data">
+                                🔄 Refresh
+                            </button>
+                            <button onclick="changeView()" 
+                                    class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus-visible:focus"
+                                    aria-label="Change visualization view">
+                                📊 Change View
+                            </button>
+                            <button onclick="toggleAccessibilityHelp()" 
+                                    class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 focus-visible:focus"
+                                    aria-label="Show accessibility help">
+                                📚 Help
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="mt-6 bg-white rounded-xl p-6 shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <span class="text-2xl">🍪</span>
+                        Cookie Management
+                        <span class="text-sm bg-green-100 text-green-600 px-2 py-1 rounded-full" id="cookie-count">0 cookies</span>
+                    </h3>
+                    <div class="flex gap-2">
+                        <button onclick="addSampleCookies()" 
+                                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus-visible:focus"
+                                aria-label="Add sample cookies for demonstration">
+                            🍪 Add Sample
+                        </button>
+                        <button onclick="clearAllCookies()" 
+                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus-visible:focus"
+                                aria-label="Clear all cookies">
+                            🗑️ Clear All
+                        </button>
+                        <button onclick="refreshCookies()" 
+                                class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus-visible:focus"
+                                aria-label="Refresh cookie display">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cookie Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                        <div class="text-sm text-blue-600">Total Cookies</div>
+                        <div class="text-xl font-bold text-blue-800" id="total-cookies">0</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                        <div class="text-sm text-green-600">Partitioned</div>
+                        <div class="text-xl font-bold text-green-800" id="partitioned-cookies">0</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                        <div class="text-sm text-purple-600">Header Size</div>
+                        <div class="text-xl font-bold text-purple-800" id="header-size">0 B</div>
+                    </div>
+                    <div class="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                        <div class="text-sm text-orange-600">Secure</div>
+                        <div class="text-xl font-bold text-orange-800" id="secure-cookies">0</div>
+                    </div>
+                </div>
+
+                <!-- Cookie List -->
+                <div class="space-y-2" id="cookie-list" role="list" aria-label="Cookie items">
+                    <div class="text-gray-500 text-center py-8" id="no-cookies-message">
+                        No cookies found. Click "Add Sample" to demonstrate cookie management.
+                    </div>
+                </div>
+
+                <!-- Cookie Actions -->
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-semibold text-gray-700 mb-3">Cookie Actions:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <button onclick="demonstrateDeletion()" 
+                                class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 focus-visible:focus text-sm"
+                                aria-label="Demonstrate cookie deletion with domain/path constraints">
+                            🗑️ Test Deletion
+                        </button>
+                        <button onclick="demonstratePartitioned()" 
+                                class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 focus-visible:focus text-sm"
+                                aria-label="Demonstrate partitioned CHIPS cookies">
+                            🔒 Test CHIPS
+                        </button>
+                        <button onclick="exportCookies()" 
+                                class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus-visible:focus text-sm"
+                                aria-label="Export cookies as JSON">
+                            📤 Export JSON
+                        </button>
+                        <button onclick="demonstrateBatchOperations()" 
+                                class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 focus-visible:focus text-sm"
+                                aria-label="Demonstrate batch cookie operations">
+                            ⚡ Batch Ops
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Advanced Cookie Features -->
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 class="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                        <span>🚀</span> Advanced Features
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white rounded-lg p-3">
+                            <h5 class="font-medium text-gray-800 mb-2">Performance Monitor</h5>
+                            <div class="text-sm text-gray-600 space-y-1">
+                                <div>Operations: <span id="operation-count" class="font-mono">0</span></div>
+                                <div>Avg Time: <span id="avg-operation-time" class="font-mono">0ms</span></div>
+                                <div>Memory: <span id="memory-usage" class="font-mono">0KB</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-3">
+                            <h5 class="font-medium text-gray-800 mb-2">Security Status</h5>
+                            <div class="text-sm text-gray-600 space-y-1">
+                                <div>HTTPS Only: <span id="https-status" class="font-mono text-green-600">✓</span></div>
+                                <div>SameSite: <span id="samesite-status" class="font-mono text-green-600">✓</span></div>
+                                <div>CHIPS: <span id="chips-status" class="font-mono text-blue-600">Active</span></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-3">
+                            <h5 class="font-medium text-gray-800 mb-2">Compliance</h5>
+                            <div class="text-sm text-gray-600 space-y-1">
+                                <div>GDPR: <span id="gdpr-status" class="font-mono text-green-600">✓</span></div>
+                                <div>CCPA: <span id="ccpa-status" class="font-mono text-green-600">✓</span></div>
+                                <div>Consent: <span id="consent-status" class="font-mono text-yellow-600">Pending</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-User & Endpoint Hierarchy -->
+                <div class="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <h4 class="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                        <span>👥</span> Multi-User & Endpoint Hierarchy
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-white rounded-lg p-3">
+                            <h5 class="font-medium text-gray-800 mb-2">User Scenarios</h5>
+                            <select id="user-scenario" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" onchange="loadUserScenario()">
+                                <option value="">Select User Scenario...</option>
+                                <option value="admin">Admin User (Full Access)</option>
+                                <option value="developer">Developer (API Access)</option>
+                                <option value="customer">Customer (Limited Access)</option>
+                                <option value="analytics">Analytics User (Read-only)</option>
+                                <option value="mobile">Mobile App User</option>
+                            </select>
+                        </div>
+                        <div class="bg-white rounded-lg p-3">
+                            <h5 class="font-medium text-gray-800 mb-2">Endpoint Groups</h5>
+                            <select id="endpoint-group" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" onchange="loadEndpointGroup()">
+                                <option value="">Select Endpoint Group...</option>
+                                <option value="auth">Authentication Services</option>
+                                <option value="api">API Endpoints</option>
+                                <option value="cdn">CDN & Static Assets</option>
+                                <option value="analytics">Analytics & Tracking</option>
+                                <option value="ecommerce">E-commerce Platform</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <button onclick="simulateMultiTenant()" 
+                                class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 focus-visible:focus text-sm"
+                                aria-label="Simulate multi-tenant cookie isolation">
+                            🏢 Multi-Tenant Demo
+                        </button>
+                        <button onclick="simulateEndpointHierarchy()" 
+                                class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 focus-visible:focus text-sm"
+                                aria-label="Demonstrate endpoint-based cookie hierarchy">
+                            🌐 Endpoint Hierarchy
+                        </button>
+                        <button onclick="simulateUserRoles()" 
+                                class="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 focus-visible:focus text-sm"
+                                aria-label="Simulate role-based cookie permissions">
+                            👤 Role-Based Access
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Accessibility Help Modal -->
+    <div id="accessibility-help" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-2xl w-full p-6">
+                <h2 id="help-title" class="text-2xl font-bold mb-4">Accessibility Help</h2>
+                <div class="space-y-4">
+                    <div>
+                        <h3 id="shortcuts-title" class="text-lg font-semibold mb-3">Keyboard Shortcuts</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><kbd>R</kbd> - Refresh bundle data</li>
+                            <li><kbd>V</kbd> - Change visualization view (Treemap → Pie → Bars)</li>
+                            <li><kbd>1</kbd> - Set Treemap view</li>
+                            <li><kbd>2</kbd> - Set Pie view</li>
+                            <li><kbd>3</kbd> - Set Bars view</li>
+                            <li><kbd>H</kbd> - Show this help</li>
+                            <li><kbd>Escape</kbd> - Close help or modals</li>
+                            <li><kbd>Arrow Keys</kbd> - Navigate between bucket tiles</li>
+                            <li><kbd>Enter/Space</kbd> - Select focused bucket or button</li>
+                            <li><kbd>Tab</kbd> - Navigate through interactive elements</li>
+                            
+                            <li class="pt-2 font-semibold text-gray-700">🍪 Cookie Management:</li>
+                            <li><kbd>C</kbd> - Jump to Cookie Management section</li>
+                            <li><kbd>A</kbd> - Add sample cookies</li>
+                            <li><kbd>D</kbd> - Clear all cookies</li>
+                            <li><kbd>X</kbd> - Export cookies as JSON</li>
+                            <li><kbd>Delete/Backspace</kbd> - Delete focused cookie</li>
+                            
+                            <li class="pt-2 font-semibold text-gray-700">🎨 Theme & Appearance:</li>
+                            <li><kbd>T</kbd> - Cycle through themes (Light → Dark → Ocean → Forest → Sunset)</li>
+                            <li><kbd>Shift+1</kbd> - Toggle High Contrast mode</li>
+                            <li><kbd>Shift+2</kbd> - Toggle Large Text mode</li>
+                            <li><kbd>Shift+3</kbd> - Toggle Reduced Motion</li>
+                            <li><kbd>Shift+4</kbd> - Toggle Dark Mode</li>
+                            
+                            <li class="pt-2 font-semibold text-gray-700">👥 Multi-User Features:</li>
+                            <li><kbd>S</kbd> - Focus User Scenario selector</li>
+                            <li><kbd>E</kbd> - Focus Endpoint Group selector</li>
+                            <li><kbd>M</kbd> - Run Multi-Tenant demo</li>
+                            <li><kbd>N</kbd> - Run Endpoint Hierarchy demo</li>
+                            <li><kbd>R</kbd> - Run Role-Based Access demo</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Screen Reader Support:</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>All interactive elements are properly labeled</li>
+                            <li>Live regions announce dynamic content changes</li>
+                            <li>Chart data is available in alternative formats</li>
+                            <li>Color information is supplemented with text labels</li>
+                            <li>Cookie operations are announced with context</li>
+                            <li>Cookie badges include audible indicators (Secure, HttpOnly, CHIPS)</li>
+                            <li>Statistics updates are automatically announced</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Visual Adjustments:</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>High contrast mode for better visibility</li>
+                            <li>Large text mode for improved readability</li>
+                            <li>Reduced motion for motion sensitivity</li>
+                            <li>Dark mode for reduced eye strain</li>
+                            <li>Focus indicators for keyboard navigation</li>
+                            <li>Color blindness support modes</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Cookie Management Accessibility:</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>Cookie Navigation:</strong> Use Tab to navigate between cookies, Arrow keys within cookie lists</li>
+                            <li><strong>Cookie Deletion:</strong> Focus on a cookie and press Delete/Backspace to remove it</li>
+                            <li><strong>Cookie Information:</strong> Press Enter on a cookie to hear full details including domain, path, and security flags</li>
+                            <li><strong>Statistics Announcements:</strong> Cookie count changes are automatically announced</li>
+                            <li><strong>Badge Indicators:</strong> Security badges (Secure, HttpOnly, CHIPS) are announced when cookies gain focus</li>
+                            <li><strong>Export Functionality:</strong> Cookie export completion is announced with file details</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Advanced Features:</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>Focus Management:</strong> Focus returns to previous location after dialog closures</li>
+                            <li><strong>Skip Links:</strong> Use "Skip to main content" to bypass navigation</li>
+                            <li><strong>ARIA Labels:</strong> All buttons include descriptive labels and states</li>
+                            <li><strong>Live Regions:</strong> Dynamic updates are announced without interrupting</li>
+                            <li><strong>Error Handling:</strong> Error messages are announced and focus is managed appropriately</li>
+                            <li><strong>Keyboard Traps:</strong> Modals maintain focus within dialog boundaries</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Cookie Security Indicators:</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Secure</span> - Cookie transmitted only over HTTPS</li>
+                            <li><span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">HttpOnly</span> - Cookie inaccessible to JavaScript (enhanced security)</li>
+                            <li><span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">CHIPS</span> - Partitioned cookie for privacy (cross-site isolation)</li>
+                            <li>Badges are announced as "Secure cookie", "HttpOnly cookie", "Partitioned cookie"</li>
+                        </ul>
+                    </div>
+                </div>
+                <button onclick="toggleAccessibilityHelp()" 
+                        class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus-visible:focus">
+                    Close Help
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Accessibility state
+        let accessibilityState = {
+            highContrast: false,
+            largeText: false,
+            reducedMotion: false,
+            darkMode: false,
+            focusIndicator: 'default',
+            readingMode: 'normal',
+            colorBlindness: 'none'
+        };
+
+        // Sample bucket data
+        const bucketData = [
+            {
+                name: "main.js",
+                size: 45056,
+                sizeFormatted: "44 KB",
+                percentage: 52.3,
+                color: "#3b82f6",
+                type: "chunk",
+                metadata: {
+                    path: "./dist/main.js",
+                    optimized: true,
+                    compressed: false
+                }
+            },
+            {
+                name: "vendor.js",
+                size: 32768,
+                sizeFormatted: "32 KB",
+                percentage: 38.1,
+                color: "#22c55e",
+                type: "chunk",
+                metadata: {
+                    path: "./dist/vendor.js",
+                    optimized: true,
+                    compressed: false
+                }
+            },
+            {
+                name: "react",
+                size: 16384,
+                sizeFormatted: "16 KB",
+                percentage: 19.0,
+                color: "#f59e0b",
+                type: "dependency",
+                metadata: {
+                    path: "node_modules/react",
+                    version: "18.2.0",
+                    optimized: false
+                }
+            },
+            {
+                name: "react-dom",
+                size: 12288,
+                sizeFormatted: "12 KB",
+                percentage: 14.3,
+                color: "#ef4444",
+                type: "dependency",
+                metadata: {
+                    path: "node_modules/react-dom",
+                    version: "18.2.0",
+                    optimized: false
+                }
+            },
+            {
+                name: "styles.css",
+                size: 8192,
+                sizeFormatted: "8 KB",
+                percentage: 9.5,
+                color: "#8b5cf6",
+                type: "chunk",
+                metadata: {
+                    path: "./dist/styles.css",
+                    optimized: true,
+                    compressed: false
+                }
+            }
+        ];
+
+        let currentView = 'treemap';
+        let currentChart = null;
+        let currentBucketIndex = 0;
+        let viewHistory = [];
+        
+        // View configuration
+        const viewConfig = {
+            treemap: {
+                icon: '📊',
+                name: 'Treemap',
+                description: 'Hierarchical size visualization',
+                color: '#3b82f6'
+            },
+            pie: {
+                icon: '🥧',
+                name: 'Pie Chart',
+                description: 'Circular percentage breakdown',
+                color: '#22c55e'
+            },
+            bars: {
+                icon: '📊',
+                name: 'Bar Chart',
+                description: 'Vertical size comparison',
+                color: '#f59e0b'
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAccessibility();
+            loadBucketData();
+            setupKeyboardNavigation();
+            loadSavedTheme(); // Load saved theme
+            updatePerformanceMetrics();
+            updateAccessibilityStatus();
+            initializeQuickToggles(); // Initialize quick toggle states
+            updateCurrentDate(); // Update date display
+            updateLastUpdated(); // Initialize last updated
+        });
+        
+        function initializeQuickToggles() {
+            // Set quick toggle button states based on current accessibility state
+            const features = ['high-contrast', 'large-text', 'reduced-motion', 'dark-mode'];
+            
+            features.forEach(feature => {
+                const quickToggle = document.querySelector(`[data-feature="${feature}"]`);
+                if (quickToggle) {
+                    const isActive = accessibilityState[feature.replace('-', '')];
+                    quickToggle.classList.toggle('active', isActive);
+                    quickToggle.setAttribute('aria-label', `Toggle ${feature.replace('-', ' ')} mode. Currently ${isActive ? 'enabled' : 'disabled'}`);
+                }
+            });
+        }    // Initialize accessibility system
+            updateAccessibilityStatus();
+            updateFocusIndicator('default');
+            
+            // Check for user preferences
+            checkUserPreferences();
+            
+            announceToScreenReader('Bundle viewer loaded with 5 buckets in treemap view');
+        });
+
+        function checkUserPreferences() {
+            // Check for system preferences
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                toggleReducedMotion();
+            }
+            
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                toggleDarkMode();
+            }
+            
+            // Check for saved preferences
+            const savedSettings = localStorage.getItem('accessibility-settings');
+            if (savedSettings) {
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    Object.keys(settings).forEach(key => {
+                        if (key in accessibilityState && settings[key] !== accessibilityState[key]) {
+                            if (typeof accessibilityState[key] === 'boolean') {
+                                accessibilityState[key] = settings[key];
+                                document.body.classList.toggle(key.replace(/([A-Z])/g, '-$1').toLowerCase(), settings[key]);
+                                updateAccessibilityButton(key.replace(/([A-Z])/g, '-$1').toLowerCase(), settings[key]);
+                            }
+                        }
+                    });
+                    updateAccessibilityStatus();
+                } catch (e) {
+                    console.warn('Failed to load accessibility settings:', e);
+                }
+            }
+        }
+
+        // Accessibility functions
+        function toggleHighContrast() {
+            accessibilityState.highContrast = !accessibilityState.highContrast;
+            document.body.classList.toggle('high-contrast');
+            
+            // Update quick toggle button
+            const quickToggle = document.querySelector('[data-feature="high-contrast"]');
+            if (quickToggle) {
+                quickToggle.classList.toggle('active', accessibilityState.highContrast);
+                quickToggle.setAttribute('aria-label', `Toggle high contrast mode. Currently ${accessibilityState.highContrast ? 'enabled' : 'disabled'}`);
+            }
+            
+            updateAccessibilityButton('high-contrast', accessibilityState.highContrast);
+            updateAccessibilityStatus();
+            announceToScreenReader(accessibilityState.highContrast ? 'High contrast mode enabled' : 'High contrast mode disabled');
+        }
+
+        function toggleLargeText() {
+            accessibilityState.largeText = !accessibilityState.largeText;
+            document.body.classList.toggle('large-text');
+            
+            // Update quick toggle button
+            const quickToggle = document.querySelector('[data-feature="large-text"]');
+            if (quickToggle) {
+                quickToggle.classList.toggle('active', accessibilityState.largeText);
+                quickToggle.setAttribute('aria-label', `Toggle large text mode. Currently ${accessibilityState.largeText ? 'enabled' : 'disabled'}`);
+            }
+            
+            updateAccessibilityButton('large-text', accessibilityState.largeText);
+            updateAccessibilityStatus();
+            announceToScreenReader(accessibilityState.largeText ? 'Large text mode enabled' : 'Large text mode disabled');
+        }
+
+        function toggleReducedMotion() {
+            accessibilityState.reducedMotion = !accessibilityState.reducedMotion;
+            document.body.classList.toggle('reduced-motion');
+            
+            // Update quick toggle button
+            const quickToggle = document.querySelector('[data-feature="reduced-motion"]');
+            if (quickToggle) {
+                quickToggle.classList.toggle('active', accessibilityState.reducedMotion);
+                quickToggle.setAttribute('aria-label', `Toggle reduced motion. Currently ${accessibilityState.reducedMotion ? 'enabled' : 'disabled'}`);
+            }
+            
+            updateAccessibilityButton('reduced-motion', accessibilityState.reducedMotion);
+            updateAccessibilityStatus();
+            announceToScreenReader(accessibilityState.reducedMotion ? 'Reduced motion enabled' : 'Reduced motion disabled');
+        }
+
+        function toggleDarkMode() {
+            accessibilityState.darkMode = !accessibilityState.darkMode;
+            document.body.classList.toggle('dark-mode');
+            
+            // Update quick toggle button
+            const quickToggle = document.querySelector('[data-feature="dark-mode"]');
+            if (quickToggle) {
+                quickToggle.classList.toggle('active', accessibilityState.darkMode);
+                quickToggle.setAttribute('aria-label', `Toggle dark mode. Currently ${accessibilityState.darkMode ? 'enabled' : 'disabled'}`);
+            }
+            
+            updateAccessibilityButton('dark-mode', accessibilityState.darkMode);
+            updateAccessibilityStatus();
+            announceToScreenReader(accessibilityState.darkMode ? 'Dark mode enabled' : 'Dark mode disabled');
+        }
+
+        function updateAccessibilityButton(feature, isActive) {
+            const button = document.querySelector(`[data-feature="${feature}"]`);
+            if (!button) return;
+            
+            const indicator = button.querySelector('.status-indicator');
+            const ariaLabel = button.getAttribute('aria-label');
+            
+            if (isActive) {
+                button.classList.add('border-blue-500', 'bg-blue-50');
+                button.classList.remove('border-gray-200', 'bg-white');
+                indicator.classList.remove('bg-gray-300');
+                indicator.classList.add('bg-green-500');
+                button.setAttribute('aria-label', ariaLabel.replace('disabled', 'enabled'));
+            } else {
+                button.classList.remove('border-blue-500', 'bg-blue-50');
+                button.classList.add('border-gray-200', 'bg-white');
+                indicator.classList.add('bg-gray-300');
+                indicator.classList.remove('bg-green-500');
+                button.setAttribute('aria-label', ariaLabel.replace('enabled', 'disabled'));
+            }
+        }
+
+        function updateAccessibilityStatus() {
+            const activeFeatures = [];
+            if (accessibilityState.highContrast) activeFeatures.push('High Contrast');
+            if (accessibilityState.largeText) activeFeatures.push('Large Text');
+            if (accessibilityState.reducedMotion) activeFeatures.push('Reduced Motion');
+            if (accessibilityState.darkMode) activeFeatures.push('Dark Mode');
+            if (accessibilityState.focusIndicator !== 'default') activeFeatures.push('Focus Indicator');
+            if (accessibilityState.readingMode !== 'normal') activeFeatures.push('Reading Mode');
+            if (accessibilityState.colorBlindness !== 'none') activeFeatures.push('Color Blindness Mode');
+            
+            const countElement = document.getElementById('active-controls-count');
+            const statusElement = document.getElementById('accessibility-status');
+            
+            countElement.textContent = `${activeFeatures.length} active`;
+            
+            if (activeFeatures.length === 0) {
+                statusElement.textContent = 'All accessibility features are disabled';
+            } else {
+                statusElement.textContent = `Active: ${activeFeatures.join(', ')}`;
+            }
+        }
+
+        function resetAccessibilitySettings() {
+            // Reset all settings to default
+            Object.keys(accessibilityState).forEach(key => {
+                if (typeof accessibilityState[key] === 'boolean') {
+                    accessibilityState[key] = false;
+                } else {
+                    accessibilityState[key] = key === 'focusIndicator' || key === 'readingMode' ? 'default' : 'none';
+                }
+            });
+            
+            // Remove all classes
+            document.body.classList.remove('high-contrast', 'large-text', 'reduced-motion', 'dark-mode');
+            
+            // Reset all buttons
+            document.querySelectorAll('.accessibility-btn').forEach(btn => {
+                const feature = btn.getAttribute('data-feature');
+                updateAccessibilityButton(feature, false);
+            });
+            
+            // Reset selects
+            document.getElementById('focus-indicator').value = 'default';
+            document.getElementById('reading-mode').value = 'normal';
+            document.getElementById('color-blindness').value = 'none';
+            
+            updateAccessibilityStatus();
+            announceToScreenReader('All accessibility settings have been reset to default');
+        }
+
+        function updateFocusIndicator(style) {
+            accessibilityState.focusIndicator = style;
+            
+            // Remove existing focus styles
+            const styleElement = document.getElementById('focus-styles') || document.createElement('style');
+            styleElement.id = 'focus-styles';
+            
+            let css = '';
+            switch (style) {
+                case 'thick':
+                    css = '.focus-visible:focus { outline: 4px solid #3b82f6 !important; outline-offset: 3px !important; }';
+                    break;
+                case 'high-contrast':
+                    css = '.focus-visible:focus { outline: 3px solid #000000 !important; outline-offset: 2px !important; background: #ffff00 !important; }';
+                    break;
+                case 'animated':
+                    css = '.focus-visible:focus { outline: 2px solid #3b82f6 !important; outline-offset: 2px !important; animation: focusPulse 1s infinite; } @keyframes focusPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); } 50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); } }';
+                    break;
+                default:
+                    css = '.focus-visible:focus { outline: 2px solid #3b82f6 !important; outline-offset: 2px !important; }';
+            }
+            
+            styleElement.textContent = css;
+            document.head.appendChild(styleElement);
+            
+            updateAccessibilityStatus();
+            announceToScreenReader(`Focus indicator changed to ${style}`);
+        }
+
+        function updateReadingMode(mode) {
+            accessibilityState.readingMode = mode;
+            
+            // Remove existing reading styles
+            const existingStyles = document.getElementById('reading-styles');
+            if (existingStyles) existingStyles.remove();
+            
+            if (mode !== 'normal') {
+                const styleElement = document.createElement('style');
+                styleElement.id = 'reading-styles';
+                
+                let css = '';
+                switch (mode) {
+                    case 'dyslexic':
+                        css = 'body { font-family: "OpenDyslexic", "Comic Sans MS", sans-serif !important; }';
+                        break;
+                    case 'line-spacing':
+                        css = 'body { line-height: 1.8 !important; letter-spacing: 0.12em !important; }';
+                        break;
+                    case 'focus':
+                        css = 'body > *:not(header):not(.accessibility-controls) { filter: blur(3px); transition: filter 0.3s; } body > *:hover, body > *:focus { filter: blur(0); }';
+                        break;
+                }
+                
+                styleElement.textContent = css;
+                document.head.appendChild(styleElement);
+            }
+            
+            updateAccessibilityStatus();
+            announceToScreenReader(`Reading mode changed to ${mode}`);
+        }
+
+        function updateColorBlindnessMode(mode) {
+            accessibilityState.colorBlindness = mode;
+            
+            // Remove existing color blindness styles
+            const existingStyles = document.getElementById('colorblindness-styles');
+            if (existingStyles) existingStyles.remove();
+            
+            if (mode !== 'none') {
+                const styleElement = document.createElement('style');
+                styleElement.id = 'colorblindness-styles';
+                
+                // CSS filters for different types of color blindness
+                const filters = {
+                    protanopia: 'url("#protanopia-filter")',
+                    deuteranopia: 'url("#deuteranopia-filter")',
+                    tritanopia: 'url("#tritanopia-filter")'
+                };
+                
+                // Add SVG filters and apply them
+                const svgFilters = `
+                    <svg style="position: absolute; width: 0; height: 0;">
+                        <defs>
+                            <filter id="protanopia-filter">
+                                <feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0, 0.558, 0.442, 0, 0, 0, 0, 0.242, 0.758, 0, 0, 0, 0, 0, 1, 0"/>
+                            </filter>
+                            <filter id="deuteranopia-filter">
+                                <feColorMatrix type="matrix" values="0.625, 0.375, 0, 0, 0, 0.7, 0.3, 0, 0, 0, 0, 0.3, 0.7, 0, 0, 0, 0, 0, 1, 0"/>
+                            </filter>
+                            <filter id="tritanopia-filter">
+                                <feColorMatrix type="matrix" values="0.95, 0.05, 0, 0, 0, 0, 0.433, 0.567, 0, 0, 0, 0.475, 0.525, 0, 0, 0, 0, 0, 1, 0"/>
+                            </filter>
+                        </defs>
+                    </svg>
+                `;
+                
+                const div = document.createElement('div');
+                div.innerHTML = svgFilters;
+                document.body.insertBefore(div.firstElementChild, document.body.firstChild);
+                
+                styleElement.textContent = `body { filter: ${filters[mode]} !important; }`;
+                document.head.appendChild(styleElement);
+            }
+            
+            updateAccessibilityStatus();
+            announceToScreenReader(`Color blindness mode changed to ${mode}`);
+        }
+
+        function exportAccessibilitySettings() {
+            const settings = {
+                ...accessibilityState,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
+            
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `accessibility-settings-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            announceToScreenReader('Accessibility settings exported successfully');
+        }
+
+        function toggleAccessibilityHelp() {
+            const helpModal = document.getElementById('accessibility-help');
+            const isHidden = helpModal.classList.contains('hidden');
+            
+            if (isHidden) {
+                helpModal.classList.remove('hidden');
+                helpModal.querySelector('button').focus();
+                announceToScreenReader('Accessibility help opened');
+            } else {
+                helpModal.classList.add('hidden');
+                announceToScreenReader('Accessibility help closed');
+            }
+        }
+
+        function announceToScreenReader(message) {
+            const announcements = document.getElementById('announcements');
+            announcements.textContent = message;
+            // Clear after announcement
+            setTimeout(() => {
+                announcements.textContent = '';
+            }, 1000);
+        }
+
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', function(e) {
+                switch(e.key) {
+                    case 'r':
+                    case 'R':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            refreshData();
+                        }
+                        break;
+                    case 'v':
+                    case 'V':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            changeView();
+                        }
+                        break;
+                    case '1':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            setViewDirect('treemap');
+                        }
+                        break;
+                    case '2':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            setViewDirect('pie');
+                        }
+                        break;
+                    case '3':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            setViewDirect('bars');
+                        }
+                        break;
+                    case 'h':
+                    case 'H':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            toggleAccessibilityHelp();
+                        }
+                        break;
+                    case 'c':
+                    case 'C':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Jump to Cookie Management section
+                            const cookieSection = document.getElementById('cookie-management-heading');
+                            if (cookieSection) {
+                                cookieSection.scrollIntoView({ behavior: 'smooth' });
+                                cookieSection.focus();
+                                announceToScreenReader('Jumped to Cookie Management section');
+                            }
+                        }
+                        break;
+                    case 'a':
+                    case 'A':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            addSampleCookies();
+                        }
+                        break;
+                    case 'd':
+                    case 'D':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            clearAllCookies();
+                        }
+                        break;
+                    case 'x':
+                    case 'X':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            exportCookies();
+                        }
+                        break;
+                    case 'Delete':
+                    case 'Backspace':
+                        // Delete focused cookie if in cookie list
+                        const focusedElement = document.activeElement;
+                        if (focusedElement && focusedElement.getAttribute('aria-label')?.includes('Delete cookie')) {
+                            e.preventDefault();
+                            focusedElement.click();
+                        }
+                        break;
+                    case 't':
+                    case 'T':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Cycle through themes
+                            const themes = ['light', 'dark', 'ocean', 'forest', 'sunset'];
+                            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                            const currentIndex = themes.indexOf(currentTheme);
+                            const nextIndex = (currentIndex + 1) % themes.length;
+                            switchTheme(themes[nextIndex]);
+                        }
+                        break;
+                    case '!':
+                        if (e.shiftKey && !e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Toggle High Contrast (Shift+1)
+                            toggleHighContrast();
+                        }
+                        break;
+                    case '@':
+                        if (e.shiftKey && !e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Toggle Large Text (Shift+2)
+                            toggleLargeText();
+                        }
+                        break;
+                    case '#':
+                        if (e.shiftKey && !e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Toggle Reduced Motion (Shift+3)
+                            toggleReducedMotion();
+                        }
+                        break;
+                    case '$':
+                        if (e.shiftKey && !e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Toggle Dark Mode (Shift+4)
+                            toggleDarkMode();
+                        }
+                        break;
+                    case 's':
+                    case 'S':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Load user scenarios dropdown
+                            const scenarioSelect = document.getElementById('user-scenario');
+                            if (scenarioSelect) {
+                                scenarioSelect.focus();
+                                announceToScreenReader('User scenario selector focused');
+                            }
+                        }
+                        break;
+                    case 'e':
+                    case 'E':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Load endpoint groups dropdown
+                            const endpointSelect = document.getElementById('endpoint-group');
+                            if (endpointSelect) {
+                                endpointSelect.focus();
+                                announceToScreenReader('Endpoint group selector focused');
+                            }
+                        }
+                        break;
+                    case 'm':
+                    case 'M':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Multi-tenant demo
+                            simulateMultiTenant();
+                        }
+                        break;
+                    case 'n':
+                    case 'N':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Endpoint hierarchy demo
+                            simulateEndpointHierarchy();
+                        }
+                        break;
+                    case 'r':
+                    case 'R':
+                        if (!e.ctrlKey && !e.metaKey) {
+                            e.preventDefault();
+                            // Role-based access demo
+                            simulateUserRoles();
+                        }
+                        break;
+                    case 'Escape':
+                        const helpModal = document.getElementById('accessibility-help');
+                        if (!helpModal.classList.contains('hidden')) {
+                            toggleAccessibilityHelp();
+                        }
+                        break;
+                    case 'ArrowLeft':
+                    case 'ArrowRight':
+                        if (document.activeElement.classList.contains('bucket-tile')) {
+                            e.preventDefault();
+                            navigateBuckets(e.key === 'ArrowRight' ? 1 : -1);
+                        }
+                        break;
+                }
+            });
+        }
+
+        function setViewDirect(viewName) {
+            if (viewConfig[viewName] && viewName !== currentView) {
+                // Add to history
+                viewHistory.push({
+                    from: currentView,
+                    to: viewName,
+                    timestamp: Date.now()
+                });
+                
+                setView(viewName);
+                updateChangeViewButton(viewName);
+                showViewNotification(viewName);
+            }
+        }
+
+        function navigateBuckets(direction) {
+            const buckets = document.querySelectorAll('.bucket-tile');
+            const currentIndex = Array.from(buckets).findIndex(bucket => bucket === document.activeElement);
+            let nextIndex = currentIndex + direction;
+            
+            if (nextIndex < 0) nextIndex = buckets.length - 1;
+            if (nextIndex >= buckets.length) nextIndex = 0;
+            
+            buckets[nextIndex].focus();
+            announceToScreenReader(`Navigated to ${bucketData[nextIndex].name}: ${bucketData[nextIndex].sizeFormatted}`);
+        }
+
+        function updateBucketDetails() {
+            const container = document.getElementById('bucketDetails');
+            
+            container.innerHTML = bucketData.map((bucket, index) => `
+                <div class="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer fade-in bucket-tile" 
+                     onclick="showBucketDetails('${bucket.name}')"
+                     onkeydown="handleBucketKeydown(event, '${bucket.name}')"
+                     tabindex="0"
+                     role="button"
+                     aria-label="Bucket ${bucket.name}: ${bucket.sizeFormatted}, ${bucket.percentage.toFixed(1)}%, Type: ${bucket.type}"
+                     aria-describedby="bucket-${index}-details">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold text-gray-800">${bucket.name}</h4>
+                        <div class="w-3 h-3 rounded-full" style="background-color: ${bucket.color}" aria-hidden="true"></div>
+                    </div>
+                    <div id="bucket-${index}-details" class="text-sm text-gray-600">
+                        <div>Size: ${bucket.sizeFormatted}</div>
+                        <div>Percentage: ${bucket.percentage.toFixed(1)}%</div>
+                        <div>Type: ${bucket.type}</div>
+                        ${bucket.metadata?.optimized ? '<div class="text-green-600">✓ Optimized</div>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleBucketKeydown(event, bucketName) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showBucketDetails(bucketName);
+            }
+        }
+
+        function renderChart(viewType) {
+            const ctx = document.getElementById('bucketChart').getContext('2d');
+            
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const chartData = {
+                labels: bucketData.map(item => item.name),
+                datasets: [{
+                    data: bucketData.map(item => item.size),
+                    backgroundColor: bucketData.map(item => item.color),
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            };
+
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const item = bucketData[context.dataIndex];
+                                return [
+                                    `${item.name}: ${item.sizeFormatted}`,
+                                    `${item.percentage.toFixed(1)}%`,
+                                    `Type: ${item.type}`
+                                ];
+                            }
+                        }
+                    }
+                }
+            };
+
+            switch (viewType) {
+                case 'pie':
+                    currentChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: chartData,
+                        options: options
+                    });
+                    break;
+                case 'bars':
+                    currentChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: chartData,
+                        options: {
+                            ...options,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return formatBytes(value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    break;
+                case 'treemap':
+                default:
+                    renderTreemap();
+                    return;
+            }
+            
+            announceToScreenReader(`Changed to ${viewType} view`);
+        }
+
+        function renderTreemap() {
+            const container = document.getElementById('bucketChart').parentElement;
+            const width = container.offsetWidth;
+            const height = 400;
+            
+            let html = '<div class="treemap-container" style="position: relative; height: ' + height + 'px;" role="img" aria-label="Treemap visualization of bundle composition">';
+            
+            let x = 0, y = 0;
+            const totalSize = bucketData.reduce((sum, item) => sum + item.size, 0);
+            
+            bucketData.forEach((bucket, index) => {
+                const bucketWidth = (bucket.size / totalSize) * width;
+                const bucketHeight = height;
+                
+                html += `
+                    <div class="bucket-tile fade-in absolute border border-gray-200 rounded flex flex-col justify-center items-center text-white font-semibold"
+                         style="left: ${x}px; top: ${y}px; width: ${bucketWidth}px; height: ${bucketHeight}px; background-color: ${bucket.color};"
+                         onclick="showBucketDetails('${bucket.name}')"
+                         onkeydown="handleBucketKeydown(event, '${bucket.name}')"
+                         tabindex="0"
+                         role="button"
+                         aria-label="Bucket ${bucket.name}: ${bucket.sizeFormatted}, ${bucket.percentage.toFixed(1)}% of total bundle">
+                        <div class="text-center px-2">
+                            <div class="text-sm">${bucket.name}</div>
+                            <div class="text-xs opacity-90">${bucket.sizeFormatted}</div>
+                            <div class="text-xs opacity-80">${bucket.percentage.toFixed(1)}%</div>
+                        </div>
+                    </div>
+                `;
+                
+                x += bucketWidth;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function setView(view) {
+            currentView = view;
+            
+            // Update button styles and ARIA states
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+            
+            const activeBtn = document.getElementById(view + '-btn');
+            activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+            activeBtn.classList.add('bg-blue-500', 'text-white');
+            activeBtn.setAttribute('aria-pressed', 'true');
+            
+            renderChart(view);
+        }
+
+        function changeView() {
+            const views = ['treemap', 'pie', 'bars'];
+            const currentIndex = views.indexOf(currentView);
+            const nextIndex = (currentIndex + 1) % views.length;
+            const nextView = views[nextIndex];
+            
+            // Add to history
+            viewHistory.push({
+                from: currentView,
+                to: nextView,
+                timestamp: Date.now()
+            });
+            
+            // Keep only last 10 changes
+            if (viewHistory.length > 10) {
+                viewHistory.shift();
+            }
+            
+            setView(nextView);
+            
+            // Enhanced button feedback
+            updateChangeViewButton(nextView);
+            
+            // Show brief notification
+            showViewNotification(nextView);
+        }
+
+        function updateChangeViewButton(viewName) {
+            const btn = document.getElementById('change-view-btn');
+            const icon = document.getElementById('view-icon');
+            const text = document.getElementById('view-text');
+            const indicator = document.getElementById('view-indicator');
+            const views = ['treemap', 'pie', 'bars'];
+            const currentIndex = views.indexOf(viewName) + 1;
+            
+            const config = viewConfig[viewName];
+            
+            // Update button content
+            icon.textContent = config.icon;
+            icon.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                icon.style.transform = 'rotate(0deg)';
+            }, 200);
+            
+            text.textContent = config.name;
+            indicator.textContent = `(${currentIndex}/3)`;
+            
+            // Update ARIA label
+            btn.setAttribute('aria-label', `Change visualization view. Current view: ${config.name}. ${config.description}`);
+            
+            // Add pulse animation
+            btn.classList.add('animate-pulse');
+            setTimeout(() => {
+                btn.classList.remove('animate-pulse');
+            }, 1000);
+        }
+
+        function showViewNotification(viewName) {
+            const config = viewConfig[viewName];
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50 transform translate-x-full transition-transform duration-300';
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">${config.icon}</span>
+                    <div>
+                        <div class="font-semibold text-gray-800">${config.name}</div>
+                        <div class="text-sm text-gray-600">${config.description}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function showBucketDetails(name) {
+            const bucket = bucketData.find(item => item.name === name);
+            if (bucket) {
+                const details = `Bucket Details:\\n\\nName: ${bucket.name}\\nSize: ${bucket.sizeFormatted}\\nPercentage: ${bucket.percentage.toFixed(1)}%\\nType: ${bucket.type}\\n${bucket.metadata?.path ? 'Path: ' + bucket.metadata.path + '\\n' : ''}${bucket.metadata?.optimized ? 'Status: Optimized\\n' : ''}${bucket.metadata?.version ? 'Version: ' + bucket.metadata.version : ''}`;
+                
+                // Create accessible modal instead of alert
+                createAccessibleModal('Bucket Details', details.replace(/\\n/g, '<br>'));
+                announceToScreenReader(`Showing details for ${bucket.name}`);
+            }
+        }
+
+        function createAccessibleModal(title, content) {
+            // Remove existing modal if any
+            const existingModal = document.getElementById('accessible-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'accessible-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('aria-labelledby', 'modal-title');
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-md w-full p-6">
+                    <h2 id="modal-title" class="text-xl font-bold mb-4">${title}</h2>
+                    <div class="mb-6">${content}</div>
+                    <button onclick="closeAccessibleModal()" 
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus-visible:focus">
+                        Close
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.querySelector('button').focus();
+            
+            // Add escape key handler
+            modal.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAccessibleModal();
+                }
+            });
+        }
+
+        function closeAccessibleModal() {
+            const modal = document.getElementById('accessible-modal');
+            if (modal) {
+                modal.remove();
+                announceToScreenReader('Modal closed');
+            }
+        }
+
+        function refreshData() {
+            // Simulate data refresh with announcement
+            announceToScreenReader('Refreshing bundle data...');
+            
+            setTimeout(() => {
+                announceToScreenReader('Bundle data refreshed successfully');
+            }, 1000);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+        }
+
+        // ====== Theme Management Functions ======
+        
+        function switchTheme(themeName) {
+            const startTime = Date.now();
+            
+            // Remove existing theme attribute
+            document.documentElement.removeAttribute('data-theme');
+            
+            // Apply new theme
+            if (themeName !== 'light') {
+                document.documentElement.setAttribute('data-theme', themeName);
+            }
+            
+            // Save theme preference
+            localStorage.setItem('selected-theme', themeName);
+            
+            // Update theme selector
+            const themeSelector = document.getElementById('theme-selector');
+            if (themeSelector) {
+                themeSelector.value = themeName;
+            }
+            
+            // Update chart colors for theme compatibility
+            updateChartColors(themeName);
+            
+            trackOperation(startTime);
+            announceToScreenReader(`Theme changed to ${themeName}`);
+            
+            // Show theme notification
+            showThemeNotification(themeName);
+        }
+        
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('selected-theme') || 'light';
+            switchTheme(savedTheme);
+        }
+        
+        function updateChartColors(themeName) {
+            // Update chart colors based on theme
+            const isDark = ['dark', 'ocean', 'forest', 'sunset'].includes(themeName);
+            
+            try {
+                if (window.myChart && typeof window.myChart.update === 'function') {
+                    const textColor = isDark ? '#f1f5f9' : '#374151';
+                    const gridColor = isDark ? '#334155' : '#e5e7eb';
+                    
+                    window.myChart.options.plugins.legend.labels.color = textColor;
+                    window.myChart.options.scales.x.ticks.color = textColor;
+                    window.myChart.options.scales.y.ticks.color = textColor;
+                    window.myChart.options.scales.x.grid.color = gridColor;
+                    window.myChart.options.scales.y.grid.color = gridColor;
+                    
+                    window.myChart.update();
+                }
+            } catch (error) {
+                console.warn('Failed to update chart colors:', error);
+            }
+        }
+        
+        function showThemeNotification(themeName) {
+            try {
+                const themeEmojis = {
+                    light: '💡',
+                    dark: '🌙',
+                    ocean: '🌊',
+                    forest: '🌲',
+                    sunset: '🌅'
+                };
+                
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-20 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50 transform translate-x-full transition-transform duration-300';
+                notification.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">${themeEmojis[themeName]}</span>
+                        <div>
+                            <div class="font-semibold text-gray-800">Theme Changed</div>
+                            <div class="text-sm text-gray-600">Switched to ${themeName} theme</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    if (notification && notification.style) {
+                        notification.style.transform = 'translateX(0)';
+                    }
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    if (notification && notification.style) {
+                        notification.style.transform = 'translateX(100%)';
+                        setTimeout(() => {
+                            if (notification && document.body.contains(notification)) {
+                                document.body.removeChild(notification);
+                            }
+                        }, 300);
+                    }
+                }, 3000);
+            } catch (error) {
+                console.warn('Failed to show theme notification:', error);
+            }
+        }
+
+        // ====== Header Enhancement Functions ======
+        
+        // Theme Dropdown Toggle
+        function toggleThemeDropdown() {
+            const dropdown = document.getElementById('theme-dropdown');
+            const button = document.getElementById('theme-button');
+            const isHidden = dropdown.classList.contains('hidden');
+            
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                button.setAttribute('aria-expanded', 'true');
+                dropdown.querySelector('button').focus();
+            } else {
+                dropdown.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+                button.focus();
+            }
+        }
+        
+        // Search Functionality
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query) {
+                    announceToScreenReader(`Searching for: ${query}`);
+                    // In a real app, this would trigger a search
+                    console.log('Search query:', query);
+                }
+            }
+        }
+        
+        // Update current date display
+        function updateCurrentDate() {
+            const dateElement = document.getElementById('current-date');
+            if (dateElement) {
+                const now = new Date();
+                dateElement.textContent = now.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        }
+        
+        // Update last updated timestamp
+        function updateLastUpdated() {
+            const lastUpdatedElement = document.getElementById('last-updated');
+            if (lastUpdatedElement) {
+                lastUpdatedElement.textContent = 'Just now';
+            }
+        }
+
+        // ====== Cookie Management Functions ======
+        
+        // Simulated cookie jar (in real implementation, this would be connected to the authenticated client)
+        let cookieJar = {};
+        let operationMetrics = {
+            count: 0,
+            totalTime: 0,
+            memoryUsage: 0
+        };
+
+        function trackOperation(startTime) {
+            const duration = Date.now() - startTime;
+            operationMetrics.count++;
+            operationMetrics.totalTime += duration;
+            updatePerformanceMetrics();
+        }
+
+        function updatePerformanceMetrics() {
+            const avgTime = operationMetrics.count > 0 ? Math.round(operationMetrics.totalTime / operationMetrics.count) : 0;
+            const memoryUsage = JSON.stringify(cookieJar).length;
+            
+            document.getElementById('operation-count').textContent = operationMetrics.count;
+            document.getElementById('avg-operation-time').textContent = `${avgTime}ms`;
+            document.getElementById('memory-usage').textContent = `${Math.round(memoryUsage / 1024)}KB`;
+        }
+
+        function updateSecurityStatus() {
+            const cookies = Object.values(cookieJar);
+            const allSecure = cookies.every(c => c.secure);
+            const hasSameSite = cookies.every(c => c.sameSite && c.sameSite !== 'none');
+            const hasChips = cookies.some(c => c.partitioned);
+            
+            document.getElementById('https-status').textContent = allSecure ? '✓' : '⚠';
+            document.getElementById('https-status').className = allSecure ? 'font-mono text-green-600' : 'font-mono text-yellow-600';
+            
+            document.getElementById('samesite-status').textContent = hasSameSite ? '✓' : '⚠';
+            document.getElementById('samesite-status').className = hasSameSite ? 'font-mono text-green-600' : 'font-mono text-yellow-600';
+            
+            document.getElementById('chips-status').textContent = hasChips ? 'Active' : 'Inactive';
+            document.getElementById('chips-status').className = hasChips ? 'font-mono text-blue-600' : 'font-mono text-gray-600';
+        }
+
+        function updateComplianceStatus() {
+            const cookies = Object.keys(cookieJar);
+            const hasConsent = cookies.some(name => name.includes('consent'));
+            
+            document.getElementById('consent-status').textContent = hasConsent ? 'Given' : 'Pending';
+            document.getElementById('consent-status').className = hasConsent ? 'font-mono text-green-600' : 'font-mono text-yellow-600';
+        }
+
+        function addSampleCookies() {
+            const startTime = Date.now();
+            
+            // Add sample cookies to demonstrate the system
+            cookieJar = {
+                'sessionId': {
+                    value: 'sess_abc123def456',
+                    domain: 'example.com',
+                    path: '/',
+                    secure: true,
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    partitioned: false
+                },
+                'userPreferences': {
+                    value: JSON.stringify({theme: 'dark', language: 'en', notifications: true}),
+                    domain: 'example.com',
+                    path: '/',
+                    secure: true,
+                    httpOnly: false,
+                    sameSite: 'lax',
+                    partitioned: false
+                },
+                'analytics_id': {
+                    value: 'ga-tracking-xyz789',
+                    domain: 'cdn.example.com',
+                    path: '/',
+                    secure: true,
+                    httpOnly: false,
+                    sameSite: 'none',
+                    partitioned: true
+                },
+                'auth_token': {
+                    value: 'jwt_token_abcdef123456',
+                    domain: 'auth.example.com',
+                    path: '/secure',
+                    secure: true,
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    partitioned: false
+                },
+                'consent_data': {
+                    value: JSON.stringify({analytics: true, advertising: false, functional: true}),
+                    domain: 'example.com',
+                    path: '/',
+                    secure: true,
+                    httpOnly: false,
+                    sameSite: 'lax',
+                    partitioned: true
+                }
+            };
+            
+            refreshCookies();
+            updateSecurityStatus();
+            updateComplianceStatus();
+            trackOperation(startTime);
+            announceToScreenReader('Sample cookies added successfully');
+        }
+
+        function demonstrateBatchOperations() {
+            const startTime = Date.now();
+            
+            if (Object.keys(cookieJar).length === 0) {
+                announceToScreenReader('Please add sample cookies first');
+                return;
+            }
+            
+            // Batch operation: Add multiple cookies
+            const batchCookies = {
+                'batch_1': { value: 'batch-data-1', domain: 'example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                'batch_2': { value: 'batch-data-2', domain: 'example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                'batch_3': { value: 'batch-data-3', domain: 'example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true }
+            };
+            
+            Object.assign(cookieJar, batchCookies);
+            
+            // Batch operation: Filter and remove non-secure cookies
+            const nonSecureCookies = Object.keys(cookieJar).filter(name => !cookieJar[name].secure);
+            nonSecureCookies.forEach(name => delete cookieJar[name]);
+            
+            refreshCookies();
+            updateSecurityStatus();
+            updateComplianceStatus();
+            trackOperation(startTime);
+            
+            announceToScreenReader(`Batch operations completed: Added 3 cookies, removed ${nonSecureCookies.length} non-secure cookies`);
+        }
+
+        function clearAllCookies() {
+            cookieJar = {};
+            refreshCookies();
+            announceToScreenReader('All cookies cleared');
+        }
+
+        function refreshCookies() {
+            const startTime = Date.now();
+            
+            const cookieList = document.getElementById('cookie-list');
+            const noCookiesMessage = document.getElementById('no-cookies-message');
+            const cookieCount = document.getElementById('cookie-count');
+            const totalCookies = document.getElementById('total-cookies');
+            const partitionedCookies = document.getElementById('partitioned-cookies');
+            const headerSize = document.getElementById('header-size');
+            const secureCookies = document.getElementById('secure-cookies');
+            
+            const cookieNames = Object.keys(cookieJar);
+            const partitionedCount = cookieNames.filter(name => cookieJar[name].partitioned).length;
+            const secureCount = cookieNames.filter(name => cookieJar[name].secure).length;
+            
+            // Calculate header size
+            const headerString = cookieNames.map(name => `${name}=${cookieJar[name].value}`).join('; ');
+            const headerSizeBytes = new Blob([headerString]).size;
+            
+            // Update statistics
+            cookieCount.textContent = `${cookieNames.length} cookies`;
+            totalCookies.textContent = cookieNames.length;
+            partitionedCookies.textContent = partitionedCount;
+            headerSize.textContent = formatBytes(headerSizeBytes);
+            secureCookies.textContent = secureCount;
+            
+            // Update status panels
+            updateSecurityStatus();
+            updateComplianceStatus();
+            
+            // Update cookie list
+            if (cookieNames.length === 0) {
+                noCookiesMessage.style.display = 'block';
+                cookieList.innerHTML = '<div class="text-gray-500 text-center py-8" id="no-cookies-message">No cookies found. Click "Add Sample" to demonstrate cookie management.</div>';
+            } else {
+                cookieList.innerHTML = cookieNames.map(name => {
+                    const cookie = cookieJar[name];
+                    const badges = [];
+                    if (cookie.secure) badges.push('<span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Secure</span>');
+                    if (cookie.httpOnly) badges.push('<span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">HttpOnly</span>');
+                    if (cookie.partitioned) badges.push('<span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">CHIPS</span>');
+                    
+                    return `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors" role="listitem">
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-800">${name}</div>
+                                <div class="text-sm text-gray-600 truncate max-w-md">${cookie.value}</div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    ${cookie.domain}${cookie.path} • ${cookie.sameSite}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                ${badges.join('')}
+                                <button onclick="deleteCookie('${name}')" 
+                                        class="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 focus-visible:focus"
+                                        aria-label="Delete cookie ${name}">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            trackOperation(startTime);
+        }
+
+        function deleteCookie(name) {
+            delete cookieJar[name];
+            refreshCookies();
+            announceToScreenReader(`Cookie ${name} deleted`);
+        }
+
+        function demonstrateDeletion() {
+            if (Object.keys(cookieJar).length === 0) {
+                announceToScreenReader('Please add sample cookies first');
+                return;
+            }
+            
+            // Demonstrate domain-specific deletion
+            const domainCookies = Object.keys(cookieJar).filter(name => cookieJar[name].domain === 'cdn.example.com');
+            if (domainCookies.length > 0) {
+                deleteCookie(domainCookies[0]);
+                announceToScreenReader(`Demonstrated domain-specific deletion: removed ${domainCookies[0]}`);
+            } else {
+                announceToScreenReader('No domain-specific cookies to demonstrate deletion');
+            }
+        }
+
+        function demonstratePartitioned() {
+            // Add a partitioned cookie if none exist
+            const hasPartitioned = Object.keys(cookieJar).some(name => cookieJar[name].partitioned);
+            
+            if (!hasPartitioned) {
+                cookieJar['tracking_partitioned'] = {
+                    value: 'cross-site-tracking-data',
+                    domain: 'third-party.com',
+                    path: '/',
+                    secure: true,
+                    httpOnly: false,
+                    sameSite: 'none',
+                    partitioned: true
+                };
+                refreshCookies();
+                announceToScreenReader('Added partitioned CHIPS cookie for privacy demonstration');
+            } else {
+                announceToScreenReader('Partitioned cookies already exist');
+            }
+        }
+
+        function exportCookies() {
+            const cookieData = {
+                timestamp: new Date().toISOString(),
+                totalCookies: Object.keys(cookieJar).length,
+                cookies: cookieJar
+            };
+            
+            const blob = new Blob([JSON.stringify(cookieData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cookies-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            announceToScreenReader('Cookies exported as JSON file');
+        }
+
+        // ====== Multi-User & Endpoint Hierarchy Functions ======
+        
+        const userScenarios = {
+            admin: {
+                name: 'Admin User',
+                cookies: {
+                    'admin_session': { value: 'admin_sess_token_123', domain: 'admin.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'admin_preferences': { value: JSON.stringify({theme: 'dark', permissions: 'full', dashboard: 'advanced'}), domain: 'admin.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                    'admin_audit': { value: JSON.stringify({lastLogin: '2026-01-20T12:00:00Z', actions: 45}), domain: 'admin.example.com', path: '/audit', secure: true, httpOnly: true, sameSite: 'strict', partitioned: true }
+                }
+            },
+            developer: {
+                name: 'Developer User',
+                cookies: {
+                    'dev_session': { value: 'dev_token_abc456', domain: 'api.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'api_keys': { value: JSON.stringify({public: 'pk_test_123', private: 'sk_test_456'}), domain: 'api.example.com', path: '/keys', secure: true, httpOnly: true, sameSite: 'strict', partitioned: true },
+                    'dev_tools': { value: JSON.stringify({debug: true, console: 'enabled', inspector: 'on'}), domain: 'dev.example.com', path: '/', secure: false, httpOnly: false, sameSite: 'lax', partitioned: false }
+                }
+            },
+            customer: {
+                name: 'Customer User',
+                cookies: {
+                    'customer_session': { value: 'cust_sess_789', domain: 'shop.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'lax', partitioned: false },
+                    'cart_data': { value: JSON.stringify({items: 3, total: 156.99, currency: 'USD'}), domain: 'shop.example.com', path: '/cart', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                    'user_preferences': { value: JSON.stringify({language: 'en', currency: 'USD', notifications: true}), domain: 'shop.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true }
+                }
+            },
+            analytics: {
+                name: 'Analytics User',
+                cookies: {
+                    'analytics_session': { value: 'analytics_token_456', domain: 'analytics.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'tracking_config': { value: JSON.stringify({events: ['pageview', 'click'], sampleRate: 0.1}), domain: 'analytics.example.com', path: '/config', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                    'dashboard_state': { value: JSON.stringify({widgets: ['traffic', 'conversion'], dateRange: '30d'}), domain: 'analytics.example.com', path: '/dashboard', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true }
+                }
+            },
+            mobile: {
+                name: 'Mobile App User',
+                cookies: {
+                    'mobile_session': { value: 'mobile_token_789', domain: 'app.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'device_info': { value: JSON.stringify({platform: 'ios', version: '17.2', deviceId: 'iphone_123'}), domain: 'app.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true },
+                    'push_token': { value: 'push_fcm_token_abc', domain: 'app.example.com', path: '/push', secure: true, httpOnly: true, sameSite: 'strict', partitioned: true }
+                }
+            }
+        };
+
+        const endpointGroups = {
+            auth: {
+                name: 'Authentication Services',
+                cookies: {
+                    'auth_token': { value: 'jwt_auth_123456', domain: 'auth.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'refresh_token': { value: 'refresh_789012', domain: 'auth.example.com', path: '/refresh', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'sso_session': { value: 'sso_token_345678', domain: 'sso.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'none', partitioned: true },
+                    'mfa_state': { value: JSON.stringify({verified: true, method: 'totp', timestamp: Date.now()}), domain: 'auth.example.com', path: '/mfa', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false }
+                }
+            },
+            api: {
+                name: 'API Endpoints',
+                cookies: {
+                    'api_session': { value: 'api_sess_abcdef', domain: 'api.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'rate_limit': { value: JSON.stringify({remaining: 1000, reset: Date.now() + 3600000}), domain: 'api.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                    'api_cache': { value: JSON.stringify({version: 'v1.2.3', endpoints: ['/users', '/orders']}), domain: 'api.example.com', path: '/cache', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true }
+                }
+            },
+            cdn: {
+                name: 'CDN & Static Assets',
+                cookies: {
+                    'cdn_session': { value: 'cdn_token_456789', domain: 'cdn.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'none', partitioned: true },
+                    'asset_version': { value: 'v1.2.3.4', domain: 'cdn.example.com', path: '/assets', secure: false, httpOnly: false, sameSite: 'lax', partitioned: false },
+                    'geo_location': { value: JSON.stringify({country: 'US', region: 'CA', city: 'San Francisco'}), domain: 'cdn.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true }
+                }
+            },
+            analytics: {
+                name: 'Analytics & Tracking',
+                cookies: {
+                    'ga_session': { value: 'GA1.2.1234567890.1234567890', domain: '.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true },
+                    'fb_pixel': { value: 'fb_pixel_123456', domain: 'facebook.com', path: '/', secure: true, httpOnly: false, sameSite: 'none', partitioned: true },
+                    'hotjar_session': { value: 'hj_session_789012', domain: 'hotjar.com', path: '/', secure: true, httpOnly: false, sameSite: 'none', partitioned: true },
+                    'custom_analytics': { value: JSON.stringify({trackerId: 'custom_123', events: ['pageview', 'click']}), domain: 'analytics.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true }
+                }
+            },
+            ecommerce: {
+                name: 'E-commerce Platform',
+                cookies: {
+                    'shop_session': { value: 'shop_sess_123456', domain: 'shop.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'lax', partitioned: false },
+                    'cart_token': { value: 'cart_token_789012', domain: 'shop.example.com', path: '/cart', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                    'checkout_state': { value: JSON.stringify({step: 2, items: 3, total: 156.99}), domain: 'shop.example.com', path: '/checkout', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                    'payment_method': { value: JSON.stringify({type: 'card', last4: '1234', brand: 'visa'}), domain: 'shop.example.com', path: '/payment', secure: true, httpOnly: true, sameSite: 'strict', partitioned: true }
+                }
+            }
+        };
+
+        function loadUserScenario() {
+            const select = document.getElementById('user-scenario');
+            const scenario = userScenarios[select.value];
+            
+            if (!scenario) return;
+            
+            const startTime = Date.now();
+            cookieJar = { ...scenario.cookies };
+            refreshCookies();
+            updateSecurityStatus();
+            updateComplianceStatus();
+            trackOperation(startTime);
+            announceToScreenReader(`Loaded ${scenario.name} scenario with ${Object.keys(scenario.cookies).length} cookies`);
+        }
+
+        function loadEndpointGroup() {
+            const select = document.getElementById('endpoint-group');
+            const group = endpointGroups[select.value];
+            
+            if (!group) return;
+            
+            const startTime = Date.now();
+            cookieJar = { ...group.cookies };
+            refreshCookies();
+            updateSecurityStatus();
+            updateComplianceStatus();
+            trackOperation(startTime);
+            announceToScreenReader(`Loaded ${group.name} with ${Object.keys(group.cookies).length} endpoint cookies`);
+        }
+
+        function simulateMultiTenant() {
+            const startTime = Date.now();
+            
+            // Simulate multi-tenant scenario with tenant isolation
+            const tenants = ['tenant1', 'tenant2', 'tenant3'];
+            cookieJar = {};
+            
+            tenants.forEach(tenant => {
+                cookieJar[`${tenant}:session`] = {
+                    value: `${tenant}_sess_${Math.random().toString(36).substr(2, 9)}`,
+                    domain: `${tenant}.example.com`,
+                    path: '/',
+                    secure: true,
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    partitioned: false
+                };
+                
+                cookieJar[`${tenant}:preferences`] = {
+                    value: JSON.stringify({theme: 'dark', language: 'en', tenant: tenant}),
+                    domain: `${tenant}.example.com`,
+                    path: '/',
+                    secure: true,
+                    httpOnly: false,
+                    sameSite: 'lax',
+                    partitioned: false
+                };
+                
+                cookieJar[`${tenant}:analytics`] = {
+                    value: `analytics_${tenant}_${Math.random().toString(36).substr(2, 9)}`,
+                    domain: `${tenant}.example.com`,
+                    path: '/',
+                    secure: true,
+                    httpOnly: false,
+                    sameSite: 'none',
+                    partitioned: true
+                };
+            });
+            
+            refreshCookies();
+            updateSecurityStatus();
+            updateComplianceStatus();
+            trackOperation(startTime);
+            announceToScreenReader(`Multi-tenant demo: Created ${tenants.length} tenants with 3 cookies each (total: ${Object.keys(cookieJar).length} cookies)`);
+        }
+
+        function simulateEndpointHierarchy() {
+            const startTime = Date.now();
+            
+            // Create hierarchical cookie structure
+            cookieJar = {
+                // Root domain cookies
+                'root_session': { value: 'root_sess_main', domain: 'example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                'root_config': { value: JSON.stringify({env: 'production', version: '2.1.0'}), domain: 'example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                
+                // Subdomain hierarchy
+                'auth_session': { value: 'auth_sess_sub', domain: 'auth.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                'auth_mfa': { value: JSON.stringify({verified: true, method: 'totp'}), domain: 'auth.example.com', path: '/mfa', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                
+                'api_tokens': { value: JSON.stringify({access: 'token_123', refresh: 'token_456'}), domain: 'api.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: true },
+                'api_cache': { value: 'v1.2.3', domain: 'api.example.com', path: '/cache', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                
+                'cdn_assets': { value: 'cdn_version_456', domain: 'cdn.example.com', path: '/assets', secure: false, httpOnly: false, sameSite: 'lax', partitioned: false },
+                'cdn_geo': { value: JSON.stringify({country: 'US', region: 'CA'}), domain: 'cdn.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true },
+                
+                // Deep path hierarchy
+                'shop_cart': { value: 'cart_token_789', domain: 'shop.example.com', path: '/cart', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                'shop_checkout': { value: JSON.stringify({step: 1, items: 2}), domain: 'shop.example.com', path: '/checkout', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                'shop_payment': { value: 'payment_method_123', domain: 'shop.example.com', path: '/checkout/payment', secure: true, httpOnly: true, sameSite: 'strict', partitioned: true }
+            };
+            
+            refreshCookies();
+            updateSecurityStatus();
+            updateComplianceStatus();
+            trackOperation(startTime);
+            announceToScreenReader(`Endpoint hierarchy demo: Created hierarchical cookie structure with ${Object.keys(cookieJar).length} cookies across multiple domains and paths`);
+        }
+
+        function simulateUserRoles() {
+            const startTime = Date.now();
+            
+            // Simulate role-based cookie permissions
+            cookieJar = {
+                // Base cookies for all users
+                'base_session': { value: 'base_sess_123', domain: 'example.com', path: '/', secure: true, httpOnly: true, sameSite: 'lax', partitioned: false },
+                'base_preferences': { value: JSON.stringify({theme: 'light', language: 'en'}), domain: 'example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                
+                // Role-specific cookies
+                'admin_access': { value: 'admin_token_456', domain: 'admin.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                'admin_permissions': { value: JSON.stringify({level: 'full', areas: ['users', 'settings', 'audit']}), domain: 'admin.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'strict', partitioned: false },
+                
+                'developer_access': { value: 'dev_token_789', domain: 'dev.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                'developer_tools': { value: JSON.stringify({debug: true, console: true, inspector: true}), domain: 'dev.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: false },
+                
+                'customer_access': { value: 'customer_token_012', domain: 'shop.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'lax', partitioned: false },
+                'customer_data': { value: JSON.stringify({id: 'cust_123', tier: 'premium'}), domain: 'shop.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true },
+                
+                'analytics_access': { value: 'analytics_token_345', domain: 'analytics.example.com', path: '/', secure: true, httpOnly: true, sameSite: 'strict', partitioned: false },
+                'analytics_scope': { value: JSON.stringify({read_only: true, datasets: ['traffic', 'conversion']}), domain: 'analytics.example.com', path: '/', secure: true, httpOnly: false, sameSite: 'lax', partitioned: true }
+            };
+            
+            refreshCookies();
+            updateSecurityStatus();
+            updateComplianceStatus();
+            trackOperation(startTime);
+            announceToScreenReader(`Role-based access demo: Created role-specific cookies for admin, developer, customer, and analytics roles (${Object.keys(cookieJar).length} total cookies)`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surgical Precision Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Team Role Colors (matching your system) */
+            --alice-cyan: #00CED1;
+            --bob-yellow: #FFD700;
+            --carol-magenta: #FF00FF;
+            --dave-green: #00FF00;
+
+            /* Priority Colors */
+            --critical-red: #FF0000;
+            --high-orange: #FFA500;
+            --medium-blue: #0000FF;
+            --low-white: #FFFFFF;
+
+            /* Status Colors */
+            --open-green: #00FF00;
+            --review-yellow: #FFD700;
+            --blocked-red: #FF0000;
+            --merged-cyan: #00CED1;
+            --closed-grey: #808080;
+
+            /* CSS Lighting Effects */
+            --glow-intense: 0 0 20px, 0 0 40px, 0 0 60px;
+            --glow-medium: 0 0 10px, 0 0 20px;
+            --glow-subtle: 0 0 5px, 0 0 10px;
+
+            /* Gradient Lighting */
+            --gradient-cyan: linear-gradient(135deg, #00CED1, #00FFFF);
+            --gradient-yellow: linear-gradient(135deg, #FFD700, #FFFF00);
+            --gradient-magenta: linear-gradient(135deg, #FF00FF, #FF1493);
+            --gradient-green: linear-gradient(135deg, #00FF00, #32CD32);
+            --gradient-red: linear-gradient(135deg, #FF0000, #FF4500);
+
+            /* Dark Mode Colors */
+            --dark-bg: #0a0a0a;
+            --dark-card: rgba(20, 20, 30, 0.8);
+            --dark-text: #ffffff;
+            --dark-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="dark"] {
+            --dark-bg: #0a0a0a;
+            --dark-card: rgba(20, 20, 30, 0.8);
+            --dark-text: #ffffff;
+            --dark-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="light"] {
+            --dark-bg: #f5f5f5;
+            --dark-card: rgba(255, 255, 255, 0.9);
+            --dark-text: #000000;
+            --dark-secondary: rgba(0, 0, 0, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0, 206, 209, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: bgAnimation 20s ease infinite;
+        }
+
+        @keyframes bgAnimation {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header with Lighting Effect */
+        .dashboard-header {
+            background: var(--gradient-cyan);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow:
+                0 0 10px rgba(0, 206, 209, 0.5),
+                0 0 20px rgba(0, 206, 209, 0.3);
+            animation: headerGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes headerGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: var(--dark-card);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle {
+            background: var(--gradient-cyan);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: var(--glow-subtle);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-medium);
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Card with Lighting Effects */
+        .card {
+            background: var(--dark-card);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-cyan);
+            animation: statusBarAnimation 10s linear infinite;
+        }
+
+        @keyframes statusBarAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(0, 206, 209, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Card Titles with Lighting */
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--alice-cyan), transparent);
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            box-shadow: var(--glow-subtle);
+        }
+
+        .status-open { background: var(--open-green); }
+        .status-review { background: var(--review-yellow); }
+        .status-blocked { background: var(--blocked-red); }
+        .status-merged { background: var(--merged-cyan); }
+
+        /* Team Member Card */
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(30, 30, 40, 0.6);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+
+        .team-member.alice { border-left-color: var(--alice-cyan); }
+        .team-member.bob { border-left-color: var(--bob-yellow); }
+        .team-member.carol { border-left-color: var(--carol-magenta); }
+        .team-member.dave { border-left-color: var(--dave-green); }
+
+        .team-member-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: var(--glow-medium);
+        }
+
+        .team-member.alice .team-member-avatar { background: var(--gradient-cyan); }
+        .team-member.bob .team-member-avatar { background: var(--gradient-yellow); }
+        .team-member.carol .team-member-avatar { background: var(--gradient-magenta); }
+        .team-member.dave .team-member-avatar { background: var(--gradient-green); }
+
+        /* PR Item */
+        .pr-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(40, 40, 50, 0.6);
+            border-radius: 8px;
+            border-left: 3px solid;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pr-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .pr-item.critical { border-left-color: var(--critical-red); }
+        .pr-item.high { border-left-color: var(--high-orange); }
+        .pr-item.medium { border-left-color: var(--medium-blue); }
+        .pr-item.low { border-left-color: var(--low-white); }
+
+        /* Metrics Display */
+        .metric {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            background: linear-gradient(135deg, var(--alice-cyan), var(--bob-yellow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: var(--glow-subtle);
+        }
+
+        /* Animated Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-cyan);
+            border-radius: 4px;
+            animation: progressAnimation 3s ease-in-out infinite;
+        }
+
+        @keyframes progressAnimation {
+            0%, 100% { width: 75%; }
+            50% { width: 85%; }
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow:
+                0 4px 20px rgba(0, 206, 209, 0.4),
+                0 0 40px rgba(0, 206, 209, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow:
+                0 6px 30px rgba(0, 206, 209, 0.6),
+                0 0 60px rgba(0, 206, 209, 0.3);
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--critical-red);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            box-shadow: var(--glow-intense);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        /* Interactive Elements */
+        .interactive-element {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .interactive-element:hover {
+            transform: scale(1.02);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1rem;
+            }
+
+            .dashboard-header {
+                font-size: 1.8rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid var(--alice-cyan);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 4px solid var(--open-green);
+        }
+
+        .alert-warning {
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 4px solid var(--review-yellow);
+        }
+
+        .alert-danger {
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid var(--blocked-red);
+        }
+
+        /* Bun Info Panel */
+        .bun-info {
+            background: rgba(0, 206, 209, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(0, 206, 209, 0.3);
+        }
+
+        .bun-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+        }
+
+        .bun-info-label {
+            font-weight: bold;
+            color: var(--alice-cyan);
+        }
+
+        .bun-info-value {
+            color: var(--dark-secondary);
+        }
+
+        /* CLI Command Panel */
+        .cli-panel {
+            background: rgba(20, 20, 30, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cli-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 0.5rem;
+            color: var(--dark-text);
+            font-family: monospace;
+        }
+
+        .cli-output {
+            margin-top: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Package Management Panel */
+        .package-panel {
+            background: rgba(20, 20, 30, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .package-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .package-item {
+            background: rgba(40, 40, 50, 0.6);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 3px solid var(--alice-cyan);
+        }
+
+        .package-name {
+            font-weight: bold;
+            color: var(--alice-cyan);
+        }
+
+        .package-version {
+            color: var(--dark-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Performance Metrics */
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .metric-card {
+            background: rgba(40, 40, 50, 0.6);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border-left: 3px solid var(--bob-yellow);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--bob-yellow);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--dark-secondary);
+        }
+
+        /* Ripgrep Search Panel */
+        .ripgrep-panel {
+            background: rgba(20, 20, 30, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 0.5rem;
+            color: var(--dark-text);
+            font-family: monospace;
+        }
+
+        .search-results {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* DNS API Panel */
+        .dns-panel {
+            background: rgba(20, 20, 30, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dns-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 0.5rem;
+            color: var(--dark-text);
+            font-family: monospace;
+        }
+
+        .dns-results {
+            margin-top: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* MCP LSP Panel */
+        .mcp-lsp-panel {
+            background: rgba(20, 20, 30, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lsp-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .lsp-status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--open-green);
+            box-shadow: var(--glow-subtle);
+        }
+
+        .lsp-status.connected .lsp-status-indicator {
+            background: var(--open-green);
+            animation: pulse 2s infinite;
+        }
+
+        .lsp-status.disconnected .lsp-status-indicator {
+            background: var(--blocked-red);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .lsp-results {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <div class="dashboard">
+        <h1 class="dashboard-header">🎯 Surgical Precision Dashboard</h1>
+
+        <div class="control-panel">
+            <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
+            <div>
+                <span class="status-indicator status-open"></span>
+                <span>Real-time Monitoring Active</span>
+            </div>
+            <div>
+                <span class="status-indicator status-review"></span>
+                <span>MCP Server: Connected</span>
+            </div>
+        </div>
+
+        <!-- Bun Info Panel -->
+        <div class="bun-info">
+            <div class="bun-info-item">
+                <span class="bun-info-label">Bun Version:</span>
+                <span class="bun-info-value" id="bun-version">Loading...</span>
+            </div>
+            <div class="bun-info-item">
+                <span class="bun-info-label">Bun Revision:</span>
+                <span class="bun-info-value" id="bun-revision">Loading...</span>
+            </div>
+            <div class="bun-info-item">
+                <span class="bun-info-label">Entry Point:</span>
+                <span class="bun-info-value" id="bun-main">Loading...</span>
+            </div>
+            <div class="bun-info-item">
+                <span class="bun-info-label">Environment:</span>
+                <span class="bun-info-value" id="bun-env">Loading...</span>
+            </div>
+            <div class="bun-info-item">
+                <span class="bun-info-label">Arguments:</span>
+                <span class="bun-info-value" id="bun-args">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Ripgrep Search Panel -->
+        <div class="ripgrep-panel">
+            <h3 class="card-title">🔍 Ripgrep Text Search</h3>
+            <div class="search-inputs">
+                <input type="text" class="search-input" id="ripgrep-pattern" placeholder="Search pattern (regex)">
+                <input type="text" class="search-input" id="ripgrep-path" placeholder="Search path (. for current directory)">
+            </div>
+            <button onclick="executeRipgrepSearch()" style="background: var(--gradient-cyan); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">Execute Search</button>
+            <div class="search-results" id="ripgrep-results">
+                <!-- Search results will appear here -->
+            </div>
+        </div>
+
+        <!-- DNS API Panel -->
+        <div class="dns-panel">
+            <h3 class="card-title">🌐 DNS API Endpoint</h3>
+            <input type="text" class="dns-input" id="dns-domain" placeholder="Enter domain to resolve">
+            <button onclick="resolveDNS()" style="margin-top: 0.5rem; background: var(--gradient-yellow); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">Resolve Domain</button>
+            <div class="dns-results" id="dns-results">
+                <!-- DNS results will appear here -->
+            </div>
+        </div>
+
+        <!-- MCP LSP Panel -->
+        <div class="mcp-lsp-panel">
+            <h3 class="card-title">🤖 MCP LSP Integration</h3>
+            <div class="lsp-status disconnected" id="lsp-status">
+                <div class="lsp-status-indicator"></div>
+                <span>LSP Status: Disconnected</span>
+            </div>
+            <button onclick="connectLSP()" style="margin-bottom: 1rem; background: var(--gradient-green); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">Connect LSP</button>
+            <div class="lsp-results" id="lsp-results">
+                <!-- LSP results will appear here -->
+            </div>
+        </div>
+
+        <!-- CLI Command Panel -->
+        <div class="cli-panel">
+            <h3 class="card-title">🔧 Bun CLI Executor</h3>
+            <input type="text" class="cli-input" id="cli-command" placeholder="Enter Bun command (e.g., bun run script.ts)">
+            <button onclick="executeBunCommand()" style="margin-top: 0.5rem; background: var(--gradient-cyan); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">Execute</button>
+            <div class="cli-output" id="cli-output"></div>
+        </div>
+
+        <!-- Package Management Panel -->
+        <div class="package-panel">
+            <h3 class="card-title">📦 Package Management</h3>
+            <button onclick="listPackages()" style="margin-bottom: 1rem; background: var(--gradient-green); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">List Packages</button>
+            <div class="package-list" id="package-list">
+                <!-- Packages will be listed here -->
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="performance-metrics" id="performance-metrics">
+            <!-- Performance metrics will be displayed here -->
+        </div>
+
+        <div id="alerts-container"></div>
+
+        <div class="dashboard-grid">
+            <!-- Team Status Card -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="status-indicator status-open"></span>
+                    Team Status
+                </h2>
+
+                <div id="team-status" class="loading-spinner"></div>
+            </div>
+
+            <!-- PR Metrics Card -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="status-indicator status-review"></span>
+                    PR Metrics
+                </h2>
+
+                <div id="pr-metrics" class="loading-spinner"></div>
+
+                <div class="chart-container">
+                    <canvas id="prChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Critical PRs Card -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="status-indicator status-blocked"></span>
+                    Critical PRs
+                </h2>
+
+                <div id="critical-prs" class="loading-spinner"></div>
+            </div>
+
+            <!-- Operations Status Card -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="status-indicator status-merged"></span>
+                    Operations Status
+                </h2>
+
+                <div id="operations-status" class="loading-spinner"></div>
+
+                <div class="chart-container">
+                    <canvas id="operationsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Metrics Row -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="status-indicator status-open"></span>
+                    Compliance Score
+                </h2>
+
+                <div id="compliance-score" class="loading-spinner"></div>
+
+                <div class="chart-container">
+                    <canvas id="complianceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="status-indicator status-review"></span>
+                    Risk Analysis
+                </h2>
+
+                <div id="risk-analysis" class="loading-spinner"></div>
+
+                <div class="chart-container">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="status-indicator status-merged"></span>
+                    LSP Code Intelligence
+                </h2>
+
+                <div id="lsp-intelligence" class="loading-spinner"></div>
+
+                <div class="interactive-element" onclick="analyzeCodeIntelligence()">
+                    <div style="text-align: center; padding: 1rem; background: rgba(0, 206, 209, 0.1); border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">🔍 Analyze Code</div>
+                        <div style="opacity: 0.7; font-size: 0.9rem;">Run LSP analysis on current PR</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab" onclick="refreshData()">🔄</div>
+
+    <!-- Notification Badge -->
+    <div class="notification-badge" id="notification-badge">0</div>
+
+    <script>
+        // Global state
+        let currentTheme = 'dark';
+        let prChart, operationsChart, complianceChart, riskChart;
+        let mcpConnection = null;
+        let lspClient = null;
+        let commandHistory = [];
+        let lspConnected = false;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            connectToMCP();
+            startRealTimeUpdates();
+            loadInitialData();
+
+            // Display Bun information
+            displayBunInfo();
+
+            // Initialize CLI and package management
+            initializeCLI();
+            listPackages();
+
+            // Display performance metrics
+            displayPerformanceMetrics();
+
+            // Initialize ripgrep and DNS
+            initializeRipgrep();
+            initializeDNS();
+            initializeLSP();
+        });
+
+        // Display Bun information
+        function displayBunInfo() {
+            // Check if Bun is available (running in Bun runtime)
+            if (typeof Bun !== 'undefined') {
+                document.getElementById('bun-version').textContent = Bun.version || 'N/A';
+                document.getElementById('bun-revision').textContent = Bun.revision || 'N/A';
+                document.getElementById('bun-main').textContent = Bun.main || 'N/A';
+                document.getElementById('bun-env').textContent = JSON.stringify(Bun.env, null, 2) || 'N/A';
+                document.getElementById('bun-args').textContent = JSON.stringify(Bun.args, null, 2) || 'N/A';
+            } else {
+                // Fallback for non-Bun environments
+                document.getElementById('bun-version').textContent = 'Browser Mode';
+                document.getElementById('bun-revision').textContent = 'N/A';
+                document.getElementById('bun-main').textContent = 'surgical-precision-dashboard.html';
+                document.getElementById('bun-env').textContent = JSON.stringify({
+                    NODE_ENV: 'production',
+                    USER_AGENT: navigator.userAgent
+                }, null, 2);
+                document.getElementById('bun-args').textContent = '[]';
+            }
+        }
+
+        // Initialize Charts
+        function initializeCharts() {
+            // PR Chart
+            const prCtx = document.getElementById('prChart').getContext('2d');
+            prChart = new Chart(prCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Open', 'In Review', 'Blocked', 'Merged'],
+                    datasets: [{
+                        data: [18, 7, 0, 17],
+                        backgroundColor: [
+                            'rgba(0, 255, 0, 0.7)',
+                            'rgba(255, 215, 0, 0.7)',
+                            'rgba(255, 0, 0, 0.7)',
+                            'rgba(0, 206, 209, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(0, 255, 0, 1)',
+                            'rgba(255, 215, 0, 1)',
+                            'rgba(255, 0, 0, 1)',
+                            'rgba(0, 206, 209, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Operations Chart
+            const opsCtx = document.getElementById('operationsChart').getContext('2d');
+            operationsChart = new Chart(opsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'Deployment Success Rate',
+                        data: [98.5, 98.7, 98.9, 98.7, 98.8, 98.7],
+                        borderColor: 'rgba(0, 255, 0, 0.8)',
+                        backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 98,
+                            max: 100,
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Compliance Chart
+            const compCtx = document.getElementById('complianceChart').getContext('2d');
+            complianceChart = new Chart(compCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Compliance Score',
+                        data: [99.8, 99.9, 99.7, 99.9, 99.8, 99.9],
+                        backgroundColor: 'rgba(255, 0, 255, 0.7)',
+                        borderColor: 'rgba(255, 0, 255, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 99.5,
+                            max: 100,
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Risk Chart
+            const riskCtx = document.getElementById('riskChart').getContext('2d');
+            riskChart = new Chart(riskCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Security', 'Performance', 'Compliance', 'Availability', 'Scalability'],
+                    datasets: [{
+                        label: 'Risk Level',
+                        data: [0.1, 0.05, 0.01, 0.02, 0.03],
+                        backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                        borderColor: 'rgba(255, 215, 0, 0.8)',
+                        pointBackgroundColor: 'rgba(255, 215, 0, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 215, 0, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-text')
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Connect to MCP Server
+        async function connectToMCP() {
+            // Use Bun's environment for configuration
+            const mcpConfig = {
+                server: Bun.env.MCP_SERVER || 'localhost:50045',
+                token: Bun.env.MCP_TOKEN || 'demo-token',
+                contentTypes: ['application/json', 'application/octet-stream', 'text/plain'],
+                s3: {
+                    bucket: Bun.env.S3_BUCKET || 'surgical-precision-dashboards',
+                    region: Bun.env.S3_REGION || 'us-east-1',
+                    endpoint: Bun.env.S3_ENDPOINT || 'https://s3.amazonaws.com'
+                }
+            };
+
+            // Simulate MCP connection with enhanced security
+            mcpConnection = {
+                connected: true,
+                config: mcpConfig,
+                protocol: 'https',
+                contentType: 'application/json',
+                s3Support: true,
+                onData: (data) => {
+                    updateDashboard(data);
+                }
+            };
+
+            // Register quantum-signed hyperlinks for S3 resources
+            if (typeof window.hyperlinkManager !== 'undefined') {
+                await window.hyperlinkManager.registerLink(
+                    `https://${mcpConfig.s3.bucket}.s3.${mcpConfig.s3.region}.amazonaws.com/dashboards/surgical-precision/metrics.json`,
+                    '📊 S3 Metrics',
+                    's3-metrics',
+                    { bucket: mcpConfig.s3.bucket, region: mcpConfig.s3.region }
+                );
+            }
+
+            showAlert(`MCP Connected to ${mcpConfig.server} (HTTPS, S3: ${mcpConfig.s3.bucket})`, 'success');
+        }
+
+        // Start real-time updates
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                refreshData();
+            }, 10000); // Update every 10 seconds
+        }
+
+        // Load initial data
+        function loadInitialData() {
+            // Simulate loading data with delay
+            setTimeout(() => {
+                updateTeamStatus();
+                updatePRMetrics();
+                updateCriticalPRs();
+                updateOperationsStatus();
+                updateComplianceScore();
+                updateRiskAnalysis();
+                updateLSPIntelligence();
+
+                // Hide loading spinners
+                document.querySelectorAll('.loading-spinner').forEach(spinner => {
+                    spinner.style.display = 'none';
+                });
+
+                // Update notification badge
+                updateNotificationBadge();
+            }, 1500);
+        }
+
+        // Refresh all data
+        function refreshData() {
+            // Update timestamp
+            const now = new Date().toLocaleTimeString();
+            showAlert(`Data refreshed at ${now}`, 'success');
+            
+            // Update metrics
+            updatePRMetrics();
+            updateOperationsStatus();
+            updateComplianceScore();
+            updateRiskAnalysis();
+            
+            // Increment notification counter
+            const badge = document.getElementById('notification-badge');
+            const current = parseInt(badge.textContent) || 0;
+            badge.textContent = (current + 1) % 10;
+        }
+
+        // Update notification badge
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notification-badge');
+            badge.textContent = Math.floor(Math.random() * 5);
+        }
+
+        // Update dashboard with MCP data (simulated)
+        function updateDashboard(data) {
+            if (data.teamStatus) updateTeamStatus(data.teamStatus);
+            if (data.prMetrics) updatePRMetrics(data.prMetrics);
+            if (data.criticalPRs) updateCriticalPRs(data.criticalPRs);
+            if (data.operationsStatus) updateOperationsStatus(data.operationsStatus);
+            if (data.complianceScore) updateComplianceScore(data.complianceScore);
+            if (data.riskAnalysis) updateRiskAnalysis(data.riskAnalysis);
+        }
+
+        // Update team status
+        function updateTeamStatus(data = null) {
+            const container = document.getElementById('team-status');
+            const statusData = data || {
+                alice: { status: 'Active', task: 'System Design' },
+                bob: { status: 'Reviewing', task: 'Security Analysis' },
+                carol: { status: 'Approved', task: 'Audit Trail' },
+                dave: { status: 'In Progress', task: 'Deployment' }
+            };
+
+            container.innerHTML = `
+                <div class="team-member alice">
+                    <div class="team-member-avatar">A</div>
+                    <div>
+                        <div>Alice (Architect)</div>
+                        <div style="opacity: 0.7; font-size: 0.9rem;">${statusData.alice.task} • ${statusData.alice.status}</div>
+                    </div>
+                </div>
+
+                <div class="team-member bob">
+                    <div class="team-member-avatar">B</div>
+                    <div>
+                        <div>Bob (Risk Analyst)</div>
+                        <div style="opacity: 0.7; font-size: 0.9rem;">${statusData.bob.task} • ${statusData.bob.status}</div>
+                    </div>
+                </div>
+
+                <div class="team-member carol">
+                    <div class="team-member-avatar">C</div>
+                    <div>
+                        <div>Carol (Compliance)</div>
+                        <div style="opacity: 0.7; font-size: 0.9rem;">${statusData.carol.task} • ${statusData.carol.status}</div>
+                    </div>
+                </div>
+
+                <div class="team-member dave">
+                    <div class="team-member-avatar">D</div>
+                    <div>
+                        <div>Dave (Operations)</div>
+                        <div style="opacity: 0.7; font-size: 0.9rem;">${statusData.dave.task} • ${statusData.dave.status}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update PR metrics
+        function updatePRMetrics(data = null) {
+            const container = document.getElementById('pr-metrics');
+            const metricsData = data || {
+                total: 42,
+                open: 18,
+                review: 7,
+                blocked: 0,
+                merged: 17
+            };
+
+            container.innerHTML = `
+                <div style="text-align: center;">
+                    <div class="metric">${metricsData.total}</div>
+                    <div style="opacity: 0.7;">Active PRs</div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${(metricsData.open / metricsData.total) * 100}%"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">${metricsData.open}</div>
+                        <div style="opacity: 0.7;">In Review</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">${metricsData.blocked}</div>
+                        <div style="opacity: 0.7;">Blocked</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">${metricsData.merged}</div>
+                        <div style="opacity: 0.7;">Merged</div>
+                    </div>
+                </div>
+            `;
+
+            // Update chart
+            if (prChart) {
+                prChart.data.datasets[0].data = [metricsData.open, metricsData.review, metricsData.blocked, metricsData.merged];
+                prChart.update();
+            }
+        }
+
+        // Update critical PRs
+        function updateCriticalPRs(data = null) {
+            const container = document.getElementById('critical-prs');
+            const prsData = data || [
+                { id: '#1234', title: 'Security Breach Fix', assignee: 'Bob', priority: 'Critical', category: 'Risk' },
+                { id: '#1235', title: 'Performance Optimization', assignee: 'Alice', priority: 'High', category: 'Architecture' },
+                { id: '#1236', title: 'Compliance Update', assignee: 'Carol', priority: 'Medium', category: 'Compliance' }
+            ];
+
+            container.innerHTML = prsData.map(pr => `
+                <div class="pr-item ${pr.priority.toLowerCase()}">
+                    <div style="font-weight: bold;">${pr.id}: ${pr.title}</div>
+                    <div style="opacity: 0.7; font-size: 0.9rem;">${pr.assignee} • ${pr.category} • ${pr.priority}</div>
+                </div>
+            `).join('');
+        }
+
+        // Update operations status
+        function updateOperationsStatus(data = null) {
+            const container = document.getElementById('operations-status');
+            const opsData = data || {
+                uptime: 99.8,
+                deployments: 42,
+                failed: 0,
+                avgTime: '2.3s'
+            };
+
+            container.innerHTML = `
+                <div class="performance-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value">${opsData.uptime}%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${opsData.deployments}</div>
+                        <div class="metric-label">Deployments</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${opsData.failed}</div>
+                        <div class="metric-label">Failed</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${opsData.avgTime}</div>
+                        <div class="metric-label">Avg Time</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update compliance score
+        function updateComplianceScore(data = null) {
+            const container = document.getElementById('compliance-score');
+            const complianceData = data || {
+                score: 99.8,
+                audits: 12,
+                violations: 0,
+                status: 'Compliant'
+            };
+
+            container.innerHTML = `
+                <div class="performance-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value">${complianceData.score}%</div>
+                        <div class="metric-label">Score</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${complianceData.audits}</div>
+                        <div class="metric-label">Audits</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${complianceData.violations}</div>
+                        <div class="metric-label">Violations</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${complianceData.status}</div>
+                        <div class="metric-label">Status</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update risk analysis
+        function updateRiskAnalysis(data = null) {
+            const container = document.getElementById('risk-analysis');
+            const riskData = data || {
+                security: 'Low',
+                performance: 'Very Low',
+                compliance: 'Minimal',
+                availability: 'Very Low',
+                scalability: 'Low'
+            };
+
+            container.innerHTML = `
+                <div style="padding: 1rem;">
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="color: var(--alice-cyan);">Security Risk:</span> 
+                        <strong>${riskData.security}</strong>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="color: var(--bob-yellow);">Performance Risk:</span> 
+                        <strong>${riskData.performance}</strong>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="color: var(--carol-magenta);">Compliance Risk:</span> 
+                        <strong>${riskData.compliance}</strong>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="color: var(--dave-green);">Availability Risk:</span> 
+                        <strong>${riskData.availability}</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--high-orange);">Scalability Risk:</span> 
+                        <strong>${riskData.scalability}</strong>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update LSP Intelligence
+        function updateLSPIntelligence(data = null) {
+            const container = document.getElementById('lsp-intelligence');
+            const lspData = data || {
+                symbols: 1423,
+                references: 8921,
+                definitions: 1423,
+                errors: 0
+            };
+
+            container.innerHTML = `
+                <div class="performance-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value">${lspData.symbols}</div>
+                        <div class="metric-label">Symbols</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${lspData.references}</div>
+                        <div class="metric-label">References</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${lspData.definitions}</div>
+                        <div class="metric-label">Definitions</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${lspData.errors}</div>
+                        <div class="metric-label">Errors</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            showAlert(`Switched to ${currentTheme} mode`, 'success');
+            
+            // Update chart colors
+            if (prChart) {
+                const textColor = currentTheme === 'dark' ? '#ffffff' : '#000000';
+                prChart.options.plugins.legend.labels.color = textColor;
+                prChart.update();
+            }
+        }
+
+        // CLI Functions
+        function initializeCLI() {
+            const input = document.getElementById('cli-command');
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    executeBunCommand();
+                }
+            });
+        }
+
+        function executeBunCommand() {
+            const command = document.getElementById('cli-command').value.trim();
+            const output = document.getElementById('cli-output');
+            
+            if (!command) {
+                showAlert('Please enter a command', 'warning');
+                return;
+            }
+
+            // Add to history
+            commandHistory.push(command);
+            
+            // Display execution message
+            output.textContent = `> Executing: ${command}\n`;
+            
+            // Simulate command execution (in a real scenario, this would call the backend)
+            setTimeout(() => {
+                if (command.includes('test')) {
+                    output.textContent += `\n✓ Tests passed\n✓ Coverage: 98.5%\n✓ Execution time: 1.2s`;
+                    showAlert('Tests completed successfully', 'success');
+                } else if (command.includes('build')) {
+                    output.textContent += `\n✓ Build completed\n✓ Artifacts generated\n✓ Optimized for production`;
+                    showAlert('Build completed successfully', 'success');
+                } else if (command.includes('search')) {
+                    output.textContent += `\n🔍 Found 42 matches\n📁 Searched 1423 files\n⏱️ Completed in 0.8s`;
+                    showAlert('Search completed', 'success');
+                } else {
+                    output.textContent += `\n✓ Command executed successfully\n\nOutput:\nOperation completed with surgical precision (99.8% success rate)`;
+                    showAlert('Command executed successfully', 'success');
+                }
+            }, 1000);
+        }
+
+        // Package Management
+        function listPackages() {
+            const container = document.getElementById('package-list');
+            
+            // Simulated package list
+            const packages = [
+                { name: '@bunhq/core', version: '1.1.0' },
+                { name: 'chart.js', version: '4.4.0' },
+                { name: '@surgical-precision/platform', version: '2.3.1' },
+                { name: 'ripgrep-wasm', version: '1.4.2' },
+                { name: 'dns-resolver', version: '1.1.0' },
+                { name: 'lsp-client', version: '0.9.5' }
+            ];
+
+            container.innerHTML = packages.map(pkg => `
+                <div class="package-item">
+                    <div class="package-name">${pkg.name}</div>
+                    <div class="package-version">v${pkg.version}</div>
+                </div>
+            `).join('');
+        }
+
+        // Performance Metrics
+        function displayPerformanceMetrics() {
+            const container = document.getElementById('performance-metrics');
+            
+            const metrics = [
+                { label: 'DNS Resolution', value: '12ms', status: 'optimal' },
+                { label: 'LSP Response', value: '45ms', status: 'optimal' },
+                { label: 'Ripgrep Search', value: '8ms', status: 'optimal' },
+                { label: 'MCP Latency', value: '23ms', status: 'optimal' },
+                { label: 'CLI Execution', value: '120ms', status: 'good' },
+                { label: 'Chart Render', value: '67ms', status: 'optimal' }
+            ];
+
+            container.innerHTML = metrics.map(metric => `
+                <div class="metric-card">
+                    <div class="metric-value">${metric.value}</div>
+                    <div class="metric-label">${metric.label}</div>
+                </div>
+            `).join('');
+        }
+
+        // Ripgrep Functions
+        function initializeRipgrep() {
+            const input = document.getElementById('ripgrep-pattern');
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    executeRipgrepSearch();
+                }
+            });
+        }
+
+        function executeRipgrepSearch() {
+            const pattern = document.getElementById('ripgrep-pattern').value.trim();
+            const path = document.getElementById('ripgrep-path').value.trim() || '.';
+            const results = document.getElementById('ripgrep-results');
+            
+            if (!pattern) {
+                showAlert('Please enter a search pattern', 'warning');
+                return;
+            }
+
+            results.textContent = `> Searching for "${pattern}" in ${path}...\n`;
+            
+            // Simulate ripgrep search (in real scenario, this would use the MCP tool)
+            setTimeout(() => {
+                const simulatedResults = [
+                    'demos/surgical-precision-dashboard.html:45:  --alice-cyan: #00CED1;',
+                    'demos/surgical-precision-dashboard.html:46:  --bob-yellow: #FFD700;',
+                    '__tests__/performance-benchmarks.test.ts:12:  const ALICE_COLOR = "#00CED1";',
+                    '__tests__/performance-benchmarks.test.ts:13:  const BOB_COLOR = "#FFD700";',
+                    'operation_surgical_precision/README.md:1: # Surgical Precision Platform',
+                    'poly-kalshi-arb/src/config.rs:5:  pub const ALICE_COLOR: &str = "#00CED1";'
+                ];
+
+                results.textContent += `\n✓ Found 6 matches in 3 files\n\n`;
+                results.textContent += simulatedResults.join('\n');
+                results.textContent += `\n\n⏱️ Search completed in 12ms`;
+                
+                showAlert('Search completed successfully', 'success');
+            }, 800);
+        }
+
+        // DNS Functions
+        function initializeDNS() {
+            const input = document.getElementById('dns-domain');
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    resolveDNS();
+                }
+            });
+        }
+
+        function resolveDNS() {
+            const domain = document.getElementById('dns-domain').value.trim();
+            const results = document.getElementById('dns-results');
+            
+            if (!domain) {
+                showAlert('Please enter a domain', 'warning');
+                return;
+            }
+
+            results.textContent = `> Resolving ${domain}...\n`;
+            
+            // Simulate DNS resolution
+            setTimeout(() => {
+                const simulatedResponse = {
+                    domain: domain,
+                    resolved: true,
+                    ip: '192.168.1.100',
+                    ttl: 300,
+                    resolver: 'surgical-precision-dns',
+                    timestamp: new Date().toISOString()
+                };
+
+                results.textContent += `\n✓ Domain resolved successfully\n\n`;
+                results.textContent += `Domain: ${simulatedResponse.domain}\n`;
+                results.textContent += `IP Address: ${simulatedResponse.ip}\n`;
+                results.textContent += `TTL: ${simulatedResponse.ttl}s\n`;
+                results.textContent += `Resolver: ${simulatedResponse.resolver}\n`;
+                results.textContent += `Timestamp: ${simulatedResponse.timestamp}`;
+                
+                showAlert('DNS resolution successful', 'success');
+            }, 600);
+        }
+
+        // LSP Functions
+        function initializeLSP() {
+            // LSP initialization handled in connectLSP()
+        }
+
+        function connectLSP() {
+            const status = document.getElementById('lsp-status');
+            const results = document.getElementById('lsp-results');
+            
+            results.textContent = '> Connecting to LSP server...\n';
+            
+            setTimeout(() => {
+                if (!lspConnected) {
+                    lspConnected = true;
+                    status.classList.remove('disconnected');
+                    status.classList.add('connected');
+                    status.innerHTML = '<div class="lsp-status-indicator"></div><span>LSP Status: Connected</span>';
+                    
+                    results.textContent += '\n✓ LSP connection established\n';
+                    results.textContent += '✓ Language server initialized\n';
+                    results.textContent += '✓ Code intelligence active\n';
+                    results.textContent += '✓ Real-time analysis enabled';
+                    
+                    showAlert('LSP connected successfully', 'success');
+                } else {
+                    // Disconnect
+                    lspConnected = false;
+                    status.classList.remove('connected');
+                    status.classList.add('disconnected');
+                    status.innerHTML = '<div class="lsp-status-indicator"></div><span>LSP Status: Disconnected</span>';
+                    
+                    results.textContent += '\n✗ LSP connection closed\n';
+                    showAlert('LSP disconnected', 'warning');
+                }
+            }, 1000);
+        }
+
+        function analyzeCodeIntelligence() {
+            const results = document.getElementById('lsp-results');
+            
+            if (!lspConnected) {
+                showAlert('Please connect LSP first', 'warning');
+                return;
+            }
+
+            results.textContent = '> Running code intelligence analysis...\n';
+            
+            setTimeout(() => {
+                const analysis = {
+                    symbols: 1523,
+                    references: 8921,
+                    definitions: 1523,
+                    errors: 0,
+                    warnings: 2,
+                    codeSmells: 5,
+                    performanceIssues: 0
+                };
+
+                results.textContent += `\n✓ Analysis completed\n\n`;
+                results.textContent += `📊 Symbols: ${analysis.symbols}\n`;
+                results.textContent += `🔗 References: ${analysis.references}\n`;
+                results.textContent += `🎯 Definitions: ${analysis.definitions}\n`;
+                results.textContent += `❌ Errors: ${analysis.errors}\n`;
+                results.textContent += `⚠️ Warnings: ${analysis.warnings}\n`;
+                results.textContent += `👃 Code Smells: ${analysis.codeSmells}\n`;
+                results.textContent += `⚡ Performance Issues: ${analysis.performanceIssues}\n\n`;
+                results.textContent += `📈 Code Quality Score: 98.5%\n`;
+                results.textContent += `🔍 Security Rating: A+\n`;
+                results.textContent += `⏱️ Analysis Time: 45ms`;
+                
+                showAlert('Code analysis complete', 'success');
+            }, 1500);
+        }
+
+        // Alert System
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alerts-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            
+            const icon = type === 'success' ? '✓' : type === 'warning' ? '⚠️' : '✗';
+            alert.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            
+            container.appendChild(alert);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+
+        // Bun v1.3.5 Terminal Enhancements
+        // Terminal String Width Wrapper with Security
+        class TerminalStringWidth {
+            constructor() {
+                this.MAX_STRING_LENGTH = 10 * 1024 * 1024; // 10MB limit
+                this.metrics = {
+                    slowCalculations: 0,
+                    totalCalls: 0
+                };
+            }
+
+            calculateWidth(str, context = 'unknown') {
+                // Security: Prevent ReDoS with excessive string lengths
+                if (str.length > this.MAX_STRING_LENGTH) {
+                    console.warn('⚠️ String width calculation blocked: length exceeds limit', {
+                        length: str.length,
+                        context
+                    });
+                    return 0;
+                }
+
+                const startTime = performance.now();
+
+                try {
+                    // Browser fallback: Use canvas for accurate text measurement
+                    if (typeof document !== 'undefined') {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        if (ctx) {
+                            ctx.font = 'monospace';
+                            const width = ctx.measureText(str).width;
+                            const duration = performance.now() - startTime;
+
+                            if (duration > 10) {
+                                this.metrics.slowCalculations++;
+                                console.log(`📊 Slow string width calculation: ${duration.toFixed(2)}ms for ${str.length} chars`);
+                            }
+
+                            this.metrics.totalCalls++;
+                            return Math.ceil(width / 8); // Approximate to terminal cells
+                        }
+                    }
+
+                    // Fallback: count characters
+                    return str.length;
+                } catch (error) {
+                    console.error('String width calculation error:', error);
+                    return str.length; // Fallback
+                }
+            }
+
+            stripSequences(str) {
+                const removed = [];
+                let cleaned = str;
+
+                // Remove CSI sequences
+                cleaned = cleaned.replace(/\x1b\[[\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E]/g, (match) => {
+                    removed.push({ type: 'CSI', sequence: match, length: match.length });
+                    return '';
+                });
+
+                // Remove OSC 8 hyperlinks
+                cleaned = cleaned.replace(/\x1b\]8;;[^\x07\x1b]*(?:\x07|\x1b\\)/g, (match) => {
+                    removed.push({ type: 'OSC8', sequence: match, length: match.length });
+                    return '';
+                });
+
+                return { cleaned, removed };
+            }
+
+            validateForTerminal(str, context) {
+                const { cleaned, removed } = this.stripSequences(str);
+                const issues = [];
+
+                removed.forEach(seq => {
+                    if (seq.length > 256) {
+                        issues.push(`Suspiciously long escape sequence: ${seq.type}`);
+                    }
+                });
+
+                return {
+                    isSafe: issues.length === 0,
+                    cleaned,
+                    originalWidth: this.calculateWidth(str),
+                    cleanedWidth: this.calculateWidth(cleaned),
+                    sequencesRemoved: removed.length,
+                    issues
+                };
+            }
+
+            truncate(str, maxWidth, suffix = '…') {
+                if (this.calculateWidth(str) <= maxWidth) {
+                    return str;
+                }
+
+                const suffixWidth = this.calculateWidth(suffix);
+                let result = '';
+                let currentWidth = 0;
+
+                for (const char of str) {
+                    const charWidth = this.calculateWidth(char);
+                    if (currentWidth + charWidth + suffixWidth > maxWidth) {
+                        break;
+                    }
+                    result += char;
+                    currentWidth += charWidth;
+                }
+
+                return result + suffix;
+            }
+        }
+
+        // Hyperlink Manager with Security and Audit Trail
+        class HyperlinkManager {
+            constructor() {
+                this.linkRegistry = new Map();
+                this.auditLog = [];
+            }
+
+            async registerLink(url, text, id, metadata = {}) {
+                // Security: Validate URL
+                const validation = await this.validateUrl(url, id);
+                if (!validation.allowed) {
+                    throw new Error(`URL blocked by policy: ${validation.reason}`);
+                }
+
+                const link = {
+                    id,
+                    url,
+                    text,
+                    displayWidth: text.length,
+                    createdAt: Date.now(),
+                    accessedCount: 0,
+                    metadata,
+                    complianceFrameworks: validation.frameworks
+                };
+
+                this.linkRegistry.set(id, link);
+
+                // Audit log
+                this.auditLog.push({
+                    action: 'register',
+                    linkId: id,
+                    timestamp: Date.now(),
+                    url,
+                    metadata
+                });
+
+                return link;
+            }
+
+            createLink(id, terminator = 'ST') {
+                const link = this.linkRegistry.get(id);
+                if (!link) {
+                    throw new Error(`Link not registered: ${id}`);
+                }
+
+                const termChar = terminator === 'BEL' ? '\x07' : '\x1b\\';
+                return `\x1b]8;;${link.url}${termChar}${link.text}\x1b]8;;${termChar}`;
+            }
+
+            async validateUrl(url, id) {
+                try {
+                    const parsed = new URL(url);
+
+                    // Basic security checks
+                    if (['javascript:', 'data:', 'vbscript:'].includes(parsed.protocol)) {
+                        return { allowed: false, reason: 'XSS attempt detected' };
+                    }
+
+                    // Check for localhost in production
+                    if (window.location.hostname !== 'localhost' && 
+                        (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1')) {
+                        return { allowed: false, reason: 'Localhost blocked in production' };
+                    }
+
+                    return { 
+                        allowed: true, 
+                        frameworks: ['GDPR', 'CCPA', 'SOC2'] 
+                    };
+                } catch (error) {
+                    return { allowed: false, reason: 'Invalid URL format' };
+                }
+            }
+
+            recordAccess(id, userId) {
+                const link = this.linkRegistry.get(id);
+                if (!link) return;
+
+                link.accessedCount++;
+
+                this.auditLog.push({
+                    action: 'access',
+                    linkId: id,
+                    userId,
+                    timestamp: Date.now(),
+                    url: link.url
+                });
+            }
+
+            generateComplianceReport() {
+                const links = Array.from(this.linkRegistry.values());
+
+                return {
+                    totalLinks: links.length,
+                    totalAccesses: links.reduce((sum, l) => sum + l.accessedCount, 0),
+                    links: links.map(l => ({
+                        id: l.id,
+                        url: l.url,
+                        accesses: l.accessedCount,
+                        createdAt: l.createdAt,
+                        frameworks: l.complianceFrameworks
+                    })),
+                    auditLog: this.auditLog.slice(-100) // Last 100 entries
+                };
+            }
+        }
+
+        // Terminal Dashboard Renderer
+        class TerminalDashboard {
+            constructor() {
+                this.stringWidth = new TerminalStringWidth();
+                this.hyperlinkManager = new HyperlinkManager();
+                this.DASHBOARD_WIDTH = 120;
+                this.PADDING = 2;
+            }
+
+            async initialize() {
+                // Register dashboard sections as hyperlinks
+                await this.hyperlinkManager.registerLink(
+                    'https://dashboard.sportsbook.internal/markets',
+                    '📊 Markets',
+                    'dashboard-markets',
+                    { section: 'active-markets', refreshRate: 100 }
+                );
+
+                await this.hyperlinkManager.registerLink(
+                    'https://dashboard.sportsbook.internal/risk',
+                    '⚠️  Risk Monitor',
+                    'dashboard-risk',
+                    { section: 'risk-analysis', refreshRate: 500 }
+                );
+
+                await this.hyperlinkManager.registerLink(
+                    'https://dashboard.sportsbook.internal/compliance',
+                    '✅ Compliance',
+                    'dashboard-compliance',
+                    { section: 'gdpr-audit', refreshRate: 1000 }
+                );
+            }
+
+            renderHeader() {
+                const title = '🏆 Sportsbook Operations Dashboard v1.3.5';
+                const timestamp = new Date().toLocaleTimeString();
+
+                const titleWidth = this.stringWidth.calculateWidth(title);
+                const timestampWidth = this.stringWidth.calculateWidth(timestamp);
+
+                const separator = '─'.repeat(this.DASHBOARD_WIDTH);
+                const padding = Math.max(0, (this.DASHBOARD_WIDTH - titleWidth) / 2);
+                const centeredTitle = ' '.repeat(Math.floor(padding)) + title;
+
+                // Create hyperlinks
+                const marketLink = this.hyperlinkManager.createLink('dashboard-markets');
+                const riskLink = this.hyperlinkManager.createLink('dashboard-risk');
+                const complianceLink = this.hyperlinkManager.createLink('dashboard-compliance');
+
+                return `\x1b[1;36m${separator}\1b[0m\n` +
+                       `\x1b[1;32m${centeredTitle}\x1b[0m\n` +
+                       `\x1b[36m${timestamp}\x1b[0m\n` +
+                       `${marketLink} | ${riskLink} | ${complianceLink}\n` +
+                       `\x1b[1;36m${separator}\x1b[0m\n`;
+            }
+
+            renderMarkets(markets) {
+                let output = '\x1b[1;33mActive Markets:\x1b[0m\n';
+
+                const headers = ['ID', 'Event', 'Status', 'Providers', 'Overround', 'Last Update'];
+                const colWidths = this.calculateColumnWidths(headers, markets);
+
+                // Render header
+                output += this.renderTableRow(headers, colWidths, '\x1b[1;37m');
+                output += '\x1b[90m' + '─'.repeat(this.DASHBOARD_WIDTH) + '\x1b[0m\n';
+
+                // Render market rows
+                for (const market of markets.slice(0, 10)) {
+                    const row = [
+                        market.marketId.toString(),
+                        market.eventId.toString(),
+                        market.status,
+                        market.providerCount.toString(),
+                        `${(market.overround * 100).toFixed(2)}%`,
+                        new Date(market.lastUpdated).toLocaleTimeString()
+                    ];
+
+                    const color = this.getStatusColor(market.status);
+                    output += this.renderTableRow(row, colWidths, color);
+                }
+
+                return output;
+            }
+
+            calculateColumnWidths(headers, markets) {
+                const widths = headers.map(h => this.stringWidth.calculateWidth(h));
+
+                for (const market of markets) {
+                    widths[0] = Math.max(widths[0], this.stringWidth.calculateWidth(market.marketId.toString()));
+                    widths[1] = Math.max(widths[1], this.stringWidth.calculateWidth(market.eventId.toString()));
+                    widths[3] = Math.max(widths[3], this.stringWidth.calculateWidth(market.providerCount.toString()));
+                }
+
+                return widths.map(w => w + this.PADDING * 2);
+            }
+
+            renderTableRow(cells, widths, color) {
+                let row = '';
+
+                for (let i = 0; i < cells.length; i++) {
+                    const cell = cells[i];
+                    const width = this.stringWidth.calculateWidth(cell);
+                    const padding = ' '.repeat(Math.max(0, widths[i] - width));
+
+                    row += `${color}${cell}${padding}\x1b[0m `;
+                }
+
+                return row + '\n';
+            }
+
+            getStatusColor(status) {
+                switch (status) {
+                    case 'OPEN': return '\x1b[32m'; // Green
+                    case 'SUSPENDED': return '\x1b[33m'; // Yellow
+                    case 'CLOSED': return '\x1b[31m'; // Red
+                    default: return '\x1b[90m'; // Gray
+                }
+            }
+
+            renderRiskAlerts(alerts) {
+                let output = '\x1b[1;33mRisk Alerts:\x1b[0m\n';
+
+                for (const alert of alerts.slice(0, 5)) {
+                    const severityColor = alert.severity === 'critical' ? '\x1b[31m' :
+                                         alert.severity === 'high' ? '\x1b[35m' : '\x1b[33m';
+
+                    const message = this.stringWidth.truncate(alert.message, this.DASHBOARD_WIDTH - 20);
+                    output += `${severityColor}⚠️  ${message}\x1b[0m\n`;
+                }
+
+                return output;
+            }
+
+            async refresh(markets, alerts) {
+                // This would normally clear the terminal
+                console.log('\x1b[2J\x1b[H'); // Clear screen
+
+                const header = this.renderHeader();
+                const marketsTable = this.renderMarkets(markets);
+                const riskPanel = this.renderRiskAlerts(alerts);
+
+                console.log(header + marketsTable + riskPanel);
+
+                return {
+                    marketsRendered: markets.length,
+                    alertsShown: alerts.length,
+                    terminalWidth: this.DASHBOARD_WIDTH
+                };
+            }
+        }
+
+        // Enhanced Binary Debugger
+        class EnhancedBinaryDebugger {
+            constructor() {
+                this.terminal = new TerminalDashboard();
+                this.stringWidth = new TerminalStringWidth();
+            }
+
+            debugWithTerminal(message) {
+                const hex = Array.from(message)
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join(' ');
+
+                const validation = this.stringWidth.validateForTerminal(hex, 'binary-hex');
+
+                if (!validation.isSafe) {
+                    console.error('⚠️  Unsafe sequences detected:', validation.issues);
+                    return;
+                }
+
+                this.renderHexDump(message, hex);
+            }
+
+            renderHexDump(message, hex) {
+                const terminalWidth = 80;
+                const hexCharsPerLine = Math.floor((terminalWidth - 20) / 2);
+
+                console.log('\x1b[1;34mBinary Message Hex Dump:\x1b[0m');
+
+                for (let i = 0; i < hex.length; i += hexCharsPerLine) {
+                    const lineHex = hex.slice(i, i + hexCharsPerLine);
+                    const bytes = message.slice(i / 2, Math.min(i / 2 + hexCharsPerLine / 2, message.length));
+
+                    const ascii = Array.from(bytes, byte =>
+                        (byte >= 32 && byte <= 126) ? String.fromCharCode(byte) : '.'
+                    ).join('');
+
+                    console.log(
+                        `\x1b[90m${(i / 2).toString(16).padStart(8, '0')}\x1b[0m ` +
+                        `${lineHex.padEnd(hexCharsPerLine, ' ')} ` +
+                        `\x1b[32m${ascii}\x1b[0m`
+                    );
+                }
+
+                console.log(`\x1b[90mLength: ${message.length}, ByteLength: ${message.byteLength}\x1b[0m`);
+            }
+        }
+
+        // Global instances
+        let terminalDashboard = null;
+        let binaryDebugger = null;
+
+        // Initialize terminal enhancements
+        async function initializeTerminalEnhancements() {
+            try {
+                terminalDashboard = new TerminalDashboard();
+                binaryDebugger = new EnhancedBinaryDebugger();
+
+                await terminalDashboard.initialize();
+
+                // Store globally for access
+                window.hyperlinkManager = terminalDashboard.hyperlinkManager;
+                window.terminalStringWidth = terminalDashboard.stringWidth;
+
+                console.log('✅ Terminal enhancements initialized (Bun v1.3.5 compatible)');
+            } catch (error) {
+                console.error('Failed to initialize terminal enhancements:', error);
+            }
+        }
+
+        // Terminal Dashboard Demo
+        async function runTerminalDashboardDemo() {
+            if (!terminalDashboard) {
+                await initializeTerminalEnhancements();
+            }
+
+            // Mock market data
+            const mockMarkets = [
+                { marketId: 1001, eventId: 5001, status: 'OPEN', providerCount: 3, overround: 0.052, lastUpdated: Date.now() },
+                { marketId: 1002, eventId: 5002, status: 'SUSPENDED', providerCount: 2, overround: 0.048, lastUpdated: Date.now() - 5000 },
+                { marketId: 1003, eventId: 5003, status: 'OPEN', providerCount: 4, overround: 0.055, lastUpdated: Date.now() - 10000 }
+            ];
+
+            const mockAlerts = [
+                { severity: 'critical', message: 'Market 1002 odds deviation exceeds threshold' },
+                { severity: 'high', message: 'Provider latency spike detected' },
+                { severity: 'medium', message: 'Compliance audit scheduled' }
+            ];
+
+            const result = await terminalDashboard.refresh(mockMarkets, mockAlerts);
+            showAlert(`Terminal dashboard rendered: ${result.marketsRendered} markets, ${result.alertsShown} alerts`, 'success');
+        }
+
+        // Binary Debugger Demo
+        function runBinaryDebuggerDemo() {
+            if (!binaryDebugger) {
+                binaryDebugger = new EnhancedBinaryDebugger();
+            }
+
+            // Mock binary message
+            const mockMessage = new Uint8Array([
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x57, 0x6F, 0x72, 0x6C, 0x64 // "Hello World"
+            ]);
+
+            binaryDebugger.debugWithTerminal(mockMessage);
+            showAlert('Binary debugger demo completed - check console for hex dump', 'success');
+        }
+
+        // Interactive functions for PR items
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.pr-item')) {
+                const prItem = e.target.closest('.pr-item');
+                const prTitle = prItem.querySelector('div').textContent;
+                showAlert(`Selected: ${prTitle}`, 'success');
+            }
+        });
+
+        // Initialize terminal enhancements on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add terminal demo buttons to control panel
+            const controlPanel = document.querySelector('.control-panel');
+            if (controlPanel) {
+                const terminalBtn = document.createElement('button');
+                terminalBtn.textContent = '🖥️ Terminal Demo';
+                terminalBtn.style.cssText = 'background: var(--gradient-magenta); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin-left: 10px;';
+                terminalBtn.onclick = runTerminalDashboardDemo;
+                controlPanel.appendChild(terminalBtn);
+
+                const binaryBtn = document.createElement('button');
+                binaryBtn.textContent = '🔧 Binary Debug';
+                binaryBtn.style.cssText = 'background: var(--gradient-red); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin-left: 10px;';
+                binaryBtn.onclick = runBinaryDebuggerDemo;
+                controlPanel.appendChild(binaryBtn);
+            }
+
+            // Initialize terminal enhancements
+            initializeTerminalEnhancements();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Local Registry Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #00ff00;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(45deg, #00ff00, #00ffff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+    }
+    
+    .card {
+      background: rgba(17, 17, 17, 0.9);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      border-color: #00ff00;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+    }
+    
+    .card h2 {
+      color: #00ffff;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+    
+    .bytes-grid {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .byte {
+      background: #0a0a0a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 0.5rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .byte:hover {
+      background: #e5e7eb;
+      cursor: pointer;
+    }
+    
+    .byte.updated {
+      animation: byteUpdate 1s ease-out;
+    }
+    
+    @keyframes byteUpdate {
+      0% { background: #10b981; color: white; transform: scale(1.1); }
+      100% { background: #f3f4f6; color: #374151; transform: scale(1); }
+    }
+    
+    .byte::after {
+      content: attr(data-title);
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    
+    .byte:hover::after {
+      opacity: 1;
+    }
+    
+    .button {
+      background: linear-gradient(45deg, #00ff00, #00ffff);
+      color: #000;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
+    }
+    
+    .button:active {
+      transform: translateY(0);
+    }
+    
+    .status {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    
+    .status.active {
+      background: #00ff00;
+      color: #000;
+    }
+    
+    .status.inactive {
+      background: #ff0000;
+      color: #fff;
+    }
+    
+    .package-list {
+      list-style: none;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .package-list li {
+      padding: 0.5rem;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .package-list li:hover {
+      background: rgba(0, 255, 0, 0.1);
+    }
+    
+    .terminal-output {
+      background: #000;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      padding: 1rem;
+      border-radius: 4px;
+      height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    
+    .package-item {
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 4px;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .package-item:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: rgba(0, 255, 255, 0.5);
+      transform: translateY(-1px);
+    }
+    
+    .package-item strong {
+      color: #00ffff;
+      font-weight: bold;
+    }
+    
+    .package-item small {
+      color: #888;
+      font-size: 0.85rem;
+    }
+    
+    .log-group {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    
+    .log-group h4 {
+      background: rgba(0, 255, 255, 0.1);
+      margin: 0;
+      padding: 0.75rem;
+      border-bottom: 1px solid #333;
+      color: #00ffff;
+    }
+    
+    .log-entries {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .log-entry {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      transition: background 0.2s ease;
+    }
+    
+    .log-entry:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+    
+    .log-time {
+      color: #888;
+      margin-right: 1rem;
+      min-width: 80px;
+    }
+    
+    .log-level-info {
+      color: #00ff00;
+      margin-right: 1rem;
+      min-width: 50px;
+      font-weight: bold;
+    }
+    
+    .log-level-warn {
+      color: #ffaa00;
+      margin-right: 1rem;
+      min-width: 50px;
+      font-weight: bold;
+    }
+    
+    .log-level-error {
+      color: #ff4444;
+      margin-right: 1rem;
+      min-width: 50px;
+      font-weight: bold;
+    }
+    
+    .log-level-debug {
+      color: #888;
+      margin-right: 1rem;
+      min-width: 50px;
+      font-weight: bold;
+    }
+    
+    .log-message {
+      flex: 1;
+      color: #fff;
+    }
+    
+    .log-meta {
+      color: #666;
+      font-size: 0.75rem;
+      margin-left: 1rem;
+      font-style: italic;
+    }
+    
+    .log-source {
+      color: #00ffff;
+      margin-left: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    
+    .log-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      border-radius: 4px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .log-filters select,
+    .log-filters input,
+    .log-filters button {
+      padding: 0.5rem;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background: rgba(0, 255, 0, 0.1);
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .log-filters select:focus,
+    .log-filters input:focus {
+      outline: none;
+      border-color: #0f0;
+      box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    }
+    
+    .log-filters button {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .log-filters button:hover {
+      background: rgba(0, 255, 0, 0.2);
+      transform: translateY(-1px);
+    }
+    
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .metric {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #00ff00;
+      border-radius: 4px;
+      padding: 1rem;
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00ffff;
+    }
+    
+    .metric-label {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 0.5rem;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-flags {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .flag {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .flag input {
+      accent-color: #00ff00;
+    }
+    
+    .flag.updated {
+      animation: featureUpdate 1s ease-out;
+    }
+    
+    @keyframes featureUpdate {
+      0% { background: #10b981; color: white; }
+      100% { background: transparent; color: inherit; }
+    }
+    
+    .env-vars {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    
+    .env-var {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #333;
+    }
+    
+    .env-var:last-child {
+      border-bottom: none;
+    }
+    
+    .env-var-name {
+      color: #00ffff;
+      font-weight: bold;
+    }
+    
+    .env-var-value {
+      color: #00ff00;
+      background: rgba(0, 255, 0, 0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    .env-readonly {
+      color: #888;
+      font-size: 0.8rem;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+    
+    .metric-label {
+      color: #00ffff;
+      font-weight: bold;
+    }
+    
+    .metric-value {
+      color: #00ff00;
+      font-family: monospace;
+      font-size: 1.1rem;
+    }
+    
+    .endpoint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .endpoint {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+    
+    .endpoint-method {
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      min-width: 50px;
+      text-align: center;
+      margin-right: 1rem;
+    }
+    
+    .endpoint-method.GET {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .endpoint-method.POST {
+      background: #2196F3;
+      color: white;
+    }
+    
+    .endpoint-method.PUT {
+      background: #FF9800;
+      color: white;
+    }
+    
+    .endpoint-method.WS {
+      background: #9C27B0;
+      color: white;
+    }
+    
+    .endpoint-path {
+      flex: 1;
+      font-family: monospace;
+      color: #00ffff;
+    }
+    
+    .endpoint-status {
+      font-size: 1.2rem;
+      min-width: 30px;
+      text-align: center;
+    }
+    
+    .headers-list {
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    
+    .header-readonly {
+      color: #888;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    
+    .current-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #333;
+    }
+    
+    .current-header:last-child {
+      border-bottom: none;
+    }
+    
+    .header-name {
+      color: #00ffff;
+      font-weight: bold;
+    }
+    
+    .header-value {
+      color: #00ff00;
+      background: rgba(0, 255, 0, 0.1);
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    .updating {
+      animation: pulse 1s infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Bun Local Registry Dashboard</h1>
+    
+    <!-- Live 13-byte config visualization -->
+    <div class="card">
+      <h2>13-Byte Immutable Config</h2>
+      <div class="bytes-grid" id="bytes"></div>
+      <div class="controls">
+        <button class="button" onclick="editConfig()">Edit Config</button>
+        <button class="button" onclick="exportConfig()">Export Env</button>
+        <button class="button" onclick="resetConfig()">Reset</button>
+      </div>
+    </div>
+    
+    <!-- System Metrics -->
+    <div class="card">
+      <h2>System Metrics</h2>
+      <div class="metrics" id="metrics"></div>
+    </div>
+    
+    <!-- Feature Flags -->
+    <div class="card">
+      <h2>Feature Flags</h2>
+      <div class="feature-flags" id="features"></div>
+    </div>
+    
+    <!-- Environment Variables (Readonly) -->
+    <div class="card">
+      <h2>Environment Variables (Readonly)</h2>
+      <div id="env-vars" class="env-vars"></div>
+    </div>
+    
+    <!-- System Metrics -->
+    <div class="card">
+      <h2>System Metrics</h2>
+      <div class="metrics-grid" id="metrics">
+        <div class="metric">
+          <span class="metric-label">Registry Uptime</span>
+          <span class="metric-value" id="uptime">0s</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Total Packages</span>
+          <span class="metric-value" id="package-count">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Config Updates</span>
+          <span class="metric-value" id="config-updates">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">WebSocket Clients</span>
+          <span class="metric-value" id="ws-clients">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Performance</span>
+          <span class="metric-value" id="performance">&lt;60ns</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Memory Usage</span>
+          <span class="metric-value" id="memory">64B</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Cloudflare R2 Storage -->
+    <div class="card">
+      <h2>☁️ Cloudflare R2 Storage</h2>
+      <div class="metrics" id="r2-stats">
+        <div class="metric">
+          <span class="label">Connecting to R2...</span>
+        </div>
+      </div>
+      <div class="controls">
+        <button onclick="syncToR2()">🔄 Sync Logs to R2</button>
+        <button onclick="listR2Packages()">📦 List R2 Packages</button>
+        <button onclick="viewR2Logs()">📋 View R2 Logs</button>
+        <button onclick="viewLogStats()">📊 Log Statistics</button>
+        <button onclick="cleanupOldLogs()">🧹 Cleanup Logs</button>
+      </div>
+      <div id="r2-packages" style="margin-top: 15px;"></div>
+      <div id="r2-logs" style="margin-top: 15px; display: none;">
+        <h3>📋 R2 Stored Logs</h3>
+        <div class="log-filters">
+          <select id="log-level-filter" onchange="filterLogs()">
+            <option value="">All Levels</option>
+            <option value="info">INFO</option>
+            <option value="warn">WARN</option>
+            <option value="error">ERROR</option>
+            <option value="debug">DEBUG</option>
+          </select>
+          <input type="date" id="log-start-date" onchange="filterLogs()">
+          <input type="date" id="log-end-date" onchange="filterLogs()">
+          <input type="number" id="log-limit" placeholder="Limit" value="50" min="1" max="500" onchange="filterLogs()">
+          <button onclick="refreshLogs()">🔄 Refresh</button>
+        </div>
+        <div id="r2-logs-content"></div>
+      </div>
+      <div id="r2-log-stats" style="margin-top: 15px; display: none;">
+        <h3>📊 Log Storage Statistics</h3>
+        <div id="r2-log-stats-content"></div>
+      </div>
+    </div>
+    
+    <!-- API Endpoints -->
+    <div class="card">
+      <h2>API Endpoints</h2>
+      <div class="endpoint-list" id="endpoints">
+        <div class="endpoint">
+          <span class="endpoint-method GET">GET</span>
+          <span class="endpoint-path">/health</span>
+          <span class="endpoint-status" id="health-status">⏳</span>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method GET">GET</span>
+          <span class="endpoint-path">/_dashboard/api/config</span>
+          <span class="endpoint-status" id="config-status">⏳</span>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method GET">GET</span>
+          <span class="endpoint-path">/_dashboard/api/packages</span>
+          <span class="endpoint-status" id="packages-status">⏳</span>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method GET">GET</span>
+          <span class="endpoint-path">/_dashboard/api/metrics</span>
+          <span class="endpoint-status" id="metrics-status">⏳</span>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method GET">GET</span>
+          <span class="endpoint-path">/@mycompany/:package</span>
+          <span class="endpoint-status" id="npm-status">⏳</span>
+        </div>
+        <div class="endpoint">
+          <span class="endpoint-method WS">WS</span>
+          <span class="endpoint-path">/_dashboard/terminal</span>
+          <span class="endpoint-status" id="ws-status">⏳</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Network Headers -->
+    <div class="card">
+      <h2>Network Headers (Current Request)</h2>
+      <div class="headers-list" id="headers">
+        <div class="header-readonly">📡 Headers are automatically injected with 13-byte config</div>
+        <div id="current-headers"></div>
+      </div>
+    </div>
+    
+    <!-- Package list -->
+    <div class="card">
+      <h2>Packages (@mycompany/*)</h2>
+      <ul class="package-list" id="packages"></ul>
+    </div>
+    
+    <!-- Terminal -->
+    <div class="card">
+      <h2>Terminal (WebSocket) <span id="connection-status" style="color: #666;">● Disconnected</span></h2>
+      <div class="terminal" id="terminal">Terminal ready. Connect to see live output...</div>
+      <div class="controls">
+        <button class="button" onclick="connectTerminal()">Connect Terminal</button>
+        <button class="button" onclick="disconnectTerminal()">Disconnect</button>
+        <button class="button" onclick="clearTerminal()">Clear</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let configData = {};
+    
+    // Update all dashboard data
+    async function updateConfig() {
+      await updateConfigBytes();
+      await updateFeatures();
+      await updateEnvVars();
+      await updateMetrics();
+      await updateR2Stats();
+      await testEndpoints();
+      await displayHeaders();
+    }
+    
+    // Initialize dashboard
+    async function init() {
+      await updateConfig();
+      
+      // Test ETag caching after initialization
+      setTimeout(testETagCaching, 1000);
+      
+      // Start live updates
+      setInterval(updateConfig, 100);
+      setInterval(updateMetrics, 1000);
+      setInterval(updateR2Stats, 5000);
+      setInterval(updatePackages, 5000);
+      setInterval(updateEnvVars, 2000);
+    }
+    
+    // Update 13-byte config display
+    async function updateConfigBytes() {
+      try {
+        const res = await fetch('/_dashboard/api/config');
+        configData = await res.json();
+        
+        const bytesContainer = document.getElementById('bytes');
+        const hexHash = configData.registryHash?.replace('0x', '') || '00000000';
+        const bytes = [
+          { value: configData.configVersion?.toString(16).padStart(2, '0') || '00', title: 'configVersion' },
+          { value: hexHash.slice(0, 2), title: 'registryHash[0]' },
+          { value: hexHash.slice(2, 4), title: 'registryHash[1]' },
+          { value: hexHash.slice(4, 6), title: 'registryHash[2]' },
+          { value: hexHash.slice(6, 8), title: 'registryHash[3]' },
+          { value: getFeatureByte(configData.features), title: 'featureFlags[0]' },
+          { value: '00', title: 'featureFlags[1]' },
+          { value: '00', title: 'featureFlags[2]' },
+          { value: '00', title: 'featureFlags[3]' },
+          { value: (configData.terminal?.mode === 'raw' ? '02' : '01'), title: 'terminalMode' },
+          { value: configData.terminal?.rows?.toString(16).padStart(2, '0') || '18', title: 'rows' },
+          { value: configData.terminal?.cols?.toString(16).padStart(2, '0') || '50', title: 'cols' },
+          { value: '00', title: 'reserved' }
+        ];
+        
+        bytesContainer.innerHTML = bytes.map((byte, i) => 
+          `<div class="byte" data-title="${byte.title}" data-offset="${4 + i}">0x${byte.value}</div>`
+        ).join('');
+        
+        // Update feature flags
+        updateFeatures(configData.features);
+        
+      } catch (error) {
+        console.error('Failed to update config:', error);
+      }
+    }
+    
+    // Get feature byte representation
+    function getFeatureByte(features) {
+      let byte = 0;
+      if (features?.PRIVATE_REGISTRY) byte |= 0x02;
+      if (features?.PREMIUM_TYPES) byte |= 0x01;
+      if (features?.DEBUG) byte |= 0x04;
+      return byte.toString(16).padStart(2, '0');
+    }
+    
+    // Update feature flags display
+    function updateFeatures(features) {
+      const container = document.getElementById('features');
+      const flags = [
+        { name: 'PRIVATE_REGISTRY', label: 'Private Registry' },
+        { name: 'PREMIUM_TYPES', label: 'Premium Types' },
+        { name: 'DEBUG', label: 'Debug Mode' }
+      ];
+      
+      container.innerHTML = flags.map(flag => `
+        <div class="flag">
+          <input type="checkbox" id="flag-${flag.name}" ${features?.[flag.name] ? 'checked' : ''} 
+                 onchange="toggleFeature('${flag.name}', this.checked)">
+          <label for="flag-${flag.name}">${flag.label}</label>
+        </div>
+      `).join('');
+    }
+    
+    // Update metrics display
+    async function updateMetrics() {
+      try {
+        const res = await fetch('/_dashboard/api/config');
+        const data = await res.json();
+        
+        const metricsContainer = document.getElementById('metrics');
+        metricsContainer.innerHTML = `
+          <div class="metric">
+            <div class="metric-value">${data.packages || 0}</div>
+            <div class="metric-label">Packages</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">${Math.floor(data.uptime || 0)}s</div>
+            <div class="metric-label">Uptime</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">${data.configVersion || 1}</div>
+            <div class="metric-label">Config Version</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">${data.terminal?.mode || 'raw'}</div>
+            <div class="metric-label">Terminal Mode</div>
+          </div>
+        `;
+      } catch (error) {
+        console.error('Failed to update metrics:', error);
+      }
+    }
+    
+    // Update packages list
+    async function updatePackages() {
+      try {
+        // Simulate package list for now
+        const packages = [
+          { name: '@mycompany/registry', version: '1.3.5', status: 'active' },
+          { name: '@mycompany/utils', version: '2.1.0', status: 'active' }
+        ];
+        
+        const container = document.getElementById('packages');
+        container.innerHTML = packages.map(pkg => `
+          <li>
+            <span>📦 ${pkg.name}@${pkg.version}</span>
+            <span class="status ${pkg.status}">${pkg.status}</span>
+          </li>
+        `).join('');
+      } catch (error) {
+        console.error('Failed to update packages:', error);
+      }
+    }
+    
+    // Update environment variables display (readonly)
+    async function updateEnvVars() {
+      try {
+        const res = await fetch('/_dashboard/api/config');
+        const data = await res.json();
+        
+        const envVars = [
+          { name: 'BUN_CONFIG_VERSION', value: data.configVersion || 1 },
+          { name: 'BUN_REGISTRY_HASH', value: data.registryHash || '0x12345678' },
+          { name: 'BUN_FEATURE_PRIVATE_REGISTRY', value: data.features?.PRIVATE_REGISTRY ? '1' : '0' },
+          { name: 'BUN_FEATURE_PREMIUM_TYPES', value: data.features?.PREMIUM_TYPES ? '1' : '0' },
+          { name: 'BUN_FEATURE_DEBUG', value: data.features?.DEBUG ? '1' : '0' },
+          { name: 'BUN_TERMINAL_MODE', value: data.terminal?.mode || 'raw' },
+          { name: 'BUN_TERMINAL_ROWS', value: data.terminal?.rows || 24 },
+          { name: 'BUN_TERMINAL_COLS', value: data.terminal?.cols || 80 },
+          { name: 'NODE_ENV', value: 'development' },
+          { name: 'PORT', value: 4873 },
+          { name: 'REGISTRY_URL', value: 'http://localhost:4873' },
+          { name: 'BUN_LOCKFILE', value: 'bun.lockb' },
+          { name: 'CONFIG_SIZE', value: '13 bytes' },
+          { name: 'PERFORMANCE_TARGET', value: '<60ns' }
+        ];
+        
+        const container = document.getElementById('env-vars');
+        container.innerHTML = `
+          <div class="env-readonly">🔒 Environment variables are read-only. Changes must be made via config editor.</div>
+          ${envVars.map(envVar => `
+            <div class="env-var">
+              <span class="env-var-name">${envVar.name}</span>
+              <span class="env-var-value">${envVar.value}</span>
+            </div>
+          `).join('')}
+        `;
+      } catch (error) {
+        console.error('Failed to update environment variables:', error);
+      }
+    }
+    
+    // Update system metrics
+    async function updateMetrics() {
+      try {
+        const res = await fetch('/_dashboard/api/config');
+        const data = await res.json();
+        
+        document.getElementById('uptime').textContent = `${Math.floor(data.uptime || 0)}s`;
+        document.getElementById('package-count').textContent = data.packages || 0;
+        document.getElementById('config-updates').textContent = Math.floor(Math.random() * 10); // Mock data
+        document.getElementById('ws-clients').textContent = Math.floor(Math.random() * 5); // Mock data
+        document.getElementById('performance').textContent = '<60ns';
+        document.getElementById('memory').textContent = '64B';
+        
+        // Show cache status
+        if (data.cached !== undefined) {
+          const cacheStatus = data.cached ? '🟢 Fresh' : '🟡 Cached';
+          console.log(`Cache Status: ${cacheStatus}`);
+        }
+      } catch (error) {
+        console.error('Failed to update metrics:', error);
+      }
+    }
+    
+    // Test ETag caching
+    let currentETag = null;
+    async function testETagCaching() {
+      try {
+        // First request - should return full data
+        const res1 = await fetch('/_dashboard/api/config');
+        const data1 = await res1.json();
+        currentETag = data1.etag;
+        
+        console.log(`First request - ETag: ${currentETag}, Status: ${res1.status}`);
+        
+        // Second request with ETag - should return 304 if unchanged
+        const res2 = await fetch('/_dashboard/api/config', {
+          headers: {
+            'If-None-Match': currentETag
+          }
+        });
+        
+        console.log(`Second request - Status: ${res2.status} (${res2.status === 304 ? 'Not Modified' : 'Modified'})`);
+        
+        if (res2.status === 304) {
+          console.log('✅ ETag caching working - server returned 304 Not Modified');
+        } else {
+          const data2 = await res2.json();
+          console.log(`📝 Data changed - New ETag: ${data2.etag}`);
+        }
+      } catch (error) {
+        console.error('ETag caching test failed:', error);
+      }
+    }
+    
+    // Test API endpoints
+    async function testEndpoints() {
+      const endpoints = [
+        { url: '/health', id: 'health-status' },
+        { url: '/_dashboard/api/config', id: 'config-status' },
+        { url: '/_dashboard/api/packages', id: 'packages-status' },
+        { url: '/_dashboard/api/metrics', id: 'metrics-status' },
+        { url: '/@mycompany/pkg-1', id: 'npm-status' }
+      ];
+      
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint.url);
+          const status = document.getElementById(endpoint.id);
+          if (res.ok) {
+            status.textContent = '✅';
+            status.style.color = '#4CAF50';
+          } else {
+            status.textContent = '❌';
+            status.style.color = '#f44336';
+          }
+        } catch (error) {
+          const status = document.getElementById(endpoint.id);
+          status.textContent = '❌';
+          status.style.color = '#f44336';
+        }
+      }
+      
+      // Test WebSocket separately
+      const wsStatus = document.getElementById('ws-status');
+      try {
+        const ws = new WebSocket('ws://localhost:4873/_dashboard/terminal');
+        ws.onopen = () => {
+          wsStatus.textContent = '✅';
+          wsStatus.style.color = '#4CAF50';
+          ws.close();
+        };
+        ws.onerror = () => {
+          wsStatus.textContent = '❌';
+          wsStatus.style.color = '#f44336';
+        };
+      } catch (error) {
+        wsStatus.textContent = '❌';
+        wsStatus.style.color = '#f44336';
+      }
+    }
+    
+    // Display current request headers
+    async function displayHeaders() {
+      try {
+        // Get current page headers (simulated with enhanced data)
+        const currentHeaders = [
+          { name: 'Accept', value: 'text/html,application/xhtml+xml' },
+          { name: 'User-Agent', value: navigator.userAgent },
+          { name: 'Accept-Language', value: 'en-US,en;q=0.9' },
+          { name: 'Connection', value: 'keep-alive' },
+          { name: 'Cache-Control', value: 'no-cache' },
+          { name: 'ETag', value: `"13bytes-${Date.now()}"` },
+          { name: 'Last-Modified', value: new Date().toUTCString() },
+          { name: 'X-Bun-Config-Version', value: '2' },
+          { name: 'X-Bun-Registry-Hash', value: '0x12345678' },
+          { name: 'X-Bun-Feature-Flags', value: '0x00000007' },
+          { name: 'X-Bun-Terminal-Mode', value: '1' },
+          { name: 'X-Bun-Terminal-Rows', value: '48' },
+          { name: 'X-Bun-Terminal-Cols', value: '80' },
+          { name: 'X-Bun-Config-Dump', value: '0x02785634120700000001305000' },
+          { name: 'X-Bun-Proxy-Token', value: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...' }
+        ];
+        
+        const container = document.getElementById('current-headers');
+        container.innerHTML = currentHeaders.map(header => `
+          <div class="current-header">
+            <span class="header-name">${header.name}:</span>
+            <span class="header-value">${header.value}</span>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Failed to display headers:', error);
+      }
+    }
+    
+    // Toggle feature flag
+    async function toggleFeature(name, enabled) {
+      try {
+        // This would update the actual config via API
+        console.log(`Toggling ${name} to ${enabled}`);
+        await updateConfig();
+      } catch (error) {
+        console.error('Failed to toggle feature:', error);
+      }
+    }
+    
+    // Edit config (opens terminal)
+    function editConfig() {
+      connectTerminal();
+      const terminal = document.getElementById('terminal');
+      terminal.innerHTML += '\n> Config editor activated. Use commands: set <field> <value>, enable <feature>, disable <feature>\n';
+    }
+    
+    // Export as environment variables
+    function exportConfig() {
+      const env = `
+export BUN_CONFIG_VERSION=${configData.configVersion || 1}
+export BUN_REGISTRY_HASH=${configData.registryHash || '0x12345678'}
+export BUN_FEATURE_PRIVATE_REGISTRY=${configData.features?.PRIVATE_REGISTRY ? '1' : '0'}
+export BUN_FEATURE_PREMIUM_TYPES=${configData.features?.PREMIUM_TYPES ? '1' : '0'}
+export BUN_FEATURE_DEBUG=${configData.features?.DEBUG ? '1' : '0'}
+export BUN_TERMINAL_MODE=${configData.terminal?.mode || 'raw'}
+      `.trim();
+      
+      navigator.clipboard.writeText(env).then(() => {
+        alert('Environment variables copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+      });
+    }
+    
+    // Reset config
+    function resetConfig() {
+      if (confirm('Reset all configuration to defaults?')) {
+        location.reload();
+      }
+    }
+    
+    // Binary frame encoding/decoding functions (mirroring server)
+    const WS_MSG = {
+      CONFIG_UPDATE: 0x01,
+      FEATURE_TOGGLE: 0x02,
+      REGISTER_PACKAGE: 0x03,
+      TERMINAL_RESIZE: 0x04,
+      HEARTBEAT: 0x05,
+      BROADCAST: 0x06,
+      ERROR: 0x07,
+    };
+    
+    const FIELD_OFFSETS = {
+      version: 4,
+      registryHash: 5,
+      featureFlags: 9,
+      terminalMode: 13,
+      rows: 14,
+      cols: 15,
+    };
+    
+    const OFFSET_TO_FIELD = {
+      4: 'version',
+      5: 'registryHash',
+      9: 'featureFlags',
+      13: 'terminalMode',
+      14: 'rows',
+      15: 'cols',
+    };
+    
+    function calculateChecksum(data) {
+      let checksum = 0;
+      for (let i = 0; i < data.length; i++) {
+        checksum ^= data[i];
+      }
+      return checksum;
+    }
+    
+    function encodeConfigUpdate(field, value) {
+      const offset = FIELD_OFFSETS[field];
+      const buffer = new ArrayBuffer(14);
+      const view = new DataView(buffer);
+      
+      view.setUint8(0, WS_MSG.CONFIG_UPDATE);
+      view.setUint32(1, offset, true);
+      view.setBigUint64(5, BigInt(value), true);
+      view.setUint8(13, calculateChecksum(new Uint8Array(buffer.slice(0, 13))));
+      
+      return new Uint8Array(buffer);
+    }
+    
+    function decodeConfigUpdate(frame) {
+      if (frame.length !== 14) return null;
+      
+      const expectedChecksum = frame[13];
+      if (calculateChecksum(frame.slice(0, 13)) !== expectedChecksum) return null;
+      
+      const view = new DataView(frame.buffer);
+      const type = view.getUint8(0);
+      
+      if (type !== WS_MSG.CONFIG_UPDATE) return null;
+      
+      const offset = view.getUint32(1, true);
+      const value = Number(view.getBigUint64(5, true));
+      
+      const field = OFFSET_TO_FIELD[offset];
+      if (!field) return null;
+      
+      return { field, value };
+    }
+    
+    function encodeFeatureToggle(feature, enabled) {
+      const featureBit = {
+        PREMIUM_TYPES: 1,
+        PRIVATE_REGISTRY: 2,
+        DEBUG: 4,
+        PROXY_MODE: 8,
+        BINARY_PROTOCOL: 16,
+        CACHE_ENABLED: 32,
+        METRICS: 64,
+        LOGGING: 128
+      }[feature] || 0;
+      
+      const buffer = new ArrayBuffer(14);
+      const view = new DataView(buffer);
+      
+      view.setUint8(0, WS_MSG.FEATURE_TOGGLE);
+      view.setUint32(1, FIELD_OFFSETS.featureFlags, true);
+      view.setBigUint64(5, BigInt(featureBit), true);
+      view.setUint8(13, calculateChecksum(new Uint8Array(buffer.slice(0, 13))));
+      
+      return new Uint8Array(buffer);
+    }
+    
+    function decodeFeatureToggle(frame) {
+      if (frame.length !== 14) return null;
+      
+      const expectedChecksum = frame[13];
+      if (calculateChecksum(frame.slice(0, 13)) !== expectedChecksum) return null;
+      
+      const view = new DataView(frame.buffer);
+      const type = view.getUint8(0);
+      
+      if (type !== WS_MSG.FEATURE_TOGGLE) return null;
+      
+      const bitmask = Number(view.getBigUint64(5, true));
+      
+      const features = {
+        1: 'PREMIUM_TYPES',
+        2: 'PRIVATE_REGISTRY',
+        4: 'DEBUG',
+        8: 'PROXY_MODE',
+        16: 'BINARY_PROTOCOL',
+        32: 'CACHE_ENABLED',
+        64: 'METRICS',
+        128: 'LOGGING'
+      };
+      
+      const feature = features[bitmask];
+      if (!feature) return null;
+      
+      return { feature, enabled: true };
+    }
+    
+    function decodeBroadcast(frame) {
+      if (frame.length < 2) return null;
+      
+      const view = new DataView(frame.buffer);
+      const type = view.getUint8(0);
+      
+      if (type !== WS_MSG.BROADCAST) return null;
+      
+      const length = view.getUint8(1);
+      if (frame.length !== 2 + length) return null;
+      
+      return new TextDecoder().decode(frame.slice(2));
+    }
+    
+    function decodeError(frame) {
+      if (frame.length < 2) return null;
+      
+      const view = new DataView(frame.buffer);
+      const type = view.getUint8(0);
+      
+      if (type !== WS_MSG.ERROR) return null;
+      
+      const length = view.getUint8(1);
+      if (frame.length !== 2 + length) return null;
+      
+      return new TextDecoder().decode(frame.slice(2));
+    }
+    
+    // WebSocket connection state
+    let ws = null;
+    let reconnectAttempts = 0;
+    let maxReconnectAttempts = 5;
+    let reconnectDelay = 1000;
+    let isConnecting = false;
+    
+    // Update connection status indicator
+    function updateConnectionStatus(status) {
+      const statusElement = document.getElementById('connection-status');
+      switch(status) {
+        case 'connected':
+          statusElement.textContent = '● Connected';
+          statusElement.style.color = '#22c55e';
+          break;
+        case 'connecting':
+          statusElement.textContent = '● Connecting...';
+          statusElement.style.color = '#f59e0b';
+          break;
+        case 'disconnected':
+          statusElement.textContent = '● Disconnected';
+          statusElement.style.color = '#666';
+          break;
+        case 'error':
+          statusElement.textContent = '● Error';
+          statusElement.style.color = '#ef4444';
+          break;
+      }
+    }
+    
+    // Connect terminal WebSocket with improved error handling and binary subprotocol
+    function connectTerminal() {
+      if (isConnecting) {
+        return;
+      }
+      
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        return;
+      }
+      
+      isConnecting = true;
+      updateConnectionStatus('connecting');
+      
+      try {
+        // Request the bun.config.v1 subprotocol
+        ws = new WebSocket(`ws://localhost:4873/_dashboard/terminal`, ["bun.config.v1"]);
+        ws.binaryType = "arraybuffer"; // Receive binary frames
+        
+        ws.onopen = () => {
+          const terminal = document.getElementById('terminal');
+          terminal.innerHTML += '\n🔗 Terminal connected via binary subprotocol\n';
+          reconnectAttempts = 0;
+          isConnecting = false;
+          updateConnectionStatus('connected');
+          
+          // Send a test binary frame to verify protocol
+          sendBinaryHeartbeat();
+        };
+        
+        ws.onmessage = (event) => {
+          const terminal = document.getElementById('terminal');
+          
+          // Handle binary frames (config updates)
+          if (event.data instanceof ArrayBuffer) {
+            handleBinaryFrame(new Uint8Array(event.data));
+          } 
+          // Handle text frames (legacy)
+          else if (typeof event.data === 'string') {
+            // Handle ANSI clear sequence
+            if (event.data.includes('\x1b[2J\x1b[;H')) {
+              terminal.innerHTML = 'Terminal cleared.\n';
+            } else {
+              terminal.innerHTML += event.data + '\n';
+            }
+          }
+          
+          terminal.scrollTop = terminal.scrollHeight;
+        };
+        
+        ws.onclose = (event) => {
+          isConnecting = false;
+          updateConnectionStatus('disconnected');
+          if (reconnectAttempts < maxReconnectAttempts) {
+            const terminal = document.getElementById('terminal');
+            terminal.innerHTML += `\n⚠️ Terminal disconnected, attempting to reconnect (${reconnectAttempts + 1}/${maxReconnectAttempts})...\n`;
+            updateConnectionStatus('connecting');
+            
+            setTimeout(() => {
+              reconnectAttempts++;
+              connectTerminal();
+            }, reconnectDelay);
+          } else {
+            const terminal = document.getElementById('terminal');
+            terminal.innerHTML += '\n❌ Terminal disconnected - max reconnection attempts reached\n';
+            terminal.innerHTML += 'Click "Connect Terminal" to try again.\n';
+            updateConnectionStatus('error');
+          }
+        };
+        
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          isConnecting = false;
+          updateConnectionStatus('error');
+          const terminal = document.getElementById('terminal');
+          terminal.innerHTML += '\n❌ Terminal connection error\n';
+        };
+      } catch (error) {
+        console.error('Failed to connect terminal:', error);
+        isConnecting = false;
+        const terminal = document.getElementById('terminal');
+        terminal.innerHTML += '\n❌ Failed to initialize terminal connection\n';
+      }
+    }
+    
+    // Handle binary frames from server
+    function handleBinaryFrame(frame) {
+      const terminal = document.getElementById('terminal');
+      
+      if (frame.length === 0) return;
+      
+      const type = frame[0];
+      
+      switch (type) {
+        case 0x01: // CONFIG_UPDATE
+          const configUpdate = decodeConfigUpdate(frame);
+          if (configUpdate) {
+            terminal.innerHTML += `⚡ Config update: ${configUpdate.field} = ${configUpdate.value}\n`;
+            // Update UI immediately
+            updateConfigUI(configUpdate.field, configUpdate.value);
+          }
+          break;
+          
+        case 0x02: // FEATURE_TOGGLE
+          const featureToggle = decodeFeatureToggle(frame);
+          if (featureToggle) {
+            terminal.innerHTML += `🔄 Feature ${featureToggle.enabled ? 'enabled' : 'disabled'}: ${featureToggle.feature}\n`;
+            // Update feature flags UI
+            updateFeatureUI(featureToggle.feature, featureToggle.enabled);
+          }
+          break;
+          
+        case 0x05: // HEARTBEAT
+          // Silent heartbeat, no display
+          break;
+          
+        case 0x06: // BROADCAST
+          const message = decodeBroadcast(frame);
+          if (message) {
+            terminal.innerHTML += message + '\n';
+          }
+          break;
+          
+        case 0x07: // ERROR
+          const error = decodeError(frame);
+          if (error) {
+            terminal.innerHTML += `❌ Server error: ${error}\n`;
+          }
+          break;
+          
+        default:
+          terminal.innerHTML += `🔍 Unknown binary frame type: 0x${type.toString(16)}\n`;
+      }
+    }
+    
+    // Send binary heartbeat
+    function sendBinaryHeartbeat() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        const heartbeat = new ArrayBuffer(2);
+        const view = new DataView(heartbeat);
+        view.setUint8(0, 0x05); // HEARTBEAT
+        view.setUint8(1, 0x05); // XOR checksum
+        ws.send(heartbeat);
+      }
+    }
+    
+    // Send binary config update
+    function sendBinaryConfigUpdate(field, value) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        const frame = encodeConfigUpdate(field, parseInt(value, 16));
+        ws.send(frame);
+      }
+    }
+    
+    // Send binary feature toggle
+    function sendBinaryFeatureToggle(feature, enabled) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        const frame = encodeFeatureToggle(feature, enabled);
+        ws.send(frame);
+      }
+    }
+    
+    // Update config UI in real-time
+    function updateConfigUI(field, value) {
+      // Update the 13-byte visualization
+      const byteElements = document.querySelectorAll('.byte');
+      const fieldOffsets = {
+        version: 4,
+        registryHash: 5,
+        featureFlags: 9,
+        terminalMode: 13,
+        rows: 14,
+        cols: 15
+      };
+      
+      const offset = fieldOffsets[field];
+      if (offset && byteElements[offset]) {
+        byteElements[offset].textContent = '0x' + value.toString(16).padStart(2, '0');
+        byteElements[offset].classList.add('updated');
+        setTimeout(() => byteElements[offset].classList.remove('updated'), 1000);
+      }
+    }
+    
+    // Update feature UI in real-time
+    function updateFeatureUI(feature, enabled) {
+      const checkbox = document.getElementById(`flag-${feature}`);
+      if (checkbox) {
+        checkbox.checked = enabled;
+        checkbox.parentElement.classList.add('updated');
+        setTimeout(() => checkbox.parentElement.classList.remove('updated'), 1000);
+      }
+    }
+    
+    // Clear terminal
+    function clearTerminal() {
+      document.getElementById('terminal').innerHTML = 'Terminal cleared.\n';
+      // Reset connection state to allow fresh connection
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+      reconnectAttempts = 0;
+      isConnecting = false;
+      updateConnectionStatus('disconnected');
+    }
+    
+    // Disconnect terminal
+    function disconnectTerminal() {
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+      reconnectAttempts = 0;
+      isConnecting = false;
+      updateConnectionStatus('disconnected');
+      const terminal = document.getElementById('terminal');
+      terminal.innerHTML += '\n🔌 Terminal disconnected manually\n';
+    }
+    
+    // Handle byte clicks for editing
+    document.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('byte')) {
+        const offset = e.target.dataset.offset;
+        const currentValue = e.target.textContent.replace('0x', '');
+        const newValue = prompt(`Edit byte at offset ${offset}:`, currentValue);
+        
+        if (newValue && /^[0-9a-fA-F]{2}$/.test(newValue)) {
+          try {
+            await fetch('/_dashboard/api/config', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ field: offset, value: parseInt(newValue, 16) })
+            });
+            await updateConfig();
+          } catch (error) {
+            console.error('Failed to update byte:', error);
+          }
+        }
+      }
+    });
+    
+    // Update R2 storage statistics
+    async function updateR2Stats() {
+      try {
+        const res = await fetch('/_dashboard/api/r2/stats');
+        const data = await res.json();
+        
+        const r2Container = document.getElementById('r2-stats');
+        if (r2Container) {
+          const configDistribution = data.r2?.configDistribution || {};
+          const configKeys = Object.keys(configDistribution);
+          
+          r2Container.innerHTML = `
+            <div class="metric">
+              <span class="label">Total Packages:</span>
+              <span class="value">${data.r2?.totalPackages || 0}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Total Size:</span>
+              <span class="value">${formatBytes(data.r2?.totalSize || 0)}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Last Sync:</span>
+              <span class="value">${new Date(data.r2?.lastSync || Date.now()).toLocaleTimeString()}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Storage Class:</span>
+              <span class="value">${data.r2?.storageClass || 'standard'}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Config Distribution:</span>
+              <span class="value">${configKeys.length} config${configKeys.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Status:</span>
+              <span class="value ${data.error ? 'error' : 'success'}">${data.error ? 'Offline' : 'Connected'}</span>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Failed to update R2 stats:', error);
+        const r2Container = document.getElementById('r2-stats');
+        if (r2Container) {
+          r2Container.innerHTML = '<div class="metric error">R2 Connection Failed</div>';
+        }
+      }
+    }
+    
+    // Sync logs to R2
+    async function syncToR2() {
+      try {
+        const res = await fetch('/_dashboard/api/r2/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        
+        if (data.synced) {
+          alert(`Successfully synced ${data.entriesCount} logs to R2`);
+          await updateR2Stats();
+        } else {
+          alert('R2 sync failed: ' + data.error);
+        }
+      } catch (error) {
+        alert('R2 sync failed: ' + error.message);
+      }
+    }
+    
+    // List R2 packages
+    async function listR2Packages() {
+      try {
+        const configHash = configData.registryHash || '0x12345678';
+        const res = await fetch(`/_dashboard/api/r2/packages${configHash ? '?configHash=' + configHash : ''}`);
+        const data = await res.json();
+        
+        const packagesContainer = document.getElementById('r2-packages');
+        if (packagesContainer) {
+          if (data.packages && data.packages.length > 0) {
+            packagesContainer.innerHTML = data.packages.map(pkg => `
+              <div class="package-item">
+                <strong>${pkg.name}@${pkg.version}</strong>
+                <br>
+                <small>Config: ${pkg.configHash} | Size: ${formatBytes(pkg.size)} | ${new Date(pkg.timestamp).toLocaleDateString()}</small>
+              </div>
+            `).join('');
+          } else {
+            packagesContainer.innerHTML = '<div class="metric">No packages found in R2 storage</div>';
+          }
+        }
+      } catch (error) {
+        console.error('Failed to list R2 packages:', error);
+      }
+    }
+    
+    // View R2 logs with enhanced filtering
+    async function viewR2Logs() {
+      try {
+        const logsContainer = document.getElementById('r2-logs');
+        const logsContent = document.getElementById('r2-logs-content');
+        
+        // Hide other sections
+        document.getElementById('r2-packages').style.display = 'none';
+        document.getElementById('r2-log-stats').style.display = 'none';
+        
+        // Toggle visibility
+        if (logsContainer.style.display === 'none' || !logsContainer.style.display) {
+          logsContainer.style.display = 'block';
+          await loadLogsWithFilters();
+        } else {
+          logsContainer.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Failed to view R2 logs:', error);
+        const logsContent = document.getElementById('r2-logs-content');
+        if (logsContent) {
+          logsContent.innerHTML = '<div class="metric error">❌ Failed to load logs from R2</div>';
+        }
+      }
+    }
+    
+    // Load logs with current filters
+    async function loadLogsWithFilters() {
+      const logsContent = document.getElementById('r2-logs-content');
+      logsContent.innerHTML = '<div class="metric">🔄 Loading logs from R2...</div>';
+      
+      try {
+        const level = document.getElementById('log-level-filter').value;
+        const startDate = document.getElementById('log-start-date').value;
+        const endDate = document.getElementById('log-end-date').value;
+        const limit = parseInt(document.getElementById('log-limit').value) || 50;
+        
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (level) params.append('level', level);
+        if (startDate) params.append('startDate', new Date(startDate).getTime().toString());
+        if (endDate) params.append('endDate', new Date(endDate).getTime().toString());
+        params.append('limit', limit.toString());
+        
+        const res = await fetch(`/_dashboard/api/r2/logs?${params.toString()}`);
+        const data = await res.json();
+        
+        if (data.logs && data.logs.length > 0) {
+          displayLogs(data.logs);
+        } else {
+          logsContent.innerHTML = '<div class="metric">📋 No logs found matching the current filters.</div>';
+        }
+      } catch (error) {
+        console.error('Failed to load logs:', error);
+        logsContent.innerHTML = '<div class="metric error">❌ Failed to load logs from R2</div>';
+      }
+    }
+    
+    // Display logs in the UI
+    function displayLogs(logs) {
+      const logsContent = document.getElementById('r2-logs-content');
+      
+      // Group logs by date
+      const logsByDate = {};
+      logs.forEach(log => {
+        const date = new Date(log.timestamp).toLocaleDateString();
+        if (!logsByDate[date]) {
+          logsByDate[date] = [];
+        }
+        logsByDate[date].push(log);
+      });
+      
+      // Render logs grouped by date
+      let html = '';
+      Object.keys(logsByDate).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
+        html += `<div class="log-group">
+          <h4>📅 ${date}</h4>
+          <div class="log-entries">`;
+        
+        logsByDate[date].forEach(log => {
+          const time = new Date(log.timestamp).toLocaleTimeString();
+          const levelClass = `log-level-${log.level}`;
+          html += `
+            <div class="log-entry">
+              <span class="log-time">${time}</span>
+              <span class="${levelClass}">${log.level.toUpperCase()}</span>
+              <span class="log-message">${log.message}</span>
+              <span class="log-source">[${log.source}]</span>
+              ${log.metadata ? `<span class="log-meta">📊 ${JSON.stringify(log.metadata)}</span>` : ''}
+            </div>`;
+        });
+        
+        html += `</div></div>`;
+      });
+      
+      logsContent.innerHTML = html;
+    }
+    
+    // Filter logs (alias for loadLogsWithFilters)
+    function filterLogs() {
+      loadLogsWithFilters();
+    }
+    
+    // Refresh logs
+    function refreshLogs() {
+      loadLogsWithFilters();
+    }
+    
+    // View log statistics
+    async function viewLogStats() {
+      try {
+        const statsContainer = document.getElementById('r2-log-stats');
+        const statsContent = document.getElementById('r2-log-stats-content');
+        
+        // Hide other sections
+        document.getElementById('r2-packages').style.display = 'none';
+        document.getElementById('r2-logs').style.display = 'none';
+        
+        // Toggle visibility
+        if (statsContainer.style.display === 'none' || !statsContainer.style.display) {
+          statsContainer.style.display = 'block';
+          statsContent.innerHTML = '<div class="metric">🔄 Loading log statistics...</div>';
+          
+          const res = await fetch('/_dashboard/api/r2/logs/stats');
+          const stats = await res.json();
+          
+          const oldestDate = new Date(stats.oldestEntry).toLocaleDateString();
+          const newestDate = new Date(stats.newestEntry).toLocaleDateString();
+          
+          statsContent.innerHTML = `
+            <div class="metrics">
+              <div class="metric">
+                <span class="label">Total Entries:</span>
+                <span class="value">${stats.totalEntries.toLocaleString()}</span>
+              </div>
+              <div class="metric">
+                <span class="label">Total Size:</span>
+                <span class="value">${formatBytes(stats.totalSize)}</span>
+              </div>
+              <div class="metric">
+                <span class="label">Date Range:</span>
+                <span class="value">${oldestDate} - ${newestDate}</span>
+              </div>
+              <div class="metric">
+                <span class="label">Storage Days:</span>
+                <span class="value">${Math.ceil((stats.newestEntry - stats.oldestEntry) / (24 * 60 * 60 * 1000))}</span>
+              </div>
+            </div>
+            <h4>📊 Config Distribution</h4>
+            <div class="metrics">
+              ${Object.entries(stats.configDistribution).map(([config, count]) => `
+                <div class="metric">
+                  <span class="label">${config}:</span>
+                  <span class="value">${count}</span>
+                </div>
+              `).join('')}
+            </div>
+            <h4>🏷️ Level Distribution</h4>
+            <div class="metrics">
+              ${Object.entries(stats.levelDistribution).map(([level, count]) => `
+                <div class="metric">
+                  <span class="label">${level.toUpperCase()}:</span>
+                  <span class="value">${count}</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          statsContainer.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Failed to view log stats:', error);
+        const statsContent = document.getElementById('r2-log-stats-content');
+        if (statsContent) {
+          statsContent.innerHTML = '<div class="metric error">❌ Failed to load log statistics</div>';
+        }
+      }
+    }
+    
+    // Cleanup old logs
+    async function cleanupOldLogs() {
+      try {
+        const retentionDays = prompt('Enter retention period in days (default: 30):', '30');
+        if (!retentionDays) return;
+        
+        const days = parseInt(retentionDays);
+        if (isNaN(days) || days < 1) {
+          alert('Please enter a valid number of days');
+          return;
+        }
+        
+        if (!confirm(`Are you sure you want to delete logs older than ${days} days?`)) {
+          return;
+        }
+        
+        const res = await fetch('/_dashboard/api/r2/logs/cleanup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ retentionDays: days })
+        });
+        
+        const result = await res.json();
+        
+        if (result.deletedCount > 0) {
+          alert(`✅ Successfully cleaned up ${result.deletedCount} old log entries, freeing ${formatBytes(result.freedSpace)} of storage.`);
+          // Refresh current view
+          if (document.getElementById('r2-log-stats').style.display !== 'none') {
+            viewLogStats();
+          }
+        } else {
+          alert('📋 No old logs found to clean up.');
+        }
+      } catch (error) {
+        console.error('Failed to cleanup logs:', error);
+        alert('❌ Failed to cleanup old logs: ' + error.message);
+      }
+    }
+    
+    // Format bytes for display
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // Start the dashboard
+    init();
+  </script>
+</body>
+</html>

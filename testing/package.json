@@ -1,0 +1,24 @@
+{
+  "name": "bun-proxy",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "proxy": "bun run src/proxy/middleware.ts",
+    "dashboard": "bun run src/terminal/dashboard.ts",
+    "test": "bun run test-proxy.ts test",
+    "dev": "bun run proxy & bun run dashboard",
+    "benchmark": "bun run benchmarks/proxy.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "author": "mike.hunt@factory.wager.com",
+  "license": "MIT",
+  "description": "Bun proxy middleware with terminal dashboard and benchmarks",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

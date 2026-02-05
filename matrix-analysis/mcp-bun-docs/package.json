@@ -1,0 +1,85 @@
+{
+	"name": "mcp-bun-docs",
+	"version": "1.0.0",
+	"private": false,
+	"type": "module",
+	"description": "SearchBun MCP server - Bun docs search bridge per https://bun.com/docs/mcp",
+	"keywords": [
+		"bun",
+		"mcp",
+		"searchbun",
+		"tier-1380",
+		"tier1380",
+		"docs",
+		"col-89",
+		"rss",
+		"matrix",
+		"omega",
+		"jsc",
+		"unicode-aware",
+		"unicode-safe",
+		"gb9c",
+		"col89-enforcer",
+		"col89-audit",
+		"col89-audit-export",
+		"col89-audit-export-md",
+		"col89-audit-export-md-export",
+		"col89-audit-export-md-export-md",
+		"col89-audit-export-md-export-md-export",
+		"col89-audit-export-md-export-md-export-md",
+		"col89-audit-export-md-export-md-export-md-export",
+		"col89-audit-export-md-export-md-export-md-export-md",
+		"col89-audit-export-md-export-md-export-md-export-md-export",
+		"col89-audit-export-md-export-md-export-md-export-md-export-md"
+	],
+	"author": "nolarose",
+	"license": "MIT",
+	"bin": {
+		"mcp-bun-docs": "./index.ts",
+		"bun-docs-mcp": "./index.ts",
+		"bun-docs-cli": "./cli.ts"
+	},
+	"engines": {
+		"bun": ">=1.3.8"
+	},
+	"scripts": {
+		"start": "bun run index.ts",
+		"mcp": "bun run index.ts",
+		"example:col89": "bun examples/col89-enforcer.example.ts",
+		"example:search": "bun examples/search-bun.example.ts",
+		"example:rss": "bun examples/rss-parse.example.ts",
+		"example:manifest": "bun examples/manifest-fetch.example.ts",
+		"example:buffer-indexof": "bun examples/buffer-indexof-includes.example.ts",
+		"example:buffer-includes": "bun examples/buffer-includes-bench.example.ts",
+		"example:spawn-sync": "bun examples/spawn-sync-bench.example.ts",
+		"matrix": "bun matrix-view.ts",
+		"ci-validate": "bun scripts/ci-validate-entries.ts",
+		"matrix:validate": "bun scripts/matrix-validate.ts",
+		"matrix:rss": "bun scripts/matrix-rss.ts",
+		"rss:verify": "bun scripts/verify-rss-canonicalization.ts",
+		"tier1380:seal": "bun scripts/tier1380-seal.ts",
+		"validate:options": "bun scripts/validate-options.ts"
+	},
+	"exports": {
+		".": "./index.ts",
+		"./lib": "./lib.ts",
+		"./rss": "./rss.ts",
+		"./matrix-view": "./matrix-view.ts",
+		"./constants": {
+			"import": "./lib.ts",
+			"require": "./lib.ts",
+			"types": "./lib.ts"
+		}
+	},
+	"files": [
+		"index.ts",
+		"cli.ts",
+		"lib.ts",
+		"rss.ts",
+		"matrix-view.ts",
+		"mcp-resources.ts",
+		"README.md",
+		"USAGE.md",
+		"EXPORTS.md"
+	]
+}

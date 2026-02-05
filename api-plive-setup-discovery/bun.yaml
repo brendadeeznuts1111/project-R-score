@@ -1,0 +1,555 @@
+# Syndicate GOV Monorepo Configuration - Bun 1.3 AI-Catalog Edition
+# feat/pm-monorepo-v3 + feat/gov-header-v3: YAML-powered catalogs with HEADER schema fortress
+
+# HEADER Schema Fortress - feat/gov-header-v3
+# Enums, regex patterns, and validation for ironclad consistency
+header:
+  schema:
+    scope:
+      enum: [GOV, SEC, OPS, TECH, FIN, LEG, AUD, COMP]
+      default: GOV
+      description: "Governance scope classification"
+    type:
+      enum: [RULES, SUMMARY, PROCEDURE, TEMPLATE, POLICY, STANDARD, GUIDANCE, REQUIREMENT]
+      default: RULES
+      description: "Content type classification"
+    id:
+      pattern: "^[A-Z]{3}-[A-Z]{3,4}-[0-9]{3}$"
+      example: "GOV-RULE-001"
+      description: "Unique identifier pattern"
+    version:
+      pattern: "^v[0-9]+\\.[0-9]+$"
+      default: "v2.9"
+      description: "Semantic version pattern"
+    status:
+      enum: [ACTIVE, DRAFT, DEPRECATED, REQUIRED, OPTIONAL]
+      default: ACTIVE
+      description: "Implementation status"
+    priority:
+      enum: [CRITICAL, HIGH, MEDIUM, LOW]
+      default: MEDIUM
+      description: "Implementation priority"
+    compliance:
+      enum: [MANDATORY, RECOMMENDED, OPTIONAL]
+      default: MANDATORY
+      description: "Compliance requirement level"
+    tags:
+      type: array
+      items:
+        pattern: "^[a-z][a-z0-9-]*$"
+        description: "Lowercase hyphenated tags"
+    metadata:
+      type: object
+      properties:
+        author: { type: string }
+        created: { type: string, format: date }
+        updated: { type: string, format: date }
+        reviewers: { type: array, items: { type: string } }
+        references: { type: array, items: { type: string } }
+
+# Core catalog for shared dependencies
+catalog:
+  react: ^18.3.1
+  typescript: ^5.0.4
+  zod: ^3.24.1
+  uuid: ^10.0.0
+  express: ^4.18.2
+  socket.io: "4.8.1"
+  redis: ^4.6.8
+  winston: ^3.10.0
+  yaml: "2.8.1"
+  bcryptjs: ^2.4.3
+  jsonwebtoken: ^9.0.2
+  pg: ^8.11.3
+  compression: ^1.7.4
+  cors: ^2.8.5
+  helmet: ^7.0.0
+  joi: ^17.9.2
+  swagger-jsdoc: ^6.2.8
+  swagger-ui-express: ^5.0.0
+
+# Named catalogs for different environments/use cases
+catalogs:
+  testing:
+    jest: "29.6.2"
+    "@types/jest": "^29.5.5"
+    react-testing-library: "14.0.0"
+    "@testing-library/jest-dom": "^6.1.4"
+
+  build:
+    esbuild: "0.19.0"
+    "@types/esbuild": "^0.19.0"
+    rollup: "^4.1.4"
+    terser: "^5.24.0"
+
+  dev:
+    nodemon: "^3.0.1"
+    ts-node: "^10.9.1"
+    "@types/node": "^20.8.7"
+    concurrently: "^8.2.2"
+
+# Workspace configuration
+workspaces:
+  packages: ["packages/*"]
+
+# Registry configuration
+registry:
+  path: ~/.syndicate/registry
+  sync: true
+  compression: zstd
+
+# Security configuration
+security:
+  scanner: "@socketsecurity/bun-security-scanner"
+  minimumReleaseAge: 604800  # 7 days
+  fatal: true
+  audit: true
+
+# Developer experience settings
+dev:
+  consoleDepth: 5
+  sqlPreconnect: true
+  hotReload: true
+  inspectPreload: "./setup.ts"
+
+# Build configuration
+build:
+  targets:
+    - linux-x64
+    - darwin-arm64
+    - windows-x64
+  compression: true
+  minify: true
+
+# Runtime configuration
+runtime:
+  secrets:
+    service: syndicate-gov
+    keys:
+      - csrf-key
+      - sign-key
+      - db-password
+  database:
+    url: "${DATABASE_URL}"
+    poolSize: 10
+  redis:
+    url: "${REDIS_URL}"
+    cluster: false
+
+# AI versioning configuration
+ai:
+  enabled: true
+  allowBreaking: false
+  autoInstall: true
+  securityThreshold: 5
+  updateFrequency: daily
+  reportFormat: json
+
+# Monitoring and logging
+monitoring:
+  enabled: true
+  metrics: true
+  tracing: true
+  alerts:
+    cpuThreshold: 80
+    memoryThreshold: 85
+    diskThreshold: 90
+
+# Deployment configuration
+deploy:
+  executable: syndicate-app
+  version: "3.0.1"
+  title: "Syndicate GOV Monorepo"
+  platforms: ["linux", "darwin", "windows"]
+  architectures: ["x64", "arm64"]
+
+# Custom interpolators for YAML processing
+interpolators:
+  vault: "vault"
+  date: "date"
+  math: "math"
+  env: "env"
+
+# Plugin configuration
+plugins:
+  yamlInterpolators: ["vault", "date", "math", "env"]
+  security: ["@socketsecurity/bun-security-scanner"]
+  build: ["esbuild", "rollup"]
+
+# API Routing Citadel - feat/api-openapi-v3
+# Bun YAML Registry + OpenAPI Auto-Forge v3.1 - Single source of truth for routing
+api:
+  basePath: /api
+  version: 1.3.0
+  openapi:
+    output: ./docs/openapi.yaml
+    title: Syndicate Dashboard API
+    description: Bun-powered, YAML-governed, grep-first REST + WS
+    servers:
+      - url: https://api.syndicate.gov
+        description: Production Vault
+      - url: ws://localhost:3003
+        description: Local WS Broadcast
+
+  routes:
+    - path: /config/{hash}
+      method: GET
+      id: get-config-by-hash
+      handler: ./routes/config/get-by-hash.ts
+      auth: vault
+      response:
+        200:
+          schema: ConfigResponse
+          example: { hash: "abc123", data: "!encrypted ${VAULT:api/main}" }
+        404: { schema: Error }
+      tags: [config, yaml]
+      summary: Retrieve interpolated YAML by hash
+      sourcemap: true
+
+    - path: /config/store
+      method: POST
+      id: store-yaml-config
+      handler: ./routes/config/store.ts
+      auth: csrf+vault
+      request:
+        schema: StoreRequest
+        required: true
+      response:
+        201: { schema: StoreResponse }
+      tags: [config, write]
+      summary: Store YAML with auto-interpolation & zstd
+      sourcemap: true
+
+    - path: /ws/config-update
+      method: WS
+      id: ws-live-config
+      handler: ./routes/ws/config-broadcast.ts
+      auth: csrf
+      subprotocol: dashboard-v1.3
+      tags: [realtime, ws]
+      summary: Live YAML diff stream with permessage-deflate
+      sourcemap: true
+
+    - path: /config/validate
+      method: POST
+      id: validate-yaml-schema
+      handler: ./routes/config/validate.ts
+      auth: csrf
+      request: { schema: YAMLString }
+      response:
+        200: { schema: ValidationResult }
+        400: { schema: ValidationError }
+      tags: [config, validate]
+      summary: Schema-check YAML before store
+      sourcemap: true
+
+    - path: /auth/login
+      method: POST
+      id: auth-login
+      handler: ./routes/auth/login.ts
+      auth: none
+      request:
+        schema: LoginRequest
+        required: true
+      response:
+        200:
+          schema: LoginResponse
+        401: { schema: Error }
+      tags: [auth, jwt]
+      summary: Issue gsession JWT + CSRF token
+      sourcemap: true
+
+    - path: /ws/telemetry
+      method: WS
+      id: ws-telemetry-live
+      handler: ./routes/ws/telemetry.ts
+      auth: jwt+csrf
+      subprotocol: dashboard-v1.3+telemetry
+      tags: [realtime, telemetry]
+      summary: Stream ETL telemetry with live updates
+      sourcemap: true
+
+    - path: /etl/start
+      method: POST
+      id: start-etl-pipeline
+      handler: ./etl/stream.ts
+      auth: jwt+csrf
+      request:
+        schema: ETLStartRequest
+        required: true
+      response:
+        200: { schema: ETLStartResponse }
+        400: { schema: ValidationError }
+      tags: [etl, stream]
+      summary: Trigger ETL pipeline on telemetry
+      sourcemap: true
+
+    - path: /js/client.min.js
+      method: GET
+      id: serve-minified-js
+      handler: ./routes/static/client-min.ts
+      auth: none
+      response:
+        200: { schema: JavaScript }
+      tags: [client, static]
+      summary: Serve minified JS with zstd compression
+      sourcemap: false
+
+    - path: /poll/telemetry
+      method: GET
+      id: poll-telemetry-fallback
+      handler: ./routes/api/poll-telemetry.ts
+      auth: csrf
+      response:
+        200: { schema: TelemetryPollResponse }
+      tags: [telemetry, fallback]
+      summary: Polling backup for v2.9 compatibility
+      sourcemap: true
+
+    - path: /ws/negotiate
+      method: POST
+      id: negotiate-ws-subprotocol
+      handler: ./routes/api/ws-negotiate.ts
+      auth: vault
+      request:
+        schema: WSNegotiateRequest
+        required: true
+      response:
+        200: { schema: WSNegotiateResponse }
+      tags: [ws, connect]
+      summary: Handshake for data types + topics
+      sourcemap: true
+
+<<<<<<< Current (Your changes)
+  # Auth & ETL Pipeline Configuration - feat/auth-etl-v3
+=======
+    - path: /ai/generate
+      method: POST
+      id: ai-generate
+      handler: ./routes/ai/generate.ts
+      auth: csrf+vault
+      request:
+        schema: AIGenerateRequest
+        required: true
+      response:
+        200: { schema: AIGenerateResponse }
+        400: { schema: Error }
+      tags: [ai, registry]
+      summary: Generate AI-driven headers and YAML configs
+      sourcemap: true
+
+    - path: /ai/batch
+      method: POST
+      id: ai-batch
+      handler: ./routes/ai/batch.ts
+      auth: csrf+vault
+      request:
+        schema: AIBatchRequest
+        required: true
+      response:
+        200: { schema: AIBatchResponse }
+      tags: [ai, registry, batch]
+      summary: Batch generate and store multiple AI-driven rules/configs
+      sourcemap: true
+
+    - path: /ai/validate
+      method: POST
+      id: ai-validate
+      handler: ./routes/ai/validate.ts
+      auth: csrf
+      request:
+        schema: AIValidateRequest
+        required: true
+      response:
+        200: { schema: AIValidateResponse }
+        400: { schema: AIValidateResponse }
+      tags: [ai, validation]
+      summary: Validate AI-generated headers/configs against bun.yaml schema
+      sourcemap: true
+
+    - path: /ai/store
+      method: POST
+      id: ai-store
+      handler: ./routes/ai/store.ts
+      auth: csrf+vault
+      request:
+        schema: AIStoreRequest
+        required: true
+      response:
+        200: { schema: AIStoreResponse }
+      tags: [ai, registry, storage]
+      summary: Store AI-generated content in registry with zstd compression
+      sourcemap: true
+
+    - path: /ai/stats
+      method: GET
+      id: ai-stats
+      handler: ./routes/ai/stats.ts
+      auth: csrf
+      response:
+        200: { schema: AIStatsResponse }
+      tags: [ai, stats]
+      summary: Retrieve AI generation stats (accuracy, throughput, errors)
+      sourcemap: true
+
+    - path: /ai/broadcast
+      method: POST
+      id: ai-broadcast
+      handler: ./routes/ai/broadcast.ts
+      auth: csrf
+      request:
+        schema: AIBroadcastRequest
+        required: true
+      response:
+        200: { schema: AIBroadcastResponse }
+      tags: [ai, broadcast, websocket]
+      summary: Broadcast AI-generated content to dashboard via WebSocket
+      sourcemap: true
+
+    - path: /ai/vault
+      method: POST
+      id: ai-vault
+      handler: ./routes/ai/vault.ts
+      auth: vault
+      request:
+        schema: AIVaultRequest
+        required: true
+      response:
+        200: { schema: AIVaultResponse }
+      tags: [ai, vault, secrets]
+      summary: Sync secrets to vault for AI-generated configs
+      sourcemap: true
+>>>>>>> Incoming (Background Agent changes)
+  auth:
+    endpoint: /api/auth/login
+    schema:
+      username:
+        type: string
+        pattern: '^[a-zA-Z0-9_]{3,20}$'
+      password:
+        type: string
+        minLength: 8
+    jwt:
+      cookie: gsession
+      secret: ${VAULT:dashboard/jwt-secret}
+      expires: 1h
+      attributes:
+        httpOnly: true
+        secure: ${ENV:prod}
+        sameSite: strict
+    csrf:
+      secret: ${VAULT:dashboard/csrf-secret}
+      expires: 3600s
+
+  connectivity:
+    ws:
+      port: 3003
+      idleTimeout: 30s
+      maxPayload: 16MB
+      compression:
+        permessageDeflate: true
+        zstd: true
+      heartbeat:
+        interval: 10s
+        timeout: 5s
+        payload:
+          type: PING
+          ts: ${DATE:ISO}
+      reconnect:
+        maxRetries: 5
+        backoff: exponential
+        delay: 1s-60s
+      dataTypes: [JSON, YAML, BINARY, TELEMETRY, STREAM]
+      topics:
+        - telemetry.live:
+            subscribe: auto
+            auth: csrf+vault
+            types: [TELEMETRY, JSON]
+        - config.updates:
+            publish: broadcast
+            types: [YAML, STREAM]
+        - binary.assets:
+            types: [BINARY]
+            compression: zstd
+      subprotocol: dashboard-v1.3+telemetry
+    fallbacks:
+      polling:
+        interval: 5s
+        endpoint: /api/poll/telemetry
+
+  etl:
+    endpoint: /api/etl/start
+    stream:
+      types: [JSON, YAML, BINARY]
+      compression: zstd
+    schema:
+      telemetry:
+        type: object
+        properties:
+          cpu: { type: number }
+          mem: { type: string }
+    hooks:
+      - validate-payload: true
+      - log-stream: true
+
+  validate:
+    hooks:
+      - auth-flow: true
+      - etl-stream: true
+      - ws-handlers: true
+      - telemetry-index: true
+      - reconnect-sim: true
+
+# Central Command Station (CCS) v3.1 - Total Oversight System
+# feat/ccs-v3: grep-first, YAML-governed nerve center
+command:
+  ccs:
+    endpoint: /api/command/control
+    ws: ws://localhost:3003/ws/command.all
+    schema:
+      commandTypes: [CONFIG, TELEMETRY, ETL, ALERT, DEPLOY]
+      nodeId:
+        pattern: '^[A-Z]{3}-[0-9]{4}$'
+        example: 'GOV-1234'
+      priority: [LOW, MEDIUM, HIGH, CRITICAL]
+    auth: jwt+csrf
+    heartbeat:
+      interval: 5s
+      payload:
+        type: PING
+        ts: ${DATE:ISO}
+
+  staging:
+    directory: ./staging
+    schema:
+      deploy:
+        type: object
+        properties:
+          target:
+            type: string
+            required: true
+          version:
+            type: string
+            pattern: '^v?\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9]+)?$'
+            required: true
+    hooks:
+      - validate-deploy: true
+      - stage-queue: true
+
+  connectivity:
+    nodes:
+      max: 10000
+      monitor: true
+    topics:
+      - command.all:
+          types: [JSON, YAML, BINARY]
+          auth: jwt+csrf
+      - telemetry.live:
+          types: [TELEMETRY]
+          subscribe: auto
+
+  validate:
+    hooks:
+      - ccs-commands: true
+      - staging-queue: true
+      - node-health: true

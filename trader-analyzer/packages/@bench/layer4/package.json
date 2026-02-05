@@ -1,0 +1,48 @@
+{
+  "name": "@bench/layer4",
+  "version": "1.0.0",
+  "description": "Layer4 anomaly detection benchmarking suite",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "bench": "bun run src/cli.ts",
+    "bench:property": "bun run src/cli.ts --property"
+  },
+  "dependencies": {
+    "@bench/core": "workspace:*",
+    "@graph/layer4": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.internal.yourcompany.com",
+    "access": "restricted"
+  },
+  "metadata": {
+    "team": {
+      "lead": "bench-layer4-lead@company.com",
+      "maintainers": [
+        "bench-maintainer-2@company.com"
+      ],
+      "owners": [
+        "bench-owner-2@company.com"
+      ]
+    },
+    "ownership": {
+      "scope": "@bench",
+      "team": "bench-layer4-team",
+      "repository": "github.com/company/monorepo/packages/bench/layer4"
+    },
+    "benchmarks": {
+      "enabled": true,
+      "suite": "@bench/layer4",
+      "thresholds": {
+        "performance": 100,
+        "memory": 50,
+        "regression": 0.05
+      }
+    }
+  }
+}

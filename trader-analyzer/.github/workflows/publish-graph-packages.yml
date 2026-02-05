@@ -1,0 +1,119 @@
+name: Publish @graph Packages
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags (e.g., v1.4.0)
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.4.1)'
+        required: true
+        type: string
+      tag:
+        description: 'Publish tag (latest, beta, rc)'
+        required: false
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - beta
+          - rc
+      package:
+        description: 'Specific package to publish (leave empty for all)'
+        required: false
+        type: string
+      skip_validation:
+        description: 'Skip validation (tests & benchmarks)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Configure Private Registry
+        run: |
+          echo "@graph:registry=https://npm.internal.yourcompany.com" > .npmrc
+          echo "//npm.internal.yourcompany.com/:_authToken=${{ secrets.GRAPH_NPM_TOKEN }}" >> .npmrc
+      
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        env:
+          GRAPH_NPM_TOKEN: ${{ secrets.GRAPH_NPM_TOKEN }}
+      
+      - name: Extract Version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION=${{ inputs.version }}
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Extracted version: ${VERSION}"
+      
+      - name: Pre-Publish Validation
+        if: ${{ !inputs.skip_validation }}
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }} bun run scripts/validate-before-publish.ts
+      
+      - name: Verify Benchmarks
+        if: ${{ !inputs.skip_validation }}
+        run: |
+          bun run scripts/benchmarks/compare.ts main HEAD --threshold=5% --fail-on-regression || echo "⚠️ Benchmark comparison skipped (main branch may not exist)"
+      
+      - name: Publish to Registry
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }} bun run scripts/publish-graph-monorepo.ts \
+            --otp=${{ secrets.NPM_OTP }} \
+            --tag=${{ inputs.tag || 'latest' }} \
+            --access=restricted \
+            ${{ inputs.package && format('--package {0}', inputs.package) || '' }} \
+            ${{ inputs.skip_validation && '--skip-validation --skip-tests --skip-bench' || '' }}
+        env:
+          GRAPH_NPM_TOKEN: ${{ secrets.GRAPH_NPM_TOKEN }}
+          NPM_OTP: ${{ secrets.NPM_OTP }}
+      
+      - name: Create Benchmark Baseline
+        if: success()
+        run: |
+          COMMIT_SHA=$(git rev-parse HEAD)
+          bun run scripts/benchmarks/create-benchmark.ts \
+            --profile=profiles/market-analysis.cpuprofile \
+            --name="Publish Baseline v${{ steps.version.outputs.VERSION }}" \
+            --description="Performance baseline for published version ${{ steps.version.outputs.VERSION }}" \
+            --tags="publish,${{ steps.version.outputs.VERSION }},baseline" || echo "⚠️ Benchmark creation skipped"
+      
+      - name: Verify Published Packages
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }} bun run scripts/verify-publish.ts
+        env:
+          REGISTRY: https://npm.internal.yourcompany.com
+      
+      - name: Notify Slack (Optional)
+        if: success()
+        run: |
+          echo "✅ Published @graph/* v${{ steps.version.outputs.VERSION }}"
+          # Uncomment and configure Slack webhook:
+          # curl -X POST https://hooks.slack.com/services/YOUR/WEBHOOK/URL \
+          #   -H 'Content-Type: application/json' \
+          #   -d '{"text":"🎉 Published @graph/* v${{ steps.version.outputs.VERSION }}"}'

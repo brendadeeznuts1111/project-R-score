@@ -1,0 +1,54 @@
+{
+  "default": true,
+  "MD001": false, // Heading levels should only increment by one level at a time
+  "MD003": { "style": "atx" }, // Heading style
+  "MD004": { "style": "dash" }, // Unordered list style
+  "MD005": true, // Inconsistent indentation for list items at the same level
+  "MD007": { "indent": 2 }, // Unordered list indentation
+  "MD009": { "br_spaces": 2 }, // Trailing spaces
+  "MD010": true, // Hard tabs
+  "MD011": true, // Reversed link syntax
+  "MD012": true, // Multiple consecutive blank lines
+  "MD013": { "line_length": 120 }, // Line length
+  "MD014": true, // Dollar signs used before commands without showing output
+  "MD018": true, // No space after hash on atx style heading
+  "MD019": true, // Multiple spaces after hash on atx style heading
+  "MD020": true, // No space inside hashes on closed atx style heading
+  "MD021": true, // Multiple spaces inside hashes on closed atx style heading
+  "MD022": true, // Headings should be surrounded by blank lines
+  "MD023": true, // Headings must start at the beginning of the line
+  "MD024": { "siblings_only": true }, // Multiple headings with the same content
+  "MD025": { "level": 1 }, // Multiple top-level headings in the same document
+  "MD026": { "punctuation": ".,;:!?" }, // Trailing punctuation in heading
+  "MD027": true, // Multiple spaces after blockquote symbol
+  "MD028": true, // Blank line inside blockquote
+  "MD029": { "style": "ordered" }, // Ordered list item prefix
+  "MD030": { "ul_single": 1, "ol_single": 1, "ul_multi": 1, "ol_multi": 1 }, // Spaces after list markers
+  "MD031": { "list_items": 1 }, // Fenced code blocks should be surrounded by blank lines
+  "MD032": true, // Lists should be surrounded by blank lines
+  "MD033": { "allowed_elements": ["br", "kbd", "details", "summary"] }, // Inline HTML
+  "MD034": true, // Bare URL used
+  "MD035": { "style": "---" }, // Horizontal rule style
+  "MD036": true, // Emphasis used instead of a heading
+  "MD037": true, // Spaces inside emphasis markers
+  "MD038": true, // Spaces inside code span elements
+  "MD039": true, // Spaces inside link text
+  "MD040": true, // Fenced code blocks should have a language specified
+  "MD041": false, // First line in a file should be a top-level heading
+  "MD042": true, // No empty links
+  "MD043": false, // Required heading structure
+  "MD044": { "names": ["DuoPlus", "TypeScript", "JavaScript", "Bun", "GitHub", "Git"], "code_blocks": false }, // Proper names should have the correct capitalization
+  "MD045": true, // Images should have alt text
+  "MD046": { "style": "fenced" }, // Code block style
+  "MD047": true, // Files should end with a single newline character
+  "MD048": { "style": "backtick" }, // Code fence style
+  "MD049": { "style": "underscore" }, // Emphasis style
+  "MD050": { "style": "asterisk" }, // Strong style
+  "MD051": true, // Link fragments should be valid
+  "MD052": true, // Reference links and images should use a label that is defined
+  "MD053": true, // Link and image reference definitions should be needed
+  "MD054": true, // Link and image reference definitions should be on their own line
+  "MD055": true, // Table pipe style
+  "MD056": true, // Table column count
+  "MD057": true // Table cell count
+}

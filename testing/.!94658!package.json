@@ -1,0 +1,11 @@
+{
+  "name": "dev-hq",
+  "version": "1.3.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "description": "Dev HQ - Ultimate Interactive Development Environment",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    // PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP

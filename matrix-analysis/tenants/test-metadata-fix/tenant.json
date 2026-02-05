@@ -1,0 +1,20 @@
+{
+  "id": "test-metadata-fix",
+  "name": "Tenant test-metadata-fix",
+  "config": {
+    "theme": "dark",
+    "timezone": "UTC",
+    "features": [
+      "analytics",
+      "reporting",
+      "api-access"
+    ]
+  },
+  "data": {
+    "users": 424,
+    "projects": 89,
+    "storage": 414886
+  },
+  "createdAt": "2026-02-01T03:56:15.847Z",
+  "updatedAt": "2026-02-01T03:56:15.847Z"
+}

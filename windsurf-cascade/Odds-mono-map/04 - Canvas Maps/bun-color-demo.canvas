@@ -1,0 +1,107 @@
+{
+	"nodes":[
+		{
+			"id":"service:bridge:production",
+			"x":100,
+			"y":100,
+			"width":400,
+			"height":200,
+			"type":"text",
+			"color":"#10B981",
+			"text":"# 🌉 Bridge Service\n\n## Purpose\n**Real-time sync** between components\n\n## Status\n- ✅ Production Ready\n- 🔄 Active Monitoring\n\n## Metrics\n- **Uptime**: 99.9%\n- **Latency**: <50ms",
+			"metadata":{
+				"documentType":"service-doc",
+				"status":"active",
+				"priority":"high",
+				"version":"3.2.1",
+				"author":"@system",
+				"lastValidated":"2025-11-18T16:45:00Z",
+				"color":{
+					"input":"#10B981",
+					"normalized":"#10B981",
+					"metadata":{
+						"originalInput":"#10B981",
+						"contrastRatio":4.8,
+						"isAccessible":true,
+						"terminalSupport":{"ansi16":true,"ansi256":true,"ansi16m":true}
+					}
+				}
+			}
+		},
+		{
+			"id":"integration:validation:system",
+			"x":600,
+			"y":100,
+			"width":350,
+			"height":180,
+			"type":"text",
+			"color":"#EF4444",
+			"text":"# 🔧 Validation System\n\n## Function\n**Comprehensive validation** pipeline\n\n## Features\n- 🎨 Color validation\n- 📊 Structure checking\n- 🏥 Health monitoring",
+			"metadata":{"documentType":"component-doc","status":"deprecated","priority":"medium","version":"2.1.0","author":"@validation-team"}
+		},
+		{
+			"id":"service:analytics:engine",
+			"x":350,
+			"y":400,
+			"width":380,
+			"height":190,
+			"type":"text",
+			"color":"#EAB308",
+			"text":"# 📊 Analytics Engine\n\n## Capabilities\n**Real-time analytics** processing\n\n## Status\n- 🟡 Beta Testing\n- 📈 Performance Monitoring\n\n## Data Flow\n- Events → Processing → Insights",
+			"metadata":{"documentType":"service-doc","status":"beta","priority":"high","version":"1.0.0-beta.3","author":"@analytics-team"}
+		},
+		{
+			"id":"core:api:gateway",
+			"x":100,
+			"y":400,
+			"width":200,
+			"height":150,
+			"type":"text",
+			"color":"#059669",
+			"text":"# 🚪 API Gateway\n\n## Role\n**Central entry point**\n\n## Protocols\n- HTTP/REST\n- GraphQL\n- WebSocket",
+			"metadata":{"documentType":"api-doc","status":"active","priority":"high","version":"4.0.0","author":"@core-team"}
+		},
+		{
+			"id":"integration:monitor:live",
+			"x":750,
+			"y":400,
+			"width":280,
+			"height":160,
+			"type":"text",
+			"color":"#6366F1",
+			"text":"# 📈 Live Monitor\n\n## Function\n**Real-time monitoring** dashboard\n\n## Alerts\n- ⚠️ Threshold breaches\n- 📊 Performance metrics",
+			"metadata":{"documentType":"monitor-doc","status":"experimental","priority":"medium","version":"0.9.0-alpha","author":"@monitoring-team"}
+		},
+		{
+			"id":"ui:component:library",
+			"x":450,
+			"y":650,
+			"width":300,
+			"height":140,
+			"type":"text",
+			"color":"#F97316",
+			"text":"# 🎨 Component Library\n\n## Purpose\n**Reusable UI** components\n\n## Stack\n- React\n- TypeScript\n- Tailwind CSS",
+			"metadata":{"documentType":"ui-doc","status":"active","priority":"low","version":"2.5.0","author":"@ui-team"}
+		},
+		{
+			"id":"pipeline:deployment:system",
+			"x":100,
+			"y":650,
+			"width":280,
+			"height":140,
+			"type":"text",
+			"color":"#06B6D4",
+			"text":"# 🔄 Deployment Pipeline\n\n## Process\n**Automated deployment** workflow\n\n## Stages\n- Build → Test → Deploy",
+			"metadata":{"documentType":"pipeline-doc","status":"active","priority":"high","version":"1.8.0","author":"@devops-team"}
+		}
+	],
+	"edges":[
+		{"fromNode":"service:bridge:production","toNode":"core:api:gateway","label":"API calls","fromSide":"bottom","toSide":"top"},
+		{"fromNode":"service:bridge:production","toNode":"integration:validation:system","label":"validates"},
+		{"fromNode":"service:bridge:production","toNode":"service:analytics:engine","label":"telemetry"},
+		{"fromNode":"service:analytics:engine","toNode":"integration:monitor:live","label":"metrics"},
+		{"fromNode":"core:api:gateway","toNode":"ui:component:library","label":"serves"},
+		{"fromNode":"pipeline:deployment:system","toNode":"service:bridge:production","label":"deploys"},
+		{"fromNode":"integration:validation:system","toNode":"pipeline:deployment:system","label":"validates"}
+	]
+}

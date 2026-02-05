@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NEXUS Registry System - Unified registry browser for all platform registries including Bun TypeScript patterns and breaking changes">
+    <meta name="keywords" content="registry, Bun, TypeScript, patterns, breaking changes, Bun.serve, Bun.Server generic">
+    <meta name="og:description" content="NEXUS Registry System - Browse Bun TypeScript patterns and breaking changes">
+    <meta name="theme-color" content="#667eea">
+    <title>NEXUS Registry Browser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .btn-icon {
+            font-size: 1.1em;
+            margin-right: 5px;
+        }
+
+        /* Stats Dashboard */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #00d4ff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-detail {
+            font-size: 0.8em;
+            color: #667eea;
+            margin-top: 8px;
+        }
+
+        /* Summary Row */
+        .summary-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            flex: 1;
+            min-width: 280px;
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .summary-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-list {
+            list-style: none;
+        }
+
+        .summary-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .summary-list li:last-child {
+            border-bottom: none;
+        }
+
+        .summary-list .label {
+            color: #9ca3af;
+        }
+
+        .summary-list .value {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        /* Registry Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin: 0;
+        }
+
+        .card .category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 6px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-data { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .category-tooling { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+        .category-security { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .category-research { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .category-integration { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+        .card .type-badge {
+            font-size: 0.7em;
+            padding: 3px 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            color: #00d4ff;
+            margin-left: 10px;
+        }
+
+        .card .description {
+            color: #9ca3af;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-healthy { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-degraded { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .status-offline { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-unknown { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 3px 10px;
+            background: rgba(0, 212, 255, 0.15);
+            border-radius: 4px;
+            font-size: 0.75em;
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .use-cases {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .use-cases h3 {
+            font-size: 0.85em;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .use-cases ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .use-cases li {
+            padding: 4px 0;
+            color: #9ca3af;
+            font-size: 0.85em;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .use-cases li:before {
+            content: "→";
+            color: #667eea;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .card-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #00d4ff;
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.7em;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .card-footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-footer a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+
+        .card-footer a:hover {
+            color: #667eea;
+        }
+
+        .schema-info {
+            font-size: 0.75em;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            color: #ef4444;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .error-icon {
+            font-size: 2em;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding: 30px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer a:hover {
+            color: #667eea;
+        }
+
+        /* Search */
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- Shared timezone utilities - Load in body to avoid execution context issues -->
+    <script src="./js/timezone-utils.js" onerror="console.error('Failed to load timezone-utils.js')"></script>
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <h1>📚 NEXUS Registry System</h1>
+                <p class="header-subtitle">Unified browser for all platform registries: properties, data sources, tools, errors, and more</p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="../docs/DOCUMENTATION-INDEX.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">📚 Docs</a>
+                <a href="../docs/17.14.0.0.0.0.0-NEXUS-REGISTRY-SYSTEM.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">📖 Registry</a>
+                <a href="../dashboard/17.14.0-nexus-dashboard.html" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">🌐 NEXUS</a>
+            </div>
+        </div>
+        
+        <!-- Developer Workspace Navigation -->
+        <div class="header-nav" style="display: flex; gap: 15px; margin-top: 15px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+            <a href="/api/changelog" target="_blank" style="color: #00d4ff; text-decoration: none; padding: 8px 16px; background: rgba(0, 212, 255, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(0, 212, 255, 0.3);" onmouseover="this.style.background='rgba(0, 212, 255, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(0, 212, 255, 0.1)'; this.style.transform='translateY(0)';">
+                📋 Changelog
+            </a>
+            <a href="/api/changelog?limit=50" target="_blank" style="color: #84cc16; text-decoration: none; padding: 8px 16px; background: rgba(132, 204, 22, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(132, 204, 22, 0.3);" onmouseover="this.style.background='rgba(132, 204, 22, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(132, 204, 22, 0.1)'; this.style.transform='translateY(0)';">
+                📜 Git Logs
+            </a>
+            <a href="/api/rss.xml" target="_blank" style="color: #f59e0b; text-decoration: none; padding: 8px 16px; background: rgba(245, 158, 11, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(245, 158, 11, 0.3);" onmouseover="this.style.background='rgba(245, 158, 11, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.transform='translateY(0)';">
+                📡 RSS Feed
+            </a>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search registries by name, tag, or description..." oninput="handleSearch(event)">
+        </div>
+        
+        <div class="controls">
+            <button class="btn active" onclick="filterCategory('all')"><span class="btn-icon">📋</span>All</button>
+            <button class="btn" onclick="filterCategory('data')"><span class="btn-icon">💾</span>Data</button>
+            <button class="btn" onclick="filterCategory('tooling')"><span class="btn-icon">🔧</span>Tooling</button>
+            <button class="btn" onclick="filterCategory('security')"><span class="btn-icon">🔐</span>Security</button>
+            <button class="btn" onclick="filterCategory('research')"><span class="btn-icon">🔬</span>Research</button>
+            <button class="btn" onclick="filterCategory('integration')"><span class="btn-icon">🔗</span>Integration</button>
+            <button class="btn" onclick="refreshRegistries()"><span class="btn-icon">🔄</span>Refresh</button>
+            <a href="./index.html" class="btn" style="text-decoration: none;"><span class="btn-icon">←</span>Dashboard</a>
+        </div>
+    </div>
+
+    <div id="errorContainer"></div>
+
+    <!-- Server-rendered timestamp (updated by HTMLRewriter) -->
+    <div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 0.85em;" data-debug>
+        Server Time: <span data-server-timestamp data-format="locale">Loading...</span> | 
+        Last Refresh: <span id="lastRefresh">Never</span>
+    </div>
+
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <div>Loading registries...</div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div id="statsContainer" style="display: none;">
+        <div class="stats-dashboard">
+            <div class="stat-card">
+                <span class="stat-value" id="totalRegistries">-</span>
+                <span class="stat-label">Total Registries</span>
+                <div class="stat-detail" id="registriesDetail">Loading...</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="totalItems">-</span>
+                <span class="stat-label">Total Items</span>
+                <div class="stat-detail" id="itemsDetail">Across all registries</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="totalCategories">-</span>
+                <span class="stat-label">Categories</span>
+                <div class="stat-detail" id="categoriesDetail">Loading...</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="healthyCount">-</span>
+                <span class="stat-label">Healthy</span>
+                <div class="stat-detail" style="color: #10b981;">All systems operational</div>
+            </div>
+        </div>
+
+        <!-- Feature-specific sections (conditionally rendered by HTMLRewriter) -->
+        <section id="shadow-graph-section" data-feature="shadowGraph" data-access="admin" style="display: none; margin-top: 30px; padding: 20px; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
+            <h2 style="color: #667eea; margin-bottom: 15px;">🔍 Shadow Market Graph Visualization</h2>
+            <div id="graph-container" style="min-height: 300px; background: rgba(26, 31, 58, 0.5); border-radius: 8px; padding: 20px;">
+                <p style="color: #9ca3af; text-align: center;">Graph visualization will be loaded here</p>
+            </div>
+        </section>
+
+        <section id="covert-steam-alerts-section" data-feature="covertSteamAlerts" style="display: none; margin-top: 30px; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 2px solid rgba(245, 158, 11, 0.3);">
+            <h2 style="color: #f59e0b; margin-bottom: 15px;">🚨 Covert Steam Alerts</h2>
+            <div id="alerts-list" style="min-height: 200px;">
+                <p style="color: #9ca3af; text-align: center;">Alerts will be displayed here</p>
+            </div>
+        </section>
+
+        <section id="statistical-analysis-section" data-feature="statisticalAnalysis" style="display: none; margin-top: 30px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border: 2px solid rgba(16, 185, 129, 0.3);">
+            <h2 style="color: #10b981; margin-bottom: 15px;">📊 Statistical Analysis Dashboard</h2>
+            <div id="statistical-analysis-container">
+                <p style="color: #9ca3af; text-align: center;">Statistical analysis tools will be loaded here</p>
+            </div>
+        </section>
+
+        <!-- Summary Cards -->
+        <div class="summary-row">
+            <div class="summary-card">
+                <h3>📊 By Category</h3>
+                <ul class="summary-list" id="categoryList"></ul>
+            </div>
+            <div class="summary-card">
+                <h3>🏷️ By Type</h3>
+                <ul class="summary-list" id="typeList"></ul>
+            </div>
+            <div class="summary-card">
+                <h3>⚡ System Status</h3>
+                <ul class="summary-list" id="statusList"></ul>
+            </div>
+            <div class="summary-card">
+                <h3>📚 Documentation</h3>
+                <ul class="summary-list">
+                    <li>
+                        <span class="label">Cross-Reference Analysis</span>
+                        <span class="value"><a href="/docs/CROSS-REFERENCE-ANALYSIS-REPORT.md" target="_blank" style="color: #00d4ff; text-decoration: none;">View Report →</a></span>
+                    </li>
+                    <li>
+                        <span class="label">HTMLRewriter</span>
+                        <span class="value">454 refs</span>
+                    </li>
+                    <li>
+                        <span class="label">Bun Utils</span>
+                        <span class="value">271 refs</span>
+                    </li>
+                    <li>
+                        <span class="label">Telegram</span>
+                        <span class="value">733 refs</span>
+                    </li>
+                    <li>
+                        <span class="label">Bun Type Fixes</span>
+                        <span class="value"><a href="/docs/BUN-TYPE-DEFINITION-FIXES.md" target="_blank" style="color: #00d4ff; text-decoration: none;">View →</a></span>
+                    </li>
+                    <li>
+                        <span class="label">Bun v1.2.11</span>
+                        <span class="value"><a href="/docs/BUN-1.2.11-IMPROVEMENTS.md" target="_blank" style="color: #00d4ff; text-decoration: none;">View →</a></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="registriesContainer" class="grid"></div>
+
+    <div class="footer">
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(102, 126, 234, 0.2); color: #9ca3af; font-size: 0.9em;">
+                <p style="margin-bottom: 10px;">
+                    <strong style="color: #667eea;">NEXUS Trading Platform</strong> v1.0.0 | Built with Bun 1.3.x + Hono<br>
+                    System Time: <span id="headerSystemTime">--:--:--</span> | Last Update: <span id="headerLastUpdate">Never</span><br>
+                    <span style="font-size: 0.85em; opacity: 0.7;" id="headerTimezoneConstants">[$TZ][Etc/UTC][setSystemTime]</span>
+                </p>
+                <p style="margin-top: 10px; opacity: 0.7;">
+                    System Time: <span id="footerSystemTime">--:--:--</span> | Last Update: <span id="footerLastUpdate">Never</span><br>
+                    <span style="font-size: 0.85em;" id="footerTimezoneConstants">[$TZ][Etc/UTC][setSystemTime]</span>
+                </p>
+        </div>
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="./index.html">Dashboard</a>
+            <a href="./examples.html">Examples</a>
+            <!-- Registry API link - should match RSS_API_PATHS.REGISTRY in src/utils/rss-constants.ts -->
+            <a href="/api/registry">Registry API</a>
+            <a href="/docs">Documentation</a>
+            <a href="/docs/CROSS-REFERENCE-ANALYSIS-REPORT.md" target="_blank">📊 Cross-Reference Analysis</a>
+        </p>
+    </div>
+
+    <script>
+        // Ensure timezone utilities are loaded before proceeding
+        if (!window.timezoneUtils) {
+            console.warn('[Registry] timezone-utils.js not loaded, timezone features may not work');
+        }
+        
+        // API_BASE configuration: Always use port 3001 for API, regardless of dashboard port
+        // Dashboard can be served on any port (8080, 3000, etc.) but API is always on 3001
+        const getAPIPort = () => {
+            const hostname = window.location.hostname;
+            const port = window.location.port;
+            const origin = window.location.origin;
+            
+            // If dashboard is on port 8080, API is on 3001
+            if (port === '8080' || origin.includes(':8080')) {
+                return '3001';
+            }
+            // If dashboard is on port 3000, API is on 3001
+            if (port === '3000' || origin.includes(':3000')) {
+                return '3001';
+            }
+            // Default to 3001 for localhost/127.0.0.1
+            if (hostname === 'localhost' || hostname === '127.0.0.1' || !hostname) {
+                return '3001';
+            }
+            // For production/other hosts, try same port first, fallback to 3001
+            return port || '3001';
+        };
+        
+        // Consume comprehensive UI context injected by HTMLRewriter
+        const uiContext = window.HYPERBUN_UI_CONTEXT || {
+            apiBaseUrl: `http://${window.location.hostname || 'localhost'}:${getAPIPort()}`,
+            featureFlags: {},
+            userRole: 'guest',
+            debugMode: false,
+            currentTimestamp: Date.now()
+        };
+        
+        // Extract API_BASE from UI context for backward compatibility
+        const API_BASE = uiContext.apiBaseUrl;
+        
+        // API endpoint paths - should match RSS_API_PATHS constants in src/utils/rss-constants.ts
+        // See: src/utils/rss-constants.ts for centralized API path constants
+        const API_PATHS = {
+            REGISTRY: '/api/registry',  // Matches RSS_API_PATHS.REGISTRY
+            REGISTRY_MCP_TOOLS: '/api/registry/mcp-tools',  // Matches RSS_API_PATHS.REGISTRY_MCP_TOOLS
+            REGISTRY_CLI_COMMANDS: '/api/registry/cli-commands',  // Matches RSS_API_PATHS.REGISTRY_CLI_COMMANDS
+        };
+        
+        // Log API_BASE for debugging
+        console.log(`[Registry] API_BASE: ${API_BASE}, Origin: ${window.location.origin}, Port: ${window.location.port || 'default'}`);
+        
+        // Debug logging if enabled
+        if (uiContext.debugMode) {
+            console.log('[Registry] UI Context:', uiContext);
+            console.log('[Registry] Feature Flags:', uiContext.featureFlags);
+            console.log('[Registry] User Role:', uiContext.userRole);
+        }
+
+        let allRegistries = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        async function loadRegistries() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('registriesContainer');
+            const errorContainer = document.getElementById('errorContainer');
+
+            try {
+                loading.style.display = 'block';
+                container.innerHTML = '';
+                errorContainer.innerHTML = '';
+
+                // Helper function for API calls with cookie support
+                function apiFetch(url, options = {}) {
+                    return fetch(url, {
+                        ...options,
+                        credentials: 'include', // Always include cookies
+                        mode: 'cors'
+                    });
+                }
+                
+                const response = await apiFetch(`${API_BASE}${API_PATHS.REGISTRY}`, {
+                    method: 'GET'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+
+                const data = await response.json();
+                allRegistries = data.registries;
+
+                // Update stats
+                updateStats(data);
+
+                // Render registries
+                renderRegistries(filterRegistries(allRegistries));
+
+                loading.style.display = 'none';
+                document.getElementById('statsContainer').style.display = 'block';
+                const refreshTime = formatSystemTime();
+                
+                // Update header and footer times
+                const headerLastUpdateEl = document.getElementById('headerLastUpdate');
+                const footerLastUpdate = document.getElementById('footerLastUpdate');
+                const lastRefreshEl = document.getElementById('lastRefresh');
+                if (headerLastUpdateEl) {
+                    headerLastUpdateEl.textContent = refreshTime;
+                }
+                if (footerLastUpdate) {
+                    footerLastUpdate.textContent = refreshTime;
+                }
+                if (lastRefreshEl) {
+                    lastRefreshEl.textContent = refreshTime;
+                }
+                
+                // Update timezone constants when data loads (in case API provides timezone info)
+                if (window.timezoneUtils && typeof window.timezoneUtils.updateTimezoneConstantsDisplay === 'function') {
+                    window.timezoneUtils.updateTimezoneConstantsDisplay();
+                }
+                
+                // Initialize feature-specific components based on UI context
+                initializeFeatureComponents();
+            } catch (error) {
+                loading.style.display = 'none';
+                errorContainer.innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">⚠️</div>
+                        <div>
+                            <strong>Error loading registries:</strong> ${error.message}<br>
+                            <span style="font-size: 0.9em;">Make sure the API server is running: <code>bun run dev</code></span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalRegistries').textContent = data.total;
+            document.getElementById('totalItems').textContent = data.totalItems.toLocaleString();
+            document.getElementById('totalCategories').textContent = Object.keys(data.categories).length;
+            document.getElementById('healthyCount').textContent = data.summary?.healthy || data.total;
+            
+            document.getElementById('registriesDetail').textContent = 
+                `${data.summary?.healthy || data.total} healthy, ${data.summary?.degraded || 0} degraded`;
+
+            // Category list
+            const categoryList = document.getElementById('categoryList');
+            categoryList.innerHTML = Object.entries(data.categories)
+                .sort((a, b) => b[1] - a[1])
+                .map(([cat, count]) => `
+                    <li>
+                        <span class="label">${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+                        <span class="value">${count}</span>
+                    </li>
+                `).join('');
+
+            // Type list
+            const typeList = document.getElementById('typeList');
+            if (data.byType) {
+                typeList.innerHTML = Object.entries(data.byType)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([type, count]) => `
+                        <li>
+                            <span class="label">${type}</span>
+                            <span class="value">${count}</span>
+                        </li>
+                    `).join('');
+            }
+
+            // Status list
+            const statusList = document.getElementById('statusList');
+            if (data.byStatus) {
+                statusList.innerHTML = Object.entries(data.byStatus)
+                    .map(([status, count]) => `
+                        <li>
+                            <span class="label">${status}</span>
+                            <span class="value" style="color: ${getStatusColor(status)}">${count}</span>
+                        </li>
+                    `).join('');
+            } else {
+                statusList.innerHTML = `
+                    <li><span class="label">Healthy</span><span class="value" style="color: #10b981">${data.total}</span></li>
+                    <li><span class="label">Degraded</span><span class="value" style="color: #f59e0b">0</span></li>
+                    <li><span class="label">Offline</span><span class="value" style="color: #ef4444">0</span></li>
+                `;
+            }
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                healthy: '#10b981',
+                degraded: '#f59e0b',
+                offline: '#ef4444',
+                unknown: '#6b7280'
+            };
+            return colors[status] || '#6b7280';
+        }
+
+        function filterRegistries(registries) {
+            let filtered = registries;
+
+            // Category filter
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(r => r.category === currentCategory);
+            }
+
+            // Search filter
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter(r => 
+                    r.name.toLowerCase().includes(query) ||
+                    r.description.toLowerCase().includes(query) ||
+                    r.tags.some(t => t.toLowerCase().includes(query)) ||
+                    r.id.toLowerCase().includes(query)
+                );
+            }
+
+            return filtered;
+        }
+
+        function renderRegistries(registries) {
+            const container = document.getElementById('registriesContainer');
+            
+            if (registries.length === 0) {
+                container.innerHTML = '<div class="empty-state">No registries found matching your criteria</div>';
+                return;
+            }
+
+            container.innerHTML = registries.map(registry => `
+                <div class="card" onclick="viewRegistry('${registry.id}')">
+                    <div class="card-header">
+                        <div>
+                            <span class="category category-${registry.category}">${registry.category}</span>
+                            ${registry.type ? `<span class="type-badge">${registry.type}</span>` : ''}
+                        </div>
+                        <div class="status-indicator status-${registry.status || 'healthy'}">
+                            <span class="status-dot"></span>
+                            ${(registry.status || 'healthy').charAt(0).toUpperCase() + (registry.status || 'healthy').slice(1)}
+                        </div>
+                    </div>
+                    
+                    <h2>${registry.name}</h2>
+                    <p class="description">${registry.description}</p>
+                    
+                    <div class="tags">
+                        ${registry.tags.slice(0, 8).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        ${registry.tags.length > 8 ? `<span class="tag">+${registry.tags.length - 8}</span>` : ''}
+                    </div>
+
+                    <div class="use-cases">
+                        <h3>Use Cases</h3>
+                        <ul>
+                            ${registry.useCases.slice(0, 4).map(uc => `<li>${uc}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="card-metrics">
+                        <div class="metric">
+                            <span class="metric-value">${registry.itemCount !== undefined ? registry.itemCount.toLocaleString() : '-'}</span>
+                            <span class="metric-label">Items</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">${registry.tags.length}</span>
+                            <span class="metric-label">Tags</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">${registry.useCases.length}</span>
+                            <span class="metric-label">Use Cases</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="${registry.endpoint}" target="_blank" onclick="event.stopPropagation();">
+                            View API Endpoint →
+                        </a>
+                        ${registry.schema ? `<span class="schema-info">v${registry.schema.version}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update button states
+            document.querySelectorAll('.controls .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.btn').classList.add('active');
+
+            // Re-render
+            renderRegistries(filterRegistries(allRegistries));
+        }
+
+        function handleSearch(event) {
+            searchQuery = event.target.value;
+            renderRegistries(filterRegistries(allRegistries));
+        }
+
+        function viewRegistry(registryId) {
+            window.open(`${API_BASE}${API_PATHS.REGISTRY}/${registryId}`, '_blank');
+        }
+
+        function refreshRegistries() {
+            loadRegistries();
+        }
+
+        /**
+         * Initialize feature-specific components based on UI context
+         * Components are conditionally rendered server-side by HTMLRewriter,
+         * but we can enhance them client-side here
+         */
+        function initializeFeatureComponents() {
+            // Shadow Graph Visualization (admin-only feature)
+            if (uiContext.featureFlags.shadowGraph && uiContext.userRole === 'admin') {
+                const shadowGraphSection = document.getElementById('shadow-graph-section');
+                if (shadowGraphSection) {
+                    shadowGraphSection.style.display = 'block';
+                    // Lazy load graph component if needed
+                    if (uiContext.debugMode) {
+                        console.log('[Registry] Initializing Shadow Graph component');
+                    }
+                    // Example: Could dynamically import('./shadow-graph-component.js')
+                }
+            }
+
+            // Covert Steam Alerts
+            if (uiContext.featureFlags.covertSteamAlerts) {
+                const alertsSection = document.getElementById('covert-steam-alerts-section');
+                if (alertsSection) {
+                    alertsSection.style.display = 'block';
+                    // Initialize alerts component
+                    if (uiContext.debugMode) {
+                        console.log('[Registry] Initializing Covert Steam Alerts');
+                    }
+                }
+            }
+
+            // Statistical Analysis Dashboard
+            if (uiContext.featureFlags.statisticalAnalysis) {
+                const statsSection = document.getElementById('statistical-analysis-section');
+                if (statsSection) {
+                    statsSection.style.display = 'block';
+                    // Initialize statistical analysis component
+                    if (uiContext.debugMode) {
+                        console.log('[Registry] Initializing Statistical Analysis Dashboard');
+                    }
+                }
+            }
+        }
+
+        /**
+         * Format system time (matches Bun CLI dashboard format)
+         * Uses toLocaleTimeString() to match test runner and CLI output
+         */
+        function formatSystemTime(date) {
+            if (!date) {
+                date = new Date();
+            }
+            return date.toLocaleTimeString();
+        }
+
+        // Update header system time and last update
+        function updateHeaderTime() {
+            const timeStr = formatSystemTime();
+            const headerTimeEl = document.getElementById('headerSystemTime');
+            if (headerTimeEl) {
+                headerTimeEl.textContent = timeStr;
+            }
+        }
+        
+        // Update footer times
+        function updateFooterTimes() {
+            const timeStr = formatSystemTime();
+            const footerSystemTime = document.getElementById('footerSystemTime');
+            if (footerSystemTime) {
+                footerSystemTime.textContent = timeStr;
+            }
+            
+            // Update footer last update from header if available
+            const footerLastUpdate = document.getElementById('footerLastUpdate');
+            if (footerLastUpdate) {
+                const headerLastUpdateEl = document.getElementById('headerLastUpdate');
+                if (headerLastUpdateEl && headerLastUpdateEl.textContent !== 'Never') {
+                    footerLastUpdate.textContent = headerLastUpdateEl.textContent;
+                }
+            }
+            
+            // Update timezone constants in headers/footers
+            try {
+                if (window.timezoneUtils && typeof window.timezoneUtils.updateTimezoneConstantsDisplay === 'function') {
+                    window.timezoneUtils.updateTimezoneConstantsDisplay();
+                } else {
+                    // Fallback: Update timezone constants manually using browser detection
+                    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    const tzEnv = 'TZ'; // Environment variable name (we can't read it in browser)
+                    const defaultTz = tz || 'Etc/UTC';
+                    const setSystemTimeAvailable = typeof Bun !== 'undefined' && Bun.setSystemTime ? 'setSystemTime' : 'setSystemTime (N/A)';
+                    const tzDisplay = `[$${tzEnv}][${defaultTz}][${setSystemTimeAvailable}]`;
+                    
+                    const headerTzEl = document.getElementById('headerTimezoneConstants');
+                    const footerTzEl = document.getElementById('footerTimezoneConstants');
+                    if (headerTzEl) {
+                        headerTzEl.textContent = tzDisplay;
+                    }
+                    if (footerTzEl) {
+                        footerTzEl.textContent = tzDisplay;
+                    }
+                }
+            } catch (e) {
+                console.debug('Timezone constants update failed:', e);
+            }
+        }
+        
+        // Initialize timezone constants display immediately
+        function initializeTimezoneConstants() {
+            try {
+                if (window.timezoneUtils && typeof window.timezoneUtils.updateTimezoneConstantsDisplay === 'function') {
+                    window.timezoneUtils.updateTimezoneConstantsDisplay();
+                } else {
+                    // Fallback: Use browser-detected timezone
+                    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    const tzDisplay = `[TZ][${tz}][setSystemTime (N/A)]`;
+                    const headerTzEl = document.getElementById('headerTimezoneConstants');
+                    const footerTzEl = document.getElementById('footerTimezoneConstants');
+                    if (headerTzEl) headerTzEl.textContent = tzDisplay;
+                    if (footerTzEl) footerTzEl.textContent = tzDisplay;
+                }
+            } catch (e) {
+                console.debug('Initial timezone constants update failed:', e);
+            }
+        }
+        
+        // Update header time every second
+        setInterval(updateHeaderTime, 1000);
+        updateHeaderTime(); // Initial update
+        
+        // Initialize timezone constants after a short delay to ensure DOM is ready
+        setTimeout(initializeTimezoneConstants, 100);
+        
+        // Update footer times every second
+        setInterval(updateFooterTimes, 1000);
+        updateFooterTimes(); // Initial update
+        
+        // Initial load
+        loadRegistries();
+
+        // Auto-refresh every 60 seconds
+        setInterval(loadRegistries, 60000);
+    </script>
+</body>
+</html>

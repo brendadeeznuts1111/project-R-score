@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "unified-shell": {
+      "command": "/opt/homebrew/bin/bun",
+      "args": [
+        "run",
+        "/Users/nolarose/.kimi/tools/unified-shell-bridge.ts"
+      ],
+      "env": {
+        "MATRIX_PROFILES_DIR": "/Users/nolarose/.matrix/profiles",
+        "TERMINAL_BINDING_ENABLED": "true",
+        "OPENCLAW_GATEWAY_TOKEN": "env:OPENCLAW_GATEWAY_TOKEN",
+        "KIMI_SHELL_MODE": "unified"
+      },
+      "description": "Unified Shell Bridge: Kimi Shell + OpenClaw + Profile Terminal"
+    },
+    "bun-local": {
+      "command": "/opt/homebrew/bin/bun",
+      "args": [
+        "run",
+        "node_modules/mcp-bun/dist/index.js"
+      ],
+      "env": {
+        "DISABLE_NOTIFICATIONS": "true",
+        "EVAL_DIRECTORIES": "/Users/nolarose:/tmp:/Users/nolarose/Projects",
+        "BUN_RUNTIME": "true",
+        "BUN_TERMINAL_ENABLED": "true"
+      },
+      "description": "Bun execution with terminal integration"
+    }
+  }
+}

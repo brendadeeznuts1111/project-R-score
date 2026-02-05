@@ -1,0 +1,2 @@
+This is blob content!
+Written using Bun.write()

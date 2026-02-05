@@ -1,0 +1,94 @@
+[install]
+
+exact = true
+# Production-ready configuration for keyboard-shortcuts-lite
+optional = true
+dev = true
+peer = true
+production = false
+saveTextLockfile = false
+frozenLockfile = false
+dryRun = false
+concurrentScripts = 16
+
+# Use hoisted strategy for better performance with our tiny library
+linker = "hoisted"
+
+# Security & stability configuration
+# Only accept packages that are at least 3 days old to avoid unstable releases
+minimumReleaseAge = 259200 # seconds
+
+# Exclude essential packages from age check for development
+minimumReleaseAgeExcludes = [
+  "@types/bun",
+  "typescript",
+  "bun-types"
+]
+
+# Default registry configuration
+registry = "https://npm.factory-wager.com"
+
+# Lockfile format version
+lockfileVersion = 1
+
+# Enable telemetry for optimization (can be disabled for privacy)
+telemetry = false
+
+# Advanced scoped registry configuration for enterprise environments
+[install.scopes]
+
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+# Public organization scopes
+"@brendadeeznuts1111" = "https://registry.npmjs.org"
+"@keyboard-shortcuts" = "https://registry.npmjs.org"
+
+# Private enterprise registry (example - uncomment to use)
+# "@myorg" = { url = "https://registry.my-company.com/", token = "${ENTERPRISE_NPM_TOKEN}" }
+# "@internal" = { username = "ci-user", password = "${CI_PASSWORD}", url = "https://npm.internal.company.com/" }
+# "@enterprise" = { url = "https://enterprise-registry.com/", token = "${ENTERPRISE_TOKEN}" }
+
+# Development registries
+"@dev" = { url = "http://localhost:4873/", token = "${DEV_NPM_TOKEN}" }
+"@test" = "http://localhost:4873/"
+
+# Bucket system registry (when available)
+# "@bucket" = { url = "https://bucket.company.com/packages/", token = "${BUCKET_AUTH_TOKEN}" }
+
+# Security scanning configuration
+[install.security]
+# Enable basic security scanning
+enabled = true
+# Custom rules for our organization
+rules = [
+  "no-eval",
+  "no-console-log",
+  "no-unsafe-"
+]
+
+# Cache configuration for optimal performance
+[install.cache]
+# Custom cache directory (optional - defaults to ~/.bun/install/cache)
+# dir = "~/.bun/install/cache"
+
+# Enable global cache for faster installs
+disable = false
+
+# Always resolve latest versions from registry (set to true for development)
+disableManifest = false
+
+# Performance optimization
+[install.performance]
+# Use clonefile on macOS for maximum speed (copy-on-write, space efficient)
+# Use hardlink on Linux/Windows (space efficient)
+# Available options: clonefile, hardlink, symlink, copyfile
+backend = "clonefile"
+
+# Concurrent network requests for faster downloads
+networkConcurrency = 48
+
+# Enable deduplication to reduce package size
+dedupe = true
+
+[publish]
+registry = "https://npm.factory-wager.com"

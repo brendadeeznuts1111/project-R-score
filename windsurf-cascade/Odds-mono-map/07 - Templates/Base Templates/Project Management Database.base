@@ -1,0 +1,310 @@
+---
+type: base-database
+title: "📊 Project Management Database"
+version: "2.0"
+category: "project-management"
+priority: "high"
+status: "active"
+tags:
+  - database
+  - projects
+  - management
+  - tasks
+created: 2025-11-18T15:03:00Z
+updated: 2025-11-18T15:03:00Z
+author: system
+---
+
+views:
+  - type: table
+    name: 📋 Overview
+    config:
+      columns:
+        - name: 🎯 Project
+          key: title
+        - name: 📊 Status
+          key: status
+        - name: ⚡ Priority
+          key: priority
+        - name: 👥 Assignee
+          key: assignee
+        - name: 📅 Due Date
+          key: due_date
+        - name: 📈 Progress
+          key: progress
+        - name: 🏷️ Tags
+          key: tags
+      sort:
+        - field: priority
+          direction: desc
+        - field: due_date
+          direction: asc
+      filters:
+        - field: status
+          operator: not_equals
+          value: completed
+  
+  - type: board
+    name: 📌 Kanban Board
+    config:
+      columns:
+        - name: 📝 To Do
+          key: status
+          value: todo
+          color: "#6b7280"
+        - name: 🔄 In Progress
+          key: status
+          value: in-progress
+          color: "#f59e0b"
+        - name: ⏳ Blocked
+          key: status
+          value: blocked
+          color: "#ef4444"
+        - name: ✅ Done
+          key: status
+          value: done
+          color: "#10b981"
+      covers:
+        field: cover_image
+        size: medium
+      card_size: large
+  
+  - type: gallery
+    name: 🎨 Visual View
+    config:
+      covers:
+        field: cover_image
+        size: large
+      title_field: title
+      subtitle_field: description
+      groups:
+        - field: status
+          order:
+            - in-progress
+            - todo
+            - blocked
+            - done
+  
+  - type: calendar
+    name: 📅 Timeline
+    config:
+      date_field: due_date
+      show_week_numbers: true
+      first_day_of_week: monday
+      colors:
+        - field: priority
+          value: critical
+          color: "#ef4444"
+        - field: priority
+          value: high
+          color: "#f59e0b"
+        - field: priority
+          value: medium
+          color: "#3b82f6"
+        - field: priority
+          value: low
+          color: "#6b7280"
+
+fields:
+  - name: title
+    type: text
+    required: true
+    options:
+      - name: Project Name
+        description: Clear, descriptive project title
+  
+  - name: description
+    type: text
+    required: true
+    options:
+      - name: Detailed Description
+        description: Comprehensive project overview and objectives
+  
+  - name: status
+    type: select
+    required: true
+    options:
+      - name: 📝 To Do
+        value: todo
+        color: "#6b7280"
+      - name: 🔄 In Progress
+        value: in-progress
+        color: "#f59e0b"
+      - name: ⏳ Blocked
+        value: blocked
+        color: "#ef4444"
+      - name: ✅ Done
+        value: done
+        color: "#10b981"
+    default: todo
+  
+  - name: priority
+    type: select
+    required: true
+    options:
+      - name: 🔴 Critical
+        value: critical
+        color: "#ef4444"
+      - name: 🟠 High
+        value: high
+        color: "#f59e0b"
+      - name: 🔵 Medium
+        value: medium
+        color: "#3b82f6"
+      - name: ⚪ Low
+        value: low
+        color: "#6b7280"
+    default: medium
+  
+  - name: assignee
+    type: text
+    options:
+      - name: Team Member
+        description: Person responsible for this project
+  
+  - name: due_date
+    type: date
+    required: true
+    options:
+      - name: Due Date
+        description: Project completion deadline
+  
+  - name: start_date
+    type: date
+    options:
+      - name: Start Date
+        description: Project initiation date
+  
+  - name: progress
+    type: number
+    options:
+      - name: Progress Percentage
+        description: Completion percentage (0-100)
+      - min: 0
+      - max: 100
+      - default: 0
+  
+  - name: tags
+    type: tags
+    required: true
+    options:
+      - name: Project Tags
+        description: Categorization and filtering tags
+  
+  - name: category
+    type: select
+    options:
+      - name: 🏗️ Development
+        value: development
+      - name: 📊 Analytics
+        value: analytics
+      - name: 🎨 Design
+        value: design
+      - name: 📚 Documentation
+        value: documentation
+      - name: 🔧 Infrastructure
+        value: infrastructure
+      - name: 🧪 Testing
+        value: testing
+      - name: 🚀 Deployment
+        value: deployment
+  
+  - name: estimated_hours
+    type: number
+    options:
+      - name: Estimated Hours
+        description: Time estimate for project completion
+  
+  - name: actual_hours
+    type: number
+    options:
+      - name: Actual Hours
+        description: Time spent on project
+  
+  - name: cover_image
+    type: image
+    options:
+      - name: Cover Image
+        description: Visual representation for gallery view
+  
+  - name: objectives
+    type: text
+    options:
+      - name: Project Objectives
+        description: Key goals and deliverables
+  
+  - name: requirements
+    type: text
+    options:
+      - name: Requirements
+        description: Technical and business requirements
+  
+  - name: dependencies
+    type: text
+    options:
+      - name: Dependencies
+        description: Related projects or prerequisites
+  
+  - name: risks
+    type: text
+    options:
+      - name: Risks & Issues
+        description: Potential problems and mitigation strategies
+  
+  - name: notes
+    type: text
+    options:
+      - name: Project Notes
+        description: Additional information and updates
+
+templates:
+  - name: 🚀 New Project
+    description: Create a new project with standard fields
+    template:
+      status: todo
+      priority: medium
+      progress: 0
+      tags: ["new", "project"]
+      created: "{{date:YYYY-MM-DDTHH:mm:ssZ}}"
+      updated: "{{date:YYYY-MM-DDTHH:mm:ssZ}}"
+  
+  - name: 📊 Quick Task
+    description: Create a simple task entry
+    template:
+      status: todo
+      priority: medium
+      progress: 0
+      tags: ["task"]
+      created: "{{date:YYYY-MM-DDTHH:mm:ssZ}}"
+      updated: "{{date:YYYY-MM-DDTHH:mm:ssZ}}"
+
+settings:
+  - name: auto_update_timestamp
+    description: Automatically update the 'updated' field when a record is modified
+    value: true
+  
+  - name: default_sort
+    description: Default sorting for table views
+    value:
+      - field: priority
+        direction: desc
+      - field: due_date
+        direction: asc
+  
+  - name: required_fields
+    description: Fields that must be filled before saving
+    value: ["title", "description", "status", "priority", "due_date"]
+
+relationships:
+  - name: linked_projects
+    type: many_to_many
+    target: project_management
+    description: Projects that are related or dependent
+  
+  - name: assigned_tasks
+    type: one_to_many
+    target: task_tracking
+    description: Tasks assigned to this project
+
+---
+*Project Management Database v2.0 • Comprehensive project tracking and management system*

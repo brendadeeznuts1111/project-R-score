@@ -1,0 +1,21 @@
+name = "mcp-blog-gateway-ord01"
+main = "src/worker.ts"
+compatibility_date = "2024-12-20"
+
+# R2 Bucket Binding
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "registry-mcp-prod"
+
+# Production environment
+[env.production]
+name = "mcp-blog-gateway-ord01"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+CACHE_TTL = "3600"
+
+# Custom domain routing
+routes = [
+  { pattern = "blog.factory-wager.com/*", zone_name = "factory-wager.com" }
+]

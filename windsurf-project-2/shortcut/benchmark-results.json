@@ -1,0 +1,130 @@
+{
+  "Simple ASCII": {
+    "Grapheme Clustering": {
+      "duration": "38.71ms",
+      "opsPerSecond": "258298 ops/sec",
+      "perOperation": "0.0039ms"
+    },
+    "Cluster Length": {
+      "duration": "47.79ms",
+      "opsPerSecond": "209237 ops/sec",
+      "perOperation": "0.0048ms"
+    },
+    "Visual Width": {
+      "duration": "63.71ms",
+      "opsPerSecond": "156973 ops/sec",
+      "perOperation": "0.0064ms"
+    },
+    "Emoji Detection": {
+      "duration": "0.79ms",
+      "opsPerSecond": "12579946 ops/sec",
+      "perOperation": "0.0001ms"
+    },
+    "Unicode Validation": {
+      "duration": "454.36ms",
+      "opsPerSecond": "22009 ops/sec",
+      "perOperation": "0.0454ms"
+    },
+    "Text Normalization": {
+      "duration": "94.90ms",
+      "opsPerSecond": "105375 ops/sec",
+      "perOperation": "0.0095ms"
+    }
+  },
+  "Emoji Heavy": {
+    "Grapheme Clustering": {
+      "duration": "12.06ms",
+      "opsPerSecond": "414609 ops/sec",
+      "perOperation": "0.0024ms"
+    },
+    "Cluster Length": {
+      "duration": "10.85ms",
+      "opsPerSecond": "460884 ops/sec",
+      "perOperation": "0.0022ms"
+    },
+    "Visual Width": {
+      "duration": "11.94ms",
+      "opsPerSecond": "418924 ops/sec",
+      "perOperation": "0.0024ms"
+    },
+    "Emoji Detection": {
+      "duration": "0.04ms",
+      "opsPerSecond": "117880045 ops/sec",
+      "perOperation": "0.0000ms"
+    },
+    "Unicode Validation": {
+      "duration": "220.30ms",
+      "opsPerSecond": "22697 ops/sec",
+      "perOperation": "0.0441ms"
+    },
+    "Text Normalization": {
+      "duration": "45.21ms",
+      "opsPerSecond": "110583 ops/sec",
+      "perOperation": "0.0090ms"
+    }
+  },
+  "Complex Unicode": {
+    "Grapheme Clustering": {
+      "duration": "6.20ms",
+      "opsPerSecond": "322524 ops/sec",
+      "perOperation": "0.0031ms"
+    },
+    "Cluster Length": {
+      "duration": "6.28ms",
+      "opsPerSecond": "318691 ops/sec",
+      "perOperation": "0.0031ms"
+    },
+    "Visual Width": {
+      "duration": "5.90ms",
+      "opsPerSecond": "338962 ops/sec",
+      "perOperation": "0.0030ms"
+    },
+    "Emoji Detection": {
+      "duration": "0.03ms",
+      "opsPerSecond": "78048780 ops/sec",
+      "perOperation": "0.0000ms"
+    },
+    "Unicode Validation": {
+      "duration": "93.50ms",
+      "opsPerSecond": "21390 ops/sec",
+      "perOperation": "0.0467ms"
+    },
+    "Text Normalization": {
+      "duration": "22.37ms",
+      "opsPerSecond": "89417 ops/sec",
+      "perOperation": "0.0112ms"
+    }
+  },
+  "Zalgo Text": {
+    "Grapheme Clustering": {
+      "duration": "1.57ms",
+      "opsPerSecond": "636014 ops/sec",
+      "perOperation": "0.0016ms"
+    },
+    "Cluster Length": {
+      "duration": "2.21ms",
+      "opsPerSecond": "453283 ops/sec",
+      "perOperation": "0.0022ms"
+    },
+    "Visual Width": {
+      "duration": "2.29ms",
+      "opsPerSecond": "436689 ops/sec",
+      "perOperation": "0.0023ms"
+    },
+    "Emoji Detection": {
+      "duration": "0.02ms",
+      "opsPerSecond": "63323202 ops/sec",
+      "perOperation": "0.0000ms"
+    },
+    "Unicode Validation": {
+      "duration": "31.99ms",
+      "opsPerSecond": "31256 ops/sec",
+      "perOperation": "0.0320ms"
+    },
+    "Text Normalization": {
+      "duration": "16.23ms",
+      "opsPerSecond": "61630 ops/sec",
+      "perOperation": "0.0162ms"
+    }
+  }
+}

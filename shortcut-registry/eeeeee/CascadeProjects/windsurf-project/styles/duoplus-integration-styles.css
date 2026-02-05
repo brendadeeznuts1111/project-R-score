@@ -1,0 +1,675 @@
+/* DuoPlus Integration Styles - Cloud Phone + Guardian Networks */
+/* Part of DUOPLUS 2025-12-31 + DECENTRALIZED SOCIAL RECOVERY fusion */
+
+/* Cloud Number Recovery Panel */
+.cloud-number-recovery-panel {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  box-shadow: 0 8px 32px rgba(30, 41, 59, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.cloud-number-recovery-panel::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  animation: cloudPulse 12s ease-in-out infinite;
+}
+
+@keyframes cloudPulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.6; }
+}
+
+/* Recovery Header */
+.recovery-header {
+  text-align: center;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.recovery-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.recovery-header p {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Anti-Detection Status */
+.anti-detection-status {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.anti-detection-status h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.status-label {
+  opacity: 0.8;
+}
+
+.status-value {
+  font-weight: 600;
+}
+
+.status-value.active {
+  color: #22c55e;
+}
+
+.status-value.inactive {
+  color: #ef4444;
+}
+
+/* Guardian Selection */
+.guardian-selection {
+  margin-bottom: 24px;
+}
+
+.guardian-selection h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.guardian-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.guardian-select:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Cloud Number Input */
+.cloud-number-input {
+  margin-bottom: 24px;
+}
+
+.cloud-number-input h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cloud-number-field {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.cloud-number-field:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.input-help {
+  font-size: 12px;
+  opacity: 0.7;
+  margin: 8px 0 0 0;
+}
+
+/* Verification Status */
+.verification-status {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 2px solid;
+  transition: all 0.3s ease;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.status-text {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.approval-code {
+  font-family: monospace;
+  font-size: 16px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.send-sms-btn,
+.verify-btn {
+  flex: 1;
+  min-width: 200px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  color: white;
+}
+
+.send-sms-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.send-sms-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+}
+
+.verify-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.verify-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+}
+
+.send-sms-btn:disabled,
+.verify-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* RPA Automation Info */
+.rpa-automation-info {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rpa-automation-info h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #8b5cf6;
+}
+
+.automation-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.feature-icon {
+  font-size: 16px;
+}
+
+.feature-text {
+  opacity: 0.9;
+}
+
+/* Performance Metrics */
+.performance-metrics {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.performance-metrics h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.metric-item {
+  text-align: center;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.metric-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-bottom: 4px;
+}
+
+.metric-label {
+  font-size: 11px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* DuoPlus Integration Dashboard */
+.duoplus-integration-dashboard {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.3);
+}
+
+.duoplus-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.duoplus-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.duoplus-header p {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Cloud Phone Matrix */
+.cloud-phone-matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.matrix-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.matrix-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.matrix-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.matrix-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.matrix-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.stat-label {
+  opacity: 0.8;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+/* RPA Task List */
+.rpa-task-list {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rpa-task-list h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.task-meta {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.task-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.task-status.pending {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.task-status.running {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.task-status.completed {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.task-status.failed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* Tension Field Integration */
+.tension-field-integration {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tension-field-integration h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ef4444;
+}
+
+.tension-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.tension-metric {
+  text-align: center;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.tension-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.tension-value.low {
+  color: #22c55e;
+}
+
+.tension-value.medium {
+  color: #f59e0b;
+}
+
+.tension-value.high {
+  color: #ef4444;
+}
+
+.tension-value.critical {
+  color: #dc2626;
+  animation: criticalPulse 1s ease-in-out infinite;
+}
+
+@keyframes criticalPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.tension-label {
+  font-size: 11px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* WebSocket Status */
+.websocket-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.ws-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: wsPulse 2s ease-in-out infinite;
+}
+
+@keyframes wsPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cloud-number-recovery-panel {
+    padding: 20px;
+  }
+  
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .automation-features {
+    grid-template-columns: 1fr;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .cloud-phone-matrix {
+    grid-template-columns: 1fr;
+  }
+  
+  .tension-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Loading States */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+  animation: loadingShimmer 1.5s infinite;
+}
+
+@keyframes loadingShimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Success States */
+.success-pulse {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* DuoPlus Branding */
+.duoplus-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.duoplus-logo {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.duoplus-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .cloud-number-recovery-panel {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+}

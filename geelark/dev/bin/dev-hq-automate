@@ -1,0 +1,72 @@
+#!/usr/bin/env bun
+// cli.js - Dev HQ Automation CLI
+
+import { DevHQAutomation, DevHQActions } from '../dev-hq/core/automation.js';
+
+const [command, ...args] = process.argv.slice(2);
+
+const auto = new DevHQAutomation();
+
+switch (command) {
+  case 'run':
+    const cmd = args;
+    console.log(`🏃‍♂️ Running: ${cmd.join(' ')}`);
+    const result = await auto.runCommand(cmd[0], cmd, { stream: true });
+    if (result && 'exitCode' in result) {
+      process.exit(result.exitCode || 0);
+    }
+    break;
+
+  case 'git':
+    console.log('📊 Analyzing Git repository...');
+    const insights = await DevHQActions.gitInsights();
+    console.log(JSON.stringify(insights, null, 2));
+    break;
+
+  case 'cloc':
+    console.log('🔍 Analyzing code...');
+    const cloc = await DevHQActions.analyzeWithCLOC();
+    console.log(JSON.stringify(cloc, null, 2));
+    break;
+
+  case 'test':
+    console.log('🧪 Running tests...');
+    await DevHQActions.runTests();
+    break;
+
+  case 'docker':
+    console.log('🐳 Analyzing Docker containers...');
+    const docker = await DevHQActions.dockerInsights();
+    console.log(JSON.stringify(docker, null, 2));
+    break;
+
+  case 'server':
+    console.log('🚀 Starting Dev HQ Automation Server...');
+    await import('../dev-hq/servers/spawn-server.js');
+    break;
+
+  default:
+    console.log(`
+🤖 Dev HQ Automation Commands:
+
+  dev-hq-automate run <cmd>      Run any command
+  dev-hq-automate git           Get git insights
+  dev-hq-automate cloc          Count lines of code
+  dev-hq-automate test          Run tests with coverage
+  dev-hq-automate docker        Docker container insights
+  dev-hq-automate server        Start automation server
+
+Examples:
+  dev-hq-automate run ls -la
+  dev-hq-automate run "bun test --coverage"
+  dev-hq-automate git | jq '.contributors'
+  dev-hq-automate server
+    `);
+}
+
+// Cleanup on exit
+process.on('SIGINT', async () => {
+  console.log('\\n🧹 Cleaning up processes...');
+  await auto.cleanup();
+  process.exit(0);
+});

@@ -1,0 +1,172 @@
+# [HEADSCALE][POLICY][ACL]{CLOUDFLARE-INTEGRATION}
+# Tailscale ACLs with Cloudflare Zero Trust integration
+# https://tailscale.com/kb/1018/acls/
+
+# ===== Groups =====
+# Define groups for access control (can integrate with Cloudflare Access)
+groups:
+  # Administrators - full access
+  group:admins:
+    - user:admin@example.com
+
+  # Operators - infrastructure access
+  group:operators:
+    - user:ops@example.com
+    - user:devops@example.com
+
+  # Developers - limited access
+  group:developers:
+    - user:dev@example.com
+
+# ===== Port Configuration =====
+# Define port constants for easy reference and updates
+# Use environment variables to override defaults
+ports:
+  headscale_api: ${HEADSCALE_API_PORT:-8080}
+  headscale_metrics: ${HEADSCALE_METRICS_PORT:-9090}
+  headplane: ${HEADPLANE_PORT:-3000}
+  prometheus: ${PROMETHEUS_PORT:-9090}
+  grafana: ${GRAFANA_PORT:-3000}
+  derp_stun: ${DERP_STUN_PORT:-3478}
+  ssh: 22
+  http: 80
+  https: 443
+
+# ===== Tag Owners =====
+# Define who can assign tags to nodes
+tagOwners:
+  # Operators can tag infrastructure nodes
+  tag:infrastructure:
+    - group:admins
+    - group:operators
+
+  # API servers
+  tag:api-server:
+    - group:admins
+    - group:operators
+
+  # Monitoring nodes
+  tag:monitoring:
+    - group:admins
+    - group:operators
+
+  # Development machines
+  tag:dev:
+    - group:developers
+
+# ===== Hosts =====
+# Define named hosts for easy reference
+# Use environment variables to override defaults
+hosts:
+  headscale: ${HEADSCALE_HOST:-100.64.0.10}
+  headplane: ${HEADPLANE_HOST:-100.64.0.11}
+  prometheus: ${PROMETHEUS_HOST:-100.64.0.12}
+  grafana: ${GRAFANA_HOST:-100.64.0.13}
+
+# ===== ACLs =====
+# Access Control List rules
+acls:
+  # Admins have full access
+  - action: accept
+    src:
+      - group:admins
+    dst:
+      - "*:*"
+
+  # Operators can access infrastructure
+  - action: accept
+    src:
+      - group:operators
+    dst:
+      - tag:infrastructure:*
+      - tag:api-server:22,80,443,${HEADSCALE_API_PORT:-8080}
+      - tag:monitoring:${HEADPLANE_PORT:-3000},${HEADSCALE_METRICS_PORT:-9090}
+
+  # Developers can access dev machines and API servers
+  - action: accept
+    src:
+      - group:developers
+    dst:
+      - tag:dev:*
+      - tag:api-server:80,443
+
+  # All users can access monitoring dashboards
+  - action: accept
+    src:
+      - "*"
+    dst:
+      - tag:monitoring:${HEADPLANE_PORT:-3000}
+
+  # All tagged nodes can talk to Headscale
+  - action: accept
+    src:
+      - tag:infrastructure
+      - tag:api-server
+      - tag:monitoring
+      - tag:dev
+    dst:
+      - headscale:${HEADSCALE_API_PORT:-8080}
+      - headplane:${HEADPLANE_PORT:-3000}
+
+  # Allow DERP relay traffic
+  - action: accept
+    src:
+      - "*"
+    dst:
+      - "*:${DERP_STUN_PORT:-3478}" # STUN
+
+# ===== SSH =====
+# SSH access control (Tailscale SSH)
+ssh:
+  # Operators can SSH to infrastructure
+  - action: check
+    src:
+      - group:operators
+      - group:admins
+    dst:
+      - tag:infrastructure
+      - tag:api-server
+    users:
+      - root
+      - ubuntu
+      - ec2-user
+
+  # Developers can SSH to dev machines
+  - action: check
+    src:
+      - group:developers
+    dst:
+      - tag:dev
+    users:
+      - autogroup:nonroot
+
+# ===== Tests =====
+# ACL tests to verify policy correctness
+tests:
+  - src: user:admin@example.com
+    accept:
+      - headscale:${HEADSCALE_API_PORT:-8080}
+      - headplane:${HEADPLANE_PORT:-3000}
+      - 100.64.0.100:22
+
+  - src: user:dev@example.com
+    accept:
+      - tag:dev:22
+      - tag:api-server:443
+    deny:
+      - headscale:${HEADSCALE_API_PORT:-8080}
+      - tag:infrastructure:22
+
+# ===== AutoApprovers =====
+# Automatically approve routes and exit nodes
+autoApprovers:
+  routes:
+    # Operators can advertise infrastructure subnets
+    - "10.0.0.0/8":
+        - group:operators
+    - "192.168.0.0/16":
+        - group:operators
+
+  exitNode:
+    # Only admins can be exit nodes
+    - group:admins

@@ -1,0 +1,157 @@
+name: 🔐 Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'config/**'
+      - '**/*.toml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'config/**'
+      - '**/*.toml'
+  schedule:
+    # Run daily at 9 AM UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+env:
+  BUN_SECRETS_DIR: ${{ github.workspace }}/.secrets
+  BUN_LOG_LEVEL: info
+
+jobs:
+  security-scan:
+    name: Scan TOML Secrets
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Initialize environment
+        run: bun run src/utils/env-config.ts init
+
+      - name: Run security scan
+        id: security-scan
+        run: |
+          bun run kimi security config/*.toml --json > security-report.json || true
+          cat security-report.json
+        continue-on-error: true
+
+      - name: Analyze security results
+        id: analyze
+        run: |
+          # Check for high-risk issues
+          HIGH_RISK=$(jq '[.[] | select(.riskScore > 75)] | length' security-report.json || echo "0")
+          MEDIUM_RISK=$(jq '[.[] | select(.riskScore > 50 and .riskScore <= 75)] | length' security-report.json || echo "0")
+          TOTAL_FILES=$(jq 'length' security-report.json || echo "0")
+          
+          echo "high_risk=$HIGH_RISK" >> $GITHUB_OUTPUT
+          echo "medium_risk=$MEDIUM_RISK" >> $GITHUB_OUTPUT
+          echo "total_files=$TOTAL_FILES" >> $GITHUB_OUTPUT
+          
+          echo "🔐 Security Scan Summary"
+          echo "========================"
+          echo "Files scanned: $TOTAL_FILES"
+          echo "High risk: $HIGH_RISK"
+          echo "Medium risk: $MEDIUM_RISK"
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: security-report.json
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('security-report.json', 'utf8'));
+            
+            const highRisk = report.filter(r => r.riskScore > 75);
+            const mediumRisk = report.filter(r => r.riskScore > 50 && r.riskScore <= 75);
+            
+            let body = '## 🔐 Security Scan Results\n\n';
+            body += `| Metric | Count |\n`;
+            body += `|--------|-------|\n`;
+            body += `| Files scanned | ${report.length} |\n`;
+            body += `| High risk | ${highRisk.length} 🔴 |\n`;
+            body += `| Medium risk | ${mediumRisk.length} 🟡 |\n`;
+            body += `| Passed | ${report.filter(r => r.valid).length} 🟢 |\n\n`;
+            
+            if (highRisk.length > 0) {
+              body += '### 🔴 High Risk Issues\n';
+              highRisk.forEach(r => {
+                body += `- **${r.file}**: Risk score ${r.riskScore}/100\n`;
+                r.errors.forEach(e => body += `  - ${e}\n`);
+              });
+              body += '\n';
+            }
+            
+            body += '<details>\n<summary>View full report</summary>\n\n```json\n';
+            body += JSON.stringify(report, null, 2);
+            body += '\n```\n</details>';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail on high risk
+        if: steps.analyze.outputs.high_risk > 0
+        run: |
+          echo "❌ Found ${{ steps.analyze.outputs.high_risk }} high-risk security issues"
+          exit 1
+
+  connection-test:
+    name: Test Connections
+    runs-on: ubuntu-latest
+    needs: security-scan
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Test Bun-native connections
+        run: bun run connections:test
+
+      - name: Test DuoPlus connection (if secrets available)
+        env:
+          DUOPLUS_API_TOKEN: ${{ secrets.DUOPLUS_API_TOKEN }}
+        if: env.DUOPLUS_API_TOKEN != ''
+        run: |
+          bun run duoplus:native --list --json > devices.json || true
+          echo "Connected devices: $(jq '.data.list | length' devices.json || echo "0")"

@@ -1,0 +1,18 @@
+
+[analysis]
+max_log_size = "10MB"
+timeout = 30
+
+[patterns]
+error = ["ERR!", "ERROR:", "npm ERR!"]
+warning = ["WARN", "WARNING:", "npm WARN"]
+
+[report]
+title = "PTY Session Analysis Report"
+include_charts = true
+export_format = "html"
+
+[performance]
+track_memory = true
+track_cpu = true
+sampling_rate = 1000

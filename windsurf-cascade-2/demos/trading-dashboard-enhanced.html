@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <title>🌍 Global High-Frequency Sports Trading Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #00d4ff, #ff00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel h2 {
+            margin-bottom: 15px;
+            color: #00ff88;
+            font-size: 1.3em;
+        }
+
+        .region-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .region-btn {
+            padding: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .region-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .region-btn.active {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        .platform-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .platform-tab {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .platform-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .platform-tab.active {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .data-stream {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #00ff88;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .region-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .region-badge.us { background: #4285f4; }
+        .region-badge.uk { background: #ea4335; }
+        .region-badge.eu { background: #fbbc04; }
+        .region-badge.apac { background: #34a853; }
+
+        .platform-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .platform-badge.polymarket { background: #6366f1; }
+        .platform-badge.fanduel { background: #10b981; }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .metric-value.positive {
+            color: #00ff88;
+        }
+
+        .metric-value.negative {
+            color: #ff4444;
+        }
+
+        .metric-value.neutral {
+            color: #00d4ff;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #00ff88;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+
+        .signal-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .signal-action {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .signal-action.BUY {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .signal-action.SELL {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .signal-action.HOLD {
+            background: #666;
+            color: #fff;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn.danger {
+            background: linear-gradient(45deg, #ff4444, #ff6666);
+            color: #fff;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.online {
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background: #ff4444;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .performance-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .performance-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .performance-label {
+            font-size: 0.8em;
+            color: #b0b0b0;
+            margin-top: 5px;
+        }
+    </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Origin Dashboard",
+        "description": "Real-time performance monitoring and analytics dashboard",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any"
+    }
+</script>
+</head>
+<body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">Skip to main content</a>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🌍 Global High-Frequency Sports Trading</h1>
+            <p>Multi-Region • Cross-Platform • Real-Time • 13-Byte Config System</p>
+        </div>
+
+        <!-- Left Panel: Region & Platform Controls -->
+        <div class="panel">
+            <h2>🌍 Regional Coverage</h2>
+            
+            <div class="region-selector">
+                <button class="region-btn active" data-region="us">
+                    🇺🇸 United States
+                </button>
+                <button class="region-btn" data-region="uk">
+                    🇬🇧 United Kingdom
+                </button>
+                <button class="region-btn" data-region="eu">
+                    🇪🇺 European Union
+                </button>
+                <button class="region-btn" data-region="apac">
+                    🇯🇵 Asia Pacific
+                </button>
+            </div>
+
+            <h2>📱 Platform Integration</h2>
+            <div class="platform-tabs">
+                <button class="platform-tab active" data-platform="all">All</button>
+                <button class="platform-tab" data-platform="polymarket">Polymarket</button>
+                <button class="platform-tab" data-platform="fanduel">Fanduel</button>
+            </div>
+
+            <h2>🎛️ Trading Controls</h2>
+            
+            <div class="control-group">
+                <label>Auto Trading</label>
+                <div class="toggle-switch" id="autoTrading" onclick="toggleFeature('autoTrading')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Multi-Region Mode</label>
+                <div class="toggle-switch" id="multiRegion" onclick="toggleFeature('multiRegion')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Risk Management</label>
+                <div class="toggle-switch" id="riskManagement" onclick="toggleFeature('riskManagement')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Arbitrage Detection</label>
+                <div class="toggle-switch" id="arbitrage" onclick="toggleFeature('arbitrage')"></div>
+            </div>
+
+            <h2>⚡ Performance</h2>
+            <div class="performance-grid">
+                <div class="performance-item">
+                    <div class="performance-value" id="configLatency">--</div>
+                    <div class="performance-label">Config Latency (ns)</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value" id="throughput">--</div>
+                    <div class="performance-label">Throughput (ops/s)</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value" id="activeRegions">--</div>
+                    <div class="performance-label">Active Regions</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value" id="dataPoints">--</div>
+                    <div class="performance-label">Data Points</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Global Data Stream -->
+        <div class="panel">
+            <h2>🌐 Global Data Stream</h2>
+            <div style="margin-bottom: 15px;">
+                <button class="btn" onclick="startGlobalDataStream()">Start Global Feed</button>
+                <button class="btn danger" onclick="stopGlobalDataStream()">Stop Feed</button>
+                <button class="btn" onclick="fetchRegionalData()">Fetch All Regions</button>
+            </div>
+            <div id="globalDataContainer">
+                <div class="loading">Waiting for global data stream...</div>
+            </div>
+
+            <h2 style="margin-top: 30px;">🎯 Trading Signals</h2>
+            <div id="signalsContainer">
+                <div class="loading">No signals generated yet...</div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Analytics & Status -->
+        <div class="panel">
+            <h2>📊 Regional Analytics</h2>
+            <div id="regionalStats">
+                <div class="metric">
+                    <span class="metric-label">US East</span>
+                    <span class="metric-value neutral" id="usStats">0 data points</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">UK</span>
+                    <span class="metric-value neutral" id="ukStats">0 data points</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">EU</span>
+                    <span class="metric-value neutral" id="euStats">0 data points</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">APAC</span>
+                    <span class="metric-value neutral" id="apacStats">0 data points</span>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 30px;">🏆 Platform Performance</h2>
+            <div id="platformStats">
+                <div class="metric">
+                    <span class="metric-label">Polymarket</span>
+                    <span class="metric-value neutral" id="polymarketStats">0 signals</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Fanduel US</span>
+                    <span class="metric-value neutral" id="fanduelUSStats">0 signals</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Fanduel UK</span>
+                    <span class="metric-value neutral" id="fanduelUKStats">0 signals</span>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 30px">💰 Global P&L</h2>
+            <div class="metric">
+                <span class="metric-label">Total P&L</span>
+                <span class="metric-value" id="globalPnL">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Active Positions</span>
+                <span class="metric-value neutral" id="globalPositions">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Success Rate</span>
+                <span class="metric-value positive" id="successRate">--</span>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="panel" style="grid-column: 1 / -1;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span class="status-indicator online" id="statusIndicator"></span>
+                    <span id="statusText">Global System Online</span>
+                </div>
+                <div>
+                    <span id="activeRegionsDisplay">🌍 4 Regions Active</span>
+                </div>
+                <div>
+                    <span id="lastUpdate">Last update: --</span>
+                </div>
+                <div>
+                    <button class="btn" onclick="refreshGlobalData()">Refresh</button>
+                    <button class="btn" onclick="runGlobalBenchmark()">Benchmark</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let globalDataStreamInterval = null;
+        let activeRegions = new Set(['us', 'uk', 'eu', 'apac']);
+        let activePlatforms = new Set(['polymarket', 'fanduel']);
+        let globalData = [];
+
+        // Initialize dashboard
+        async function init() {
+            await loadGlobalConfiguration();
+            await loadRegionalStats();
+            await loadPlatformStats();
+            startAutoRefresh();
+            setupEventListeners();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Region selector
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const region = this.dataset.region;
+                    
+                    if (activeRegions.has(region)) {
+                        activeRegions.delete(region);
+                        this.classList.remove('active');
+                    } else {
+                        activeRegions.add(region);
+                        this.classList.add('active');
+                    }
+                    
+                    updateActiveRegionsDisplay();
+                    filterDataDisplay();
+                });
+            });
+
+            // Platform tabs
+            document.querySelectorAll('.platform-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const platform = this.dataset.platform;
+                    
+                    // Update active state
+                    document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (platform === 'all') {
+                        activePlatforms = new Set(['polymarket', 'fanduel']);
+                    } else {
+                        activePlatforms = new Set([platform]);
+                    }
+                    
+                    filterDataDisplay();
+                });
+            });
+        }
+
+        // Load global configuration
+        async function loadGlobalConfiguration() {
+            try {
+                const response = await fetch(`${API_BASE}/trading/config`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const config = data.data;
+                    
+                    // Update toggle switches
+                    document.getElementById('autoTrading').className = 
+                        config.features.autoTrading ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('multiRegion').className = 
+                        config.features.multiRegion ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('riskManagement').className = 
+                        config.features.riskManagement ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('arbitrage').className = 
+                        config.features.arbitrage ? 'toggle-switch active' : 'toggle-switch';
+                }
+            } catch (error) {
+                console.error('Failed to load global configuration:', error);
+            }
+        }
+
+        // Toggle trading feature
+        async function toggleFeature(feature) {
+            const toggle = document.getElementById(feature);
+            const enabled = !toggle.classList.contains('active');
+            
+            try {
+                const response = await fetch(`${API_BASE}/trading/features/${feature}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    toggle.className = enabled ? 'toggle-switch active' : 'toggle-switch';
+                    console.log(`Feature ${feature} ${enabled ? 'enabled' : 'disabled'}`);
+                }
+            } catch (error) {
+                console.error('Failed to toggle feature:', error);
+            }
+        }
+
+        // Start global data stream
+        function startGlobalDataStream() {
+            if (globalDataStreamInterval) return;
+            
+            globalDataStreamInterval = setInterval(async () => {
+                await fetchRegionalData();
+            }, 3000);
+            
+            console.log('🌍 Global data stream started');
+        }
+
+        // Stop global data stream
+        function stopGlobalDataStream() {
+            if (globalDataStreamInterval) {
+                clearInterval(globalDataStreamInterval);
+                globalDataStreamInterval = null;
+                console.log('🛑 Global data stream stopped');
+            }
+        }
+
+        // Fetch data from all active regions
+        async function fetchRegionalData() {
+            try {
+                // Simulate fetching data from different regions
+                const regions = ['us', 'uk', 'eu', 'apac'];
+                const platforms = ['polymarket', 'fanduel'];
+                
+                for (const region of regions) {
+                    if (!activeRegions.has(region)) continue;
+                    
+                    for (const platform of platforms) {
+                        if (!activePlatforms.has(platform)) continue;
+                        
+                        const data = generateMockRegionalData(region, platform);
+                        addGlobalDataItem(data);
+                    }
+                }
+                
+                updateRegionalStats();
+                updatePlatformStats();
+                
+            } catch (error) {
+                console.error('Failed to fetch regional data:', error);
+            }
+        }
+
+        // Generate mock regional data
+        function generateMockRegionalData(region, platform) {
+            const events = {
+                us: ['Lakers vs Warriors', 'Patriots vs Chiefs', 'Yankees vs Red Sox'],
+                uk: ['Manchester United vs Liverpool', 'Arsenal vs Chelsea', 'Tottenham vs City'],
+                eu: ['Barcelona vs Real Madrid', 'Bayern vs Dortmund', 'PSG vs Lyon'],
+                apac: ['Urawa Reds vs Kashima', 'Guangzhou vs Beijing', 'Seoul vs Jeju']
+            };
+            
+            const eventNames = events[region] || events.us;
+            const eventName = eventNames[Math.floor(Math.random() * eventNames.length)];
+            
+            return {
+                id: `${region}_${platform}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                region,
+                platform,
+                event: eventName,
+                homeOdds: 1.8 + Math.random() * 0.8,
+                awayOdds: 2.0 + Math.random() * 1.0,
+                timestamp: Date.now(),
+                volume: 1000000 + Math.random() * 9000000,
+                liquidity: 50000 + Math.random() * 950000
+            };
+        }
+
+        // Add global data item to display
+        function addGlobalDataItem(data) {
+            const container = document.getElementById('globalDataContainer');
+            
+            // Remove loading message if present
+            if (container.querySelector('.loading')) {
+                container.innerHTML = '';
+            }
+            
+            // Add to global data array
+            globalData.unshift(data);
+            
+            // Keep only last 50 items
+            if (globalData.length > 50) {
+                globalData = globalData.slice(0, 50);
+            }
+            
+            // Filter and display
+            filterDataDisplay();
+        }
+
+        // Filter data display based on active regions and platforms
+        function filterDataDisplay() {
+            const container = document.getElementById('globalDataContainer');
+            const filteredData = globalData.filter(data => 
+                activeRegions.has(data.region) && activePlatforms.has(data.platform)
+            );
+            
+            container.innerHTML = '';
+            
+            filteredData.slice(0, 10).forEach(data => {
+                const dataDiv = document.createElement('div');
+                dataDiv.className = 'data-item';
+                dataDiv.innerHTML = `
+                    <div>
+                        <strong>${data.event}</strong>
+                        <span class="region-badge ${data.region}">${data.region.toUpperCase()}</span>
+                        <span class="platform-badge ${data.platform}">${data.platform}</span>
+                    </div>
+                    <div>
+                        <span style="color: #00d4ff;">@ ${data.homeOdds.toFixed(2)} / ${data.awayOdds.toFixed(2)}</span>
+                    </div>
+                `;
+                container.appendChild(dataDiv);
+            });
+        }
+
+        // Update regional statistics
+        function updateRegionalStats() {
+            const regionCounts = {
+                us: 0,
+                uk: 0,
+                eu: 0,
+                apac: 0
+            };
+            
+            globalData.forEach(data => {
+                if (regionCounts.hasOwnProperty(data.region)) {
+                    regionCounts[data.region]++;
+                }
+            });
+            
+            document.getElementById('usStats').textContent = `${regionCounts.us} data points`;
+            document.getElementById('ukStats').textContent = `${regionCounts.uk} data points`;
+            document.getElementById('euStats').textContent = `${regionCounts.eu} data points`;
+            document.getElementById('apacStats').textContent = `${regionCounts.apac} data points`;
+        }
+
+        // Update platform statistics
+        function updatePlatformStats() {
+            const platformCounts = {
+                polymarket: 0,
+                fanduelUS: 0,
+                fanduelUK: 0
+            };
+            
+            globalData.forEach(data => {
+                if (data.platform === 'polymarket') {
+                    platformCounts.polymarket++;
+                } else if (data.platform === 'fanduel') {
+                    if (data.region === 'uk') {
+                        platformCounts.fanduelUK++;
+                    } else {
+                        platformCounts.fanduelUS++;
+                    }
+                }
+            });
+            
+            document.getElementById('polymarketStats').textContent = `${platformCounts.polymarket} signals`;
+            document.getElementById('fanduelUSStats').textContent = `${platformCounts.fanduelUS} signals`;
+            document.getElementById('fanduelUKStats').textContent = `${platformCounts.fanduelUK} signals`;
+        }
+
+        // Load regional stats
+        async function loadRegionalStats() {
+            try {
+                const response = await fetch(`${API_BASE}/trading/performance`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('activeRegions').textContent = activeRegions.size;
+                    document.getElementById('dataPoints').textContent = globalData.length;
+                    
+                    // Update performance metrics
+                    if (data.data.performance) {
+                        document.getElementById('configLatency').textContent = data.data.performance.configUpdateTime;
+                        document.getElementById('throughput').textContent = 
+                            Math.round(1000000 / data.data.performance.configUpdateTime);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load regional stats:', error);
+            }
+        }
+
+        // Load platform stats
+        async function loadPlatformStats() {
+            try {
+                // This would fetch real platform statistics
+                document.getElementById('globalPnL').textContent = '+2.45%';
+                document.getElementById('globalPositions').textContent = '12';
+                document.getElementById('successRate').textContent = '68.5%';
+            } catch (error) {
+                console.error('Failed to load platform stats:', error);
+            }
+        }
+
+        // Update active regions display
+        function updateActiveRegionsDisplay() {
+            document.getElementById('activeRegionsDisplay').textContent = 
+                `🌍 ${activeRegions.size} Regions Active`;
+        }
+
+        // Refresh global data
+        function refreshGlobalData() {
+            fetchRegionalData();
+            loadRegionalStats();
+            loadPlatformStats();
+            updateLastUpdate();
+        }
+
+        // Run global benchmark
+        async function runGlobalBenchmark() {
+            try {
+                const response = await fetch(`${API_BASE}/trading/benchmark`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`🌍 Global Benchmark Results:\n\n` +
+                          `Config Update: ${data.data.benchmark.configUpdateTime}\n` +
+                          `Feature Check: ${data.data.benchmark.featureCheckTime}\n` +
+                          `Risk Check: ${data.data.benchmark.riskCheckTime}\n` +
+                          `Total Latency: ${data.data.benchmark.totalLatency}\n\n` +
+                          `🚀 ${data.data.comparison.fasterThanRedis} faster than Redis!\n` +
+                          `🌍 Active Regions: ${activeRegions.size}\n` +
+                          `📱 Active Platforms: ${activePlatforms.size}`);
+                }
+            } catch (error) {
+                console.error('Benchmark failed:', error);
+            }
+        }
+
+        // Update last update time
+        function updateLastUpdate() {
+            document.getElementById('lastUpdate').textContent = 
+                'Last update: ' + new Date().toLocaleTimeString();
+        }
+
+        // Start auto refresh
+        function startAutoRefresh() {
+            setInterval(() => {
+                loadRegionalStats();
+                updateLastUpdate();
+            }, 5000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>test-feed</title>
+    <description>TIER-1380 RSS Feed</description>
+    
+    <item>
+      <title>Test Item</title>
+      <description>Test description</description>
+      <pubDate>2026-01-31T01:17:58.897Z</pubDate>
+    </item>
+  </channel>
+</rss>

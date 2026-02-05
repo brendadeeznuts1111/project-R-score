@@ -1,0 +1,107 @@
+name: Test Suite
+
+on:
+  pull_request:
+    paths:
+      - 'test/**'
+      - 'src/**'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Bun
+        uses: oven/bun-action@v1
+        with:
+          bun-version: latest
+      
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Verify Bun URL constants
+        run: |
+          echo "Verifying no hardcoded Bun URLs in executable code..."
+          chmod +x scripts/verify-bun-constants.sh
+          ./scripts/verify-bun-constants.sh --strict
+      
+      - name: Run Layer4 correlation tests
+        id: test-basic
+        run: |
+          echo "Running Layer4 correlation detection tests..."
+          bun test test/ticks/correlation-detection.test.ts || TEST_EXIT=$?
+          echo "test_exit=${TEST_EXIT:-0}" >> $GITHUB_OUTPUT
+      
+      - name: Run stability tests (20 repeats)
+        id: test-stability
+        run: |
+          echo "Running stability tests with 20 repeats..."
+          bun test --repeats=20 test/ticks/correlation-detection.test.ts || STABILITY_EXIT=$?
+          echo "stability_exit=${STABILITY_EXIT:-0}" >> $GITHUB_OUTPUT
+      
+      - name: Generate coverage report
+        id: test-coverage
+        run: |
+          echo "Generating coverage report..."
+          bun test --coverage --coverage-reporter=html,lcov test/ticks/correlation-detection.test.ts || COVERAGE_EXIT=$?
+          echo "coverage_exit=${COVERAGE_EXIT:-0}" >> $GITHUB_OUTPUT
+      
+      - name: Upload coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: |
+            coverage/
+            .coverage/
+          retention-days: 30
+      
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const basicExit = '${{ steps.test-basic.outputs.test_exit }}' === '0';
+            const stabilityExit = '${{ steps.test-stability.outputs.stability_exit }}' === '0';
+            const coverageExit = '${{ steps.test-coverage.outputs.coverage_exit }}' === '0';
+            
+            const allPassed = basicExit && stabilityExit && coverageExit;
+            const emoji = allPassed ? '✅' : '❌';
+            const status = allPassed ? 'All tests passed' : 'Some tests failed';
+            
+            const comment = `## ${emoji} Test Results: Layer4 Correlation Detection
+            
+            **Status**: ${status}
+            
+            - **Basic Tests**: ${basicExit ? '✅ Passed' : '❌ Failed'}
+            - **Stability Tests (20 repeats)**: ${stabilityExit ? '✅ Passed' : '❌ Failed'}
+            - **Coverage Report**: ${coverageExit ? '✅ Generated' : '❌ Failed'}
+            
+            ${allPassed ? '✅ All Layer4 correlation detection tests passed successfully!' : '⚠️ Some tests failed. Please review the test output above.'}
+            
+            See test output above for details.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: Fail on test failure
+        if: steps.test-basic.outputs.test_exit != '0' || steps.test-stability.outputs.stability_exit != '0'
+        run: |
+          echo "❌ Test failures detected!"
+          exit 1

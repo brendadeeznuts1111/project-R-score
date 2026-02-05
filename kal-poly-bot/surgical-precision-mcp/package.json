@@ -1,0 +1,68 @@
+{
+  "name": "@brendadeeznuts1111/surgical-precision-mcp",
+  "version": "1.2.0",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "description": "Surgical Precision Operations - Zero-Collateral Precision with Ripgrep Ultra-Fast Search",
+  "main": "build/index.js",
+  "type": "module",
+  "bin": {
+    "surgical-precision": "build/index.js"
+  },
+  "files": [
+    "build/"
+  ],
+  "scripts": {
+    "build": "bun build ./index.ts --target node --outdir build && chmod +x build/index.js",
+    "dev": "bun run index.ts",
+    "start": "bun run build/index.js",
+    "cli": "bun run cli.ts",
+    "test": "bun test",
+    "test:utils": "bun test __tests__/bun-utils.test.ts --concurrent",
+    "test:history": "bun test __tests__/history-cli.test.ts --concurrent",
+    "bench:utils": "bun run __tests__/bun-utils.bench.ts",
+    "bench:history": "bun run __tests__/history-cli.bench.ts",
+    "bench": "bun run surgical-precision-bench.ts",
+    "bench-compare": "bun run compare-benchmark.ts",
+    "health": "bun run cli.ts health",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "decimal.js": "^10.6.0",
+    "minimist": "^1.2.8"
+  },
+  "keywords": [
+    "mcp",
+    "surgical-precision",
+    "zero-collateral",
+    "ripgrep",
+    "decimal-precision",
+    "ultra-fast-search",
+    "model-context-protocol",
+    "speed-benchmarks",
+    "precision-operations"
+  ],
+  "author": "SERO Operations Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/kal-poly-bot.git"
+  },
+  "homepage": "https://github.com/brendadeeznuts1111/kal-poly-bot#readme",
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/kal-poly-bot/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "test": "bun test --verbose --concurrent",
+  "contributors": "[\"SERO Team <team@sero.com>\", \"Contributors <contrib@project.com>\"]"
+}

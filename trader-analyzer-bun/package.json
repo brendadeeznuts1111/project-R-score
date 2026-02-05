@@ -1,0 +1,63 @@
+{
+  "name": "@nexus/trader-analyzer",
+  "version": "0.1.0",
+  "description": "NEXUS - Unified trading intelligence platform connecting crypto, prediction markets, and sports betting with cross-market arbitrage detection",
+  "type": "module",
+  "license": "MIT",
+  "author": "NEXUS Team",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brendadeeznuts1111/trader-analyzer-bun.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/trader-analyzer-bun/issues"
+  },
+  "homepage": "https://github.com/brendadeeznuts1111/trader-analyzer-bun#readme",
+  "keywords": [
+    "trading",
+    "arbitrage",
+    "crypto",
+    "prediction-markets",
+    "polymarket",
+    "kalshi",
+    "sports-betting",
+    "bun",
+    "typescript",
+    "real-time",
+    "websocket",
+    "analytics",
+    "deribit",
+    "options",
+    "derivatives"
+  ],
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "scripts": {
+    "dev": "bun --hot run src/index.ts",
+    "start": "bun --disable-eval --use-system-ca run src/index.ts",
+    "start:secure": "bun --disable-eval --disable-wasm --use-system-ca run src/index.ts",
+    "test": "bun test",
+    "bench": "bun run scripts/bench.ts",
+    "bench:full": "bun run src/bench/index.ts",
+    "cli": "bun run src/cli/index.ts",
+    "fetch": "bun run src/cli/fetch.ts",
+    "gh": "bun run scripts/gh.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "bunx @biomejs/biome check src/"
+  },
+  "dependencies": {
+    "ccxt": "^4.5.35",
+    "hono": "^4.11.7"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  },
+  "trustedDependencies": [
+    "ccxt"
+  ]
+}

@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Factory Wager Empire - Complete System Integration Dashboard">
+    <title>Factory Wager Empire - Complete System Dashboard</title>
+    <!-- Tailwind CSS: Use production build instead of CDN -->
+    <!-- For production: npm install -D tailwindcss && npx tailwindcss build -->
+    <!-- CDN removed for production readiness - see styles below for custom CSS -->
+    <script>
+        // Tailwind config removed - using custom CSS instead
+        // For production, use: npx tailwindcss -i ./src/input.css -o ./dist/output.css
+        /*
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Brand Colors - Factory Wager Empire
+                        brand: {
+                            primary: '#667eea',      // Royal Purple - Trust & Dominance
+                            secondary: '#764ba2',    // Deep Purple - Premium
+                            accent: '#f093fb',       // Pink Accent - Innovation
+                            success: '#10b981',      // Emerald Green - Financial Success
+                            warning: '#f59e0b',      // Amber - Alerts
+                            danger: '#ef4444',       // Red - Critical
+                            info: '#3b82f6',         // Blue - Information
+                            dark: '#1e293b',         // Slate Dark
+                            light: '#f8fafc',        // Slate Light
+                        },
+                        canvas: {
+                            light: '#f8fafc',
+                            dark: '#0f172a',
+                        },
+                        base: {
+                            light: '#ffffff',
+                            dark: '#1e293b',
+                        }
+                    },
+                    typography: {
+                        h1: {
+                            fontSize: '3.75rem',
+                            fontWeight: '800',
+                            lineHeight: '1.1',
+                            letterSpacing: '-0.025em',
+                        },
+                        h2: {
+                            fontSize: '2.25rem',
+                            fontWeight: '700',
+                            lineHeight: '1.2',
+                            letterSpacing: '-0.02em',
+                        },
+                        h3: {
+                            fontSize: '1.5rem',
+                            fontWeight: '600',
+                            lineHeight: '1.3',
+                            letterSpacing: '-0.01em',
+                        }
+                    }
+                }
+            }
+        }
+        */
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- WindSurf Keyboard Shortcuts Integration -->
+    <script src="shortcuts.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        :root {
+            /* Brand Color Palette */
+            --brand-primary: #667eea;        /* Royal Purple - Trust & Dominance */
+            --brand-secondary: #764ba2;      /* Deep Purple - Premium */
+            --brand-accent: #f093fb;        /* Pink Accent - Innovation */
+            --brand-success: #10b981;       /* Emerald Green - Financial Success */
+            --brand-warning: #f59e0b;       /* Amber - Alerts */
+            --brand-danger: #ef4444;         /* Red - Critical */
+            --brand-info: #3b82f6;          /* Blue - Information */
+            
+            /* Brand Gradients */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            
+            /* Semantic Colors */
+            --success-color: var(--brand-success);
+            --warning-color: var(--brand-warning);
+            --danger-color: var(--brand-danger);
+            --info-color: var(--brand-info);
+            
+            /* Canvas & Base Colors */
+            --canvas-light: #f8fafc;
+            --canvas-dark: #0f172a;
+            --base-light: #ffffff;
+            --base-dark: #1e293b;
+            
+            /* Text Colors */
+            --text-primary-light: #111827;
+            --text-primary-dark: #f1f5f9;
+            --text-secondary-light: #6b7280;
+            --text-secondary-dark: #94a3b8;
+            
+            /* Border Colors */
+            --border-light: #e5e7eb;
+            --border-dark: #334155;
+            --border-brand: rgba(102, 126, 234, 0.3);
+            
+            /* Shadow System */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-brand: 0 10px 30px -5px rgba(102, 126, 234, 0.3);
+        }
+        
+        [data-theme="dark"] {
+            --canvas: var(--canvas-dark);
+            --base: var(--base-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --border: var(--border-dark);
+        }
+        
+        [data-theme="light"] {
+            --canvas: var(--canvas-light);
+            --base: var(--base-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --border: var(--border-light);
+        }
+        
+        body {
+            background: var(--canvas);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Typography System */
+        .heading-primary {
+            font-size: clamp(2.5rem, 5vw, 3.75rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+        }
+        
+        .heading-secondary {
+            font-size: clamp(1.75rem, 3vw, 2.25rem);
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+        }
+        
+        .heading-tertiary {
+            font-size: clamp(1.25rem, 2vw, 1.5rem);
+            font-weight: 600;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.75rem;
+        }
+        
+        .text-body-large {
+            font-size: 1.125rem;
+            line-height: 1.75;
+            font-weight: 400;
+        }
+        
+        .text-body {
+            font-size: 1rem;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+        
+        .text-body-small {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+        
+        .text-label {
+            font-size: 0.875rem;
+            line-height: 1.4;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Animated background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            background-size: 100% 100%;
+            pointer-events: none;
+            z-index: 0;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        
+        [data-theme="dark"] body::before {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-section {
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Brand Color Utilities */
+        .bg-brand-primary { background-color: var(--brand-primary); }
+        .bg-brand-secondary { background-color: var(--brand-secondary); }
+        .bg-brand-accent { background-color: var(--brand-accent); }
+        .text-brand-primary { color: var(--brand-primary); }
+        .text-brand-secondary { color: var(--brand-secondary); }
+        .border-brand { border-color: var(--border-brand); }
+        .shadow-brand { box-shadow: var(--shadow-brand); }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 50%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .card-interactive {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--base);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-interactive::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.6s;
+        }
+        
+        .card-interactive:hover::before {
+            left: 100%;
+        }
+        
+        .card-interactive:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: var(--shadow-brand);
+            border-color: var(--border-brand);
+        }
+        
+        .card-interactive:active {
+            transform: translateY(-8px) scale(1.01);
+        }
+        
+        .status-indicator {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 0 12px rgba(16, 185, 129, 0);
+            }
+        }
+        
+        .metric-card-container {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-brand);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card-container::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .metric-card-container:hover::after {
+            opacity: 1;
+        }
+        
+        .system-card-container {
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .floating-animation {
+            animation: floating 8s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(1deg); }
+            50% { transform: translateY(-20px) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(-1deg); }
+        }
+        
+        .fade-in-animation {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+        
+        .animation-delay-1 { animation-delay: 0.1s; }
+        .animation-delay-2 { animation-delay: 0.2s; }
+        .animation-delay-3 { animation-delay: 0.3s; }
+        .animation-delay-4 { animation-delay: 0.4s; }
+        .animation-delay-5 { animation-delay: 0.5s; }
+        .animation-delay-6 { animation-delay: 0.6s; }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        [data-theme="dark"] .glass-morphism {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .notification-toast {
+            animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Filter Chip Styles */
+        .filter-chip {
+            background: var(--base);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-chip:hover {
+            background: var(--canvas);
+            border-color: var(--text-secondary);
+            transform: translateY(-1px);
+        }
+
+        .filter-chip.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            color: white;
+            font-weight: 600;
+        }
+
+        .filter-chip.active:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-brand);
+        }
+
+        /* Search Input Focus */
+        #systemSearchInput:focus {
+            outline: none;
+        }
+
+        /* Active Filter Badge */
+        .active-filter-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--canvas);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        /* System Card Hidden State */
+        .system-card-hidden {
+            display: none !important;
+        }
+
+        /* System Card Fade Animation */
+        .system-card-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Sort Select Arrow */
+        #sortSelect {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        [data-theme="dark"] #sortSelect {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2994a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                height: 250px;
+            }
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--canvas);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        /* Shadow depth system */
+        .shadow-depth-1 { box-shadow: var(--shadow-sm); }
+        .shadow-depth-2 { box-shadow: var(--shadow-md); }
+        .shadow-depth-3 { box-shadow: var(--shadow-lg); }
+        .shadow-depth-4 { box-shadow: var(--shadow-xl); }
+        .shadow-depth-5 { box-shadow: var(--shadow-2xl); }
+        
+        /* Link styles */
+        .system-navigation-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+        }
+        
+        .system-navigation-link:hover {
+            text-decoration: none;
+        }
+        
+        /* Button component styles */
+        .button-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button-primary:active {
+            transform: translateY(0);
+        }
+        
+        .button-secondary {
+            background: var(--base);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .button-secondary:hover {
+            background: var(--border);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body data-theme="light" class="content-wrapper">
+    <!-- Theme Toggle Button -->
+    <button 
+        id="themeToggleButton" 
+        class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all shadow-depth-4"
+        aria-label="Toggle dark mode"
+        onclick="handleThemeToggle()"
+    >
+        <i data-lucide="sun" class="w-5 h-5 text-yellow-500 dark:hidden"></i>
+        <i data-lucide="moon" class="w-5 h-5 text-blue-400 hidden dark:block"></i>
+    </button>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-white relative shadow-depth-5">
+        <div class="container mx-auto px-4 py-16 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div class="flex-1 fade-in-animation">
+                    <h1 class="heading-primary text-white mb-4">Factory Wager Empire</h1>
+                    <p class="text-body-large mb-6 opacity-90">Complete System Integration Dashboard</p>
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-400 rounded-full status-indicator mr-2"></div>
+                            <span class="text-body-small">All Systems Operational</span>
+                        </div>
+                        <div class="text-body-small opacity-75">
+                            Last Updated: <span id="lastUpdatedTimestamp">Just now</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center lg:text-right fade-in-animation animation-delay-1">
+                    <div class="heading-primary text-white mb-2">
+                        $<span id="totalRevenueDisplay" class="counter-value">0</span>
+                    </div>
+                    <div class="text-label opacity-75">Total Monthly Revenue</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Key Metrics Section -->
+    <section class="container mx-auto px-4 -mt-8 relative z-10" aria-label="Key Performance Metrics">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <article class="metric-card-container rounded-xl p-6 text-white card-interactive fade-in-animation animation-delay-1 shadow-depth-3" style="background: var(--primary-gradient);">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="users" class="w-8 h-8" aria-hidden="true"></i>
+                    <div>
+                        <span class="text-2xl font-bold counter-value" data-target-value="94">0</span>
+                        <span class="text-2xl font-bold">%</span>
+                    </div>
+                </div>
+                <h3 class="text-body-small opacity-90 font-semibold mb-1">Operational Success Rate</h3>
+                <p class="text-body-small opacity-75">+35% vs baseline</p>
+            </article>
+            
+            <article class="metric-card-container rounded-xl p-6 text-white card-interactive fade-in-animation animation-delay-2 shadow-depth-3" style="background: var(--accent-gradient);">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="trending-up" class="w-8 h-8" aria-hidden="true"></i>
+                    <div>
+                        <span class="text-2xl font-bold counter-value" data-target-value="4900">0</span>
+                        <span class="text-2xl font-bold">%</span>
+                    </div>
+                </div>
+                <h3 class="text-body-small opacity-90 font-semibold mb-1">Average ROI</h3>
+                <p class="text-body-small opacity-75">Across all systems</p>
+            </article>
+            
+            <article class="metric-card-container rounded-xl p-6 text-white card-interactive fade-in-animation animation-delay-3 shadow-depth-3" style="background: var(--secondary-gradient);">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="zap" class="w-8 h-8" aria-hidden="true"></i>
+                    <div>
+                        <span class="text-2xl font-bold counter-value" data-target-value="5.1" data-decimal-places="1">0</span>
+                        <span class="text-2xl font-bold">x</span>
+                    </div>
+                </div>
+                <h3 class="text-body-small opacity-90 font-semibold mb-1">Performance Speed</h3>
+                <p class="text-body-small opacity-75">Bun 1.3.6 acceleration</p>
+            </article>
+            
+            <article class="metric-card-container rounded-xl p-6 text-white card-interactive fade-in-animation animation-delay-4 shadow-depth-3" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                <div class="flex items-center justify-between mb-4">
+                    <i data-lucide="shield" class="w-8 h-8" aria-hidden="true"></i>
+                    <div>
+                        <span class="text-2xl font-bold counter-value" data-target-value="95">0</span>
+                        <span class="text-2xl font-bold">%</span>
+                    </div>
+                </div>
+                <h3 class="text-body-small opacity-90 font-semibold mb-1">Security Score</h3>
+                <p class="text-body-small opacity-75">Enterprise grade</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- System Overview Section -->
+    <section class="container mx-auto px-4 py-12 relative z-10" aria-label="System Overview">
+        <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+            <h2 class="heading-secondary text-gray-900 dark:text-white">System Overview</h2>
+            <div class="flex gap-2">
+                <button 
+                    onclick="handleRefreshAllData()" 
+                    class="button-primary px-4 py-2 rounded-lg flex items-center gap-2 shadow-depth-2"
+                    style="background: var(--primary-gradient);"
+                    id="refreshDataButton"
+                >
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Refresh Data</span>
+                </button>
+                <button 
+                    onclick="handleExportData()" 
+                    class="text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-depth-2 hover:shadow-brand"
+                    style="background: var(--success-gradient);"
+                >
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Export</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtering & Search Controls -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6 card-interactive shadow-depth-2">
+            <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+                <!-- Search Input -->
+                <div class="flex-1 w-full lg:w-auto">
+                    <label for="systemSearchInput" class="sr-only">Search systems</label>
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input 
+                            type="text" 
+                            id="systemSearchInput"
+                            placeholder="Search systems by name, metrics, or keywords..."
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            autocomplete="off"
+                        />
+                        <button 
+                            id="clearSearchButton"
+                            class="absolute right-2 top-1/2 transform -translate-y-1/2 hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                            onclick="clearSearchFilter()"
+                            aria-label="Clear search"
+                        >
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Chips -->
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span class="text-body-small text-gray-600 dark:text-gray-400 font-medium">Filter:</span>
+                    <button 
+                        onclick="toggleFilter('all')"
+                        class="filter-chip active px-3 py-1 rounded-full text-body-small transition-all"
+                        data-filter="all"
+                    >
+                        All Systems
+                    </button>
+                    <button 
+                        onclick="toggleFilter('purple')"
+                        class="filter-chip px-3 py-1 rounded-full text-body-small transition-all"
+                        data-filter="purple"
+                    >
+                        <i data-lucide="crown" class="w-4 h-4 inline-block mr-1"></i>
+                        Trust & AI
+                    </button>
+                    <button 
+                        onclick="toggleFilter('green')"
+                        class="filter-chip px-3 py-1 rounded-full text-body-small transition-all"
+                        data-filter="green"
+                    >
+                        <i data-lucide="trending-up" class="w-4 h-4 inline-block mr-1"></i>
+                        Financial
+                    </button>
+                    <button 
+                        onclick="toggleFilter('blue')"
+                        class="filter-chip px-3 py-1 rounded-full text-body-small transition-all"
+                        data-filter="blue"
+                    >
+                        <i data-lucide="users" class="w-4 h-4 inline-block mr-1"></i>
+                        Controls
+                    </button>
+                    <button 
+                        onclick="toggleFilter('gray')"
+                        class="filter-chip px-3 py-1 rounded-full text-body-small transition-all"
+                        data-filter="gray"
+                    >
+                        <i data-lucide="activity" class="w-4 h-4 inline-block mr-1"></i>
+                        Status
+                    </button>
+                </div>
+
+                <!-- Sort Dropdown -->
+                <div class="relative">
+                    <label for="sortSelect" class="sr-only">Sort systems</label>
+                    <select 
+                        id="sortSelect"
+                        onchange="handleSortChange(this.value)"
+                        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none pr-8 cursor-pointer"
+                    >
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="revenue-desc">Revenue (High to Low)</option>
+                        <option value="revenue-asc">Revenue (Low to High)</option>
+                        <option value="success-desc">Success Rate (High to Low)</option>
+                        <option value="default">Default Order</option>
+                    </select>
+                    <i data-lucide="chevron-down" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div id="activeFiltersContainer" class="mt-4 flex flex-wrap gap-2 items-center hidden">
+                <span class="text-body-small text-gray-600 dark:text-gray-400 font-medium">Active filters:</span>
+                <div id="activeFiltersList" class="flex flex-wrap gap-2"></div>
+                <button 
+                    onclick="clearAllFilters()"
+                    class="text-body-small text-red-600 dark:text-red-400 hover:underline flex items-center gap-1"
+                >
+                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                    Clear All
+                </button>
+            </div>
+
+            <!-- Results Count -->
+            <div id="resultsCount" class="mt-4 text-body-small text-gray-600 dark:text-gray-400">
+                <span id="resultsCountText">Showing all systems</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="systemCardsContainer">
+            <!-- Cards will be dynamically generated -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResultsMessage" class="hidden text-center py-12">
+            <i data-lucide="search-x" class="w-16 h-16 mx-auto mb-4 text-gray-400"></i>
+            <h3 class="heading-tertiary text-gray-600 dark:text-gray-400 mb-2">No systems found</h3>
+            <p class="text-body text-gray-500 dark:text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+            <button 
+                onclick="clearAllFilters()"
+                class="button-primary px-4 py-2 rounded-lg"
+            >
+                Clear All Filters
+            </button>
+        </div>
+    </section>
+
+    <!-- Revenue Overview Section -->
+    <section class="container mx-auto px-4 py-12 relative z-10" aria-label="Revenue Overview">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 card-interactive shadow-depth-4">
+            <h2 class="heading-secondary text-gray-900 dark:text-white mb-6">Revenue Overview</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="chart-wrapper">
+                    <canvas id="revenueChartCanvas"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="distributionChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="container mx-auto px-4 py-12 relative z-10" aria-label="Quick Actions">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 card-interactive shadow-depth-4">
+            <h2 class="heading-secondary text-gray-900 dark:text-white mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="quickActionsContainer">
+                <!-- Actions will be dynamically generated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h3 class="heading-tertiary mb-2 text-white">Factory Wager Empire</h3>
+                    <p class="text-body-small text-gray-400">Complete System Integration Platform</p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-body-small text-gray-400">Version 6.0</p>
+                    <p class="text-body-small text-gray-400">Last Deployment: <span id="deploymentTimestamp">Today</span></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 space-y-2" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-depth-5 flex flex-col items-center gap-4">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-body text-gray-900 dark:text-white" id="loadingMessage">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================================
+        // Type Definitions (JSDoc for IDE support)
+        // =============================================================================
+        
+        /**
+         * @typedef {Object} SystemConfiguration
+         * @property {string} name
+         * @property {string} icon
+         * @property {string} color
+         * @property {number} [trustLevel]
+         * @property {number} [identitiesCreated]
+         * @property {number} [timeToIdentity]
+         * @property {number} [monthlyRevenue]
+         * @property {number} [successRate]
+         * @property {number} [dailyPairs]
+         * @property {number} [roi]
+         * @property {number} [adoption]
+         * @property {number} [compliance]
+         * @property {number} [retention]
+         * @property {number} [conversion]
+         * @property {number} [checkoutTime]
+         * @property {number} [accuracy]
+         * @property {number} [prevention]
+         * @property {number} [inferenceSpeed]
+         * @property {number} [monthlySavings]
+         * @property {number} [uptime]
+         * @property {number} [responseTime]
+         * @property {number} [errorRate]
+         * @property {number} [activeUsers]
+         */
+
+        /**
+         * @typedef {Object.<string, SystemConfiguration>} SystemDataCollection
+         */
+
+        /**
+         * @typedef {Object.<string, string>} RouteMapping
+         */
+
+        /**
+         * @typedef {Object} CounterElementConfig
+         * @property {HTMLElement} element
+         * @property {number} targetValue
+         * @property {number} decimalPlaces
+         */
+
+        /**
+         * @typedef {Object} NotificationConfig
+         * @property {string} message
+         * @property {'success'|'error'|'info'|'warning'} type
+         * @property {number} [duration]
+         * @property {boolean} [persistent]
+         */
+
+        /**
+         * @typedef {Object} LoadingStateConfig
+         * @property {boolean} isLoading
+         * @property {string} [message]
+         */
+
+        /**
+         * @typedef {Object} ErrorConfig
+         * @property {string} message
+         * @property {string} [code]
+         * @property {boolean} [retryable]
+         */
+
+        /**
+         * @typedef {Object} ChartConfiguration
+         * @property {'line'|'doughnut'|'bar'} type
+         * @property {string} canvasId
+         * @property {*} data
+         * @property {*} options
+         */
+
+        /**
+         * @typedef {'operational-dominance'|'financial-warming'|'family-controls'|'cash-app-priority'|'ai-risk-prediction'|'system-status'} SystemRouteKey
+         */
+
+        /**
+         * @typedef {'operational-dominance'|'financial-warming'|'family-controls'|'ai-risk'} DemoRouteKey
+         */
+
+        /**
+         * @typedef {'light'|'dark'} ThemeType
+         */
+
+        /**
+         * @typedef {'success'|'error'|'info'|'warning'} NotificationType
+         */
+
+        /**
+         * @typedef {Object} FilterStateConfig
+         * @property {string} searchQuery
+         * @property {string|null} colorFilter
+         * @property {string} sortOption
+         */
+
+        // =============================================================================
+        // Constants
+        // =============================================================================
+
+        const SYSTEM_ROUTE_MAPPING = {
+            'operational-dominance': 'dashboard.html?system=operational-dominance',
+            'financial-warming': 'dashboard.html?system=financial-warming',
+            'family-controls': 'dashboard.html?system=family-controls',
+            'cash-app-priority': 'dashboard.html?system=cash-app-priority',
+            'ai-risk-prediction': 'dashboard.html?system=ai-risk-prediction',
+            'system-status': 'dashboard.html?system=system-status'
+        };
+
+        const DEMO_ROUTE_MAPPING = {
+            'operational-dominance': 'dashboard.html?demo=trust-ladder',
+            'financial-warming': 'dashboard.html?demo=cross-pollination',
+            'family-controls': 'dashboard.html?demo=family-controls',
+            'ai-risk': 'dashboard.html?demo=ai-risk-analysis'
+        };
+
+        const ANIMATION_DURATION_DEFAULT = 2000;
+        const REFRESH_INTERVAL_MS = 30000;
+        const NOTIFICATION_DURATION_MS = 3000;
+        const COUNTER_ANIMATION_FPS = 60;
+        const COUNTER_FRAME_DURATION_MS = 1000 / COUNTER_ANIMATION_FPS;
+        const CHART_UPDATE_DELAY_MS = 100;
+        const INITIAL_LOAD_DELAY_MS = 500;
+
+        // =============================================================================
+        // Global State
+        // =============================================================================
+
+        const systemDataCollection = {
+            operationalDominance: {
+                name: 'Operational Dominance',
+                icon: 'crown',
+                color: 'purple',
+                trustLevel: 5,
+                identitiesCreated: 2880,
+                timeToIdentity: 5,
+                monthlyRevenue: 73500
+            },
+            financialWarming: {
+                name: 'Financial Warming Loop',
+                icon: 'trending-up',
+                color: 'green',
+                successRate: 94,
+                dailyPairs: 500,
+                roi: 1900,
+                monthlyRevenue: 142500
+            },
+            familyControls: {
+                name: 'Family Controls',
+                icon: 'users',
+                color: 'blue',
+                adoption: 83,
+                compliance: 98,
+                retention: 80,
+                monthlyRevenue: 787686
+            },
+            cashAppPriority: {
+                name: 'Cash App Priority',
+                icon: 'dollar-sign',
+                color: 'green',
+                conversion: 87,
+                checkoutTime: 18,
+                successRate: 94,
+                monthlyRevenue: 74750
+            },
+            aiRiskPrediction: {
+                name: 'AI Risk Prediction',
+                icon: 'brain',
+                color: 'purple',
+                accuracy: 94,
+                prevention: 90,
+                inferenceSpeed: 45,
+                monthlySavings: 1070000
+            },
+            systemStatus: {
+                name: 'System Status',
+                icon: 'activity',
+                color: 'gray',
+                uptime: 99.7,
+                responseTime: 124,
+                errorRate: 0.3,
+                activeUsers: 12847
+            }
+        };
+
+        let revenueChartInstance = null;
+        let distributionChartInstance = null;
+        
+        // Filter state
+        const filterState = {
+            searchQuery: '',
+            colorFilter: null,
+            sortOption: 'default'
+        };
+        
+        // Store original system cards order
+        let originalSystemCardsOrder = [];
+
+        // =============================================================================
+        // Utility Functions
+        // =============================================================================
+
+        /**
+         * Initialize Lucide icons
+         */
+        function initializeLucideIcons() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        /**
+         * Get system subtitle by key
+         * @param {string} systemKey
+         * @returns {string}
+         */
+        function getSystemSubtitleByKey(systemKey) {
+            const subtitleMap = {
+                operationalDominance: 'Trust Ladder System',
+                financialWarming: 'Cross-Pollination Engine',
+                familyControls: 'Guardian Oversight',
+                cashAppPriority: 'Payment Processing',
+                aiRiskPrediction: 'Suspension Prevention',
+                systemStatus: 'Health Monitoring'
+            };
+            return subtitleMap[systemKey] || 'System';
+        }
+
+        /**
+         * Format metric value for display
+         * @param {number|string} value
+         * @param {string} key
+         * @returns {string}
+         */
+        function formatMetricValue(value, key) {
+            if (typeof value === 'string') return value;
+            
+            if (value > 1000) {
+                return `$${value.toLocaleString()}`;
+            }
+            if (value < 1) {
+                return `${(value * 100).toFixed(1)}%`;
+            }
+            if (value >= 1 && value < 100) {
+                return `${value}%`;
+            }
+            return value.toLocaleString();
+        }
+
+        /**
+         * Check if metric is revenue/savings related
+         * @param {string} metricKey
+         * @returns {boolean}
+         */
+        function isRevenueMetric(metricKey) {
+            return metricKey.includes('Revenue') || metricKey.includes('Savings');
+        }
+
+        // =============================================================================
+        // Theme Management
+        // =============================================================================
+
+        /**
+         * Initialize theme from localStorage
+         */
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        }
+
+        /**
+         * Apply theme to document
+         * @param {'light'|'dark'} theme
+         */
+        function applyTheme(theme) {
+            try {
+                document.documentElement.setAttribute('data-theme', theme);
+                document.body.setAttribute('data-theme', theme);
+                updateThemeToggleIcon(theme);
+            } catch (error) {
+                console.error('Failed to apply theme:', error);
+            }
+        }
+
+        /**
+         * Handle theme toggle
+         */
+        function handleThemeToggle() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+            initializeLucideIcons();
+            updateChartsTheme();
+        }
+
+        /**
+         * Update theme toggle icon
+         * @param {'light'|'dark'} theme
+         */
+        function updateThemeToggleIcon(theme) {
+            const toggleButton = document.getElementById('themeToggleButton');
+            if (!toggleButton) return;
+
+            const sunIcon = toggleButton.querySelector('[data-lucide="sun"]');
+            const moonIcon = toggleButton.querySelector('[data-lucide="moon"]');
+            
+            if (theme === 'dark') {
+                sunIcon?.classList.add('hidden');
+                moonIcon?.classList.remove('hidden');
+            } else {
+                sunIcon?.classList.remove('hidden');
+                moonIcon?.classList.add('hidden');
+            }
+        }
+
+        // =============================================================================
+        // Counter Animation
+        // =============================================================================
+
+        /**
+         * Animate counter value with smooth easing
+         * @param {HTMLElement} element
+         * @param {number} targetValue
+         * @param {number} [duration=ANIMATION_DURATION_DEFAULT]
+         * @param {number} [decimalPlaces=0]
+         */
+        function animateCounterValue(element, targetValue, duration = ANIMATION_DURATION_DEFAULT, decimalPlaces = 0) {
+            if (!element) {
+                console.warn('Counter element not found');
+                return;
+            }
+
+            const startValue = parseFloat(element.textContent || '0') || 0;
+            const totalFrames = Math.ceil(duration / COUNTER_FRAME_DURATION_MS);
+            const increment = (targetValue - startValue) / totalFrames;
+            let currentFrame = 0;
+            let currentValue = startValue;
+
+            const timer = setInterval(() => {
+                currentFrame++;
+                currentValue += increment;
+                
+                // Easing function for smooth animation
+                const progress = currentFrame / totalFrames;
+                const easedProgress = progress < 0.5 
+                    ? 2 * progress * progress 
+                    : -1 + (4 - 2 * progress) * progress;
+                
+                const displayValue = startValue + (targetValue - startValue) * easedProgress;
+                
+                if (currentFrame >= totalFrames) {
+                    element.textContent = targetValue.toFixed(decimalPlaces);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = displayValue.toFixed(decimalPlaces);
+                }
+            }, COUNTER_FRAME_DURATION_MS);
+        }
+
+        // =============================================================================
+        // Revenue Management
+        // =============================================================================
+
+        /**
+         * Calculate total revenue from all systems
+         * @returns {number}
+         */
+        function calculateTotalRevenue() {
+            return Object.values(systemDataCollection).reduce((total, system) => {
+                return total + (system.monthlyRevenue || system.monthlySavings || 0);
+            }, 0);
+        }
+
+        /**
+         * Update total revenue display with animation
+         */
+        function updateTotalRevenueDisplay() {
+            const totalRevenue = calculateTotalRevenue();
+            const revenueElement = document.getElementById('totalRevenueDisplay');
+            
+            if (revenueElement) {
+                animateCounterValue(revenueElement, totalRevenue, ANIMATION_DURATION_DEFAULT, 0);
+            }
+        }
+
+        // =============================================================================
+        // System Cards Generation
+        // =============================================================================
+
+        /**
+         * Generate system cards dynamically with error handling
+         */
+        function generateSystemCards() {
+            const container = document.getElementById('systemCardsContainer');
+            if (!container) {
+                console.error('System cards container not found');
+                return;
+            }
+
+            try {
+                // Store original order
+                originalSystemCardsOrder = Object.entries(systemDataCollection);
+                
+                container.innerHTML = Object.entries(systemDataCollection).map(([systemKey, systemConfig], index) => {
+                const metricEntries = Object.entries(systemConfig)
+                    .filter(([key]) => !['name', 'icon', 'color'].includes(key))
+                    .map(([metricKey, metricValue]) => {
+                        const label = metricKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                        const formattedValue = formatMetricValue(metricValue, metricKey);
+                        const isRevenue = isRevenueMetric(metricKey);
+                        
+                        return `
+                            <div class="flex justify-between items-center">
+                                <span class="text-body-small text-gray-600 dark:text-gray-400">${label}</span>
+                                <span class="text-body-small font-semibold ${isRevenue ? 'text-green-600 dark:text-green-400' : ''}">${formattedValue}</span>
+                            </div>
+                        `;
+                    }).join('');
+
+                const routeKey = systemKey === 'financialWarming' ? 'financial-warming' : 
+                               systemKey === 'cashAppPriority' ? 'cash-app-priority' :
+                               systemKey === 'aiRiskPrediction' ? 'ai-risk-prediction' :
+                               systemKey === 'systemStatus' ? 'system-status' : systemKey;
+                
+                const routePath = SYSTEM_ROUTE_MAPPING[routeKey] || `dashboard.html?system=${routeKey}`;
+                const animationDelay = (index % 6) + 1;
+
+                return `
+                    <article 
+                        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 card-interactive fade-in-animation animation-delay-${animationDelay} shadow-depth-3 system-card"
+                        data-system-key="${systemKey}"
+                        data-system-name="${systemConfig.name.toLowerCase()}"
+                        data-system-color="${systemConfig.color}"
+                        data-system-revenue="${systemConfig.monthlyRevenue || systemConfig.monthlySavings || 0}"
+                        data-system-success="${systemConfig.successRate || systemConfig.accuracy || systemConfig.adoption || 0}"
+                    >
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-${systemConfig.color}-100 dark:bg-${systemConfig.color}-900 rounded-lg flex items-center justify-center mr-3">
+                                    <i data-lucide="${systemConfig.icon}" class="w-6 h-6 text-${systemConfig.color}-600 dark:text-${systemConfig.color}-400"></i>
+                                </div>
+                                <div>
+                                    <h3 class="heading-tertiary text-gray-900 dark:text-white mb-1">${systemConfig.name}</h3>
+                                    <p class="text-label text-gray-500 dark:text-gray-400">${getSystemSubtitleByKey(systemKey)}</p>
+                                </div>
+                            </div>
+                            <div class="w-3 h-3 bg-green-400 rounded-full status-indicator"></div>
+                        </div>
+                        <div class="space-y-3">
+                            ${metricEntries}
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <a href="${routePath}" class="system-navigation-link" aria-label="View ${systemConfig.name} details">
+                                <button class="button-primary w-full bg-${systemConfig.color}-600 hover:bg-${systemConfig.color}-700 text-white py-2 rounded-lg transition-all shadow-depth-2">
+                                    View Details
+                                </button>
+                            </a>
+                        </div>
+                    </article>
+                `;
+                }).join('');
+
+                initializeLucideIcons();
+                
+                // Initialize filtering after cards are generated
+                setTimeout(() => {
+                    applyFilters();
+                }, 100);
+            } catch (error) {
+                console.error('Failed to generate system cards:', error);
+                handleError({
+                    message: 'Failed to generate system cards',
+                    code: 'CARD_GENERATION_ERROR',
+                    retryable: true
+                });
+                
+                // Show fallback message
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-body text-gray-600 dark:text-gray-400">Failed to load system cards. Please refresh the page.</p>
+                        <button onclick="handleRefreshAllData()" class="button-primary mt-4 px-4 py-2 rounded-lg">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // =============================================================================
+        // Quick Actions Generation
+        // =============================================================================
+
+        /**
+         * Generate quick action buttons with error handling
+         */
+        function generateQuickActionButtons() {
+            const actionConfigurations = [
+                { name: 'Run Trust Ladder Demo', icon: 'play', color: 'purple', demoKey: 'operational-dominance' },
+                { name: 'Test Cross-Pollination', icon: 'play', color: 'green', demoKey: 'financial-warming' },
+                { name: 'Family Controls Demo', icon: 'play', color: 'blue', demoKey: 'family-controls' },
+                { name: 'AI Risk Analysis', icon: 'brain', color: 'purple', demoKey: 'ai-risk' }
+            ];
+
+            const container = document.getElementById('quickActionsContainer');
+            if (!container) {
+                console.error('Quick actions container not found');
+                return;
+            }
+
+            try {
+                container.innerHTML = actionConfigurations.map((actionConfig, index) => {
+                const routePath = DEMO_ROUTE_MAPPING[actionConfig.demoKey] || `dashboard.html?demo=${actionConfig.demoKey}`;
+                const animationDelay = index + 1;
+                
+                return `
+                    <a href="${routePath}" class="system-navigation-link" aria-label="${actionConfig.name}">
+                        <button 
+                            class="button-secondary bg-${actionConfig.color}-100 dark:bg-${actionConfig.color}-900 text-${actionConfig.color}-700 dark:text-${actionConfig.color}-300 p-4 rounded-lg hover:bg-${actionConfig.color}-200 dark:hover:bg-${actionConfig.color}-800 transition-all fade-in-animation animation-delay-${animationDelay} shadow-depth-2 w-full"
+                        >
+                            <i data-lucide="${actionConfig.icon}" class="w-6 h-6 mx-auto mb-2" aria-hidden="true"></i>
+                            <span class="text-body-small font-medium block">${actionConfig.name}</span>
+                        </button>
+                    </a>
+                `;
+                }).join('');
+
+                initializeLucideIcons();
+            } catch (error) {
+                console.error('Failed to generate quick actions:', error);
+                handleError({
+                    message: 'Failed to generate quick actions',
+                    code: 'ACTIONS_GENERATION_ERROR',
+                    retryable: true
+                });
+            }
+        }
+
+        // =============================================================================
+        // Chart Management
+        // =============================================================================
+
+        /**
+         * Initialize revenue and distribution charts
+         */
+        function initializeCharts() {
+            const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDarkTheme ? '#f1f5f9' : '#111827';
+            const gridColor = isDarkTheme ? '#334155' : '#e5e7eb';
+
+            initializeRevenueChart(textColor, gridColor);
+            initializeDistributionChart(textColor);
+        }
+
+        /**
+         * Initialize revenue line chart with error handling
+         * @param {string} textColor
+         * @param {string} gridColor
+         */
+        function initializeRevenueChart(textColor, gridColor) {
+            const canvasElement = document.getElementById('revenueChartCanvas');
+            if (!canvasElement) {
+                console.warn('Revenue chart canvas not found');
+                return;
+            }
+
+            const ctx = canvasElement.getContext('2d');
+            if (!ctx) {
+                console.error('Failed to get 2D context for revenue chart');
+                return;
+            }
+
+            // Destroy existing chart if present
+            if (revenueChartInstance) {
+                revenueChartInstance.destroy();
+            }
+
+            try {
+                revenueChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: [450000, 680000, 920000, 1150000, 1380000, 1620000],
+                        borderColor: 'rgb(99, 102, 241)',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: textColor,
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            },
+                            grid: { color: gridColor }
+                        }
+                    }
+                }
+            });
+            } catch (error) {
+                console.error('Failed to create revenue chart:', error);
+                handleError({
+                    message: 'Failed to initialize revenue chart',
+                    code: 'REVENUE_CHART_ERROR',
+                    retryable: true
+                });
+            }
+        }
+
+        /**
+         * Initialize distribution doughnut chart with error handling
+         * @param {string} textColor
+         */
+        function initializeDistributionChart(textColor) {
+            const canvasElement = document.getElementById('distributionChartCanvas');
+            if (!canvasElement) {
+                console.warn('Distribution chart canvas not found');
+                return;
+            }
+
+            const ctx = canvasElement.getContext('2d');
+            if (!ctx) {
+                console.error('Failed to get 2D context for distribution chart');
+                return;
+            }
+
+            // Destroy existing chart if present
+            if (distributionChartInstance) {
+                distributionChartInstance.destroy();
+            }
+
+            try {
+                distributionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Family Controls', 'Financial Warming', 'Operational Dominance', 'Cash App Priority', 'AI Risk Savings'],
+                    datasets: [{
+                        data: [787686, 142500, 73500, 74750, 1070000],
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(34, 197, 94)',
+                            'rgb(147, 51, 234)',
+                            'rgb(16, 185, 129)',
+                            'rgb(168, 85, 247)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: textColor }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': $' + context.parsed.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            } catch (error) {
+                console.error('Failed to create distribution chart:', error);
+                handleError({
+                    message: 'Failed to initialize distribution chart',
+                    code: 'DISTRIBUTION_CHART_ERROR',
+                    retryable: true
+                });
+            }
+        }
+
+        /**
+         * Update charts theme with error handling
+         */
+        function updateChartsTheme() {
+            try {
+                if (revenueChartInstance || distributionChartInstance) {
+                    // Destroy existing charts before recreating
+                    if (revenueChartInstance) {
+                        revenueChartInstance.destroy();
+                        revenueChartInstance = null;
+                    }
+                    if (distributionChartInstance) {
+                        distributionChartInstance.destroy();
+                        distributionChartInstance = null;
+                    }
+                    
+                    // Reinitialize with new theme
+                    setTimeout(() => {
+                        initializeCharts();
+                    }, CHART_UPDATE_DELAY_MS);
+                }
+            } catch (error) {
+                handleError({
+                    message: 'Failed to update chart theme',
+                    code: 'CHART_THEME_ERROR',
+                    retryable: true
+                });
+            }
+        }
+
+        // =============================================================================
+        // Data Management
+        // =============================================================================
+
+        /**
+         * Show loading overlay
+         * @param {string} [message='Loading...']
+         */
+        function showLoadingOverlay(message = 'Loading...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const messageElement = document.getElementById('loadingMessage');
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                if (messageElement) {
+                    messageElement.textContent = message;
+                }
+            }
+        }
+
+        /**
+         * Hide loading overlay
+         */
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Handle refresh all data with error handling
+         */
+        function handleRefreshAllData() {
+            const refreshButton = document.getElementById('refreshDataButton');
+            
+            try {
+                if (refreshButton) {
+                    refreshButton.disabled = true;
+                    const iconElement = refreshButton.querySelector('[data-lucide="refresh-cw"]');
+                    if (iconElement) iconElement.classList.add('animate-spin');
+                }
+
+                showLoadingOverlay('Refreshing all system data...');
+                showNotificationToast({
+                    message: 'Refreshing all system data...',
+                    type: 'info'
+                });
+                
+                // Simulate async data refresh
+                setTimeout(() => {
+                    try {
+                        updateLastUpdatedTimestamp();
+                        updateTotalRevenueDisplay();
+                        
+                        document.querySelectorAll('.counter-value').forEach(element => {
+                            const targetValue = parseFloat(element.getAttribute('data-target-value') || '0');
+                            const decimalPlaces = parseInt(element.getAttribute('data-decimal-places') || '0');
+                            animateCounterValue(element, targetValue, 1000, decimalPlaces);
+                        });
+
+                        hideLoadingOverlay();
+                        
+                        if (refreshButton) {
+                            refreshButton.disabled = false;
+                            const iconElement = refreshButton.querySelector('[data-lucide="refresh-cw"]');
+                            if (iconElement) iconElement.classList.remove('animate-spin');
+                        }
+                        
+                        showNotificationToast({
+                            message: 'All systems updated successfully',
+                            type: 'success'
+                        });
+                    } catch (error) {
+                        hideLoadingOverlay();
+                        handleError({
+                            message: 'Failed to refresh data',
+                            code: 'REFRESH_ERROR',
+                            retryable: true
+                        });
+                        
+                        if (refreshButton) {
+                            refreshButton.disabled = false;
+                            const iconElement = refreshButton.querySelector('[data-lucide="refresh-cw"]');
+                            if (iconElement) iconElement.classList.remove('animate-spin');
+                        }
+                    }
+                }, 1000);
+            } catch (error) {
+                handleError({
+                    message: 'Failed to start refresh',
+                    code: 'REFRESH_START_ERROR',
+                    retryable: true
+                });
+            }
+        }
+
+        /**
+         * Handle export data with error handling
+         */
+        function handleExportData() {
+            try {
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    version: '6.0',
+                    systems: systemDataCollection,
+                    totalRevenue: calculateTotalRevenue(),
+                    metadata: {
+                        exportedBy: 'Factory Wager Empire Dashboard',
+                        exportFormat: 'JSON',
+                        exportVersion: '1.0'
+                    }
+                };
+                
+                const jsonString = JSON.stringify(exportData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const anchorElement = document.createElement('a');
+                anchorElement.href = url;
+                anchorElement.download = `factory-wager-export-${Date.now()}.json`;
+                anchorElement.style.display = 'none';
+                document.body.appendChild(anchorElement);
+                anchorElement.click();
+                document.body.removeChild(anchorElement);
+                
+                // Clean up URL after a delay
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 100);
+                
+                showNotificationToast({
+                    message: 'Data exported successfully',
+                    type: 'success'
+                });
+            } catch (error) {
+                handleError({
+                    message: 'Failed to export data',
+                    code: 'EXPORT_ERROR',
+                    retryable: true
+                });
+            }
+        }
+
+        /**
+         * Navigate to system dashboard with validation
+         * @param {string} systemName
+         */
+        function navigateToSystem(systemName) {
+            try {
+                const routeKey = systemName.replace(/([A-Z])/g, '-$1').toLowerCase();
+                const routePath = SYSTEM_ROUTE_MAPPING[routeKey] || `dashboard.html?system=${routeKey}`;
+                
+                // Validate route exists
+                if (!routePath || routePath === '') {
+                    throw new Error(`Invalid system route: ${systemName}`);
+                }
+                
+                window.location.href = routePath;
+            } catch (error) {
+                handleError({
+                    message: `Failed to navigate to system: ${systemName}`,
+                    code: 'NAVIGATION_ERROR',
+                    retryable: false
+                });
+            }
+        }
+
+        /**
+         * Navigate to demo with validation
+         * @param {string} demoName
+         */
+        function navigateToDemo(demoName) {
+            try {
+                const routeKey = demoName;
+                const routePath = DEMO_ROUTE_MAPPING[routeKey] || `dashboard.html?demo=${routeKey}`;
+                
+                // Validate route exists
+                if (!routePath || routePath === '') {
+                    throw new Error(`Invalid demo route: ${demoName}`);
+                }
+                
+                window.location.href = routePath;
+            } catch (error) {
+                handleError({
+                    message: `Failed to navigate to demo: ${demoName}`,
+                    code: 'NAVIGATION_ERROR',
+                    retryable: false
+                });
+            }
+        }
+
+        /**
+         * Handle errors with user-friendly notifications
+         * @param {ErrorConfig} errorConfig
+         */
+        function handleError(errorConfig) {
+            console.error(`[Error ${errorConfig.code || 'UNKNOWN'}]`, errorConfig.message);
+            
+            showNotificationToast({
+                message: errorConfig.message,
+                type: 'error',
+                duration: errorConfig.retryable ? 5000 : NOTIFICATION_DURATION_MS
+            });
+        }
+
+        // =============================================================================
+        // Notification System
+        // =============================================================================
+
+        /**
+         * Show notification toast with enhanced styling
+         * @param {NotificationConfig} config
+         */
+        function showNotificationToast(config) {
+            const container = document.getElementById('notificationContainer');
+            if (!container) {
+                console.warn('Notification container not found');
+                return;
+            }
+
+            const typeStyles = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+
+            const icons = {
+                success: 'check-circle',
+                error: 'alert-circle',
+                warning: 'alert-triangle',
+                info: 'info'
+            };
+
+            const notificationElement = document.createElement('div');
+            notificationElement.className = `notification-toast px-6 py-4 rounded-lg shadow-xl text-white flex items-center gap-3 max-w-md ${
+                typeStyles[config.type] || typeStyles.info
+            }`;
+            
+            notificationElement.innerHTML = `
+                <i data-lucide="${icons[config.type] || icons.info}" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="flex-1">${config.message}</span>
+                ${config.persistent ? '' : '<button onclick="this.parentElement.remove()" class="ml-2 hover:opacity-70"><i data-lucide="x" class="w-4 h-4"></i></button>'}
+            `;
+            
+            container.appendChild(notificationElement);
+            initializeLucideIcons();
+            
+            if (!config.persistent) {
+                const duration = config.duration || NOTIFICATION_DURATION_MS;
+                setTimeout(() => {
+                    notificationElement.style.opacity = '0';
+                    notificationElement.style.transform = 'translateY(-20px) scale(0.95)';
+                    setTimeout(() => notificationElement.remove(), 300);
+                }, duration);
+            }
+        }
+
+        // =============================================================================
+        // Timestamp Management
+        // =============================================================================
+
+        /**
+         * Update last updated timestamp
+         */
+        function updateLastUpdatedTimestamp() {
+            const lastUpdatedElement = document.getElementById('lastUpdatedTimestamp');
+            const deploymentElement = document.getElementById('deploymentTimestamp');
+            
+            if (lastUpdatedElement) {
+                lastUpdatedElement.textContent = 'Just now';
+            }
+            if (deploymentElement) {
+                deploymentElement.textContent = new Date().toLocaleDateString();
+            }
+        }
+
+        // =============================================================================
+        // Initialization
+        // =============================================================================
+
+        /**
+         * Initialize application on DOM load with error handling
+         */
+        function initializeApplication() {
+            showLoadingOverlay('Initializing dashboard...');
+            
+            try {
+                // Initialize theme first
+                initializeTheme();
+                
+                // Initialize icons
+                initializeLucideIcons();
+                
+                // Generate dynamic content
+                generateSystemCards();
+                generateQuickActionButtons();
+                
+                // Initialize data displays
+                updateTotalRevenueDisplay();
+                updateLastUpdatedTimestamp();
+                
+                // Initialize charts with delay for better performance
+                setTimeout(() => {
+                    try {
+                        initializeCharts();
+                    } catch (error) {
+                        handleError({
+                            message: 'Failed to initialize charts',
+                            code: 'CHART_INIT_ERROR',
+                            retryable: true
+                        });
+                    }
+                }, CHART_UPDATE_DELAY_MS);
+                
+                // Animate counters after initial render
+                setTimeout(() => {
+                    try {
+                        document.querySelectorAll('.counter-value').forEach(element => {
+                            const targetValue = parseFloat(element.getAttribute('data-target-value') || '0');
+                            const decimalPlaces = parseInt(element.getAttribute('data-decimal-places') || '0');
+                            animateCounterValue(element, targetValue, ANIMATION_DURATION_DEFAULT, decimalPlaces);
+                        });
+                        hideLoadingOverlay();
+                    } catch (error) {
+                        hideLoadingOverlay();
+                        handleError({
+                            message: 'Failed to animate counters',
+                            code: 'COUNTER_ANIMATION_ERROR',
+                            retryable: false
+                        });
+                    }
+                }, INITIAL_LOAD_DELAY_MS);
+                
+                // Set up auto-refresh
+                setInterval(handleRefreshAllData, REFRESH_INTERVAL_MS);
+                
+            } catch (error) {
+                hideLoadingOverlay();
+                handleError({
+                    message: 'Failed to initialize application',
+                    code: 'INIT_ERROR',
+                    retryable: true
+                });
+            }
+        }
+
+        /**
+         * Add floating animation to hero section
+         */
+        function addHeroFloatingAnimation() {
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                heroSection.classList.add('floating-animation');
+            }
+        }
+
+        // =============================================================================
+        // Event Listeners & Lifecycle
+        // =============================================================================
+
+        /**
+         * Handle page visibility change
+         */
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                // Page is hidden - pause updates
+                console.log('[Dashboard] Page hidden - pausing updates');
+            } else {
+                // Page is visible - resume updates
+                console.log('[Dashboard] Page visible - resuming updates');
+                updateLastUpdatedTimestamp();
+            }
+        }
+
+        /**
+         * Handle before unload
+         */
+        function handleBeforeUnload() {
+            // Clean up charts
+            if (revenueChartInstance) {
+                revenueChartInstance.destroy();
+            }
+            if (distributionChartInstance) {
+                distributionChartInstance.destroy();
+            }
+        }
+
+        /**
+         * Initialize event listeners
+         */
+        function initializeEventListeners() {
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeApplication();
+                addHeroFloatingAnimation();
+            });
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('beforeunload', handleBeforeUnload);
+
+            // Handle keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                // Ctrl/Cmd + K for theme toggle
+                if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+                    event.preventDefault();
+                    handleThemeToggle();
+                }
+                
+                // Ctrl/Cmd + R for refresh (with prevention of default browser refresh)
+                if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+                    event.preventDefault();
+                    handleRefreshAllData();
+                }
+            });
+        }
+
+        // =============================================================================
+        // Filtering & Search Functionality
+        // =============================================================================
+
+        /**
+         * Apply filters to system cards
+         */
+        function applyFilters() {
+            const cards = document.querySelectorAll('.system-card');
+            const searchQuery = filterState.searchQuery.toLowerCase().trim();
+            const colorFilter = filterState.colorFilter;
+            let visibleCount = 0;
+
+            cards.forEach((card) => {
+                const systemName = card.getAttribute('data-system-name') || '';
+                const systemColor = card.getAttribute('data-system-color') || '';
+                const systemKey = card.getAttribute('data-system-key') || '';
+                
+                // Get all text content from the card for search
+                const cardText = card.textContent?.toLowerCase() || '';
+                
+                // Check search query match
+                const matchesSearch = !searchQuery || 
+                    systemName.includes(searchQuery) ||
+                    systemKey.toLowerCase().includes(searchQuery) ||
+                    cardText.includes(searchQuery);
+                
+                // Check color filter match
+                const matchesColor = !colorFilter || colorFilter === 'all' || systemColor === colorFilter;
+                
+                // Show/hide card
+                if (matchesSearch && matchesColor) {
+                    card.classList.remove('system-card-hidden');
+                    card.classList.add('system-card-fade-in');
+                    visibleCount++;
+                } else {
+                    card.classList.add('system-card-hidden');
+                    card.classList.remove('system-card-fade-in');
+                }
+            });
+
+            // Update results count
+            updateResultsCount(visibleCount, cards.length);
+            
+            // Show/hide no results message
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            if (noResultsMessage) {
+                if (visibleCount === 0) {
+                    noResultsMessage.classList.remove('hidden');
+                } else {
+                    noResultsMessage.classList.add('hidden');
+                }
+            }
+
+            // Apply sorting
+            applySorting();
+        }
+
+        /**
+         * Apply sorting to visible cards
+         */
+        function applySorting() {
+            const container = document.getElementById('systemCardsContainer');
+            if (!container) return;
+
+            const cards = Array.from(container.querySelectorAll('.system-card:not(.system-card-hidden)'));
+            
+            cards.sort((a, b) => {
+                const sortOption = filterState.sortOption;
+                
+                switch (sortOption) {
+                    case 'name-asc':
+                        return (a.getAttribute('data-system-name') || '').localeCompare(b.getAttribute('data-system-name') || '');
+                    case 'name-desc':
+                        return (b.getAttribute('data-system-name') || '').localeCompare(a.getAttribute('data-system-name') || '');
+                    case 'revenue-desc':
+                        return parseFloat(b.getAttribute('data-system-revenue') || '0') - parseFloat(a.getAttribute('data-system-revenue') || '0');
+                    case 'revenue-asc':
+                        return parseFloat(a.getAttribute('data-system-revenue') || '0') - parseFloat(b.getAttribute('data-system-revenue') || '0');
+                    case 'success-desc':
+                        return parseFloat(b.getAttribute('data-system-success') || '0') - parseFloat(a.getAttribute('data-system-success') || '0');
+                    default:
+                        return 0; // Keep original order
+                }
+            });
+
+            // Reorder DOM elements
+            cards.forEach((card) => {
+                container.appendChild(card);
+            });
+        }
+
+        /**
+         * Handle search input
+         * @param {Event} event
+         */
+        function handleSearchInput(event) {
+            const input = event.target;
+            if (!input || !(input instanceof HTMLInputElement)) return;
+            filterState.searchQuery = input.value;
+            
+            // Show/hide clear button
+            const clearButton = document.getElementById('clearSearchButton');
+            if (clearButton) {
+                if (input.value.trim()) {
+                    clearButton.classList.remove('hidden');
+                } else {
+                    clearButton.classList.add('hidden');
+                }
+            }
+            
+            applyFilters();
+            updateActiveFilters();
+        }
+
+        /**
+         * Clear search filter
+         */
+        function clearSearchFilter() {
+            const searchInput = document.getElementById('systemSearchInput');
+            if (searchInput && searchInput instanceof HTMLInputElement) {
+                searchInput.value = '';
+                filterState.searchQuery = '';
+                
+                const clearButton = document.getElementById('clearSearchButton');
+                if (clearButton) {
+                    clearButton.classList.add('hidden');
+                }
+                
+                applyFilters();
+                updateActiveFilters();
+            }
+        }
+
+        /**
+         * Toggle color filter
+         * @param {string} color
+         */
+        function toggleFilter(color) {
+            // Update filter state
+            if (color === 'all') {
+                filterState.colorFilter = null;
+            } else {
+                filterState.colorFilter = color;
+            }
+            
+            // Update active state of filter chips
+            document.querySelectorAll('.filter-chip').forEach((chip) => {
+                chip.classList.remove('active');
+            });
+            
+            const activeChip = document.querySelector(`[data-filter="${color === 'all' ? 'all' : color}"]`);
+            if (activeChip) {
+                activeChip.classList.add('active');
+            }
+            
+            applyFilters();
+            updateActiveFilters();
+        }
+
+        /**
+         * Handle sort change
+         * @param {string} sortOption
+         */
+        function handleSortChange(sortOption) {
+            if (typeof sortOption === 'string') {
+                filterState.sortOption = sortOption;
+                applySorting();
+            }
+        }
+
+        /**
+         * Update active filters display
+         */
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFiltersContainer');
+            const list = document.getElementById('activeFiltersList');
+            
+            if (!container || !list) return;
+            
+            const activeFilters = [];
+            
+            if (filterState.searchQuery.trim()) {
+                activeFilters.push(`Search: "${filterState.searchQuery}"`);
+            }
+            
+            if (filterState.colorFilter && filterState.colorFilter !== 'all') {
+                const colorNames = {
+                    purple: 'Trust & AI',
+                    green: 'Financial',
+                    blue: 'Controls',
+                    gray: 'Status'
+                };
+                activeFilters.push(`Color: ${colorNames[filterState.colorFilter] || filterState.colorFilter}`);
+            }
+            
+            if (activeFilters.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            list.innerHTML = activeFilters.map(filter => `
+                <span class="active-filter-badge">
+                    ${filter}
+                </span>
+            `).join('');
+        }
+
+        /**
+         * Clear all filters
+         */
+        function clearAllFilters() {
+            // Reset filter state
+            filterState.searchQuery = '';
+            filterState.colorFilter = null;
+            filterState.sortOption = 'default';
+            
+            // Reset UI
+            const searchInput = document.getElementById('systemSearchInput');
+            if (searchInput && searchInput instanceof HTMLInputElement) {
+                searchInput.value = '';
+            }
+            
+            const clearButton = document.getElementById('clearSearchButton');
+            if (clearButton) {
+                clearButton.classList.add('hidden');
+            }
+            
+            // Reset filter chips
+            document.querySelectorAll('.filter-chip').forEach((chip) => {
+                chip.classList.remove('active');
+            });
+            const allChip = document.querySelector('[data-filter="all"]');
+            if (allChip) {
+                allChip.classList.add('active');
+            }
+            
+            // Reset sort
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect && sortSelect instanceof HTMLSelectElement) {
+                sortSelect.value = 'default';
+            }
+            
+            applyFilters();
+            updateActiveFilters();
+        }
+
+        /**
+         * Update results count display
+         * @param {number} visible
+         * @param {number} total
+         */
+        function updateResultsCount(visible, total) {
+            const countElement = document.getElementById('resultsCountText');
+            if (!countElement) return;
+            
+            if (visible === total) {
+                countElement.textContent = `Showing all ${total} systems`;
+            } else {
+                countElement.textContent = `Showing ${visible} of ${total} systems`;
+            }
+        }
+
+        /**
+         * Initialize filtering functionality
+         */
+        function initializeFiltering() {
+            // Search input listener
+            const searchInput = document.getElementById('systemSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleSearchInput);
+                searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        clearSearchFilter();
+                        searchInput.blur();
+                    }
+                });
+            }
+            
+            // Set default active filter chip
+            const allChip = document.querySelector('[data-filter="all"]');
+            if (allChip) {
+                allChip.classList.add('active');
+            }
+        }
+
+        // Initialize event listeners
+        initializeEventListeners();
+        
+        // Initialize filtering after DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFiltering();
+        });
+    </script>
+</body>
+</html>

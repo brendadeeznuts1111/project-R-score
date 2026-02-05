@@ -1,0 +1,63 @@
+{
+  "name": "systems-dashboard",
+  "version": "1.0.0",
+  "description": "🖥️ Advanced Systems Dashboard - Pure Bun with Native Features",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch run index.tsx",
+    "dev:native": "bun --watch run bun-native-advanced.ts",
+    "dev:hot": "bun --hot run index.tsx",
+    "build": "bun build --target browser --outdir dist --define process.env.NODE_ENV:\\\"production\\\" --drop=console",
+    "build:dev": "bun build --target browser --outdir dist --sourcemap",
+    "build:analyze": "bun build --target browser --outdir dist --metafile=meta.json",
+    "preview": "bun run dist/index.js",
+    "serve": "bun --watch run bun-native-advanced.ts",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "bun --watch run type-check",
+    "lint": "bunx tsc --noEmit && bunx eslint . --ext .ts,.tsx",
+    "lint:fix": "bunx eslint . --ext .ts,.tsx --fix",
+    "format": "bunx prettier --write .",
+    "format:check": "bunx prettier --check .",
+    "clean": "rm -rf dist node_modules .bun",
+    "test": "bun test",
+    "test:watch": "bun --watch test",
+    "test:coverage": "bun test --coverage",
+    "start": "bun run bun-native-advanced.ts",
+    "demo": "bun run bun-table-demo.ts",
+    "demo:advanced": "bun run bun-native-advanced.ts",
+    "cli": "bun run cli-bun-native.js",
+    "metrics": "curl -s http://localhost:3000/api/metrics | bun -e 'console.log(JSON.stringify(JSON.parse(await Bun.stdin.text()), null, 2))'",
+    "table": "curl -s http://localhost:3000/api/table",
+    "health": "curl -s http://localhost:3000/health | bun -e 'console.log(JSON.stringify(JSON.parse(await Bun.stdin.text()), null, 2))'"
+  },
+  "bin": {
+    "systems-dashboard": "./cli-bun-native.js",
+    "sysdash": "./cli-bun-native.js",
+    "sysdash-advanced": "./bun-native-advanced.ts"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^4.4.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  },
+  "bun": {
+    "allowJS": true,
+    "jsxFactory": "React.createElement",
+    "jsxFragment": "React.Fragment",
+    "jsxImportSource": null,
+    "loader": {
+      ".tsx": "tsx",
+      ".ts": "ts",
+      ".jsx": "jsx",
+      ".js": "js"
+    }
+  }
+}

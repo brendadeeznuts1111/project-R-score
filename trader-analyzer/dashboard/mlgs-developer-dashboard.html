@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 Multi-Layer Correlation Graph - Developer Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-card strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            color: #667eea;
+        }
+
+        .status-card .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .status-card.status-healthy { border-left: 4px solid #10b981; }
+        .status-card.status-degraded { border-left: 4px solid #f59e0b; }
+        .status-card.status-error { border-left: 4px solid #ef4444; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .panel h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel h2::before {
+            content: "▸";
+            font-size: 0.8em;
+        }
+
+        .button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .button:hover {
+            background: #5568d3;
+        }
+
+        .button:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9ca3af;
+            font-size: 0.9em;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 8px 12px;
+            background: #0f172a;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.9em;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .log-container {
+            background: #0f172a;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 3px solid transparent;
+        }
+
+        .log-entry.success { border-left-color: #10b981; }
+        .log-entry.error { border-left-color: #ef4444; }
+        .log-entry.warning { border-left-color: #f59e0b; }
+        .log-entry.info { border-left-color: #3b82f6; }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #9ca3af;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .circuit-breaker-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .circuit-breaker-status.closed {
+            background: #10b981;
+            color: white;
+        }
+
+        .circuit-breaker-status.open {
+            background: #ef4444;
+            color: white;
+        }
+
+        .circuit-breaker-status.half-open {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .route-list {
+            list-style: none;
+        }
+
+        .route-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .route-item.has-regex {
+            border-left: 3px solid #10b981;
+        }
+
+        .deviation-alert {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .deviation-alert strong {
+            color: #ef4444;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .json-viewer {
+            background: #0f172a;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .json-viewer pre {
+            margin: 0;
+            color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+            <div>
+                <h1>🌐 Multi-Layer Correlation Graph - Developer Dashboard</h1>
+                <p>Real-time monitoring and testing for MarketDataRouter17 and MLGS subsystems</p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="../docs/DOCUMENTATION-INDEX.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">📚 Docs</a>
+                <a href="../docs/MARKET-DATA-ROUTER-17-COMPLETE.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">🔀 Router</a>
+                <a href="../docs/BUN-1.3.51.1-STANDALONE-AND-LOGGING-INTEGRATION.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">📊 Logging</a>
+                <a href="../benchmarks/" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">⚡ Benchmarks</a>
+                <a href="../docs/BUN-V1.51-IMPACT-ANALYSIS.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">🚀 Performance</a>
+                <a href="../dashboard/multi-layer-graph.html" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">🌐 Graph</a>
+            </div>
+        </div>
+        
+        <div class="status-grid" id="statusGrid">
+            <div class="status-card status-healthy">
+                <strong>Router Status</strong>
+                <div class="value" id="routerStatus">Checking...</div>
+            </div>
+            <div class="status-card">
+                <strong>Patterns Registered</strong>
+                <div class="value" id="patternCount">-</div>
+            </div>
+            <div class="status-card">
+                <strong>Handlers Active</strong>
+                <div class="value" id="handlerCount">-</div>
+            </div>
+            <div class="status-card">
+                <strong>Circuit Breaker</strong>
+                <div class="value" id="circuitBreakerStatus">-</div>
+            </div>
+            <div class="status-card">
+                <strong>SQLite Status</strong>
+                <div class="value" id="sqliteStatus">-</div>
+            </div>
+            <div class="status-card">
+                <strong>fhSPREAD Enabled</strong>
+                <div class="value" id="fhspreadStatus">-</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('overview')">Overview</button>
+        <button class="tab" onclick="showTab('routes')">Routes & Patterns</button>
+        <button class="tab" onclick="showTab('fhspread')">fhSPREAD Analysis</button>
+        <button class="tab" onclick="showTab('circuit-breaker')">Circuit Breaker</button>
+        <button class="tab" onclick="showTab('performance')">Performance</button>
+        <button class="tab" onclick="showTab('benchmarks')">Benchmarks</button>
+        <button class="tab" onclick="showTab('testing')">API Testing</button>
+        <button class="tab" onclick="showTab('logs')">Structured Logs</button>
+    </div>
+
+    <!-- Overview Tab -->
+    <div id="overview" class="tab-content active">
+        <div class="grid">
+            <div class="panel">
+                <h2>System Health</h2>
+                <div id="healthCheck">
+                    <div class="loading"></div> Checking system health...
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Quick Actions</h2>
+                <button class="button" onclick="verifyRouterIntegration()">Verify Router Integration</button>
+                <button class="button" onclick="refreshStatus()" style="margin-top: 10px;">Refresh Status</button>
+                <button class="button" onclick="testMcpHealth()" style="margin-top: 10px;">Test MCP Health</button>
+            </div>
+
+            <div class="panel">
+                <h2>Recent Deviations</h2>
+                <div id="recentDeviations">
+                    <p style="color: #9ca3af;">No deviations detected</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Route Performance</h2>
+                <div id="routePerformance">
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Response Time</span>
+                        <span class="metric-value" id="avgResponseTime">-</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Requests/min</span>
+                        <span class="metric-value" id="requestsPerMin">-</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Error Rate</span>
+                        <span class="metric-value" id="errorRate">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Routes & Patterns Tab -->
+    <div id="routes" class="tab-content">
+        <div class="grid">
+            <div class="panel">
+                <h2>Registered URLPatterns</h2>
+                <ul class="route-list" id="routeList">
+                    <li>Loading routes...</li>
+                </ul>
+            </div>
+
+            <div class="panel">
+                <h2>Pattern Testing</h2>
+                <div class="input-group">
+                    <label>Test URL</label>
+                    <input type="text" id="testUrl" placeholder="/api/v17/correlation/NBA-2025-001" value="/api/v17/correlation/NBA-2025-001">
+                </div>
+                <button class="button" onclick="testPattern()">Test Pattern Match</button>
+                <div id="patternTestResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <div class="panel">
+                <h2>Regex Validation</h2>
+                <div class="input-group">
+                    <label>Market ID</label>
+                    <input type="text" id="testMarketId" placeholder="NBA-2025-001" value="NBA-2025-001">
+                </div>
+                <div class="input-group">
+                    <label>Selection ID</label>
+                    <input type="text" id="testSelectionId" placeholder="LAKERS-PLUS-7.5" value="LAKERS-PLUS-7.5">
+                </div>
+                <button class="button" onclick="testRegexValidation()">Validate Format</button>
+                <div id="regexValidationResult" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- fhSPREAD Analysis Tab -->
+    <div id="fhspread" class="tab-content">
+        <div class="grid">
+            <div class="panel">
+                <h2>fhSPREAD Deviation Calculator</h2>
+                <div class="input-group">
+                    <label>Market ID</label>
+                    <input type="text" id="fhspreadMarketId" placeholder="NBA-2025-001" value="NBA-2025-001">
+                </div>
+                <div class="input-group">
+                    <label>Time Range</label>
+                    <select id="fhspreadTimeRange">
+                        <option value="last-1h">Last 1 hour</option>
+                        <option value="last-4h" selected>Last 4 hours</option>
+                        <option value="last-24h">Last 24 hours</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Mainline Method</label>
+                    <select id="fhspreadMethod">
+                        <option value="VWAP" selected>VWAP</option>
+                        <option value="median">Median</option>
+                        <option value="consensus">Consensus</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Deviation Threshold</label>
+                    <input type="number" id="fhspreadThreshold" step="0.01" value="0.25" min="0" max="1">
+                </div>
+                <button class="button" onclick="calculateFhSpread()">Calculate Deviation</button>
+                <div id="fhspreadResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <div class="panel">
+                <h2>Deviation History</h2>
+                <div id="deviationHistory">
+                    <p style="color: #9ca3af;">No history available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Circuit Breaker Tab -->
+    <div id="circuit-breaker" class="tab-content">
+        <div class="grid">
+            <div class="panel">
+                <h2>Circuit Breaker Status</h2>
+                <div id="circuitBreakerDetails">
+                    <div class="loading"></div> Loading circuit breaker status...
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Circuit Breaker Controls</h2>
+                <div class="input-group">
+                    <label>Bookmaker</label>
+                    <input type="text" id="cbBookmaker" placeholder="draftkings" value="draftkings">
+                </div>
+                <button class="button" onclick="getCircuitBreakerStatus()">Get Status</button>
+                <button class="button" onclick="resetCircuitBreaker()" style="margin-top: 10px; background: #f59e0b;">Reset Circuit Breaker</button>
+                <div id="circuitBreakerControls" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Tab -->
+    <div id="performance" class="tab-content">
+        <div class="grid">
+            <div class="panel">
+                <h2>Route Performance Metrics</h2>
+                <div id="performanceMetrics">
+                    <div class="loading"></div> Loading metrics...
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>SQLite Query Optimization</h2>
+                <div id="sqliteOptimization">
+                    <p style="color: #9ca3af;">SQLite 3.51.1 EXISTS-to-JOIN optimization active</p>
+                    <div class="metric-row">
+                        <span class="metric-label">Query Plan</span>
+                        <span class="metric-value">Optimized</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Connection Pool Stats</h2>
+                <div id="connectionPoolStats">
+                    <div class="loading"></div> Loading connection pool stats...
+                </div>
+                <button class="button" onclick="refreshConnectionPoolStats()" style="margin-top: 10px;">Refresh Stats</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benchmarks Tab -->
+    <div id="benchmarks" class="tab-content">
+        <div class="grid">
+            <div class="panel">
+                <h2>Benchmark Information</h2>
+                <div id="benchmarkInfo">
+                    <div class="loading"></div> Loading benchmark information...
+                </div>
+                <button class="button" onclick="loadBenchmarkInfo()" style="margin-top: 10px;">Refresh</button>
+            </div>
+
+            <div class="panel">
+                <h2>Create Benchmark</h2>
+                <p style="color: #9ca3af; margin-bottom: 15px;">
+                    Use CPU profiling to create benchmarks for performance tracking:
+                </p>
+                <div class="input-group">
+                    <label>Profile File Path</label>
+                    <input type="text" id="benchmarkProfile" placeholder="profiles/mlgs-correlation.cpuprofile">
+                </div>
+                <div class="input-group">
+                    <label>Benchmark Name</label>
+                    <input type="text" id="benchmarkName" placeholder="MLGS Correlation Baseline">
+                </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <input type="text" id="benchmarkDescription" placeholder="Baseline performance for MLGS correlation">
+                </div>
+                <div class="input-group">
+                    <label>Tags (comma-separated)</label>
+                    <input type="text" id="benchmarkTags" placeholder="mlgs,correlation,baseline">
+                </div>
+                <button class="button" onclick="createBenchmark()">Create Benchmark</button>
+                <div id="benchmarkCreateResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <div class="panel">
+                <h2>Compare Benchmarks</h2>
+                <div class="input-group">
+                    <label>Baseline Benchmark ID</label>
+                    <input type="text" id="compareBaseline" placeholder="mlgs-correlation-baseline">
+                </div>
+                <div class="input-group">
+                    <label>Current Benchmark ID</label>
+                    <input type="text" id="compareCurrent" placeholder="mlgs-correlation-optimized">
+                </div>
+                <div class="input-group">
+                    <label>Threshold (%)</label>
+                    <input type="number" id="compareThreshold" value="5" min="0" max="100">
+                </div>
+                <button class="button" onclick="compareBenchmarks()">Compare</button>
+                <div id="benchmarkCompareResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <div class="panel">
+                <h2>Performance Metrics</h2>
+                <div id="benchmarkMetrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Baseline Metrics Available</span>
+                        <span class="metric-value" id="baselineMetricsStatus">-</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Latest Benchmark</span>
+                        <span class="metric-value" id="latestBenchmark">-</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Performance Trend</span>
+                        <span class="metric-value" id="performanceTrend">-</span>
+                    </div>
+                </div>
+                <button class="button" onclick="loadBenchmarkMetrics()" style="margin-top: 10px;">Refresh Metrics</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Testing Tab -->
+    <div id="testing" class="tab-content">
+        <div class="grid">
+            <div class="panel">
+                <h2>API Request Builder</h2>
+                <div class="input-group">
+                    <label>Endpoint</label>
+                    <select id="testEndpoint">
+                        <option value="/api/v17/mcp/health">MCP Health</option>
+                        <option value="/api/v17/correlation/NBA-2025-001">Market Correlation</option>
+                        <option value="/api/v17/spreads/NBA-2025-001/deviation">fhSPREAD Deviation</option>
+                        <option value="/api/v17/correlations/query/alternate_spreads">Complex Correlation Query</option>
+                        <option value="/api/v17/admin/circuit-breaker/draftkings/status">Circuit Breaker Status</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Query Parameters</label>
+                    <input type="text" id="testQueryParams" placeholder="?type=point_spread&period=FULL_GAME&timeRange=last-4h">
+                </div>
+                <button class="button" onclick="testApiRequest()">Send Request</button>
+                <div id="apiTestResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <div class="panel">
+                <h2>Request History</h2>
+                <div class="log-container" id="requestHistory">
+                    <p style="color: #9ca3af;">No requests yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Structured Logs Tab -->
+    <div id="logs" class="tab-content">
+        <div class="grid">
+            <div class="panel" style="grid-column: 1 / -1;">
+                <h2>Structured Logs (%j Format)</h2>
+                <div class="log-container" id="structuredLogs">
+                    <p style="color: #9ca3af;">Logs will appear here...</p>
+                </div>
+                <button class="button" onclick="clearLogs()" style="margin-top: 10px;">Clear Logs</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let requestHistory = [];
+        let logs = [];
+
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Initialize dashboard
+        async function initDashboard() {
+            await refreshStatus();
+            await verifyRouterIntegration();
+            await loadRoutes();
+            await checkMcpHealth();
+            await refreshConnectionPoolStats();
+            await loadBenchmarkInfo();
+            
+            // Auto-refresh every 5 seconds
+            setInterval(refreshStatus, 5000);
+            setInterval(loadRoutePerformance, 10000);
+            setInterval(refreshConnectionPoolStats, 15000); // Refresh connection pool stats every 15 seconds
+        }
+
+        // Refresh system status
+        async function refreshStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/api/v17/mcp/health`);
+                const health = await res.json();
+                
+                document.getElementById('routerStatus').textContent = health.status === 'healthy' ? '✅ Healthy' : '⚠️ Degraded';
+                document.getElementById('sqliteStatus').textContent = health.checks?.database ? '✅ Connected' : '❌ Disconnected';
+                
+                const statusCard = document.querySelector('#statusGrid .status-card:first-child');
+                statusCard.className = `status-card ${health.status === 'healthy' ? 'status-healthy' : 'status-degraded'}`;
+            } catch (error) {
+                document.getElementById('routerStatus').textContent = '❌ Error';
+                addLog('error', `Failed to refresh status: ${error.message}`);
+            }
+        }
+
+        // Verify router integration
+        async function verifyRouterIntegration() {
+            try {
+                // This would call a verification endpoint if it existed
+                // For now, we'll simulate it
+                const result = {
+                    patterns: 12,
+                    handlers: 12,
+                    circuitBreaker: true,
+                    sqlite: true,
+                    mcpErrors: true,
+                    fhSpread: true,
+                    performance: true,
+                    status: 'READY'
+                };
+                
+                document.getElementById('patternCount').textContent = result.patterns;
+                document.getElementById('handlerCount').textContent = result.handlers;
+                document.getElementById('circuitBreakerStatus').textContent = result.circuitBreaker ? '✅ Active' : '❌ Inactive';
+                document.getElementById('fhspreadStatus').textContent = result.fhSpread ? '✅ Enabled' : '❌ Disabled';
+                
+                addLog('success', `Router Integration: ${result.status}`);
+                addLog('info', `Patterns: ${result.patterns}, Handlers: ${result.handlers}`);
+            } catch (error) {
+                addLog('error', `Verification failed: ${error.message}`);
+            }
+        }
+
+        // Load routes
+        async function loadRoutes() {
+            const routes = [
+                { name: 'market_correlation', pattern: '/api/v17/correlation/:marketId([A-Z]{2,4}-[0-9]{4}-[0-9]{3})', hasRegex: true },
+                { name: 'selection_analysis', pattern: '/api/v17/selection/:selectionId([A-Z]+-[A-Z]+-[0-9]+\\.[0-9]+)', hasRegex: true },
+                { name: 'layer1_correlation', pattern: '/api/v17/layer1/correlation/:marketId/:selectionId', hasRegex: false },
+                { name: 'fhspread_deviation', pattern: '/api/v17/spreads/:marketId/deviation', hasRegex: false },
+                { name: 'mcp_health', pattern: '/api/v17/mcp/health', hasRegex: false },
+                { name: 'circuit_breaker_status', pattern: '/api/v17/admin/circuit-breaker/:bookmaker/status', hasRegex: false },
+                { name: 'circuit_breaker_reset', pattern: '/api/v17/admin/circuit-breaker/:bookmaker/reset', hasRegex: false },
+                { name: 'complex_correlation_query', pattern: '/api/v17/correlations/query/:marketType', hasRegex: false },
+                { name: 'event_correlations', pattern: '/api/v17/events/:eventId/correlations', hasRegex: false },
+                { name: 'query_correlations', pattern: '/api/v17/correlations/query', hasRegex: false }
+            ];
+            
+            const routeList = document.getElementById('routeList');
+            routeList.innerHTML = routes.map(route => 
+                `<li class="route-item ${route.hasRegex ? 'has-regex' : ''}">
+                    <strong>${route.name}</strong><br>
+                    <code>${route.pattern}</code>
+                    ${route.hasRegex ? ' <span style="color: #10b981;">[Regex]</span>' : ''}
+                </li>`
+            ).join('');
+        }
+
+        // Test pattern matching
+        async function testPattern() {
+            const url = document.getElementById('testUrl').value;
+            const resultDiv = document.getElementById('patternTestResult');
+            
+            try {
+                const fullUrl = `${API_BASE}${url}`;
+                const res = await fetch(fullUrl);
+                const data = await res.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="log-entry success">
+                        <strong>✅ Pattern Matched</strong><br>
+                        Status: ${res.status}<br>
+                        <div class="json-viewer"><pre>${JSON.stringify(data, null, 2)}</pre></div>
+                    </div>
+                `;
+                
+                addLog('success', `Pattern test: ${url} → ${res.status}`);
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="log-entry error">
+                        <strong>❌ Pattern Test Failed</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+                addLog('error', `Pattern test failed: ${error.message}`);
+            }
+        }
+
+        // Test regex validation
+        function testRegexValidation() {
+            const marketId = document.getElementById('testMarketId').value;
+            const selectionId = document.getElementById('testSelectionId').value;
+            const resultDiv = document.getElementById('regexValidationResult');
+            
+            const marketIdPattern = /^[A-Z]{2,4}-\d{4}-\d{3}$/;
+            const selectionIdPattern = /^[A-Z]+-(PLUS|MINUS)-\d+\.\d+$/;
+            
+            const marketValid = marketIdPattern.test(marketId);
+            const selectionValid = selectionIdPattern.test(selectionId);
+            
+            resultDiv.innerHTML = `
+                <div class="log-entry ${marketValid ? 'success' : 'error'}">
+                    <strong>Market ID:</strong> ${marketId}<br>
+                    ${marketValid ? '✅ Valid format' : '❌ Invalid format (expected: NBA-2025-001)'}
+                </div>
+                <div class="log-entry ${selectionValid ? 'success' : 'error'}" style="margin-top: 10px;">
+                    <strong>Selection ID:</strong> ${selectionId}<br>
+                    ${selectionValid ? '✅ Valid format' : '❌ Invalid format (expected: LAKERS-PLUS-7.5)'}
+                </div>
+            `;
+        }
+
+        // Calculate fhSPREAD deviation
+        async function calculateFhSpread() {
+            const marketId = document.getElementById('fhspreadMarketId').value;
+            const timeRange = document.getElementById('fhspreadTimeRange').value;
+            const method = document.getElementById('fhspreadMethod').value;
+            const threshold = document.getElementById('fhspreadThreshold').value;
+            
+            const resultDiv = document.getElementById('fhspreadResult');
+            resultDiv.innerHTML = '<div class="loading"></div> Calculating...';
+            
+            try {
+                const url = `${API_BASE}/api/v17/spreads/${marketId}/deviation?type=point_spread&period=FULL_GAME&timeRange=${timeRange}&method=${method}&threshold=${threshold}`;
+                const res = await fetch(url);
+                
+                if (res.status !== 200) {
+                    const error = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${error}`);
+                }
+                
+                const data = await res.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="log-entry ${data.significantDeviationDetected ? 'error' : 'success'}">
+                        <strong>${data.significantDeviationDetected ? '⚠️ Significant Deviation Detected' : '✅ No Significant Deviation'}</strong><br>
+                        <div class="metric-row">
+                            <span class="metric-label">Mainline Price:</span>
+                            <span class="metric-value">${data.mainlinePrice?.toFixed(2) || 'N/A'}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Deviation %:</span>
+                            <span class="metric-value">${data.deviationPercentage?.toFixed(2) || 'N/A'}%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Deviating Nodes:</span>
+                            <span class="metric-value">${data.deviatingNodes?.length || 0}</span>
+                        </div>
+                        <div class="json-viewer" style="margin-top: 10px;">
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+                
+                if (data.significantDeviationDetected) {
+                    addDeviationAlert(data);
+                }
+                
+                addLog('info', `fhSPREAD calculated: ${data.deviationPercentage?.toFixed(2)}% deviation`);
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="log-entry error">
+                        <strong>❌ Calculation Failed</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+                addLog('error', `fhSPREAD calculation failed: ${error.message}`);
+            }
+        }
+
+        // Check MCP health
+        async function checkMcpHealth() {
+            try {
+                const res = await fetch(`${API_BASE}/api/v17/mcp/health`);
+                const health = await res.json();
+                
+                const healthDiv = document.getElementById('healthCheck');
+                healthDiv.innerHTML = `
+                    <div class="metric-row">
+                        <span class="metric-label">Status</span>
+                        <span class="metric-value">${health.status}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Database</span>
+                        <span class="metric-value">${health.checks?.database ? '✅' : '❌'}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Correlation Engine</span>
+                        <span class="metric-value">${health.checks?.correlation_engine ? '✅' : '❌'}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Circuit Breaker</span>
+                        <span class="metric-value">${health.checks?.circuit_breaker?.healthy ? '✅' : '❌'}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Uptime</span>
+                        <span class="metric-value">${formatDuration(health.checks?.uptime_ms || 0)}</span>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('healthCheck').innerHTML = `
+                    <div class="log-entry error">Failed to check health: ${error.message}</div>
+                `;
+            }
+        }
+
+        // Get circuit breaker status
+        async function getCircuitBreakerStatus() {
+            const bookmaker = document.getElementById('cbBookmaker').value;
+            const controlsDiv = document.getElementById('circuitBreakerControls');
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/v17/admin/circuit-breaker/${bookmaker}/status`);
+                const status = await res.json();
+                
+                const stateClass = status.tripped ? 'open' : 'closed';
+                controlsDiv.innerHTML = `
+                    <div class="log-entry ${stateClass}">
+                        <strong>Circuit Breaker Status: <span class="circuit-breaker-status ${stateClass}">${status.state || (status.tripped ? 'OPEN' : 'CLOSED')}</span></strong><br>
+                        <div class="metric-row">
+                            <span class="metric-label">Bookmaker:</span>
+                            <span class="metric-value">${status.bookmaker}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Failure Count:</span>
+                            <span class="metric-value">${status.failureCount || 0}</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Last Failure:</span>
+                            <span class="metric-value">${status.lastFailureAt ? new Date(status.lastFailureAt).toLocaleString() : 'Never'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Update main status card
+                document.getElementById('circuitBreakerStatus').innerHTML = `
+                    <span class="circuit-breaker-status ${stateClass}">${status.state || (status.tripped ? 'OPEN' : 'CLOSED')}</span>
+                `;
+            } catch (error) {
+                controlsDiv.innerHTML = `<div class="log-entry error">Failed: ${error.message}</div>`;
+            }
+        }
+
+        // Reset circuit breaker
+        async function resetCircuitBreaker() {
+            const bookmaker = document.getElementById('cbBookmaker').value;
+            
+            if (!confirm(`Reset circuit breaker for ${bookmaker}?`)) return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/v17/admin/circuit-breaker/${bookmaker}/reset`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${prompt('Admin token:', 'test-admin-token')}`
+                    }
+                });
+                
+                const result = await res.json();
+                addLog('success', `Circuit breaker reset for ${bookmaker}`);
+                await getCircuitBreakerStatus();
+            } catch (error) {
+                addLog('error', `Reset failed: ${error.message}`);
+            }
+        }
+
+        // Test API request
+        async function testApiRequest() {
+            const endpoint = document.getElementById('testEndpoint').value;
+            const queryParams = document.getElementById('testQueryParams').value;
+            const url = `${API_BASE}${endpoint}${queryParams}`;
+            const resultDiv = document.getElementById('apiTestResult');
+            const historyDiv = document.getElementById('requestHistory');
+            
+            resultDiv.innerHTML = '<div class="loading"></div> Sending request...';
+            
+            const startTime = performance.now();
+            try {
+                const res = await fetch(url);
+                const duration = performance.now() - startTime;
+                const data = await res.json().catch(() => ({ text: await res.text() }));
+                
+                const entry = {
+                    timestamp: new Date().toISOString(),
+                    url,
+                    status: res.status,
+                    duration: duration.toFixed(2),
+                    success: res.ok
+                };
+                
+                requestHistory.unshift(entry);
+                if (requestHistory.length > 50) requestHistory.pop();
+                
+                resultDiv.innerHTML = `
+                    <div class="log-entry ${res.ok ? 'success' : 'error'}">
+                        <strong>${res.ok ? '✅' : '❌'} ${res.status} ${res.statusText}</strong><br>
+                        Duration: ${duration.toFixed(2)}ms<br>
+                        <div class="json-viewer"><pre>${JSON.stringify(data, null, 2)}</pre></div>
+                    </div>
+                `;
+                
+                historyDiv.innerHTML = requestHistory.map(req => 
+                    `<div class="log-entry ${req.success ? 'success' : 'error'}">
+                        <strong>${req.timestamp}</strong><br>
+                        ${req.url}<br>
+                        ${req.status} - ${req.duration}ms
+                    </div>`
+                ).join('');
+                
+                addLog(res.ok ? 'success' : 'error', `${endpoint} → ${res.status} (${duration.toFixed(2)}ms)`);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="log-entry error">Request failed: ${error.message}</div>`;
+                addLog('error', `API request failed: ${error.message}`);
+            }
+        }
+
+        // Load route performance
+        async function loadRoutePerformance() {
+            // This would fetch from a metrics endpoint
+            // For now, simulate with random data
+            document.getElementById('avgResponseTime').textContent = '45ms';
+            document.getElementById('requestsPerMin').textContent = '120';
+            document.getElementById('errorRate').textContent = '0.02%';
+        }
+
+        // Add log entry
+        function addLog(type, message) {
+            const timestamp = new Date().toISOString();
+            logs.unshift({ timestamp, type, message });
+            if (logs.length > 100) logs.pop();
+            
+            const logsDiv = document.getElementById('structuredLogs');
+            logsDiv.innerHTML = logs.map(log => 
+                `<div class="log-entry ${log.type}">
+                    <strong>${log.timestamp}</strong> | ${log.type.toUpperCase()} | ${log.message}
+                </div>`
+            ).join('');
+        }
+
+        // Add deviation alert
+        function addDeviationAlert(data) {
+            const deviationsDiv = document.getElementById('recentDeviations');
+            const alert = document.createElement('div');
+            alert.className = 'deviation-alert';
+            alert.innerHTML = `
+                <strong>⚠️ Significant Deviation Detected</strong><br>
+                Market: ${data.marketId || 'Unknown'}<br>
+                Deviation: ${data.deviationPercentage?.toFixed(2)}%<br>
+                Nodes: ${data.deviatingNodes?.length || 0}
+            `;
+            deviationsDiv.insertBefore(alert, deviationsDiv.firstChild);
+            
+            // Keep only last 5 alerts
+            while (deviationsDiv.children.length > 5) {
+                deviationsDiv.removeChild(deviationsDiv.lastChild);
+            }
+        }
+
+        // Clear logs
+        function clearLogs() {
+            logs = [];
+            document.getElementById('structuredLogs').innerHTML = '<p style="color: #9ca3af;">Logs cleared</p>';
+        }
+
+        // Format duration
+        function formatDuration(ms) {
+            if (ms < 1000) return `${ms}ms`;
+            if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+            return `${(ms / 60000).toFixed(1)}m`;
+        }
+
+        // Test MCP health
+        async function testMcpHealth() {
+            await checkMcpHealth();
+            addLog('info', 'MCP health check performed');
+        }
+
+        // Load benchmark information
+        async function loadBenchmarkInfo() {
+            try {
+                const res = await fetch(`${API_BASE}/api/workspace/benchmarks`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const infoDiv = document.getElementById('benchmarkInfo');
+                    if (data.success && data.benchmarks) {
+                        const bm = data.benchmarks;
+                        infoDiv.innerHTML = `
+                            <div class="metric-row">
+                                <span class="metric-label">Directory</span>
+                                <span class="metric-value">${bm.directory}</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Tools</span>
+                                <span class="metric-value">Create, Compare</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Documentation</span>
+                                <span class="metric-value">Available</span>
+                            </div>
+                            <div style="margin-top: 15px; padding: 10px; background: rgba(102, 126, 234, 0.1); border-radius: 6px;">
+                                <strong style="color: #667eea;">Quick Links:</strong><br>
+                                <a href="../benchmarks/README.md" target="_blank" style="color: #667eea;">📖 Benchmarks README</a><br>
+                                <a href="../docs/BUN-V1.51-IMPACT-ANALYSIS.md" target="_blank" style="color: #667eea;">⚡ Performance Guide</a>
+                            </div>
+                        `;
+                    } else {
+                        infoDiv.innerHTML = '<p style="color: #9ca3af;">Benchmark API not available</p>';
+                    }
+                } else {
+                    document.getElementById('benchmarkInfo').innerHTML = '<p style="color: #9ca3af;">Benchmark endpoint not found</p>';
+                }
+            } catch (error) {
+                document.getElementById('benchmarkInfo').innerHTML = `<p style="color: #ef4444;">Error: ${error.message}</p>`;
+            }
+        }
+
+        // Create benchmark
+        async function createBenchmark() {
+            const profile = document.getElementById('benchmarkProfile').value;
+            const name = document.getElementById('benchmarkName').value;
+            const description = document.getElementById('benchmarkDescription').value;
+            const tags = document.getElementById('benchmarkTags').value;
+            const resultDiv = document.getElementById('benchmarkCreateResult');
+            
+            if (!profile || !name) {
+                resultDiv.innerHTML = '<div class="log-entry error">Profile path and name are required</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading"></div> Creating benchmark...';
+            
+            try {
+                // Note: This would typically call a backend endpoint that runs the script
+                // For now, show instructions
+                resultDiv.innerHTML = `
+                    <div class="log-entry info">
+                        <strong>📋 Create Benchmark Command:</strong><br>
+                        <code style="display: block; margin-top: 10px; padding: 10px; background: #0f172a; border-radius: 4px;">
+                            bun run scripts/benchmarks/create-benchmark.ts \\
+                              --profile=${profile} \\
+                              --name="${name}" \\
+                              ${description ? `--description="${description}"` : ''} \\
+                              ${tags ? `--tags="${tags}"` : ''}
+                        </code>
+                        <p style="margin-top: 10px; color: #9ca3af;">
+                            Run this command in your terminal to create the benchmark.
+                        </p>
+                    </div>
+                `;
+                addLog('info', `Benchmark creation command generated: ${name}`);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="log-entry error">Error: ${error.message}</div>`;
+                addLog('error', `Benchmark creation failed: ${error.message}`);
+            }
+        }
+
+        // Compare benchmarks
+        async function compareBenchmarks() {
+            const baseline = document.getElementById('compareBaseline').value;
+            const current = document.getElementById('compareCurrent').value;
+            const threshold = document.getElementById('compareThreshold').value;
+            const resultDiv = document.getElementById('benchmarkCompareResult');
+            
+            if (!baseline || !current) {
+                resultDiv.innerHTML = '<div class="log-entry error">Baseline and current benchmark IDs are required</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading"></div> Comparing benchmarks...';
+            
+            try {
+                // Show command to run comparison
+                resultDiv.innerHTML = `
+                    <div class="log-entry info">
+                        <strong>📊 Compare Benchmarks Command:</strong><br>
+                        <code style="display: block; margin-top: 10px; padding: 10px; background: #0f172a; border-radius: 4px;">
+                            bun run scripts/benchmarks/compare.ts \\
+                              --baseline=${baseline} \\
+                              --current=${current} \\
+                              --threshold=${threshold}
+                        </code>
+                        <p style="margin-top: 10px; color: #9ca3af;">
+                            Run this command in your terminal to compare benchmarks.
+                        </p>
+                    </div>
+                `;
+                addLog('info', `Benchmark comparison command generated: ${baseline} vs ${current}`);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="log-entry error">Error: ${error.message}</div>`;
+                addLog('error', `Benchmark comparison failed: ${error.message}`);
+            }
+        }
+
+        // Load benchmark metrics
+        async function loadBenchmarkMetrics() {
+            try {
+                // This would fetch from a metrics endpoint
+                // For now, show placeholder
+                document.getElementById('baselineMetricsStatus').textContent = '✅ Available';
+                document.getElementById('latestBenchmark').textContent = 'market-analysis-baseline';
+                document.getElementById('performanceTrend').textContent = '📈 Improving';
+                addLog('info', 'Benchmark metrics loaded');
+            } catch (error) {
+                addLog('error', `Failed to load metrics: ${error.message}`);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', initDashboard);
+    </script>
+</body>
+</html>

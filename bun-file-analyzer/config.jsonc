@@ -1,0 +1,61 @@
+{
+  // Bun Enhanced File Analyzer Configuration
+  // Generated with Bun v1.3.6+ virtual files
+  
+  "name": "bun-enhanced-file-analyzer",
+  "version": "1.3.6+",
+  "description": "Production-ready Bun v1.3.6+ Enhanced File Analyzer",
+  
+  // Build configuration
+  "build": {
+    "target": "browser",
+    "reactFastRefresh": true,
+    "metafile": true,
+    "sourcemap": "external",
+    "minify": false
+  },
+  
+  // Virtual files configuration
+  "virtualFiles": {
+    "enabled": true,
+    "theme": {
+      "primary": "hsl(210, 90%, 55%)",
+      "success": "hsl(145, 63%, 42%)",
+      "warning": "hsl(25, 85%, 55%)",
+      "error": "hsl(0, 75%, 60%)",
+      "info": "hsl(195, 85%, 55%)"
+    },
+    "buildInfo": {
+      "includeBundleSize": true,
+      "includeCommitSha": true,
+      "includeTimestamp": true
+    }
+  },
+  
+  // Performance settings
+  "performance": {
+    "responseJsonOptimization": true,
+    "colorConversionCache": true,
+    "archiveCompression": "gzip"
+  },
+  
+  // Cross-compilation targets
+  "targets": [
+    "bun-darwin-arm64",
+    "bun-linux-x64", 
+    "bun-windows-x64"
+  ],
+  
+  // Features enabled
+  "features": [
+    "virtual-files",
+    "react-fast-refresh", 
+    "cross-compilation",
+    "metafile-analysis",
+    "wcag-colors",
+    "response-json-optimization",
+    "bun-archive",
+    "bun-color",
+    "bun-jsonc"
+  ]
+}

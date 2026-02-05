@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bun PTY Terminal Client</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm-addon-fit/0.8.0/xterm-addon-fit.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.css">
+    <style>
+        .terminal-container {
+            height: 400px;
+            background: #1e1e1e;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .xterm {
+            height: 100%;
+        }
+
+        .xterm-viewport {
+            overflow-y: auto;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-connected {
+            background-color: #10b981;
+        }
+
+        .status-disconnected {
+            background-color: #ef4444;
+        }
+
+        .status-connecting {
+            background-color: #f59e0b;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1
+                class="text-4xl font-bold text-center mb-2 bg-linear-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
+                Bun PTY Terminal Client
+            </h1>
+            <p class="text-center text-gray-400">Interactive terminal sessions powered by Bun v1.3.5 Terminal API</p>
+        </header>
+
+        <!-- Connection Status -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <span id="statusIndicator" class="status-indicator status-disconnected"></span>
+                    <span id="statusText" class="text-sm">Disconnected</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-400">Session: <span id="sessionId"
+                            class="font-mono">None</span></span>
+                    <span class="text-sm text-gray-400">Size: <span id="terminalSize"
+                            class="font-mono">80x24</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Terminal -->
+            <div class="lg:col-span-2">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold">Terminal</h2>
+                        <div class="flex space-x-2">
+                            <button id="clearBtn"
+                                class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors">
+                                Clear
+                            </button>
+                            <button id="resizeBtn"
+                                class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors">
+                                Resize
+                            </button>
+                        </div>
+                    </div>
+                    <div id="terminal" class="terminal-container"></div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="space-y-6">
+                <!-- Connection Controls -->
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">Connection</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Server URL</label>
+                            <input type="text" id="serverUrl" value="ws://localhost:3000/ws"
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Shell</label>
+                            <select id="shellType"
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:border-blue-500">
+                                <option value="bash">Bash</option>
+                                <option value="zsh">Zsh</option>
+                                <option value="sh">Sh</option>
+                                <option value="fish">Fish</option>
+                            </select>
+                        </div>
+                        <button id="connectBtn"
+                            class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded font-medium transition-colors">
+                            Connect
+                        </button>
+                        <button id="disconnectBtn"
+                            class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded font-medium transition-colors"
+                            disabled>
+                            Disconnect
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Commands -->
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">Quick Commands</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button
+                            class="quick-cmd px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+                            data-cmd="ls -la">
+                            List Files
+                        </button>
+                        <button
+                            class="quick-cmd px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+                            data-cmd="pwd">
+                            Current Dir
+                        </button>
+                        <button
+                            class="quick-cmd px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+                            data-cmd="whoami">
+                            Who Am I
+                        </button>
+                        <button
+                            class="quick-cmd px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+                            data-cmd="date">
+                            Date
+                        </button>
+                        <button
+                            class="quick-cmd px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+                            data-cmd="uname -a">
+                            System Info
+                        </button>
+                        <button
+                            class="quick-cmd px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+                            data-cmd="ps aux | head -10">
+                            Processes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Session Info -->
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">Session Info</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Created:</span>
+                            <span id="sessionCreated" class="font-mono">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Last Activity:</span>
+                            <span id="sessionActivity" class="font-mono">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Commands Sent:</span>
+                            <span id="commandsSent" class="font-mono">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Lines Received:</span>
+                            <span id="linesReceived" class="font-mono">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="mt-8 bg-gray-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-4">Instructions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-300">
+                <div>
+                    <h4 class="font-medium text-white mb-2">Getting Started</h4>
+                    <ol class="list-decimal list-inside space-y-1">
+                        <li>Start the Bun PTY server: <code
+                                class="bg-gray-700 px-1 rounded">bun src/terminal-server.ts</code></li>
+                        <li>Configure server URL and shell type</li>
+                        <li>Click "Connect" to create a new session</li>
+                        <li>Type commands directly in the terminal</li>
+                    </ol>
+                </div>
+                <div>
+                    <h4 class="font-medium text-white mb-2">Features</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Real-time bidirectional communication</li>
+                        <li>Support for TTY-aware applications (vim, htop)</li>
+                        <li>Terminal resize support</li>
+                        <li>Session management and auto-cleanup</li>
+                        <li>Security validation and input sanitization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TerminalClient {
+            constructor() {
+                this.terminal = null;
+                this.fitAddon = null;
+                this.ws = null;
+                this.sessionId = null;
+                this.connected = false;
+                this.commandsSent = 0;
+                this.linesReceived = 0;
+                this.sessionCreated = null;
+                this.lastActivity = null;
+
+                this.initializeTerminal();
+                this.bindEvents();
+            }
+
+            initializeTerminal() {
+                this.terminal = new Terminal({
+                    theme: {
+                        background: '#1e1e1e',
+                        foreground: '#d4d4d4',
+                        cursor: '#ffffff',
+                        selection: '#264f78',
+                        black: '#000000',
+                        red: '#f44747',
+                        green: '#4ec9b0',
+                        yellow: '#ffcc02',
+                        blue: '#569cd6',
+                        magenta: '#c586c0',
+                        cyan: '#9cdcfe',
+                        white: '#d4d4d4',
+                        brightBlack: '#808080',
+                        brightRed: '#f44747',
+                        brightGreen: '#4ec9b0',
+                        brightYellow: '#ffcc02',
+                        brightBlue: '#569cd6',
+                        brightMagenta: '#c586c0',
+                        brightCyan: '#9cdcfe',
+                        brightWhite: '#d4d4d4'
+                    },
+                    fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                    fontSize: 14,
+                    cursorBlink: true,
+                    cursorStyle: 'block',
+                    scrollback: 1000,
+                    tabStopWidth: 4
+                });
+
+                this.fitAddon = new FitAddon.FitAddon();
+                this.terminal.loadAddon(this.fitAddon);
+
+                this.terminal.open(document.getElementById('terminal'));
+                this.fitAddon.fit();
+
+                this.terminal.onData(data => {
+                    if (this.connected && this.ws) {
+                        this.sendInput(data);
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    this.fitAddon.fit();
+                    this.updateTerminalSize();
+                });
+            }
+
+            bindEvents() {
+                document.getElementById('connectBtn').addEventListener('click', () => this.connect());
+                document.getElementById('disconnectBtn').addEventListener('click', () => this.disconnect());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearTerminal());
+                document.getElementById('resizeBtn').addEventListener('click', () => this.resizeTerminal());
+
+                // Quick commands
+                document.querySelectorAll('.quick-cmd').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const cmd = e.target.dataset.cmd;
+                        if (cmd && this.connected) {
+                            this.sendInput(cmd + '\n');
+                        }
+                    });
+                });
+            }
+
+            async connect() {
+                const serverUrl = document.getElementById('serverUrl').value;
+                const shellType = document.getElementById('shellType').value;
+
+                this.setStatus('connecting', 'Connecting...');
+
+                try {
+                    // Create session first
+                    const response = await fetch('http://localhost:3000/api/sessions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ shell: shellType })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create session');
+                    }
+
+                    const session = await response.json();
+                    this.sessionId = session.sessionId;
+                    this.sessionCreated = new Date();
+
+                    // Connect WebSocket
+                    const wsUrl = `${serverUrl}?sessionId=${this.sessionId}`;
+                    this.ws = new WebSocket(wsUrl);
+
+                    this.ws.onopen = () => {
+                        this.connected = true;
+                        this.setStatus('connected', 'Connected');
+                        this.updateSessionInfo();
+                        this.enableControls(true);
+
+                        // Send initial welcome
+                        this.terminal.writeln('\r\n\x1b[32mConnected to Bun PTY server!\x1b[0m');
+                        this.terminal.writeln(`\x1b[36mSession: ${this.sessionId}\x1b[0m`);
+                        this.terminal.writeln(`\x1b[36mShell: ${shellType}\x1b[0m`);
+                        this.terminal.writeln('');
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'output') {
+                            this.terminal.write(data.data);
+                            this.linesReceived += data.data.split('\n').length;
+                            this.lastActivity = new Date();
+                            this.updateSessionInfo();
+                        }
+                    };
+
+                    this.ws.onclose = () => {
+                        this.disconnect();
+                    };
+
+                    this.ws.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                        this.disconnect();
+                    };
+
+                } catch (error) {
+                    console.error('Connection error:', error);
+                    this.setStatus('disconnected', 'Connection failed');
+                    this.terminal.writeln(`\r\n\x1b[31mConnection failed: ${error.message}\x1b[0m`);
+                }
+            }
+
+            disconnect() {
+                if (this.ws) {
+                    this.ws.close();
+                    this.ws = null;
+                }
+
+                this.connected = false;
+                this.sessionId = null;
+                this.setStatus('disconnected', 'Disconnected');
+                this.enableControls(false);
+                this.updateSessionInfo();
+
+                this.terminal.writeln('\r\n\x1b[33mDisconnected from server\x1b[0m');
+            }
+
+            sendInput(data) {
+                if (this.ws && this.connected) {
+                    this.ws.send(JSON.stringify({
+                        type: 'input',
+                        input: data
+                    }));
+                    this.commandsSent++;
+                    this.lastActivity = new Date();
+                    this.updateSessionInfo();
+                }
+            }
+
+            resizeTerminal() {
+                if (!this.connected) return;
+
+                const cols = this.terminal.cols;
+                const rows = this.terminal.rows;
+
+                this.ws.send(JSON.stringify({
+                    type: 'resize',
+                    cols: cols,
+                    rows: rows
+                }));
+
+                this.updateTerminalSize();
+                this.terminal.writeln(`\r\n\x1b[36mTerminal resized to ${cols}x${rows}\x1b[0m`);
+            }
+
+            clearTerminal() {
+                this.terminal.clear();
+            }
+
+            setStatus(status, text) {
+                const indicator = document.getElementById('statusIndicator');
+                const statusText = document.getElementById('statusText');
+
+                indicator.className = `status-indicator status-${status}`;
+                statusText.textContent = text;
+            }
+
+            enableControls(connected) {
+                document.getElementById('connectBtn').disabled = connected;
+                document.getElementById('disconnectBtn').disabled = !connected;
+                document.getElementById('serverUrl').disabled = connected;
+                document.getElementById('shellType').disabled = connected;
+
+                document.querySelectorAll('.quick-cmd').forEach(btn => {
+                    btn.disabled = !connected;
+                });
+            }
+
+            updateSessionInfo() {
+                document.getElementById('sessionId').textContent = this.sessionId || 'None';
+                document.getElementById('sessionCreated').textContent =
+                    this.sessionCreated ? this.sessionCreated.toLocaleTimeString() : '-';
+                document.getElementById('sessionActivity').textContent =
+                    this.lastActivity ? this.lastActivity.toLocaleTimeString() : '-';
+                document.getElementById('commandsSent').textContent = this.commandsSent;
+                document.getElementById('linesReceived').textContent = this.linesReceived;
+            }
+
+            updateTerminalSize() {
+                const cols = this.terminal.cols;
+                const rows = this.terminal.rows;
+                document.getElementById('terminalSize').textContent = `${cols}x${rows}`;
+            }
+        }
+
+        // Initialize client when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new TerminalClient();
+        });
+    </script>
+</body>
+
+</html>

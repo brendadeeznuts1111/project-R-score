@@ -1,0 +1,90 @@
+/**
+ * @fileoverview {{{fileoverview}}}
+ * @module {{{modulePath}}}
+ * @description {{{description}}}
+{{{authorInfo}}}
+ * @created {{{createdDate}}}
+{{{teamInfo}}}
+{{{depsInfo}}}
+{{{exportsInfo}}}
+ *
+ * {{{metadata}}}
+ *
+ * @ref {{{ref}}}
+ *
+ * @see {@link ../server.ts} - MCP server implementation
+ * @see {@link ../../mcp/tools/ai-team-tools.ts} - AI team tools integration
+ */
+
+import { z } from 'zod';
+import type { MCPTool } from '../server.js';
+
+/**
+ * {{{pascalName}}} tool input schema
+ */
+const {{{camelName}}}InputSchema = z.object({
+	// TODO: Define input schema properties
+	example: z.string().optional().describe('Example input parameter'),
+});
+
+/**
+ * Create {{{pascalName}}} MCP tool
+ * @returns {MCPTool} Configured MCP tool definition
+ */
+export function create{{{pascalName}}}Tool(): MCPTool {
+	return {
+		name: '{{{name}}}',
+		description: '{{{description}}}',
+		inputSchema: {
+			type: 'object',
+			properties: {
+				example: {
+					type: 'string',
+					description: 'Example input parameter',
+				},
+			},
+			required: [],
+		},
+	};
+}
+
+/**
+ * Execute {{{pascalName}}} tool
+ * @param {z.infer<typeof {{{camelName}}}InputSchema>} args - Tool input arguments
+ * @returns {Promise<{content: Array<{type: string; text: string}>}>} Tool execution result
+ */
+export async function execute{{{pascalName}}}Tool(
+	args: z.infer<typeof {{{camelName}}}InputSchema>,
+): Promise<{
+	content: Array<{ type: string; text: string }>;
+}> {
+	try {
+		// TODO: Implement tool logic
+
+		return {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify({
+						status: 'success',
+						message: '{{{name}}} executed successfully',
+						result: {},
+					}, null, 2),
+				},
+			],
+		};
+	} catch (error: any) {
+		return {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify({
+						error: 'Execution failed',
+						message: error.message,
+					}, null, 2),
+				},
+			],
+			isError: true,
+		};
+	}
+}

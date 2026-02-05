@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Development Environment - Code Point Allocation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Enhanced Header */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(52, 152, 219, 0.3);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      space-x: 15px;
+    }
+
+    .logo {
+      font-size: 2rem;
+      margin-right: 15px;
+    }
+
+    .title-section h1 {
+      color: #2c3e50;
+      font-size: 1.8rem;
+      margin: 0;
+    }
+
+    .title-section p {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .nav-header {
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-header a {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      text-decoration: none;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-header a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      width: 100%;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Code Point Allocation Section */
+    .code-point-header {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin: 30px 0;
+      text-align: center;
+    }
+
+    .code-point-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .code-point-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .code-point-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .code-point-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .code-point-label {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Enhanced Typography */
+    h1 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #34495e;
+      margin-top: 30px;
+      border-left: 4px solid #3498db;
+      padding-left: 15px;
+    }
+
+    /* Enhanced Code Styling */
+    code {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      color: #e74c3c;
+      font-weight: 600;
+      border: 1px solid #dee2e6;
+    }
+
+    pre {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: #ecf0f1;
+      padding: 25px;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 20px 0;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+      border: 1px solid #34495e;
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+      border: none;
+      font-weight: normal;
+    }
+
+    /* Enhanced Lists */
+    ul,
+    ol {
+      margin: 20px 0;
+      padding-left: 30px;
+    }
+
+    li {
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+
+    /* Enhanced Cards */
+    .highlight {
+      background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+      padding: 25px;
+      border-radius: 12px;
+      margin: 25px 0;
+      border-left: 5px solid #3498db;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .session-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
+    }
+
+    .session-item {
+      background: linear-gradient(135deg, #f8f9fa, #ffffff);
+      padding: 25px;
+      border-radius: 12px;
+      border-left: 4px solid #28a745;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .session-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .session-item code {
+      color: #28a745;
+      font-weight: bold;
+      background: linear-gradient(135deg, #d4edda, #c3e6cb);
+      border-color: #28a745;
+    }
+
+    /* Enhanced Navigation */
+    .nav-links {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .nav-links a {
+      display: inline-block;
+      margin: 10px;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+    }
+
+    /* Enhanced Footer */
+    footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 2px solid rgba(52, 152, 219, 0.3);
+      padding: 30px 0;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .footer-section h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .footer-section p,
+    .footer-section li {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-section li {
+      padding: 5px 0;
+      border: none;
+    }
+
+    .footer-section a {
+      color: #3498db;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: #2980b9;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ecf0f1;
+      color: #95a5a6;
+      font-size: 0.9rem;
+    }
+
+    /* Stats Section */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: scale(1.05);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+      }
+
+      .nav-header {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      .code-point-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="logo">🚀</div>
+        <div class="title-section">
+          <h1>Development Environment</h1>
+          <p>Code Point Allocation & Project Management</p>
+        </div>
+      </div>
+      <nav class="nav-header">
+        <a href="#sessions">Sessions</a>
+        <a href="#allocation">Allocation</a>
+        <a href="#commands">Commands</a>
+        <a href="#stats">Statistics</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="code-point-header">
+        <h2>📊 Detailed Code Point Allocation</h2>
+        <p>Comprehensive resource distribution across all development sessions</p>
+      </div>
+
+      <div class="code-point-grid">
+        <div class="code-point-card">
+          <div class="code-point-number">382</div>
+          <div class="code-point-label">Total Allocated</div>
+        </div>
+        <div class="code-point-card">
+          <div class="code-point-number">2048</div>
+          <div class="code-point-label">Total Available</div>
+        </div>
+        <div class="code-point-card">
+          <div class="code-point-number">18.7%</div>
+          <div class="code-point-label">Overall Usage</div>
+        </div>
+        <div class="code-point-card">
+          <div class="code-point-number">8</div>
+          <div class="code-point-label">Memory Ranges</div>
+        </div>
+      </div>
+
+      <h2 id="allocation">🎯 Memory Range Allocation Details</h2>
+      <div class="allocation-table">
+        <table
+          style="width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <thead>
+            <tr style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+              <th style="padding: 15px; text-align: left; font-weight: 600;">Memory Range</th>
+              <th style="padding: 15px; text-align: left; font-weight: 600;">Purpose</th>
+              <th style="padding: 15px; text-align: center; font-weight: 600;">Allocated</th>
+              <th style="padding: 15px; text-align: center; font-weight: 600;">Available</th>
+              <th style="padding: 15px; text-align: center; font-weight: 600;">Usage</th>
+              <th style="padding: 15px; text-align: center; font-weight: 600;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0000-0x00FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">🔧</span>
+                  <div>
+                    <div style="font-weight: 600;">Core</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Essential functions</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #27ae60;">50</td>
+              <td style="padding: 15px; text-align: center;">206</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #27ae60 24.3%, #ecf0f1 24.3%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  24.3%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Optimal</span>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0100-0x01FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">🌐</span>
+                  <div>
+                    <div style="font-weight: 600;">Protocols</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Network protocols</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #f39c12;">80</td>
+              <td style="padding: 15px; text-align: center;">256</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #f39c12 31.3%, #ecf0f1 31.3%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  31.3%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Moderate</span>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0200-0x02FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">🎨</span>
+                  <div>
+                    <div style="font-weight: 600;">Patterns</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Design patterns</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #27ae60;">40</td>
+              <td style="padding: 15px; text-align: center;">256</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #27ae60 15.6%, #ecf0f1 15.6%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  15.6%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Good</span>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0300-0x03FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">🔒</span>
+                  <div>
+                    <div style="font-weight: 600;">Security</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Security modules</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #f39c12;">60</td>
+              <td style="padding: 15px; text-align: center;">256</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #f39c12 23.4%, #ecf0f1 23.4%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  23.4%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Moderate</span>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0400-0x04FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">📊</span>
+                  <div>
+                    <div style="font-weight: 600;">Monitoring</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Analytics & metrics</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #27ae60;">48</td>
+              <td style="padding: 15px; text-align: center;">256</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #27ae60 18.8%, #ecf0f1 18.8%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  18.8%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Good</span>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0500-0x05FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">💾</span>
+                  <div>
+                    <div style="font-weight: 600;">Caching</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Cache systems</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #27ae60;">36</td>
+              <td style="padding: 15px; text-align: center;">256</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #27ae60 14.1%, #ecf0f1 14.1%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  14.1%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Good</span>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0600-0x06FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">🔌</span>
+                  <div>
+                    <div style="font-weight: 600;">WebSocket</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Real-time connections</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #27ae60;">32</td>
+              <td style="padding: 15px; text-align: center;">256</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #27ae60 12.5%, #ecf0f1 12.5%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  12.5%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Good</span>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ecf0f1; transition: background 0.3s;"
+              onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+              <td style="padding: 15px; font-family: monospace; font-weight: bold; color: #e74c3c;">0x0700-0x07FF</td>
+              <td style="padding: 15px;">
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px;">🛠️</span>
+                  <div>
+                    <div style="font-weight: 600;">Utils</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d;">Utility functions</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 15px; text-align: center; font-weight: bold; color: #27ae60;">36</td>
+              <td style="padding: 15px; text-align: center;">256</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: linear-gradient(90deg, #27ae60 14.1%, #ecf0f1 14.1%); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;">
+                  14.1%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Good</span>
+              </td>
+            </tr>
+            <tr style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: bold;">
+              <td style="padding: 15px; font-family: monospace;">TOTAL</td>
+              <td style="padding: 15px;">All Ranges</td>
+              <td style="padding: 15px; text-align: center;">382</td>
+              <td style="padding: 15px; text-align: center;">2048</td>
+              <td style="padding: 15px; text-align: center;">
+                <div
+                  style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem;">
+                  18.7%</div>
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <span
+                  style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">Healthy</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">🔧 Core</div>
+          <div class="stat-label">24.3% • Highest Usage</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">🌐 Protocols</div>
+          <div class="stat-label">31.3% • Most Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">🔌 WebSocket</div>
+          <div class="stat-label">12.5% • Most Available</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">📊 Overall</div>
+          <div class="stat-label">18.7% • Balanced</div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>🎯 Mission:</strong> This workspace supports session-by-session development directories with optimized
+        resource allocation and modern tooling.
+        <br><br>
+        <strong>🔧 Technology Stack:</strong> Bun • TypeScript • React • TailwindCSS • HTML5
+      </div>
+
+      <h2>🏗️ Dependency Injection Architecture</h2>
+      <div class="code-example">
+        <pre><code>// Dependency injection container to prevent circular dependencies
+class DIContainer {
+  private services = new Map&lt;string, any&gt;();
+  private factories = new Map&lt;string, () =&gt; any&gt;();
+
+  register&lt;T&gt;(name: string, factory: () =&gt; T): void {
+    this.factories.set(name, factory);
+  }
+
+  get&lt;T&gt;(name: string): T {
+    if (!this.services.has(name)) {
+      const factory = this.factories.get(name);
+      if (!factory) {
+        throw new Error(`Service not registered: ${name}`);
+      }
+      this.services.set(name, factory());
+    }
+    return this.services.get(name);
+  }
+
+  // Initialize all core modules
+  initialize(): void {
+    // Register core services (0x0000-0x00FF)
+    this.register('config', () =&gt; new ConfigService());
+    this.register('logger', () =&gt; new LoggerService());
+    this.register('metrics', () =&gt; new MetricsService());
+
+    // Register protocol services (0x0100-0x01FF)
+    this.register('httpProxy', () =&gt; new HTTPProxy(this.get('logger')));
+    this.register('wsProxy', () =&gt; new WebSocketProxy(
+      this.get('logger'),
+      this.get('metrics')
+    ));
+
+    // Register pattern services (0x0200-0x02FF)
+    this.register('circuitBreaker', () =&gt; new CircuitBreaker(
+      this.get('config'),
+      this.get('logger')
+    ));
+
+    // Register security services (0x0300-0x03FF)
+    this.register('authenticator', () =&gt; new Authenticator(
+      this.get('config')
+    ));
+  }
+}
+
+// Usage
+const container = new DIContainer();
+container.initialize();
+
+const httpProxy = container.get&lt;HTTPProxy&gt;('httpProxy');
+const circuitBreaker = container.get&lt;CircuitBreaker&gt;('circuitBreaker');</code></pre>
+      </div>
+
+      <div class="session-list">
+        <div class="session-item">
+          <strong>🔧 Core Services (0x0000-0x00FF)</strong><br>
+          <code>ConfigService, LoggerService, MetricsService</code><br>
+          <small>Essential foundation services with 24.3% allocation</small><br>
+          <small>Optimal usage pattern with dependency injection</small>
+        </div>
+        <div class="session-item">
+          <strong>🌐 Protocol Services (0x0100-0x01FF)</strong><br>
+          <code>HTTPProxy, WebSocketProxy</code><br>
+          <small>Network protocol handlers with 31.3% allocation</small><br>
+          <small>Highest usage due to active connections</small>
+        </div>
+        <div class="session-item">
+          <strong>🎨 Pattern Services (0x0200-0x02FF)</strong><br>
+          <code>CircuitBreaker, RateLimiter, CacheManager</code><br>
+          <small>Design pattern implementations with 15.6% allocation</small><br>
+          <small>Efficient resource utilization</small>
+        </div>
+        <div class="session-item">
+          <strong>🔒 Security Services (0x0300-0x03FF)</strong><br>
+          <code>Authenticator, Encryption, TokenManager</code><br>
+          <small>Security modules with 23.4% allocation</small><br>
+          <small>Moderate usage with room for expansion</small>
+        </div>
+      </div>
+
+      <h2>⚡ Dynamic Code Point Loading</h2>
+      <div class="code-example">
+        <pre><code>// Import by module path (recommended)
+import { createProxyServer } from "@bun/proxy";
+import { CircuitBreaker } from "@bun/proxy/patterns/circuit-breaker";
+import { MetricsCollector } from "@bun/proxy/monitoring/metrics";
+
+// Dynamic import by code point (advanced usage)
+async function loadByCodePoint(codePoint: number) {
+  const modules: Record&lt;number, string&gt; = {
+    0x01: "@bun/proxy",
+    0x100: "@bun/proxy/protocols/http",
+    0x200: "@bun/proxy/patterns/circuit-breaker",
+    0x300: "@bun/proxy/security/auth",
+    0x400: "@bun/proxy/monitoring/metrics",
+    0x500: "@bun/proxy/caching/cache",
+    0x600: "@bun/proxy/websocket/proxy",
+    0x700: "@bun/proxy/utils/string"
+  };
+
+  const modulePath = modules[codePoint];
+  if (modulePath) {
+    return await import(modulePath);
+  }
+  throw new Error(`Unknown code point: 0x${codePoint.toString(16)}`);
+}
+
+// Usage
+const proxyModule = await loadByCodePoint(0x01);
+const server = proxyModule.createProxyServer(config);</code></pre>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">0x01</div>
+          <div class="stat-label">Core Proxy Module</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0x100</div>
+          <div class="stat-label">HTTP Protocol</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0x200</div>
+          <div class="stat-label">Circuit Breaker</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0x300</div>
+          <div class="stat-label">Authentication</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0x400</div>
+          <div class="stat-label">Metrics Collection</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0x500</div>
+          <div class="stat-label">Cache System</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0x600</div>
+          <div class="stat-label">WebSocket Proxy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">0x700</div>
+          <div class="stat-label">String Utils</div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>🔧 Advanced Loading:</strong> Dynamic code point loading allows runtime module resolution based on
+        hexadecimal memory addresses, enabling flexible architecture and hot-swappable components.
+        <br><br>
+        <strong>📊 Memory Mapping:</strong> Each code point maps to a specific module path, providing a direct
+        correlation between the allocation table and actual implementation.
+      </div>
+
+      <h2>🗃️ Module Registry System</h2>
+      <div class="code-example">
+        <pre><code>// Module registry for dynamic loading
+class ModuleRegistry {
+  private static registry = new Map&lt;number, {
+    path: string;
+    exports: Record&lt;string, any&gt;;
+  }&gt;();
+
+  static register(codePoint: number, path: string, exports: Record&lt;string, any&gt;) {
+    this.registry.set(codePoint, { path, exports });
+  }
+
+  static get(codePoint: number): any {
+    const entry = this.registry.get(codePoint);
+    if (!entry) {
+      throw new Error(`Module not found for code point: 0x${codePoint.toString(16)}`);
+    }
+    return entry.exports;
+  }
+
+  static getAll(): Map&lt;number, string&gt; {
+    const result = new Map&lt;number, string&gt;();
+    for (const [codePoint, entry] of this.registry.entries()) {
+      result.set(codePoint, entry.path);
+    }
+    return result;
+  }
+}
+
+// Register modules
+ModuleRegistry.register(0x01, "@bun/proxy", { createProxyServer });
+ModuleRegistry.register(0x100, "@bun/proxy/protocols/http", { HTTPProxy });
+ModuleRegistry.register(0x200, "@bun/proxy/patterns/circuit-breaker", { CircuitBreaker });
+
+// Usage
+const proxyFactory = ModuleRegistry.get(0x01);
+const server = proxyFactory.createProxyServer(config);</code></pre>
+      </div>
+
+      <div class="session-list">
+        <div class="session-item">
+          <strong>🗃️ Registry Features</strong><br>
+          <code>Static registry pattern • Type-safe exports</code><br>
+          <small>Centralized module management with code point mapping</small><br>
+          <small>Runtime discovery and resolution capabilities</small>
+        </div>
+        <div class="session-item">
+          <strong>📋 Registry Methods</strong><br>
+          <code>register() • get() • getAll()</code><br>
+          <small>Register modules by code point and retrieve exports</small><br>
+          <small>Get complete registry overview for debugging</small>
+        </div>
+        <div class="session-item">
+          <strong>🔧 Error Handling</strong><br>
+          <code>Hexadecimal formatting • Type safety</code><br>
+          <small>Comprehensive error messages with code point display</small><br>
+          <small>TypeScript generics for compile-time safety</small>
+        </div>
+        <div class="session-item">
+          <strong>⚡ Performance</strong><br>
+          <code>Static registry • Lazy loading</code><br>
+          <small>Optimized for frequent access patterns</small><br>
+          <small>Minimal overhead for module resolution</small>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">🗃️</div>
+          <div class="stat-label">Static Registry</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">📋</div>
+          <div class="stat-label">Type-Safe Exports</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">🔍</div>
+          <div class="stat-label">Runtime Discovery</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">⚡</div>
+          <div class="stat-label">High Performance</div>
+        </div>
+      </div>
+
+      <h2>⚙️ Core Configuration Properties Reference</h2>
+      <div class="config-reference">
+        <div class="config-section">
+          <h3>🔧 Core Configuration (0x0000-0x00FF)</h3>
+          <div class="config-table">
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+              <thead>
+                <tr style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                  <th style="padding: 12px; text-align: left;">Property</th>
+                  <th style="padding: 12px; text-align: left;">Type</th>
+                  <th style="padding: 12px; text-align: left;">Default</th>
+                  <th style="padding: 12px; text-align: left;">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">server.port</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>3000</code></td>
+                  <td style="padding: 10px;">Server listening port</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">server.host</td>
+                  <td style="padding: 10px;"><code>string</code></td>
+                  <td style="padding: 10px;"><code>"localhost"</code></td>
+                  <td style="padding: 10px;">Server binding host</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">log.level</td>
+                  <td style="padding: 10px;"><code>"info" | "debug" | "warn" | "error"</code></td>
+                  <td style="padding: 10px;"><code>"info"</code></td>
+                  <td style="padding: 10px;">Logging verbosity level</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">metrics.enabled</td>
+                  <td style="padding: 10px;"><code>boolean</code></td>
+                  <td style="padding: 10px;"><code>true</code></td>
+                  <td style="padding: 10px;">Enable metrics collection</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">cache.ttl</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>3600</code></td>
+                  <td style="padding: 10px;">Cache time-to-live in seconds</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h3>🌐 Protocol Configuration (0x0100-0x01FF)</h3>
+          <div class="config-table">
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+              <thead>
+                <tr style="background: linear-gradient(135deg, #3498db, #2980b9); color: white;">
+                  <th style="padding: 12px; text-align: left;">Property</th>
+                  <th style="padding: 12px; text-align: left;">Type</th>
+                  <th style="padding: 12px; text-align: left;">Default</th>
+                  <th style="padding: 12px; text-align: left;">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">http.timeout</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>30000</code></td>
+                  <td style="padding: 10px;">HTTP request timeout (ms)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">http.maxConnections</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>1000</code></td>
+                  <td style="padding: 10px;">Max concurrent HTTP connections</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">ws.heartbeatInterval</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>30000</code></td>
+                  <td style="padding: 10px;">WebSocket heartbeat interval (ms)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">ws.maxMessageSize</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>1048576</code></td>
+                  <td style="padding: 10px;">Max WebSocket message size (bytes)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h3>🎨 Pattern Configuration (0x0200-0x02FF)</h3>
+          <div class="config-table">
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+              <thead>
+                <tr style="background: linear-gradient(135deg, #27ae60, #229954); color: white;">
+                  <th style="padding: 12px; text-align: left;">Property</th>
+                  <th style="padding: 12px; text-align: left;">Type</th>
+                  <th style="padding: 12px; text-align: left;">Default</th>
+                  <th style="padding: 12px; text-align: left;">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">circuitBreaker.threshold</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>5</code></td>
+                  <td style="padding: 10px;">Failure threshold before opening</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">circuitBreaker.timeout</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>60000</code></td>
+                  <td style="padding: 10px;">Circuit breaker timeout (ms)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">rateLimit.requestsPerSecond</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>100</code></td>
+                  <td style="padding: 10px;">Rate limit requests per second</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">retry.maxAttempts</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>3</code></td>
+                  <td style="padding: 10px;">Maximum retry attempts</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h3>🔒 Security Configuration (0x0300-0x03FF)</h3>
+          <div class="config-table">
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+              <thead>
+                <tr style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;">
+                  <th style="padding: 12px; text-align: left;">Property</th>
+                  <th style="padding: 12px; text-align: left;">Type</th>
+                  <th style="padding: 12px; text-align: left;">Default</th>
+                  <th style="padding: 12px; text-align: left;">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">auth.jwtSecret</td>
+                  <td style="padding: 10px;"><code>string</code></td>
+                  <td style="padding: 10px;"><code>"change-me"</code></td>
+                  <td style="padding: 10px;">JWT signing secret</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">auth.tokenExpiry</td>
+                  <td style="padding: 10px;"><code>number</code></td>
+                  <td style="padding: 10px;"><code>3600</code></td>
+                  <td style="padding: 10px;">Token expiry time (seconds)</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">encryption.algorithm</td>
+                  <td style="padding: 10px;"><code>"AES-256-GCM"</code></td>
+                  <td style="padding: 10px;"><code>"AES-256-GCM"</code></td>
+                  <td style="padding: 10px;">Encryption algorithm</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ecf0f1;">
+                  <td style="padding: 10px; font-family: monospace; color: #e74c3c;">security.cors.enabled</td>
+                  <td style="padding: 10px;"><code>boolean</code></td>
+                  <td style="padding: 10px;"><code>true</code></td>
+                  <td style="padding: 10px;">Enable CORS headers</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>📖 Configuration Reference:</strong> All configuration properties are organized by memory range and
+        follow a hierarchical naming convention for easy management.
+        <br><br>
+        <strong>🔧 Environment Variables:</strong> Configuration can be overridden using environment variables with the
+        format: <code>MODULE_PROPERTY=value</code>
+      </div>
+
+      <h2>📊 Bun.inspect.table() - Complete Practical Guide</h2>
+      <div class="inspect-guide">
+        <div class="guide-section">
+          <h3>🎯 Quick Start</h3>
+          <div class="code-example">
+            <pre><code>// Basic usage
+import { inspect } from "bun";
+
+const users = [
+  { name: "Alice", age: 25, active: true },
+  { name: "Bob", age: 30, active: false },
+  { name: "Charlie", age: 35, active: true }
+];
+
+console.log(inspect.table(users));
+
+// Output:
+// ┌─────────┬─────┬────────┐
+// │ name    │ age │ active │
+// ├─────────┼─────┼────────┤
+// │ Alice   │ 25  │ true   │
+// │ Bob     │ 30  │ false  │
+// │ Charlie │ 35  │ true   │
+// └─────────┴─────┴────────┘</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <h3>🎨 Advanced Formatting Examples</h3>
+          <div class="code-example">
+            <pre><code>// Proxy Server Configuration Table
+const proxyConfigs = {
+  columns: [
+    { key: "property", header: "Property", type: "code", width: 20 },
+    { key: "type", header: "Type", type: "string", width: 12 },
+    { key: "required", header: "Required", type: "boolean" },
+    { key: "default", header: "Default", type: "string", width: 15 },
+    { key: "description", header: "Description", type: "string", width: 40 }
+  ],
+  rows: [
+    {
+      property: "listenHost",
+      type: "string",
+      required: false,
+      default: '"0.0.0.0"',
+      description: "Host to bind server to"
+    },
+    {
+      property: "listenPort",
+      type: "number",
+      required: false,
+      default: "random",
+      description: "Port to listen on (0=auto)"
+    },
+    {
+      property: "targetUrl",
+      type: "string",
+      required: true,
+      default: "-",
+      description: "Backend WebSocket URL"
+    }
+  ]
+};
+
+console.log(inspect.table(proxyConfigs, {
+  theme: "dark",
+  showBorder: true,
+  zebra: true
+}));</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <h3>📊 Performance Metrics Dashboard</h3>
+          <div class="code-example">
+            <pre><code>const performanceData = {
+  columns: [
+    { key: "metric", header: "Metric", type: "string" },
+    { key: "value", header: "Value", type: "number", align: "right" },
+    { key: "unit", header: "Unit", type: "string" },
+    { key: "trend", header: "Trend", type: "badge" },
+    { key: "status", header: "Status", type: "badge" }
+  ],
+  rows: [
+    {
+      metric: "Active Connections",
+      value: 2456,
+      unit: "connections",
+      trend: "up",
+      status: "healthy"
+    },
+    {
+      metric: "Avg Latency",
+      value: 42.5,
+      unit: "ms",
+      trend: "down",
+      status: "good"
+    },
+    {
+      metric: "Error Rate",
+      value: 0.12,
+      unit: "%",
+      trend: "up",
+      status: "warning"
+    }
+  ]
+};
+
+console.log(inspect.table(performanceData, {
+  sortBy: "value",
+  sortOrder: "desc",
+  zebra: true,
+  theme: "dark"
+}));</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <h3>🔧 Custom Formatters & Transformations</h3>
+          <div class="code-example">
+            <pre><code>const customFormatters = {
+  columns: [
+    {
+      key: "amount",
+      header: "Amount",
+      type: "number",
+      format: (value) => `$${value.toFixed(2)}`,
+      align: "right"
+    },
+    {
+      key: "progress",
+      header: "Progress",
+      type: "number",
+      format: (value) => {
+        const bar = '█'.repeat(Math.floor(value / 10));
+        const empty = '░'.repeat(10 - Math.floor(value / 10));
+        return `${bar}${empty} ${value}%`;
+      }
+    },
+    {
+      key: "timestamp",
+      header: "Timestamp",
+      type: "datetime",
+      format: (value) => new Date(value).toLocaleString()
+    }
+  ],
+  rows: [
+    {
+      amount: 1234.56,
+      progress: 75,
+      timestamp: Date.now()
+    }
+  ]
+};
+
+console.log(inspect.table(customFormatters));</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <h3>📤 Export Options</h3>
+          <div class="code-example">
+            <pre><code>// Export to different formats
+const htmlOutput = inspect.table(data, { output: "html" });
+await Bun.write("table.html", htmlOutput);
+
+const jsonOutput = inspect.table(data, { output: "json" });
+await Bun.write("data.json", JSON.stringify(JSON.parse(jsonOutput), null, 2));
+
+const csvOutput = inspect.table(data, { output: "csv" });
+await Bun.write("data.csv", csvOutput);
+
+const mdOutput = inspect.table(data, { output: "markdown" });
+await Bun.write("data.md", mdOutput);</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <h3>🔄 Real-time Monitoring Dashboard</h3>
+          <div class="code-example">
+            <pre><code>async function createLiveDashboard() {
+  const dashboardData = {
+    columns: [
+      { key: "metric", header: "Metric", type: "string" },
+      { key: "value", header: "Value", type: "number" },
+      { key: "trend", header: "Trend", type: "badge" },
+      { key: "lastUpdate", header: "Updated", type: "datetime" }
+    ],
+    rows: []
+  };
+
+  setInterval(async () => {
+    const stats = await fetchStats();
+
+    dashboardData.rows = [
+      {
+        metric: "Active Connections",
+        value: stats.activeConnections,
+        trend: stats.connectionsTrend,
+        lastUpdate: Date.now()
+      },
+      {
+        metric: "Memory Usage",
+        value: stats.memoryMB,
+        trend: stats.memoryTrend,
+        lastUpdate: Date.now()
+      }
+    ];
+
+    console.clear();
+    console.log(inspect.table(dashboardData, {
+      theme: "dark",
+      showBorder: true,
+      compact: true
+    }));
+  }, 1000);
+}
+
+createLiveDashboard();</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <h3>🛠️ Table Builder Utility</h3>
+          <div class="code-example">
+            <pre><code>class TableBuilder {
+  constructor() {
+    this.columns = [];
+    this.rows = [];
+    this.options = {};
+  }
+
+  addColumn(key, header, type = "string", options = {}) {
+    this.columns.push({ key, header, type, ...options });
+    return this;
+  }
+
+  addRow(data) {
+    this.rows.push(data);
+    return this;
+  }
+
+  setOption(key, value) {
+    this.options[key] = value;
+    return this;
+  }
+
+  build() {
+    return inspect.table(
+      { columns: this.columns, rows: this.rows },
+      this.options
+    );
+  }
+
+  render() {
+    console.log(this.build());
+  }
+}
+
+// Usage
+new TableBuilder()
+  .addColumn("name", "Name", "string", { width: 20 })
+  .addColumn("status", "Status", "badge")
+  .addColumn("latency", "Latency", "number", { format: v => `${v}ms` })
+  .addRow({ name: "HTTP Proxy", status: "connected", latency: 28 })
+  .addRow({ name: "WebSocket", status: "connecting", latency: 125 })
+  .setOption("theme", "dark")
+  .setOption("zebra", true)
+  .render();</code></pre>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <h3>📊 Quick Reference Cheat Sheet</h3>
+          <div class="code-example">
+            <pre><code>// Common Patterns
+inspect.table(arrayOfObjects)
+inspect.table({ columns, rows }, options)
+inspect.table(data, { output: "html" })
+inspect.table(data, { theme: "dark", colors: true })
+inspect.table(data, { sortBy: "name", filter: "active" })
+
+// Column Types
+const columnTypes = {
+  text: "string",      // Plain text
+  numbers: "number",   // Formatted numbers
+  trueFalse: "boolean", // ✓/✗ icons
+  dates: "date",       // Date formatting
+  times: "datetime",   // Date & time
+  files: "bytes",      // KB, MB, GB
+  progress: "percentage", // 75%
+  status: "badge",     // Colored badges
+  code: "code",        // Monospace
+  json: "json",        // Pretty JSON
+  color: "color"       // Color swatches
+};
+
+// Performance Tips
+inspect.table(data, { maxRows: 50 })     // Limit rows
+inspect.table(data, { compact: true })   // Dense data
+inspect.table(data, { zebra: true })     // Alternating rows</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">📊</div>
+          <div class="stat-label">Table Display</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">🎨</div>
+          <div class="stat-label">Advanced Formatting</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">📤</div>
+          <div class="stat-label">Multiple Exports</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">🔄</div>
+          <div class="stat-label">Real-time Updates</div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>📚 Practical Guide:</strong> Comprehensive reference for Bun.inspect.table() with real-world examples,
+        custom formatters, export options, and performance optimization techniques.
+        <br><br>
+        <strong>🎯 Best Practices:</strong> Use appropriate column types, implement custom formatting for better
+        readability, add context with captions, and optimize for large datasets with pagination.
+      </div>
+
+      <h2 id="sessions">📁 Active Sessions &amp; Code Distribution</h2>
+      <div class="session-list">
+        <div class="session-item">
+          <strong>🌐 Web Development</strong><br>
+          <code>web-project</code><br>
+          <small>~3K LOC • TypeScript • React Components</small><br>
+          <small>Bun runtime with hot reload</small>
+        </div>
+        <div class="session-item">
+          <strong>🔐 Secrets Management</strong><br>
+          <code>secrets-dashboard</code><br>
+          <small>~5K LOC • Security-focused UI</small><br>
+          <small>Encrypted storage interface</small>
+        </div>
+        <div class="session-item">
+          <strong>📊 Link Analytics</strong><br>
+          <code>link-analytics-dashboard</code><br>
+          <small>~8K LOC • Data visualization</small><br>
+          <small>Real-time metrics dashboard</small>
+        </div>
+        <div class="session-item">
+          <strong>⚛️ React Demo</strong><br>
+          <code>react-demo</code><br>
+          <small>~2K LOC • Interactive components</small><br>
+          <small>State management examples</small>
+        </div>
+      </div>
+
+      <h2 id="allocation">🎯 Code Point Allocation Details</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">35%</div>
+          <div class="stat-label">Analytics Dashboard</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">25%</div>
+          <div class="stat-label">Secrets Management</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">20%</div>
+          <div class="stat-label">Web Project</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">20%</div>
+          <div class="stat-label">React Demo</div>
+        </div>
+      </div>
+
+      <h2>⚡ Quick Start</h2>
+      <ol>
+        <li>Create a new session directory: <code>mkdir &lt;session-name&gt;</code></li>
+        <li>Navigate to it: <code>cd &lt;session-name&gt;</code></li>
+        <li>Choose your project type and run the corresponding setup command</li>
+        <li>Install dependencies with your package manager</li>
+        <li>Start coding!</li>
+      </ol>
+
+      <h2 id="commands">🛠️ Available Setups</h2>
+      <p>Navigate to your session directory first, then:</p>
+      <ul>
+        <li><strong>Bun/TypeScript/JavaScript</strong>: <code>bun init</code> (exclusive - no npm/yarn/pnpm)</li>
+        <li><strong>Java</strong>: <code>java -version</code> (ensure JDK is installed)</li>
+      </ul>
+
+      <h2>📂 Session Management</h2>
+      <p>Each coding session should have its own directory:</p>
+      <ul>
+        <li><code>mkdir web-project</code> - for web development (Bun/TypeScript)</li>
+        <li><code>mkdir api-server</code> - for backend services (Bun/TypeScript)</li>
+        <li><code>mkdir java-app</code> - for Java applications</li>
+        <li><code>mkdir learning-typescript</code> - for learning TypeScript</li>
+      </ul>
+
+      <h2>🔧 Git Setup</h2>
+      <p>Initialize git repository in your session directory:</p>
+      <pre><code>cd &lt;session-name&gt;
+git init</code></pre>
+
+      <h2>⚙️ IDE Configuration</h2>
+      <p>This workspace is ready for development with your preferred IDE and tools.</p>
+
+      <div class="nav-links">
+        <a href="web-project/index.html">🌐 Web Project</a>
+        <a href="react-demo/MyComponent.html">⚛️ React Demo</a>
+        <a href="secrets-dashboard/SecretsDashboard.html">🔐 Secrets Dashboard</a>
+        <a href="link-analytics-dashboard/LinkAnalyticsDashboard.html">📊 Analytics Dashboard</a>
+      </div>
+
+      <h2 id="stats">📋 Session Commands & Statistics</h2>
+      <div class="session-list">
+        <div class="session-item">
+          <strong>Start Web Project</strong><br>
+          <pre><code>cd web-project
+bun run dev</code></pre>
+          <small>Port: 3000 • Hot reload enabled</small>
+        </div>
+        <div class="session-item">
+          <strong>Start React Demo</strong><br>
+          <pre><code>cd react-demo
+bun run dev</code></pre>
+          <small>Port: 3000 • Component testing</small>
+        </div>
+        <div class="session-item">
+          <strong>Start Secrets Dashboard</strong><br>
+          <pre><code>cd secrets-dashboard
+bun run dev</code></pre>
+          <small>Port: 3000 • Security interface</small>
+        </div>
+        <div class="session-item">
+          <strong>Start Analytics Dashboard</strong><br>
+          <pre><code>cd link-analytics-dashboard
+bun run dev</code></pre>
+          <small>Port: 3000 • Data visualization</small>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>💡 Pro Tip:</strong> Use <code>bun create &lt;component.tsx&gt;</code> to automatically generate a
+        complete React development environment with hot reload and TailwindCSS!
+        <br><br>
+        <strong>📈 Performance:</strong> All sessions optimized for Bun runtime with TypeScript compilation and
+        automatic bundling.
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>🚀 Development Environment</h3>
+        <p>Session-based development with modern tooling</p>
+        <p>Bun • TypeScript • React • TailwindCSS</p>
+      </div>
+      <div class="footer-section">
+        <h3>📁 Active Sessions</h3>
+        <ul>
+          <li><a href="web-project/index.html">Web Project</a></li>
+          <li><a href="react-demo/MyComponent.html">React Demo</a></li>
+          <li><a href="secrets-dashboard/SecretsDashboard.html">Secrets Dashboard</a></li>
+          <li><a href="link-analytics-dashboard/LinkAnalyticsDashboard.html">Analytics Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>🛠️ Resources</h3>
+        <ul>
+          <li><a href="#sessions">Session Management</a></li>
+          <li><a href="#allocation">Code Allocation</a></li>
+          <li><a href="#commands">Quick Commands</a></li>
+          <li><a href="#stats">Statistics</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>📊 Project Statistics</h3>
+        <p>4 Active Sessions</p>
+        <p>18K+ Lines of Code</p>
+        <p>Bun Runtime Environment</p>
+        <p>TypeScript Powered</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Development Environment • Built with Bun, TypeScript & React • Code Point Allocation System</p>
+    </div>
+  </footer>
+</body>
+
+</html>

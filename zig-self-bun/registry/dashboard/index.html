@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Registry Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Courier New', monospace; 
+      background: #0a0a0a; 
+      color: #00ff00; 
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    h1 { color: #00ff00; margin-bottom: 1rem; }
+    h2 { color: #00ffff; margin-top: 2rem; margin-bottom: 1rem; }
+    #config { 
+      background: #111; 
+      padding: 1.5rem; 
+      border: 2px solid #333; 
+      border-radius: 4px;
+      margin-bottom: 2rem;
+    }
+    .byte { 
+      display: inline-block; 
+      width: 40px; 
+      height: 40px;
+      text-align: center; 
+      line-height: 40px;
+      background: #222;
+      border: 1px solid #444;
+      margin: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .byte:hover {
+      background: #333;
+      border-color: #00ff00;
+    }
+    .byte-label {
+      font-size: 10px;
+      color: #888;
+      display: block;
+      margin-top: -5px;
+    }
+    button {
+      background: #00ff00;
+      color: #000;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: bold;
+      margin-right: 0.5rem;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #00cc00;
+    }
+    #packages {
+      list-style: none;
+      background: #111;
+      padding: 1rem;
+      border: 2px solid #333;
+      border-radius: 4px;
+    }
+    #packages li {
+      padding: 0.5rem;
+      border-bottom: 1px solid #333;
+    }
+    #packages li:last-child {
+      border-bottom: none;
+    }
+    #terminal {
+      background: #000;
+      color: #00ff00;
+      padding: 1rem;
+      font-family: monospace;
+      border: 2px solid #333;
+      border-radius: 4px;
+      min-height: 200px;
+      white-space: pre-wrap;
+    }
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background: #333;
+      border-radius: 2px;
+      margin-left: 0.5rem;
+    }
+    .status.active { background: #006600; }
+    .status.inactive { background: #660000; }
+  </style>
+</head>
+<body>
+  <h1>🔧 Bun Local Registry Dashboard</h1>
+  
+  <div id="status">
+    <span>Registry:</span>
+    <span id="registry-status" class="status">●</span>
+    <span>Config:</span>
+    <span id="config-status" class="status">●</span>
+  </div>
+
+  <!-- Live 13-byte config visualization -->
+  <div id="config">
+    <h2>13-Byte Immutable Config</h2>
+    <div id="bytes"></div>
+    <div style="margin-top: 1rem;">
+      <button onclick="editConfig()">Edit Config</button>
+      <button onclick="exportConfig()">Export as Env</button>
+      <button onclick="showReadonlyEnv()">Show Readonly Env</button>
+      <button onclick="reloadConfig()">Reload</button>
+    </div>
+    <div id="config-details" style="margin-top: 1rem; font-size: 0.9em;"></div>
+  </div>
+  
+  <!-- Package list -->
+  <h2>Packages (@mycompany/*)</h2>
+  <ul id="packages">Loading...</ul>
+  
+  <!-- Terminal placeholder -->
+  <h2>Terminal (WebSocket)</h2>
+  <div id="terminal">Connecting...</div>
+  
+  <script>
+    let ws = null;
+    let configPollInterval = null;
+
+    // Initialize WebSocket connection
+    function initWebSocket() {
+      try {
+        ws = new WebSocket('ws://localhost:4873/_dashboard/terminal');
+        ws.onopen = () => {
+          document.getElementById('terminal').textContent = 'Terminal connected. Ready for commands.';
+        };
+        ws.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+          if (data.type === 'output') {
+            document.getElementById('terminal').textContent += '\n' + data.data;
+          }
+        };
+        ws.onerror = (e) => {
+          document.getElementById('terminal').textContent = 'WebSocket error. Terminal unavailable.';
+        };
+        ws.onclose = () => {
+          document.getElementById('terminal').textContent = 'Terminal disconnected.';
+        };
+      } catch (error) {
+        document.getElementById('terminal').textContent = 'WebSocket not available: ' + error.message;
+      }
+    }
+
+    // Live config updater (polls every 100ms)
+    function updateConfig() {
+      fetch('/_dashboard/api/config')
+        .then(res => res.json())
+        .then(config => {
+          // Update status
+          document.getElementById('registry-status').className = 'status active';
+          document.getElementById('config-status').className = 'status active';
+          
+          // Render bytes
+          const hashHex = config.registryHash.replace('0x', '').padStart(8, '0');
+          const features = config.features;
+          
+          document.getElementById('bytes').innerHTML = `
+            <div class="byte" title="configVersion">
+              ${config.configVersion}
+              <span class="byte-label">v</span>
+            </div>
+            <div class="byte" title="registryHash[0]">${hashHex.slice(0,2)}<span class="byte-label">h0</span></div>
+            <div class="byte" title="registryHash[1]">${hashHex.slice(2,4)}<span class="byte-label">h1</span></div>
+            <div class="byte" title="registryHash[2]">${hashHex.slice(4,6)}<span class="byte-label">h2</span></div>
+            <div class="byte" title="registryHash[3]">${hashHex.slice(6,8)}<span class="byte-label">h3</span></div>
+            <div class="byte" title="featureFlags[0]">${features.PREMIUM_TYPES ? 'P' : '-'}<span class="byte-label">PT</span></div>
+            <div class="byte" title="featureFlags[1]">${features.PRIVATE_REGISTRY ? 'R' : '-'}<span class="byte-label">PR</span></div>
+            <div class="byte" title="featureFlags[2]">${features.DEBUG ? 'D' : '-'}<span class="byte-label">DB</span></div>
+            <div class="byte" title="terminalMode">1<span class="byte-label">tm</span></div>
+            <div class="byte" title="rows">24<span class="byte-label">r</span></div>
+            <div class="byte" title="cols">80<span class="byte-label">c</span></div>
+            <div class="byte" title="reserved">00<span class="byte-label">rs</span></div>
+          `;
+          
+          // Show feature flags details
+          const flags = Object.entries(features)
+            .filter(([_, v]) => v)
+            .map(([k]) => k);
+          
+          document.getElementById('config-details').innerHTML = `
+            <strong>Active Features:</strong> ${flags.length > 0 ? flags.join(', ') : 'none'}<br>
+            <strong>Registry Hash:</strong> ${config.registryHash}<br>
+            <strong>Version:</strong> ${config.configVersion}<br>
+            <strong>Packages:</strong> ${config.packages}<br>
+            <strong>Uptime:</strong> ${Math.floor(config.uptime)}s
+          `;
+          
+          // Update packages list
+          if (config.packages > 0) {
+            document.getElementById('packages').innerHTML = `
+              <li>📦 @mycompany/registry (1.3.5)</li>
+              <li>📦 @mycompany/utils (1.0.0)</li>
+            `;
+          } else {
+            document.getElementById('packages').innerHTML = '<li>No packages published yet</li>';
+          }
+        })
+        .catch(error => {
+          document.getElementById('registry-status').className = 'status inactive';
+          console.error('Failed to fetch config:', error);
+        });
+    }
+
+    // Edit config (opens modal or terminal)
+    function editConfig() {
+      const field = prompt('Enter field name (version, registryHash, terminalMode, rows, cols):');
+      const value = prompt('Enter value (hex for registryHash, decimal for others):');
+      
+      if (field && value) {
+        fetch('/_dashboard/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ field, value }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(`Updated ${data.updated} to ${data.value}`);
+          updateConfig();
+        })
+        .catch(error => {
+          alert('Error updating config: ' + error.message);
+        });
+      }
+    }
+
+    // Export as readonly environment variables
+    async function exportConfig() {
+      try {
+        // Fetch readonly env vars from API
+        const response = await fetch('/_dashboard/api/env?format=shell');
+        const env = await response.text();
+        
+        navigator.clipboard.writeText(env);
+        alert('Readonly environment variables copied to clipboard!\n\n' + env);
+      } catch (error) {
+        // Fallback to manual generation
+        fetch('/_dashboard/api/config')
+          .then(r => r.json())
+          .then(config => {
+            const hashHex = config.registryHash.replace('0x', '');
+            const flags = Object.entries(config.features);
+            let mask = 0;
+            if (config.features.PREMIUM_TYPES) mask |= 0x01;
+            if (config.features.PRIVATE_REGISTRY) mask |= 0x02;
+            if (config.features.DEBUG) mask |= 0x04;
+            
+            const env = `
+export BUN_CONFIG_VERSION=${config.configVersion}
+export BUN_REGISTRY_HASH=0x${hashHex}
+export BUN_FEATURE_FLAGS=0x${mask.toString(16).padStart(8, '0')}
+            `.trim();
+            
+            navigator.clipboard.writeText(env);
+            alert('Environment variables copied to clipboard!\n\n' + env);
+          });
+      }
+    }
+    
+    // Show readonly environment variables
+    async function showReadonlyEnv() {
+      try {
+        const response = await fetch('/_dashboard/api/env');
+        const env = await response.json();
+        
+        const envList = Object.entries(env)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('\n');
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.8); z-index: 1000;
+          display: flex; align-items: center; justify-content: center;
+        `;
+        modal.innerHTML = `
+          <div style="background: #111; padding: 2rem; border: 2px solid #00ff00; max-width: 600px; max-height: 80vh; overflow: auto;">
+            <h2 style="color: #00ff00; margin-bottom: 1rem;">Readonly Environment Variables</h2>
+            <pre style="color: #00ff00; font-family: monospace; white-space: pre-wrap; word-break: break-all;">${envList}</pre>
+            <button onclick="this.closest('div').parentElement.remove()" style="margin-top: 1rem; background: #00ff00; color: #000; border: none; padding: 0.5rem 1rem; cursor: pointer;">Close</button>
+            <button onclick="navigator.clipboard.writeText(\`${envList.replace(/`/g, '\\`')}\`); alert('Copied!')" style="margin-top: 1rem; margin-left: 0.5rem; background: #00ff00; color: #000; border: none; padding: 0.5rem 1rem; cursor: pointer;">Copy All</button>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      } catch (error) {
+        alert('Failed to load readonly environment variables: ' + error.message);
+      }
+    }
+
+    // Reload config
+    function reloadConfig() {
+      updateConfig();
+    }
+
+    // Initialize
+    initWebSocket();
+    updateConfig();
+    configPollInterval = setInterval(updateConfig, 100);
+  </script>
+</body>
+</html>
+

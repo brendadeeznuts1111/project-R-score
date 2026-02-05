@@ -1,0 +1,34 @@
+{
+  "name": "cli-dashboard",
+  "version": "1.0.0",
+  "description": "Interactive CLI dashboard application",
+  "main": "dashboard.ts",
+  "scripts": {
+    "start": "bun dashboard.ts",
+    "dev": "bun dashboard.ts --debug",
+    "terminal": "bun terminal-tool.ts",
+    "typecheck": "bun cli-resolver.ts typecheck"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "bun",
+    "cli",
+    "dashboard",
+    "interactive"
+  ],
+  "author": "ashley",
+  "license": "ISC",
+  "private": true,
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

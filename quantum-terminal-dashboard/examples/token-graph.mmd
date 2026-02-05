@@ -1,0 +1,19 @@
+graph TB
+    subgraph "WEBGL_RENDERING"
+        qsimd-scene_1_5.0["THREE.Scene<br/>T:0.00"]
+        qsimd-particles_1_5.0["ParticleSystem<br/>T:0.50"]
+        qsimd-shaders_1_5.0["ShaderUniform<br/>T:0.90"]
+    end
+    subgraph "NETWORK_VISUALIZATION"
+        qsimd-network_1_5.0["NetworkNode<br/>T:0.80"]
+        qsimd-connections_1_5.0["ConnectionLine<br/>T:0.90"]
+    end
+    subgraph "USER_INTERFACE"
+        qsimd-ui_1_5.0["GlassCard<br/>T:0.30"]
+        qsimd-interaction_1_5.0["Raycaster<br/>T:0.70"]
+    end
+    subgraph "DATA_PROCESSING"
+        qsimd-data_1_5.0["DataStream<br/>T:0.60"]
+    end
+
+    style qsimd-scene_1_5_0 fill:#00f0ff,stroke:#333

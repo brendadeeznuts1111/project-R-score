@@ -1,0 +1,78 @@
+# Prometheus alerting rules for 13-byte config system
+groups:
+- name: bun-13byte
+  interval: 30s
+  rules:
+  
+  # Alert: Config reads are too frequent (cache thrashing)
+  - alert: ExcessiveConfigReads
+    expr: rate(bun_config_reads_total[1m]) > 1000
+    for: 5m
+    labels:
+      severity: warning
+      component: config
+    annotations:
+      summary: "Config cache is thrashing"
+      description: "Application is reading config >1000 times/sec. Check for loops or missing cache."
+      runbook_url: "https://docs.example.com/runbooks/excessive-config-reads"
+  
+  # Alert: Feature flag mismatch between nodes (config drift)
+  - alert: ConfigDrift
+    expr: count(count by (instance) (bun_config_feature_flags)) > 1
+    for: 0m
+    labels:
+      severity: critical
+      component: config
+    annotations:
+      summary: "Config drift detected"
+      description: "Multiple instances have different feature flags. Redeploy required to sync config."
+      runbook_url: "https://docs.example.com/runbooks/config-drift"
+  
+  # Alert: Terminal mode stuck in raw (leaked after crash)
+  - alert: TerminalModeLeak
+    expr: bun_terminal_mode == 2 and up > 5m
+    for: 10m
+    labels:
+      severity: warning
+      component: terminal
+    annotations:
+      summary: "Raw terminal mode not restored"
+      description: "Process may have crashed without cleanup. Terminal mode stuck in raw. Restart recommended."
+      runbook_url: "https://docs.example.com/runbooks/terminal-mode-leak"
+  
+  # Alert: Config version mismatch (version drift)
+  - alert: ConfigVersionDrift
+    expr: count(count by (instance) (bun_config_version)) > 1
+    for: 0m
+    labels:
+      severity: critical
+      component: config
+    annotations:
+      summary: "Config version drift detected"
+      description: "Instances running different config versions. This may cause incompatible behavior."
+      runbook_url: "https://docs.example.com/runbooks/config-version-drift"
+  
+  # Alert: Registry hash changed unexpectedly
+  - alert: RegistryHashChanged
+    expr: changes(bun_registry_hash[5m]) > 0
+    for: 0m
+    labels:
+      severity: warning
+      component: registry
+    annotations:
+      summary: "Registry hash changed"
+      description: "Registry hash changed unexpectedly. Verify this was intentional (registry migration)."
+      runbook_url: "https://docs.example.com/runbooks/registry-hash-changed"
+  
+  # Alert: Config read latency increased (cache miss)
+  - alert: ConfigReadLatency
+    expr: histogram_quantile(0.99, rate(bun_config_read_duration_seconds_bucket[5m])) > 0.000001
+    for: 5m
+    labels:
+      severity: warning
+      component: config
+    annotations:
+      summary: "Config read latency increased"
+      description: "99th percentile config read latency >1µs (expected <0.5ns). Possible cache miss or disk I/O."
+      runbook_url: "https://docs.example.com/runbooks/config-read-latency"
+

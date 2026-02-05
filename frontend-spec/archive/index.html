@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Cash Flow Lattice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/keyboardjs@2.7.0/dist/keyboard.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: transparent; /* Allow canvas at z-index -1 to show */
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            background-color: #1f2937; /* Move background color here */
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .lattice-text {
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.75rem;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <main class="relative z-10">
+        <div id="matrix-overlay" class="fixed inset-0 bg-black/90 z-50 hidden overflow-auto p-10 font-mono text-xs">
+            <div class="flex justify-between items-center mb-6 border-b border-blue-500/30 pb-4">
+                <h2 class="text-2xl font-bold text-blue-400">COMPONENT_MATRIX_v1.0</h2>
+                <button id="close-matrix" class="text-gray-500 hover:text-white transition-colors">[CLOSE_X]</button>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-blue-500 border-b border-blue-900/50">
+                        <th class="p-2">ID</th>
+                        <th class="p-2">Type</th>
+                        <th class="p-2">Domain</th>
+                        <th class="p-2">Scope</th>
+                        <th class="p-2">Function</th>
+                        <th class="p-2">Tension</th>
+                        <th class="p-2">Ref</th>
+                    </tr>
+                </thead>
+                <tbody id="matrix-body">
+                    <!-- Injected via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <button id="open-matrix" class="fixed bottom-4 right-4 z-40 glass-card px-4 py-2 text-[10px] text-blue-500 hover:text-white transition-all uppercase tracking-widest" 
+                data-token="MATRIX_BUTTON" 
+                data-domain="WEBGL" 
+                data-scope="SCENE" 
+                data-meta='{"blur":"25px"}' 
+                data-ref="#REF:RAY_CAST,MAGNETIC_ZONE">
+            View System Matrix
+        </button>
+
+        <section class="h-screen flex items-center justify-center p-8" 
+                 data-token="SCENE_SECTION" 
+                 data-domain="WEBGL" 
+                 data-scope="SCENE">
+            <div class="glass-card p-10 max-w-2xl transform transition-transform duration-500 hover:scale-105" 
+                 id="hero-card"
+                 data-token="UI_CARD"
+                 data-meta='{"blur":"25px"}'
+                 data-ref="#REF:RAY_CAST,MAGNETIC_ZONE">
+                <p class="lattice-text mb-2 text-[#22c55e]">System Status: Neural Nodes Synced</p>
+                <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-[#3b82f6] to-[#22c55e] bg-clip-text text-transparent">
+                    Quantum Cash Flow Lattice
+                </h1>
+                <p class="text-gray-400 text-lg leading-relaxed">
+                    Visualizing real-time financial synchronizations through a kinetic particle mesh. 
+                    Monitoring 5,000 active neural nodes across the digital aurora.
+                </p>
+            </div>
+        </section>
+
+        <section class="h-screen flex items-center justify-end p-20"
+                 data-token="SCENE_SECTION">
+            <div class="glass-card p-8 w-96" 
+                 id="stats-card"
+                 data-token="UI_CARD"
+                 data-meta='{"blur":"25px"}'>
+                <h3 class="text-xl font-semibold mb-6 border-b border-[#3b82f6]/30 pb-2">Lattice Metrics</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Throughput</span>
+                        <span class="text-[#22c55e] font-mono" id="val-throughput">1,242 TX/S</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Latency</span>
+                        <span class="text-[#3b82f6] font-mono">14ms</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Node Stability</span>
+                        <span class="text-[#3b82f6] font-mono">99.98%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="h-screen flex items-center justify-start p-20"
+                 data-token="SCENE_SECTION">
+            <div class="glass-card p-8 w-96" 
+                 id="log-card"
+                 data-token="UI_CARD"
+                 data-meta='{"blur":"25px"}'>
+                <h3 class="text-xl font-semibold mb-4 border-b border-[#3b82f6]/30 pb-2">Lattice Synchronizations</h3>
+                <div class="space-y-3 font-mono text-xs text-gray-400" id="sync-logs">
+                    <div class="flex gap-2">
+                        <span class="text-[#3b82f6]">[06:39:01]</span>
+                        <span>TX_ID: 0x82...f32 SYNCED</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-[#3b82f6]">[06:39:04]</span>
+                        <span>NODE_UP: n14 ESTABLISHED</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-[#3b82f6]">[06:39:07]</span>
+                        <span>TX_ID: 0x11...a9b SYNCED</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="./src/tension-integration.js"></script>
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>

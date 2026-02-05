@@ -1,0 +1,67 @@
+{
+  "name": "@graph/layer2",
+  "version": "1.2.0",
+  "description": "Cross-market efficiency detection",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "dev": "bun run --watch src/detector.ts",
+    "build": "bun build src/index.ts --outdir dist",
+    "test": "bun test test/layer2.test.ts",
+    "bench": "bun run @bench/layer2",
+    "prepublishOnly": "bun run build && bun test && bun run bench"
+  },
+  "maintainers": [
+    {
+      "name": "Maria Rodriguez",
+      "email": "maria.rodriguez@yourcompany.com",
+      "role": "team-lead",
+      "scope": "full-access"
+    },
+    {
+      "name": "Taylor Smith",
+      "email": "taylor.smith@yourcompany.com",
+      "role": "contributor",
+      "scope": "read-write"
+    }
+  ],
+  "publishConfig": {
+    "registry": "https://npm.internal.yourcompany.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourorg/graph-engine",
+    "directory": "packages/@graph/layer2"
+  },
+  "dependencies": {
+    "@graph/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "benchmarks": {
+    "lastRun": "2024-01-15T10:30:00Z",
+    "bestValues": {
+      "spreadThreshold": 0.02,
+      "correlationThreshold": 0.85
+    }
+  },
+  "metadata": {
+    "team": {
+      "lead": "maria.rodriguez@yourcompany.com",
+      "maintainers": [
+        "taylor.smith@yourcompany.com"
+      ],
+      "owners": [
+        "maria.rodriguez@yourcompany.com"
+      ]
+    },
+    "ownership": {
+      "scope": "@graph",
+      "team": "markets-team",
+      "repository": "github.com/yourorg/graph-engine/packages/@graph/layer2"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+# MarkdownLint Ignore File
+# Files and directories to ignore when linting markdown
+
+# Auto-generated reports
+reports/
+
+# Dependencies
+node_modules/
+config/project/
+
+# Build outputs
+dist/
+
+# Generated files
+*.generated.md
+*.min.md
+
+# Test outputs
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log

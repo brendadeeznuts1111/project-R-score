@@ -1,0 +1,322 @@
+# =============================================================================
+# Shortcut Management System Configuration
+# =============================================================================
+# This TOML configuration file defines the complete setup for the enhanced
+# shortcut management system with Unicode support and hierarchical profiles
+
+# =============================================================================
+# [h1] CORE APPLICATION SETTINGS
+# =============================================================================
+[app]
+name = "Enhanced ShortcutRegistry"
+version = "1.0.0"
+description = "Advanced shortcut management with Unicode text handling"
+author = "Cascade Development Team"
+license = "MIT"
+homepage = "https://github.com/cascade/shortcut-registry"
+
+# =============================================================================
+# [h2] DEVELOPMENT SERVER CONFIGURATION
+# =============================================================================
+[serve]
+# Static file serving configuration
+[serve.static]
+plugins = ["bun-plugin-tailwind"]
+env = "BUN_PUBLIC_*"
+# Port configuration
+port = 3000
+host = "localhost"
+# Development settings
+hot_reload = true
+open_browser = true
+ssl = false
+
+# =============================================================================
+# [h2] BUILD CONFIGURATION
+# =============================================================================
+[build]
+# Entry points
+entry_points = ["src/app.js", "src/main.tsx"]
+# Output directory
+outdir = "dist"
+# Target environment
+target = "browser"
+# Build optimization
+minify = true
+sourcemap = true
+tree_shaking = true
+
+# =============================================================================
+# [h2] DEPENDENCY MANAGEMENT
+# =============================================================================
+[dependencies]
+# Core React ecosystem
+react = "^18.2.0"
+react-dom = "^18.2.0"
+# TypeScript support
+typescript = "^5.0.0"
+"@types/react" = "^18.2.0"
+"@types/react-dom" = "^18.2.0"
+# Build tools
+vite = "^4.4.0"
+"@vitejs/plugin-react" = "^4.0.0"
+# Tailwind CSS
+tailwindcss = "^3.3.0"
+autoprefixer = "^10.4.0"
+postcss = "^8.4.0"
+
+[dev-dependencies]
+# Development tools
+"@types/node" = "^20.0.0"
+eslint = "^8.45.0"
+"@typescript-eslint/eslint-plugin" = "^6.0.0"
+"@typescript-eslint/parser" = "^6.0.0"
+prettier = "^3.0.0"
+jest = "^29.6.0"
+"@types/jest" = "^29.5.0"
+ts-jest = "^29.1.0"
+# Unicode support
+"@types/intl" = "^1.0.0"
+
+# =============================================================================
+# [h2] UNICODE TEXT PROCESSING
+# =============================================================================
+[unicode]
+# Grapheme clustering configuration
+[unicode.grapheme_clustering]
+# Use Intl.Segmenter when available
+use_intl_segmenter = true
+# Fallback behavior for older environments
+enable_fallback = true
+# Performance optimization
+cache_size = 1000
+# Supported locales
+supported_locales = ["en", "zh", "ja", "ko", "ar", "hi", "th", "he"]
+
+# Text processing limits
+[unicode.limits]
+# Maximum text length for processing
+max_text_length = 10000
+# Maximum grapheme count for display
+max_grapheme_display = 50
+# Truncation settings
+default_truncate_length = 30
+truncation_suffix = "..."
+
+# =============================================================================
+# [h3] HIERARCHICAL PROFILE MANAGEMENT
+# =============================================================================
+[profiles]
+# Profile hierarchy settings
+[profiles.hierarchy]
+# Maximum hierarchy depth
+max_depth = 10
+# Seed number range
+seed_range = { min = 1000, max = 9999 }
+# Default profile settings
+default_profile = "professional"
+# Auto-inheritance settings
+auto_inherit = true
+inherit_conflict_resolution = "child_wins"
+
+# Profile templates
+[profiles.templates]
+# Startup team template
+[profiles.templates.startup]
+name = "Startup Team"
+description = "Complete startup team structure"
+seed = 5000
+profiles = ["ceo", "cto", "product_manager", "senior_engineer", "junior_engineer"]
+
+# Enterprise division template
+[profiles.templates.enterprise]
+name = "Enterprise Division"
+description = "Large enterprise division structure"
+seed = 6000
+profiles = ["director", "senior_manager", "team_lead", "senior_developer", "developer", "analyst"]
+
+# =============================================================================
+# [h3] SHORTCUT MANAGEMENT
+# =============================================================================
+[shortcuts]
+# Shortcut configuration
+[shortcuts.management]
+# Maximum shortcuts per profile
+max_shortcuts_per_profile = 100
+# Default scope
+default_scope = "global"
+# Conflict resolution
+conflict_resolution = "priority_based"
+# Performance settings
+cache_enabled = true
+cache_ttl = 3600
+
+# Categories
+[shortcuts.categories]
+general = { name = "General", icon = "⚙️", color = "#6b7280", priority = 1 }
+development = { name = "Development", icon = "💻", color = "#3b82f6", priority = 2 }
+navigation = { name = "Navigation", icon = "🧭", color = "#10b981", priority = 3 }
+editor = { name = "Editor", icon = "📝", color = "#f59e0b", priority = 4 }
+ui = { name = "User Interface", icon = "🎨", color = "#8b5cf6", priority = 5 }
+management = { name = "Management", icon = "👥", color = "#ef4444", priority = 6 }
+
+# =============================================================================
+# [h3] DATABASE CONFIGURATION
+# =============================================================================
+[database]
+# Database connection settings
+[database.connection]
+type = "sqlite"
+path = "./data/shortcuts.db"
+# Connection pooling
+max_connections = 10
+connection_timeout = 30
+# Performance settings
+journal_mode = "WAL"
+synchronous = "NORMAL"
+cache_size = 2000
+
+# Migration settings
+[database.migrations]
+auto_migrate = true
+migration_path = "./migrations"
+backup_enabled = true
+backup_path = "./backups"
+
+# =============================================================================
+# [h4] PERFORMANCE MONITORING
+# =============================================================================
+[performance]
+# Metrics collection
+[performance.metrics]
+enabled = true
+collection_interval = 60
+retention_period = 86400
+# Performance thresholds
+[performance.thresholds]
+response_time_ms = 100
+memory_usage_mb = 512
+cpu_usage_percent = 80
+
+# Caching configuration
+[performance.cache]
+# Memory cache
+[performance.cache.memory]
+enabled = true
+max_size = 100
+ttl = 3600
+# Disk cache
+[performance.cache.disk]
+enabled = true
+path = "./cache"
+max_size_mb = 100
+cleanup_interval = 3600
+
+# =============================================================================
+# [h4] SECURITY SETTINGS
+# =============================================================================
+[security]
+# Authentication
+[security.auth]
+enabled = false
+method = "jwt"
+secret_key_env = "JWT_SECRET"
+token_expiry = 3600
+
+# Input validation
+[security.validation]
+max_input_length = 1000
+allowed_characters = "unicode"
+sanitize_html = true
+xss_protection = true
+
+# =============================================================================
+# [h4] LOGGING CONFIGURATION
+# =============================================================================
+[logging]
+# Log levels
+level = "info"
+# Output destinations
+[logging.outputs]
+console = { enabled = true, format = "colored" }
+file = { enabled = true, path = "./logs/app.log", max_size = "10MB", rotate = true }
+# Log categories
+[logging.categories]
+app = "info"
+database = "warn"
+performance = "info"
+security = "error"
+
+# =============================================================================
+# [h4] INTEGRATION SETTINGS
+# =============================================================================
+[integrations]
+# External services
+[integrations.services]
+# Analytics service
+[integrations.services.analytics]
+enabled = false
+endpoint = "https://analytics.example.com"
+api_key_env = "ANALYTICS_API_KEY"
+# Error reporting
+[integrations.services.error_reporting]
+enabled = false
+service = "sentry"
+dsn_env = "SENTRY_DSN"
+# Update service
+[integrations.services.updates]
+enabled = true
+check_interval = 86400
+auto_update = false
+
+# =============================================================================
+# ENVIRONMENT VARIABLES
+# =============================================================================
+[env]
+# Development environment
+[env.development]
+NODE_ENV = "development"
+LOG_LEVEL = "debug"
+HOT_RELOAD = "true"
+# Production environment
+[env.production]
+NODE_ENV = "production"
+LOG_LEVEL = "info"
+MINIFY = "true"
+# Testing environment
+[env.testing]
+NODE_ENV = "test"
+LOG_LEVEL = "error"
+CI = "true"
+
+# =============================================================================
+# SCRIPTS AND TASKS
+# =============================================================================
+[scripts]
+# Development scripts
+[scripts.dev]
+start = "bun run src/app.js"
+dev = "bun --hot src/app.js"
+build = "bun build src/app.js --outdir dist"
+test = "bun test"
+lint = "eslint src --ext .ts,.tsx"
+format = "prettier --write src/**/*.{ts,tsx,css}"
+
+# Production scripts
+[scripts.prod]
+build = "bun build src/app.js --minify --outdir dist"
+deploy = "bun run build && rsync -av dist/ user@server:/var/www/app/"
+backup = "sqlite3 data/shortcuts.db '.backup backups/backup-$(date +%Y%m%d-%H%M%S).db'"
+
+# =============================================================================
+# FINAL CONFIGURATION VALIDATION
+# =============================================================================
+[validation]
+# Required settings
+required_fields = ["app.name", "app.version", "database.connection.type"]
+# Type validation
+strict_types = true
+# Schema validation
+validate_schema = true
+# Environment validation
+validate_env = true

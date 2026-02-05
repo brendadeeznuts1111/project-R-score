@@ -1,0 +1,93 @@
+---
+# Document 1: Base configurations with anchors
+_document_index: 0
+_schema_version: v4.5
+
+# Base configuration anchor
+defaults: &defaults
+  timeout: 30
+  retries: 3
+  log_level: info
+  features:
+    caching: true
+    compression: true
+
+# Production-specific defaults
+production: &production
+  <<: *defaults
+  timeout: 60
+  log_level: warn
+  monitoring:
+    enabled: true
+    metrics: true
+
+---
+# Document 2: Environment configurations with enhanced merge inheritance
+_document_index: 1
+is_config: true
+
+# Development environment - simple inheritance
+development:
+  <<: *defaults
+  debug: true
+  hot_reload: true
+  database:
+    host: localhost
+    port: 5432
+
+# Staging environment - inheritance with overrides
+staging:
+  <<: *production
+  timeout: 45
+  database:
+    host: staging.db.internal
+    ssl: true
+
+# Production environment - complex inheritance
+production:
+  <<: *production
+  database:
+    host: prod.db.internal
+    ssl: true
+    pool_size: 20
+  monitoring:
+    alerts: true
+    slack_webhook: ${SLACK_WEBHOOK}
+
+---
+# Document 3: Advanced merge scenarios with inheritance tracking
+_document_index: 2
+is_advanced: true
+
+# Multiple inheritance - multiple anchors
+multi_inherit:
+  <<: [*defaults, *production]
+  environment: hybrid
+  custom_feature: true
+
+# Nested merge with inheritance tracking
+nested_merge:
+  server:
+    <<: *defaults
+    port: 8080
+  database:
+    <<: *defaults
+    connection_pool: 10
+  cache:
+    <<: *production
+    redis: true
+
+# Complex inheritance chain
+complex_chain:
+  base_config: &base_config
+    app_name: "FactoryWager"
+    version: "4.5.0"
+  
+  extended_config: &extended_config
+    <<: *base_config
+    features: ["nexus", "merge", "inheritance"]
+    
+  final_config:
+    <<: *extended_config
+    deployment: "production"
+    status: "merged"

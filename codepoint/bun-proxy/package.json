@@ -1,0 +1,93 @@
+{
+  "name": "@bun/proxy",
+  "version": "1.3.5",
+  "description": "Enhanced proxy server implementation for Bun with improved naming and type safety",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./protocols": {
+      "types": "./dist/protocols/index.d.ts",
+      "import": "./dist/protocols/index.js"
+    },
+    "./patterns": {
+      "types": "./dist/patterns/index.d.ts",
+      "import": "./dist/patterns/index.js"
+    },
+    "./security": {
+      "types": "./dist/security/index.d.ts",
+      "import": "./dist/security/index.js"
+    },
+    "./monitoring": {
+      "types": "./dist/monitoring/index.d.ts",
+      "import": "./dist/monitoring/index.js"
+    },
+    "./caching": {
+      "types": "./dist/caching/index.d.ts",
+      "import": "./dist/caching/index.js"
+    },
+    "./websocket": {
+      "types": "./dist/websocket/index.d.ts",
+      "import": "./dist/websocket/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js"
+    }
+  },
+  "scripts": {
+    "clean-build-directory": "rm -rf dist",
+    "compile-typescript": "bun build ./src --outdir ./dist --target bun",
+    "generate-type-declarations": "tsc --emitDeclarationOnly --outDir dist",
+    "execute-build-process": "bun run clean-build-directory && bun run compile-typescript && bun run generate-type-declarations",
+    "run-type-check": "tsc --noEmit",
+    "execute-test-suite": "bun test",
+    "run-lint-check": "bunx eslint src/**/*.ts",
+    "format-source-code": "bunx prettier --write src/**/*.ts",
+    "start-development-server": "bun --watch src/index.ts",
+    "generate-documentation": "bun run typedoc --out docs src",
+    "execute-benchmark-tests": "bun run test:benchmark",
+    "run-coverage-analysis": "bun test --coverage",
+    "validate-bundle-size": "bunx bundlesize",
+    "perform-security-audit": "bunx audit-ci",
+    "release-new-version": "bun run execute-build-process && bun run execute-test-suite && npm publish --access public"
+  },
+  "keywords": [
+    "bun",
+    "proxy",
+    "websocket",
+    "http",
+    "https",
+    "typescript",
+    "enhanced"
+  ],
+  "author": "Bun Proxy Team <team@bun.sh>",
+  "license": "MIT",
+  "dependencies": {
+    "bun-types": "^1.3.5"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.5",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "typedoc": "^0.25.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "bun": ">=1.3.0",
+    "node": ">=18.0.0"
+  },
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"]
+}

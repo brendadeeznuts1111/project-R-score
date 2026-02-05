@@ -1,0 +1,43 @@
+{
+  // Metrics collection settings for the Clawdbot skill system
+  // This file uses JSONC format - comments are allowed
+
+  "collection": {
+    "enabled": true, // Master switch for metrics collection
+    "maxRecentExecutions": 100, // Keep last 100 executions in memory
+
+    // Performance thresholds (in milliseconds)
+    "thresholds": {
+      "warning": 5000, // Log warning if execution exceeds 5s
+      "critical": 15000, // Log error if execution exceeds 15s
+    },
+  },
+
+  // Archival settings
+  "archival": {
+    "enabled": true,
+    "maxAgeDays": 7, // Archive executions older than 7 days
+    "compressLevel": 9, // Max gzip compression (1-9)
+    "storagePath": "~/.clawdbot/archives",
+  },
+
+  // Terminal tracking settings
+  "terminal": {
+    "trackUsage": true,
+    "maxSessionTime": 3600000, // 1 hour max session (ms)
+    "recordSessions": false, // Enable to record terminal sessions
+  },
+
+  // Real-time WebSocket updates
+  "websocket": {
+    "enabled": true,
+    "updateInterval": 5000, // Send updates every 5 seconds
+    "maxConnections": 10, // Limit concurrent WebSocket connections
+  },
+
+  // Optional S3 configuration (uncomment to enable cloud archival)
+  // "s3": {
+  //   "bucket": "clawdbot-metrics",
+  //   "requesterPays": false
+  // }
+}

@@ -1,0 +1,70 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM"],
+
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "preserveSymlinks": true,
+    "allowUmdGlobalAccess": false,
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "removeComments": true,
+    "importHelpers": true,
+    "inlineSources": true,
+    "newLine": "lf",
+    "noEmitOnError": true,
+    "preserveConstEnums": true,
+    "stripInternal": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@bun/proxy": ["./src/index.ts"],
+      "@bun/proxy/*": ["./src/*"],
+      "@proxy/core": ["./src/core/index.ts"],
+      "@proxy/protocols": ["./src/protocols/index.ts"],
+      "@proxy/patterns": ["./src/patterns/index.ts"],
+      "@proxy/security": ["./src/security/index.ts"],
+      "@proxy/monitoring": ["./src/monitoring/index.ts"],
+      "@proxy/caching": ["./src/caching/index.ts"],
+      "@proxy/websocket": ["./src/websocket/index.ts"],
+      "@proxy/utils": ["./src/utils/index.ts"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "types/**/*.d.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "*.config.ts"
+  ]
+}

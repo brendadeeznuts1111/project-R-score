@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FactoryWager Analysis Report</title>
+    <style>
+        body { font-family: monospace; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .risk-high { color: #d32f2f; font-weight: bold; }
+        .risk-medium { color: #f57c00; }
+        .risk-low { color: #388e3c; }
+        .status-active { color: #388e3c; }
+        .status-draft { color: #f57c00; }
+        .status-deprecated { color: #7b1fa2; }
+    </style>
+</head>
+<body>
+    <h1>FactoryWager Configuration Analysis</h1>
+    <p><strong>File:</strong> config.yaml</p>
+    <p><strong>Timestamp:</strong> 2026-02-01T17:48:59.611Z</p>
+    <p><strong>Risk Score:</strong> <span class="risk-low">19/100</span></p>
+
+    <h2>Statistics</h2>
+    <ul>
+        <li>Documents: 1</li>
+        <li>Anchors: 0</li>
+        <li>Aliases: 0</li>
+        <li>Interpolations: 0</li>
+    </ul>
+
+    <h2>Configuration Analysis</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Doc</th>
+                <th>Key</th>
+                <th>Value</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Risk</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td>1</td>
+                    <td>api</td>
+                    <td>Object</td>
+                    <td>object</td>
+                    <td class="status-active">active</td>
+                    <td class="risk-low">0</td>
+                </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>api.registry</td>
+                    <td>Object</td>
+                    <td>object</td>
+                    <td class="status-active">active</td>
+                    <td class="risk-low">0</td>
+                </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>api.registry.token</td>
+                    <td>demo-registry-token-12345678901234567890</td>
+                    <td>string</td>
+                    <td class="status-active">active</td>
+                    <td class="risk-medium">50</td>
+                </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>api.r2</td>
+                    <td>Object</td>
+                    <td>object</td>
+                    <td class="status-active">active</td>
+                    <td class="risk-low">0</td>
+                </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>api.r2.secret</td>
+                    <td>demo-r2-secret-key-123456789012345678901234567890</td>
+                    <td>string</td>
+                    <td class="status-active">active</td>
+                    <td class="risk-medium">50</td>
+                </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>api.domain</td>
+                    <td>Object</td>
+                    <td>object</td>
+                    <td class="status-active">active</td>
+                    <td class="risk-low">0</td>
+                </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>api.domain.cert</td>
+                    <td>demo-ssl-certificate-12345678901234567890123456...</td>
+                    <td>string</td>
+                    <td class="status-active">active</td>
+                    <td class="risk-low">30</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</body>
+</html>

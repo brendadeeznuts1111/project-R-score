@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bun MCP Matrix v2.0 - Tier-1380 Enhanced",
+  "description": "Enhanced schema with versioning, platform matrix, and security scopes for intelligent API routing",
+  "type": "object",
+  "properties": {
+    "term": {
+      "type": "string",
+      "description": "API term identifier",
+      "examples": ["fetch", "Bun.serve", "password"]
+    },
+    "path": {
+      "type": "string",
+      "description": "Documentation path",
+      "examples": ["guides/http/fetch", "api/http", "api/password"]
+    },
+    "fullUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Full documentation URL",
+      "examples": ["https://bun.com/docs/guides/http/fetch"]
+    },
+    "bunMinVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Minimum Bun version required",
+      "examples": ["1.0.0", "1.2.0", "1.3.5"]
+    },
+    "stability": {
+      "type": "string",
+      "enum": ["experimental", "stable", "deprecated", "unstable"],
+      "description": "API stability level",
+      "default": "stable"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["darwin", "linux", "win32"]
+      },
+      "minItems": 1,
+      "description": "Supported platforms",
+      "examples": [["darwin", "linux"], ["darwin", "linux", "win32"]]
+    },
+    "perfBaseline": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "string",
+          "description": "Performance metric type",
+          "examples": ["req/sec", "throughput", "queries/sec", "hash ops/sec"]
+        },
+        "comparison": {
+          "type": "string",
+          "description": "Performance comparison baseline",
+          "examples": ["1.8x node-fetch", "4x Node.js http", "7.9x ioredis"]
+        }
+      },
+      "required": ["metric", "comparison"],
+      "additionalProperties": false
+    },
+    "securityScope": {
+      "type": "object",
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"],
+          "description": "Security classification level"
+        },
+        "requiresRoot": {
+          "type": "boolean",
+          "description": "Whether root privileges are required",
+          "default": false
+        },
+        "zeroTrustEnforced": {
+          "type": "boolean",
+          "description": "Zero-trust policy enforcement",
+          "default": true
+        }
+      },
+      "required": ["classification", "zeroTrustEnforced"],
+      "additionalProperties": false
+    },
+    "changelogFeed": {
+      "type": "string",
+      "format": "uri",
+      "description": "RSS/Atom feed URL for changelog updates",
+      "examples": ["https://bun.sh/blog/rss.xml#tag=fetch"]
+    },
+    "requiredFlags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required CLI flags for the API",
+      "examples": [["--experimental-secrets"], ["--experimental-mcp"]]
+    },
+    "breakingSince": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      },
+      "description": "Versions that introduced breaking changes",
+      "examples": [["1.0.20"], ["1.2.2"]]
+    },
+    "crossRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Related API references",
+      "examples": [["Bun.serve", "Headers", "Request"]]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["runtime", "bundler", "pm", "security", "storage", "network"],
+      "description": "API category for service routing"
+    }
+  },
+  "required": [
+    "term",
+    "path",
+    "fullUrl",
+    "bunMinVersion",
+    "stability",
+    "platforms",
+    "securityScope",
+    "category"
+  ],
+  "additionalProperties": false
+}

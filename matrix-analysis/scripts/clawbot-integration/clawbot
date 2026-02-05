@@ -1,0 +1,6 @@
+#!/bin/bash
+# Legacy clawdbot compatibility shim → redirects to Matrix Agent
+echo "🦞 Clawdbot has been migrated to Matrix Agent"
+echo "   Running: matrix-agent $@"
+echo ""
+exec matrix-agent "$@"

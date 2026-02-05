@@ -1,0 +1,284 @@
+/**
+ * Dashboard Styles
+ * Extracted from dashboard/index.html for Bun CSS bundling
+ * 
+ * Uses Bun's CSS bundler with syntax lowering:
+ * - CSS Nesting
+ * - Color-mix and relative colors
+ * - LAB colors (oklch, lab, lch)
+ * - Logical properties
+ * - Modern selectors (:is, :not, :dir, :lang)
+ * - Math functions (clamp, round)
+ * - Media query ranges
+ * - Modern shorthands and gradients
+ * - light-dark() and system-ui
+ * 
+ * Documentation: https://bun.com/docs/bundler/css
+ */
+
+/* CSS Variables with color-mix and relative colors */
+:root {
+	color-scheme: light dark;
+	
+	/* Base colors using modern notation */
+	--bg-primary: oklch(25% 0.05 250);
+	--bg-secondary: oklch(30% 0.05 250);
+	--bg-tertiary: oklch(35% 0.05 250);
+	--text-primary: oklch(85% 0.02 250);
+	--text-secondary: oklch(65% 0.02 250);
+	--text-muted: oklch(50% 0.02 250);
+	--border-color: oklch(40% 0.05 250);
+	
+	/* NEXUS Theme Colors */
+	--accent-cyan: #00d4ff;
+	--accent-purple: #667eea;
+	--accent-green: #10b981;
+	--accent-red: #ef4444;
+	--accent-yellow: #f59e0b;
+	--accent-blue: #3b82f6;
+	--accent-magenta: #9c27b0;
+	--accent-orange: #ff6b00;
+	
+	/* Color-mix variants for theme variations */
+	--accent-cyan-light: color-mix(in srgb, var(--accent-cyan) 70%, white);
+	--accent-cyan-dark: color-mix(in srgb, var(--accent-cyan) 70%, black);
+	--accent-purple-light: color-mix(in srgb, var(--accent-purple) 70%, white);
+	--accent-purple-dark: color-mix(in srgb, var(--accent-purple) 70%, black);
+	
+	/* Department Colors with relative colors */
+	--dept-api: #00d4ff;
+	--dept-api-light: lch(from var(--dept-api) calc(l + 10%) c h);
+	--dept-api-dark: lch(from var(--dept-api) calc(l - 10%) c h);
+	
+	--dept-arbitrage: #ff1744;
+	--dept-arbitrage-light: lch(from var(--dept-arbitrage) calc(l + 10%) c h);
+	--dept-arbitrage-dark: lch(from var(--dept-arbitrage) calc(l - 10%) c h);
+	
+	--dept-orca: #9c27b0;
+	--dept-dashboard: #667eea;
+	--dept-registry: #ff00ff;
+	--dept-security: #ff6b00;
+	--dept-performance: #00ff88;
+	--dept-docs: #00ff88;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: system-ui, sans-serif;
+	background-color: light-dark(#ffffff, var(--bg-primary));
+	color: light-dark(#333333, var(--text-primary));
+	padding: 20px;
+	line-height: 1.6;
+}
+
+/* Header with double position gradients */
+.header {
+	background: linear-gradient(
+		135deg,
+		var(--accent-purple) 0% 50%,
+		#764ba2 50% 100%
+	);
+	padding-block: 30px;
+	padding-inline: 30px;
+	border-radius: 12px;
+	margin-block-end: 30px;
+	box-shadow: 0 8px 32px rgb(0 0 0 / 0.3);
+	
+	h1 {
+		/* Using clamp() with calc() for responsive typography */
+		font-size: clamp(1.8em, calc(5vw + 1rem), 2.5em);
+		margin-block-end: round(10px, 5px);
+		color: white;
+		
+		:lang(en, fr, de) & {
+			font-weight: 600;
+		}
+	}
+	
+	p {
+		opacity: 0.9;
+		/* Using clamp() with min() for optimal sizing */
+		font-size: clamp(1em, min(2vw, 1.1em), 1.1em);
+	}
+}
+
+.status-bar {
+	display: flex;
+	gap: 15px;
+	margin-block-start: 20px;
+	flex-wrap: wrap;
+}
+
+.status-item {
+	background: rgba(255, 255, 255, 0.1);
+	padding-block: 10px;
+	padding-inline: 20px;
+	border-radius: 8px;
+	backdrop-filter: blur(10px);
+	
+	strong {
+		display: block;
+		margin-block-end: 5px;
+		font-size: 0.9em;
+		opacity: 0.8;
+	}
+}
+
+.grid {
+	display: grid;
+	/* Using clamp() and min() for responsive grid sizing */
+	grid-template-columns: repeat(auto-fit, minmax(min(clamp(300px, 50%, 800px), 100%), 1fr));
+	gap: clamp(15px, 2vw, 20px);
+	margin-block-end: clamp(20px, 3vw, 30px);
+	place-items: start center;
+	
+	@media (width >= 768px) {
+		grid-template-columns: repeat(auto-fit, minmax(max(300px, 50vw), 1fr));
+	}
+}
+
+/* Card with CSS Nesting */
+.card {
+	/* clamp() for responsive sizing */
+	width: clamp(300px, 50%, 800px);
+	font-size: clamp(1rem, 2.5vw, 1.5rem);
+	
+	/* round() for precise values */
+	padding-block: round(24.7px, 5px);
+	padding-inline: round(24.7px, 5px);
+	
+	/* Other math functions */
+	min-width: min(100%, 800px);
+	min-height: max(200px, 50vh);
+	
+	background: var(--bg-secondary);
+	border-radius: 12px;
+	border-inline-start: 4px solid var(--accent-cyan);
+	box-shadow: 0 4px 20px #0000004d;
+	transition: transform 0.2s, box-shadow 0.2s;
+	overflow: hidden auto;
+	
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+	}
+	
+	h2 {
+		color: var(--accent-cyan);
+		margin-block-end: round(15px, 5px);
+		/* Using clamp() with pow() for exponential scaling */
+		font-size: clamp(1.2em, calc(3vw * pow(1.1, 2)), 1.5em);
+		
+		:lang(en, fr, de) & {
+			font-weight: 600;
+		}
+	}
+	
+	.content {
+		color: var(--text-primary);
+	}
+	
+	:dir(rtl) & {
+		text-align: right;
+		border-inline-start: none;
+		border-inline-end: 4px solid var(--accent-cyan);
+	}
+}
+
+/* Modern selectors with :is() and :not() */
+:is(.card, .status-item):not(.disabled, .hidden) {
+	transition: transform 0.2s;
+}
+
+.info-row {
+	display: flex;
+	justify-content: space-between;
+	padding-block: 12px;
+	padding-inline: 0;
+	border-block-end: 1px solid rgba(255, 255, 255, 0.1);
+	margin-inline-start: 0;
+}
+
+.info-label {
+	opacity: 0.7;
+	font-size: 0.9em;
+}
+
+.info-value {
+	font-weight: 600;
+	color: var(--accent-purple);
+}
+
+/* Status badges with nesting */
+.status-badge {
+	display: inline-block;
+	padding-block: 6px;
+	padding-inline: 12px;
+	border-radius: 20px;
+	font-size: 0.85em;
+	font-weight: 600;
+	
+	&.online,
+	&.status-online {
+		background: var(--accent-green);
+		color: white;
+	}
+	
+	&.offline,
+	&.status-offline {
+		background: var(--accent-red);
+		color: white;
+	}
+	
+	&.warning,
+	&.status-warning {
+		background: var(--accent-yellow);
+		color: white;
+	}
+}
+
+/* Department-specific colors with relative colors */
+.dept-api {
+	color: var(--dept-api);
+	
+	&:hover {
+		color: var(--dept-api-light);
+	}
+}
+
+.dept-arbitrage {
+	color: var(--dept-arbitrage);
+	
+	&:hover {
+		color: var(--dept-arbitrage-light);
+	}
+}
+
+.dept-orca {
+	color: var(--dept-orca);
+}
+
+.dept-dashboard {
+	color: var(--dept-dashboard);
+}
+
+.dept-registry {
+	color: var(--dept-registry);
+}
+
+.dept-security {
+	color: var(--dept-security);
+}
+
+.dept-performance {
+	color: var(--dept-performance);
+}
+
+.dept-docs {
+	color: var(--dept-docs);
+}

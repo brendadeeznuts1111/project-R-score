@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotation Heatmap vΨ</title>
+  <style>
+    :root {
+      --cell-size: 8px;
+      --gap: 1px;
+      --grid-width: calc(100 * var(--cell-size) + 99 * var(--gap));
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Courier New", monospace;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      padding: 1rem;
+      overflow: auto;
+    }
+
+    #header {
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    #stats {
+      font-size: 0.85rem;
+      color: #888;
+      font-family: monospace;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(100, var(--cell-size));
+      gap: var(--gap);
+      width: var(--grid-width);
+      margin: 0 auto;
+      background: #111;
+      padding: 0.5rem;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+
+    .cell {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      font-size: 6px;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.1s ease, z-index 0.1s ease;
+      position: relative;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cell:hover {
+      transform: scale(3);
+      z-index: 999;
+      font-size: 10px;
+      border: 1px solid #fff;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    #tooltip {
+      position: fixed;
+      background: rgba(0, 0, 0, 0.95);
+      border: 1px solid #444;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      pointer-events: none;
+      z-index: 10000;
+      display: none;
+      max-width: 300px;
+    }
+
+    #tooltip.show {
+      display: block;
+    }
+
+    #status {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      border: 1px solid #333;
+    }
+
+    #status.connected {
+      border-color: #0f0;
+    }
+
+    #status.disconnected {
+      border-color: #f00;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>🌪️ Rotation Heatmap vΨ</h1>
+    <div id="stats">
+      <span id="cell-count">0</span> cells |
+      <span id="game-count">0</span> games
+    </div>
+  </div>
+
+  <div id="status" class="disconnected">Connecting...</div>
+  <div id="tooltip"></div>
+
+  <div id="grid"></div>
+
+  <script type="module">
+    const grid = document.getElementById("grid");
+    const tooltip = document.getElementById("tooltip");
+    const status = document.getElementById("status");
+    const cellCountEl = document.getElementById("cell-count");
+    const gameCountEl = document.getElementById("game-count");
+
+    const cells = new Map();
+    let ws = null;
+    let reconnectAttempts = 0;
+
+    function connect() {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const host = window.location.hostname;
+      const port = window.location.port || "3003";
+      const wsUrl = `${protocol}//${host}:${port}/ws/rotation-grid`;
+
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        status.textContent = "Connected";
+        status.className = "status connected";
+        reconnectAttempts = 0;
+      };
+
+      ws.onclose = () => {
+        status.textContent = "Disconnected";
+        status.className = "status disconnected";
+        
+        // Reconnect after delay
+        setTimeout(() => {
+          reconnectAttempts++;
+          if (reconnectAttempts < 10) {
+            connect();
+          }
+        }, 1000 * reconnectAttempts);
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const delta = JSON.parse(event.data);
+          
+          for (const { rot, heat, fp, hsl } of delta) {
+            let cell = cells.get(rot);
+            
+            if (!cell) {
+              cell = document.createElement("div");
+              cell.className = "cell";
+              cell.dataset.rot = rot;
+              cell.dataset.fp = fp;
+              
+              // Click handler - drill to rule
+              cell.addEventListener("click", () => {
+                // Navigate to rule detail (would open rule MD file)
+                const rulePath = `rules/${rot}.md`;
+                console.log(`Opening rule: ${rulePath}`);
+                // In production, this would navigate to the rule viewer
+                window.open(`/rule/${rot}`, "_blank");
+              });
+              
+              // Hover handler - show tooltip
+              cell.addEventListener("mouseenter", (e) => {
+                const rect = cell.getBoundingClientRect();
+                tooltip.innerHTML = `
+                  <strong>${rot}</strong><br>
+                  FP: <code>${fp}</code><br>
+                  Heat: ${heat}
+                `;
+                tooltip.style.left = `${rect.left + rect.width / 2}px`;
+                tooltip.style.top = `${rect.top - 40}px`;
+                tooltip.classList.add("show");
+              });
+              
+              cell.addEventListener("mouseleave", () => {
+                tooltip.classList.remove("show");
+              });
+              
+              grid.appendChild(cell);
+              cells.set(rot, cell);
+            }
+            
+            cell.textContent = heat;
+            cell.style.background = hsl;
+            cell.style.color = hsl.includes("hsl(0") || hsl.includes("hsl(60") 
+              ? "#fff" 
+              : "#000";
+            cell.title = `${rot} | FP: ${fp} | Heat: ${heat}`;
+          }
+          
+          // Update stats
+          cellCountEl.textContent = cells.size;
+          gameCountEl.textContent = delta.length;
+        } catch (error) {
+          console.error("Failed to parse delta:", error);
+        }
+      };
+    }
+
+    // Initial connection
+    connect();
+
+    // Health check
+    setInterval(async () => {
+      try {
+        const response = await fetch("/api/grid/health");
+        if (response.ok) {
+          const data = await response.json();
+          status.textContent = `Connected (${data.cachedGames} games)`;
+        }
+      } catch {
+        // Ignore health check errors
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
+

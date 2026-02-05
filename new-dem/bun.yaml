@@ -1,0 +1,263 @@
+# T3-Lattice v3.4 Registry Configuration
+# Bun YAML Configuration File with MCP Integration
+
+# Runtime settings
+runtime:
+  # Enable experimental features for advanced networking and MCP
+  experimental: true
+
+  # Worker configuration for parallel processing
+  workers:
+    max: 8
+    min: 2
+    memory_limit: "512MB"
+    task_timeout: 30000
+
+# HTTP server configuration
+http:
+  # Default headers for all responses
+  headers:
+    X-Powered-By: "T3-Lattice-Registry/3.4"
+    X-Content-Type-Options: "nosniff"
+    X-Frame-Options: "DENY"
+    X-XSS-Protection: "1; mode=block"
+    Referrer-Policy: "strict-origin-when-cross-origin"
+    Permissions-Policy: "geolocation=(), microphone=(), camera=()"
+
+  # Security headers
+  security:
+    csrf: true
+    hsts: true
+    csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+
+# DNS and networking optimization
+networking:
+  # DNS prefetch settings
+  dns:
+    prefetch: true
+    cache_ttl: 300000  # 5 minutes
+    hosts:
+      - "registry.npmjs.org"
+      - "api.github.com"
+      - "bun.sh"
+      - "api.z.ai"  # Zread MCP endpoint
+      - "api.example.com"
+
+  # Connection pooling
+  connection_pool:
+    max_sockets: 256
+    keep_alive: true
+    keep_alive_timeout: 30000
+
+# MCP Configuration
+mcp:
+  # Server settings
+  servers:
+    zread:
+      url: "https://api.z.ai/api/mcp/zread/mcp"
+      timeout: 30000
+      retries: 3
+      cache_ttl: 300000
+
+    t3lattice:
+      type: "stdio"
+      command: "bun"
+      args: ["run", "./src/mcp/t3lattice-server.ts"]
+      restart: true
+
+  # Tool configuration
+  tools:
+    vpin_calculator:
+      cache_ttl: 60000  # 1 minute
+      priority: "high"
+      max_concurrent: 4
+
+    quantum_operations:
+      cache_ttl: 3600000  # 1 hour
+      priority: "medium"
+      max_concurrent: 2
+
+    market_analysis:
+      cache_ttl: 30000  # 30 seconds
+      priority: "high"
+      max_concurrent: 6
+
+    repository_search:
+      cache_ttl: 300000  # 5 minutes
+      priority: "low"
+      max_concurrent: 2
+
+  # Performance optimization
+  performance:
+    cache:
+      enabled: true
+      strategy: "lru"
+      max_size: "500MB"
+
+    parallel:
+      enabled: true
+      max_concurrency: 8
+      queue_size: 1000
+
+# Cookie configuration
+cookies:
+  # Default cookie settings
+  defaults:
+    http_only: true
+    secure: true
+    same_site: "strict"
+    max_age: 86400  # 24 hours
+
+  # Session cookie
+  session:
+    name: "t3_session"
+    path: "/"
+    domain: "localhost"
+
+  # CSRF cookie
+  csrf:
+    name: "t3_csrf"
+    path: "/"
+    http_only: false  # CSRF tokens need to be readable by JavaScript
+
+# Environment-specific overrides
+development:
+  http:
+    security:
+      csrf: false
+      hsts: false
+
+  cookies:
+    defaults:
+      secure: false
+
+  mcp:
+    debug: true
+    hot_reload: true
+
+production:
+  http:
+    headers:
+      Strict-Transport-Security: "max-age=31536000; includeSubDomains"
+
+  cookies:
+    defaults:
+      secure: true
+      same_site: "strict"
+
+  mcp:
+    debug: false
+    cache_aggressive: true
+
+# Monitoring and metrics
+monitoring:
+  enabled: true
+  endpoints:
+    health: "/health"
+    metrics: "/api/metrics"
+    dns_stats: "/api/dns/stats"
+    mcp_health: "/api/mcp/health"
+    mcp_metrics: "/api/mcp/metrics"
+
+  # Performance thresholds
+  thresholds:
+    response_time_p99: 2000  # 2 seconds
+    error_rate: 0.01  # 1%
+    memory_usage: 0.8  # 80%
+    mcp_response_time_p99: 5000  # 5 seconds for MCP operations
+
+# Logging configuration
+logging:
+  level: "info"
+  format: "json"
+  outputs:
+    - "console"
+    - "file:./logs/lattice.log"
+    - "file:./logs/mcp.log"
+
+  # MCP-specific logging
+  mcp:
+    level: "debug"
+    include_requests: true
+    include_responses: true
+    include_performance: true
+
+# Feature flags
+features:
+  enterprise: true
+  websocket: true
+  dns_prefetch: true
+  security_audit: true
+  metrics_collection: true
+  mcp_integration: true
+  vpin_calculations: true
+  quantum_operations: true
+  worker_parallelism: true
+  redis_streams: true
+
+# Performance optimization
+performance:
+  # Memory optimization
+  memory:
+    gc: "aggressive"
+    max_heap: "2GB"
+    stack_size: "64MB"
+    pooling: true
+
+  # CPU optimization
+  cpu:
+    max_workers: 8
+    affinity: true
+    priority: "high"
+
+  # I/O optimization
+  io:
+    async_file_operations: true
+    buffer_size: "64KB"
+    max_open_files: 1024
+
+# Security configuration
+security:
+  # API key management
+  api_keys:
+    zread: "719ee5bf31e649e4b94c5178ee9de577.GpOa1gomVrqac8Hv"
+    rotation_interval: "monthly"
+
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute:
+      vpin: 1000
+      quantum: 100
+      market: 500
+      repository: 200
+
+  # Access control
+  access_control:
+    allowed_origins:
+      - "http://localhost:3000"
+      - "https://t3-lattice.local"
+    allowed_methods: ["GET", "POST", "PUT", "DELETE"]
+    max_request_size: "10MB"
+
+# Cache configuration
+cache:
+  # L1 cache (in-memory)
+  l1:
+    type: "memory"
+    max_size: "100MB"
+    ttl: 300000  # 5 minutes
+
+  # L2 cache (disk)
+  l2:
+    type: "disk"
+    path: "./cache"
+    max_size: "1GB"
+    ttl: 3600000  # 1 hour
+
+  # Cache strategies by content type
+  strategies:
+    vpin_calculations: "l1"
+    quantum_operations: "l2"
+    market_data: "l1"
+    repository_data: "l2"

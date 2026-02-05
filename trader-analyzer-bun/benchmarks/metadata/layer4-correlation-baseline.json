@@ -1,0 +1,24 @@
+{
+  "id": "layer4-correlation-baseline",
+  "name": "Layer4 Correlation Detection Baseline",
+  "description": "Baseline performance benchmark for Layer4 cross-sport correlation detection",
+  "createdAt": "2025-12-08T19:53:18.590Z",
+  "gitCommit": "61ed139762ccbeb69d4fb46e03ff4f19427c2b10",
+  "gitBranch": "merge/workspace-onboarding-to-main",
+  "system": {
+    "os": "darwin",
+    "arch": "arm64",
+    "nodeVersion": "bun/1.3.4"
+  },
+  "profile": {
+    "type": "test-execution",
+    "file": null,
+    "note": "Baseline created from test execution metrics. CPU profiling to be added."
+  },
+  "tags": [
+    "layer4",
+    "correlation",
+    "baseline"
+  ],
+  "relatedBenchmarks": []
+}

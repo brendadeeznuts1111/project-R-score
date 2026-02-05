@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.build-cache/
+packages/
+**/bin/
+.debug/
+recordings/
+
+# Backup files
+*.tar.gz
+*.crc32
+
+# Environment files (contains secrets)
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log

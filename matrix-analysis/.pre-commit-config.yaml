@@ -1,0 +1,47 @@
+# Pre-commit configuration - FactoryWager Unicode Governance v4.4
+# Ensures Unicode governance compliance before commits
+
+repos:
+  - repo: local
+    hooks:
+      - id: unicode-rendering-test
+        name: "Unicode width & alignment smoke test (CJK + emoji)"
+        entry: bun run .factory-wager/scripts/unicode-smoke-test.ts
+        language: system
+        files: \.(ts|tsx|md|yaml)$
+        pass_filenames: false
+
+      - id: unicode-governance-validation
+        name: "Unicode governance configuration validation"
+        entry: bun run .factory-wager/scripts/unicode-smoke-test.ts
+        language: system
+        files: bun\.yaml
+        pass_filenames: false
+
+      - id: visual-regression-test
+        name: "Visual regression check for tables & reports"
+        entry: bun run .factory-wager/scripts/visual-regression.ts
+        language: system
+        files: \.(ts|tsx|md|yaml)$
+        pass_filenames: false
+
+      - id: responsive-layout-test
+        name: "Responsive layout engine validation"
+        entry: bun run .factory-wager/scripts/responsive-layout-engine.ts
+        language: system
+        files: \.(ts|tsx|yaml)$
+        pass_filenames: false
+
+      - id: sixel-graphics-test
+        name: "Sixel graphics support validation"
+        entry: bun run .factory-wager/scripts/sixel-graphics.ts
+        language: system
+        files: \.(ts|tsx|yaml)$
+        pass_filenames: false
+
+      - id: factory-wager-rules-check
+        name: "FactoryWager GOV header validation"
+        entry: bun run .factory-wager/scripts/validate-gov-headers.ts
+        language: system
+        files: \.(md|ts)$
+        pass_filenames: false

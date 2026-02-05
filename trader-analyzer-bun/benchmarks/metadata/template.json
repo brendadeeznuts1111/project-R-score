@@ -1,0 +1,28 @@
+{
+  "id": "benchmark-id",
+  "name": "Benchmark Name",
+  "description": "What this benchmark measures and why it's important",
+  "createdAt": "2025-01-15T10:30:00Z",
+  "gitCommit": "abc123def456",
+  "gitBranch": "main",
+  "system": {
+    "os": "darwin",
+    "arch": "arm64",
+    "nodeVersion": "bun/1.0.0",
+    "cpu": "Apple M1",
+    "memory": "16GB"
+  },
+  "profile": {
+    "type": "cpu",
+    "file": "cpu-profiles/example.cpuprofile",
+    "durationMs": 0,
+    "sampleCount": 0
+  },
+  "analysis": {
+    "file": "analysis/example_analysis.json",
+    "hotspots": [],
+    "recommendations": []
+  },
+  "tags": ["production", "feature-name", "version"],
+  "relatedBenchmarks": []
+}

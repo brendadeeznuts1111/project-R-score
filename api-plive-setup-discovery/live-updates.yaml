@@ -1,0 +1,14 @@
+# Live Updates Configuration
+live:
+  updates:
+    enabled: true
+    interval: "500ms"
+    
+  websocket:
+    url: "ws://localhost:8080"
+    reconnect: true
+    
+  features:
+    real_time: true
+    compression: "zstd"
+

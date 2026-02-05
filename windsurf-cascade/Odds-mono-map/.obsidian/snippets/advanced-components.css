@@ -1,0 +1,609 @@
+/* 🎯 Advanced Components - Enhanced Design System */
+
+/* ===== 📊 DASHBOARD COMPONENTS ===== */
+
+/* Metric Cards */
+.metric-card {
+    background: linear-gradient(135deg, var(--odds-bg-primary) 0%, var(--odds-bg-secondary) 100%);
+    border: 1px solid var(--odds-border-light);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--odds-primary), var(--odds-secondary));
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15);
+}
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--odds-primary);
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: var(--odds-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-change {
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.metric-change.positive {
+    color: var(--odds-success);
+}
+
+.metric-change.negative {
+    color: var(--odds-error);
+}
+
+/* Status Grid */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.status-item {
+    background: var(--odds-bg-secondary);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.status-item:hover {
+    background: var(--odds-bg-tertiary);
+    transform: scale(1.02);
+}
+
+.status-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.status-text {
+    font-weight: 600;
+    color: var(--odds-text-primary);
+}
+
+.status-subtext {
+    font-size: 0.875rem;
+    color: var(--odds-text-secondary);
+}
+
+/* ===== 🎯 KANBAN BOARD ===== */
+
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.kanban-column {
+    background: var(--odds-bg-secondary);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    min-height: 400px;
+}
+
+.kanban-header {
+    font-weight: 600;
+    color: var(--odds-text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--odds-border-light);
+}
+
+.kanban-column.todo .kanban-header {
+    border-bottom-color: var(--odds-gray-400);
+}
+
+.kanban-column.in-progress .kanban-header {
+    border-bottom-color: var(--odds-warning);
+}
+
+.kanban-column.done .kanban-header {
+    border-bottom-color: var(--odds-success);
+}
+
+.kanban-card {
+    background: var(--odds-bg-primary);
+    border: 1px solid var(--odds-border-light);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.kanban-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.kanban-title {
+    font-weight: 500;
+    color: var(--odds-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.kanban-meta {
+    font-size: 0.75rem;
+    color: var(--odds-text-muted);
+}
+
+/* ===== 📊 TIMELINE COMPONENTS ===== */
+
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 2rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--odds-border-medium);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--odds-primary);
+    border: 2px solid var(--odds-bg-primary);
+}
+
+.timeline-item.completed::before {
+    background: var(--odds-success);
+}
+
+.timeline-item.current::before {
+    background: var(--odds-warning);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+}
+
+.timeline-date {
+    font-size: 0.875rem;
+    color: var(--odds-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.timeline-title {
+    font-weight: 600;
+    color: var(--odds-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.timeline-description {
+    color: var(--odds-text-secondary);
+    line-height: 1.6;
+}
+
+/* ===== 🎯 PROGRESS COMPONENTS ===== */
+
+.progress-ring {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    margin: 1rem auto;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+.progress-ring-bg {
+    stroke: var(--odds-gray-200);
+}
+
+.progress-ring-fill {
+    stroke: var(--odds-primary);
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--odds-primary);
+}
+
+/* Multi-step Progress */
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    height: 2px;
+    background: var(--odds-gray-200);
+    z-index: 0;
+}
+
+.progress-step {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    flex: 1;
+}
+
+.progress-step-circle {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--odds-gray-200);
+    border: 2px solid var(--odds-bg-primary);
+    margin: 0 auto 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--odds-text-muted);
+}
+
+.progress-step.completed .progress-step-circle {
+    background: var(--odds-success);
+    color: white;
+}
+
+.progress-step.active .progress-step-circle {
+    background: var(--odds-primary);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+.progress-step-label {
+    font-size: 0.75rem;
+    color: var(--odds-text-secondary);
+    max-width: 100px;
+    margin: 0 auto;
+}
+
+/* ===== 🎨 CALLOUT VARIATIONS ===== */
+
+.callout.feature {
+    border-left-color: var(--odds-secondary);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(34, 211, 238, 0.05) 100%);
+}
+
+.callout.tip {
+    border-left-color: var(--odds-success);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+.callout.warning {
+    border-left-color: var(--odds-warning);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(245, 158, 11, 0.05) 100%);
+}
+
+.callout.error {
+    border-left-color: var(--odds-error);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(239, 68, 68, 0.05) 100%);
+}
+
+.callout.question {
+    border-left-color: var(--odds-primary);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(99, 102, 241, 0.05) 100%);
+}
+
+/* ===== 📊 DATA VISUALIZATION ===== */
+
+.chart-container {
+    background: var(--odds-bg-primary);
+    border: 1px solid var(--odds-border-light);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.chart-title {
+    font-weight: 600;
+    color: var(--odds-text-primary);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 200px;
+    padding: 1rem 0;
+}
+
+.bar {
+    flex: 1;
+    margin: 0 0.25rem;
+    background: linear-gradient(to top, var(--odds-primary), var(--odds-primary-light));
+    border-radius: 0.25rem 0.25rem 0 0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.bar:hover {
+    opacity: 0.8;
+    transform: translateY(-4px);
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: var(--odds-text-secondary);
+    white-space: nowrap;
+}
+
+.bar-value {
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--odds-primary);
+}
+
+/* ===== 🎯 INTERACTIVE COMPONENTS ===== */
+
+.toggle-switch {
+    position: relative;
+    width: 3rem;
+    height: 1.5rem;
+    background: var(--odds-gray-300);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.toggle-switch.active {
+    background: var(--odds-primary);
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 0.125rem;
+    left: 0.125rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.active::after {
+    transform: translateX(1.5rem);
+}
+
+/* Badge System */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badge-primary {
+    background: var(--odds-primary);
+    color: white;
+}
+
+.badge-success {
+    background: var(--odds-success);
+    color: white;
+}
+
+.badge-warning {
+    background: var(--odds-warning);
+    color: var(--odds-gray-900);
+}
+
+.badge-error {
+    background: var(--odds-error);
+    color: white;
+}
+
+.badge-outline {
+    background: transparent;
+    border: 1px solid var(--odds-border-medium);
+    color: var(--odds-text-secondary);
+}
+
+/* ===== 🎨 LOADING STATES ===== */
+
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--odds-gray-200);
+    border-top: 2px solid var(--odds-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, var(--odds-gray-200) 25%, var(--odds-gray-100) 50%, var(--odds-gray-200) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 0.25rem;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-title {
+    height: 1.5rem;
+    width: 60%;
+    margin-bottom: 1rem;
+}
+
+/* ===== 📱 RESPONSIVE ENHANCEMENTS ===== */
+
+@media (max-width: 768px) {
+    .kanban-board {
+        grid-template-columns: 1fr;
+    }
+
+    .status-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .progress-steps {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .progress-steps::before {
+        top: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+        right: auto;
+        width: 2px;
+        height: auto;
+    }
+
+    .metric-card {
+        padding: 1rem;
+    }
+
+    .metric-value {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline {
+        padding-left: 1.5rem;
+    }
+
+    .timeline-item::before {
+        left: -1rem;
+    }
+}
+
+/* ===== 🌙 DARK MODE ENHANCEMENTS ===== */
+
+.theme-dark .metric-card {
+    background: linear-gradient(135deg, var(--odds-bg-primary) 0%, var(--odds-bg-secondary) 100%);
+}
+
+.theme-dark .kanban-column {
+    background: var(--odds-bg-tertiary);
+}
+
+.theme-dark .kanban-card {
+    background: var(--odds-bg-secondary);
+}
+
+.theme-dark .timeline::before {
+    background: var(--odds-gray-600);
+}
+
+.theme-dark .progress-steps::before {
+    background: var(--odds-gray-600);
+}
+
+/* ===== 🎯 PRINT STYLES ===== */
+
+@media print {
+
+    .kanban-board,
+    .status-grid,
+    .progress-steps {
+        display: block;
+    }
+
+    .kanban-column,
+    .status-item {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+
+    .loading-spinner {
+        display: none;
+    }
+}

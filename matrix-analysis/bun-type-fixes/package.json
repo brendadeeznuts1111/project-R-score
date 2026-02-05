@@ -1,0 +1,45 @@
+{
+  "name": "bun-type-fixes",
+  "version": "1.0.0",
+  "description": "TypeScript type fixes verification for Bun v1.3.6",
+  "type": "module",
+  "main": "./src/index.ts",
+  "bin": {
+    "bun-type-fixes": "./bin/bun-type-fixes"
+  },
+  "scripts": {
+    "setup": "bun run scripts/setup-path.ts",
+    "verify": "bun run cli.ts verify --all",
+    "verify:autoload": "bun run cli.ts verify --autoload",
+    "verify:sqlite": "bun run cli.ts verify --sqlite",
+    "verify:filesink": "bun run cli.ts verify --filesink",
+    "verify:integration": "bun run cli.ts verify --integration",
+    "test": "bun test",
+    "dev": "bun --watch cli.ts verify --all -v",
+    "build": "bun run cli.ts build",
+    "clean": "bun run cli.ts clean",
+    "start": "bun run cli.ts verify --all -v",
+    "path": "echo $BUN_TYPE_FIXES_BIN",
+    "env": "echo 'BUN_TYPE_FIXES_BIN='$BUN_TYPE_FIXES_BIN && echo 'BUN_TYPE_FIXES_ROOT='$BUN_TYPE_FIXES_ROOT"
+  },
+  "dependencies": {
+    "bun-types": "latest",
+    "commander": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "latest"
+  },
+  "engines": {
+    "bun": ">=1.3.6"
+  },
+  "keywords": [
+    "bun",
+    "typescript",
+    "type-fixes",
+    "verification",
+    "cli"
+  ],
+  "author": "Bun Type Fixes Team",
+  "license": "MIT"
+}

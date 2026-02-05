@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Integration Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .response {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Legitimate API Integration Demo</h1>
+        <p style="text-align: center; color: #666;">Production-ready error handling & retry patterns</p>
+
+        <!-- GitHub API Demo -->
+        <div class="demo-section">
+            <h2>🐙 GitHub API Integration</h2>
+            <p>Fetch user data with proper error handling and retry logic.</p>
+            
+            <label>GitHub Username:</label>
+            <input type="text" id="githubUsername" placeholder="Enter username (e.g., octocat)" value="octocat">
+            
+            <button onclick="fetchGitHubUser()">Fetch User Data</button>
+            <button onclick="fetchGitHubRepos()">Fetch Repositories</button>
+            
+            <div id="githubStatus"></div>
+            <div id="githubResponse" class="response">Click a button to test the API...</div>
+        </div>
+
+        <!-- Error Handling Demo -->
+        <div class="demo-section">
+            <h2>🛠️ Error Handling Patterns</h2>
+            <p>Demonstrates retry logic and error classification.</p>
+            
+            <button onclick="testSuccess()">Test Success Case</button>
+            <button onclick="testRetryableError()">Test Retryable Error</button>
+            <button onclick="testFatalError()">Test Fatal Error</button>
+            
+            <div id="errorStatus"></div>
+            <div id="errorResponse" class="response">Click a button to test error handling...</div>
+        </div>
+
+        <!-- Code Example -->
+        <div class="demo-section">
+            <h2>📚 Example Implementation</h2>
+            <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
+class APIClient {
+  async request(endpoint) {
+    return this.executeWithRetry(async () => {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw this.createAPIError(response);
+      }
+      return response.json();
+    }, endpoint);
+  }
+
+  async executeWithRetry(operation, name) {
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        if (!error.retryable || attempt === this.maxRetries) {
+          throw error;
+        }
+        const delay = this.baseDelay * Math.pow(2, attempt - 1);
+        console.log(`Retry ${attempt} in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+}
+            </pre>
+        </div>
+
+        <!-- Legitimate APIs List -->
+        <div class="demo-section">
+            <h2>✅ Legitimate APIs You Can Use</h2>
+            <ul>
+                <li>🐙 <strong>GitHub API</strong> - Repository management, user data</li>
+                <li>💳 <strong>Stripe API</strong> - Payment processing</li>
+                <li>📧 <strong>SendGrid API</strong> - Email services</li>
+                <li>🌤️ <strong>OpenWeather API</strong> - Weather data</li>
+                <li>📊 <strong>Google Analytics API</strong> - Analytics data</li>
+                <li>💬 <strong>Twilio API</strong> - SMS and messaging</li>
+                <li>☁️ <strong>AWS SDK</strong> - Cloud services</li>
+                <li>🗺️ <strong>Google Maps API</strong> - Maps and location services</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Simple API Client implementation
+        class APIClient {
+            constructor(maxRetries = 3, baseDelay = 1000) {
+                this.maxRetries = maxRetries;
+                this.baseDelay = baseDelay;
+            }
+
+            async request(url, options = {}) {
+                return this.executeWithRetry(async () => {
+                    const response = await fetch(url, {
+                        ...options,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...options.headers,
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw this.createAPIError(response);
+                    }
+
+                    return response.json();
+                }, url);
+            }
+
+            async executeWithRetry(operation, operationName) {
+                for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+                    try {
+                        return await operation();
+                    } catch (error) {
+                        if (!error.retryable || attempt === this.maxRetries) {
+                            throw error;
+                        }
+
+                        const delay = this.baseDelay * Math.pow(2, attempt - 1);
+                        console.log(`Attempt ${attempt} failed for ${operationName}, retrying in ${delay}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+                throw new Error('Max retries exceeded');
+            }
+
+            createAPIError(response) {
+                const statusCode = response.status;
+                let retryable = false;
+                let fallbackAvailable = false;
+
+                switch (statusCode) {
+                    case 429: // Rate limited
+                        retryable = true;
+                        fallbackAvailable = true;
+                        break;
+                    case 500: // Server error
+                    case 502: // Bad gateway
+                    case 503: // Service unavailable
+                        retryable = true;
+                        fallbackAvailable = true;
+                        break;
+                    case 401: // Unauthorized
+                    case 403: // Forbidden
+                        retryable = false;
+                        fallbackAvailable = false;
+                        break;
+                    default:
+                        retryable = false;
+                        fallbackAvailable = true;
+                }
+
+                const error = new Error(`API Error: ${statusCode}`);
+                error.statusCode = statusCode;
+                error.retryable = retryable;
+                error.fallbackAvailable = fallbackAvailable;
+                return error;
+            }
+        }
+
+        // Initialize client
+        const apiClient = new APIClient();
+
+        // Utility functions
+        function updateStatus(elementId, message, type = 'success') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function updateResponse(elementId, data) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // GitHub API functions
+        async function fetchGitHubUser() {
+            const username = document.getElementById('githubUsername').value;
+            if (!username) {
+                updateStatus('githubStatus', 'Please enter a username', 'warning');
+                return;
+            }
+
+            updateStatus('githubStatus', 'Fetching user data...', 'success');
+            updateResponse('githubResponse', 'Loading...');
+
+            try {
+                const user = await apiClient.request(`https://api.github.com/users/${username}`);
+                updateStatus('githubStatus', `✅ Successfully fetched ${user.login}`, 'success');
+                updateResponse('githubResponse', {
+                    login: user.login,
+                    name: user.name,
+                    public_repos: user.public_repos,
+                    followers: user.followers,
+                    created_at: user.created_at
+                });
+            } catch (error) {
+                updateStatus('githubStatus', `❌ Error: ${error.message}`, 'error');
+                updateResponse('githubResponse', {
+                    error: error.message,
+                    retryable: error.retryable,
+                    statusCode: error.statusCode
+                });
+            }
+        }
+
+        async function fetchGitHubRepos() {
+            const username = document.getElementById('githubUsername').value;
+            if (!username) {
+                updateStatus('githubStatus', 'Please enter a username', 'warning');
+                return;
+            }
+
+            updateStatus('githubStatus', 'Fetching repositories...', 'success');
+            updateResponse('githubResponse', 'Loading...');
+
+            try {
+                const repos = await apiClient.request(`https://api.github.com/users/${username}/repos?per_page=5`);
+                updateStatus('githubStatus', `✅ Found ${repos.length} repositories`, 'success');
+                updateResponse('githubResponse', repos.map(repo => ({
+                    name: repo.name,
+                    stars: repo.stargazers_count,
+                    language: repo.language,
+                    updated_at: repo.updated_at
+                })));
+            } catch (error) {
+                updateStatus('githubStatus', `❌ Error: ${error.message}`, 'error');
+                updateResponse('githubResponse', {
+                    error: error.message,
+                    retryable: error.retryable,
+                    statusCode: error.statusCode
+                });
+            }
+        }
+
+        // Error handling tests
+        async function testSuccess() {
+            updateStatus('errorStatus', 'Testing success case...', 'success');
+            updateResponse('errorResponse', 'Loading...');
+
+            try {
+                // Simulate successful API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const result = { status: 'success', data: 'API call successful!' };
+                updateStatus('errorStatus', '✅ Success case completed', 'success');
+                updateResponse('errorResponse', result);
+            } catch (error) {
+                updateStatus('errorStatus', `❌ Unexpected error: ${error.message}`, 'error');
+                updateResponse('errorResponse', error);
+            }
+        }
+
+        async function testRetryableError() {
+            updateStatus('errorStatus', 'Testing retryable error (will retry 3 times)...', 'warning');
+            updateResponse('errorResponse', 'Loading...');
+
+            let attempt = 0;
+            const maxAttempts = 3;
+
+            async function failingOperation() {
+                attempt++;
+                if (attempt < maxAttempts) {
+                    throw {
+                        message: `Simulated network error (attempt ${attempt})`,
+                        retryable: true,
+                        statusCode: 503
+                    };
+                }
+                return { status: 'success', data: 'Finally succeeded after retries!' };
+            }
+
+            try {
+                const result = await apiClient.executeWithRetry(failingOperation, 'test-operation');
+                updateStatus('errorStatus', '✅ Retry logic worked! Succeeded after retries', 'success');
+                updateResponse('errorResponse', result);
+            } catch (error) {
+                updateStatus('errorStatus', `❌ All retries failed: ${error.message}`, 'error');
+                updateResponse('errorResponse', error);
+            }
+        }
+
+        async function testFatalError() {
+            updateStatus('errorStatus', 'Testing fatal error (no retry)...', 'error');
+            updateResponse('errorResponse', 'Loading...');
+
+            try {
+                throw {
+                    message: 'Authentication failed - cannot retry',
+                    retryable: false,
+                    statusCode: 401,
+                    fallbackAvailable: false
+                };
+            } catch (error) {
+                updateStatus('errorStatus', '❌ Fatal error - no retry attempted', 'error');
+                updateResponse('errorResponse', {
+                    error: error.message,
+                    retryable: error.retryable,
+                    statusCode: error.statusCode,
+                    fallbackAvailable: error.fallbackAvailable,
+                    note: 'Fatal errors should not be retried'
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatus('githubStatus', 'Ready to test GitHub API', 'success');
+            updateStatus('errorStatus', 'Ready to test error handling', 'success');
+        });
+    </script>
+</body>
+</html>

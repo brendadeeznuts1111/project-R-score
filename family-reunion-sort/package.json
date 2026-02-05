@@ -1,0 +1,34 @@
+{
+  "name": "bun-react-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot src/index.ts",
+    "build": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
+    "start": "NODE_ENV=production bun src/index.ts",
+    "security:audit": "bun scripts/security-audit.ts",
+    "performance:benchmark": "bun scripts/performance-benchmark.ts",
+    "test:websocket": "bun scripts/websocket-security-test.ts",
+    "test:file-integrity": "bun scripts/file-integrity-test.ts",
+    "upgrade:bun": "bun upgrade && bun run security:audit && bun run performance:benchmark"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "@types/bun": "latest"
+  },
+  "author": "mike.hunt@factory.wager.com",
+  "license": "MIT",
+  "description": "Bun-native React template with HTML imports, WebSocket support, and HMR",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

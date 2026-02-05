@@ -1,0 +1,23 @@
+{
+  "name": "trader-analyzer-bench",
+  "type": "module",
+  "scripts": {
+    "generate": "bun run generate-sample-data.ts",
+    "csv": "bun run csv-parse.ts",
+    "position": "bun run position-calc.ts",
+    "sqlite": "bun run sqlite.ts",
+    "bun-sql": "bun run bun-sql.ts",
+    "binary": "bun run binary-csv.ts",
+    "binary-manifest": "bun run binary-manifest.ts",
+    "http": "bun run http-server.ts",
+    "fetch": "bun run fetch.ts",
+    "telegram": "bun run telegram.ts",
+    "correlation": "bun run correlation-engine.ts",
+    "error-normalization": "bun run error-normalization.ts",
+    "all": "bun run csv && bun run position && bun run sqlite && bun run bun-sql"
+  },
+  "dependencies": {
+    "mitata": "^1.0.34",
+    "csv-parse": "^6.1.0"
+  }
+}

@@ -1,0 +1,84 @@
+name: 📦 Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Run tests
+        run: bun test
+
+  build:
+    name: Build Binaries
+    needs: test
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux-x64
+            output: kimi-linux-x64
+          - os: macos-latest
+            target: darwin-arm64
+            output: kimi-darwin-arm64
+          - os: macos-13
+            target: darwin-x64
+            output: kimi-darwin-x64
+          - os: windows-latest
+            target: windows-x64
+            output: kimi-windows-x64.exe
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Build binary
+        run: |
+          bun build ./src/cli/kimi-cli.ts --compile --target bun-${{ matrix.target }} --outfile ./dist/${{ matrix.output }}
+      
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.output }}
+          path: ./dist/${{ matrix.output }}
+          retention-days: 30
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist
+          pattern: kimi-*
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./dist/**/*
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, '-alpha') || contains(github.ref, '-beta') || contains(github.ref, '-rc') }}

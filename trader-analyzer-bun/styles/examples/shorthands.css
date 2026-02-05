@@ -1,0 +1,119 @@
+/**
+ * Modern Shorthands Examples
+ * 
+ * CSS has introduced several modern shorthand properties that improve
+ * code readability. Bun's CSS bundler converts them to longhand equivalents.
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ */
+
+/* ==========================================================================
+   Place Properties
+   ========================================================================== */
+
+.flex-container {
+	/* Shorthand for align-items and justify-items */
+	place-items: center start;
+	
+	/* Shorthand for align-content and justify-content */
+	place-content: space-between center;
+	
+	/* Bun converts to:
+	 * align-items: center;
+	 * justify-items: start;
+	 * align-content: space-between;
+	 * justify-content: center;
+	 */
+}
+
+.grid-item {
+	/* Shorthand for align-self and justify-self */
+	place-self: end center;
+	
+	/* Bun converts to:
+	 * align-self: end;
+	 * justify-self: center;
+	 */
+}
+
+/* ==========================================================================
+   Two-Value Overflow
+   ========================================================================== */
+
+.content-box {
+	/* First value for horizontal, second for vertical */
+	overflow: hidden auto;
+	
+	/* Bun converts to:
+	 * overflow-x: hidden;
+	 * overflow-y: auto;
+	 */
+}
+
+.scrollable {
+	overflow: scroll hidden;
+}
+
+.hidden-vertical {
+	overflow: visible hidden;
+}
+
+/* ==========================================================================
+   Enhanced Text Decoration
+   ========================================================================== */
+
+.fancy-link {
+	/* Combines multiple text decoration properties */
+	text-decoration: underline dotted blue 2px;
+	
+	/* Bun converts to:
+	 * text-decoration-line: underline;
+	 * text-decoration-style: dotted;
+	 * text-decoration-color: blue;
+	 * text-decoration-thickness: 2px;
+	 */
+}
+
+.underlined {
+	text-decoration: underline wavy var(--accent-cyan) 3px;
+}
+
+.strikethrough {
+	text-decoration: line-through solid var(--color-error) 1px;
+}
+
+/* ==========================================================================
+   Two-Value Display
+   ========================================================================== */
+
+.component {
+	/* Outer display type + inner display type */
+	display: inline flex;
+	
+	/* Bun converts to:
+	 * display: inline-flex;
+	 */
+}
+
+.inline-grid {
+	display: inline grid;
+}
+
+.block-flex {
+	display: block flex;
+}
+
+/* ==========================================================================
+   Combined Examples
+   ========================================================================== */
+
+.modern-layout {
+	display: grid;
+	place-items: center start;
+	place-content: space-between center;
+	overflow: hidden auto;
+	
+	.modern-link {
+		text-decoration: underline wavy var(--accent-cyan) 2px;
+	}
+}

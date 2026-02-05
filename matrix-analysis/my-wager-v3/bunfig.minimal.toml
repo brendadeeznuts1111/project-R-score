@@ -1,0 +1,9 @@
+# Minimal bunfig.toml for Tier-1380 development
+# Optimized for <1ms parse time
+
+[test]
+# Only essential test config
+root = "src"
+
+# Coverage disabled by default for speed
+coverage = false

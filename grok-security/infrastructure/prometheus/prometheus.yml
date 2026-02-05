@@ -1,0 +1,51 @@
+# [PROMETHEUS][HEADSCALE][MONITORING]{OBSERVABILITY}
+# Prometheus configuration for Headscale metrics
+# Used with monitoring profile: docker-compose --profile monitoring up
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: "headscale-monitor"
+
+# ===== Alerting =====
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# ===== Rule Files =====
+rule_files: []
+
+# ===== Port Configuration =====
+# Use environment variables to override defaults
+# PROMETHEUS_PORT=9090, HEADSCALE_METRICS_PORT=9090, NODE_EXPORTER_PORT=9100, DOCKER_METRICS_PORT=9323
+ports:
+  prometheus: ${PROMETHEUS_PORT:-9090}
+  headscale_metrics: ${HEADSCALE_METRICS_PORT:-9090}
+  node_exporter: ${NODE_EXPORTER_PORT:-9100}
+  docker_metrics: ${DOCKER_METRICS_PORT:-9323}
+
+# ===== Scrape Configs =====
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:${PROMETHEUS_PORT:-9090}"]
+
+  # Headscale metrics
+  - job_name: "headscale"
+    static_configs:
+      - targets: ["headscale:${HEADSCALE_METRICS_PORT:-9090}"]
+    metrics_path: /metrics
+    scheme: http
+
+  # Node exporter (if running)
+  - job_name: "node"
+    static_configs:
+      - targets: ["host.docker.internal:${NODE_EXPORTER_PORT:-9100}"]
+
+  # Docker metrics (if configured)
+  - job_name: "docker"
+    static_configs:
+      - targets: ["host.docker.internal:${DOCKER_METRICS_PORT:-9323}"]

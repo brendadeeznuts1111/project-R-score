@@ -1,0 +1,220 @@
+# Registry-Powered-MCP v2.4.1 Hardened Baseline Configuration
+# Native TOML Ingressor - Zero-latency tool discovery and routing
+
+[lattice]
+version = "2.4.1"
+tier = "hardened"
+runtime = "bun-1.3.6_STABLE"
+global_pops = 300
+
+[lattice.performance]
+bundle_size_kb = 9.64
+p99_response_ms = 10.8
+cold_start_ms = 0
+search_acceleration = "SIMD-ES2023"
+
+[lattice.security]
+profile = "Strict-Hardened"
+rfc_compliance = 6265
+cookie_partitioning = true
+http_only = true
+
+# MCP Server Registry
+# Define available MCP servers and their transport configurations
+
+[[servers]]
+name = "core-runtime"
+description = "Core MCP runtime primitives"
+protocol = "workspace"
+transport = "stdio"
+command = "bun"
+args = ["run", "servers/core-runtime.ts"]
+enabled = true
+
+[[servers]]
+name = "filesystem"
+description = "Filesystem operations MCP server"
+protocol = "stdio"
+transport = "stdio"
+command = "bun"
+args = ["run", "servers/filesystem.ts"]
+enabled = true
+
+[[servers]]
+name = "web-tools"
+description = "Web scraping and HTTP tools"
+protocol = "http"
+transport = "sse"
+endpoint = "http://localhost:3001/mcp"
+enabled = false
+
+[[servers]]
+name = "workflow"
+description = "Workflow execution engine"
+protocol = "workspace"
+transport = "stdio"
+command = "bun"
+args = ["run", "servers/workflow.ts"]
+enabled = true
+
+# Lattice Route Compilation
+# URLPattern-based routing for tool/resource discovery
+
+[[routes]]
+pattern = "/mcp/registry/:scope?/:name"
+target = "core-runtime"
+method = "GET"
+description = "Registry package lookup"
+
+[[routes]]
+pattern = "/mcp/tools/fs/*"
+target = "filesystem"
+method = "*"
+description = "Filesystem tool routing"
+
+[[routes]]
+pattern = "/mcp/tools/web/*"
+target = "web-tools"
+method = "*"
+description = "Web tools routing"
+enabled = false
+
+[[routes]]
+pattern = "/mcp/health"
+target = "core-runtime"
+method = "GET"
+description = "Health check endpoint"
+
+[[routes]]
+pattern = "/mcp/metrics"
+target = "core-runtime"
+method = "GET"
+description = "Performance metrics"
+
+[[routes]]
+pattern = "/mcp/workflow/:id"
+target = "workflow"
+method = "GET"
+description = "Get workflow definition"
+
+[[routes]]
+pattern = "/mcp/workflow/:id/execute"
+target = "workflow"
+method = "POST"
+description = "Execute workflow"
+
+[[routes]]
+pattern = "/mcp/workflow/:id/status/:executionId"
+target = "workflow"
+method = "GET"
+description = "Get workflow execution status"
+
+[[routes]]
+pattern = "/mcp/workflows"
+target = "workflow"
+method = "GET"
+description = "List all workflows"
+
+# Edge Topology Configuration
+[edge]
+failover_threshold_ms = 200
+avg_latency_target_ms = 11.2
+connection_pooling = "reuse_fixed"
+keep_alive = true
+
+# Instrumentation Settings
+[instrumentation]
+logging_enabled = true
+log_level = "info"
+metrics_enabled = true
+tracing_enabled = true
+health_checks_enabled = true
+
+[instrumentation.logger]
+format = "json"
+timestamp = true
+include_pid = true
+
+[instrumentation.metrics]
+provider = "native"
+export_interval_ms = 5000
+include_runtime = true
+
+# Workflow Engine Configuration
+# Plugin-based workflow execution system
+[workflow]
+enabled = true
+maxConcurrent = 10
+defaultTimeout = 300000
+plugins = []
+
+# Example: Build and Deploy Workflow
+[[workflow.workflows]]
+id = "build-deploy"
+name = "Build and Deploy"
+version = "1.0.0"
+description = "Build project and deploy to production"
+trigger = "webhook"
+execution_mode = "sequential"
+enabled = true
+
+[[workflow.workflows.steps]]
+id = "install"
+name = "Install Dependencies"
+type = "shell"
+handler = "shell.exec"
+
+[workflow.workflows.steps.inputs]
+command = "bun install"
+
+[[workflow.workflows.steps]]
+id = "build"
+name = "Build Project"
+type = "shell"
+handler = "shell.exec"
+depends_on = ["install"]
+
+[workflow.workflows.steps.inputs]
+command = "bun run build"
+
+[[workflow.workflows.steps]]
+id = "test"
+name = "Run Tests"
+type = "shell"
+handler = "shell.exec"
+depends_on = ["build"]
+continue_on_error = false
+
+[workflow.workflows.steps.inputs]
+command = "bun test"
+
+# Example: Health Check Workflow
+[[workflow.workflows]]
+id = "health-check"
+name = "Health Check"
+version = "1.0.0"
+description = "Run health checks on all services"
+trigger = "schedule"
+execution_mode = "parallel"
+enabled = true
+
+[[workflow.workflows.steps]]
+id = "api-health"
+name = "API Health Check"
+type = "http"
+handler = "http.request"
+
+[workflow.workflows.steps.inputs]
+url = "http://localhost:3333/mcp/health"
+method = "GET"
+
+[[workflow.workflows.steps]]
+id = "log-status"
+name = "Log Status"
+type = "log"
+handler = "log"
+depends_on = ["api-health"]
+
+[workflow.workflows.steps.inputs]
+message = "Health check completed"
+level = "info"

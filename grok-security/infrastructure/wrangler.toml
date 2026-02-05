@@ -1,0 +1,99 @@
+# [CLOUDFLARE][WORKERS][HEADSCALE]{TAILSCALE-INTEGRATION}
+# Wrangler configuration for Headscale Proxy Worker
+# Durable Objects for rate limiting, WebSocket DERP support
+
+name = "headscale-proxy"
+main = "../workers/headscale-proxy.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Account settings (set via environment or wrangler login)
+# account_id = "your-account-id"
+
+# ===== Durable Objects =====
+[[durable_objects.bindings]]
+name = "HEADSCALE_PROXY"
+class_name = "HeadscaleProxy"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["HeadscaleProxy"]
+
+# ===== Environment Variables =====
+[vars]
+HEADSCALE_HOST = "100.64.0.10"
+HEADSCALE_PORT = "8080"
+HEADSCALE_URL = "http://100.64.0.10:8080"
+LOG_LEVEL = "info"
+ENABLE_TAILSCALE_METADATA = "true"
+
+# ===== Analytics Engine =====
+[[analytics_engine_datasets]]
+binding = "HEADSCALE_ANALYTICS"
+dataset = "headscale_metrics"
+
+# ===== Production Environment =====
+[env.production]
+name = "headscale-api"
+routes = [
+  { pattern = "api.example.com/*", zone_name = "example.com" },
+  { pattern = "headscale.example.com/*", zone_name = "example.com" }
+]
+
+[env.production.vars]
+HEADSCALE_URL = "http://100.64.0.10:8080"
+LOG_LEVEL = "warn"
+ENABLE_TAILSCALE_METADATA = "true"
+
+# ===== Staging Environment =====
+[env.staging]
+name = "headscale-api-staging"
+routes = [
+  { pattern = "api-staging.example.com/*", zone_name = "example.com" }
+]
+
+[env.staging.vars]
+HEADSCALE_HOST = "100.64.0.20"
+HEADSCALE_PORT = "8080"
+HEADSCALE_URL = "http://100.64.0.20:8080"
+LOG_LEVEL = "debug"
+ENABLE_TAILSCALE_METADATA = "true"
+
+# ===== Development (Local) =====
+[env.dev]
+name = "headscale-api-dev"
+
+[env.dev.vars]
+HEADSCALE_HOST = "localhost"
+HEADSCALE_PORT = "8080"
+HEADSCALE_URL = "http://localhost:8080"
+LOG_LEVEL = "debug"
+ENABLE_TAILSCALE_METADATA = "true"
+
+# ===== Build Configuration =====
+[build]
+command = "bun build ../workers/headscale-proxy.ts --outdir=dist --target=browser"
+watch_dir = "../workers"
+
+# ===== Secrets (set via `wrangler secret put`) =====
+# HEADSCALE_API_KEY - API key for Headscale authentication
+# CF_ACCESS_CLIENT_ID - Cloudflare Access client ID
+# CF_ACCESS_CLIENT_SECRET - Cloudflare Access client secret
+
+# ===== Triggers =====
+[triggers]
+crons = ["*/5 * * * *"]  # Health check every 5 minutes
+
+# ===== Observability =====
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+# ===== Limits =====
+[limits]
+cpu_ms = 50
+
+# ===== Tail Workers (for logging) =====
+# [[tail_consumers]]
+# service = "headscale-logger"
+

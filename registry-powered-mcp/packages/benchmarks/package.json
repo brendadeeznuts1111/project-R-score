@@ -1,0 +1,35 @@
+{
+  "name": "@registry-mcp/benchmarks",
+  "version": "1.0.0",
+  "description": "Standalone benchmark suite for MCP implementations using Bun-native APIs",
+  "module": "src/index.ts",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./constants": "./src/constants.ts",
+    "./harness": "./src/harness.ts",
+    "./stats": "./src/stats.ts",
+    "./reporters/*": "./src/reporters/*.ts",
+    "./suites/*": "./src/suites/*.ts"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun --minify",
+    "test": "bun test"
+  },
+  "keywords": [
+    "benchmark",
+    "performance",
+    "mcp",
+    "bun",
+    "testing",
+    "metrics"
+  ],
+  "author": "Registry-MCP Contributors",
+  "license": "MIT",
+  "peerDependencies": {
+    "bun-types": ">=1.0.0"
+  },
+  "engines": {
+    "bun": ">=1.3.6"
+  }
+}

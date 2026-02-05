@@ -1,0 +1,56 @@
+name: Check Links
+
+on:
+  push:
+    branches: [ main, refactor/organize-root ]
+    paths: [ '**.md', '**.mdx' ]
+  pull_request:
+    branches: [ main ]
+    paths: [ '**.md', '**.mdx' ]
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+        
+    - name: Install dependencies
+      run: |
+        cd benchmarks-combined
+        bun install
+        
+    - name: Check internal links
+      run: |
+        cd benchmarks-combined
+        bun run links:check
+        
+    - name: Check external links (weekly only)
+      if: github.event_name == 'schedule'
+      run: |
+        cd benchmarks-combined
+        bun run links:check:external
+        
+    - name: Export results
+      if: always()
+      run: |
+        cd benchmarks-combined
+        bun run links:check --export json
+        
+    - name: Upload results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: link-check-results
+        path: benchmarks-combined/link-check-results-*.json
+        retention-days: 30

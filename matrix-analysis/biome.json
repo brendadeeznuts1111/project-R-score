@@ -1,0 +1,100 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
+	"files": {
+		"includes": [
+			"src/**",
+			".claude/**",
+			"tools/**",
+			"cli/**",
+			"mcp-bun-docs/**",
+			"!node_modules/**",
+			"!dist/**",
+			"!.claude/cdn/external/**",
+			"!**/*.min.js",
+			"!**/*.html"
+		]
+	},
+	"formatter": {
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 89
+	},
+	"javascript": {
+		"globals": [
+			"Bun",
+			"process",
+			"fetch",
+			"Request",
+			"Response",
+			"Headers",
+			"WebSocket",
+			"logger",
+			"coreLogger",
+			"setTimeout",
+			"setInterval",
+			"clearTimeout",
+			"clearInterval",
+			"AbortController",
+			"URL",
+			"URLSearchParams",
+			"TextEncoder",
+			"TextDecoder",
+			"crypto",
+			"atob",
+			"btoa",
+			"FormData",
+			"ReadableStream",
+			"WritableStream",
+			"structuredClone"
+		],
+		"formatter": {
+			"semicolons": "always",
+			"quoteStyle": "double",
+			"trailingCommas": "all"
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"style": {
+				"noNonNullAssertion": "off",
+				"useNodejsImportProtocol": "off",
+				"useTemplate": "warn"
+			},
+			"correctness": {
+				"noUnusedVariables": "warn",
+				"noUnusedImports": "warn",
+				"noUnusedFunctionParameters": "warn",
+				"noUndeclaredVariables": "error",
+				"useParseIntRadix": "warn",
+				"noInnerDeclarations": "warn"
+			},
+			"suspicious": {
+				"noConsole": "warn",
+				"noDebugger": "error",
+				"noExplicitAny": "warn",
+				"noImplicitAnyLet": "warn",
+				"noControlCharactersInRegex": "warn",
+				"noTemplateCurlyInString": "warn",
+				"noAssignInExpressions": "warn",
+				"useIterableCallbackReturn": "warn",
+				"noFallthroughSwitchClause": "warn",
+				"noUnsafeDeclarationMerging": "warn",
+				"noShadowRestrictedNames": "warn",
+				"noDuplicateParameters": "error"
+			},
+			"complexity": {
+				"noStaticOnlyClass": "warn",
+				"noBannedTypes": "warn",
+				"useLiteralKeys": "warn",
+				"useOptionalChain": "warn",
+				"noCommaOperator": "warn",
+				"noImportantStyles": "warn"
+			},
+			"a11y": {
+				"noSvgWithoutTitle": "warn"
+			}
+		}
+	}
+}

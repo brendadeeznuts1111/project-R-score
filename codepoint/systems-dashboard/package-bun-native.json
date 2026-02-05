@@ -1,0 +1,48 @@
+{
+  "name": "systems-dashboard",
+  "version": "1.0.0",
+  "description": "🖥️ Professional Systems Dashboard - Pure Bun with inspect.table()",
+  "type": "module",
+  "scripts": {
+    "dev": "bunx --bun vite",
+    "dev:port": "bunx --bun vite --port",
+    "dev:host": "bunx --bun vite --host",
+    "dev:https": "bunx --bun vite --https",
+    "build": "bunx --bun vite build",
+    "build:analyze": "bunx --bun vite build --mode analyze",
+    "preview": "bunx --bun vite preview",
+    "preview:port": "bunx --bun vite preview --port",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "lint": "bunx tsc --noEmit && bunx eslint . --ext .ts,.tsx",
+    "lint:fix": "bunx eslint . --ext .ts,.tsx --fix",
+    "format": "bunx prettier --write .",
+    "format:check": "bunx prettier --check .",
+    "clean": "rm -rf dist node_modules .bun",
+    "start": "bun run preview",
+    "serve": "bunx --bun vite preview --port 3000 --host",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "demo": "bun run bun-table-demo.ts",
+    "demo:watch": "bun --watch bun-table-demo.ts",
+    "cli-native": "bun run cli-bun-native.js"
+  },
+  "bin": {
+    "systems-dashboard": "./cli-bun-native.js",
+    "sysdash": "./cli-bun-native.js"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^4.4.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  }
+}

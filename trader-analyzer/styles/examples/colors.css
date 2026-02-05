@@ -1,0 +1,36 @@
+/**
+ * Color Examples
+ */
+
+/* color-mix() */
+:root {
+  --accent-cyan: #00d4ff;
+  --accent-light: color-mix(in srgb, var(--accent-cyan) 70%, white);
+  --accent-dark: color-mix(in srgb, var(--accent-cyan) 70%, black);
+}
+
+/* Relative colors */
+:root {
+  --base-color: #00d4ff;
+  --lighter: lch(from var(--base-color) calc(l + 10%) c h);
+  --darker: lch(from var(--base-color) calc(l - 10%) c h);
+}
+
+/* LAB colors */
+.card {
+  background: oklch(25% 0.05 250);
+  color: lab(55% 78 35);
+}
+
+/* HWB colors */
+.theme {
+  --base: hwb(180 0% 0%);
+  --light: hwb(180 20% 0%);
+}
+
+/* Modern notation */
+.element {
+  background: rgb(102 126 234 / 0.8);
+  color: hsl(250 50% 60% / 0.9);
+  border-color: #667eeacc;
+}

@@ -1,0 +1,54 @@
+# 🧬 Persona Constants - Cryptographic Persona Engine
+
+[bio]
+genders = ["Female", "Male", "Non-binary"]
+age_range = [22, 45]
+ethnicities = ["Caucasian", "African American", "Hispanic", "Asian", "Mixed"]
+
+[locales]
+cities = ["New York", "Los Angeles", "Chicago", "Miami", "Austin", "Seattle", "Boston", "Denver"]
+states = ["NY", "CA", "IL", "FL", "TX", "WA", "MA", "CO"]
+countries = ["United States"]
+
+[professions]
+tech = ["Software Engineer", "Product Manager", "Data Scientist", "UX Designer", "DevOps Engineer"]
+creative = ["Graphic Designer", "Content Creator", "Marketing Manager", "Photographer", "Writer"]
+business = ["Consultant", "Financial Analyst", "Project Manager", "Sales Executive", "HR Manager"]
+
+[security]
+mfa_methods = ["TOTP", "SMS", "Passkey", "Security Key"]
+recovery_hint_pool = ["First pet?", "Mother's maiden name?", "Street you grew up on?", "Favorite teacher?", "First car?"]
+passkey_algorithms = ["ES256", "RS256", "EdDSA"]
+
+[communication]
+email_providers = ["gmail.com", "yahoo.com", "outlook.com", "protonmail.com", "icloud.com"]
+phone_carriers = ["AT&T", "Verizon", "T-Mobile", "Sprint", "MetroPCS"]
+
+[social]
+platforms = ["Instagram", "Twitter", "LinkedIn", "Facebook", "TikTok"]
+interests = ["Technology", "Travel", "Photography", "Cooking", "Fitness", "Reading", "Music", "Art"]
+
+[education]
+levels = ["High School", "Bachelor's", "Master's", "PhD", "Professional Certificate"]
+majors = ["Computer Science", "Business Administration", "Marketing", "Design", "Data Science", "Psychology"]
+
+[financial]
+credit_score_range = [650, 850]
+income_brackets = ["$30k-50k", "$50k-75k", "$75k-100k", "$100k-150k", "$150k+"]
+bank_types = ["National Bank", "Credit Union", "Online Bank", "Investment Firm"]
+
+[physical]
+height_range_male = [64, 76]  # inches
+height_range_female = [60, 72]  # inches
+eye_colors = ["Brown", "Blue", "Green", "Hazel", "Gray"]
+hair_colors = ["Brown", "Blonde", "Black", "Red", "Gray"]
+
+[preferences]
+music_genres = ["Pop", "Rock", "Hip-Hop", "Electronic", "Classical", "Jazz", "Country"]
+food_preferences = ["Italian", "Mexican", "Asian", "American", "Vegetarian", "Vegan"]
+hobbies = ["Reading", "Gaming", "Hiking", "Cooking", "Photography", "Travel", "Fitness", "Art"]
+
+[generation]
+seed_entropy = 32  # bytes for deterministic generation
+version = "1.0"
+created_at = "2024-01-22"

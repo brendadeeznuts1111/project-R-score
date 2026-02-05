@@ -1,0 +1,235 @@
+# Quantum Cash Flow Lattice Configuration
+# Environment-based configuration with YAML support
+
+# Development environment
+development:
+  # Server configuration
+  server:
+    host: "localhost"
+    port: 
+    timeout: 5000
+    retries: 3
+    
+  # Database configuration
+  database:
+    host: "localhost"
+    port: 5432
+    name: "quantum_lattice_dev"
+    pool_size: 10
+    
+  # Cache configuration
+  cache:
+    enabled: true
+    ttl: 300
+    provider: "redis"
+    
+  # Security configuration
+  security:
+    jwt_secret: "dev_secret_12345"
+    session_timeout: 86400
+    cors_enabled: true
+    
+  # Performance configuration
+  performance:
+    simd_enabled: true
+    worker_threads: 4
+    memory_limit: "512MB"
+    
+  # Logging configuration
+  logging:
+    level: "debug"
+    format: "pretty"
+    
+  # Feature flags
+  features:
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 50
+      allowedUsers:
+        - admin@example.com
+        - beta@example.com
+    experimentalAPI:
+      enabled: false
+      endpoints:
+        - /api/v2/experimental
+        - /api/v2/beta
+    darkMode:
+      enabled: true
+      default: "auto"
+    quantumTerminal:
+      enabled: true
+      rolloutPercentage: 100
+    realTimeMonitoring:
+      enabled: true
+      rolloutPercentage: 100
+
+# Staging environment
+staging:
+  # Server configuration
+  server:
+    host: "staging.quantum-lattice.com"
+    port: 443
+    timeout: 5000
+    retries: 3
+    
+  # Database configuration
+  database:
+    host: "${STAGING_DB_HOST}"
+    port: 5432
+    name: "quantum_lattice_staging"
+    pool_size: 10
+    
+  # Cache configuration
+  cache:
+    enabled: true
+    ttl: 1800
+    provider: "redis"
+    
+  # Security configuration
+  security:
+    jwt_secret: "${STAGING_JWT_SECRET}"
+    session_timeout: 86400
+    cors_enabled: true
+    
+  # Performance configuration
+  performance:
+    simd_enabled: true
+    worker_threads: 4
+    memory_limit: "512MB"
+    
+  # Logging configuration
+  logging:
+    level: "info"
+    format: "json"
+    
+  # Feature flags
+  features:
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 25
+      allowedUsers:
+        - admin@example.com
+        - beta@example.com
+    experimentalAPI:
+      enabled: false
+      endpoints:
+        - /api/v2/experimental
+        - /api/v2/beta
+    darkMode:
+      enabled: true
+      default: "auto"
+    quantumTerminal:
+      enabled: true
+      rolloutPercentage: 50
+
+# Production environment
+production:
+  # Server configuration
+  server:
+    host: "api.quantum-lattice.com"
+    port: 443
+    timeout: 10000
+    retries: 3
+    
+  # Database configuration
+  database:
+    host: "${PROD_DB_HOST}"
+    port: 5432
+    name: "quantum_lattice_prod"
+    pool_size: 20
+    
+  # Cache configuration
+  cache:
+    enabled: true
+    ttl: 86400
+    provider: "redis-cluster"
+    
+  # Security configuration
+  security:
+    jwt_secret: "${PROD_JWT_SECRET}"
+    session_timeout: 3600
+    cors_enabled: true
+    
+  # Performance configuration
+  performance:
+    simd_enabled: true
+    worker_threads: 8
+    memory_limit: "2GB"
+    
+  # Logging configuration
+  logging:
+    level: "error"
+    format: "json"
+    
+  # Feature flags
+  features:
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 100
+    experimentalAPI:
+      enabled: false
+      endpoints:
+        - /api/v2/experimental
+        - /api/v2/beta
+    darkMode:
+      enabled: true
+      default: "auto"
+    quantumTerminal:
+      enabled: true
+      rolloutPercentage: 100
+    realTimeMonitoring:
+      enabled: true
+      rolloutPercentage: 75
+    predictiveAnalytics:
+      enabled: false
+      rolloutPercentage: 0
+
+# Testing environment
+test:
+  # Server configuration
+  server:
+    host: "localhost"
+    port: 3001
+    timeout: 5000
+    retries: 3
+    
+  # Database configuration
+  database:
+    host: "localhost"
+    port: 5432
+    name: "quantum_lattice_test"
+    pool_size: 5
+    
+  # Cache configuration
+  cache:
+    enabled: false
+    ttl: 3600
+    provider: "redis"
+    
+  # Security configuration
+  security:
+    jwt_secret: "test_secret_12345"
+    session_timeout: 3600
+    cors_enabled: true
+    
+  # Performance configuration
+  performance:
+    simd_enabled: true
+    worker_threads: 4
+    memory_limit: "512MB"
+    
+  # Logging configuration
+  logging:
+    level: "silent"
+    format: "json"
+    
+  # Feature flags
+  features:
+    newDashboard:
+      enabled: true
+      rolloutPercentage: 100
+    experimentalAPI:
+      enabled: true
+      rolloutPercentage: 100
+    darkMode:
+      enabled: false

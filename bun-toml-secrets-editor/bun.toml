@@ -1,0 +1,59 @@
+# Bun Workspace Configuration - Optimized for Golden Template
+# https://bun.sh/docs/runtime/bunfig
+
+[workspace]
+# Include all packages and templates
+packages = [
+  "packages/*",
+  "templates/*"
+]
+
+[install]
+# Use exact versions for reproducibility
+exact = true
+# Don't auto-install peer dependencies
+peer = false
+# Use fastest registry
+registry = "https://registry.npmjs.org"
+
+[install.cache]
+# Local cache for CI/CD consistency
+dir = ".bun/install/cache"
+
+[build]
+# Build target - native Bun APIs
+target = "bun"
+# Minify for production
+minify = true
+# External sourcemaps for debugging
+sourcemap = "external"
+# Enable code splitting across packages
+splitting = true
+# ES modules format
+format = "esm"
+# Externalize Bun built-ins
+external = ["bun:*"]
+
+[test]
+# Enable coverage reporting
+coverage = true
+# 30 second timeout
+timeout = 30000
+# Preload setup file
+preload = ["./test-setup.ts"]
+# Parallel test execution
+parallel = true
+
+[run]
+# Auto-install missing dependencies
+auto-install = false
+
+# Environment-specific settings
+[env.production]
+NODE_ENV = "production"
+BUN_ENV = "production"
+
+[env.development]
+NODE_ENV = "development"
+BUN_ENV = "development"
+LOG_LEVEL = "debug"

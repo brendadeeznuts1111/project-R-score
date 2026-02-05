@@ -1,0 +1,220 @@
+# Repository Metadata Configuration
+# This file contains metadata for the GitHub repository
+
+repository:
+  name: "rss-feed-optimization"
+  description: "High-performance RSS feed optimization system built with Bun and Node.js"
+  topics:
+    - rss
+    - feed
+    - optimization
+    - bun
+    - nodejs
+    - performance
+    - streaming
+    - buffer-optimization
+    - jsonl
+    - markdown
+    - cloudflare-r2
+    - rss-generator
+    - performance-monitoring
+    - memory-optimization
+    - web-performance
+    - content-delivery
+    - edge-computing
+    - serverless
+    - typescript
+    - javascript
+    - web-development
+    - api
+    - backend
+    - full-stack
+    - devops
+    - ci-cd
+    - github-actions
+    - open-source
+    - mit-license
+
+labels:
+  # Bug Labels
+  - name: "bug"
+    color: "d73a4a"
+    description: "Something isn't working"
+  
+  - name: "critical"
+    color: "ff0000"
+    description: "Critical bug that blocks functionality"
+  
+  - name: "performance"
+    color: "ff6b6b"
+    description: "Performance related issues"
+  
+  - name: "security"
+    color: "ff4444"
+    description: "Security vulnerabilities"
+
+  # Feature Labels
+  - name: "enhancement"
+    color: "a2eeef"
+    description: "New feature or request"
+  
+  - name: "feature"
+    color: "0e8a16"
+    description: "New feature implementation"
+  
+  - name: "optimization"
+    color: "008672"
+    description: "Code optimization"
+  
+  - name: "refactor"
+    color: "bfdadc"
+    description: "Code refactoring"
+
+  # Development Labels
+  - name: "good first issue"
+    color: "7057ff"
+    description: "Good for beginners"
+  
+  - name: "help wanted"
+    color: "008672"
+    description: "Extra attention is needed"
+  
+  - name: "documentation"
+    color: "d4c5f9"
+    description: "Improvements or additions to documentation"
+  
+  - name: "tests"
+    color: "86ae2e"
+    description: "Adding or updating tests"
+
+  # Status Labels
+  - name: "in progress"
+    color: "0052cc"
+    description: "Work is currently being done"
+  
+  - name: "ready for review"
+    color: "0e8a16"
+    description: "Ready for code review"
+  
+  - name: "blocked"
+    color: "e4e669"
+    description: "Blocked by external dependencies"
+  
+  - name: "wontfix"
+    color: "ffffff"
+    description: "Will not be worked on"
+  
+  - name: "duplicate"
+    color: "cfd3d7"
+    description: "This issue or pull request already exists"
+
+  # Priority Labels
+  - name: "high-priority"
+    color: "ff0000"
+    description: "High priority issue"
+  
+  - name: "medium-priority"
+    color: "ffaa00"
+    description: "Medium priority issue"
+  
+  - name: "low-priority"
+    color: "00ff00"
+    description: "Low priority issue"
+
+  # Type Labels
+  - name: "frontend"
+    color: "006b75"
+    description: "Frontend related changes"
+  
+  - name: "backend"
+    color: "0052cc"
+    description: "Backend related changes"
+  
+  - name: "api"
+    color: "008672"
+    description: "API related changes"
+  
+  - name: "database"
+    color: "0366d6"
+    description: "Database related changes"
+  
+  - name: "devops"
+    color: "006b75"
+    description: "DevOps related changes"
+
+  # Technology Labels
+  - name: "bun"
+    color: "ff6b6b"
+    description: "Bun runtime related"
+  
+  - name: "nodejs"
+    color: "68a063"
+    description: "Node.js related"
+  
+  - name: "typescript"
+    color: "3178c6"
+    description: "TypeScript related"
+  
+  - name: "javascript"
+    color: "f7df1e"
+    description: "JavaScript related"
+  
+  - name: "cloudflare-r2"
+    color: "f38ba8"
+    description: "Cloudflare R2 related"
+
+# Milestones
+milestones:
+  - title: "v1.0.0"
+    description: "Initial stable release"
+    due_on: "2025-06-01T00:00:00Z"
+  
+  - title: "v1.1.0"
+    description: "Performance improvements and new features"
+    due_on: "2025-09-01T00:00:00Z"
+  
+  - title: "v1.2.0"
+    description: "Advanced optimization features"
+    due_on: "2025-12-01T00:00:00Z"
+
+# Project Boards
+projects:
+  - name: "Backlog"
+    columns:
+      - "To Do"
+      - "In Progress"
+      - "Review"
+      - "Done"
+  
+  - name: "Sprint Planning"
+    columns:
+      - "This Sprint"
+      - "Next Sprint"
+      - "Future"
+
+# Branch Protection
+branch_protection:
+  main:
+    required_status_checks:
+      strict: true
+      contexts:
+        - "test"
+        - "lint"
+        - "typecheck"
+    enforce_admins: true
+    required_pull_request_reviews:
+      dismiss_stale_reviews: true
+      require_code_owner_reviews: true
+    restrictions:
+      users: []
+      teams: ["maintainers"]
+  
+  develop:
+    required_status_checks:
+      strict: true
+      contexts:
+        - "test"
+        - "lint"
+    required_pull_request_reviews:
+      dismiss_stale_reviews: true
+      require_code_owner_reviews: false

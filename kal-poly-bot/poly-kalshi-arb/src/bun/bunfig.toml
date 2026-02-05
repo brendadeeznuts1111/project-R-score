@@ -1,0 +1,31 @@
+# Bun Configuration for Kalman Filter Suite
+# Optimized for microsecond latency and high-performance matrix operations
+
+[watch]
+throttle = 1000  # 1ms throttle for file changes during development
+
+[build]
+target = "browser"
+minify = true
+sourcemap = "none"
+splitting = true
+
+[serve]
+port = 3000
+hostname = "0.0.0.0"
+development = false
+
+# Memory limits optimized for Kalman filter matrix operations
+[memory]
+limit = "512mb"  # For matrix operations and state management
+gcThreshold = 0.7
+
+# Performance optimizations
+[performance]
+maxConcurrency = 1000
+requestTimeout = 5000  # 5 second timeout for pattern detection
+
+# Logging configuration
+[log]
+level = "info"
+format = "json"

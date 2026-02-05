@@ -1,0 +1,309 @@
+/**
+ * [DoD][CLASS:UI-SKIN][SCOPE:Dashboard]
+ * [META:{theme:dark, refresh:5s, failover:enabled}]
+ * Defense-Grade Dashboard Theme
+ */
+
+:root {
+	--primary-bg: #050505;
+	--secondary-bg: #0f0f0f;
+	--accent-bg: #1a1a1a;
+	--text-primary: #e6e6e6;
+	--text-secondary: #8a8a8a;
+	--accent-green: #00ff9f;
+	--accent-blue: #00b8ff;
+	--accent-red: #ff3b5c;
+	--accent-orange: #ffb23d;
+	--critical-glow: 0 0 20px rgba(255, 59, 92, 0.5);
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "JetBrains Mono", "Courier New", monospace;
+	background-color: var(--primary-bg);
+	color: var(--text-primary);
+	overflow: hidden;
+}
+
+.dashboard-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: auto 1fr;
+	gap: 1rem;
+	height: 100vh;
+	padding: 1rem;
+}
+
+.header-bar {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: var(--secondary-bg);
+	padding: 0.75rem 1.5rem;
+	border-bottom: 2px solid var(--accent-green);
+}
+
+.system-status {
+	display: flex;
+	gap: 1rem;
+}
+
+.status-indicator {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.85rem;
+}
+
+.status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	animation: pulse 2s infinite;
+}
+
+.status-dot.active {
+	background: var(--accent-green);
+}
+
+.status-dot.warning {
+	background: var(--accent-orange);
+}
+
+.status-dot.critical {
+	background: var(--accent-red);
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.3;
+	}
+}
+
+.layer-tile {
+	background: var(--secondary-bg);
+	border: 1px solid var(--accent-bg);
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.layer-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.75rem;
+	background: var(--accent-bg);
+	border-bottom: 1px solid var(--accent-green);
+}
+
+.layer-id {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--accent-green);
+}
+
+.anomaly-counter {
+	background: var(--primary-bg);
+	padding: 0.25rem 0.75rem;
+	border-radius: 12px;
+	font-size: 0.8rem;
+}
+
+.anomaly-counter.critical {
+	background: var(--accent-red);
+	color: var(--primary-bg);
+	box-shadow: var(--critical-glow);
+}
+
+.edge-stream {
+	flex: 1;
+	overflow-y: auto;
+	padding: 0.5rem;
+	scroll-behavior: smooth;
+}
+
+.edge-card {
+	background: var(--accent-bg);
+	margin: 0.5rem;
+	padding: 0.75rem;
+	border-left: 3px solid var(--accent-blue);
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+}
+
+.edge-card:hover {
+	transform: translateX(4px);
+	border-left-color: var(--accent-green);
+	background: #2a2a2a;
+}
+
+.edge-card.severity-critical {
+	border-left-color: var(--accent-red);
+	animation: critical-flash 3s infinite;
+}
+
+@keyframes critical-flash {
+	0%,
+	100% {
+		border-left-color: var(--accent-red);
+	}
+	50% {
+		border-left-color: var(--accent-orange);
+	}
+}
+
+.edge-meta {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr;
+	gap: 0.5rem;
+	font-size: 0.75rem;
+	margin-top: 0.5rem;
+}
+
+.node-id {
+	font-family: "JetBrains Mono", monospace;
+	color: var(--text-primary);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.metric-value {
+	text-align: right;
+	color: var(--accent-blue);
+	font-weight: 600;
+}
+
+.metric-value.high-impact {
+	color: var(--accent-red);
+	font-weight: 700;
+}
+
+.propagation-viz {
+	grid-column: 1 / -1;
+	background: var(--secondary-bg);
+	border-top: 2px solid var(--accent-green);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 2rem;
+	padding: 1rem;
+}
+
+.propagation-node {
+	background: var(--accent-bg);
+	border: 2px solid var(--text-secondary);
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.75rem;
+	font-weight: 700;
+	position: relative;
+}
+
+.propagation-node.active {
+	border-color: var(--accent-green);
+	background: var(--accent-green);
+	color: var(--primary-bg);
+	animation: active-pulse 1s infinite;
+}
+
+@keyframes active-pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(0, 255, 159, 0.7);
+	}
+	70% {
+		box-shadow: 0 0 0 20px rgba(0, 255, 159, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(0, 255, 159, 0);
+	}
+}
+
+.propagation-arrow {
+	color: var(--accent-green);
+	font-size: 1.5rem;
+}
+
+/* Failover UI */
+.failover-banner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: var(--accent-orange);
+	color: var(--primary-bg);
+	text-align: center;
+	padding: 0.5rem;
+	font-weight: 700;
+	z-index: 1000;
+	transform: translateY(-100%);
+	transition: transform 0.3s;
+}
+
+.failover-banner.visible {
+	transform: translateY(0);
+}
+
+/* Health status indicators */
+.health-indicator {
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.health-indicator.healthy {
+	background: var(--accent-green);
+	color: var(--primary-bg);
+}
+
+.health-indicator.degraded {
+	background: var(--accent-orange);
+	color: var(--primary-bg);
+}
+
+.health-indicator.critical {
+	background: var(--accent-red);
+	color: var(--primary-bg);
+}
+
+/* Circuit breaker status */
+.circuit-status {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-size: 0.7rem;
+}
+
+.circuit-item {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.25rem 0.5rem;
+	background: var(--accent-bg);
+	border-radius: 2px;
+}
+
+.circuit-item.open {
+	border-left: 2px solid var(--accent-red);
+}
+
+.circuit-item.closed {
+	border-left: 2px solid var(--accent-green);
+}

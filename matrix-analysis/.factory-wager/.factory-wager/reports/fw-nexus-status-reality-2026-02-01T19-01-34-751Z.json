@@ -1,0 +1,50 @@
+{
+  "nexus": {
+    "score": 60,
+    "endpoints": {
+      "total": 6,
+      "up": 2,
+      "down": 4,
+      "degraded": 0
+    },
+    "latency": {
+      "average": 874,
+      "min": 3,
+      "max": 5001
+    },
+    "drift": {
+      "count": 0,
+      "mismatches": []
+    }
+  },
+  "reality": {
+    "mode": "SIMULATED",
+    "r2": "SIMULATED",
+    "mcp": {
+      "installed": 0,
+      "total": 6
+    },
+    "secrets": {
+      "real": 0,
+      "total": 5
+    }
+  },
+  "monitoring": {
+    "effective_health": 40,
+    "reality_adjusted_score": 40,
+    "recommendations": [
+      "Configure real infrastructure for accurate monitoring",
+      "Install missing MCP servers for complete monitoring",
+      "Configure real secrets for accurate endpoint monitoring",
+      "Investigate network performance and endpoint optimization",
+      "Investigate failed endpoints and check service health"
+    ],
+    "warnings": [
+      "Monitoring simulated endpoints - may not reflect real infrastructure",
+      "6 MCP servers not monitored",
+      "Some endpoints may be using simulated credentials",
+      "High average latency: 874ms",
+      "4 endpoints down"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+# Simple Test Configuration
+api:
+  key: VAULT:com.factory-wager.registry.registry.token
+  timeout: 5000
+
+database:
+  secret: VAULT:com.factory-wager.registry.r2.secret_key
+
+ssl:
+  certificate: VAULT:com.factory-wager.registry.domain.ssl_cert

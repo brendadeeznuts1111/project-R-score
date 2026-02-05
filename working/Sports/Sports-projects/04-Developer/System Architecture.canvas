@@ -1,0 +1,18 @@
+{
+	"nodes":[
+		{"id":"mcporter-integration","type":"text","text":"# 🔌 MCPorter Bridge\n\n**MCP Servers**\n- 14 Configured\n- Local & External\n- Real-time Sync\n\n**Tools**\n- obsidian-mcp-server\n- context7, signoz\n- chrome-devtools","x":-100,"y":0,"width":200,"height":100},
+		{"id":"dashboards","type":"text","text":"# 📊 Dashboards\n\n**Fantasy402 Feed**\n- Real-time monitoring\n- API connectivity\n- System health\n\n**Projects**\n- Active feeds\n- Progress tracking\n- Tag-based views","x":-400,"y":200,"width":180,"height":100},
+		{"id":"templates","type":"text","text":"# 📝 Templates\n\n**Project Template**\n- Feed integration flag\n- Progress tracking\n- Dynamic queries\n\n**Metadata**\n- YAML frontmatter\n- Dataview compatible\n- Enterprise-grade","x":200,"y":200,"width":180,"height":100},
+		{"id":"maintenance","type":"text","text":"# 🔧 Maintenance System\n\n**Automated**\n- Weekly health checks\n- Audit compliance\n- Performance monitoring\n\n**Scripts**\n- vault-maintenance.ts\n- tes-vault-audit.ts","x":-100,"y":400,"width":200,"height":80},
+		{"id":"fantasy402-core","type":"text","text":"# 🎮 Fantasy402 Feed Core\n\n**Main Server**\n- Port: 3000\n- Status: 🟢 Operational\n- API Health: /api/health\n\n**WebSocket**\n- Real-time odds\n- Live updates\n- NBA, NCAA, NowGoal","x":-400,"y":-200,"width":200,"height":120},
+		{"id":"obsidian-vault","type":"text","text":"# 📚 Obsidian Vault\n\n**Local REST API**\n- Port: 27124\n- Status: ✅ Connected\n- MCP Access: Enabled\n\n**Performance**\n- 100% Audit Compliance\n- Cache: Enabled\n- Exclusions: Configured","x":240,"y":-380,"width":200,"height":120}
+	],
+	"edges":[
+		{"id":"feed-to-mcporter","fromNode":"fantasy402-core","fromSide":"bottom","toNode":"mcporter-integration","toSide":"top","label":"MCP Bridge"},
+		{"id":"mcporter-to-vault","fromNode":"mcporter-integration","fromSide":"right","toNode":"obsidian-vault","toSide":"left","label":"API Access"},
+		{"id":"vault-to-dashboards","fromNode":"obsidian-vault","fromSide":"bottom","toNode":"dashboards","toSide":"top","label":"Dataview Queries"},
+		{"id":"vault-to-templates","fromNode":"obsidian-vault","fromSide":"bottom","toNode":"templates","toSide":"top","label":"Template System"},
+		{"id":"mcporter-to-maintenance","fromNode":"mcporter-integration","fromSide":"bottom","toNode":"maintenance","toSide":"top","label":"Health Monitoring"},
+		{"id":"feed-to-maintenance","fromNode":"fantasy402-core","fromSide":"right","toNode":"maintenance","toSide":"left","label":"Status Checks"}
+	]
+}

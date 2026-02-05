@@ -1,0 +1,11 @@
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+
+[install]
+exact = true
+minimumReleaseAge = 259200 # seconds
+registry = "https://npm.factory-wager.com"
+
+[publish]
+registry = "https://npm.factory-wager.com"

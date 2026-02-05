@@ -1,0 +1,147 @@
+{
+  "name": "nolarose-benchmarks",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Unified benchmark suite for Nolarose MCP Config workspace",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/matrix-analysis.git",
+    "directory": "benchmarks-combined"
+  },
+  "homepage": "https://github.com/brendadeeznuts1111/matrix-analysis/tree/main/benchmarks-combined",
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/matrix-analysis/issues"
+  },
+  "dependencies": {
+    "mitata": "^1.0.34",
+    "benchmark": "^2.1.4"
+  },
+  "scripts": {
+    "start": "bun run-all.ts",
+    "utils": "cd utils && bun run all",
+    "utils:json": "cd utils && BENCHMARK_RUNNER=1 bun run all",
+    "performance": "bun performance/*.ts",
+    "core": "bun core/*.ts",
+    "skills": "bun skills/*.ts",
+    "all": "bun run-all.ts",
+    "all:json": "BENCHMARK_RUNNER=1 bun run-all.ts",
+    "crc32": "cd utils && bun crc32-bench-mitata.ts",
+    "spawn": "cd utils && bun spawn-bench-mitata.ts",
+    "archive": "cd utils && bun archive-bench-mitata.ts",
+    "buffer": "bun performance/buffer-simd-benchmark.ts",
+    "hash": "bun performance/bun-hash-benchmark.ts",
+    "config": "bun core/test-config-bench.ts",
+    "report": "bun skills/perf-optimizations.bench.ts",
+    "test": "bun test **/*.test.ts",
+    "test:ci": "bun test --reporter=verbose",
+    "badges:generate": "bun scripts/badge-status.ts",
+    "badges:server": "bun scripts/badge-server.ts",
+    "badges:update": "bun run badges:generate && git add reports/ && git commit -m 'chore: update badge status [skip ci]' || true",
+    "links:check": "bun scripts/check-links.ts",
+    "links:check:external": "bun scripts/check-links.ts --external",
+    "links:check:verbose": "bun scripts/check-links.ts --verbose",
+    "links:quick": "bun scripts/quick-link-check.ts"
+  },
+  "keywords": ["benchmark", "performance", "bun", "typescript", "mitata", "nolarose", "mcp", "config"],
+  "author": {
+    "name": "Nolarose Development Team",
+    "email": "dev@nolarose.com",
+    "url": "https://nolarose.com"
+  },
+  "contributors": [
+    {
+      "name": "Claude Opus",
+      "role": "AI Assistant",
+      "type": "contributor"
+    },
+    {
+      "name": "DuoPlus Development",
+      "role": "Core Team",
+      "type": "maintainer"
+    }
+  ],
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.3.6"
+  },
+  "nolarose": {
+    "domain": "factory-wager.com",
+    "tier": "1380",
+    "profiles": [
+      {
+        "name": "development",
+        "description": "Local development environment",
+        "env": "development"
+      },
+      {
+        "name": "staging",
+        "description": "Staging environment for pre-production testing",
+        "env": "staging"
+      },
+      {
+        "name": "production",
+        "description": "Production environment",
+        "env": "production"
+      }
+    ],
+    "team": {
+      "lead": "senior",
+      "members": [
+        {
+          "role": "lead",
+          "permissions": ["admin", "deploy", "review", "mentor", "manageTeam"]
+        },
+        {
+          "role": "senior",
+          "permissions": ["deploy", "review", "mentor", "develop", "test"]
+        },
+        {
+          "role": "developer",
+          "permissions": ["develop", "test"]
+        },
+        {
+          "role": "contributor",
+          "permissions": ["test"]
+        }
+      ]
+    },
+    "domains": {
+      "prod": "https://factory-wager.com",
+      "staging": "https://staging.factory-wager.com",
+      "api": "https://api.factory-wager.com",
+      "metrics": "https://metrics.factory-wager.com",
+      "benchmarks": "https://benchmarks.factory-wager.com",
+      "cdn": "https://cdn.factory-wager.com/benchmarks",
+      "backup": "https://backup.factory-wager.com",
+      "dashboard": "https://dashboard.factory-wager.com",
+      "admin": "https://admin.factory-wager.com",
+      "logs": "https://logs.factory-wager.com",
+      "health": "https://health.factory-wager.com",
+      "test": "https://test.factory-wager.com",
+      "dev-api": "https://dev-api.factory-wager.com",
+      "dev-metrics": "https://dev-metrics.factory-wager.com",
+      "local": "http://localhost:3000"
+    },
+    "tags": [
+  "tier-1380",
+  "enterprise",
+  "mcp",
+  "config-management",
+  "performance",
+  "benchmarking",
+  "bun",
+  "typescript",
+  "mitata",
+  "ci-cd",
+  "metrics",
+  "monitoring",
+  "analytics",
+  "factory-wager",
+  "duoplus",
+  "venmo-family",
+  "production-ready",
+  "regression-testing",
+  "optimization"
+]
+  }
+}

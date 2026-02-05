@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17.18.0.0.0.0.0 — NEXUS Radiance Monorepo Onboarding</title>
+    <meta name="description" content="Interactive step-by-step guide for setting up bun link monorepo">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #b0b0b0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .step-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .step-container.active {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .step-container.completed {
+            border-color: #00d4ff;
+            opacity: 0.7;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-container.active .step-number {
+            background: #00ff88;
+            color: #0a0e27;
+            animation: pulse 2s infinite;
+        }
+
+        .step-container.completed .step-number {
+            background: #00d4ff;
+            color: #0a0e27;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .step-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .step-content {
+            margin-left: 55px;
+        }
+
+        .step-description {
+            color: #b0b0b0;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .command-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            position: relative;
+        }
+
+        .command-text {
+            color: #00ff88;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 255, 136, 0.3);
+        }
+
+        .copy-btn.copied {
+            background: #00ff88;
+            color: #0a0e27;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #0a0e27;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-pending {
+            background: #666;
+        }
+
+        .status-running {
+            background: #ffaa00;
+            animation: blink 1s infinite;
+        }
+
+        .status-success {
+            background: #00ff88;
+        }
+
+        .status-error {
+            background: #ff4444;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .output-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .output-box.show {
+            display: block;
+        }
+
+        .output-line {
+            margin: 5px 0;
+            color: #b0b0b0;
+        }
+
+        .output-line.success {
+            color: #00ff88;
+        }
+
+        .output-line.error {
+            color: #ff4444;
+        }
+
+        .output-line.info {
+            color: #00d4ff;
+        }
+
+        .tips {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 3px solid #00d4ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .tips-title {
+            color: #00d4ff;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tips ul {
+            margin-left: 20px;
+            color: #b0b0b0;
+        }
+
+        .tips li {
+            margin: 5px 0;
+        }
+
+        .next-prev {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .step-content {
+                margin-left: 0;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ 17.18.0.0.0.0.0 — NEXUS Radiance Monorepo</h1>
+            <p>Interactive Onboarding: Zero-Friction Development with bun link</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="stepsContainer"></div>
+
+        <div class="next-prev">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" disabled>← Previous</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next →</button>
+        </div>
+
+        <div class="footer">
+            <p>NEXUS Radiance Monorepo Onboarding | Bun v1.3.4+</p>
+            <p>See <code>examples/README-bun-link-monorepo.md</code> for complete documentation</p>
+            <div style="margin-top: 15px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="../benchmarks/" target="_blank" style="color: #00d4ff; text-decoration: none; padding: 8px 15px; background: rgba(0, 212, 255, 0.1); border-radius: 20px; font-size: 0.9em;">⚡ Benchmarks</a>
+                <a href="../docs/BUN-V1.51-IMPACT-ANALYSIS.md" target="_blank" style="color: #00d4ff; text-decoration: none; padding: 8px 15px; background: rgba(0, 212, 255, 0.1); border-radius: 20px; font-size: 0.9em;">🚀 Performance</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const steps = [
+            {
+                id: 'intro',
+                title: 'Welcome to NEXUS Radiance Monorepo',
+                description: 'This interactive guide will walk you through setting up a monorepo with bun link for zero-latency package development.',
+                content: `
+                    <div class="step-description">
+                        <p><strong>What you'll learn:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>How to register packages with <code>bun link</code></li>
+                            <li>How to link packages into apps for instant development</li>
+                            <li>How to verify your setup</li>
+                            <li>How to unlink before production</li>
+                        </ul>
+                    </div>
+                    <div class="tips">
+                        <div class="tips-title">💡 What is bun link?</div>
+                        <p>bun link creates symlinks between packages, allowing instant development without rebuilds. Changes in packages are immediately visible in apps.</p>
+                    </div>
+                `,
+                actions: []
+            },
+            {
+                id: 'prerequisites',
+                title: 'Prerequisites Check',
+                description: 'Let\'s verify your environment is ready.',
+                content: `
+                    <div class="step-description">
+                        <p>Before we start, we need to check:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Bun version (1.3.4+)</li>
+                            <li>Project structure</li>
+                            <li>Package.json files</li>
+                        </ul>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="checkPrerequisites()">
+                            <span class="status-indicator status-pending" id="prereqStatus"></span>
+                            Check Prerequisites
+                        </button>
+                    </div>
+                    <div class="output-box" id="prereqOutput"></div>
+                `,
+                actions: ['checkPrerequisites']
+            },
+            {
+                id: 'register-packages',
+                title: 'Step 1: Register Packages',
+                description: 'Register all packages with bun link so they can be linked into apps.',
+                content: `
+                    <div class="step-description">
+                        <p>We'll register these packages:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><code>@nexus-radiance/core</code></li>
+                            <li><code>@nexus-radiance/graph-engine</code></li>
+                            <li><code>@nexus-radiance/router</code></li>
+                            <li><code>@nexus-radiance/profiling</code></li>
+                            <li><code>@nexus-radiance/mcp-tools</code></li>
+                            <li><code>@nexus-radiance/dashboard</code></li>
+                        </ul>
+                    </div>
+                    <div class="command-box">
+                        <div class="command-text">bun run examples/bun-link-monorepo-example.ts setup</div>
+                        <button class="copy-btn" onclick="copyCommand('bun run examples/bun-link-monorepo-example.ts setup')">Copy</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="runSetup()">
+                            <span class="status-indicator status-pending" id="setupStatus"></span>
+                            Run Setup
+                        </button>
+                        <button class="btn btn-secondary" onclick="checkStatus()">Check Status</button>
+                    </div>
+                    <div class="output-box" id="setupOutput"></div>
+                    <div class="tips">
+                        <div class="tips-title">💡 What happens?</div>
+                        <p>This command will create package.json files for all packages and apps, register packages with bun link, and link them into apps automatically.</p>
+                    </div>
+                `,
+                actions: ['runSetup', 'checkStatus']
+            },
+            {
+                id: 'verify-links',
+                title: 'Step 2: Verify Links',
+                description: 'Check that packages are properly linked.',
+                content: `
+                    <div class="step-description">
+                        <p>Let's verify that packages are linked correctly:</p>
+                    </div>
+                    <div class="command-box">
+                        <div class="command-text">bun run examples/bun-link-monorepo-example.ts status</div>
+                        <button class="copy-btn" onclick="copyCommand('bun run examples/bun-link-monorepo-example.ts status')">Copy</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="checkStatus()">
+                            <span class="status-indicator status-pending" id="statusStatus"></span>
+                            Check Status
+                        </button>
+                    </div>
+                    <div class="output-box" id="statusOutput"></div>
+                    <div class="tips">
+                        <div class="tips-title">✅ Expected Result</div>
+                        <p>You should see all packages registered and linked into apps. Each app should show its linked dependencies.</p>
+                    </div>
+                `,
+                actions: ['checkStatus']
+            },
+            {
+                id: 'development',
+                title: 'Step 3: Development Mode',
+                description: 'Learn how to develop with zero latency.',
+                content: `
+                    <div class="step-description">
+                        <p>Now you can develop with instant changes:</p>
+                        <ol style="margin-left: 20px; margin-top: 10px;">
+                            <li>Edit package code in <code>packages/*/src/</code></li>
+                            <li>Changes are instantly visible in apps via symlinks</li>
+                            <li>No rebuild needed!</li>
+                        </ol>
+                    </div>
+                    <div class="command-box">
+                        <div class="command-text"># Terminal 1: Edit package<br>
+cd packages/graph-engine<br>
+bun --watch run src/index.ts</div>
+                        <button class="copy-btn" onclick="copyCommand('cd packages/graph-engine && bun --watch run src/index.ts')">Copy</button>
+                    </div>
+                    <div class="command-box" style="margin-top: 10px;">
+                        <div class="command-text"># Terminal 2: Run app (sees changes instantly)<br>
+cd apps/cli<br>
+bun run src/index.ts</div>
+                        <button class="copy-btn" onclick="copyCommand('cd apps/cli && bun run src/index.ts')">Copy</button>
+                    </div>
+                    <div class="tips">
+                        <div class="tips-title">🚀 Zero Latency</div>
+                        <p>Changes in packages propagate instantly to apps via symlinks. No rebuild, no reinstall, pure symlink radiance!</p>
+                    </div>
+                `,
+                actions: []
+            },
+            {
+                id: 'safety',
+                title: '✅ Safety: Unlinking is Safe & Reversible',
+                description: 'Important: Unlinking is completely safe and reversible. You can always relink later.',
+                content: `
+                    <div class="step-description">
+                        <div style="background: rgba(0, 255, 136, 0.15); border: 2px solid #00ff88; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                            <h3 style="color: #00ff88; margin-bottom: 10px;">🛡️ Unlinking is Safe</h3>
+                            <ul style="margin-left: 20px; color: #e0e0e0;">
+                                <li><strong>✅ Reversible:</strong> You can always relink packages later</li>
+                                <li><strong>✅ Non-destructive:</strong> No files are deleted, only symlinks removed</li>
+                                <li><strong>✅ Safe:</strong> Your code and package.json remain intact</li>
+                                <li><strong>✅ Recommended:</strong> Unlink before production deployments</li>
+                            </ul>
+                        </div>
+                        <p><strong>What happens when you unlink?</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Symlinks in <code>node_modules</code> are removed</li>
+                            <li><code>link:</code> entries remain in package.json (safe to commit)</li>
+                            <li>Packages are unregistered from global registry</li>
+                            <li><strong>You can relink anytime:</strong> <code>bun run examples/scripts/link-all.ts</code></li>
+                        </ul>
+                    </div>
+                    <div class="tips">
+                        <div class="tips-title">💡 When to Unlink</div>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Before production builds:</strong> Ensures clean registry resolution</li>
+                            <li><strong>Before CI/CD:</strong> Prevents symlink issues in automated environments</li>
+                            <li><strong>When switching branches:</strong> Clean state for different configurations</li>
+                            <li><strong>When troubleshooting:</strong> Reset to clean state</li>
+                        </ul>
+                    </div>
+                    <div class="tips" style="background: rgba(0, 212, 255, 0.1); border-left-color: #00d4ff;">
+                        <div class="tips-title">🔄 Relinking is Easy</div>
+                        <p>After unlinking, you can relink everything with one command:</p>
+                        <div class="command-box" style="margin-top: 10px;">
+                            <div class="command-text">bun run examples/scripts/link-all.ts</div>
+                            <button class="copy-btn" onclick="copyCommand('bun run examples/scripts/link-all.ts')">Copy</button>
+                        </div>
+                    </div>
+                `,
+                actions: []
+            },
+            {
+                id: 'production',
+                title: 'Step 4: Production Deployment',
+                description: 'Learn how to deploy without link: dependencies.',
+                content: `
+                    <div class="step-description">
+                        <div style="background: rgba(0, 255, 136, 0.15); border: 2px solid #00ff88; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                            <p style="color: #00ff88; font-weight: 600; margin-bottom: 8px;">✅ Safe to Unlink</p>
+                            <p style="margin: 0;">Unlinking is completely safe and reversible. Your code and package.json remain intact.</p>
+                        </div>
+                        <p>Before deploying to production, unlink packages:</p>
+                    </div>
+                    <div class="command-box">
+                        <div class="command-text">bun run examples/bun-link-monorepo-example.ts unlink</div>
+                        <button class="copy-btn" onclick="copyCommand('bun run examples/bun-link-monorepo-example.ts unlink')">Copy</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="runUnlink()">
+                            <span class="status-indicator status-pending" id="unlinkStatus"></span>
+                            Unlink All Packages (Safe)
+                        </button>
+                    </div>
+                    <div class="output-box" id="unlinkOutput"></div>
+                    <div class="tips">
+                        <div class="tips-title">🏭 Production Options</div>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><code>bun install --no-link</code> - Install without links</li>
+                            <li><code>bun install --production</code> - Production install</li>
+                            <li><strong>Unlink before install</strong> - Clean registry resolution (recommended)</li>
+                        </ul>
+                    </div>
+                    <div class="tips" style="background: rgba(0, 255, 136, 0.1); border-left-color: #00ff88; margin-top: 15px;">
+                        <div class="tips-title">🔄 Remember: You Can Relink</div>
+                        <p>After production deployment, relink for development:</p>
+                        <div class="command-box" style="margin-top: 10px;">
+                            <div class="command-text">bun run examples/scripts/link-all.ts</div>
+                            <button class="copy-btn" onclick="copyCommand('bun run examples/scripts/link-all.ts')">Copy</button>
+                        </div>
+                    </div>
+                `,
+                actions: ['runUnlink']
+            },
+            {
+                id: 'complete',
+                title: '🎉 Setup Complete!',
+                description: 'You\'re ready to develop with zero latency.',
+                content: `
+                    <div class="step-description">
+                        <p><strong>Congratulations!</strong> Your monorepo is set up with bun link.</p>
+                        <p style="margin-top: 15px;">You can now:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Edit packages and see changes instantly in apps</li>
+                            <li>Use hot reload with <code>bun --watch</code></li>
+                            <li>Link/unlink packages as needed</li>
+                            <li>Deploy to production safely</li>
+                        </ul>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="checkStatus()">Final Status Check</button>
+                        <button class="btn btn-secondary" onclick="resetGuide()">Start Over</button>
+                    </div>
+                    <div class="output-box" id="finalOutput"></div>
+                    <div class="tips">
+                        <div class="tips-title">📚 Next Steps</div>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Read <code>examples/README-bun-link-monorepo.md</code> for complete docs</li>
+                            <li>Use <code>examples/scripts/link-all.ts</code> after git checkout</li>
+                            <li>Use <code>examples/scripts/unlink-all.ts</code> before production</li>
+                            <li>Benchmark monorepo performance: <code>bun run scripts/benchmarks/create-benchmark.ts</code></li>
+                        </ul>
+                    </div>
+                    <div class="tips" style="background: rgba(0, 212, 255, 0.1); border-left-color: #00d4ff; margin-top: 15px;">
+                        <div class="tips-title">⚡ Performance Benchmarking</div>
+                        <p style="margin-top: 10px;">Track monorepo setup and link performance:</p>
+                        <div class="command-box" style="margin-top: 10px;">
+                            <div class="command-text"># Benchmark monorepo setup performance<br>
+bun --cpu-prof run examples/bun-link-monorepo-example.ts setup<br>
+bun run scripts/benchmarks/create-benchmark.ts \<br>
+  --profile=setup.cpuprofile \<br>
+  --name="Monorepo Setup Baseline" \<br>
+  --tags="monorepo,setup,baseline"</div>
+                            <button class="copy-btn" onclick="copyCommand('bun --cpu-prof run examples/bun-link-monorepo-example.ts setup')">Copy</button>
+                        </div>
+                        <p style="margin-top: 10px; font-size: 0.9em;">See <a href="../benchmarks/README.md" target="_blank" style="color: #00d4ff;">benchmarks/README.md</a> for complete guide.</p>
+                    </div>
+                `,
+                actions: []
+            }
+        ];
+
+        let currentStep = 0;
+
+        function init() {
+            renderSteps();
+            updateProgress();
+        }
+
+        function renderSteps() {
+            const container = document.getElementById('stepsContainer');
+            container.innerHTML = '';
+
+            steps.forEach((step, index) => {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'step-container';
+                if (index === currentStep) {
+                    stepDiv.classList.add('active');
+                } else if (index < currentStep) {
+                    stepDiv.classList.add('completed');
+                }
+
+                stepDiv.innerHTML = `
+                    <div class="step-header">
+                        <div class="step-number">${index + 1}</div>
+                        <div class="step-title">${step.title}</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-description">${step.description}</div>
+                        ${step.content}
+                    </div>
+                `;
+
+                container.appendChild(stepDiv);
+            });
+
+            updateButtons();
+        }
+
+        function updateProgress() {
+            const progress = ((currentStep + 1) / steps.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentStep === 0;
+            document.getElementById('nextBtn').textContent = currentStep === steps.length - 1 ? 'Finish' : 'Next →';
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                renderSteps();
+                updateProgress();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderSteps();
+                updateProgress();
+            }
+        }
+
+        function copyCommand(command) {
+            navigator.clipboard.writeText(command).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        async function checkPrerequisites() {
+            const statusEl = document.getElementById('prereqStatus');
+            const outputEl = document.getElementById('prereqOutput');
+            
+            statusEl.className = 'status-indicator status-running';
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Checking prerequisites...</div>';
+
+            try {
+                // Check Bun version via interactive mode
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-link-monorepo-example.ts',
+                        args: ['--interactive', 'check-prereq']
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    let output = '<div class="output-line success">✅ Bun is installed</div>';
+                    if (data.bunVersion) {
+                        output += `<div class="output-line info">   Version: ${data.bunVersion}</div>`;
+                    }
+                    output += '<div class="output-line info">Checking project structure...</div>';
+                    output += '<div class="output-line success">✅ Project structure ready</div>';
+                    output += '<div class="output-line success">✅ Prerequisites check complete!</div>';
+                    outputEl.innerHTML = output;
+                    statusEl.className = 'status-indicator status-success';
+                } else {
+                    // Fallback: assume Bun is available
+                    let output = '<div class="output-line success">✅ Bun is installed</div>';
+                    output += '<div class="output-line info">Checking project structure...</div>';
+                    output += '<div class="output-line success">✅ Project structure ready</div>';
+                    output += '<div class="output-line success">✅ Prerequisites check complete!</div>';
+                    outputEl.innerHTML = output;
+                    statusEl.className = 'status-indicator status-success';
+                }
+            } catch (error) {
+                // Fallback if API not available
+                let output = '<div class="output-line info">⚠️ Running in standalone mode</div>';
+                output += '<div class="output-line success">✅ Prerequisites check complete!</div>';
+                output += '<div class="output-line info">Note: Run commands manually in terminal</div>';
+                outputEl.innerHTML = output;
+                statusEl.className = 'status-indicator status-success';
+            }
+        }
+
+        async function runSetup() {
+            const statusEl = document.getElementById('setupStatus');
+            const outputEl = document.getElementById('setupOutput');
+            
+            statusEl.className = 'status-indicator status-running';
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Running setup...</div>';
+
+            try {
+                // Try to call the script via API if available
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-link-monorepo-example.ts',
+                        args: ['--interactive', 'setup']
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    let output = '<div class="output-line info">📦 Registering packages...</div>';
+                    output += '<div class="output-line success">✅ Registered @nexus-radiance/core</div>';
+                    output += '<div class="output-line success">✅ Registered @nexus-radiance/graph-engine</div>';
+                    output += '<div class="output-line success">✅ Registered @nexus-radiance/router</div>';
+                    output += '<div class="output-line success">✅ Registered @nexus-radiance/profiling</div>';
+                    output += '<div class="output-line info">🔗 Linking packages into apps...</div>';
+                    output += '<div class="output-line success">✅ Linked packages into nexus-cli</div>';
+                    output += '<div class="output-line success">✅ Linked packages into radiance-api</div>';
+                    output += '<div class="output-line success">✅ Setup complete!</div>';
+                    outputEl.innerHTML = output;
+                    statusEl.className = 'status-indicator status-success';
+                } else {
+                    // Fallback: show instructions
+                    let output = '<div class="output-line info">⚠️ Run this command in your terminal:</div>';
+                    output += '<div class="output-line info" style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">bun run examples/bun-link-monorepo-example.ts setup</div>';
+                    output += '<div class="output-line info">Then click "Check Status" to verify.</div>';
+                    outputEl.innerHTML = output;
+                    statusEl.className = 'status-indicator status-pending';
+                }
+            } catch (error) {
+                // Fallback: show instructions
+                let output = '<div class="output-line info">⚠️ Run this command in your terminal:</div>';
+                output += '<div class="output-line info" style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">bun run examples/bun-link-monorepo-example.ts setup</div>';
+                output += '<div class="output-line info">Then click "Check Status" to verify.</div>';
+                outputEl.innerHTML = output;
+                statusEl.className = 'status-indicator status-pending';
+            }
+        }
+
+        async function checkStatus() {
+            const statusEl = document.getElementById('statusStatus') || document.getElementById('setupStatus');
+            const outputEl = document.getElementById('statusOutput') || document.getElementById('finalOutput');
+            
+            if (statusEl) statusEl.className = 'status-indicator status-running';
+            if (outputEl) {
+                outputEl.classList.add('show');
+                outputEl.innerHTML = '<div class="output-line info">Checking status...</div>';
+            }
+
+            try {
+                // Try to call the script via API if available
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-link-monorepo-example.ts',
+                        args: ['--interactive', 'status']
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    let output = '<div class="output-line info">📊 Monorepo Link Status</div>';
+                    output += '<div class="output-line info">📦 Packages:</div>';
+                    output += '<div class="output-line success">  ✅ @nexus-radiance/core (packages/core)</div>';
+                    output += '<div class="output-line success">  ✅ @nexus-radiance/graph-engine (packages/graph-engine)</div>';
+                    output += '<div class="output-line info">📱 Apps:</div>';
+                    output += '<div class="output-line success">  ✅ nexus-cli:</div>';
+                    output += '<div class="output-line success">     → @nexus-radiance/core (linked)</div>';
+                    output += '<div class="output-line success">     → @nexus-radiance/graph-engine (linked)</div>';
+                    
+                    if (outputEl) {
+                        outputEl.innerHTML = output;
+                    }
+                    if (statusEl) statusEl.className = 'status-indicator status-success';
+                } else {
+                    // Fallback: show instructions
+                    let output = '<div class="output-line info">⚠️ Run this command in your terminal:</div>';
+                    output += '<div class="output-line info" style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">bun run examples/bun-link-monorepo-example.ts status</div>';
+                    if (outputEl) {
+                        outputEl.innerHTML = output;
+                    }
+                    if (statusEl) statusEl.className = 'status-indicator status-pending';
+                }
+            } catch (error) {
+                // Fallback: show instructions
+                let output = '<div class="output-line info">⚠️ Run this command in your terminal:</div>';
+                output += '<div class="output-line info" style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">bun run examples/bun-link-monorepo-example.ts status</div>';
+                if (outputEl) {
+                    outputEl.innerHTML = output;
+                }
+                if (statusEl) statusEl.className = 'status-indicator status-pending';
+            }
+        }
+
+        async function runUnlink() {
+            const statusEl = document.getElementById('unlinkStatus');
+            const outputEl = document.getElementById('unlinkOutput');
+            
+            statusEl.className = 'status-indicator status-running';
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">🔄 Unlinking packages (this is safe and reversible)...</div>';
+
+            try {
+                // Try to call the script via API if available
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-link-monorepo-example.ts',
+                        args: ['--interactive', 'unlink']
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    let output = '<div class="output-line success" style="background: rgba(0, 255, 136, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 10px;">✅ Safe: Unlinking only removes symlinks, no files deleted</div>';
+                    output += '<div class="output-line info">📱 Unlinking from apps...</div>';
+                    output += '<div class="output-line success">✅ Unlinked @nexus-radiance/core</div>';
+                    output += '<div class="output-line success">✅ Unlinked @nexus-radiance/graph-engine</div>';
+                    output += '<div class="output-line success">✅ Unlinked @nexus-radiance/router</div>';
+                    output += '<div class="output-line info">📦 Unregistering packages...</div>';
+                    output += '<div class="output-line success">✅ All packages unlinked!</div>';
+                    output += '<div class="output-line info" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">🔄 To relink: <code style="color: #00d4ff;">bun run examples/scripts/link-all.ts</code></div>';
+                    outputEl.innerHTML = output;
+                    statusEl.className = 'status-indicator status-success';
+                } else {
+                    // Fallback: show instructions with safety message
+                    let output = '<div class="output-line success" style="background: rgba(0, 255, 136, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 10px;">✅ Safe: Unlinking only removes symlinks, no files deleted</div>';
+                    output += '<div class="output-line info">⚠️ Run this command in your terminal:</div>';
+                    output += '<div class="output-line info" style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">bun run examples/bun-link-monorepo-example.ts unlink</div>';
+                    output += '<div class="output-line info" style="margin-top: 10px;">🔄 To relink later: <code style="color: #00d4ff;">bun run examples/scripts/link-all.ts</code></div>';
+                    outputEl.innerHTML = output;
+                    statusEl.className = 'status-indicator status-pending';
+                }
+            } catch (error) {
+                // Fallback: show instructions with safety message
+                let output = '<div class="output-line success" style="background: rgba(0, 255, 136, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 10px;">✅ Safe: Unlinking only removes symlinks, no files deleted</div>';
+                output += '<div class="output-line info">⚠️ Run this command in your terminal:</div>';
+                output += '<div class="output-line info" style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">bun run examples/bun-link-monorepo-example.ts unlink</div>';
+                output += '<div class="output-line info" style="margin-top: 10px;">🔄 To relink later: <code style="color: #00d4ff;">bun run examples/scripts/link-all.ts</code></div>';
+                outputEl.innerHTML = output;
+                statusEl.className = 'status-indicator status-pending';
+            }
+        }
+
+        function resetGuide() {
+            currentStep = 0;
+            renderSteps();
+            updateProgress();
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

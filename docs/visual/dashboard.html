@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>BUN Constants - Tier-1380 Dashboard</title>
+    <style>
+        :root {
+            /* Light theme (default) */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --text-muted: #8b949e;
+            --border: #d0d7de;
+            --border-hover: #afb8c1;
+            --card-bg: #ffffff;
+            --card-border: #d0d7de;
+            --header-bg: linear-gradient(135deg, #f6f8fa 0%, #ffffff 100%);
+            --accent: #0969da;
+            --accent-hover: #0860ca;
+            --success: #1a7f37;
+            --warning: #9a6700;
+            --error: #cf222e;
+            --chart-fill: linear-gradient(90deg, #0969da 0%, #0550ae 100%);
+        }
+        
+        [data-theme="dark"] {
+            /* Dark theme */
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --border: #30363d;
+            --border-hover: #484f58;
+            --card-bg: #161b22;
+            --card-border: #30363d;
+            --header-bg: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+            --chart-fill: linear-gradient(90deg, #58a6ff 0%, #79c0ff 100%);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg-primary); 
+            color: var(--text-primary); 
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+            padding: 40px 0; 
+            background: var(--header-bg); 
+            border-radius: 12px; 
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .header h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 10px; 
+            background: var(--chart-fill); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { font-size: 1.1rem; color: var(--text-secondary); }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .theme-toggle:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-hover);
+        }
+        .badges { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--card-border); 
+            border-radius: 8px; 
+            padding: 24px; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+        .card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--border-hover);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 16px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .metric { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 8px 0; 
+            border-bottom: 1px solid var(--border);
+            transition: border-color 0.3s ease;
+        }
+        .metric:last-child { border-bottom: none; }
+        .metric-value { font-weight: 600; color: var(--accent-hover); }
+        .status-compliant { color: var(--success); }
+        .status-non-compliant { color: var(--error); }
+        .chart-bar { 
+            background: var(--bg-tertiary); 
+            height: 8px; 
+            border-radius: 4px; 
+            margin-top: 4px; 
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+        .chart-fill { 
+            background: var(--chart-fill); 
+            height: 100%; 
+            border-radius: 4px; 
+            transition: width 0.3s ease;
+        }
+        .controls { 
+            background: var(--card-bg); 
+            border: 1px solid var(--card-border); 
+            border-radius: 8px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+            align-items: center;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .search-box { 
+            flex: 1; 
+            min-width: 200px; 
+            padding: 10px 15px; 
+            background: var(--bg-primary); 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            color: var(--text-primary); 
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .search-box:focus { outline: none; border-color: var(--accent); }
+        .filter-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-btn { 
+            padding: 8px 16px; 
+            background: var(--bg-tertiary); 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            color: var(--text-primary); 
+            cursor: pointer; 
+            font-size: 13px; 
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { background: var(--bg-secondary); border-color: var(--accent); }
+        .filter-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .export-btn { 
+            padding: 8px 16px; 
+            background: var(--success); 
+            border: 1px solid var(--success); 
+            border-radius: 6px; 
+            color: white; 
+            cursor: pointer; 
+            font-size: 13px; 
+            transition: all 0.2s;
+        }
+        .export-btn:hover { 
+            background: var(--success);
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .constants-table-wrapper { 
+            width: 100%; 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            overflow: hidden; 
+            border: 1px solid var(--card-border);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .constants-table { width: 100%; border-collapse: collapse; }
+        .constants-table th { 
+            background: var(--bg-tertiary); 
+            padding: 12px; 
+            text-align: left; 
+            font-weight: 600; 
+            color: var(--text-primary); 
+            cursor: pointer; 
+            user-select: none; 
+            position: relative;
+            transition: background 0.2s ease;
+        }
+        .constants-table th:hover { background: var(--bg-secondary); }
+        .constants-table th.sortable::after { content: ' ↕'; opacity: 0.5; font-size: 0.8em; }
+        .constants-table th.sort-asc::after { content: ' ↑'; opacity: 1; }
+        .constants-table th.sort-desc::after { content: ' ↓'; opacity: 1; }
+        .constants-table td { 
+            padding: 12px; 
+            border-bottom: 1px solid var(--border);
+            transition: border-color 0.3s ease;
+        }
+        .constants-table tbody tr { transition: background 0.15s; }
+        .constants-table tbody tr:hover { background: var(--bg-secondary); }
+        .constants-table tbody tr.hidden { display: none; }
+        .type-badge { padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+        .type-string { background: #0969da; color: white; }
+        .type-url { background: #8250df; color: white; }
+        .type-number { background: #d1242f; color: white; }
+        .security-low { background: #1f7424; color: white; }
+        .security-medium { background: #9a6700; color: white; }
+        .security-high { background: #d1242f; color: white; }
+        .security-critical { background: #8250df; color: white; }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px; padding: 15px; }
+        .pagination-btn { 
+            padding: 8px 12px; 
+            background: var(--bg-tertiary); 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            color: var(--text-primary); 
+            cursor: pointer; 
+            font-size: 13px; 
+            transition: all 0.2s;
+        }
+        .pagination-btn:hover:not(:disabled) { 
+            background: var(--bg-secondary); 
+            border-color: var(--accent);
+        }
+        .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination-info { color: var(--text-secondary); font-size: 14px; }
+        .footer { 
+            text-align: center; 
+            margin-top: 40px; 
+            padding: 20px; 
+            border-top: 1px solid var(--border); 
+            color: var(--text-muted);
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        .code-link { color: var(--accent); text-decoration: none; transition: color 0.2s ease; }
+        .code-link:hover { text-decoration: underline; color: var(--accent-hover); }
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header h1 { font-size: 2rem; }
+            .grid { grid-template-columns: 1fr; }
+            .badges { justify-content: center; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .search-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">
+                <span id="themeIcon">🌙</span>
+                <span id="themeLabel">Dark</span>
+            </button>
+            <h1>🏆 BUN Constants Dashboard</h1>
+            <p>Tier-1380 Certified Version Management System</p>
+            <p style="margin-top: 10px; font-size: 0.95rem;">
+                <a href="https://bun.com/docs" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent);">
+                    📚 Bun Documentation: https://bun.com/docs
+                </a>
+                <span style="color: var(--text-muted); margin: 0 8px;">|</span>
+                <a href="https://bun.com/docs/reference" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent);">
+                    📖 API Reference
+                </a>
+                <span style="color: var(--text-muted); margin: 0 8px;">|</span>
+                <a href="https://github.com/oven-sh/bun/tree/main/packages/bun-types" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent);">
+                    🔷 Bun Types Repository
+                </a>
+                <span style="color: var(--text-muted); margin: 0 8px;">|</span>
+                <a href="https://bun.com/docs/pm/bunx" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent);">
+                    ⚡ bunx
+                </a>
+                <span style="color: var(--text-muted); margin: 0 8px;">|</span>
+                <a href="https://bun.com/rss.xml" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent);">
+                    📡 RSS
+                </a>
+            </p>
+            <div class="badges" id="badgesContainer">
+                <img src="badges/version.svg" alt="Version" data-badge="version.svg">
+                <img src="badges/tier_1380.svg" alt="Tier-1380" data-badge="tier_1380.svg">
+                <img src="badges/constants.svg" alt="Constants" data-badge="constants.svg">
+                <img src="badges/schema.svg" alt="Schema" data-badge="schema.svg">
+                <img src="badges/mcp.svg" alt="MCP" data-badge="mcp.svg">
+                <img src="badges/col_89.svg" alt="Col-89" data-badge="col_89.svg">
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>📊 System Overview</h3>
+                <div class="metric">
+                    <span>Version</span>
+                    <span class="metric-value">v1.0.1</span>
+                </div>
+                <div class="metric">
+                    <span>Total Constants</span>
+                    <span class="metric-value">76</span>
+                </div>
+                <div class="metric">
+                    <span>Projects</span>
+                    <span class="metric-value">2</span>
+                </div>
+                <div class="metric">
+                    <span>Last Updated</span>
+                    <span class="metric-value">2/4/2026, 1:59:00 PM</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔒 Tier-1380 Compliance</h3>
+                <div class="metric">
+                    <span>Certification Status</span>
+                    <span class="status-compliant">✅ Certified</span>
+                </div>
+                <div class="metric">
+                    <span>Certified Date</span>
+                    <span class="metric-value">2/3/2026</span>
+                </div>
+                <div class="metric">
+                    <span>Audit Level</span>
+                    <span class="metric-value">enterprise</span>
+                </div>
+                <div class="metric">
+                    <span>Col-89 Max Width</span>
+                    <span class="metric-value">89 chars</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🛠️ Technical Details</h3>
+                <div class="metric">
+                    <span>Bun Version</span>
+                    <span class="metric-value">1.3.7+</span>
+                </div>
+                <div class="metric">
+                    <span>Schema Version</span>
+                    <span class="metric-value">1.0.0</span>
+                </div>
+                <div class="metric">
+                    <span>MCP Enabled</span>
+                    <span class="status-compliant">✅ Yes</span>
+                </div>
+                <div class="metric">
+                    <span>Platform</span>
+                    <span class="metric-value">darwin</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Category Distribution</h3>
+                
+                <div class="metric">
+                    <span>runtime</span>
+                    <span class="metric-value">40</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 52.63157894736842%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>config</span>
+                    <span class="metric-value">27</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 35.526315789473685%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>api</span>
+                    <span class="metric-value">5</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 6.578947368421052%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>cli</span>
+                    <span class="metric-value">4</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 5.263157894736842%"></div>
+                </div>
+                
+            </div>
+
+            <div class="card">
+                <h3>🔤 Type Distribution</h3>
+                
+                <div class="metric">
+                    <span>url</span>
+                    <span class="metric-value">23</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 30.263157894736842%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>string</span>
+                    <span class="metric-value">18</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 23.684210526315788%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>number</span>
+                    <span class="metric-value">4</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 5.263157894736842%"></div>
+                </div>
+                
+            </div>
+
+            <div class="card">
+                <h3>🔐 Security Classification</h3>
+                
+                <div class="metric">
+                    <span>Low</span>
+                    <span class="metric-value">68</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 89.47368421052632%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>Critical</span>
+                    <span class="metric-value">7</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 9.210526315789473%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>High</span>
+                    <span class="metric-value">1</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 1.3157894736842104%"></div>
+                </div>
+                
+            </div>
+
+            <div class="card">
+                <h3>📦 Project Breakdown</h3>
+                
+                <div class="metric">
+                    <span>scanner</span>
+                    <span class="metric-value">40</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 52.63157894736842%"></div>
+                </div>
+                
+                <div class="metric">
+                    <span>mcp-bun-docs</span>
+                    <span class="metric-value">36</span>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-fill" style="width: 47.368421052631575%"></div>
+                </div>
+                
+            </div>
+            
+        <div class="card" style="grid-column: 1 / -1;">
+            <h3>⚡ CLI Fix Projections - FactoryWager v4.2</h3>
+            <div class="metric"><span>Baseline R-Score</span><span class="metric-value">0.82</span></div>
+            <div style="overflow-x: auto; margin-top: 16px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                    <thead>
+                        <tr style="background: var(--bg-tertiary);">
+                            <th style="padding: 8px; text-align: left;">Flag</th>
+                            <th style="padding: 8px; text-align: left;">Description</th>
+                            <th style="padding: 8px; text-align: center;">M_Impact</th>
+                            <th style="padding: 8px; text-align: center;">P_Ratio Δ</th>
+                            <th style="padding: 8px; text-align: center;">Projected R</th>
+                            <th style="padding: 8px; text-align: center;">Tier</th>
+                            <th style="padding: 8px; text-align: left;">Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 8px;"><code>--fix-engine</code></td>
+                            <td style="padding: 8px;">unify engines.bun to &quot;&gt;=1.1.29&quot; across 47 projects</td>
+                            <td style="padding: 8px; text-align: center;">0.06</td>
+                            <td style="padding: 8px; text-align: center;">+11.0%</td>
+                            <td style="padding: 8px; text-align: center; font-weight: 600; color: var(--accent);">0.987</td>
+                            <td style="padding: 8px; text-align: center;">
+                                <span class="type-badge" style="background: #28a745; color: white;">Elite</span>
+                            </td>
+                            <td style="padding: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                                
+                                📊 +11.4%
+                                
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 8px;"><code>--fix-dns</code></td>
+                            <td style="padding: 8px;">inject dns-prefetch.ts into 47 projects</td>
+                            <td style="padding: 8px; text-align: center;">0.02</td>
+                            <td style="padding: 8px; text-align: center;">+48.0%</td>
+                            <td style="padding: 8px; text-align: center; font-weight: 600; color: var(--accent);">0.994</td>
+                            <td style="padding: 8px; text-align: center;">
+                                <span class="type-badge" style="background: #28a745; color: white;">Elite</span>
+                            </td>
+                            <td style="padding: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                                ⚡ -135 ms per cold start (via native DNS hardening)
+                                
+                                
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 8px;"><code>--fix-trusted</code></td>
+                            <td style="padding: 8px;">trustedDependencies coverage</td>
+                            <td style="padding: 8px; text-align: center;">0.18</td>
+                            <td style="padding: 8px; text-align: center;">+7.0%</td>
+                            <td style="padding: 8px; text-align: center; font-weight: 600; color: var(--accent);">0.965</td>
+                            <td style="padding: 8px; text-align: center;">
+                                <span class="type-badge" style="background: #ffc107; color: white;">Native-Grade</span>
+                            </td>
+                            <td style="padding: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                                
+                                
+                                -
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 8px;"><code>--fix-registry</code></td>
+                            <td style="padding: 8px;">Registry unification</td>
+                            <td style="padding: 8px; text-align: center;">0.09</td>
+                            <td style="padding: 8px; text-align: center;">+22.0%</td>
+                            <td style="padding: 8px; text-align: center; font-weight: 600; color: var(--accent);">0.978</td>
+                            <td style="padding: 8px; text-align: center;">
+                                <span class="type-badge" style="background: #28a745; color: white;">Elite</span>
+                            </td>
+                            <td style="padding: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                                
+                                
+                                -
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 8px;"><code>--fix-scopes</code></td>
+                            <td style="padding: 8px;">Scoped registry config</td>
+                            <td style="padding: 8px; text-align: center;">0.11</td>
+                            <td style="padding: 8px; text-align: center;">+19.0%</td>
+                            <td style="padding: 8px; text-align: center; font-weight: 600; color: var(--accent);">0.976</td>
+                            <td style="padding: 8px; text-align: center;">
+                                <span class="type-badge" style="background: #28a745; color: white;">Elite</span>
+                            </td>
+                            <td style="padding: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                                
+                                
+                                -
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 8px;"><code>--update</code></td>
+                            <td style="padding: 8px;">Dependency version freshness</td>
+                            <td style="padding: 8px; text-align: center;">0.28</td>
+                            <td style="padding: 8px; text-align: center;">+17.0%</td>
+                            <td style="padding: 8px; text-align: center; font-weight: 600; color: var(--accent);">0.980</td>
+                            <td style="padding: 8px; text-align: center;">
+                                <span class="type-badge" style="background: #28a745; color: white;">Elite</span>
+                            </td>
+                            <td style="padding: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                                
+                                
+                                -
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search constants, projects, types..." />
+            <div class="filter-group">
+                <button class="filter-btn" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="mcp">MCP Only</button>
+                <button class="filter-btn" data-filter="critical">Critical</button>
+                <button class="filter-btn" data-filter="category:runtime">runtime</button><button class="filter-btn" data-filter="category:api">api</button><button class="filter-btn" data-filter="category:config">config</button><button class="filter-btn" data-filter="category:cli">cli</button>
+            </div>
+            <button class="export-btn" onclick="exportData('json')">Export JSON</button>
+            <button class="export-btn" onclick="exportData('csv')">Export CSV</button>
+        </div>
+
+        <div class="constants-table-wrapper">
+            <table class="constants-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="name">Constant</th>
+                        <th class="sortable" data-sort="project">Project</th>
+                        <th class="sortable" data-sort="type">Type</th>
+                        <th class="sortable" data-sort="category">Category</th>
+                        <th class="sortable" data-sort="security">Security</th>
+                        <th class="sortable" data-sort="mcp">MCP</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody id="constantsTableBody">
+                    
+                    <tr data-name="bun_keychain_service" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_KEYCHAIN_SERVICE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="scan.ts:1405">scan.ts:1405</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_keychain_service_legacy" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_KEYCHAIN_SERVICE_LEGACY</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="scan.ts:1406">scan.ts:1406</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_keychain_token_names" data-project="scanner" data-type="string" data-category="runtime" data-security="critical" data-mcp="false">
+                        <td><code>BUN_KEYCHAIN_TOKEN_NAMES</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-critical">critical</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="scan.ts:1407">scan.ts:1407</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_token_audit_rss_path" data-project="scanner" data-type="string" data-category="runtime" data-security="critical" data-mcp="false">
+                        <td><code>BUN_TOKEN_AUDIT_RSS_PATH</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-critical">critical</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="scan.ts:1859">scan.ts:1859</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_scan_results_rss_path" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_SCAN_RESULTS_RSS_PATH</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="scan.ts:1860">scan.ts:1860</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_advisory_matches_path" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_ADVISORY_MATCHES_PATH</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="scan.ts:1861">scan.ts:1861</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_api_provenance" data-project="scanner" data-type="string" data-category="api" data-security="low" data-mcp="false">
+                        <td><code>BUN_API_PROVENANCE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>api</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/doc-cross-reference.ts:65">cli/renderers/doc-cross-reference.ts:65</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_perf_annotations" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_PERF_ANNOTATIONS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/doc-cross-reference.ts:177">cli/renderers/doc-cross-reference.ts:177</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_related_apis" data-project="scanner" data-type="string" data-category="api" data-security="low" data-mcp="false">
+                        <td><code>BUN_RELATED_APIS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>api</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/doc-cross-reference.ts:232">cli/renderers/doc-cross-reference.ts:232</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_search_keywords" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_SEARCH_KEYWORDS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/doc-cross-reference.ts:361">cli/renderers/doc-cross-reference.ts:361</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_status_glyphs" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_STATUS_GLYPHS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/status-glyphs.ts:19">cli/renderers/status-glyphs.ts:19</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_project_presets" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_PROJECT_PRESETS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/status-glyphs.ts:47">cli/renderers/status-glyphs.ts:47</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_docs_base" data-project="scanner" data-type="url" data-category="config" data-security="low" data-mcp="false">
+                        <td><code>BUN_DOCS_BASE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/bun-api-matrix.ts:45">cli/renderers/bun-api-matrix.ts:45</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_doc_base" data-project="scanner" data-type="url" data-category="config" data-security="low" data-mcp="false">
+                        <td><code>BUN_DOC_BASE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/bun-api-matrix.ts:47">cli/renderers/bun-api-matrix.ts:47</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_api_catalog" data-project="scanner" data-type="string" data-category="api" data-security="low" data-mcp="false">
+                        <td><code>BUN_API_CATALOG</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>api</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/bun-api-matrix.ts:89">cli/renderers/bun-api-matrix.ts:89</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_scanner_apis" data-project="scanner" data-type="string" data-category="api" data-security="low" data-mcp="false">
+                        <td><code>BUN_SCANNER_APIS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>api</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="cli/renderers/bun-api-matrix.ts:1844">cli/renderers/bun-api-matrix.ts:1844</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_max_safe_size" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_MAX_SAFE_SIZE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="optimizations/runtime-optimizations.ts:18">optimizations/runtime-optimizations.ts:18</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_risk_constants" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_RISK_CONSTANTS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="optimizations/bun-optimizations.ts:69">optimizations/bun-optimizations.ts:69</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_constants_version" data-project="scanner" data-type="string" data-category="config" data-security="low" data-mcp="false">
+                        <td><code>BUN_CONSTANTS_VERSION</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="scripts/extract-bun-constants.ts:13">scripts/extract-bun-constants.ts:13</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_r2_cookie_format_version" data-project="scanner" data-type="number" data-category="config" data-security="low" data-mcp="false">
+                        <td><code>BUN_R2_COOKIE_FORMAT_VERSION</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-number">number</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="lib/r2-cookie-stream.ts:3">lib/r2-cookie-stream.ts:3</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_r2_cookie_compress_threshold" data-project="scanner" data-type="number" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_R2_COOKIE_COMPRESS_THRESHOLD</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-number">number</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="lib/r2-cookie-stream.ts:4">lib/r2-cookie-stream.ts:4</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_profiles_keychain_prefix" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_PROFILES_KEYCHAIN_PREFIX</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/profiles.ts:9">src/profiles.ts:9</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_profiles_default_namespace" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_PROFILES_DEFAULT_NAMESPACE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/profiles.ts:10">src/profiles.ts:10</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_profiles_secret_names" data-project="scanner" data-type="string" data-category="runtime" data-security="critical" data-mcp="false">
+                        <td><code>BUN_PROFILES_SECRET_NAMES</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-critical">critical</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/profiles.ts:11">src/profiles.ts:11</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_profiles_env_map" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_PROFILES_ENV_MAP</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/profiles.ts:13">src/profiles.ts:13</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_keychain_error_codes" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_KEYCHAIN_ERROR_CODES</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/profiles.ts:95">src/profiles.ts:95</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_keychain_service" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_KEYCHAIN_SERVICE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/scan.ts:1430">src/scan.ts:1430</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_keychain_service_legacy" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_KEYCHAIN_SERVICE_LEGACY</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/scan.ts:1431">src/scan.ts:1431</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_keychain_token_names" data-project="scanner" data-type="string" data-category="runtime" data-security="critical" data-mcp="false">
+                        <td><code>BUN_KEYCHAIN_TOKEN_NAMES</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-critical">critical</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/scan.ts:1432">src/scan.ts:1432</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_token_audit_rss_path" data-project="scanner" data-type="string" data-category="runtime" data-security="critical" data-mcp="false">
+                        <td><code>BUN_TOKEN_AUDIT_RSS_PATH</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-critical">critical</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/scan.ts:1878">src/scan.ts:1878</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_scan_results_rss_path" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_SCAN_RESULTS_RSS_PATH</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/scan.ts:1879">src/scan.ts:1879</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_advisory_matches_path" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_ADVISORY_MATCHES_PATH</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/scan.ts:1880">src/scan.ts:1880</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_scanner_columns" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_SCANNER_COLUMNS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/scan-columns.ts:3">src/scan-columns.ts:3</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_r_score_baseline" data-project="scanner" data-type="number" data-category="cli" data-security="low" data-mcp="false">
+                        <td><code>BUN_R_SCORE_BASELINE</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-number">number</span></td>
+                        <td>cli</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/cli-constants.ts:46">src/cli-constants.ts:46</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_fix_projections" data-project="scanner" data-type="string" data-category="cli" data-security="low" data-mcp="false">
+                        <td><code>BUN_FIX_PROJECTIONS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>cli</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/cli-constants.ts:60">src/cli-constants.ts:60</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_secret_status_columns" data-project="scanner" data-type="string" data-category="runtime" data-security="critical" data-mcp="false">
+                        <td><code>BUN_SECRET_STATUS_COLUMNS</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-critical">critical</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/service-color-secrets.ts:35">src/service-color-secrets.ts:35</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_export_manifest" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_EXPORT_MANIFEST</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/code-discovery.ts:40">src/code-discovery.ts:40</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_cookie_session_prefix" data-project="scanner" data-type="string" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_COOKIE_SESSION_PREFIX</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/cookie-sessions.ts:101">src/cookie-sessions.ts:101</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_default_session_ttl" data-project="scanner" data-type="number" data-category="runtime" data-security="low" data-mcp="false">
+                        <td><code>BUN_DEFAULT_SESSION_TTL</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-number">number</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/cookie-sessions.ts:102">src/cookie-sessions.ts:102</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_cookie_secret_names" data-project="scanner" data-type="string" data-category="runtime" data-security="critical" data-mcp="false">
+                        <td><code>BUN_COOKIE_SECRET_NAMES</code></td>
+                        <td>scanner</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-critical">critical</span></td>
+                        <td>❌</td>
+                        <td><a href="#" class="code-link" title="src/cookie-sessions.ts:103">src/cookie-sessions.ts:103</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_base_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_BASE_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:11">lib.ts:11</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_install_script_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_INSTALL_SCRIPT_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:14">lib.ts:14</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_docs_base" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_DOCS_BASE</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:16">lib.ts:16</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_docs_version" data-project="mcp-bun-docs" data-type="string" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_DOCS_VERSION</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:17">lib.ts:17</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_docs_min_version" data-project="mcp-bun-docs" data-type="string" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_DOCS_MIN_VERSION</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:18">lib.ts:18</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_changelog_rss" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_CHANGELOG_RSS</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:19">lib.ts:19</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_shop_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_SHOP_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:22">lib.ts:22</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_blog_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_BLOG_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:24">lib.ts:24</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_blog_rss_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_BLOG_RSS_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:26">lib.ts:26</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_guides_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_GUIDES_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:27">lib.ts:27</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_repo_releases_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_REPO_RELEASES_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:30">lib.ts:30</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_pm_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_PM_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:32">lib.ts:32</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_pm_cli_url" data-project="mcp-bun-docs" data-type="string" data-category="cli" data-security="low" data-mcp="true">
+                        <td><code>BUN_PM_CLI_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>cli</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:33">lib.ts:33</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_install_add_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_INSTALL_ADD_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:34">lib.ts:34</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_node_compat_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_NODE_COMPAT_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:35">lib.ts:35</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_feedback_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_FEEDBACK_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:36">lib.ts:36</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_feedback_upgrade_first" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_FEEDBACK_UPGRADE_FIRST</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:39">lib.ts:39</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_reference_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_REFERENCE_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:42">lib.ts:42</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_test_reference_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_TEST_REFERENCE_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:43">lib.ts:43</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_repo_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_REPO_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:46">lib.ts:46</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_docs_json_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_DOCS_JSON_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:49">lib.ts:49</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_types_repo_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_TYPES_REPO_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:53">lib.ts:53</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_types_readme_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_TYPES_README_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:57">lib.ts:57</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_types_authoring_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="high" data-mcp="true">
+                        <td><code>BUN_TYPES_AUTHORING_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-high">high</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:61">lib.ts:61</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_types_key_files" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_TYPES_KEY_FILES</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:65">lib.ts:65</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_reference_links" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_REFERENCE_LINKS</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:78">lib.ts:78</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_url_config" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_URL_CONFIG</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:111">lib.ts:111</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_doc_entries" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_DOC_ENTRIES</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:299">lib.ts:299</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_test_cli_options" data-project="mcp-bun-docs" data-type="string" data-category="cli" data-security="low" data-mcp="true">
+                        <td><code>BUN_TEST_CLI_OPTIONS</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>cli</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:1296">lib.ts:1296</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_137_feature_matrix" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_137_FEATURE_MATRIX</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:1403">lib.ts:1403</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_137_complete_matrix" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_137_COMPLETE_MATRIX</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:1463">lib.ts:1463</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_node_api_comparison_matrix" data-project="mcp-bun-docs" data-type="string" data-category="api" data-security="low" data-mcp="true">
+                        <td><code>BUN_NODE_API_COMPARISON_MATRIX</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>api</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:1827">lib.ts:1827</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_doc_map" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_DOC_MAP</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:2145">lib.ts:2145</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_reference_keys" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_REFERENCE_KEYS</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:2244">lib.ts:2244</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_globals" data-project="mcp-bun-docs" data-type="string" data-category="runtime" data-security="low" data-mcp="true">
+                        <td><code>BUN_GLOBALS</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-string">string</span></td>
+                        <td>runtime</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:2258">lib.ts:2258</a></td>
+                    </tr>
+                    
+                    <tr data-name="bun_globals_api_url" data-project="mcp-bun-docs" data-type="url" data-category="config" data-security="low" data-mcp="true">
+                        <td><code>BUN_GLOBALS_API_URL</code></td>
+                        <td>mcp-bun-docs</td>
+                        <td><span class="type-badge type-url">url</span></td>
+                        <td>config</td>
+                        <td><span class="type-badge security-low">low</span></td>
+                        <td>✅</td>
+                        <td><a href="#" class="code-link" title="lib.ts:2569">lib.ts:2569</a></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">← Previous</button>
+            <span class="pagination-info" id="pageInfo">Page 1 of <span id="totalPages">1</span></span>
+            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">Next →</button>
+        </div>
+
+        <div class="footer">
+            <p>Generated on 2026-02-05T00:56:31.266Z | Tier-1380 Certified | BUN Constants Version Management System</p>
+        </div>
+    </div>
+    <script>
+        const constantsData = [{"name":"BUN_KEYCHAIN_SERVICE","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"scan.ts","line":1405,"value":"dev.bun.scanner"},{"name":"BUN_KEYCHAIN_SERVICE_LEGACY","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"scan.ts","line":1406,"value":"bun-scanner"},{"name":"BUN_KEYCHAIN_TOKEN_NAMES","project":"scanner","type":"string","category":"runtime","security":"critical","mcp":false,"path":"scan.ts","line":1407},{"name":"BUN_TOKEN_AUDIT_RSS_PATH","project":"scanner","type":"string","category":"runtime","security":"critical","mcp":false,"path":"scan.ts","line":1859,"value":"${SNAPSHOT_DIR}/token-events.rss.xml"},{"name":"BUN_SCAN_RESULTS_RSS_PATH","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"scan.ts","line":1860,"value":"${SNAPSHOT_DIR}/scan-results.rss.xml"},{"name":"BUN_ADVISORY_MATCHES_PATH","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"scan.ts","line":1861,"value":"${SNAPSHOT_DIR}/advisory-matches.jsonl"},{"name":"BUN_API_PROVENANCE","project":"scanner","type":"string","category":"api","security":"low","mcp":false,"path":"cli/renderers/doc-cross-reference.ts","line":65},{"name":"BUN_PERF_ANNOTATIONS","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"cli/renderers/doc-cross-reference.ts","line":177},{"name":"BUN_RELATED_APIS","project":"scanner","type":"string","category":"api","security":"low","mcp":false,"path":"cli/renderers/doc-cross-reference.ts","line":232},{"name":"BUN_SEARCH_KEYWORDS","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"cli/renderers/doc-cross-reference.ts","line":361},{"name":"BUN_STATUS_GLYPHS","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"cli/renderers/status-glyphs.ts","line":19},{"name":"BUN_PROJECT_PRESETS","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"cli/renderers/status-glyphs.ts","line":47},{"name":"BUN_DOCS_BASE","project":"scanner","type":"url","category":"config","security":"low","mcp":false,"path":"cli/renderers/bun-api-matrix.ts","line":45,"value":"https://bun.com/docs"},{"name":"BUN_DOC_BASE","project":"scanner","type":"url","category":"config","security":"low","mcp":false,"path":"cli/renderers/bun-api-matrix.ts","line":47},{"name":"BUN_API_CATALOG","project":"scanner","type":"string","category":"api","security":"low","mcp":false,"path":"cli/renderers/bun-api-matrix.ts","line":89},{"name":"BUN_SCANNER_APIS","project":"scanner","type":"string","category":"api","security":"low","mcp":false,"path":"cli/renderers/bun-api-matrix.ts","line":1844},{"name":"BUN_MAX_SAFE_SIZE","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"optimizations/runtime-optimizations.ts","line":18},{"name":"BUN_RISK_CONSTANTS","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"optimizations/bun-optimizations.ts","line":69},{"name":"BUN_CONSTANTS_VERSION","project":"scanner","type":"string","category":"config","security":"low","mcp":false,"path":"scripts/extract-bun-constants.ts","line":13,"value":"1.0.1"},{"name":"BUN_R2_COOKIE_FORMAT_VERSION","project":"scanner","type":"number","category":"config","security":"low","mcp":false,"path":"lib/r2-cookie-stream.ts","line":3,"value":"1"},{"name":"BUN_R2_COOKIE_COMPRESS_THRESHOLD","project":"scanner","type":"number","category":"runtime","security":"low","mcp":false,"path":"lib/r2-cookie-stream.ts","line":4,"value":"1024"},{"name":"BUN_PROFILES_KEYCHAIN_PREFIX","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/profiles.ts","line":9,"value":"bun-tier1380"},{"name":"BUN_PROFILES_DEFAULT_NAMESPACE","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/profiles.ts","line":10,"value":"com.tier1380.scanner"},{"name":"BUN_PROFILES_SECRET_NAMES","project":"scanner","type":"string","category":"runtime","security":"critical","mcp":false,"path":"src/profiles.ts","line":11},{"name":"BUN_PROFILES_ENV_MAP","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/profiles.ts","line":13},{"name":"BUN_KEYCHAIN_ERROR_CODES","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/profiles.ts","line":95},{"name":"BUN_KEYCHAIN_SERVICE","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/scan.ts","line":1430,"value":"dev.bun.scanner"},{"name":"BUN_KEYCHAIN_SERVICE_LEGACY","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/scan.ts","line":1431,"value":"bun-scanner"},{"name":"BUN_KEYCHAIN_TOKEN_NAMES","project":"scanner","type":"string","category":"runtime","security":"critical","mcp":false,"path":"src/scan.ts","line":1432},{"name":"BUN_TOKEN_AUDIT_RSS_PATH","project":"scanner","type":"string","category":"runtime","security":"critical","mcp":false,"path":"src/scan.ts","line":1878,"value":"${SNAPSHOT_DIR}/token-events.rss.xml"},{"name":"BUN_SCAN_RESULTS_RSS_PATH","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/scan.ts","line":1879,"value":"${SNAPSHOT_DIR}/scan-results.rss.xml"},{"name":"BUN_ADVISORY_MATCHES_PATH","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/scan.ts","line":1880,"value":"${SNAPSHOT_DIR}/advisory-matches.jsonl"},{"name":"BUN_SCANNER_COLUMNS","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/scan-columns.ts","line":3},{"name":"BUN_R_SCORE_BASELINE","project":"scanner","type":"number","category":"cli","security":"low","mcp":false,"path":"src/cli-constants.ts","line":46,"value":"0.82","description":"Current baseline R-Score: 0.82 Used as the starting point for calculating projected improvements. /"},{"name":"BUN_FIX_PROJECTIONS","project":"scanner","type":"string","category":"cli","security":"low","mcp":false,"path":"src/cli-constants.ts","line":60,"description":"@see BUN_CONSTANTS_TABLE.md for complete reference /"},{"name":"BUN_SECRET_STATUS_COLUMNS","project":"scanner","type":"string","category":"runtime","security":"critical","mcp":false,"path":"src/service-color-secrets.ts","line":35},{"name":"BUN_EXPORT_MANIFEST","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/code-discovery.ts","line":40},{"name":"BUN_COOKIE_SESSION_PREFIX","project":"scanner","type":"string","category":"runtime","security":"low","mcp":false,"path":"src/cookie-sessions.ts","line":101,"value":"cookie-session"},{"name":"BUN_DEFAULT_SESSION_TTL","project":"scanner","type":"number","category":"runtime","security":"low","mcp":false,"path":"src/cookie-sessions.ts","line":102,"value":"24"},{"name":"BUN_COOKIE_SECRET_NAMES","project":"scanner","type":"string","category":"runtime","security":"critical","mcp":false,"path":"src/cookie-sessions.ts","line":103},{"name":"BUN_BASE_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":11,"value":"https://bun.com"},{"name":"BUN_INSTALL_SCRIPT_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":14,"value":"https://bun.sh/install"},{"name":"BUN_DOCS_BASE","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":16,"value":"${BUN_BASE_URL}/docs"},{"name":"BUN_DOCS_VERSION","project":"mcp-bun-docs","type":"string","category":"config","security":"low","mcp":true,"path":"lib.ts","line":17,"value":"1.3.7"},{"name":"BUN_DOCS_MIN_VERSION","project":"mcp-bun-docs","type":"string","category":"config","security":"low","mcp":true,"path":"lib.ts","line":18,"value":"1.3.6"},{"name":"BUN_CHANGELOG_RSS","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":19,"value":"${BUN_BASE_URL}/rss.xml"},{"name":"BUN_SHOP_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":22,"value":"https://shop.bun.com/"},{"name":"BUN_BLOG_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":24,"value":"${BUN_BASE_URL}/blog"},{"name":"BUN_BLOG_RSS_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":26},{"name":"BUN_GUIDES_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":27,"value":"${BUN_BASE_URL}/guides"},{"name":"BUN_REPO_RELEASES_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":30,"value":"https://github.com/oven-sh/bun/releases"},{"name":"BUN_PM_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":32,"value":"${BUN_BASE_URL}/package-manager"},{"name":"BUN_PM_CLI_URL","project":"mcp-bun-docs","type":"string","category":"cli","security":"low","mcp":true,"path":"lib.ts","line":33,"value":"${BUN_BASE_URL}/docs/cli/pm"},{"name":"BUN_INSTALL_ADD_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":34,"value":"${BUN_BASE_URL}/docs/guides/install/add"},{"name":"BUN_NODE_COMPAT_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":35,"value":"${BUN_BASE_URL}/docs/runtime/nodejs-apis"},{"name":"BUN_FEEDBACK_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":36,"value":"${BUN_BASE_URL}/docs/feedback"},{"name":"BUN_FEEDBACK_UPGRADE_FIRST","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":39},{"name":"BUN_REFERENCE_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":42,"value":"${BUN_BASE_URL}/reference"},{"name":"BUN_TEST_REFERENCE_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":43,"value":"${BUN_BASE_URL}/reference/bun/test"},{"name":"BUN_REPO_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":46,"value":"https://github.com/oven-sh/bun"},{"name":"BUN_DOCS_JSON_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":49},{"name":"BUN_TYPES_REPO_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":53},{"name":"BUN_TYPES_README_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":57},{"name":"BUN_TYPES_AUTHORING_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"high","mcp":true,"path":"lib.ts","line":61},{"name":"BUN_TYPES_KEY_FILES","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":65},{"name":"BUN_REFERENCE_LINKS","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":78},{"name":"BUN_URL_CONFIG","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":111},{"name":"BUN_DOC_ENTRIES","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":299},{"name":"BUN_TEST_CLI_OPTIONS","project":"mcp-bun-docs","type":"string","category":"cli","security":"low","mcp":true,"path":"lib.ts","line":1296},{"name":"BUN_137_FEATURE_MATRIX","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":1403},{"name":"BUN_137_COMPLETE_MATRIX","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":1463},{"name":"BUN_NODE_API_COMPARISON_MATRIX","project":"mcp-bun-docs","type":"string","category":"api","security":"low","mcp":true,"path":"lib.ts","line":1827},{"name":"BUN_DOC_MAP","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":2145},{"name":"BUN_REFERENCE_KEYS","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":2244},{"name":"BUN_GLOBALS","project":"mcp-bun-docs","type":"string","category":"runtime","security":"low","mcp":true,"path":"lib.ts","line":2258},{"name":"BUN_GLOBALS_API_URL","project":"mcp-bun-docs","type":"url","category":"config","security":"low","mcp":true,"path":"lib.ts","line":2569,"value":"${BUN_BASE_URL}/docs/api/globals"}];
+        let filteredData = [...constantsData];
+        let currentPage = 1;
+        const itemsPerPage = 50;
+        let sortColumn = null;
+        let sortDirection = 'asc';
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            filterAndRender(query);
+        });
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                applyFilter(filter);
+            });
+        });
+
+        function applyFilter(filter) {
+            if (filter === 'all') {
+                filteredData = [...constantsData];
+            } else if (filter === 'mcp') {
+                filteredData = constantsData.filter(c => c.mcp);
+            } else if (filter === 'critical') {
+                filteredData = constantsData.filter(c => c.security === 'critical');
+            } else if (filter.startsWith('category:')) {
+                const category = filter.split(':')[1];
+                filteredData = constantsData.filter(c => c.category === category);
+            }
+            currentPage = 1;
+            renderTable();
+        }
+
+        function filterAndRender(query) {
+            const rows = document.querySelectorAll('#constantsTableBody tr');
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const matches = !query || text.includes(query);
+                row.classList.toggle('hidden', !matches);
+                if (matches) visibleCount++;
+            });
+            updatePagination(visibleCount);
+        }
+
+        // Sorting
+        document.querySelectorAll('.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const column = th.dataset.sort;
+                if (sortColumn === column) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = column;
+                    sortDirection = 'asc';
+                }
+                
+                document.querySelectorAll('.sortable').forEach(t => {
+                    t.classList.remove('sort-asc', 'sort-desc');
+                });
+                th.classList.add(`sort-${sortDirection}`);
+                
+                filteredData.sort((a, b) => {
+                    let aVal = a[column];
+                    let bVal = b[column];
+                    if (column === 'mcp') {
+                        aVal = a.mcp ? 1 : 0;
+                        bVal = b.mcp ? 1 : 0;
+                    }
+                    if (typeof aVal === 'string') {
+                        aVal = aVal.toLowerCase();
+                        bVal = bVal.toLowerCase();
+                    }
+                    const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                    return sortDirection === 'asc' ? comparison : -comparison;
+                });
+                
+                currentPage = 1;
+                renderTable();
+            });
+        });
+
+        function renderTable() {
+            const tbody = document.getElementById('constantsTableBody');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = filteredData.slice(start, end);
+            
+            // Escape HTML to prevent XSS attacks
+            const escapeHTML = (str) => {
+                if (str == null) return '';
+                const div = document.createElement('div');
+                div.textContent = String(str);
+                return div.innerHTML;
+            };
+            
+            tbody.innerHTML = pageData.map(constant => `
+                <tr data-name="${escapeHTML(constant.name.toLowerCase())}" data-project="${escapeHTML(constant.project)}" data-type="${escapeHTML(constant.type)}" data-category="${escapeHTML(constant.category)}" data-security="${escapeHTML(constant.security)}" data-mcp="${constant.mcp}">
+                    <td><code>${escapeHTML(constant.name)}</code></td>
+                    <td>${escapeHTML(constant.project)}</td>
+                    <td><span class="type-badge type-${escapeHTML(constant.type)}">${escapeHTML(constant.type)}</span></td>
+                    <td>${escapeHTML(constant.category || '-')}</td>
+                    <td><span class="type-badge security-${escapeHTML(constant.security)}">${escapeHTML(constant.security)}</span></td>
+                    <td>${constant.mcp ? '✅' : '❌'}</td>
+                    <td><a href="#" class="code-link" title="${escapeHTML(constant.path)}:${escapeHTML(constant.line)}">${escapeHTML(constant.path)}:${escapeHTML(constant.line)}</a></td>
+                </tr>
+            `).join('');
+            
+            updatePagination(filteredData.length);
+            
+            // Re-apply search filter
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            if (searchQuery) {
+                filterAndRender(searchQuery);
+            }
+        }
+
+        function updatePagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('pageInfo').innerHTML = `Page ${currentPage} of ${totalPages} (${totalItems} total)`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const newPage = currentPage + direction;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderTable();
+            }
+        }
+
+        // Export functionality
+        function exportData(format) {
+            const data = filteredData.length > 0 ? filteredData : constantsData;
+            let content, filename, mimeType;
+            
+            if (format === 'json') {
+                content = JSON.stringify(data, null, 2);
+                filename = `bun-constants-${new Date().toISOString().split('T')[0]}.json`;
+                mimeType = 'application/json';
+            } else {
+                const headers = ['Name', 'Project', 'Type', 'Category', 'Security', 'MCP', 'Path', 'Line', 'Value', 'Description'];
+                const rows = data.map(c => [
+                    c.name,
+                    c.project,
+                    c.type,
+                    c.category || '',
+                    c.security,
+                    c.mcp ? 'Yes' : 'No',
+                    c.path || '',
+                    c.line || '',
+                    c.value || '',
+                    c.description || ''
+                ]);
+                content = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+                filename = `bun-constants-${new Date().toISOString().split('T')[0]}.csv`;
+                mimeType = 'text/csv';
+            }
+            
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Theme management
+        (function() {
+            // Detect system preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const savedTheme = localStorage.getItem('dashboard-theme');
+            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            // Apply initial theme
+            document.documentElement.setAttribute('data-theme', initialTheme);
+            updateThemeUI(initialTheme);
+            
+            // Watch for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('dashboard-theme')) {
+                    const theme = e.matches ? 'dark' : 'light';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    updateThemeUI(theme);
+                }
+            });
+        })();
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('dashboard-theme', newTheme);
+            updateThemeUI(newTheme);
+        }
+        
+        function updateThemeUI(theme) {
+            const icon = document.getElementById('themeIcon');
+            const label = document.getElementById('themeLabel');
+            if (icon) icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+            if (label) label.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        }
+        
+        // Initialize badge paths with file:// protocol fallback
+        (function() {
+            const isFileProtocol = window.location.protocol === 'file:';
+            if (isFileProtocol) {
+                const badgeImages = document.querySelectorAll('#badgesContainer img[data-badge]');
+                const dashboardPath = window.location.pathname;
+                const dashboardDir = dashboardPath.substring(0, dashboardPath.lastIndexOf('/'));
+                
+                badgeImages.forEach(img => {
+                    const badgeName = img.getAttribute('data-badge');
+                    // For file:// protocol, use Bun.file() compatible paths
+                    // Try relative path first (works when dashboard.html is in same dir as badges/)
+                    const relativePath = `${dashboardDir}/badges/${badgeName}`;
+                    
+                    // Fallback: construct file:// URL using Bun.file() pattern
+                    // Bun.file() supports file:// URLs as per https://bun.com/docs/runtime/file-io
+                    try {
+                        // Use relative path - browsers handle file:// relative paths
+                        img.src = relativePath;
+                        
+                        // If image fails to load, try absolute file:// URL
+                        img.onerror = function() {
+                            try {
+                                // Construct absolute file:// URL
+                                const absolutePath = new URL(relativePath, 'file://').href;
+                                this.src = absolutePath;
+                            } catch (e) {
+                                console.warn(`Failed to load badge: ${badgeName}`);
+                            }
+                        };
+                    } catch (e) {
+                        console.warn(`Failed to set badge path: ${badgeName}`);
+                    }
+                });
+            }
+        })();
+
+        // Initialize
+        updatePagination(filteredData.length);
+        document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+    </script>
+</body>
+</html>

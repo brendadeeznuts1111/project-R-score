@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🚀 Enhanced Page - HTMLRewriter Demo</title>
+</head>
+<body>
+  <h1 class="main-title" style="color: #667eea; font-size: 2.5em;">👋 Welcome to HTMLRewriter</h1>
+  <p class="intro enhanced" style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">This is the ✨ enhanced content.</p>
+  <div class="content">
+    <p style="margin: 0.5rem 0; padding: 0.5rem; border-left: 3px solid #667eea;">First paragraph</p>
+    <p style="margin: 0.5rem 0; padding: 0.5rem; border-left: 3px solid #667eea;">Second paragraph</p>
+  </div>
+  <footer style="text-align: center; color: #666; margin-top: 2rem;">© 2024 | Enhanced by Bun HTMLRewriter</footer>
+</body>
+</html>
+<style>
+  body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 2rem; }
+  .main-title { text-align: center; }
+</style>
+<script>
+  console.log('✅ Page transformed by HTMLRewriter!');
+  document.querySelectorAll('p').forEach(p => {
+    p.addEventListener('click', () => {
+      p.style.background = '#fff3cd';
+      setTimeout(() => { p.style.background = ''; }, 1000);
+    });
+  });
+</script>
+      

@@ -1,0 +1,29 @@
+{
+  "name": "dev-hq-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun --hot run packages/server/src/index.ts",
+    "test": "bun test --workspace",
+    "release": "bun run build && npm publish --workspace",
+    "cli": "bun run packages/cli/src/index.ts",
+    "insights": "dev-hq insights --table",
+    "serve": "dev-hq serve --hot --watch",
+    "health": "dev-hq health",
+    "lint": "dev-hq insights --json | jq '.stats'"
+  },
+  "bun-create": {
+    "preinstall": "echo '🚀 Setting up Dev HQ workspace...'",
+    "postinstall": [
+      "echo '✅ Dependencies installed!'",
+      "echo '📋 Run \\'bun run dev\\' to start the development server'",
+      "echo '📊 Run \\'bun run insights\\' to analyze your codebase'"
+    ],
+    "start": "bun run dev"
+  }
+}
+
+

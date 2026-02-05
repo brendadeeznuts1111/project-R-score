@@ -1,0 +1,105 @@
+/* Tier-1380 Dashboard Theme */
+:root {
+  color-scheme: light dark;
+  --primary: #82589f;
+  --surface: light-dark(#ffffff, #121212);
+  --text: light-dark(#333333, #eeeeee);
+  --border: light-dark(#dddddd, #444444);
+}
+
+.dashboard {
+  background: var(--surface);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  padding-block: 1rem 2rem;
+  margin-inline: auto;
+  inline-size: min(90%, 1200px);
+
+  .header {
+    display: flex;
+    place-items: center;
+    gap: 1rem;
+    border-block-end: 1px solid var(--border);
+    padding-block-end: 1rem;
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .subtitle {
+      color: color-mix(in srgb, var(--text) 60%, transparent);
+      font-size: 0.875rem;
+    }
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding-block-start: 2rem;
+
+    @media (width >= 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (width >= 1200px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .card {
+    background: light-dark(#f8f8f8, #1e1e1e);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+
+    .card-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: color-mix(in srgb, var(--text) 50%, transparent);
+    }
+
+    .card-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-block-start: 0.25rem;
+    }
+
+    .card-trend {
+      font-size: 0.875rem;
+      margin-block-start: 0.5rem;
+
+      &.up { color: hwb(120 10% 20%); }
+      &.down { color: hwb(0 10% 20%); }
+      &.neutral { color: color-mix(in srgb, var(--text) 40%, transparent); }
+    }
+  }
+
+  .status-bar {
+    display: flex;
+    place-content: space-between;
+    padding-block-start: 2rem;
+    border-block-start: 1px solid var(--border);
+    margin-block-start: 2rem;
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--text) 50%, transparent);
+
+    :is(a, button) {
+      color: var(--primary);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

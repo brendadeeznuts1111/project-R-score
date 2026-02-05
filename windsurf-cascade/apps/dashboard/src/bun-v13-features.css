@@ -1,0 +1,224 @@
+/* Bun v1.3 CSS Features Demo
+ * Demonstrating view-transition pseudo-elements with class selectors
+ * and @layer blocks with color-scheme support
+ */
+
+/* CSS Custom Properties for color scheme */
+@layer base {
+  :root {
+    --buncss-light: {
+      --transition-bg: #ffffff;
+      --transition-text: #1e293b;
+      --transition-accent: #2563eb;
+    };
+    
+    --buncss-dark: {
+      --transition-bg: #0f172a;
+      --transition-text: #f1f5f9;
+      --transition-accent: #3b82f6;
+    };
+  }
+
+  /* Color scheme with fallback for browsers without light-dark() support */
+  color-scheme: light dark;
+  
+  @media (prefers-color-scheme: light) {
+    :root {
+      --transition-bg: #ffffff;
+      --transition-text: #1e293b;
+      --transition-accent: #2563eb;
+    }
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --transition-bg: #0f172a;
+      --transition-text: #f1f5f9;
+      --transition-accent: #3b82f6;
+    }
+  }
+}
+
+/* View Transition API with class selector support - Bun v1.3 feature */
+@layer transitions {
+  /* Slide-out transition for old content */
+  ::view-transition-old(.slide-out) {
+    animation: slideOut 0.3s ease-out;
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  
+  /* Fade-in transition for new content */
+  ::view-transition-new(.fade-in) {
+    animation: fadeIn 0.3s ease-in;
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  /* Card-specific transition group */
+  ::view-transition-group(.card) {
+    animation: cardFlip 0.4s ease-in-out;
+    transform-style: preserve-3d;
+  }
+  
+  /* Hero image pair transitions */
+  ::view-transition-image-pair(.hero) {
+    animation: heroZoom 0.5s ease-out;
+    object-fit: cover;
+  }
+  
+  /* Navigation transition */
+  ::view-transition-old(.nav-item) {
+    animation: navSlideOut 0.2s ease-out;
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  
+  ::view-transition-new(.nav-item) {
+    animation: navSlideIn 0.2s ease-in;
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animation keyframes */
+@layer animations {
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes cardFlip {
+    0% {
+      transform: rotateY(0deg);
+    }
+    50% {
+      transform: rotateY(90deg);
+    }
+    100% {
+      transform: rotateY(0deg);
+    }
+  }
+  
+  @keyframes heroZoom {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes navSlideOut {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes navSlideIn {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Enhanced component styles with view transitions */
+@layer components {
+  .page-transition {
+    view-transition-name: page-content;
+  }
+  
+  .card-transition {
+    view-transition-name: card-element;
+    view-transition-class: card;
+  }
+  
+  .nav-transition {
+    view-transition-name: nav-element;
+    view-transition-class: nav-item;
+  }
+  
+  .hero-transition {
+    view-transition-name: hero-image;
+    view-transition-class: hero;
+  }
+  
+  .slide-transition {
+    view-transition-name: slide-content;
+    view-transition-class: slide-out;
+  }
+  
+  .fade-transition {
+    view-transition-name: fade-content;
+    view-transition-class: fade-in;
+  }
+}
+
+/* Utility classes for triggering transitions */
+@layer utilities {
+  .transition-slide-out {
+    animation: slideOut 0.3s ease-out forwards;
+  }
+  
+  .transition-fade-in {
+    animation: fadeIn 0.3s ease-in forwards;
+  }
+  
+  .transition-card-flip {
+    animation: cardFlip 0.4s ease-in-out;
+  }
+  
+  .transition-hero-zoom {
+    animation: heroZoom 0.5s ease-out;
+  }
+}
+
+/* Dark mode support with enhanced color scheme handling */
+@layer theme {
+  @media (prefers-color-scheme: dark) {
+    .metric-card {
+      background-color: var(--buncss-dark, #1e293b);
+      border-color: #334155;
+      color: var(--buncss-dark, #f1f5f9);
+    }
+    
+    .panel {
+      background-color: var(--buncss-dark, #1e293b);
+      border-color: #334155;
+    }
+    
+    .arbitrage-table {
+      background-color: var(--buncss-dark, #1e293b);
+      border-color: #334155;
+    }
+  }
+}

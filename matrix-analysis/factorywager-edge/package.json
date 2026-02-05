@@ -1,0 +1,25 @@
+{
+  "name": "factorywager-edge",
+  "version": "2.0.0",
+  "description": "FactoryWager Edge Workflow - Legendary performance at the edge",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "build": "wrangler publish --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0",
+    "@cloudflare/workers-types": "^4.0.0"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "edge-computing",
+    "factorywager",
+    "workflow",
+    "performance"
+  ],
+  "author": "FactoryWager Team",
+  "license": "MIT"
+}

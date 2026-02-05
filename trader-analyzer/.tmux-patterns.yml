@@ -1,0 +1,56 @@
+# .tmux-patterns.yml
+# Tmuxinator config for URLPattern router development
+# Usage: tmuxinator start -p .tmux-patterns.yml url-pattern-router-dev
+# Provides dedicated windows for router testing, performance, and security validation
+# Version: 17.16.0.0.0.0.0-routing
+# @see docs/operators/url-pattern-quickref.md
+# @see docs/migration/url-pattern-migration.md
+
+---
+
+name: url-pattern-router-dev
+root: .
+
+windows:
+  - Core-Router:
+      layout: main-vertical
+      panes:
+        - clear && echo "🔀 URLPattern Router Development"
+        - bun run dev --filter="**/router/**"
+        - bun test --watch test/api/url-pattern-router.test.ts
+
+  - Pattern-Optimizer:
+      layout: even-horizontal
+      panes:
+        - echo "⚡ Pattern Caching & Performance"
+        - bun run bench bench/url-pattern-performance.ts
+        - watch -n 5 'bun run console -e "mlgs.router.metrics()" 2>/dev/null || echo "Router metrics not available"'
+
+  - Route-Builder:
+      layout: main-vertical
+      panes:
+        - echo "🏗️  Route Builder API Testing"
+        - bun test --watch test/api/route-builder.test.ts
+        - echo "Route Builder Examples:" && cat docs/operators/url-pattern-quickref.md 2>/dev/null || echo "Quickref not found"
+
+  - Security-Validation:
+      layout: even-horizontal
+      panes:
+        - echo "🔒 Security Validation & Rate Limiting"
+        - bun test --watch test/api/security-validation.test.ts
+        - tail -f logs/hyper-bun-$(date +%Y-%m-%d).log 2>/dev/null | jq -c 'select(.source | contains("router") or .code | startswith("NX-"))' || echo "No router logs found"
+
+  - Migration-Testing:
+      layout: main-vertical
+      panes:
+        - echo "🔄 Regex to URLPattern Migration"
+        - bun run scripts/migrate-regex-to-urlpattern.ts 2>/dev/null || echo "Migration script not found"
+        - bun test test/migration/url-pattern-migration.test.ts --watch 2>/dev/null || echo "Migration tests not found"
+
+  - Performance-Monitoring:
+      layout: tiled
+      panes:
+        - echo "📊 Performance Benchmarks (21,900 matches/sec target)"
+        - bun run bench bench/url-pattern-performance.ts --json | jq '.benchmarks[] | "\(.name): \(.ops) ops/sec"'
+        - watch -n 10 'ps aux | grep -E "(bun|node)" | grep -v grep | head -5'
+        - echo "Memory Usage:" && watch -n 5 'bun run console -e "console.log(JSON.stringify(process.memoryUsage(), null, 2))" 2>/dev/null || echo "Memory stats unavailable"'

@@ -1,0 +1,10 @@
+{
+  "secrets": [
+    {
+      "name": "GITHUB_TOKEN",
+      "createdAt": 1769460060916,
+      "updatedAt": 1769460060916
+    }
+  ],
+  "version": 2
+}

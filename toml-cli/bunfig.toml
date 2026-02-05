@@ -1,0 +1,23 @@
+# Bun configuration for Empire Pro Config Manager
+# See https://bun.sh/docs/runtime/bunfig
+
+[build]
+root = "src"
+
+[test]
+root = "tests"
+testTimeout = 5000
+
+[dev]
+hot = false
+
+[install]
+exact = true
+registry = "https://npm.factory-wager.com"
+
+[publish]
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }

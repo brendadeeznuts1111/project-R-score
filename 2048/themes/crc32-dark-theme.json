@@ -1,0 +1,38 @@
+{
+  "name": "CRC32 Dark",
+  "author": "CRC32 Team",
+  "themes": [
+    {
+      "id": "crc32-dark",
+      "name": "CRC32 Dark",
+      "appearance": "dark",
+      "style": {
+        "background": "#0f172a",
+        "foreground": "#e6e6e6",
+        "border": "#334155",
+        "border.variant": "#475569",
+        "surface": "#1e293b",
+        "surface.variant": "#334155",
+        "text": "#e6e6e6",
+        "text.muted": "#94a3b8",
+        "text.placeholder": "#64748b",
+        "primary": "#3b82f6",
+        "primary.hover": "#2563eb",
+        "primary.pressed": "#1d4ed8",
+        "success": "#22c55e",
+        "warning": "#f59e0b",
+        "error": "#ef4444",
+        "syntax": {
+          "keyword": "#3b82f6",
+          "function": "#f59e0b",
+          "string": "#22c55e",
+          "number": "#ef4444",
+          "type": "#8b5cf6",
+          "comment": "#6b7280",
+          "operator": "#e6e6e6",
+          "punctuation": "#94a3b8"
+        }
+      }
+    }
+  ]
+}

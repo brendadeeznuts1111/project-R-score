@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": false,
+    "noEmit": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "noResolve": false
+  },
+  "include": [
+    "src/**/*",
+    "cli/**/*",
+    "web/**/*",
+    "persona/**/*",
+    "tests/**/*",
+    "examples/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "logs",
+    "cache"
+  ]
+}

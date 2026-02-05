@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PTY Session Analysis Report</title>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'SF Mono', Monaco, monospace; background: #0a0a0a; color: #e0e0e0; }
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+header { text-align: center; margin-bottom: 3rem; }
+h1 { font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(45deg, #00d4ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.timestamp { color: #666; font-size: 0.9rem; }
+.metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+.metric-card { background: #1a1a1a; padding: 1.5rem; border-radius: 8px; border: 1px solid #333; text-align: center; }
+.metric-card h3 { font-size: 0.9rem; color: #888; margin-bottom: 0.5rem; }
+.metric-value { font-size: 2rem; font-weight: bold; color: #00d4ff; }
+.metric-value.error { color: #ff4444; }
+.metric-value.warning { color: #ffaa00; }
+.commands-section { background: #1a1a1a; padding: 2rem; border-radius: 8px; border: 1px solid #333; }
+.commands-section h3 { margin-bottom: 1.5rem; color: #00d4ff; }
+.commands-table { width: 100%; border-collapse: collapse; }
+.commands-table th, .commands-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #333; }
+.commands-table th { color: #888; font-weight: normal; }
+.commands-table tr:hover { background: #2a2a2a; }
+</style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{TITLE}}</h1>
+            <p class="timestamp">Generated: 1/22/2026, 4:19:24 PM</p>
+        </header>
+        <main>
+            
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <h3>Total Commands</h3>
+      <span class="metric-value">5</span>
+    </div>
+    <div class="metric-card">
+      <h3>Errors</h3>
+      <span class="metric-value error">2</span>
+    </div>
+    <div class="metric-card">
+      <h3>Warnings</h3>
+      <span class="metric-value warning">1</span>
+    </div>
+    <div class="metric-card">
+      <h3>Session Duration</h3>
+      <span class="metric-value">11.0s</span>
+    </div>
+  </div>
+  
+  <div class="commands-section">
+    <h3>Top Commands</h3>
+    <table class="commands-table">
+      <thead>
+        <tr><th>Command</th><th>Usage</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>git</td><td>3</td></tr>
+        <tr><td>npm</td><td>2</td></tr>
+        <tr><td>bun</td><td>2</td></tr>
+        <tr><td>curl</td><td>1</td></tr>
+        <tr><td>exit</td><td>1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+        </main>
+    </div>
+</body>
+</html>

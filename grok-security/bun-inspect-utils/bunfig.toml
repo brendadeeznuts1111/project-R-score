@@ -1,0 +1,108 @@
+# [BUN-FIRST] Enterprise-Grade Bun.inspect Configuration
+# Zero-NPM Architecture with Cloudflare Workers Integration
+
+[inspect]
+# REPL-like protocol for dynamic inspection
+protocol = "repl"
+
+# AI-powered formatting suggestions
+aiFeedback = true
+
+# Cloudflare KV-backed storage for logs
+storage = "kv"
+
+# Dark-mode-first UI defaults
+darkMode = true
+
+# Compression for signed bundles
+compression = "snappy"
+
+# Default recursion depth
+depthDefault = 5
+
+# Default array truncation
+maxArrayLength = 100
+
+# Default string truncation
+maxStringLength = 10000
+
+# ANSI colors enabled
+colors = true
+
+# Sort object keys
+sorted = false
+
+[performance]
+# Cache inspection results
+cacheInspections = true
+
+# Cache TTL in seconds
+cacheTTL = 3600
+
+# Track performance metrics
+monitorMetrics = true
+
+# Enable benchmarking
+benchmarkMode = false
+
+# Max inspection size (bytes)
+maxInspectionSize = 1048576
+
+[cloudflare]
+# Deploy to Cloudflare Workers
+workersEnabled = true
+
+# Use Durable Objects for state
+durableObjectsEnabled = true
+
+# KV namespace name
+kvNamespace = "inspect-logs"
+
+# Sign release bundles
+signedBundles = true
+
+# Durable Object class name
+durableObjectClass = "InspectionDurableObject"
+
+[ui]
+# Dark-mode-first design
+darkModeFirst = true
+
+# AI-powered suggestions
+aiPoweredFeedback = true
+
+# Real-time WebSocket streaming
+realTimeStreaming = true
+
+# Custom WebSocket subprotocol negotiation
+subprotocolNegotiation = true
+
+# Emoji support
+emojiSupport = true
+
+[logging]
+# Log level: debug, info, warn, error
+level = "info"
+
+# Log to KV storage
+kvLogging = true
+
+# Log retention days
+retentionDays = 30
+
+# Max log size (bytes)
+maxLogSize = 10485760
+
+[security]
+# Sign inspection bundles
+signBundles = true
+
+# Verify bundle signatures
+verifySignatures = true
+
+# Mask sensitive data
+maskSensitive = true
+
+# Sensitive key patterns
+sensitiveKeys = ["password", "token", "secret", "apiKey", "auth"]
+

@@ -1,0 +1,153 @@
+/**
+ * Components CSS Module
+ * Demonstrates CSS module composition and modern syntax
+ * 
+ * Bun automatically handles:
+ * - Class name hashing
+ * - Composition (composes property)
+ * - Import into TSX/JSX
+ */
+
+/* Base module for composition */
+.base {
+	padding: 1rem;
+	border-radius: 8px;
+	transition: all 0.2s;
+}
+
+/* Button component with composition and nesting */
+.button {
+	composes: base;
+	color: white;
+	background: var(--accent-purple);
+	border: none;
+	cursor: pointer;
+	font-weight: 600;
+	padding-block: 12px;
+	padding-inline: 24px;
+	
+	&:hover {
+		background-color: color-mix(in srgb, var(--accent-purple) 80%, white);
+		transform: translateY(-1px);
+	}
+	
+	&:active {
+		background-color: color-mix(in srgb, var(--accent-purple) 80%, black);
+		transform: translateY(0);
+	}
+	
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+	
+	/* Variants using nesting */
+	&.primary {
+		background: var(--accent-cyan);
+		
+		&:hover {
+			background-color: color-mix(in srgb, var(--accent-cyan) 80%, white);
+		}
+	}
+	
+	&.secondary {
+		background: var(--accent-purple);
+	}
+	
+	&.success {
+		background: var(--accent-green);
+		
+		&:hover {
+			background-color: color-mix(in srgb, var(--accent-green) 80%, white);
+		}
+	}
+	
+	&.danger {
+		background: var(--accent-red);
+		
+		&:hover {
+			background-color: color-mix(in srgb, var(--accent-red) 80%, white);
+		}
+	}
+}
+
+/* Card component with modern selectors */
+.card {
+	composes: base;
+	background: var(--bg-secondary);
+	border-radius: 12px;
+	padding: 25px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	
+	&:is(.card, .status-item):not(.disabled, .hidden) {
+		transition: transform 0.2s, box-shadow 0.2s;
+	}
+	
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+	}
+	
+	.title {
+		font-size: clamp(1.2em, 3vw, 1.5em);
+		margin-block-end: 15px;
+		color: var(--accent-cyan);
+	}
+	
+	.content {
+		color: var(--text-primary);
+		line-height: 1.6;
+	}
+}
+
+/* Input component with logical properties */
+.input {
+	composes: base;
+	background: var(--bg-tertiary);
+	color: var(--text-primary);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	padding-block: 10px;
+	padding-inline: 15px;
+	width: 100%;
+	
+	&:focus {
+		outline: none;
+		border-color: var(--accent-cyan);
+		border-inline-start-width: 3px;
+	}
+	
+	&:dir(rtl) {
+		text-align: right;
+	}
+}
+
+/* Badge component */
+.badge {
+	display: inline-block;
+	padding-block: 4px;
+	padding-inline: 8px;
+	border-radius: 12px;
+	font-size: 0.75em;
+	font-weight: 600;
+	
+	&.info {
+		background: color-mix(in srgb, var(--accent-blue) 20%, transparent);
+		color: var(--accent-blue);
+	}
+	
+	&.success {
+		background: color-mix(in srgb, var(--accent-green) 20%, transparent);
+		color: var(--accent-green);
+	}
+	
+	&.warning {
+		background: color-mix(in srgb, var(--accent-yellow) 20%, transparent);
+		color: var(--accent-yellow);
+	}
+	
+	&.error {
+		background: color-mix(in srgb, var(--accent-red) 20%, transparent);
+		color: var(--accent-red);
+	}
+}

@@ -1,0 +1,20 @@
+# Grafana Datasource Configuration for Bun 1.3 Betting Platform
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: 15s
+      queryTimeout: 60s
+      httpMethod: POST
+      exemplarTraceIdDestinations:
+        - name: traceID
+          datasourceUid: tempo
+    # Performance optimized settings
+    timeout: 60
+    readTimeout: 60

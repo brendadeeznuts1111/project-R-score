@@ -1,0 +1,17 @@
+# OpenClaw Cron Jobs - Generated 2026-01-31
+SHELL=/bin/bash
+PATH=/Users/nolarose/.bun/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
+HOME=/Users/nolarose
+BUN_INSTALL=/Users/nolarose/.bun
+
+# Nightly audit compaction (3 AM CST)
+0 3 * * * cd ~ && bun ~/.matrix/scripts/compact-audits.ts >> ~/.matrix/logs/cron.log 2>&1
+
+# RSS feed refresh every 30 min
+*/30 * * * * cd ~ && bun ~/.matrix/scripts/refresh-rss.ts >> ~/.matrix/logs/cron.log 2>&1
+
+# Session cleanup daily (2 AM)
+0 2 * * * cd ~ && bun ~/.matrix/scripts/cleanup-sessions.ts >> ~/.matrix/logs/cron.log 2>&1
+
+# OpenClaw health check every 5 min
+*/5 * * * * export OPENCLAW_GATEWAY_TOKEN=$(bun -e 'const t=await Bun.secrets.get({service:"com.openclaw.gateway",name:"gateway_token"});console.log(t)') && curl -s http://127.0.0.1:18789/health > /dev/null || (cd ~ && openclaw gateway --port 18789 &)

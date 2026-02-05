@@ -1,0 +1,19 @@
+{
+	"name": "@bun-toml/dashboard",
+	"version": "1.0.0",
+	"description": "God View Dashboard and monitoring",
+	"main": "./src/index.ts",
+	"bin": {
+		"god-view": "./src/dashboard/god-view-rss.ts"
+	},
+	"scripts": {
+		"build": "bun build ./src/dashboard/god-view-rss.ts --compile --outfile dist/god-view",
+		"dev": "bun run ./src/dashboard/god-view-rss.ts",
+		"test": "bun test"
+	},
+	"dependencies": {
+		"@bun-toml/core": "workspace:*",
+		"@bun-toml/rss": "workspace:*",
+		"@bun-toml/profiler": "workspace:*"
+	}
+}

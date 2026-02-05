@@ -1,0 +1,249 @@
+{
+  "nodes": [
+    {
+      "id": "canvas-overview",
+      "x": -500,
+      "y": -400,
+      "width": 350,
+      "height": 220,
+      "type": "text",
+      "text": "# 🎨 System Design Canvas\n\n## Purpose\nVisual system architecture and component relationships\n\n## Version\n2.0 • Enhanced Design System\n\n## Standards\n- Color-coded components\n- Clear relationship labels\n- Logical information hierarchy\n\n---\n*Follows Odds Protocol canvas standards*",
+      "color": "#8B5CF6",
+      "metadata": {
+        "domain": "unknown",
+        "complexity": "medium",
+        "section": "visualization",
+        "healthScore": 95,
+        "colorType": "hex",
+        "colorCategory": "status.experimental",
+        "documentType": "general",
+        "priority": "low",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.198Z"
+      }
+    },
+    {
+      "id": "core-components",
+      "x": -1200,
+      "y": -100,
+      "width": 280,
+      "height": 200,
+      "type": "text",
+      "text": "## 🏗️ Core Components\n\n### Primary Systems\n- **Frontend**: React/Vite Dashboard\n- **Backend**: Bun Runtime Services\n- **Database**: SQLite + Graph DB\n- **Bridge**: Obsidian Integration\n\n### Key Features\n- Real-time synchronization\n- Automated validation\n- Performance monitoring\n- Content organization",
+      "color": "#059669",
+      "metadata": {
+        "domain": "integration",
+        "documentType": "general",
+        "complexity": "medium",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.core",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.198Z"
+      }
+    },
+    {
+      "id": "data-flow",
+      "x": -500,
+      "y": 150,
+      "width": 320,
+      "height": 180,
+      "type": "text",
+      "text": "## 🔄 Data Flow Architecture\n\n### Information Pipeline\n1. **Content Creation** → Templates & Standards\n2. **Validation** → Automated Quality Checks\n3. **Processing** → Bridge Service Integration\n4. **Storage** → Graph Database\n5. **Visualization** → Dashboard & Analytics\n\n### Real-time Updates\n- WebSocket connections\n- Event-driven architecture\n- Hot reload capabilities",
+      "color": "#6366F1",
+      "metadata": {
+        "domain": "integration",
+        "documentType": "general",
+        "complexity": "medium",
+        "section": "visualization",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.integration",
+        "priority": "low",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.198Z"
+      }
+    },
+    {
+      "id": "user-interfaces",
+      "x": 300,
+      "y": -100,
+      "width": 280,
+      "height": 200,
+      "type": "text",
+      "text": "## 📱 User Interfaces\n\n### Primary Interfaces\n- **Obsidian Vault**: Knowledge Management\n- **Web Dashboard**: Technical Metrics\n- **Mobile Views**: Responsive Design\n- **API Endpoints**: External Access\n\n### Design Principles\n- Professional appearance\n- Accessibility first\n- Mobile optimization\n- Consistent theming",
+      "color": "#14B8A6",
+      "metadata": {
+        "domain": "api",
+        "documentType": "api",
+        "complexity": "medium",
+        "section": "analytics",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.service",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.198Z"
+      }
+    },
+    {
+      "id": "integration-points",
+      "x": -1200,
+      "y": 350,
+      "width": 280,
+      "height": 180,
+      "type": "text",
+      "text": "## 🔗 Integration Points\n\n### External Services\n- **GitHub Actions**: CI/CD Pipeline\n- **Analytics Platform**: Metrics Collection\n- **Notification System**: Alerts & Updates\n- **Backup Services**: Data Protection\n\n### Internal APIs\n- Bridge Service API\n- Validation Engine\n- Analytics Processor\n- Template Manager",
+      "color": "#6366F1",
+      "metadata": {
+        "domain": "integration",
+        "documentType": "api",
+        "complexity": "medium",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.integration",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.198Z"
+      }
+    },
+    {
+      "id": "quality-assurance",
+      "x": 300,
+      "y": 350,
+      "width": 280,
+      "height": 180,
+      "type": "text",
+      "text": "## ✅ Quality Assurance\n\n### Validation Layers\n- **Content Standards**: Style Guide Compliance\n- **Link Integrity**: Relationship Validation\n- **Performance Metrics**: Speed & Efficiency\n- **Accessibility**: WCAG AA Standards\n\n### Automation\n- Real-time monitoring\n- Automated fixes\n- Health scoring\n- Trend analysis",
+      "color": "#F97316",
+      "metadata": {
+        "domain": "ui",
+        "documentType": "documentation",
+        "complexity": "medium",
+        "section": "analytics",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "status.maintenance",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.198Z"
+      }
+    },
+    {
+      "id": "future-enhancements",
+      "x": -500,
+      "y": 600,
+      "width": 320,
+      "height": 160,
+      "type": "text",
+      "text": "## 🚀 Future Enhancements\n\n### Planned Features\n- **AI Integration**: Smart categorization\n- **Advanced Analytics**: Predictive insights\n- **Mobile App**: Native experience\n- **Cloud Sync**: Multi-device sync\n\n### Roadmap\n- Q1 2026: AI features\n- Q2 2026: Mobile app\n- Q3 2026: Cloud integration\n- Q4 2026: Advanced analytics",
+      "color": "#6366F1",
+      "metadata": {
+        "domain": "integration",
+        "documentType": "general",
+        "complexity": "medium",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.integration",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.198Z"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "fromNode": "canvas-overview",
+      "fromSide": "left",
+      "toNode": "core-components",
+      "toSide": "right",
+      "color": "#3B82F6",
+      "label": "defines architecture"
+    },
+    {
+      "id": "edge-2",
+      "fromNode": "canvas-overview",
+      "fromSide": "right",
+      "toNode": "user-interfaces",
+      "toSide": "left",
+      "color": "#10B981",
+      "label": "user experience"
+    },
+    {
+      "id": "edge-3",
+      "fromNode": "canvas-overview",
+      "fromSide": "bottom",
+      "toNode": "data-flow",
+      "toSide": "top",
+      "color": "#EAB308",
+      "label": "information flow"
+    },
+    {
+      "id": "edge-4",
+      "fromNode": "core-components",
+      "fromSide": "bottom",
+      "toNode": "integration-points",
+      "toSide": "top",
+      "color": "#F97316",
+      "label": "external connections"
+    },
+    {
+      "id": "edge-5",
+      "fromNode": "user-interfaces",
+      "fromSide": "bottom",
+      "toNode": "quality-assurance",
+      "toSide": "top",
+      "color": "#EF4444",
+      "label": "quality standards"
+    },
+    {
+      "id": "edge-6",
+      "fromNode": "data-flow",
+      "fromSide": "bottom",
+      "toNode": "future-enhancements",
+      "toSide": "top",
+      "color": "#8B5CF6",
+      "label": "evolution path"
+    },
+    {
+      "id": "edge-7",
+      "fromNode": "integration-points",
+      "fromSide": "right",
+      "toNode": "future-enhancements",
+      "toSide": "left",
+      "color": "#06B6D4",
+      "label": "expansion areas"
+    },
+    {
+      "id": "edge-8",
+      "fromNode": "quality-assurance",
+      "fromSide": "left",
+      "toNode": "future-enhancements",
+      "toSide": "right",
+      "color": "#14B8A6",
+      "label": "continuous improvement"
+    }
+  ],
+  "metadata": {
+    "colorMigration": {
+      "migrated": true,
+      "migrationDate": "2025-11-19T01:52:29.198Z",
+      "migrationVersion": "2.1.0",
+      "legacyColorsRemoved": true,
+      "semanticColorsApplied": true,
+      "errorHandling": "enhanced"
+    }
+  }
+}

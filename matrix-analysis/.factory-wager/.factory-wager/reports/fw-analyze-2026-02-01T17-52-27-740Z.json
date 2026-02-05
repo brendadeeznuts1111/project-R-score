@@ -1,0 +1,222 @@
+{
+  "timestamp": "2026-02-01T17:52:27.739Z",
+  "file": "config.yaml",
+  "stats": {
+    "docs": 1,
+    "anchors": 0,
+    "aliases": 0,
+    "interpolations": 0
+  },
+  "inheritance": [],
+  "riskScore": 2,
+  "rows": [
+    {
+      "doc": 1,
+      "key": "api",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.registry",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.registry.token",
+      "value": "${REGISTRY_TOKEN}",
+      "type": "string",
+      "status": "active",
+      "riskScore": 20
+    },
+    {
+      "doc": 1,
+      "key": "api.r2",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.r2.secret",
+      "value": "${R2_SECRET_KEY}",
+      "type": "string",
+      "status": "active",
+      "riskScore": 20
+    },
+    {
+      "doc": 1,
+      "key": "api.domain",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "api.domain.cert",
+      "value": "${SSL_CERTIFICATE}",
+      "type": "string",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production.security",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production.security.encryption",
+      "value": "true",
+      "type": "boolean",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production.security.tls_version",
+      "value": "1.3",
+      "type": "string",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production.security.monitoring",
+      "value": "true",
+      "type": "boolean",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production.features",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production.features.debug",
+      "value": "false",
+      "type": "boolean",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "production.features.logging",
+      "value": "error",
+      "type": "string",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "staging",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "staging.security",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "staging.security.encryption",
+      "value": "true",
+      "type": "boolean",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "staging.security.tls_version",
+      "value": "1.3",
+      "type": "string",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "staging.features",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "staging.features.debug",
+      "value": "false",
+      "type": "boolean",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "staging.features.logging",
+      "value": "info",
+      "type": "string",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "development",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "development.features",
+      "value": "Object",
+      "type": "object",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "development.features.debug",
+      "value": "true",
+      "type": "boolean",
+      "status": "active",
+      "riskScore": 0
+    },
+    {
+      "doc": 1,
+      "key": "development.features.logging",
+      "value": "verbose",
+      "type": "string",
+      "status": "active",
+      "riskScore": 0
+    }
+  ]
+}

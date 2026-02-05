@@ -1,0 +1,416 @@
+{
+  "inputs": {
+    "src/app.tsx": {
+      "bytes": 6887,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/components/FileAnalyzer.tsx",
+          "kind": "import-statement",
+          "original": "./components/FileAnalyzer"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/components/DOMAnalyzer.tsx",
+          "kind": "import-statement",
+          "original": "./components/DOMAnalyzer"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/components/CookieManager.tsx",
+          "kind": "import-statement",
+          "original": "./components/CookieManager"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/components/URLPatternDemo.tsx",
+          "kind": "import-statement",
+          "original": "./components/URLPatternDemo"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/components/BunCookieMapDemo.tsx",
+          "kind": "import-statement",
+          "original": "./components/BunCookieMapDemo"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/components/HTTPHeadersDemo.tsx",
+          "kind": "import-statement",
+          "original": "./components/HTTPHeadersDemo"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/components/DevDashboard.tsx",
+          "kind": "import-statement",
+          "original": "./components/DevDashboard"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/react/jsx-dev-runtime.js",
+          "kind": "import-statement",
+          "original": "react/jsx-dev-runtime"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/react/jsx-dev-runtime.js": {
+      "bytes": 222,
+      "imports": [
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/react/cjs/react-jsx-dev-runtime.development.js",
+          "kind": "import-statement",
+          "original": "./cjs/react-jsx-dev-runtime.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "src/components/FileAnalyzer.tsx": {
+      "bytes": 2247,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/stores/fileStore.ts",
+          "kind": "import-statement",
+          "original": "../stores/fileStore"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/utils/colors.ts",
+          "kind": "import-statement",
+          "original": "../utils/colors"
+        },
+        {
+          "path": "react/jsx-dev-runtime",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/components/HTTPHeadersDemo.tsx": {
+      "bytes": 10225,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "react/jsx-dev-runtime",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/components/CookieManager.tsx": {
+      "bytes": 8648,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "../api/cookie-manager-browser",
+          "kind": "import-statement"
+        },
+        {
+          "path": "react/jsx-dev-runtime",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/components/BunCookieMapDemo.tsx": {
+      "bytes": 12302,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/api/cookie-manager-browser.ts",
+          "kind": "import-statement",
+          "original": "../api/cookie-manager-browser"
+        },
+        {
+          "path": "react/jsx-dev-runtime",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/components/DOMAnalyzer.tsx": {
+      "bytes": 4320,
+      "imports": [
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/react/index.js",
+          "kind": "import-statement",
+          "original": "react"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/src/utils/dom-helpers.ts",
+          "kind": "import-statement",
+          "original": "../utils/dom-helpers"
+        },
+        {
+          "path": "react/jsx-dev-runtime",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/components/URLPatternDemo.tsx": {
+      "bytes": 9500,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "react/jsx-dev-runtime",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/components/DevDashboard.tsx": {
+      "bytes": 15801,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "react/jsx-dev-runtime",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/utils/dom-helpers.ts": {
+      "bytes": 2422,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/react/index.js": {
+      "bytes": 190,
+      "imports": [
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/react/cjs/react.development.js",
+          "kind": "import-statement",
+          "original": "./cjs/react.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "src/api/cookie-manager-browser.ts": {
+      "bytes": 5822,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/react/cjs/react-jsx-dev-runtime.development.js": {
+      "bytes": 42101,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "cjs"
+    },
+    "src/utils/colors.ts": {
+      "bytes": 1229,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "src/stores/fileStore.ts": {
+      "bytes": 1208,
+      "imports": [
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/zustand/esm/index.mjs",
+          "kind": "import-statement",
+          "original": "zustand"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/zustand/esm/middleware.mjs",
+          "kind": "import-statement",
+          "original": "zustand/middleware"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/react/cjs/react.development.js": {
+      "bytes": 87593,
+      "imports": [
+      ],
+      "format": "cjs"
+    },
+    "node_modules/zustand/esm/middleware.mjs": {
+      "bytes": 18897,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/zustand/esm/index.mjs": {
+      "bytes": 2014,
+      "imports": [
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/zustand/esm/vanilla.mjs",
+          "kind": "import-statement",
+          "original": "zustand/vanilla"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/zustand/esm/vanilla.mjs",
+          "kind": "import-statement",
+          "original": "zustand/vanilla"
+        },
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/use-sync-external-store/shim/with-selector.js",
+          "kind": "import-statement",
+          "original": "use-sync-external-store/shim/with-selector.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zustand/esm/vanilla.mjs": {
+      "bytes": 1690,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "node_modules/use-sync-external-store/shim/with-selector.js": {
+      "bytes": 262,
+      "imports": [
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js",
+          "kind": "require-call",
+          "original": "../cjs/use-sync-external-store-shim/with-selector.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js": {
+      "bytes": 3526,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        },
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/use-sync-external-store/shim/index.js",
+          "kind": "require-call",
+          "original": "use-sync-external-store/shim"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/use-sync-external-store/shim/index.js": {
+      "bytes": 234,
+      "imports": [
+        {
+          "path": "/Users/nolarose/b-react-hmr-refresh/node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js",
+          "kind": "require-call",
+          "original": "../cjs/use-sync-external-store-shim.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js": {
+      "bytes": 3457,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement"
+        }
+      ],
+      "format": "cjs"
+    }
+  },
+  "outputs": {
+    "./app.js": {
+      "bytes": 227074,
+      "inputs": {
+        "node_modules/react/cjs/react.development.js": {
+          "bytesInOutput": 69196
+        },
+        "node_modules/react/index.js": {
+          "bytesInOutput": 189
+        },
+        "node_modules/zustand/esm/vanilla.mjs": {
+          "bytesInOutput": 1340
+        },
+        "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.development.js": {
+          "bytesInOutput": 2917
+        },
+        "node_modules/use-sync-external-store/shim/index.js": {
+          "bytesInOutput": 157
+        },
+        "node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.development.js": {
+          "bytesInOutput": 2956
+        },
+        "node_modules/use-sync-external-store/shim/with-selector.js": {
+          "bytesInOutput": 151
+        },
+        "node_modules/zustand/esm/index.mjs": {
+          "bytesInOutput": 1563
+        },
+        "node_modules/zustand/esm/middleware.mjs": {
+          "bytesInOutput": 9224
+        },
+        "src/stores/fileStore.ts": {
+          "bytesInOutput": 440
+        },
+        "src/utils/colors.ts": {
+          "bytesInOutput": 656
+        },
+        "node_modules/react/cjs/react-jsx-dev-runtime.development.js": {
+          "bytesInOutput": 33832
+        },
+        "node_modules/react/jsx-dev-runtime.js": {
+          "bytesInOutput": 247
+        },
+        "src/components/FileAnalyzer.tsx": {
+          "bytesInOutput": 2717
+        },
+        "src/utils/dom-helpers.ts": {
+          "bytesInOutput": 1017
+        },
+        "src/components/DOMAnalyzer.tsx": {
+          "bytesInOutput": 6923
+        },
+        "src/api/cookie-manager-browser.ts": {
+          "bytesInOutput": 4061
+        },
+        "src/components/CookieManager.tsx": {
+          "bytesInOutput": 12469
+        },
+        "src/components/URLPatternDemo.tsx": {
+          "bytesInOutput": 14058
+        },
+        "src/components/BunCookieMapDemo.tsx": {
+          "bytesInOutput": 15359
+        },
+        "src/components/HTTPHeadersDemo.tsx": {
+          "bytesInOutput": 14503
+        },
+        "src/components/DevDashboard.tsx": {
+          "bytesInOutput": 20496
+        },
+        "src/app.tsx": {
+          "bytesInOutput": 10719
+        }
+      },
+      "imports": [
+      ],
+      "exports": [
+        "default"
+      ],
+      "entryPoint": "src/app.tsx"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+# TypeScript Type Fixes Review Rules
+# For Bun v1.3.6+ type corrections
+
+rules:
+  - name: "Bun.build autoload options"
+    description: "Verify Bun.build() uses properly typed autoload options"
+    pattern: "Bun\\.build\\s*\\("
+    checks:
+      - type: "property_exists"
+        property: "standalone"
+        message: "Consider using standalone config for executable builds"
+      - type: "property_type"
+        property: "standalone.autoloadTsconfig"
+        expected_type: "boolean"
+        message: "autoloadTsconfig should be a boolean"
+      - type: "property_type"
+        property: "standalone.autoloadPackageJson"
+        expected_type: "boolean"
+        message: "autoloadPackageJson should be a boolean"
+    severity: "info"
+    category: "types"
+
+  - name: "bun:sqlite .run() return type"
+    description: "Ensure .run() return type is properly handled as Changes object"
+    pattern: "\\.run\\s*\\("
+    file_patterns:
+      - "*.ts"
+      - "*.tsx"
+    checks:
+      - type: "no_property_access"
+        property: "changes"
+        on_undefined_check: true
+        message: "Ensure .run() result is typed as Changes, not undefined"
+      - type: "property_type_check"
+        property: "changes"
+        expected_type: "number"
+        message: "changes property should be typed as number"
+      - type: "property_type_check"
+        property: "lastInsertRowid"
+        expected_type: "number"
+        message: "lastInsertRowid property should be typed as number"
+    severity: "error"
+    category: "types"
+    references:
+      - "https://bun.sh/docs/api/sqlite"
+      - "docs/reference/TYPESCRIPT-FIXES-SUMMARY.md"
+
+  - name: "FileSink.write() return type"
+    description: "Verify FileSink.write() handles both sync and async returns"
+    pattern: "\\.write\\s*\\("
+    checks:
+      - type: "await_check"
+        message: "Consider awaiting write() as it may return Promise<number>"
+      - type: "union_type_check"
+        expected_types:
+          - "number"
+          - "Promise<number>"
+        message: "write() return type should be number | Promise<number>"
+    severity: "warning"
+    category: "types"
+
+  - name: "TypeScript strict mode compliance"
+    description: "Check for potential type issues that v1.3.6 fixes addressed"
+    pattern: "(Database|FileSink|Bun\\.build)"
+    checks:
+      - type: "no_explicit_any"
+        message: "Avoid using 'any' for Bun API types - use proper types instead"
+      - type: "type_annotation_check"
+        message: "Consider adding explicit type annotations for Bun API calls"
+    severity: "info"
+    category: "best-practice"
+
+global_settings:
+  bun_version: ">=1.3.6"
+  typescript_version: ">=5.0.0"
+  
+summary_template: |
+  ## TypeScript Type Fixes Review
+  
+  ### Checked Fixes
+  1. ✅ Bun.build() autoloadTsconfig/autoloadPackageJson types
+  2. ✅ bun:sqlite .run() Changes return type  
+  3. ✅ FileSink.write() number | Promise<number> return type
+  
+  ### Files Checked
+  {{files_checked}}
+  
+  ### Issues Found
+  {{issues_count}}
+  
+  ### References
+  - docs/reference/TYPESCRIPT-FIXES-SUMMARY.md
+  - https://bun.sh/blog/bun-v1.3.6

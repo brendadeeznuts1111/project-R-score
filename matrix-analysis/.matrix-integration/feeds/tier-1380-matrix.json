@@ -1,0 +1,12 @@
+{
+  "channel": "tier-1380-matrix",
+  "items": [
+    {
+      "channel": "tier-1380-matrix",
+      "content": "# Profile-Terminal Matrix Report\n\nGenerated: 2026-01-31T01:26:06.900Z\n\n## Profiles (8)\n┌───┬────────────┬─────────┬─────────────┬──────┬────────┬────────────────────────────────┐\n│   │ name       │ version │ environment │ vars │ active │ description                    │\n├───┼────────────┼─────────┼─────────────┼──────┼────────┼────────────────────────────────┤\n│ 0 │ dev        │ 1.0.1   │ unknown     │ 27   │ false  │ Comprehensive development envi │\n│ 1 │ developer  │ 1.0.0   │ unknown     │ 21   │ false  │ Personal developer profile wit │\n│ 2 │ prod       │ 1.0.0   │ unknown     │ 32   │ false  │ Production environment profile │\n│ 3 │ prod-api   │ 1.0.1   │ unknown     │ 20   │ false  │ API service production profile │\n│ 4 │ team       │ 1.0.0   │ unknown     │ 16   │ false  │ Team collaboration profile wit │\n│ 5 │ test       │ 1.0.0   │ unknown     │ 20   │ false  │ CI/CD and automated testing pr │\n│ 6 │ test-local │ 1.0.1   │ unknown     │ 15   │ false  │ Local development and testing  │\n│ 7 │ thuis      │ 1.0.0   │ home        │ 28   │ false  │ Home automation and local serv │\n└───┴────────────┴─────────┴─────────────┴──────┴────────┴────────────────────────────────┘\n\n\n## Active Terminals (1)\n┌───┬─────────────┬───────┬─────────┬──────────┬────────┬─────┐\n│   │ id          │ pid   │ profile │ project  │ active │ age │\n├───┼─────────────┼───────┼─────────┼──────────┼────────┼─────┤\n│ 0 │ 0aa3cf1c... │ 44599 │ (none)  │ nolarose │ true   │ 0m  │\n└───┴─────────────┴───────┴─────────┴──────────┴────────┴─────┘\n\n\n## Project Bindings (0)",
+      "checksum": 16894291074908418000,
+      "timestamp": 1769822766900
+    }
+  ],
+  "lastUpdate": 1769822766900
+}

@@ -1,0 +1,182 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.1.0.0.0: ManifestDigest Tests 8.2.6.6.1.2.0: computeHash with seed-based content produces snapshot 1`] = `"1156018f5367a1338701555d60ef0359379a1b59a58ca4967292a3f6cfef22be"`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.1.0.0.0: ManifestDigest Tests 8.2.6.6.1.4.0: computeChecksum with seed-based content produces snapshot 1`] = `1261841236`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.1.0.0.0: ManifestDigest Tests 8.2.6.6.1.6.0: createVersionStamp produces complete stamp 1`] = `
+{
+  "checksum": 1261841236,
+  "hash": "1156018f5367a1338701555d60ef0359379a1b59a58ca4967292a3f6cfef22be",
+  "size": 538,
+  "timestamp": "<TIMESTAMP>",
+}
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.2.0.0.0: BinaryManifestCodec Tests 8.2.6.6.2.2.0: encode with seed produces deterministic binary snapshot 1`] = `
+[
+  85,
+  73,
+  80,
+  77,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  2,
+  26,
+  0,
+  0,
+  1,
+  68,
+  101,
+  145,
+  81,
+  75,
+  195,
+  48,
+  16,
+  128,
+  255,
+  74,
+  185,
+  231,
+  174,
+  116,
+  101,
+  27,
+]
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.2.0.0.0: BinaryManifestCodec Tests 8.2.6.6.2.4.0: decode with seed produces deterministic manifest snapshot 1`] = `
+{
+  "feature_flags": {
+    "advancedAnalytics": {
+      "description": "Advanced analytics feature",
+      "enabled": false,
+    },
+    "shadowGraph": {
+      "description": "ShadowGraph feature flag",
+      "enabled": true,
+    },
+  },
+  "html_rewriter_policies": {
+    "transformations": [
+      {
+        "action": "inject",
+        "content": "Test content 49",
+        "selector": "div.test",
+      },
+    ],
+  },
+  "metadata": {
+    "description": "Test manifest generated with seed 42",
+    "last_updated": "<TIMESTAMP>",
+    "schema_version": "8.2.6.0.0.0.0",
+    "version": "1.5.5",
+  },
+  "ui_context_defaults": {
+    "apiBaseUrl": "AUTO_DETECT",
+    "debugMode": true,
+    "defaultUserRole": "admin",
+  },
+}
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.2.0.0.0: BinaryManifestCodec Tests 8.2.6.6.2.8.0: compression ratio snapshot 1`] = `
+{
+  "compressedSize": 340,
+  "compressionRatio": "63.20%",
+  "originalSize": 538,
+  "reduction": "36.80%",
+}
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.3.0.0.0: Integration Tests with Seed 8.2.6.6.3.1.0: end-to-end with seed produces deterministic results 1`] = `
+{
+  "binarySize": 340,
+  "checksum": "0x16bc1ad1",
+  "digest": "c4065244073bb9ae...",
+  "roundTripMatch": true,
+  "seed": 42,
+}
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.3.0.0.0: Integration Tests with Seed 8.2.6.6.3.2.0: multiple seeds produce different but deterministic results 1`] = `
+[
+  {
+    "digest": "c4065244073bb9ae...",
+    "seed": 42,
+    "size": 340,
+  },
+  {
+    "digest": "15d921fc84b388bc...",
+    "seed": 123,
+    "size": 339,
+  },
+  {
+    "digest": "7e7b6a4938d58fa1...",
+    "seed": 456,
+    "size": 342,
+  },
+  {
+    "digest": "4956c2bbdde21186...",
+    "seed": 789,
+    "size": 343,
+  },
+]
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.3.0.0.0: Integration Tests with Seed 8.2.6.6.3.3.0: version stamp with seed produces snapshot 1`] = `
+{
+  "checksum": 1261841236,
+  "hash": "1156018f5367a1338701555d60ef0359379a1b59a58ca4967292a3f6cfef22be",
+  "size": 538,
+  "timestamp": "<TIMESTAMP>",
+}
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.4.0.0.0: Performance and Edge Cases 8.2.6.6.4.4.0: checksum performance snapshot 1`] = `
+[
+  {
+    "checksum": "0x2a2a2a2a",
+    "performanceCategory": "fast",
+    "size": 100,
+  },
+  {
+    "checksum": "0x0",
+    "performanceCategory": "medium",
+    "size": 1000,
+  },
+  {
+    "checksum": "0x0",
+    "performanceCategory": "slow",
+    "size": 10000,
+  },
+  {
+    "checksum": "0x0",
+    "performanceCategory": "slow",
+    "size": 100000,
+  },
+]
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.5.0.0.0: Snapshot Regression Tests 8.2.6.6.5.1.0: binary format header snapshot 1`] = `
+{
+  "compressedSize": 324,
+  "magic": "0x5549504d",
+  "uncompressedSize": 538,
+  "versionMajor": 1,
+  "versionMinor": 0,
+}
+`;
+
+exports[`8.2.6.6.0.0.0.0: Binary Manifest Test Suite 8.2.6.6.5.0.0.0: Snapshot Regression Tests 8.2.6.6.5.2.0: hash consistency across formats snapshot 1`] = `
+{
+  "binaryHash": "c4065244073bb9ae...",
+  "jsonHash": "1156018f5367a133...",
+  "structuralHash": "1156018f5367a133...",
+}
+`;

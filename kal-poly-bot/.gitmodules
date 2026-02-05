@@ -1,0 +1,4 @@
+[submodule "poly-kalshi-arb"]
+	path = poly-kalshi-arb
+	url = git@github.com:brendadeeznuts1111/poly-kalshi-arb.git
+	branch = bun-integration

@@ -1,0 +1,22 @@
+{
+  "name": "@registry-mcp/blog",
+  "version": "2.4.1",
+  "description": "Core blog infrastructure with strict bun:bundle feature flag enforcement",
+  "main": "src/core/index.ts",
+  "types": "src/core/index.ts",
+  "scripts": {
+    "build": "bun build src/core/index.ts",
+    "test": "bun test",
+    "lint": "bun run --check"
+  },
+  "keywords": ["blog", "infrastructure", "bun", "feature-flags"],
+  "author": "Registry Core Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "bun-types": "^1.3.5"
+  },
+  "peerDependencies": {
+    "bun": "^1.3.6"
+  }
+}

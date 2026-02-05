@@ -1,0 +1,24 @@
+# Bun
+node_modules
+bun.lockb
+
+# Environment
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Build outputs
+dist/
+out/
+*.log
+
+# Databases
+*.db
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# OS files
+.DS_Store
+Thumbs.db

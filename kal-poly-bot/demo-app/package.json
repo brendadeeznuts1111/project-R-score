@@ -1,0 +1,34 @@
+{
+  "name": "my-demo-app",
+  "version": "1.0.0",
+  "description": "Surgical Precision Platform - MCP server with ripgrep codebase search",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts",
+    "test": "bun test",
+    "lint": "bunx eslint src",
+    "type-check": "bunx tsc --noEmit",
+    "help": "bun run scripts/help.ts",
+    "mcp:start": "bun mcp/server.ts",
+    "mcp:search": "curl -X POST http://localhost:8787/mcp/codesearch -H \"Content-Type: application/json\" -d '{\"query\":\"function\",\"type\":\"ts\"}'",
+    "mcp:health": "curl http://localhost:8787/health",
+    "bench:all": "bun run bench:performance && bun run bench:search",
+    "bench:performance": "bun test --reporter=verbose",
+    "bench:search": "bun scripts/search-benchmark.ts"
+  },
+  "keywords": [
+    "surgical-precision",
+    "bun",
+    "microservices",
+    "mcp"
+  ],
+  "author": "Surgical Precision Team",
+  "license": "MIT",
+  "repository": "https://github.com/brendadeeznuts1111/kal-poly-bot",
+  "dependencies": {},
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}

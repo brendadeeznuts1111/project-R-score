@@ -1,0 +1,10 @@
+#!/bin/bash
+# ═══════════════════════════════════════════════════════════════════════════════
+# FactoryWager CLI Wrapper
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Run the TypeScript CLI with Bun
+exec bun "$SCRIPT_DIR/fw.ts" "$@"

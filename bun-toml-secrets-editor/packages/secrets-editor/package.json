@@ -1,0 +1,21 @@
+{
+	"name": "bun-toml-secrets-editor",
+	"version": "1.0.0",
+	"description": "Production-grade TOML editor with secrets management",
+	"main": "./src/main.ts",
+	"bin": {
+		"secrets-editor": "./src/main.ts",
+		"safe-toml": "./src/safe-toml-cli.ts"
+	},
+	"scripts": {
+		"build": "bun build ./src/main.ts --compile --feature INTERACTIVE --outfile dist/secrets-guard",
+		"build:community": "bun build ./src/main.ts --compile --outfile dist/secrets-guard-community",
+		"test": "bun test",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@bun-toml/core": "workspace:*",
+		"@bun-toml/rss": "workspace:*",
+		"@bun-toml/profiler": "workspace:*"
+	}
+}

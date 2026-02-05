@@ -1,0 +1,1 @@
+import {feature} from "bun:bundle"; const enabled = feature("DEBUG") ? "YES" : "NO"; console.log("DEBUG:", enabled);

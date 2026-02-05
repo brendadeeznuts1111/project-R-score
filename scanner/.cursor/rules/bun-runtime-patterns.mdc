@@ -1,0 +1,137 @@
+---
+description: Bun runtime optimizations and type safety patterns for scanner
+globs: **/*.ts
+alwaysApply: true
+---
+
+# Bun Runtime Patterns & Type Safety
+
+## Type Safety
+
+### Avoid `as any` Casts
+
+```typescript
+// ❌ BAD - Using as any to bypass type checking
+const service = projectTokenService(projectInfo as any);
+const project = projectTokenProject(projectInfo as any);
+
+// ✅ GOOD - Use createProjectContext for proper ProjectInfo
+const projectContext = createProjectContext(projectId);
+const service = projectTokenService(projectContext.projectInfo);
+const project = projectTokenProject(projectContext.projectInfo);
+```
+
+### Use Proper Types
+
+- Always use `ProjectInfo` type from `scan.ts` instead of inline objects
+- Use `createProjectContext(projectId)` to get properly typed `ProjectContext` with `projectInfo`
+- Prefer `number` over `bigint` in hot paths (JSC optimizes Number, not BigInt)
+
+## Bun Runtime Optimizations
+
+### Lazy Stat Pattern
+
+```typescript
+// ❌ BAD - Eager stat() syscall
+const stat = await stat(path);
+const size = stat.size;
+
+// ✅ GOOD - Lazy file reference, only syscall when needed
+const file = Bun.file(path);
+if (await file.exists()) {
+  const size = file.size; // Cached after first access
+}
+```
+
+### Batched Operations
+
+```typescript
+// ✅ GOOD - Runtime can batch multiple exists() calls
+const checks = paths.map(p => Bun.file(p).exists());
+const results = await Promise.all(checks);
+```
+
+### Monomorphic Object Shapes
+
+```typescript
+// ❌ BAD - Shape transitions cause JSC deoptimization
+const node = { path, name };
+if (hasChildren) node.children = []; // Shape transition!
+
+// ✅ GOOD - Pre-define all properties, use null for unused
+const node: RuntimeNode = {
+  path,
+  name,
+  type: 'file',
+  size: 0,
+  modified: 0,
+  riskScore: 1.0,
+  depth: 0,
+  children: null, // Always set, never undefined
+  parent: null,
+};
+```
+
+### Generator-Based Backpressure
+
+```typescript
+// ✅ GOOD - Async generators for unlimited depth, natural backpressure
+export async function* scanRuntimeGenerator(
+  path: string,
+  depth: number = 0,
+  opts: { yieldEveryLevels?: number } = {},
+): AsyncGenerator<RuntimeNode> {
+  // ... yield nodes
+  if (opts.yieldEveryLevels && depth % opts.yieldEveryLevels === 0) {
+    await Bun.sleep(0); // Yield to event loop
+  }
+}
+```
+
+## Bun.secrets Integration
+
+### Storage Pattern
+
+```typescript
+// ✅ GOOD - Use getSecret/setSecret from profiles.ts
+import { getSecret, setSecret } from './profiles';
+
+const value = await getSecret(service, name); // Returns string | null
+if (value) {
+  const data = JSON.parse(value);
+}
+
+await setSecret(service, name, JSON.stringify(data)); // Returns boolean
+```
+
+### Avoid Circular Dependencies
+
+```typescript
+// ❌ BAD - Circular import
+// cookie-sessions.ts imports from scan.ts
+// scan.ts imports from cookie-sessions.ts
+
+// ✅ GOOD - Duplicate small helpers or use type-only imports
+// cookie-sessions.ts: import type { ProjectInfo } from './scan';
+// Then duplicate projectTokenService/projectTokenProject helpers locally
+```
+
+## Project Context Pattern
+
+```typescript
+// ✅ GOOD - Always use createProjectContext for typed ProjectInfo
+const projectContext = createProjectContext(projectId);
+// projectContext.projectInfo is fully typed ProjectInfo
+// Use projectContext.projectInfo with projectTokenService, etc.
+```
+
+## CRC32 & Compression
+
+```typescript
+// ✅ GOOD - Use Bun.hash.crc32 (SIMD-optimized)
+const checksum = Bun.hash.crc32(buffer).toString(16);
+
+// ✅ GOOD - Use CompressionStream for large payloads
+const stream = new CompressionStream('zstd');
+// Avoid blocking Bun.zstdCompressSync for large data
+```

@@ -1,0 +1,86 @@
+{
+  "period": {
+    "start": "2025-10-22T12:26:20.715Z",
+    "end": "2026-01-29T12:26:20.715Z",
+    "duration": 8553600000
+  },
+  "summary": {
+    "totalDataPoints": 100,
+    "avgTensions": {
+      "volume": 56.747154266520546,
+      "link": 48.56430282783198,
+      "profile": 58.07501631928798,
+      "security": 58.24896962711171,
+      "compliance": 57.193202795768684
+    },
+    "peakTensions": {
+      "volume": 95.79521455934106,
+      "link": 84.63918497726863,
+      "profile": 83.47018976871931,
+      "security": 98.35487131082195,
+      "compliance": 88.48038914933163
+    },
+    "minTensions": {
+      "volume": 12.742993934672626,
+      "link": 16.86583076592293,
+      "profile": 32.78803647840633,
+      "security": 20.913880482972598,
+      "compliance": 22.031855480501157
+    },
+    "totalAnomalies": 19,
+    "avgRiskScore": 58.271891292310144
+  },
+  "trends": {
+    "volume": {
+      "direction": "stable",
+      "slope": -3.741958025794097e-10,
+      "strength": 0.04677838705719815,
+      "confidence": 0.04677838705719815
+    },
+    "link": {
+      "direction": "stable",
+      "slope": -6.911899736713265e-10,
+      "strength": 0.10256187827196242,
+      "confidence": 0.10256187827196242
+    },
+    "profile": {
+      "direction": "stable",
+      "slope": -1.67879966058165e-10,
+      "strength": 0.032269545770842595,
+      "confidence": 0.032269545770842595
+    },
+    "security": {
+      "direction": "stable",
+      "slope": 2.470475265508185e-9,
+      "strength": 0.32400455915877785,
+      "confidence": 0.32400455915877785
+    },
+    "compliance": {
+      "direction": "stable",
+      "slope": -3.1829261554334063e-10,
+      "strength": 0.05347981293688186,
+      "confidence": 0.05347981293688186
+    }
+  },
+  "patterns": [],
+  "recommendations": [
+    "⚠️ VOLUME reached critical levels (95.8%)",
+    "⚠️ SECURITY reached critical levels (98.4%)",
+    "🚨 High anomaly rate detected - investigate underlying issues"
+  ],
+  "riskAssessment": {
+    "overallRisk": "CRITICAL",
+    "riskFactors": [
+      "Critical volume levels",
+      "Critical security levels",
+      "High compliance levels"
+    ],
+    "probabilityOfCrisis": 0.8,
+    "recommendedActions": [
+      "🚨 Activate emergency response protocols",
+      "📞 Notify all stakeholders immediately",
+      "🔧 Implement immediate mitigation measures",
+      "📊 Increase monitoring frequency to real-time"
+    ]
+  }
+}

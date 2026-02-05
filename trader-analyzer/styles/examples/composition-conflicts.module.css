@@ -1,0 +1,65 @@
+/**
+ * Composition Conflicts Example
+ * 
+ * Demonstrates the warning about conflicting properties when composing
+ * from separate CSS module files.
+ * 
+ * ⚠️ WARNING: The CSS module spec says that composing classes from
+ * separate files with conflicting properties is undefined behavior.
+ */
+
+/* ==========================================================================
+   ✅ CORRECT: No Conflicting Properties
+   ========================================================================== */
+
+/* background.module.css defines: background-color: blue; */
+.buttonCorrect {
+	composes: background from "./background.module.css";
+	color: red; /* No conflict - background.module.css doesn't define color */
+	padding: 12px; /* No conflict - background.module.css doesn't define padding */
+}
+
+/* ==========================================================================
+   ❌ INCORRECT: Conflicting Properties (Undefined Behavior)
+   ========================================================================== */
+
+/* background.module.css defines: background-color: blue; */
+/* ⚠️ This causes undefined behavior - output may differ and be unreliable */
+.buttonIncorrect {
+	composes: background from "./background.module.css";
+	background-color: #667eea; /* ⚠️ CONFLICT: background.module.css also defines background-color */
+	color: red;
+}
+
+/* ==========================================================================
+   ✅ CORRECT: Separate Concerns
+   ========================================================================== */
+
+/* base.module.css defines: padding, border-radius, font-weight */
+/* background.module.css defines: background-color */
+.buttonSeparated {
+	composes: base from "./base.module.css";
+	composes: background from "./background.module.css";
+	color: red; /* No conflicts - neither base nor background define color */
+}
+
+/* ==========================================================================
+   ✅ CORRECT: Local Composition for Variants
+   ========================================================================== */
+
+/* When you need to override properties, use local composition */
+.baseButton {
+	composes: base from "./base.module.css";
+	background-color: #667eea;
+	color: white;
+}
+
+.buttonPrimary {
+	composes: baseButton; /* Local composition - safe to override */
+	background-color: #667eea; /* Override is safe within same file */
+}
+
+.buttonSecondary {
+	composes: baseButton; /* Local composition - safe to override */
+	background-color: #10b981; /* Override is safe within same file */
+}

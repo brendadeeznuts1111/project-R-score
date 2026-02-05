@@ -1,0 +1,89 @@
+{
+  // ============================================================================
+  // VS CODE COLOR CUSTOMIZATION FOR PR TEAM
+  // ============================================================================
+
+  // Team role indicators in activity bar
+  "workbench.colorCustomizations": {
+    // Alice (Architect) - CYAN
+    "activityBar.background": "#00CED1",
+    "activityBar.foreground": "#000000",
+    
+    // Bob (Risk) - YELLOW
+    "statusBar.background": "#FFD700",
+    "statusBar.foreground": "#000000",
+    
+    // Carol (Compliance) - MAGENTA
+    "titleBar.activeBackground": "#FF00FF",
+    "titleBar.activeForeground": "#FFFFFF",
+    
+    // Priority colors in editor
+    "editorError.foreground": "#FF0000",      // Critical
+    "editorWarning.foreground": "#FFA500",    // High priority
+    "editorInfo.foreground": "#0000FF",       // Medium priority
+    "editorHint.foreground": "#FFFFFF",       // Low priority
+    
+    // Git colors (matching PR labels)
+    "gitDecoration.modifiedResourceForeground": "#00CED1",  // Cyan - Modified
+    "gitDecoration.addedResourceForeground": "#00FF00",     // Green - Added
+    "gitDecoration.deletedResourceForeground": "#FF0000",   // Red - Deleted
+    "gitDecoration.conflictingResourceForeground": "#FFD700", // Yellow - Conflicts
+    "gitDecoration.ignoredResourceForeground": "#808080",    // Grey - Ignored
+    "gitDecoration.untrackedResourceForeground": "#9370DB",  // Purple - Untracked
+    
+    // Terminal colors (matching TMUX)
+    "terminal.ansiBlack": "#000000",
+    "terminal.ansiRed": "#FF0000",
+    "terminal.ansiGreen": "#00FF00",
+    "terminal.ansiYellow": "#FFD700",
+    "terminal.ansiBlue": "#0000FF",
+    "terminal.ansiMagenta": "#FF00FF",
+    "terminal.ansiCyan": "#00CED1",
+    "terminal.ansiWhite": "#FFFFFF"
+  },
+
+  // ============================================================================
+  // PR-SPECIFIC EDITOR SETTINGS
+  // ============================================================================
+  "editor.codeLens": true,
+  "editor.codeLensFontSize": 12,
+  
+  // Show git blame in editor (Bob's risk analysis)
+  "gitlens.currentLine.enabled": true,
+  "gitlens.hovers.currentLine.over": "line",
+  
+  // Diff editor colors (matching PR diff view)
+  "diffEditor.insertedTextBackground": "#00FF0020",  // Green for additions
+  "diffEditor.removedTextBackground": "#FF000020",   // Red for deletions
+  "diffEditor.insertedLineBackground": "#00FF0010",
+  "diffEditor.removedLineBackground": "#FF000010",
+  "diffEditor.border": "#808080",
+
+  // ============================================================================
+  // PR TEAM EXTENSION COLORS
+  // ============================================================================
+  "workbench.colorCustomizations": {
+    // GitLens (Bob's risk analysis)
+    "gitlens.gutterHeatmap.enabled": true,
+    "gitlens.gutterHeatmap.coldColor": "#0000FF",    // Blue (old)
+    "gitlens.gutterHeatmap.hotColor": "#FF0000"      // Red (new)
+  },
+
+  // ============================================================================
+  // PR SEMANTIC HIGHLIGHTING
+  // ============================================================================
+  "editor.semanticHighlighting.enabled": true,
+  "editor.semanticTokenColorCustomizations": {
+    "enabled": true,
+    "rules": {
+      "function": "#00CED1",          // Cyan - Functions (Alice's design)
+      "variable": "#FFD700",          // Yellow - Variables (Bob's analysis)
+      "class": "#FF00FF",             // Magenta - Classes (Carol's compliance)
+      "interface": "#00FF00",         // Green - Interfaces (Dave's ops)
+      "enum": "#9370DB",              // Purple - Enums (risk levels)
+      "parameter": "#FFA500",         // Orange - Parameters (review focus)
+      "property": "#4682B4",          // Steel Blue - Properties (architecture)
+      "method": "#00CED1"             // Cyan - Methods (Alice's design)
+    }
+  }
+}

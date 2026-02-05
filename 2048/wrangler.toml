@@ -1,0 +1,8 @@
+name = "quantum-crc32"
+main = "workers/crc32-worker.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+VERSION = "1.5.1"

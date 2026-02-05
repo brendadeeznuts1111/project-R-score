@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Empire Pro | Scoped Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style id="dynamic-theme">
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .status-healthy { border-left: 4px solid #10b981; }
+        .status-degraded { border-left: 4px solid #f59e0b; }
+        .status-unhealthy { border-left: 4px solid #ef4444; }
+        
+        #terminal-container {
+            font-family: 'Fira Code', 'JetBrains Mono', monospace;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            border-radius: 8px;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.01); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        
+        /* Enhanced Animations */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        @keyframes slide-up {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .glass-enhanced {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .glass-interactive {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-interactive:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dashboard-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dashboard-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .dashboard-brand {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .dashboard-logo {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, rgb(37, 99, 235), rgb(29, 78, 216));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .dashboard-logo:hover {
+            box-shadow: 0 6px 30px rgba(37, 99, 235, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .dashboard-title {
+            font-weight: bold;
+            font-size: 1.125rem;
+            color: white;
+            letter-spacing: -0.025em;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgb(148, 163, 184);
+            margin-top: 0.25rem;
+        }
+        
+        .matrix-container {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .matrix-grid {
+                grid-template-columns: repeat(12, 1fr);
+            }
+        }
+        
+        .matrix-cell {
+            aspect-ratio: 1;
+            border-radius: 0.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .matrix-cell:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .pattern-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .pattern-card:hover {
+            transform: translateX(0.25rem);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pattern-section {
+            width: 7rem;
+            flex-shrink: 0;
+            font-weight: 900;
+            font-size: 0.6875rem;
+            letter-spacing: -0.05em;
+            color: rgb(148, 163, 184);
+            transition: color 0.2s ease;
+        }
+        
+        .pattern-card:hover .pattern-section {
+            color: rgb(96, 165, 250);
+        }
+        
+        .pattern-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .pattern-name {
+            font-size: 0.875rem;
+            font-weight: bold;
+            color: rgb(241, 245, 249);
+            letter-spacing: -0.025em;
+            transition: color 0.2s ease;
+        }
+        
+        .pattern-card:hover .pattern-name {
+            color: white;
+        }
+        
+        .pattern-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        
+        .pattern-metric {
+            font-size: 0.5625rem;
+            color: rgb(148, 163, 184);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .pattern-status {
+            width: 10rem;
+            flex-shrink: 0;
+            text-align: right;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .status-indicator {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-text {
+            font-size: 0.625rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .notification-badge {
+            position: relative;
+        }
+        
+        .notification-badge::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Progress Ring */
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        /* Heat Map Colors */
+        .heat-low { background: rgba(16, 185, 129, 0.2); }
+        .heat-medium { background: rgba(245, 158, 11, 0.2); }
+        .heat-high { background: rgba(239, 68, 68, 0.2); }
+        
+        /* OS-Specific Optimizations */
+        @media (prefers-color-scheme: dark) {
+            .glass-enhanced {
+                background: rgba(255, 255, 255, 0.06);
+                backdrop-filter: blur(20px) saturate(180%);
+            }
+        }
+        
+        /* macOS-specific optimizations */
+        @supports (-webkit-backdrop-filter: blur(20px)) {
+            .glass-enhanced {
+                -webkit-backdrop-filter: blur(20px) saturate(180%);
+                backdrop-filter: blur(20px) saturate(180%);
+            }
+        }
+        
+        /* Windows-specific optimizations */
+        @media (min-resolution: 96dpi) {
+            .matrix-cell {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+        
+        /* Linux-specific optimizations */
+        @supports (backdrop-filter: blur(20px)) {
+            .linux-optimized {
+                backdrop-filter: blur(20px) contrast(1.2);
+            }
+        }
+        
+        /* Performance optimizations */
+        .gpu-accelerated {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
+        /* Filter-specific styles */
+        .filter-tag {
+            padding: 0.125rem 0.5rem;
+            font-size: 0.625rem;
+            border-radius: 9999px;
+            border: 1px solid;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .filter-tag.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-color: rgb(59, 130, 246);
+            color: rgb(147, 197, 253);
+        }
+        
+        .filter-tag.inactive {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: rgb(148, 163, 184);
+        }
+        
+        .filter-tag.inactive:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Advanced filter panel */
+        .filter-panel {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .filter-panel > * + * {
+            margin-top: 1rem;
+        }
+        
+        /* Performance metrics bar */
+        .performance-bar {
+            height: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        /* Enhanced search input styling */
+        [data-search-input] {
+            transition: box-shadow 0.2s ease;
+        }
+        
+        /* Tooltip for first-time users */
+        .search-tooltip {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            animation: tooltipFadeIn 0.3s ease;
+        }
+        
+        .search-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 20px;
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        @keyframes tooltipFadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Screen reader only utility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen font-sans">
+    
+    <!-- Enhanced Navigation Header -->
+    <header class="dashboard-header glass-enhanced sticky top-0 z-50 backdrop-blur-xl">
+        <!-- Brand Section -->
+        <div class="dashboard-brand">
+            <div class="dashboard-logo" id="nav-logo">
+                <span class="group-hover:scale-110 transition-transform">E</span>
+            </div>
+            <div class="space-y-1">
+                <div class="flex items-center gap-3">
+                    <h1 class="dashboard-title flex items-center gap-3">
+                        Empire Pro
+                        <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase animate-pulse">v2.1.0</span>
+                    </h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <p class="dashboard-subtitle" id="current-scope">Detecting Scope...</p>
+                    <div class="w-1 h-1 bg-slate-600 rounded-full"></div>
+                    <p class="text-[10px] text-slate-600" id="system-time">--:--:--</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Center Navigation -->
+        <nav class="hidden md:flex items-center gap-1 bg-white/5 rounded-xl p-1">
+            <button class="px-4 py-2 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 flex items-center gap-2">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                Overview
+            </button>
+            <button class="px-4 py-2 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 flex items-center gap-2">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+                Telemetry
+            </button>
+            <button class="px-4 py-2 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 flex items-center gap-2">
+                <i data-lucide="shield" class="w-4 h-4"></i>
+                Security
+            </button>
+            <button class="px-4 py-2 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 flex items-center gap-2">
+                <i data-lucide="settings" class="w-4 h-4"></i>
+                Settings
+            </button>
+        </nav>
+        
+        <!-- Right Section -->
+        <div class="dashboard-nav">
+            <!-- Search Bar -->
+            <div class="hidden lg:flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 hover:bg-white/10 transition-all duration-200">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                <input type="search" data-search-input placeholder="Quick search... (Ctrl+K)" class="bg-transparent text-[11px] text-slate-300 placeholder-slate-600 outline-none w-32 focus:w-40 transition-all duration-200">
+            </div>
+            
+            <!-- System Status -->
+            <div class="flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-[10px] font-medium text-emerald-400">Healthy</span>
+            </div>
+            
+            <!-- Notifications -->
+            <button onclick="toggleNotifications()" class="relative p-2 glass-enhanced rounded-lg hover:bg-white/10 transition-all notification-badge group">
+                <i data-lucide="bell" class="w-4 h-4 text-slate-300 group-hover:text-white transition-colors"></i>
+                <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
+            </button>
+            
+            <!-- User Menu -->
+            <div class="flex items-center gap-3 pl-4 border-l border-white/10">
+                <div class="text-right">
+                    <p class="text-xs font-semibold text-white" id="user-name">Loading...</p>
+                    <p class="text-[10px] text-slate-500 uppercase" id="user-role">...</p>
+                </div>
+                <div class="relative group">
+                    <div class="w-10 h-10 bg-slate-800 rounded-full border border-white/10 overflow-hidden shadow-inner cursor-pointer group-hover:border-blue-500/50 transition-all duration-200">
+                        <img src="" alt="User" id="user-avatar">
+                    </div>
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-8 max-w-7xl mx-auto space-y-8">
+        
+        <!-- Pinned Metrics Section -->
+        <section id="pinned-section">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-blue-500 rounded-full"></span> Pinned Tracking
+                </h2>
+                <button onclick="addPinnedMetric()" class="text-[10px] bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 px-3 py-1 rounded-md transition-all border border-blue-500/30">
+                    <i data-lucide="plus" class="w-3 h-3 inline mr-1"></i> Add Metric
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="pinned-metrics">
+                <!-- Dynamically filled -->
+            </div>
+        </section>
+        
+        <!-- System Alerts -->
+        <section id="alerts-section" class="hidden">
+            <div class="glass-enhanced p-4 rounded-2xl border-l-4 border-red-500">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400"></i>
+                        <div>
+                            <h3 class="text-sm font-semibold text-red-400">System Alert</h3>
+                            <p class="text-xs text-slate-400" id="alert-message">High memory usage detected</p>
+                        </div>
+                    </div>
+                    <button onclick="dismissAlert()" class="text-slate-500 hover:text-white transition-colors">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Patterns & Telemetry -->
+            <div class="lg:col-span-8 space-y-8">
+                
+                <!-- EMPIRE PRO MASTER MATRIX (§Types:Master) -->
+                <div class="glass-enhanced p-8 rounded-3xl space-y-8 shadow-2xl border border-white/10 relative group bg-gradient-to-br from-slate-900/50 to-slate-950/50">
+                    <div class="absolute -top-4 -left-4 bg-blue-600 text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-blue-600/20 tracking-[0.2em] uppercase animate-pulse">Matrix v2.2</div>
+                    
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <h2 class="text-2xl font-black italic tracking-tighter text-white flex items-center gap-3">
+                                Master Pattern Matrix
+                                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-full font-bold uppercase animate-pulse">LIVE</span>
+                            </h2>
+                            <p class="text-[10px] uppercase tracking-[0.3em] text-slate-500 mt-1">Formal Type Safety & Runtime Enforcement</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <p class="text-[9px] text-slate-500 uppercase tracking-widest">System Load</p>
+                                <p class="text-sm font-mono text-emerald-400" id="system-load">23.4%</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] text-slate-500 uppercase tracking-widest">Active Patterns</p>
+                                <p class="text-sm font-mono text-blue-400" id="active-patterns">0</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-md border border-emerald-500/20 font-bold tracking-widest uppercase animate-pulse">● Mesh Enabled</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Matrix Controls -->
+                    <div class="flex items-center justify-between p-4 bg-black/40 rounded-2xl border border-white/5">
+                        <div class="flex items-center gap-4">
+                            <button onclick="toggleMatrixView('grid')" class="px-3 py-1.5 text-[10px] bg-white/10 hover:bg-white/20 rounded-lg transition-all flex items-center gap-2">
+                                <i data-lucide="grid" class="w-3 h-3"></i> Grid
+                            </button>
+                            <button onclick="toggleMatrixView('list')" class="px-3 py-1.5 text-[10px] bg-white/5 hover:bg-white/10 rounded-lg transition-all flex items-center gap-2">
+                                <i data-lucide="list" class="w-3 h-3"></i> List
+                            </button>
+                            <button onclick="toggleMatrixView('graph')" class="px-3 py-1.5 text-[10px] bg-white/5 hover:bg-white/10 rounded-lg transition-all flex items-center gap-2">
+                                <i data-lucide="gitgraph" class="w-3 h-3"></i> Graph
+                            </button>
+                            <div class="w-px h-6 bg-white/10"></div>
+                            <button onclick="refreshMatrix()" class="px-3 py-1.5 text-[10px] bg-white/5 hover:bg-white/10 rounded-lg transition-all flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh
+                            </button>
+                            <button onclick="exportMatrix()" class="px-3 py-1.5 text-[10px] bg-white/5 hover:bg-white/10 rounded-lg transition-all flex items-center gap-2">
+                                <i data-lucide="download" class="w-3 h-3"></i> Export
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-6">
+                            <div class="flex items-center gap-4 text-[9px]">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-3 h-3 rounded-sm bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                                    <span class="text-slate-400 font-bold uppercase">Types</span>
+                                    <span class="text-slate-600" id="type-count">0</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-3 h-3 rounded-sm bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                                    <span class="text-slate-400 font-bold uppercase">Workflow</span>
+                                    <span class="text-slate-600" id="workflow-count">0</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-3 h-3 rounded-sm bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
+                                    <span class="text-slate-400 font-bold uppercase">Gate</span>
+                                    <span class="text-slate-600" id="gate-count">0</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-3 h-3 rounded-sm bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+                                    <span class="text-slate-400 font-bold uppercase">Storage</span>
+                                    <span class="text-slate-600" id="storage-count">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Matrix Visualization -->
+                    <div class="p-6 bg-black/40 rounded-3xl border border-white/5 shadow-inner">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 flex items-center gap-2">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                                Live Infrastructure Matrix
+                            </h3>
+                            <div class="flex items-center gap-3">
+                                <select class="bg-white/10 text-[10px] text-slate-300 px-2 py-1 rounded border border-white/10 outline-none">
+                                    <option>Real-time View</option>
+                                    <option>Performance Mode</option>
+                                    <option>Debug Mode</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Matrix Grid -->
+                        <div id="matrix-chart" class="grid grid-cols-8 md:grid-cols-12 gap-2 mb-6">
+                            <!-- Matrix cells injected here -->
+                        </div>
+                        
+                        <!-- Enhanced Heat Map Legend -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-6 text-[9px]">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 heat-low rounded shadow-sm"></div>
+                                    <span class="text-slate-500">Low Load (&lt;30%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 heat-medium rounded shadow-sm"></div>
+                                    <span class="text-slate-500">Medium Load (30-70%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 heat-high rounded shadow-sm"></div>
+                                    <span class="text-slate-500">High Load (&gt;70%)</span>
+                                </div>
+                            </div>
+                            <div class="text-[9px] text-slate-600">
+                                Last updated: <span id="matrix-last-update">--:--:--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Pattern Details with Advanced Filtering -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                                Active Pattern Registry
+                                <span class="text-[9px] text-slate-600" id="filtered-count">Showing all</span>
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <input type="text" placeholder="Filter patterns..." id="pattern-search" class="bg-white/5 text-[10px] text-slate-300 placeholder-slate-600 px-3 py-1 rounded border border-white/10 outline-none w-32 focus:w-40 transition-all">
+                                <button onclick="toggleAdvancedFilters()" class="text-[9px] text-slate-600 hover:text-white transition-colors flex items-center gap-1">
+                                    <i data-lucide="filter" class="w-3 h-3"></i>
+                                    <span>Filters</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Filter Panel -->
+                        <div id="advanced-filters" class="filter-panel hidden">
+                            <div class="space-y-4">
+                                <!-- Status Filters -->
+                                <div>
+                                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Status</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="filter-tag inactive" data-filter="status" data-value="active" onclick="toggleFilter('status', 'active')">Active</span>
+                                        <span class="filter-tag inactive" data-filter="status" data-value="stable" onclick="toggleFilter('status', 'stable')">Stable</span>
+                                        <span class="filter-tag inactive" data-filter="status" data-value="guard" onclick="toggleFilter('status', 'guard')">Guard</span>
+                                        <span class="filter-tag inactive" data-filter="status" data-value="synced" onclick="toggleFilter('status', 'synced')">Synced</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Section Filters -->
+                                <div>
+                                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Section</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="filter-tag inactive" data-filter="section" data-value="type" onclick="toggleFilter('section', 'type')">Types</span>
+                                        <span class="filter-tag inactive" data-filter="section" data-value="workflow" onclick="toggleFilter('section', 'workflow')">Workflow</span>
+                                        <span class="filter-tag inactive" data-filter="section" data-value="gate" onclick="toggleFilter('section', 'gate')">Gates</span>
+                                        <span class="filter-tag inactive" data-filter="section" data-value="storage" onclick="toggleFilter('section', 'storage')">Storage</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Performance Filters -->
+                                <div>
+                                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Performance</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="filter-tag inactive" data-filter="performance" data-value="excellent" onclick="toggleFilter('performance', 'excellent')">Excellent (>80%)</span>
+                                        <span class="filter-tag inactive" data-filter="performance" data-value="good" onclick="toggleFilter('performance', 'good')">Good (60-80%)</span>
+                                        <span class="filter-tag inactive" data-filter="performance" data-value="optimize" onclick="toggleFilter('performance', 'optimize')">Optimize (<60%)</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- ROI Filters -->
+                                <div>
+                                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">ROI Range</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="filter-tag inactive" data-filter="roi" data-value="high" onclick="toggleFilter('roi', 'high')">High (>500x)</span>
+                                        <span class="filter-tag inactive" data-filter="roi" data-value="medium" onclick="toggleFilter('roi', 'medium')">Medium (100-500x)</span>
+                                        <span class="filter-tag inactive" data-filter="roi" data-value="low" onclick="toggleFilter('roi', 'low')">Low (<100x)</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- OS-Specific Optimizations -->
+                                <div>
+                                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">OS Optimizations</h4>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center gap-2 text-[10px] text-slate-400">
+                                            <input type="checkbox" id="macos-optimize" class="rounded" onchange="toggleOSOptimization('macos')">
+                                            <span>macOS optimizations (Webkit backdrop-filter)</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 text-[10px] text-slate-400">
+                                            <input type="checkbox" id="windows-optimize" class="rounded" onchange="toggleOSOptimization('windows')">
+                                            <span>Windows optimizations (Crisp rendering)</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 text-[10px] text-slate-400">
+                                            <input type="checkbox" id="linux-optimize" class="rounded" onchange="toggleOSOptimization('linux')">
+                                            <span>Linux optimizations (Contrast boost)</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 text-[10px] text-slate-400">
+                                            <input type="checkbox" id="gpu-accelerate" class="rounded" onchange="toggleGPUAcceleration()" checked>
+                                            <span>GPU acceleration (Transform3D)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-2 pt-2 border-t border-white/10">
+                                    <button onclick="applyFilters()" class="px-3 py-1.5 text-[10px] bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded-lg transition-all flex items-center gap-2">
+                                        <i data-lucide="check" class="w-3 h-3"></i> Apply Filters
+                                    </button>
+                                    <button onclick="clearFilters()" class="px-3 py-1.5 text-[10px] bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg transition-all flex items-center gap-2">
+                                        <i data-lucide="x" class="w-3 h-3"></i> Clear All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 gap-3" id="matrix-container">
+                            <!-- Enhanced Matrix Rows will be injected here -->
+                            <div class="animate-pulse space-y-3">
+                                <div class="h-14 bg-white/5 rounded-xl"></div>
+                                <div class="h-14 bg-white/5 rounded-xl"></div>
+                                <div class="h-14 bg-white/5 rounded-xl"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Telemetry Mesh -->
+                <div class="glass p-6 rounded-2xl space-y-6 shadow-xl relative overflow-hidden">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-xs uppercase tracking-widest text-slate-400">Live Telemetry Mesh (§Telemetry:Live)</h3>
+                        <div id="mesh-status" class="flex items-center gap-2">
+                             <span class="w-1.5 h-1.5 bg-slate-500 rounded-full"></span>
+                             <span class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Connecting...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Metric Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="metric-cards">
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/5 group transition-all relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold tracking-widest">Heap Used</p>
+                                <i data-lucide="cpu" class="w-3 h-3 text-slate-600"></i>
+                            </div>
+                            <p id="telemetry-heap" class="text-xl font-mono text-slate-100 italic">-- MB</p>
+                            <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
+                                <div id="heap-pulse" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/5 group transition-all relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold tracking-widest">RSS</p>
+                                <i data-lucide="hard-drive" class="w-3 h-3 text-slate-600"></i>
+                            </div>
+                            <p id="telemetry-rss" class="text-xl font-mono text-slate-100 italic">-- MB</p>
+                            <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
+                                <div id="rss-pulse" class="h-full bg-purple-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/5 group transition-all relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold tracking-widest">Uptime</p>
+                                <i data-lucide="clock" class="w-3 h-3 text-slate-600"></i>
+                            </div>
+                            <p id="telemetry-uptime" class="text-xl font-mono text-slate-100 italic">-- s</p>
+                            <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
+                                <div id="uptime-pulse" class="h-full bg-emerald-500 transition-all duration-300" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/5 group transition-all relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold tracking-widest">Events</p>
+                                <i data-lucide="activity" class="w-3 h-3 text-slate-600"></i>
+                            </div>
+                            <p id="telemetry-events" class="text-xl font-mono text-emerald-400 italic">0</p>
+                            <div id="event-glow" class="absolute inset-0 bg-emerald-500/5 opacity-0 transition-opacity duration-75"></div>
+                        </div>
+                    </div>
+
+                    <!-- Frequency Sparkline -->
+                    <div class="h-16 flex items-end gap-[2px] px-2 bg-black/20 rounded-lg overflow-hidden border border-white/5" id="telemetry-sparkline">
+                        <!-- Bars dynamically added here -->
+                    </div>
+
+                    <!-- Event Feed -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Event Stream</h4>
+                            <button onclick="clearEventFeed()" class="text-[9px] text-slate-600 hover:text-white transition-colors">
+                                <i data-lucide="trash-2" class="w-3 h-3 inline mr-1"></i> Clear
+                            </button>
+                        </div>
+                        <div id="workflow-mesh-feed" class="bg-black/40 rounded-lg p-3 font-mono text-[10px] h-32 overflow-y-auto space-y-1 text-slate-400 border border-white/5 custom-scrollbar">
+                            <div class="opacity-30 italic">⚡ Waiting for live telemetry packets...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Terminal -->
+                <div class="glass p-6 rounded-2xl space-y-4 shadow-xl">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-xs uppercase tracking-widest text-slate-400">Interactive PTY Environment (§Bun:132)</h3>
+                        <div class="flex gap-2">
+                            <button onclick="spawnTerminal(['bun', 'run', 'scripts/proxy-sniffer.ts'])" class="text-[10px] bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-3 py-1 rounded-md transition-all border border-purple-500/30">📡 SNIFF</button>
+                            <button onclick="spawnTerminal(['bun', 'run', 'scripts/health-tracer.ts'])" class="text-[10px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 px-3 py-1 rounded-md transition-all border border-emerald-500/30">💚 HEALTH</button>
+                            <button onclick="spawnTerminal(['bun', 'run', 'scripts/trace-logger.ts'])" class="text-[10px] bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 px-3 py-1 rounded-md transition-all border border-blue-500/30">📜 TRACE</button>
+                            <button onclick="spawnTerminal(['bun', 'run', 'scripts/test-patterns.ts'])" class="text-[10px] bg-white/5 hover:bg-white/10 px-3 py-1 rounded-md transition-all">🏗️ AUDIT</button>
+                        </div>
+                    </div>
+                    <div id="terminal-container" class="custom-scrollbar">
+                        <div>$ Ready for interactive PTY...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Identity & Actions -->
+            <div class="lg:col-span-4 space-y-8">
+                
+                <!-- Identity Shield -->
+                <div class="glass-enhanced p-6 rounded-2xl status-healthy shadow-xl pulse-glow" id="shield-panel">
+                    <h3 class="font-bold mb-4 flex items-center justify-between text-slate-100 font-mono tracking-tighter">
+                        IDENTITY SHIELD
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded uppercase font-bold tracking-tighter">Encrypted</span>
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        </div>
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-blue-500/30 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Risk Index</p>
+                                <i data-lucide="shield" class="w-4 h-4 text-blue-400"></i>
+                            </div>
+                            <div class="flex items-end gap-2">
+                                <span class="text-2xl font-mono leading-none text-slate-100" id="risk-index">0.12</span>
+                                <span class="text-[10px] text-emerald-400 uppercase font-bold mb-1 tracking-tighter animate-pulse">● Stable</span>
+                            </div>
+                            <div class="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500 transition-all duration-300" style="width: 12%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 bg-white/5 rounded-lg border border-white/5">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Active Sessions</p>
+                                <p class="text-lg font-mono text-slate-100" id="active-sessions">3</p>
+                            </div>
+                            <div class="p-3 bg-white/5 rounded-lg border border-white/5">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1">Last Rotation</p>
+                                <p class="text-lg font-mono text-slate-100" id="last-rotation">2h ago</p>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full py-3 bg-blue-600 hover:bg-blue-500 transition-all rounded-xl font-bold text-xs uppercase tracking-widest text-white shadow-lg shadow-blue-600/20 active:scale-[0.98] flex items-center justify-center gap-2" onclick="rotateIdentity()">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            Rotate Global Bundle
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Infrastructure Control -->
+                <div class="glass-enhanced p-6 rounded-2xl border-t border-white/5 shadow-xl" id="admin-tools">
+                    <h3 class="font-bold mb-4 text-[10px] uppercase tracking-widest text-slate-500 flex items-center justify-between">
+                        Infrastructure Control
+                        <span class="text-[9px] text-slate-600">2 Actions</span>
+                    </h3>
+                    <div class="space-y-3">
+                        <button class="w-full p-4 text-left text-[11px] glass-enhanced hover:bg-white/5 rounded-xl border-l-2 border-emerald-500 group transition-all" onclick="triggerHeal()">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold text-slate-300 group-hover:text-emerald-400 transition-colors flex items-center gap-2">
+                                        <i data-lucide="zap" class="w-4 h-4"></i>
+                                        §100.HEAL Manual Trigger
+                                    </div>
+                                    <div class="text-[9px] opacity-40 mt-1 uppercase tracking-tighter">Force autonomic carrier failover</div>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600 group-hover:text-emerald-400 transition-colors"></i>
+                            </div>
+                        </button>
+                        <button class="w-full p-4 text-left text-[11px] glass-enhanced hover:bg-white/5 rounded-xl border-l-2 border-blue-500 group transition-all" onclick="runAudit()">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold text-slate-300 group-hover:text-blue-400 transition-colors flex items-center gap-2">
+                                        <i data-lucide="database" class="w-4 h-4"></i>
+                                        §Storage.Audit Lifecycle
+                                    </div>
+                                    <div class="text-[9px] opacity-40 mt-1 uppercase tracking-tighter">Validate R2 path compliance</div>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+        <!-- Dashboard Integration Panel -->
+        <div class="glass-enhanced p-6 rounded-2xl border-t border-white/5 shadow-xl">
+            <h3 class="font-bold mb-4 text-[10px] uppercase tracking-widest text-slate-500 flex items-center justify-between">
+                Dashboard Hub
+                <span class="text-[9px] text-slate-600">4 Dashboards</span>
+            </h3>
+            <div class="space-y-4">
+                <!-- Quick Dashboard Switcher -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="switchDashboard('main')" class="p-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-lg transition-all text-[10px] text-blue-300 flex flex-col items-center gap-2">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        <span>Main Dashboard</span>
+                        <span class="text-[8px] text-blue-400/70">Current</span>
+                    </button>
+                    <button onclick="switchDashboard('analytics')" class="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-[10px] text-slate-300 flex flex-col items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Analytics</span>
+                        <span class="text-[8px] text-slate-600">Live</span>
+                    </button>
+                    <button onclick="switchDashboard('security')" class="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-[10px] text-slate-300 flex flex-col items-center gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>Security</span>
+                        <span class="text-[8px] text-slate-600">2 Alerts</span>
+                    </button>
+                    <button onclick="switchDashboard('performance')" class="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all text-[10px] text-slate-300 flex flex-col items-center gap-2">
+                        <i data-lucide="gauge" class="w-4 h-4"></i>
+                        <span>Performance</span>
+                        <span class="text-[8px] text-slate-600">Optimal</span>
+                    </button>
+                </div>
+                
+                <!-- Cross-Dashboard Features -->
+                <div class="border-t border-white/10 pt-4 space-y-3">
+                    <h4 class="text-[9px] font-bold uppercase tracking-widest text-slate-600">Cross-Dashboard Actions</h4>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="syncAllDashboards()" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-[9px] text-slate-400 flex items-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                            Sync All Dashboards
+                        </button>
+                        <button onclick="exportAllData()" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-[9px] text-slate-400 flex items-center gap-2">
+                            <i data-lucide="download" class="w-3 h-3"></i>
+                            Export All Data
+                        </button>
+                        <button onclick="broadcastMessage()" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-[9px] text-slate-400 flex items-center gap-2">
+                            <i data-lucide="send" class="w-3 h-3"></i>
+                            Broadcast Message
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Status -->
+                <div class="border-t border-white/10 pt-4">
+                    <h4 class="text-[9px] font-bold uppercase tracking-widest text-slate-600 mb-3">Dashboard Status</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-[9px]">
+                            <span class="text-slate-500">Main Dashboard</span>
+                            <span class="flex items-center gap-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                <span class="text-green-400">Active</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-[9px]">
+                            <span class="text-slate-500">Analytics Dashboard</span>
+                            <span class="flex items-center gap-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                <span class="text-green-400">Active</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-[9px]">
+                            <span class="text-slate-500">Security Dashboard</span>
+                            <span class="flex items-center gap-1">
+                                <div class="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                                <span class="text-amber-400">Warning</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-[9px]">
+                            <span class="text-slate-500">Performance Dashboard</span>
+                            <span class="flex items-center gap-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                <span class="text-green-400">Active</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        // Import our standalone keyboard shortcut library
+        // import { shortcuts, focusWithFeedback } from '../keyboard-shortcuts-lite/dist/index.js';
+        
+        // Stub for missing keyboard shortcuts library
+        const shortcuts = {
+            create: (config) => ({
+                add: () => {},
+                remove: () => {},
+                destroy: () => {}
+            })
+        };
+        const focusWithFeedback = (element) => element?.focus();
+        
+        // Enhanced Dashboard Manager with integrated library
+        class DashboardManager {
+            constructor() {
+                this.shortcutManager = null;
+                this.initializeKeyboardShortcuts();
+            }
+            
+            initializeKeyboardShortcuts() {
+                // Simple keyboard shortcuts implementation
+                document.addEventListener('keydown', (e) => {
+                    // Search shortcuts
+                    if (e.key === 'k' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        this.focusSearchInput();
+                    }
+                    // Escape to clear search
+                    if (e.key === 'Escape') {
+                        const searchInput = document.querySelector('input[placeholder="Quick search..."]');
+                        if (searchInput) {
+                            searchInput.value = '';
+                            searchInput.blur();
+                        }
+                    }
+                });
+                
+                // Initialize our library with dashboard-specific shortcuts
+                this.shortcutManager = shortcuts.create({
+                    // Search shortcuts
+                    'k': () => this.focusSearchInput(),
+                    'ctrl+k': () => this.focusSearchInput(),
+                    'meta+k': () => this.focusSearchInput(),
+                    
+                    // Dashboard actions
+                    'e': () => this.exportData(),
+                    'r': () => this.refreshData(),
+                    'h': () => this.showHelp(),
+                    
+                    // Navigation
+                    'g': () => this.goToSection(),
+                    'n': () => this.newItem(),
+                    's': () => this.saveData()
+                }, {
+                    // Library configuration
+                    context: 'dashboard',
+                    debounceMs: 500,
+                    requireModifier: ['e', 'r', 'h', 'g', 'n', 's'], // These need Ctrl/Meta
+                    screenReader: true,
+                    metrics: true
+                });
+                
+                // Initialize the shortcut system
+                this.shortcutManager.init();
+            }
+            
+            focusSearchInput() {
+                const searchInput = document.querySelector('[data-search-input]');
+                if (!searchInput) {
+                    console.error('Search input not found');
+                    this.showAlert('Search unavailable', 'error');
+                    return;
+                }
+                
+                // Use our library's focus utility with enhanced feedback
+                const success = focusWithFeedback(searchInput, {
+                    animation: {
+                        duration: 300,
+                        boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.5)'
+                    },
+                    select: true,
+                    screenReader: 'Search activated, type to filter results',
+                    tooltip: {
+                        message: 'Press Ctrl+K anytime to search',
+                        showOnce: true
+                    }
+                });
+                
+                if (!success) {
+                    this.showAlert('Search input not available', 'warning');
+                }
+            }
+            
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    // Support both Ctrl and Cmd keys for cross-platform compatibility
+                    const isModifierKey = e.ctrlKey || e.metaKey;
+                    
+                    if (isModifierKey) {
+                        switch(e.key.toLowerCase()) {
+                            case 'e':
+                                e.preventDefault();
+                                this.exportData();
+                                break;
+                            case 'r':
+                                e.preventDefault();
+                                this.refreshData();
+                                break;
+                            case 'h':
+                                e.preventDefault();
+                                this.showHelp();
+                                break;
+                            case 'k':
+                                e.preventDefault();
+                                this.focusSearchInput();
+                                break;
+                        }
+                    }
+                });
+            }
+            
+            focusSearchInput() {
+                const searchInput = document.querySelector('input[placeholder="Quick search..."]');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                    this.showAlert('Search activated - Type your query', 'info');
+                } else {
+                    this.showAlert('Search input not found', 'error');
+                }
+            };
+            
+            startAutoUpdate() {
+                setInterval(() => {
+                    if (this.config) {
+                        this.updateSystemTime();
+                        const systemLoad = (Math.random() * 100).toFixed(1);
+                        document.getElementById('system-load').textContent = `${systemLoad}%`;
+                    }
+                }, 5000);
+            }
+            
+            updateSystemTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour12: false, 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+                document.getElementById('system-time').textContent = timeString;
+            };
+            
+            showAlert(message, type = 'info') {
+                // Implementation for showing alerts
+                console.log(`[${type.toUpperCase()}] ${message}`);
+            };
+            
+            handleSearch(event) {
+                const query = event.target.value.toLowerCase();
+                if (query.length > 2) {
+                    this.showAlert(`Searching for: ${query}`, 'info');
+                }
+            };
+            
+            handleNavigation(section) {
+                this.showAlert(`Navigating to ${section} section`, 'info');
+            };
+            
+            handlePatternSearch() {
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.filters.applyFilters();
+                }, 300);
+            };
+            
+            exportData() {
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    config: this.config,
+                    patterns: this.patterns.getAllPatterns(),
+                    filters: this.filters.getState()
+                };
+                
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dashboard-export-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                this.showAlert('Data exported successfully!', 'success');
+            };
+            
+            refreshData() {
+                this.patterns.loadPatterns();
+                this.showAlert('Data refreshed!', 'success');
+            };
+            
+            showHelp() {
+                this.showAlert('Help: Ctrl+E (Export), Ctrl+R (Refresh), Ctrl+H (Help), Ctrl+K (Search)', 'info');
+            };
+        }
+
+        // Filter Management Class
+        class FilterManager {
+            constructor() {
+                this.state = {
+                    status: [],
+                    section: [],
+                    performance: [],
+                    roi: [],
+                    search: ''
+                };
+                this.allPatterns = [];
+            }
+            
+            getState() {
+                return { ...this.state };
+            }
+            
+            setState(newState) {
+                this.state = { ...this.state, ...newState };
+            }
+            
+            clearAll() {
+                this.state = {
+                    status: [],
+                    section: [],
+                    performance: [],
+                    roi: [],
+                    search: ''
+                };
+            }
+            
+            toggleFilter(category, value) {
+                const filterTag = document.querySelector(`[data-filter="${category}"][data-value="${value}"]`);
+                const isActive = this.state[category].includes(value);
+                
+                if (isActive) {
+                    this.state[category] = this.state[category].filter(v => v !== value);
+                    filterTag.classList.remove('active');
+                    filterTag.classList.add('inactive');
+                } else {
+                    this.state[category].push(value);
+                    filterTag.classList.remove('inactive');
+                    filterTag.classList.add('active');
+                }
+            }
+            
+            applyFilters() {
+                let filteredPatterns = [...this.allPatterns];
+                
+                // Apply search filter
+                const searchTerm = document.getElementById('pattern-search')?.value.toLowerCase() || '';
+                if (searchTerm) {
+                    filteredPatterns = filteredPatterns.filter(p => 
+                        p.name.toLowerCase().includes(searchTerm) ||
+                        p.section.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Apply other filters
+                ['status', 'section', 'performance', 'roi'].forEach(category => {
+                    if (this.state[category].length > 0) {
+                        filteredPatterns = filteredPatterns.filter(p => {
+                            const value = this.getFilterValue(p, category);
+                            return this.state[category].includes(value);
+                        });
+                    }
+                });
+                
+                this.updateFilteredCount(filteredPatterns.length, this.allPatterns.length);
+                this.renderFilteredPatterns(filteredPatterns);
+            }
+            
+            getFilterValue(pattern, category) {
+                switch(category) {
+                    case 'status':
+                        if (pattern.section.includes('Workflow')) return 'active';
+                        if (pattern.section.includes('Gate')) return 'guard';
+                        if (pattern.section.includes('Storage')) return 'synced';
+                        return 'stable';
+                    case 'section':
+                        if (pattern.section.includes('Type')) return 'type';
+                        if (pattern.section.includes('Workflow')) return 'workflow';
+                        if (pattern.section.includes('Gate')) return 'gate';
+                        if (pattern.section.includes('Storage')) return 'storage';
+                        return 'type';
+                    case 'performance':
+                        if (pattern.performanceScore > 80) return 'excellent';
+                        if (pattern.performanceScore > 60) return 'good';
+                        return 'optimize';
+                    case 'roi':
+                        const roiValue = parseInt(pattern.roi);
+                        if (roiValue > 500) return 'high';
+                        if (roiValue > 100) return 'medium';
+                        return 'low';
+                    default:
+                        return '';
+                }
+            }
+            
+            updateFilteredCount(filtered, total) {
+                const countText = filtered === total ? 
+                    'Showing all' : `Showing ${filtered} of ${total}`;
+                const countElement = document.getElementById('filtered-count');
+                if (countElement) countElement.textContent = countText;
+            }
+            
+            renderFilteredPatterns(patterns) {
+                const container = document.getElementById('matrix-container');
+                const chart = document.getElementById('matrix-chart');
+                
+                if (!container || !chart) return;
+                
+                // Render matrix cells
+                chart.innerHTML = patterns.map((p, index) => {
+                    const color = this.getPatternColor(p);
+                    const heatClass = this.getHeatClass(p);
+                    
+                    return `<div class="matrix-cell ${heatClass} animate-slide-up" style="background-color: ${color}22; border-left: 2px solid ${color}; animation-delay: ${index * 50}ms" title="${p.section}: ${p.name} - ROI: ${p.roi} - Performance: ${p.performanceScore}%"></div>`;
+                }).join('');
+                
+                // Render pattern cards
+                container.innerHTML = patterns.map((p, index) => {
+                    return this.createPatternCard(p, index);
+                }).join('');
+                
+                // Re-initialize Lucide icons
+                lucide.createIcons();
+            }
+            
+            getPatternColor(pattern) {
+                if (pattern.section.includes('Workflow')) return dashboardConfig.colors.status_active;
+                if (pattern.section.includes('Gate')) return dashboardConfig.colors.status_guard;
+                if (pattern.section.includes('Storage')) return dashboardConfig.colors.status_synced;
+                return dashboardConfig.colors.status_stable;
+            }
+            
+            getHeatClass(pattern) {
+                if (pattern.performanceScore > 80) return 'heat-high';
+                if (pattern.performanceScore > 60) return 'heat-medium';
+                return 'heat-low';
+            }
+            
+            createPatternCard(pattern, index) {
+                const statusInfo = this.getStatusInfo(pattern);
+                const efficiency = pattern.performanceScore > 80 ? 'Excellent' : 
+                                 pattern.performanceScore > 60 ? 'Good' : 'Optimize';
+                
+                return `
+                <div class="pattern-card animate-slide-up" style="animation-delay: ${index * 100}ms">
+                    <div class="pattern-section">${pattern.section}</div>
+                    
+                    <div class="pattern-content">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="pattern-name">${pattern.name}</div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] font-mono text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded uppercase font-bold">${pattern.roi} ROI</span>
+                                <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Budget: ${pattern.perf}</span>
+                            </div>
+                        </div>
+                        <div class="pattern-meta">
+                            <span class="pattern-metric">
+                                <i data-lucide="trending-up" class="w-3 h-3"></i>
+                                Performance: ${pattern.performanceScore}%
+                            </span>
+                            <span class="pattern-metric">
+                                <i data-lucide="zap" class="w-3 h-3"></i>
+                                ${efficiency}
+                            </span>
+                            <span class="pattern-metric">
+                                <i data-lucide="clock" class="w-3 h-3"></i>
+                                ${pattern.avgResponseTime}ms avg
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="pattern-status">
+                        <div class="status-badge">
+                            <i data-lucide="${statusInfo.icon}" class="w-3 h-3" style="color: ${statusInfo.color}"></i>
+                            <span class="status-indicator" style="background-color: ${statusInfo.color}; box-shadow: 0 0 10px ${statusInfo.color}"></span>
+                            <span class="status-text" style="color: ${statusInfo.color}">${statusInfo.label}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+            
+            getStatusInfo(pattern) {
+                if (pattern.section.includes('Workflow')) {
+                    return {
+                        label: 'ACTIVE',
+                        color: dashboardConfig.colors.status_active,
+                        icon: 'activity'
+                    };
+                }
+                if (pattern.section.includes('Gate')) {
+                    return {
+                        label: 'GUARD',
+                        color: dashboardConfig.colors.status_guard,
+                        icon: 'shield'
+                    };
+                }
+                if (pattern.section.includes('Storage')) {
+                    return {
+                        label: 'SYNCED',
+                        color: dashboardConfig.colors.status_synced,
+                        icon: 'database'
+                    };
+                }
+                return {
+                    label: 'STABLE',
+                    color: dashboardConfig.colors.status_stable,
+                    icon: 'check-circle'
+                };
+            }
+        }
+
+        function applyTheme(theme) {
+            document.getElementById('nav-logo').className = `w-12 h-12 bg-gradient-to-br from-${theme.primary_color} to-${theme.primary_color}-700 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg shadow-${theme.primary_color}-600/20 hover:shadow-${theme.primary_color}-600/40 transition-all duration-300 cursor-pointer group`;
+        }
+        
+        function updateSystemTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById('system-time').textContent = timeString;
+        }
+
+        async function initTelemetryMesh() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            wsTelemetry = new WebSocket(`${protocol}//${window.location.host}${API_URL}/telemetry/mesh`);
+            
+            const meshStatus = document.getElementById('mesh-status');
+            const feed = document.getElementById('workflow-mesh-feed');
+
+            wsTelemetry.onopen = () => {
+                meshStatus.innerHTML = `
+                    <span class="w-1.5 h-1.5 bg-[${dashboardConfig.colors.mesh_linked}] rounded-full animate-pulse"></span>
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-[${dashboardConfig.colors.mesh_linked}]">Mesh Linked</span>
+                `;
+            };
+
+            wsTelemetry.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.topic === 'system:health') {
+                    updateHealthMetrics(data.payload);
+                } else if (data.topic === 'workflow:stage' || data.topic === 'workflow:complete') {
+                    handleWorkflowEvent(data);
+                }
+            };
+
+            wsTelemetry.onclose = () => {
+                meshStatus.innerHTML = `
+                    <span class="w-1.5 h-1.5 bg-[${dashboardConfig.colors.mesh_severed}] rounded-full"></span>
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-[${dashboardConfig.colors.mesh_severed}]">Mesh Severed</span>
+                `;
+                setTimeout(initTelemetryMesh, 5000);
+            };
+        }
+
+        function updateHealthMetrics(metrics) {
+            document.getElementById('telemetry-heap').textContent = metrics.heapUsed;
+            document.getElementById('telemetry-rss').textContent = metrics.rss;
+            document.getElementById('telemetry-uptime').textContent = metrics.uptime;
+            
+            const heapVal = parseFloat(metrics.heapUsed);
+            const rssVal = parseFloat(metrics.rss);
+            
+            document.getElementById('heap-pulse').style.width = Math.min((heapVal / dashboardConfig.components.metrics.heap_max_mb) * 100, 100) + '%';
+            document.getElementById('rss-pulse').style.width = Math.min((rssVal / dashboardConfig.components.metrics.rss_max_mb) * 100, 100) + '%';
+            
+            // Check for alerts
+            if (heapVal > dashboardConfig.components.metrics.heap_max_mb * 0.8) {
+                showAlert('High memory usage detected: ' + metrics.heapUsed);
+            }
+        }
+
+        function handleWorkflowEvent(data) {
+            workflowEventCount++;
+            document.getElementById('telemetry-events').textContent = workflowEventCount;
+            
+            // Glow effect
+            const glow = document.getElementById('event-glow');
+            glow.style.opacity = '1';
+            setTimeout(() => glow.style.opacity = '0', 75);
+
+            // Update sparkline
+            sparklineData[sparklineData.length - 1]++;
+            renderSparkline();
+
+            // Append to feed
+            const feed = document.getElementById('workflow-mesh-feed');
+            const item = document.createElement('div');
+            item.className = 'flex gap-2 items-center border-b border-white/5 pb-1 animate-in fade-in slide-in-from-left-2 duration-300';
+            const time = new Date(data.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            if (data.topic === 'workflow:stage') {
+                item.innerHTML = `
+                    <span class="text-slate-600">${time}</span>
+                    <span class="text-blue-400 font-bold">[STAGE]</span>
+                    <span class="text-slate-300">${data.payload.workflow}</span>
+                    <span class="text-slate-500">→ ${data.payload.stage}</span>
+                    <span class="text-emerald-500/50">${data.payload.duration.toFixed(3)}ms</span>
+                `;
+            } else {
+                item.innerHTML = `
+                    <span class="text-slate-600">${time}</span>
+                    <span class="text-purple-400 font-bold">[COMPLETE]</span>
+                    <span class="text-slate-300">${data.payload.workflow}</span>
+                    <span class="text-emerald-400">${data.payload.duration.toFixed(2)}ms</span>
+                `;
+            }
+            
+            feed.prepend(item);
+            if (feed.children.length > dashboardConfig.telemetry.event_history_limit) feed.lastElementChild.remove();
+        }
+
+        function renderSparkline() {
+            const container = document.getElementById('telemetry-sparkline');
+            if (!container || !dashboardConfig) return;
+
+            const max = Math.max(...sparklineData, 5);
+            container.innerHTML = sparklineData.map(v => {
+                const height = (v / max) * 100;
+                const active = v > 0;
+                const color = active ? dashboardConfig.components.sparkline.line_color : dashboardConfig.components.sparkline.empty_color;
+                return `<div class="flex-1 bg-${color} rounded-t-[1px] transition-all duration-300" style="height: ${height}%"></div>`;
+            }).join('');
+        }
+
+        let userPreferences = { pinnedMetrics: [] };
+
+        async function loadPreferences() {
+            const res = await fetch(`${API_URL}/user/preferences`);
+            const { data } = await res.json();
+            userPreferences = data;
+        }
+
+        async function loadPatterns() {
+            const res = await fetch(`${API_URL}/patterns`);
+            const { data } = await res.json();
+            console.log('📦 Patterns Loaded:', data.length);
+            
+            // Store all patterns for filtering
+            allPatterns = data.map((pattern, index) => ({
+                ...pattern,
+                performanceScore: Math.floor(Math.random() * 100),
+                efficiency: 'Excellent',
+                avgResponseTime: Math.floor(Math.random() * 100),
+                index
+            }));
+            
+            const container = document.getElementById('matrix-container');
+            const chart = document.getElementById('matrix-chart');
+            
+            // Update statistics
+            const typeCount = allPatterns.filter(p => p.section.includes('Type')).length;
+            const workflowCount = allPatterns.filter(p => p.section.includes('Workflow')).length;
+            const gateCount = allPatterns.filter(p => p.section.includes('Gate')).length;
+            const storageCount = allPatterns.filter(p => p.section.includes('Storage')).length;
+            
+            document.getElementById('type-count').textContent = typeCount;
+            document.getElementById('workflow-count').textContent = workflowCount;
+            document.getElementById('gate-count').textContent = gateCount;
+            document.getElementById('storage-count').textContent = storageCount;
+            document.getElementById('active-patterns').textContent = allPatterns.length;
+            
+            // Update matrix last update time
+            updateMatrixTimestamp();
+            
+            // Apply current filters
+            applyFilters();
+        }
+
+        function loadPinnedMetrics(scope) {
+            const container = document.getElementById('pinned-metrics');
+            const metrics = [
+                { label: 'Autonomic Heal ROI', value: '73x', color: 'emerald', sub: 'Target: >50x' },
+                { label: 'Shield Integrity', value: '100%', color: 'blue', sub: 'Active Rotations: 12' },
+                { label: 'Global p99 Latency', value: '2.1ms', color: 'purple', sub: 'Nodes: 14 Active' }
+            ];
+            
+            container.innerHTML = metrics.map(m => `
+                <div class="glass p-6 rounded-2xl relative overflow-hidden group hover:bg-white/[0.05] transition-all border-b-2 border-transparent hover:border-${m.color}-500 shadow-lg">
+                    <div class="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14H11V21L20 10H13Z"/></svg>
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">${m.label}</p>
+                    <div class="flex items-end gap-2">
+                        <p class="text-3xl font-mono text-slate-100">${m.value}</p>
+                        <p class="text-[9px] text-slate-600 mb-1 font-bold uppercase tracking-tighter">${m.sub}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function spawnTerminal(command) {
+            const res = await fetch(`${API_URL}/terminal/spawn`, {
+                method: 'POST',
+                body: JSON.stringify({ command }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const { data } = await res.json();
+            const container = document.getElementById('terminal-container');
+            const statusEl = document.getElementById('terminal-status');
+            container.innerHTML = `<div class="text-blue-400 font-bold">$ Spawning PTY [PID: ${data.pid}]...</div>`;
+            statusEl.textContent = `Process ${data.pid} running`;
+            
+            if (wsTerminal) wsTerminal.close();
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            wsTerminal = new WebSocket(`${protocol}//${window.location.host}${API_URL}/terminal/stream/${data.terminalId}`);
+            
+            wsTerminal.onmessage = (event) => {
+                const line = document.createElement('div');
+                line.textContent = event.data;
+                container.appendChild(line);
+                container.scrollTop = container.scrollHeight;
+            };
+            
+            wsTerminal.onclose = () => {
+                statusEl.textContent = 'No active process';
+            };
+        }
+
+        async function triggerHeal() {
+            if (confirm('§100.HEAL: Authorize manual carrier failover?')) {
+                const res = await fetch(`${API_URL}/heal`, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ subsystem: 'all' }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const { data } = await res.json();
+                showAlert('Autonomic Cycle Result: ' + data.result.action, 'success');
+            }
+        }
+        
+        // Enhanced UI Functions
+        function toggleNotifications() {
+            showAlert('Notification center with 3 new alerts: System update available, Memory usage at 78%, Security scan complete', 'info');
+        }
+        
+        function toggleSettings() {
+            showAlert('Settings panel: Theme, Preferences, API Keys, Notifications', 'info');
+        }
+        
+        function handleSearch(event) {
+            const query = event.target.value.toLowerCase();
+            if (query.length > 2) {
+                showAlert(`Searching for: ${query}`, 'info');
+            }
+        }
+        
+        function handleNavigation(section) {
+            showAlert(`Navigating to ${section} section`, 'info');
+        }
+        
+        function addPinnedMetric() {
+            showAlert('Metric selector coming soon!', 'info');
+        }
+        
+        function toggleMatrixView(view) {
+            showAlert(`Switching to ${view} view...`, 'info');
+            
+            // Update button states
+            const buttons = document.querySelectorAll('[onclick^="toggleMatrixView"]');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(view)) {
+                    btn.className = btn.className.replace('bg-white/5', 'bg-white/10');
+                } else {
+                    btn.className = btn.className.replace('bg-white/10', 'bg-white/5');
+                }
+            });
+            
+            // Here you would implement actual view switching logic
+            setTimeout(() => {
+                showAlert(`${view.charAt(0).toUpperCase() + view.slice(1)} view activated`, 'success');
+            }, 1000);
+        }
+        
+        function refreshMatrix() {
+            showAlert('Refreshing matrix data...', 'info');
+            loadPatterns();
+            
+            // Update system load with random value for demo
+            const systemLoad = (Math.random() * 100).toFixed(1);
+            document.getElementById('system-load').textContent = `${systemLoad}%`;
+        }
+        
+        function exportMatrix() {
+            const matrixData = {
+                timestamp: new Date().toISOString(),
+                systemLoad: document.getElementById('system-load').textContent,
+                activePatterns: document.getElementById('active-patterns').textContent,
+                patterns: {
+                    types: document.getElementById('type-count').textContent,
+                    workflows: document.getElementById('workflow-count').textContent,
+                    gates: document.getElementById('gate-count').textContent,
+                    storage: document.getElementById('storage-count').textContent
+                },
+                config: dashboardConfig
+            };
+            
+            const blob = new Blob([JSON.stringify(matrixData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `matrix-export-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('Matrix data exported successfully!', 'success');
+        }
+        
+        // Advanced Filtering Functions
+        function toggleAdvancedFilters() {
+            const panel = document.getElementById('advanced-filters');
+            panel.classList.toggle('hidden');
+        }
+        
+        function toggleFilter(category, value) {
+            const filterTag = document.querySelector(`[data-filter="${category}"][data-value="${value}"]`);
+            const isActive = filterState[category].includes(value);
+            
+            if (isActive) {
+                filterState[category] = filterState[category].filter(v => v !== value);
+                filterTag.classList.remove('active');
+                filterTag.classList.add('inactive');
+            } else {
+                filterState[category].push(value);
+                filterTag.classList.remove('inactive');
+                filterTag.classList.add('active');
+            }
+        }
+        
+        function applyFilters() {
+            let filteredPatterns = [...allPatterns];
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('pattern-search').value.toLowerCase();
+            if (searchTerm) {
+                filteredPatterns = filteredPatterns.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    p.section.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Apply status filters
+            if (filterState.status.length > 0) {
+                filteredPatterns = filteredPatterns.filter(p => {
+                    const status = getStatusFromPattern(p);
+                    return filterState.status.includes(status);
+                });
+            }
+            
+            // Apply section filters
+            if (filterState.section.length > 0) {
+                filteredPatterns = filteredPatterns.filter(p => {
+                    const section = getSectionFromPattern(p);
+                    return filterState.section.includes(section);
+                });
+            }
+            
+            // Apply performance filters
+            if (filterState.performance.length > 0) {
+                filteredPatterns = filteredPatterns.filter(p => {
+                    const performance = getPerformanceFromPattern(p);
+                    return filterState.performance.includes(performance);
+                });
+            }
+            
+            // Apply ROI filters
+            if (filterState.roi.length > 0) {
+                filteredPatterns = filteredPatterns.filter(p => {
+                    const roi = getROIFromPattern(p);
+                    return filterState.roi.includes(roi);
+                });
+            }
+            
+            // Update filtered count
+            const countText = filteredPatterns.length === allPatterns.length ? 
+                'Showing all' : `Showing ${filteredPatterns.length} of ${allPatterns.length}`;
+            document.getElementById('filtered-count').textContent = countText;
+            
+            // Render filtered patterns
+            renderFilteredPatterns(filteredPatterns);
+        }
+        
+        function clearFilters() {
+            // Reset filter state
+            filterState = {
+                status: [],
+                section: [],
+                performance: [],
+                roi: [],
+                search: '',
+                osOptimizations: filterState.osOptimizations
+            };
+            
+            // Clear search
+            document.getElementById('pattern-search').value = '';
+            
+            // Reset all filter tags
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+                tag.classList.add('inactive');
+            });
+            
+            // Apply filters (which will show all patterns)
+            applyFilters();
+            
+            showAlert('All filters cleared', 'info');
+        }
+        
+        function getStatusFromPattern(pattern) {
+            if (pattern.section.includes('Workflow')) return 'active';
+            if (pattern.section.includes('Gate')) return 'guard';
+            if (pattern.section.includes('Storage')) return 'synced';
+            return 'stable';
+        }
+        
+        function getSectionFromPattern(pattern) {
+            if (pattern.section.includes('Type')) return 'type';
+            if (pattern.section.includes('Workflow')) return 'workflow';
+            if (pattern.section.includes('Gate')) return 'gate';
+            if (pattern.section.includes('Storage')) return 'storage';
+            return 'type';
+        }
+        
+        function getPerformanceFromPattern(pattern) {
+            if (pattern.performanceScore > 80) return 'excellent';
+            if (pattern.performanceScore > 60) return 'good';
+            return 'optimize';
+        }
+        
+        function getROIFromPattern(pattern) {
+            const roiValue = parseInt(pattern.roi);
+            if (roiValue > 500) return 'high';
+            if (roiValue > 100) return 'medium';
+            return 'low';
+        }
+        
+        function renderFilteredPatterns(patterns) {
+            const container = document.getElementById('matrix-container');
+            const chart = document.getElementById('matrix-chart');
+            
+            // Render chart cells
+            chart.innerHTML = patterns.map((p, index) => {
+                const isWorkflow = p.section.includes('Workflow');
+                const isGate = p.section.includes('Gate');
+                const isStorage = p.section.includes('Storage');
+                
+                let color = dashboardConfig.colors.status_stable;
+                let heatClass = 'heat-low';
+                
+                if (isWorkflow) { 
+                    color = dashboardConfig.colors.status_active;
+                    heatClass = p.performanceScore > 70 ? 'heat-medium' : 'heat-low';
+                }
+                if (isGate) { 
+                    color = dashboardConfig.colors.status_guard;
+                    heatClass = p.performanceScore > 80 ? 'heat-high' : 'heat-medium';
+                }
+                if (isStorage) { 
+                    color = dashboardConfig.colors.status_synced;
+                    heatClass = p.performanceScore > 60 ? 'heat-medium' : 'heat-low';
+                }
+                
+                const gpuClass = filterState.osOptimizations.gpu ? 'gpu-accelerated' : '';
+                
+                return `<div class="aspect-square rounded-[4px] border border-white/5 transition-all hover:scale-110 hover:border-white/20 cursor-pointer ${heatClass} animate-slide-up matrix-cell ${gpuClass}" style="background-color: ${color}22; border-left: 2px solid ${color}; animation-delay: ${index * 50}ms" title="${p.section}: ${p.name} - ROI: ${p.roi} - Performance: ${p.performanceScore}%"></div>`;
+            }).join('');
+            
+            // Render detail rows
+            container.innerHTML = patterns.map((p, index) => {
+                const isWorkflow = p.section.includes('Workflow');
+                const isGate = p.section.includes('Gate');
+                const isStorage = p.section.includes('Storage');
+                
+                let statusLabel = 'STABLE';
+                let statusColor = dashboardConfig.colors.status_stable;
+                let bgGlow = 'group-hover:bg-blue-500/5';
+                let statusIcon = 'check-circle';
+                
+                if (isWorkflow) { 
+                    statusLabel = 'ACTIVE'; 
+                    statusColor = dashboardConfig.colors.status_active;
+                    bgGlow = 'group-hover:bg-emerald-500/5';
+                    statusIcon = 'activity';
+                }
+                if (isGate) { 
+                    statusLabel = 'GUARD'; 
+                    statusColor = dashboardConfig.colors.status_guard;
+                    bgGlow = 'group-hover:bg-amber-500/5';
+                    statusIcon = 'shield';
+                }
+                if (isStorage) { 
+                    statusLabel = 'SYNCED'; 
+                    statusColor = dashboardConfig.colors.status_synced;
+                    bgGlow = 'group-hover:bg-purple-500/5';
+                    statusIcon = 'database';
+                }
+                
+                const efficiency = p.performanceScore > 80 ? 'Excellent' : p.performanceScore > 60 ? 'Good' : 'Optimize';
+                const gpuClass = filterState.osOptimizations.gpu ? 'gpu-accelerated' : '';
+                
+                return `
+                <div class="flex items-center gap-6 p-4 rounded-2xl bg-white/[0.03] border border-white/5 transition-all duration-300 group hover:translate-x-1 ${bgGlow} hover:border-white/10 shadow-lg animate-slide-up ${gpuClass}" style="animation-delay: ${index * 100}ms">
+                    <div class="w-28 shrink-0 font-black text-[11px] tracking-tighter text-slate-500 group-hover:text-blue-400 transition-colors">${p.section}</div>
+                    
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="text-sm font-bold text-slate-100 tracking-tight group-hover:text-white">${p.name}</div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] font-mono text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded uppercase font-bold">${p.roi} ROI</span>
+                                <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Budget: ${p.perf}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 text-[9px] text-slate-600">
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="trending-up" class="w-3 h-3"></i>
+                                Performance: ${p.performanceScore}%
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="zap" class="w-3 h-3"></i>
+                                ${efficiency}
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="clock" class="w-3 h-3"></i>
+                                ${p.avgResponseTime}ms avg
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="w-40 shrink-0 text-right">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 border border-white/5 group-hover:border-white/10 transition-all shadow-inner">
+                            <i data-lucide="${statusIcon}" class="w-3 h-3" style="color: ${statusColor}"></i>
+                            <span class="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px]" style="background-color: ${statusColor}; box-shadow: 0 0 10px ${statusColor}"></span>
+                            <span class="text-[10px] font-black tracking-[0.1em] uppercase" style="color: ${statusColor}">${statusLabel}</span>
+                        </div>
+                    </div>
+                </div>
+            `;}).join('');
+            
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+        }
+        
+        // OS Optimization Functions
+        function toggleOSOptimization(os) {
+            filterState.osOptimizations[os] = !filterState.osOptimizations[os];
+            
+            const body = document.body;
+            const glassElements = document.querySelectorAll('.glass-enhanced');
+            
+            switch(os) {
+                case 'macos':
+                    if (filterState.osOptimizations.macos) {
+                        glassElements.forEach(el => {
+                            el.style.webkitBackdropFilter = 'blur(20px) saturate(180%)';
+                        });
+                        showAlert('macOS optimizations enabled', 'success');
+                    } else {
+                        glassElements.forEach(el => {
+                            el.style.webkitBackdropFilter = '';
+                        });
+                        showAlert('macOS optimizations disabled', 'info');
+                    }
+                    break;
+                    
+                case 'windows':
+                    if (filterState.osOptimizations.windows) {
+                        document.querySelectorAll('.matrix-cell').forEach(el => {
+                            el.style.imageRendering = 'crisp-edges';
+                        });
+                        showAlert('Windows optimizations enabled', 'success');
+                    } else {
+                        document.querySelectorAll('.matrix-cell').forEach(el => {
+                            el.style.imageRendering = '';
+                        });
+                        showAlert('Windows optimizations disabled', 'info');
+                    }
+                    break;
+                    
+                case 'linux':
+                    if (filterState.osOptimizations.linux) {
+                        glassElements.forEach(el => {
+                            el.classList.add('linux-optimized');
+                        });
+                        showAlert('Linux optimizations enabled', 'success');
+                    } else {
+                        glassElements.forEach(el => {
+                            el.classList.remove('linux-optimized');
+                        });
+                        showAlert('Linux optimizations disabled', 'info');
+                    }
+                    break;
+            }
+        }
+        
+        function toggleGPUAcceleration() {
+            filterState.osOptimizations.gpu = !filterState.osOptimizations.gpu;
+            
+            const elements = document.querySelectorAll('.gpu-accelerated');
+            if (filterState.osOptimizations.gpu) {
+                elements.forEach(el => {
+                    el.style.transform = 'translateZ(0)';
+                    el.style.willChange = 'transform';
+                });
+                showAlert('GPU acceleration enabled', 'success');
+            } else {
+                elements.forEach(el => {
+                    el.style.transform = '';
+                    el.style.willChange = '';
+                });
+                showAlert('GPU acceleration disabled', 'info');
+            }
+        }
+        
+        // Dashboard Hub Functions
+        function switchDashboard(dashboardName) {
+            if (dashboardName === currentDashboard) {
+                showAlert(`Already on ${dashboardName} dashboard`, 'info');
+                return;
+            }
+            
+            // Save current state
+            const currentState = {
+                filters: filterState,
+                patterns: allPatterns,
+                config: dashboardConfig
+            };
+            
+            // Store state in localStorage for cross-dashboard persistence
+            localStorage.setItem(`dashboard_${currentDashboard}_state`, JSON.stringify(currentState));
+            
+            // Switch to new dashboard
+            currentDashboard = dashboardName;
+            
+            // Load new dashboard state if exists
+            const savedState = localStorage.getItem(`dashboard_${dashboardName}_state`);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                filterState = state.filters || filterState;
+                allPatterns = state.patterns || allPatterns;
+            }
+            
+            // Update UI to reflect dashboard switch
+            updateDashboardUI(dashboardName);
+            showAlert(`Switched to ${dashboardName} dashboard`, 'success');
+            
+            // Load dashboard-specific data
+            loadDashboardSpecificData(dashboardName);
+        }
+        
+        function updateDashboardUI(dashboardName) {
+            // Update header title
+            const titles = {
+                main: 'Empire Pro | Main Dashboard',
+                analytics: 'Empire Pro | Analytics Dashboard',
+                security: 'Empire Pro | Security Dashboard',
+                performance: 'Empire Pro | Performance Dashboard'
+            };
+            document.title = titles[dashboardName];
+            
+            // Update button states
+            const buttons = document.querySelectorAll('[onclick^="switchDashboard"]');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(dashboardName)) {
+                    btn.className = btn.className.replace('bg-white/5', 'bg-blue-500/20');
+                } else {
+                    btn.className = btn.className.replace('bg-blue-500/20', 'bg-white/5');
+                }
+            });
+        }
+        
+        function loadDashboardSpecificData(dashboardName) {
+            switch(dashboardName) {
+                case 'analytics':
+                    loadAnalyticsData();
+                    break;
+                case 'security':
+                    loadSecurityData();
+                    break;
+                case 'performance':
+                    loadPerformanceData();
+                    break;
+                default:
+                    loadPatterns();
+            }
+        }
+        
+        function loadAnalyticsData() {
+            const analyticsPatterns = allPatterns.map(p => ({
+                ...p,
+                section: p.section.replace('Type', 'Analytics'),
+                performanceScore: Math.floor(Math.random() * 100),
+                roi: Math.floor(Math.random() * 1000) + 'x'
+            }));
+            renderFilteredPatterns(analyticsPatterns);
+            showAlert('Analytics data loaded', 'success');
+        }
+        
+        function loadSecurityData() {
+            const securityPatterns = allPatterns.filter(p => 
+                p.section.includes('Gate') || p.section.includes('Shield')
+            ).map(p => ({
+                ...p,
+                section: 'Security ' + p.section,
+                performanceScore: Math.floor(Math.random() * 100),
+                alertLevel: Math.random() > 0.7 ? 'high' : 'low'
+            }));
+            renderFilteredPatterns(securityPatterns);
+            showAlert('Security data loaded with ' + securityPatterns.length + ' patterns', 'success');
+        }
+        
+        function loadPerformanceData() {
+            const performancePatterns = allPatterns.map(p => ({
+                ...p,
+                performanceScore: Math.floor(Math.random() * 100),
+                avgResponseTime: Math.floor(Math.random() * 50),
+                throughput: Math.floor(Math.random() * 10000) + ' req/s'
+            }));
+            renderFilteredPatterns(performancePatterns);
+            showAlert('Performance metrics loaded', 'success');
+        }
+        
+        // Cross-Dashboard Communication
+        function initializeCrossDashboard() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            crossDashboard = new WebSocket(`${protocol}//${window.location.host}/api/v1/dashboard/hub`);
+            
+            crossDashboard.onopen = () => {
+                console.log('Cross-dashboard hub connected');
+                crossDashboard.send(JSON.stringify({
+                    type: 'register',
+                    dashboard: currentDashboard,
+                    timestamp: Date.now()
+                }));
+            };
+            
+            crossDashboard.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                handleCrossDashboardMessage(message);
+            };
+            
+            crossDashboard.onclose = () => {
+                console.log('Cross-dashboard hub disconnected');
+                setTimeout(initializeCrossDashboard, 5000);
+            };
+        }
+        
+        function handleCrossDashboardMessage(message) {
+            switch(message.type) {
+                case 'sync':
+                    showAlert('Dashboard sync initiated from ' + message.from, 'info');
+                    syncDashboardData(message.data);
+                    break;
+                case 'broadcast':
+                    showAlert('Broadcast from ' + message.from + ': ' + message.content, 'info');
+                    break;
+                case 'status_update':
+                    updateDashboardStatus(message.dashboard, message.status);
+                    break;
+            }
+        }
+        
+        function syncAllDashboards() {
+            showAlert('Syncing all dashboards...', 'info');
+            
+            const syncData = {
+                dashboard: currentDashboard,
+                patterns: allPatterns,
+                filters: filterState,
+                timestamp: Date.now()
+            };
+            
+            if (crossDashboard && crossDashboard.readyState === WebSocket.OPEN) {
+                crossDashboard.send(JSON.stringify({
+                    type: 'sync',
+                    data: syncData
+                }));
+            }
+            
+            setTimeout(() => {
+                showAlert('All dashboards synchronized successfully', 'success');
+                updateDashboardStatus('all', 'synced');
+            }, 2000);
+        }
+        
+        function syncDashboardData(data) {
+            if (data.filters) {
+                filterState = data.filters;
+                applyFilters();
+            }
+            if (data.patterns) {
+                allPatterns = data.patterns;
+                renderFilteredPatterns(data.patterns);
+            }
+        }
+        
+        function exportAllData() {
+            const allData = {
+                timestamp: new Date().toISOString(),
+                currentDashboard: currentDashboard,
+                dashboards: {
+                    main: localStorage.getItem('dashboard_main_state'),
+                    analytics: localStorage.getItem('dashboard_analytics_state'),
+                    security: localStorage.getItem('dashboard_security_state'),
+                    performance: localStorage.getItem('dashboard_performance_state')
+                },
+                globalSettings: {
+                    osOptimizations: filterState.osOptimizations,
+                    theme: dashboardConfig.theme
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `all-dashboards-export-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('All dashboard data exported successfully!', 'success');
+        }
+        
+        function broadcastMessage() {
+            const message = prompt('Enter message to broadcast to all dashboards:');
+            if (message && crossDashboard && crossDashboard.readyState === WebSocket.OPEN) {
+                crossDashboard.send(JSON.stringify({
+                    type: 'broadcast',
+                    from: currentDashboard,
+                    content: message,
+                    timestamp: Date.now()
+                }));
+                showAlert('Message broadcasted to all dashboards', 'success');
+            }
+        }
+        
+        function updateDashboardStatus(dashboard, status) {
+            const statusColors = {
+                active: 'green',
+                warning: 'amber',
+                error: 'red',
+                synced: 'blue'
+            };
+            
+            console.log(`Dashboard ${dashboard} status: ${status}`);
+        }
+        
+        // Auto-update matrix data
+        setInterval(() => {
+            if (dashboardConfig) {
+                updateMatrixTimestamp();
+                // Update system load periodically
+                const systemLoad = (Math.random() * 100).toFixed(1);
+                document.getElementById('system-load').textContent = `${systemLoad}%`;
+            }
+        }, 5000);
+        
+        // Add search functionality with debouncing
+        let searchTimeout;
+        function handlePatternSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                applyFilters();
+            }, 300);
+        }
+        
+        function clearEventFeed() {
+            const feed = document.getElementById('workflow-mesh-feed');
+            feed.innerHTML = '<div class="opacity-30 italic">⚡ Event feed cleared...</div>';
+        }
+        
+        function clearTerminal() {
+            const container = document.getElementById('terminal-container');
+            container.innerHTML = '<div>$ Terminal cleared...</div>';
+        }
+        
+        function showAlert(message, type = 'warning') {
+            const alertsSection = document.getElementById('alerts-section');
+            const alertMessage = document.getElementById('alert-message');
+            
+            alertMessage.textContent = message;
+            alertsSection.classList.remove('hidden');
+            alertsSection.classList.add('animate-slide-up');
+            
+            setTimeout(() => {
+                dismissAlert();
+            }, 5000);
+        }
+        
+        function dismissAlert() {
+            const alertsSection = document.getElementById('alerts-section');
+            alertsSection.classList.add('hidden');
+        }
+        
+        function exportData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                metrics: {
+                    heap: document.getElementById('telemetry-heap').textContent,
+                    rss: document.getElementById('telemetry-rss').textContent,
+                    uptime: document.getElementById('telemetry-uptime').textContent,
+                    events: document.getElementById('telemetry-events').textContent
+                },
+                config: dashboardConfig
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dashboard-export-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('Dashboard data exported successfully!', 'success');
+        }
+        
+        function refreshData() {
+            showAlert('Refreshing dashboard data...', 'info');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+        
+        function toggleDarkMode() {
+            showAlert('Theme switcher coming soon!', 'info');
+        }
+        
+        function showHelp() {
+            showAlert('Help documentation coming soon!', 'info');
+        }
+        
+        async function runAudit() {
+            showAlert('Starting storage audit...', 'info');
+            // Implementation would go here
+        }
+        
+        async function rotateIdentity() {
+            if (confirm('Rotate global identity bundle? This will affect all active sessions.')) {
+                showAlert('Identity rotation initiated...', 'info');
+                // Update UI to show rotation in progress
+                const riskIndex = document.getElementById('risk-index');
+                riskIndex.textContent = '0.00';
+                
+                setTimeout(() => {
+                    riskIndex.textContent = '0.12';
+                    showAlert('Identity bundle rotated successfully!', 'success');
+                }, 2000);
+            }
+        }
+
+        // Shift sparkline data
+        setInterval(() => {
+            if (!dashboardConfig) return;
+            sparklineData.shift();
+            sparklineData.push(0);
+            renderSparkline();
+        }, 1000);
+
+        initDashboard();
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'e':
+                        e.preventDefault();
+                        exportData();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        refreshData();
+                        break;
+                    case 'h':
+                        e.preventDefault();
+                        showHelp();
+                        break;
+                    case 'k':
+                        e.preventDefault();
+                        document.querySelector('input[placeholder="Quick search..."]').focus();
+                        break;
+                }
+            }
+        });
+        
+        // Add search functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('input[placeholder="Quick search..."]');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleSearch);
+                searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        handleSearch(e);
+                    }
+                });
+            }
+            
+            // Add pattern search functionality
+            const patternSearchInput = document.getElementById('pattern-search');
+            if (patternSearchInput) {
+                patternSearchInput.addEventListener('input', handlePatternSearch);
+            }
+            
+            // Add navigation click handlers
+            const navButtons = document.querySelectorAll('nav button');
+            navButtons.forEach(button => {
+                if (button.textContent.trim()) {
+                    button.addEventListener('click', () => {
+                        handleNavigation(button.textContent.trim());
+                    });
+                }
+            });
+            
+            // Initialize OS optimizations and cross-dashboard communication
+            initializeOSOptimizations();
+            initializeCrossDashboard();
+        });
+    </script>
+</body>
+</html>

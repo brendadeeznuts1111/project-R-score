@@ -1,0 +1,203 @@
+/**
+ * LAB Colors Examples
+ * 
+ * Modern CSS supports perceptually uniform color spaces (LAB, LCH, OKLAB, OKLCH)
+ * that can represent colors outside the standard RGB gamut.
+ * 
+ * Bun's CSS bundler automatically converts these to backwards-compatible
+ * alternatives with layered fallbacks.
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ */
+
+/* ==========================================================================
+   LAB Color Space
+   ========================================================================== */
+
+.lab-examples {
+	/* LAB: Lightness (0-100%), a-axis, b-axis */
+	/* A vibrant red that exceeds sRGB gamut boundaries */
+	color: lab(55% 78 35);
+	
+	/* Vibrant colors */
+	--vibrant-red: lab(55% 78 35);
+	--vibrant-blue: lab(60% -30 -50);
+	--vibrant-green: lab(70% -50 60);
+}
+
+/* ==========================================================================
+   LCH Color Space
+   ========================================================================== */
+
+.lch-examples {
+	/* LCH: Lightness (0-100%), Chroma (0+), Hue (0-360deg) */
+	color: lch(55% 78 35deg);
+	background: lch(70% 0.2 250deg);
+	
+	/* More intuitive than LAB for color manipulation */
+	--base: lch(60% 50 250deg);
+	--lighter: lch(70% 50 250deg);
+	--darker: lch(50% 50 250deg);
+}
+
+/* ==========================================================================
+   OKLAB Color Space (Perceptually Uniform)
+   ========================================================================== */
+
+.oklab-examples {
+	/* OKLAB: Lightness (0-1), a-axis, b-axis */
+	color: oklab(0.6 0.1 0.05);
+	background: oklab(0.7 -0.1 0.05);
+	
+	/* Perceptually uniform steps */
+	--step-1: oklab(0.9 0 0);
+	--step-2: oklab(0.8 0 0);
+	--step-3: oklab(0.7 0 0);
+	--step-4: oklab(0.6 0 0);
+	--step-5: oklab(0.5 0 0);
+}
+
+/* ==========================================================================
+   OKLCH Color Space (Recommended)
+   ========================================================================== */
+
+.oklch-examples {
+	/* OKLCH: Lightness (0-1 or 0-100%), Chroma (0+), Hue (0-360deg) */
+	/* Recommended for most use cases */
+	color: oklch(65% 0.25 10deg);
+	background: oklch(25% 0.05 250deg);
+	
+	/* Base colors for themes */
+	--color-base-00: oklch(98% 0.01 250);
+	--color-base-50: oklch(50% 0.04 250);
+	--color-base-100: oklch(5% 0.05 250);
+}
+
+/* ==========================================================================
+   Vibrant Colors Outside sRGB
+   ========================================================================== */
+
+.vibrant-element {
+	/* A vibrant red that exceeds sRGB gamut boundaries */
+	color: lab(55% 78 35);
+	
+	/* Bun automatically creates fallbacks:
+	 * color: #ff0f52; (RGB fallback)
+	 * color: color(display-p3 1 0.12 0.37); (P3 fallback)
+	 * color: lab(55% 78 35); (Original)
+	 */
+}
+
+.vibrant-blue {
+	/* A vibrant blue impossible in standard RGB */
+	color: oklch(65% 0.25 250deg);
+}
+
+/* ==========================================================================
+   Perceptually Uniform Gradients
+   ========================================================================== */
+
+.smooth-gradient {
+	/* Smooth gradient using perceptual color space */
+	background: linear-gradient(
+		to right,
+		oklch(65% 0.25 10deg),
+		oklch(65% 0.25 250deg)
+	);
+	
+	/* Bun creates fallback:
+	 * background: linear-gradient(to right, #cd4e15, #3887ab);
+	 * background: linear-gradient(to right, oklch(65% 0.25 10deg), oklch(65% 0.25 250deg));
+	 */
+}
+
+.perceptual-gradient {
+	/* Equal perceptual steps - appears uniform to human eye */
+	background: linear-gradient(
+		to bottom,
+		oklch(90% 0.05 250deg),
+		oklch(80% 0.05 250deg),
+		oklch(70% 0.05 250deg),
+		oklch(60% 0.05 250deg),
+		oklch(50% 0.05 250deg)
+	);
+}
+
+/* ==========================================================================
+   Color Scales (Perceptually Uniform)
+   ========================================================================== */
+
+.color-scale {
+	/* Generate color scale with perceptually uniform steps */
+	--base: oklch(60% 0.2 250deg);
+	
+	--50: oklch(90% 0.05 250deg);
+	--100: oklch(85% 0.08 250deg);
+	--200: oklch(75% 0.12 250deg);
+	--300: oklch(65% 0.16 250deg);
+	--400: oklch(55% 0.18 250deg);
+	--500: var(--base);
+	--600: oklch(50% 0.18 250deg);
+	--700: oklch(40% 0.16 250deg);
+	--800: oklch(30% 0.12 250deg);
+	--900: oklch(20% 0.08 250deg);
+}
+
+/* ==========================================================================
+   Theme Colors
+   ========================================================================== */
+
+.theme-colors {
+	/* Base colors using OKLCH for perceptual uniformity */
+	--bg-primary: oklch(25% 0.05 250);
+	--bg-secondary: oklch(30% 0.05 250);
+	--bg-tertiary: oklch(35% 0.05 250);
+	
+	--text-primary: oklch(85% 0.02 250);
+	--text-secondary: oklch(65% 0.02 250);
+	--text-muted: oklch(50% 0.02 250);
+	
+	/* Brand colors */
+	--brand-primary: oklch(60% 0.2 250deg);
+	--brand-secondary: oklch(65% 0.25 10deg);
+}
+
+/* ==========================================================================
+   Combined with Relative Colors
+   ========================================================================== */
+
+.lab-relative {
+	--base: oklch(60% 0.2 250deg);
+	
+	/* Lightness variations */
+	--lighter: oklch(from var(--base) calc(l + 10%) c h);
+	--darker: oklch(from var(--base) calc(l - 10%) c h);
+	
+	/* Chroma variations */
+	--vibrant: oklch(from var(--base) l calc(c + 0.1) h);
+	--muted: oklch(from var(--base) l calc(c * 0.5) h);
+	
+	/* Hue shifts */
+	--shifted: oklch(from var(--base) l c calc(h + 30));
+}
+
+/* ==========================================================================
+   Comparison: RGB vs LAB
+   ========================================================================== */
+
+/* RGB - Not perceptually uniform */
+.rgb-gradient {
+	background: linear-gradient(to bottom, #000000, #808080, #ffffff);
+	/* Steps don't appear equal to human eye */
+}
+
+/* LAB - Perceptually uniform */
+.lab-gradient {
+	background: linear-gradient(
+		to bottom,
+		oklch(0% 0 0deg),
+		oklch(50% 0 0deg),
+		oklch(100% 0 0deg)
+	);
+	/* Steps appear equal to human eye */
+}

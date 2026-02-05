@@ -1,0 +1,17 @@
+/**
+ * Math Functions Examples
+ */
+
+.card {
+  /* clamp() for responsive sizing */
+  width: clamp(300px, 50%, 800px);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  
+  /* round() for precise values */
+  padding: round(24.7px, 5px);
+  
+  /* Other math functions */
+  font-size: calc(16px * pow(1.25, 2));
+  width: min(100%, 800px);
+  height: max(200px, 50vh);
+}

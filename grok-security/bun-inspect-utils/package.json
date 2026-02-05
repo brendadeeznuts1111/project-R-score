@@ -1,0 +1,85 @@
+{
+  "name": "@bun/inspect-utils",
+  "version": "2.0.0",
+  "description": "[BUN-FIRST] Enterprise-Grade Bun.inspect Utility Methods: AI-Powered Inspection & Formatting System with Table Enforcement",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
+    "./engine": {
+      "import": "./dist/engine/index.js",
+      "types": "./dist/engine/index.d.ts"
+    },
+    "./terminal": {
+      "import": "./dist/terminal/index.js",
+      "types": "./dist/terminal/index.d.ts"
+    },
+    "./patterns": {
+      "import": "./dist/patterns/index.js",
+      "types": "./dist/patterns/index.d.ts"
+    },
+    "./integrations": {
+      "import": "./dist/integrations/index.js",
+      "types": "./dist/integrations/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "build:versioned": "bun run ./scripts/build-versioned.ts",
+    "build:versioned:archive": "bun run ./scripts/build-versioned.ts --archive",
+    "dev": "bun build ./src/index.ts --outdir ./dist --target bun --watch",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "benchmark": "bun run ./src/performance/benchmarks.ts",
+    "lint": "bun run ./scripts/lint.ts",
+    "format": "bun run ./scripts/format.ts",
+    "type-check": "bun run ./scripts/type-check.ts",
+    "version:show": "bun run ./src/cli/version-cli.ts show",
+    "version:compare": "bun run ./src/cli/version-cli.ts compare",
+    "version:constant": "bun run ./src/cli/version-cli.ts constant",
+    "version:json": "bun run ./src/cli/version-cli.ts json",
+    "table-doctor": "bun run ./src/cli/table-doctor.ts",
+    "table-doctor:analyze": "bun run ./src/cli/table-doctor.ts --analyze",
+    "table-doctor:domain": "bun run ./src/cli/table-doctor.ts --analyze --domain",
+    "table-doctor:report": "bun run ./src/cli/table-doctor.ts --report",
+    "table-doctor:interactive": "bun run ./src/cli/table-doctor.ts --interactive",
+    "table-doctor:watch": "bun run ./src/cli/table-doctor.ts --watch",
+    "table-doctor:fix": "bun run ./src/cli/table-doctor.ts --fix",
+    "table-tutorial": "bun run ../../bin/table-tutorial.ts"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.24.0",
+    "@babel/traverse": "^7.24.0"
+  },
+  "devDependencies": {
+    "@types/babel__traverse": "^7.20.0"
+  },
+  "keywords": [
+    "bun",
+    "inspect",
+    "formatting",
+    "debugging",
+    "cloudflare",
+    "workers",
+    "zero-npm",
+    "enterprise"
+  ],
+  "author": "Brenda Williams",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

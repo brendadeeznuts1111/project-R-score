@@ -1,0 +1,94 @@
+name: Bug Report
+description: Report a bug in NEXUS
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # [ISSUE.BUG_REPORT.RG] Bug Report Template
+        
+        **Metadata**: `[[TECH][MODULE][INSTANCE][META:{blueprint=BP-BUG-REPORT@0.1.0;instance-id=BUG-REPORT-001;version=0.1.0}][PROPERTIES:{template={value:"bug-report";@root:"ROOT-GIT";@chain:["BP-GITHUB","BP-ISSUES"];@version:"0.1.0"}}][CLASS:BugReportTemplate][#REF:v-0.1.0.BP.BUG.REPORT.1.0.A.1.1.GIT.1.1]]`
+        
+        Thanks for taking the time to fill out this bug report!
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component is affected?
+      options:
+        - API / Routes
+        - Cache (APICacheManager)
+        - Arbitrage Scanner
+        - ORCA Normalizer
+        - Crypto Matcher
+        - WebSocket Streaming
+        - Canonical UUIDs
+        - Error Registry
+        - CLI / Scripts
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: error-code
+    attributes:
+      label: Error Code
+      description: If applicable, include the NX-xxx error code
+      placeholder: "NX-404"
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug
+      placeholder: Describe what went wrong
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Run `bun run dev`
+        2. Call endpoint `/api/...`
+        3. See error
+    validations:
+      required: true
+
+  - type: input
+    id: bun-version
+    attributes:
+      label: Bun Version
+      placeholder: "1.1.x"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - macOS
+        - Linux
+        - Windows (WSL)
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Copy any relevant logs here
+      render: shell

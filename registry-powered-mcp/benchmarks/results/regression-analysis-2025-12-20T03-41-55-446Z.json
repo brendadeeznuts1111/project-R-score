@@ -1,0 +1,152 @@
+{
+  "generatedAt": "2025-12-20T03:41:55.446Z",
+  "baseline": {
+    "name": "URLPattern vs RegExp",
+    "timestamp": "2025-12-20T02:18:43.172Z",
+    "version": "1.3.6"
+  },
+  "current": {
+    "name": "URLPattern vs RegExp",
+    "timestamp": "2025-12-20T03:41:55.387Z",
+    "version": "Unknown"
+  },
+  "analysis": {
+    "totalTests": 10,
+    "regressions": 7,
+    "improvements": 3,
+    "bySeverity": {
+      "critical": 7,
+      "severe": 0,
+      "moderate": 0,
+      "minor": 0
+    }
+  },
+  "regressions": [
+    {
+      "testName": "No Match",
+      "category": "routing",
+      "baseline": {
+        "opsPerSecond": 1056638,
+        "timestamp": "2025-12-20T02:18:43.172Z"
+      },
+      "current": {
+        "opsPerSecond": 805137,
+        "timestamp": "2025-12-20T03:41:55.387Z"
+      },
+      "change": {
+        "absolute": -251501,
+        "percentage": -23.802002199428753,
+        "isRegression": true,
+        "severity": "critical"
+      }
+    },
+    {
+      "testName": "Case Insensitive",
+      "category": "routing",
+      "baseline": {
+        "opsPerSecond": 1476821,
+        "timestamp": "2025-12-20T02:18:43.172Z"
+      },
+      "current": {
+        "opsPerSecond": 1390723,
+        "timestamp": "2025-12-20T03:41:55.387Z"
+      },
+      "change": {
+        "absolute": -86098,
+        "percentage": -5.829955018245271,
+        "isRegression": true,
+        "severity": "critical"
+      }
+    },
+    {
+      "testName": "Complex Path Structure",
+      "category": "routing",
+      "baseline": {
+        "opsPerSecond": 643386,
+        "timestamp": "2025-12-20T02:18:43.172Z"
+      },
+      "current": {
+        "opsPerSecond": 402526,
+        "timestamp": "2025-12-20T03:41:55.387Z"
+      },
+      "change": {
+        "absolute": -240860,
+        "percentage": -37.4363135038686,
+        "isRegression": true,
+        "severity": "critical"
+      }
+    },
+    {
+      "testName": "With Query String",
+      "category": "routing",
+      "baseline": {
+        "opsPerSecond": 645869,
+        "timestamp": "2025-12-20T02:18:43.172Z"
+      },
+      "current": {
+        "opsPerSecond": 578933,
+        "timestamp": "2025-12-20T03:41:55.387Z"
+      },
+      "change": {
+        "absolute": -66936,
+        "percentage": -10.36371152664085,
+        "isRegression": true,
+        "severity": "critical"
+      }
+    },
+    {
+      "testName": "Simple Path",
+      "category": "routing",
+      "baseline": {
+        "opsPerSecond": 617539,
+        "timestamp": "2025-12-20T02:18:43.172Z"
+      },
+      "current": {
+        "opsPerSecond": 524596,
+        "timestamp": "2025-12-20T03:41:55.387Z"
+      },
+      "change": {
+        "absolute": -92943,
+        "percentage": -15.050547414819146,
+        "isRegression": true,
+        "severity": "critical"
+      }
+    },
+    {
+      "testName": "Wildcard Path",
+      "category": "routing",
+      "baseline": {
+        "opsPerSecond": 626225,
+        "timestamp": "2025-12-20T02:18:43.172Z"
+      },
+      "current": {
+        "opsPerSecond": 434222,
+        "timestamp": "2025-12-20T03:41:55.387Z"
+      },
+      "change": {
+        "absolute": -192003,
+        "percentage": -30.660385644137488,
+        "isRegression": true,
+        "severity": "critical"
+      }
+    },
+    {
+      "testName": "Multiple Parameters",
+      "category": "routing",
+      "baseline": {
+        "opsPerSecond": 1089467,
+        "timestamp": "2025-12-20T02:18:43.172Z"
+      },
+      "current": {
+        "opsPerSecond": 524002,
+        "timestamp": "2025-12-20T03:41:55.387Z"
+      },
+      "change": {
+        "absolute": -565465,
+        "percentage": -51.9029029791632,
+        "isRegression": true,
+        "severity": "critical"
+      }
+    }
+  ]
+}

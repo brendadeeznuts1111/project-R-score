@@ -1,0 +1,34 @@
+{
+  "name": "{{APP_NAME}}",
+  "version": "1.0.0",
+  "description": "{{APP_DESCRIPTION}}",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --hot run src/index.ts",
+    "test": "bun test",
+    "secrets:init": "bun secrets-cli.ts init",
+    "secrets:set": "bun secrets-cli.ts set",
+    "secrets:get": "bun secrets-cli.ts get",
+    "config:validate": "bun golden-template-cli.ts validate",
+    "config:load": "bun golden-template-cli.ts load",
+    "rss:feeds": "bun golden-template-cli.ts rss-feeds",
+    "rss:fetch": "bun run src/rss/fetch.ts",
+    "build": "bun build ./src/index.ts --outfile=dist/app",
+    "docker:build": "docker build -t {{APP_NAME}} .",
+    "docker:run": "docker run -p 3000:3000 {{APP_NAME}}"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.3.0"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

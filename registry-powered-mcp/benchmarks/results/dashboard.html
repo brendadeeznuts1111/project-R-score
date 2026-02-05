@@ -1,0 +1,1799 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registry-Powered MCP Benchmark Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #718096;
+            font-size: 1.2em;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .status-card.success { border-left: 4px solid #48bb78; }
+        .status-card.warning { border-left: 4px solid #ed8936; }
+        .status-card.error { border-left: 4px solid #f56565; }
+
+        .status-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .status-card p {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            height: 400px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .categories-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 10px 20px;
+            background: #f7fafc;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-tab.active {
+            background: #4299e1;
+            color: white;
+        }
+
+        .category-content {
+            display: none;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        .benchmark-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .benchmark-table th,
+        .benchmark-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .benchmark-table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-success { background: #c6f6d5; color: #22543d; }
+        .status-warning { background: #feebc8; color: #744210; }
+        .status-error { background: #fed7d7; color: #742a2a; }
+
+        .performance-metrics {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4299e1;
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .timeline-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .footer {
+            text-align: center;
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 10px;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* DNS Cache Monitor Styles */
+        .dns-monitor-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .dns-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dns-stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .dns-stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 2em;
+            opacity: 0.9;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .dns-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .dns-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: #4299e1;
+            color: white;
+        }
+
+        .dns-btn:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+        }
+
+        .dns-btn.clear-btn {
+            background: #e53e3e;
+        }
+
+        .dns-btn.clear-btn:hover {
+            background: #c53030;
+        }
+
+        .dns-chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Universal Terminal Lab Styles */
+        .terminal-lab-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .terminal-lab-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 250px;
+            gap: 20px;
+            min-height: 600px;
+        }
+
+        .terminal-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-group {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .control-group h4 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sequence-buttons, .control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sequence-btn, .control-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .sequence-btn {
+            background: #4299e1;
+            color: white;
+        }
+
+        .sequence-btn:hover {
+            background: #3182ce;
+        }
+
+        .sequence-btn.clear-btn {
+            background: #e53e3e;
+        }
+
+        .sequence-btn.clear-btn:hover {
+            background: #c53030;
+        }
+
+        .control-btn {
+            background: #48bb78;
+            color: white;
+        }
+
+        .control-btn:hover {
+            background: #38a169;
+        }
+
+        .control-btn:active {
+            transform: scale(0.98);
+        }
+
+        .terminal-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            background: #1a202c;
+            border-radius: 8px 8px 0 0;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #2d3748;
+            border-bottom: none;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .status-indicator {
+            font-weight: bold;
+        }
+
+        .status-indicator.active {
+            color: #48bb78;
+        }
+
+        .terminal-info {
+            opacity: 0.8;
+        }
+
+        .terminal-metadata {
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75em;
+        }
+
+        .metadata-item {
+            display: flex;
+            gap: 3px;
+        }
+
+        .metadata-item .label {
+            color: #a0aec0;
+        }
+
+        .metadata-item .value {
+            color: #68d391;
+            font-weight: bold;
+        }
+
+        .terminal-window {
+            background: #000;
+            border: 2px solid #2d3748;
+            border-radius: 0 0 8px 8px;
+            padding: 15px;
+            min-height: 400px;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #00ff41;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .terminal-window::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 48%, rgba(0, 255, 65, 0.03) 50%, transparent 52%);
+            pointer-events: none;
+            animation: scanlines 0.1s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .terminal-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .terminal-line {
+            display: flex;
+            margin-bottom: 2px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .terminal-line.command {
+            color: #00ff41;
+        }
+
+        .terminal-line.output {
+            color: #ffffff;
+            margin-left: 20px;
+        }
+
+        .terminal-line.error {
+            color: #ff6b6b;
+            margin-left: 20px;
+        }
+
+        .terminal-line.success {
+            color: #51cf66;
+            margin-left: 20px;
+        }
+
+        .terminal-line.welcome {
+            color: #74c0fc;
+        }
+
+        .terminal-prompt {
+            color: #ffd43b;
+            margin-right: 8px;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            animation: blink 1s infinite;
+            color: #00ff41;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .process-stack {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .process-stack h4 {
+            margin: 0 0 15px 0;
+            color: #2d3748;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .process-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .process-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #4299e1;
+            font-size: 0.8em;
+        }
+
+        .process-item.running {
+            border-left-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .process-item.completed {
+            border-left-color: #38a169;
+            background: #c6f6d5;
+        }
+
+        .process-item.failed {
+            border-left-color: #e53e3e;
+            background: #fed7d7;
+        }
+
+        .process-item.empty {
+            border-left-color: #a0aec0;
+            background: #f7fafc;
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .process-item .process-name {
+            font-weight: 500;
+        }
+
+        .process-item .process-status {
+            font-size: 0.75em;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .process-item .process-time {
+            font-size: 0.7em;
+            color: #718096;
+        }
+
+        @media (max-width: 1200px) {
+            .terminal-lab-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+
+            .terminal-controls {
+                order: 2;
+            }
+
+            .terminal-main {
+                order: 1;
+            }
+
+            .process-stack {
+                order: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .terminal-lab-container {
+                gap: 15px;
+            }
+
+            .terminal-window {
+                min-height: 300px;
+                font-size: 12px;
+            }
+
+            .terminal-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .terminal-metadata {
+                align-self: stretch;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>📊 Registry-Powered MCP Benchmark Dashboard</h1>
+            <p class="subtitle">Performance monitoring across all infrastructure tiers</p>
+            <div style="margin-top: 20px; color: #718096;">
+                <div>📅 Last Updated: 12/19/2025, 10:21:05 PM</div>
+                <div>⚡ 0 Tests • 9 Benchmark Runs</div>
+            </div>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-card success">
+                <h3>0</h3>
+                <p>Tests Passed</p>
+            </div>
+            <div class="status-card success">
+                <h3>0</h3>
+                <p>Tests Failed</p>
+            </div>
+            <div class="status-card success">
+                <h3>0.00ms</h3>
+                <p>Average Latency</p>
+            </div>
+            <div class="status-card warning">
+                <h3>0.0MB</h3>
+                <p>Peak Memory</p>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3>Performance Overview</h3>
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Memory Usage Trends</h3>
+                <canvas id="memoryChart"></canvas>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3>Test Results Timeline</h3>
+                <canvas id="timelineChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Category Performance</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <div class="categories-section">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">📋 Benchmark Categories</h2>
+            <div class="category-tabs">
+                <button class="category-tab" onclick="showCategory('routing')">routing</button>
+            </div>
+
+            
+                <div id="routing" class="category-content">
+                    <h3>routing Benchmarks</h3>
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Performance</th>
+                                <th>Latency</th>
+                                <th>Memory</th>
+                                <th>Status</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                                <tr>
+                                    <td>No Match</td>
+                                    <td>116,380,564 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Case Insensitive</td>
+                                    <td>91,338,131 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Wildcards</td>
+                                    <td>74,694,202 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Complex Path Structure</td>
+                                    <td>55,871,134 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Parameters</td>
+                                    <td>46,790,937 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>With Query String</td>
+                                    <td>39,068,223 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Simple Path</td>
+                                    <td>37,369,208 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Wildcard Path</td>
+                                    <td>36,201,821 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Nested Groups</td>
+                                    <td>33,841,910 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Full URL Pattern</td>
+                                    <td>31,849,670 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Case Insensitive</td>
+                                    <td>1,390,723 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>No Match</td>
+                                    <td>805,137 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Wildcards</td>
+                                    <td>640,803 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Nested Groups</td>
+                                    <td>636,836 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Full URL Pattern</td>
+                                    <td>627,757 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>With Query String</td>
+                                    <td>578,933 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Simple Path</td>
+                                    <td>524,596 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Parameters</td>
+                                    <td>524,002 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Wildcard Path</td>
+                                    <td>434,222 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Complex Path Structure</td>
+                                    <td>402,526 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:55 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>No Match</td>
+                                    <td>117,647,059 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Case Insensitive</td>
+                                    <td>83,411,532 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Wildcards</td>
+                                    <td>67,240,045 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>With Query String</td>
+                                    <td>55,356,947 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Complex Path Structure</td>
+                                    <td>54,549,184 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Wildcard Path</td>
+                                    <td>52,581,986 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Nested Groups</td>
+                                    <td>41,669,566 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Parameters</td>
+                                    <td>36,452,009 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Simple Path</td>
+                                    <td>32,261,103 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Full URL Pattern</td>
+                                    <td>31,878,860 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Case Insensitive</td>
+                                    <td>1,518,152 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>No Match</td>
+                                    <td>1,461,783 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Parameters</td>
+                                    <td>1,048,501 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Wildcards</td>
+                                    <td>722,147 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Complex Path Structure</td>
+                                    <td>708,525 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>With Query String</td>
+                                    <td>708,514 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Simple Path</td>
+                                    <td>679,133 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Wildcard Path</td>
+                                    <td>652,867 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Full URL Pattern</td>
+                                    <td>614,442 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Nested Groups</td>
+                                    <td>575,947 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:41:02 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>No Match</td>
+                                    <td>114,810,563 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Case Insensitive</td>
+                                    <td>100,959,112 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Wildcards</td>
+                                    <td>66,485,648 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Parameters</td>
+                                    <td>45,569,339 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Simple Path</td>
+                                    <td>40,513,845 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Nested Groups</td>
+                                    <td>39,704,866 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Complex Path Structure</td>
+                                    <td>31,271,167 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Wildcard Path</td>
+                                    <td>29,967,413 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>With Query String</td>
+                                    <td>25,980,214 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Full URL Pattern</td>
+                                    <td>17,738,620 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Case Insensitive</td>
+                                    <td>1,449,567 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>No Match</td>
+                                    <td>1,315,954 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Parameters</td>
+                                    <td>1,162,413 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Simple Path</td>
+                                    <td>703,457 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>With Query String</td>
+                                    <td>650,433 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Complex Path Structure</td>
+                                    <td>573,535 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Wildcard Path</td>
+                                    <td>527,785 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Multiple Wildcards</td>
+                                    <td>504,796 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Nested Groups</td>
+                                    <td>498,324 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                                <tr>
+                                    <td>Full URL Pattern</td>
+                                    <td>422,299 ops/s</td>
+                                    <td>N/A</td>
+                                    <td>N/A</td>
+                                    <td><span class="status-badge status-success">success</span></td>
+                                    <td>12/19/2025, 9:40:05 PM</td>
+                                </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            
+        </div>
+
+        <div class="timeline-section">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">📈 Performance History</h2>
+            <div class="performance-metrics">
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value">27,875,316.45</div>
+                        <div class="metric-label">Avg Operations/sec</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.00ms</div>
+                        <div class="metric-label">Avg Latency</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0%</div>
+                        <div class="metric-label">Performance Trend</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">100.0%</div>
+                        <div class="metric-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dns-monitor-section">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">🌐 DNS Cache Monitor</h2>
+
+            <div class="dns-stats-grid">
+                <div class="dns-stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="cacheHitsCompleted">0</div>
+                        <div class="stat-label">Cache Hits Completed</div>
+                    </div>
+                </div>
+
+                <div class="dns-stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="cacheHitsInflight">0</div>
+                        <div class="stat-label">Cache Hits In Flight</div>
+                    </div>
+                </div>
+
+                <div class="dns-stat-card">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="cacheMisses">0</div>
+                        <div class="stat-label">Cache Misses</div>
+                    </div>
+                </div>
+
+                <div class="dns-stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="cacheSize">0</div>
+                        <div class="stat-label">Cache Size</div>
+                    </div>
+                </div>
+
+                <div class="dns-stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="dnsErrors">0</div>
+                        <div class="stat-label">DNS Errors</div>
+                    </div>
+                </div>
+
+                <div class="dns-stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalRequests">0</div>
+                        <div class="stat-label">Total Requests</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dns-controls">
+                <button onclick="updateDNSStats()" class="dns-btn">🔄 Refresh Stats</button>
+                <button onclick="clearDNSCache()" class="dns-btn clear-btn">🗑️ Clear Cache</button>
+                <button onclick="simulateDNSActivity()" class="dns-btn">🚀 Simulate Activity</button>
+                <button onclick="startDNSMonitoring()" class="dns-btn" id="monitorBtn">▶️ Start Monitoring</button>
+            </div>
+
+            <div class="dns-chart-container">
+                <canvas id="dnsPerformanceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="terminal-lab-section">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">🖥️ Universal Terminal Lab</h2>
+
+            <div class="terminal-lab-container">
+                <div class="terminal-controls">
+                    <div class="control-group">
+                        <h4>Sequence Orchestrator</h4>
+                        <div class="sequence-buttons">
+                            <button onclick="runSequence(['git fetch', 'bun install', 'bun build'])" class="sequence-btn">🚀 Build Pipeline</button>
+                            <button onclick="runSequence(['git status', 'bun test', 'bun run bench'])" class="sequence-btn">🧪 Test Suite</button>
+                            <button onclick="runSequence(['ps aux', 'top -l 1', 'df -h'])" class="sequence-btn">📊 System Monitor</button>
+                            <button onclick="clearTerminal()" class="sequence-btn clear-btn">🗑️ Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h4>Terminal Controls</h4>
+                        <div class="control-buttons">
+                            <button onclick="resizeTerminal(120, 30)" class="control-btn">📐 Resize (120x30)</button>
+                            <button onclick="resizeTerminal(80, 24)" class="control-btn">📐 Resize (80x24)</button>
+                            <button onclick="toggleRawMode()" class="control-btn" id="rawModeBtn">🎛️ Raw Mode: OFF</button>
+                            <button onclick="unrefTerminal()" class="control-btn">🔗 Unref</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terminal-main">
+                    <div class="terminal-header">
+                        <div class="status-bar">
+                            <span class="status-indicator" id="terminalStatus">⚫ Signal Inactive</span>
+                            <span class="terminal-info">
+                                <span id="terminalSize">80x24</span> |
+                                <span id="processCount">0 processes</span> |
+                                <span id="memoryUsage">0MB</span>
+                            </span>
+                        </div>
+                        <div class="terminal-metadata">
+                            <div class="metadata-item">
+                                <span class="label">COLS:</span>
+                                <span class="value" id="colsValue">80</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="label">ROWS:</span>
+                                <span class="value" id="rowsValue">24</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="label">PID:</span>
+                                <span class="value" id="pidValue">N/A</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="label">MODE:</span>
+                                <span class="value" id="modeValue">COOKED</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="terminal-window" id="terminalWindow">
+                        <div class="terminal-content" id="terminalContent">
+                            <div class="terminal-line welcome">
+                                <span class="terminal-prompt">universal-terminal:~$ </span>
+                                <span>Welcome to the Universal Terminal Lab</span>
+                            </div>
+                            <div class="terminal-line welcome">
+                                <span class="terminal-prompt">universal-terminal:~$ </span>
+                                <span>Use the controls above to interact with Bun.Terminal API</span>
+                            </div>
+                        </div>
+                        <div class="terminal-cursor" id="terminalCursor">█</div>
+                    </div>
+                </div>
+
+                <div class="process-stack">
+                    <h4>📚 Process Stack</h4>
+                    <div class="process-list" id="processList">
+                        <div class="process-item empty">
+                            <span>No processes yet</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Generated by Registry-Powered MCP Benchmark Suite • Bun vUnknown</p>
+        </div>
+    </div>
+
+    <script>
+        const benchmarkData = [{"generatedAt":"2025-12-20T03:41:55.446Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":7,"improvements":3,"bySeverity":{"critical":7,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"No Match","category":"routing","baseline":{"opsPerSecond":1056638,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":805137,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-251501,"percentage":-23.802002199428753,"isRegression":true,"severity":"critical"}},{"testName":"Case Insensitive","category":"routing","baseline":{"opsPerSecond":1476821,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1390723,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-86098,"percentage":-5.829955018245271,"isRegression":true,"severity":"critical"}},{"testName":"Complex Path Structure","category":"routing","baseline":{"opsPerSecond":643386,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":402526,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-240860,"percentage":-37.4363135038686,"isRegression":true,"severity":"critical"}},{"testName":"With Query String","category":"routing","baseline":{"opsPerSecond":645869,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":578933,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-66936,"percentage":-10.36371152664085,"isRegression":true,"severity":"critical"}},{"testName":"Simple Path","category":"routing","baseline":{"opsPerSecond":617539,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524596,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-92943,"percentage":-15.050547414819146,"isRegression":true,"severity":"critical"}},{"testName":"Wildcard Path","category":"routing","baseline":{"opsPerSecond":626225,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":434222,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-192003,"percentage":-30.660385644137488,"isRegression":true,"severity":"critical"}},{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524002,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-565465,"percentage":-51.9029029791632,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:41:14.437Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":1,"improvements":9,"bySeverity":{"critical":1,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1048501,"timestamp":"2025-12-20T03:41:02.188Z"},"change":{"absolute":-40966,"percentage":-3.7601873209560273,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:45:05.332Z","summary":{"totalSuites":9,"totalTests":0,"averageSuccessRate":100,"averageLatency":0,"peakMemoryUsage":null,"performanceTrend":0},"suites":[{"generatedAt":"2025-12-20T03:41:55.446Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":7,"improvements":3,"bySeverity":{"critical":7,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"No Match","category":"routing","baseline":{"opsPerSecond":1056638,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":805137,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-251501,"percentage":-23.802002199428753,"isRegression":true,"severity":"critical"}},{"testName":"Case Insensitive","category":"routing","baseline":{"opsPerSecond":1476821,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1390723,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-86098,"percentage":-5.829955018245271,"isRegression":true,"severity":"critical"}},{"testName":"Complex Path Structure","category":"routing","baseline":{"opsPerSecond":643386,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":402526,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-240860,"percentage":-37.4363135038686,"isRegression":true,"severity":"critical"}},{"testName":"With Query String","category":"routing","baseline":{"opsPerSecond":645869,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":578933,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-66936,"percentage":-10.36371152664085,"isRegression":true,"severity":"critical"}},{"testName":"Simple Path","category":"routing","baseline":{"opsPerSecond":617539,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524596,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-92943,"percentage":-15.050547414819146,"isRegression":true,"severity":"critical"}},{"testName":"Wildcard Path","category":"routing","baseline":{"opsPerSecond":626225,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":434222,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-192003,"percentage":-30.660385644137488,"isRegression":true,"severity":"critical"}},{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524002,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-565465,"percentage":-51.9029029791632,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:41:14.437Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":1,"improvements":9,"bySeverity":{"critical":1,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1048501,"timestamp":"2025-12-20T03:41:02.188Z"},"change":{"absolute":-40966,"percentage":-3.7601873209560273,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:45:00.562Z","summary":{"totalSuites":9,"totalTests":0,"averageSuccessRate":100,"averageLatency":0,"peakMemoryUsage":null,"performanceTrend":0},"suites":[{"generatedAt":"2025-12-20T03:41:55.446Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":7,"improvements":3,"bySeverity":{"critical":7,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"No Match","category":"routing","baseline":{"opsPerSecond":1056638,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":805137,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-251501,"percentage":-23.802002199428753,"isRegression":true,"severity":"critical"}},{"testName":"Case Insensitive","category":"routing","baseline":{"opsPerSecond":1476821,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1390723,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-86098,"percentage":-5.829955018245271,"isRegression":true,"severity":"critical"}},{"testName":"Complex Path Structure","category":"routing","baseline":{"opsPerSecond":643386,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":402526,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-240860,"percentage":-37.4363135038686,"isRegression":true,"severity":"critical"}},{"testName":"With Query String","category":"routing","baseline":{"opsPerSecond":645869,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":578933,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-66936,"percentage":-10.36371152664085,"isRegression":true,"severity":"critical"}},{"testName":"Simple Path","category":"routing","baseline":{"opsPerSecond":617539,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524596,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-92943,"percentage":-15.050547414819146,"isRegression":true,"severity":"critical"}},{"testName":"Wildcard Path","category":"routing","baseline":{"opsPerSecond":626225,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":434222,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-192003,"percentage":-30.660385644137488,"isRegression":true,"severity":"critical"}},{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524002,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-565465,"percentage":-51.9029029791632,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:41:14.437Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":1,"improvements":9,"bySeverity":{"critical":1,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1048501,"timestamp":"2025-12-20T03:41:02.188Z"},"change":{"absolute":-40966,"percentage":-3.7601873209560273,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:44:56.228Z","summary":{"totalSuites":9,"totalTests":0,"averageSuccessRate":100,"averageLatency":0,"peakMemoryUsage":null,"performanceTrend":0},"suites":[{"generatedAt":"2025-12-20T03:41:55.446Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":7,"improvements":3,"bySeverity":{"critical":7,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"No Match","category":"routing","baseline":{"opsPerSecond":1056638,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":805137,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-251501,"percentage":-23.802002199428753,"isRegression":true,"severity":"critical"}},{"testName":"Case Insensitive","category":"routing","baseline":{"opsPerSecond":1476821,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1390723,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-86098,"percentage":-5.829955018245271,"isRegression":true,"severity":"critical"}},{"testName":"Complex Path Structure","category":"routing","baseline":{"opsPerSecond":643386,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":402526,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-240860,"percentage":-37.4363135038686,"isRegression":true,"severity":"critical"}},{"testName":"With Query String","category":"routing","baseline":{"opsPerSecond":645869,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":578933,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-66936,"percentage":-10.36371152664085,"isRegression":true,"severity":"critical"}},{"testName":"Simple Path","category":"routing","baseline":{"opsPerSecond":617539,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524596,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-92943,"percentage":-15.050547414819146,"isRegression":true,"severity":"critical"}},{"testName":"Wildcard Path","category":"routing","baseline":{"opsPerSecond":626225,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":434222,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-192003,"percentage":-30.660385644137488,"isRegression":true,"severity":"critical"}},{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524002,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-565465,"percentage":-51.9029029791632,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:41:14.437Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":1,"improvements":9,"bySeverity":{"critical":1,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1048501,"timestamp":"2025-12-20T03:41:02.188Z"},"change":{"absolute":-40966,"percentage":-3.7601873209560273,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:44:52.721Z","summary":{"totalSuites":9,"totalTests":0,"averageSuccessRate":100,"averageLatency":0,"peakMemoryUsage":null,"performanceTrend":0},"suites":[{"generatedAt":"2025-12-20T03:41:55.446Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":7,"improvements":3,"bySeverity":{"critical":7,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"No Match","category":"routing","baseline":{"opsPerSecond":1056638,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":805137,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-251501,"percentage":-23.802002199428753,"isRegression":true,"severity":"critical"}},{"testName":"Case Insensitive","category":"routing","baseline":{"opsPerSecond":1476821,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1390723,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-86098,"percentage":-5.829955018245271,"isRegression":true,"severity":"critical"}},{"testName":"Complex Path Structure","category":"routing","baseline":{"opsPerSecond":643386,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":402526,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-240860,"percentage":-37.4363135038686,"isRegression":true,"severity":"critical"}},{"testName":"With Query String","category":"routing","baseline":{"opsPerSecond":645869,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":578933,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-66936,"percentage":-10.36371152664085,"isRegression":true,"severity":"critical"}},{"testName":"Simple Path","category":"routing","baseline":{"opsPerSecond":617539,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524596,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-92943,"percentage":-15.050547414819146,"isRegression":true,"severity":"critical"}},{"testName":"Wildcard Path","category":"routing","baseline":{"opsPerSecond":626225,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":434222,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-192003,"percentage":-30.660385644137488,"isRegression":true,"severity":"critical"}},{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524002,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-565465,"percentage":-51.9029029791632,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:41:14.437Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":1,"improvements":9,"bySeverity":{"critical":1,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1048501,"timestamp":"2025-12-20T03:41:02.188Z"},"change":{"absolute":-40966,"percentage":-3.7601873209560273,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:44:48.972Z","summary":{"totalSuites":9,"totalTests":0,"averageSuccessRate":100,"averageLatency":0,"peakMemoryUsage":null,"performanceTrend":0},"suites":[{"generatedAt":"2025-12-20T03:41:55.446Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":7,"improvements":3,"bySeverity":{"critical":7,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"No Match","category":"routing","baseline":{"opsPerSecond":1056638,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":805137,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-251501,"percentage":-23.802002199428753,"isRegression":true,"severity":"critical"}},{"testName":"Case Insensitive","category":"routing","baseline":{"opsPerSecond":1476821,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1390723,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-86098,"percentage":-5.829955018245271,"isRegression":true,"severity":"critical"}},{"testName":"Complex Path Structure","category":"routing","baseline":{"opsPerSecond":643386,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":402526,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-240860,"percentage":-37.4363135038686,"isRegression":true,"severity":"critical"}},{"testName":"With Query String","category":"routing","baseline":{"opsPerSecond":645869,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":578933,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-66936,"percentage":-10.36371152664085,"isRegression":true,"severity":"critical"}},{"testName":"Simple Path","category":"routing","baseline":{"opsPerSecond":617539,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524596,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-92943,"percentage":-15.050547414819146,"isRegression":true,"severity":"critical"}},{"testName":"Wildcard Path","category":"routing","baseline":{"opsPerSecond":626225,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":434222,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-192003,"percentage":-30.660385644137488,"isRegression":true,"severity":"critical"}},{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524002,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-565465,"percentage":-51.9029029791632,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:41:14.437Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":1,"improvements":9,"bySeverity":{"critical":1,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1048501,"timestamp":"2025-12-20T03:41:02.188Z"},"change":{"absolute":-40966,"percentage":-3.7601873209560273,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:44:42.492Z","summary":{"totalSuites":9,"totalTests":0,"averageSuccessRate":100,"averageLatency":0,"peakMemoryUsage":null,"performanceTrend":0},"suites":[{"generatedAt":"2025-12-20T03:41:55.446Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":7,"improvements":3,"bySeverity":{"critical":7,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"No Match","category":"routing","baseline":{"opsPerSecond":1056638,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":805137,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-251501,"percentage":-23.802002199428753,"isRegression":true,"severity":"critical"}},{"testName":"Case Insensitive","category":"routing","baseline":{"opsPerSecond":1476821,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1390723,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-86098,"percentage":-5.829955018245271,"isRegression":true,"severity":"critical"}},{"testName":"Complex Path Structure","category":"routing","baseline":{"opsPerSecond":643386,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":402526,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-240860,"percentage":-37.4363135038686,"isRegression":true,"severity":"critical"}},{"testName":"With Query String","category":"routing","baseline":{"opsPerSecond":645869,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":578933,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-66936,"percentage":-10.36371152664085,"isRegression":true,"severity":"critical"}},{"testName":"Simple Path","category":"routing","baseline":{"opsPerSecond":617539,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524596,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-92943,"percentage":-15.050547414819146,"isRegression":true,"severity":"critical"}},{"testName":"Wildcard Path","category":"routing","baseline":{"opsPerSecond":626225,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":434222,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-192003,"percentage":-30.660385644137488,"isRegression":true,"severity":"critical"}},{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":524002,"timestamp":"2025-12-20T03:41:55.387Z"},"change":{"absolute":-565465,"percentage":-51.9029029791632,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:41:14.437Z","baseline":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6"},"current":{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown"},"analysis":{"totalTests":10,"regressions":1,"improvements":9,"bySeverity":{"critical":1,"severe":0,"moderate":0,"minor":0}},"regressions":[{"testName":"Multiple Parameters","category":"routing","baseline":{"opsPerSecond":1089467,"timestamp":"2025-12-20T02:18:43.172Z"},"current":{"opsPerSecond":1048501,"timestamp":"2025-12-20T03:41:02.188Z"},"change":{"absolute":-40966,"percentage":-3.7601873209560273,"isRegression":true,"severity":"critical"}}]},{"generatedAt":"2025-12-20T03:40:32.288Z","summary":{"totalSuites":3,"totalTests":0,"averageSuccessRate":100,"averageLatency":0,"peakMemoryUsage":0,"performanceTrend":0},"suites":[{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:19:38.219Z","version":"1.3.6","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":104684638,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":91757093,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":73117213,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":55093899,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":54798274,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":48840049,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":42204475,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":25290845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":21507689,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":18208993,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":1416619,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":1210633,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":1047158,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":669006,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":660121,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":651411,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":627687,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":582564,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":549116,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T02:19:38.219Z","duration":0,"opsPerSecond":516674,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T02:18:43.172Z","version":"1.3.6","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":112349073,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":93414292,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":67685697,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":57739521,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":48748765,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":44332785,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":25898912,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":23088023,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":22550884,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":21992121,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":1476821,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":1089467,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":1056638,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":645869,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":643386,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":632931,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":626225,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":617539,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":596911,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T02:18:43.172Z","duration":0,"opsPerSecond":496879,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}],"categories":[{"category":"routing","count":60,"averageOps":26498770.766666666,"averageLatency":0,"successRate":100}]},{"status":"failed","reason":"Performance regression detected","timestamp":"2025-12-20T03:41:55.449Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true},"regressionFile":null,"dashboardFile":"results/dashboard.html"},{"status":"error","error":"Performance regression threshold exceeded","timestamp":"2025-12-20T03:41:55.450Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"status":"error","error":"Benchmark execution failed: Error: ENOENT: no such file or directory, posix_spawn '/bin/sh'","timestamp":"2025-12-20T03:41:42.864Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}],"categories":[{"category":"routing","count":60,"averageOps":27875316.45,"averageLatency":0,"successRate":100}]},{"status":"failed","reason":"Performance regression detected","timestamp":"2025-12-20T03:41:55.449Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true},"regressionFile":null,"dashboardFile":"results/dashboard.html"},{"status":"error","error":"Performance regression threshold exceeded","timestamp":"2025-12-20T03:41:55.450Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"status":"error","error":"Benchmark execution failed: Error: ENOENT: no such file or directory, posix_spawn '/bin/sh'","timestamp":"2025-12-20T03:41:42.864Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}],"categories":[{"category":"routing","count":60,"averageOps":27875316.45,"averageLatency":0,"successRate":100}]},{"status":"failed","reason":"Performance regression detected","timestamp":"2025-12-20T03:41:55.449Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true},"regressionFile":null,"dashboardFile":"results/dashboard.html"},{"status":"error","error":"Performance regression threshold exceeded","timestamp":"2025-12-20T03:41:55.450Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"status":"error","error":"Benchmark execution failed: Error: ENOENT: no such file or directory, posix_spawn '/bin/sh'","timestamp":"2025-12-20T03:41:42.864Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}],"categories":[{"category":"routing","count":60,"averageOps":27875316.45,"averageLatency":0,"successRate":100}]},{"status":"failed","reason":"Performance regression detected","timestamp":"2025-12-20T03:41:55.449Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true},"regressionFile":null,"dashboardFile":"results/dashboard.html"},{"status":"error","error":"Performance regression threshold exceeded","timestamp":"2025-12-20T03:41:55.450Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"status":"error","error":"Benchmark execution failed: Error: ENOENT: no such file or directory, posix_spawn '/bin/sh'","timestamp":"2025-12-20T03:41:42.864Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}],"categories":[{"category":"routing","count":60,"averageOps":27875316.45,"averageLatency":0,"successRate":100}]},{"status":"failed","reason":"Performance regression detected","timestamp":"2025-12-20T03:41:55.449Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true},"regressionFile":null,"dashboardFile":"results/dashboard.html"},{"status":"error","error":"Performance regression threshold exceeded","timestamp":"2025-12-20T03:41:55.450Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"status":"error","error":"Benchmark execution failed: Error: ENOENT: no such file or directory, posix_spawn '/bin/sh'","timestamp":"2025-12-20T03:41:42.864Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}],"categories":[{"category":"routing","count":60,"averageOps":27875316.45,"averageLatency":0,"successRate":100}]},{"status":"failed","reason":"Performance regression detected","timestamp":"2025-12-20T03:41:55.449Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true},"regressionFile":null,"dashboardFile":"results/dashboard.html"},{"status":"error","error":"Performance regression threshold exceeded","timestamp":"2025-12-20T03:41:55.450Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"status":"error","error":"Benchmark execution failed: Error: ENOENT: no such file or directory, posix_spawn '/bin/sh'","timestamp":"2025-12-20T03:41:42.864Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}],"categories":[{"category":"routing","count":60,"averageOps":27875316.45,"averageLatency":0,"successRate":100}]},{"status":"failed","reason":"Performance regression detected","timestamp":"2025-12-20T03:41:55.449Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true},"regressionFile":null,"dashboardFile":"results/dashboard.html"},{"status":"error","error":"Performance regression threshold exceeded","timestamp":"2025-12-20T03:41:55.450Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"status":"error","error":"Benchmark execution failed: Error: ENOENT: no such file or directory, posix_spawn '/bin/sh'","timestamp":"2025-12-20T03:41:42.864Z","config":{"benchmarkCommand":"bun run urlpattern-vs-regex.ts","regressionCommand":"bun run performance-regression.ts","dashboardCommand":"bun run dashboard-generator.ts","failureThreshold":"critical","notifyOnRegression":true}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:55.387Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:41:02.188Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}},{"name":"URLPattern vs RegExp","timestamp":"2025-12-20T03:40:05.762Z","version":"Unknown","platform":"darwin arm64","results":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}],"summary":{"totalTests":0,"passedTests":0,"failedTests":0,"averageLatency":0,"peakMemoryUsage":0,"totalDuration":0}}];
+
+        // Show first category by default
+        const firstCategory = Object.keys({"routing":[{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":116380564,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":91338131,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":74694202,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":55871134,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":46790937,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":39068223,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":37369208,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":36201821,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":33841910,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":31849670,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":1390723,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":805137,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":640803,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":636836,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":627757,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":578933,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524596,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":524002,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":434222,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:55.387Z","duration":0,"opsPerSecond":402526,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":117647059,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":83411532,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":67240045,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":55356947,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":54549184,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":52581986,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":41669566,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":36452009,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":32261103,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":31878860,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1518152,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1461783,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":1048501,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":722147,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708525,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":708514,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":679133,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":652867,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":614442,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:41:02.188Z","duration":0,"opsPerSecond":575947,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":114810563,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":100959112,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":66485648,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":45569339,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":40513845,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":39704866,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":31271167,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":29967413,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":25980214,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":17738620,"status":"success"},{"name":"Case Insensitive","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1449567,"status":"success"},{"name":"No Match","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1315954,"status":"success"},{"name":"Multiple Parameters","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":1162413,"status":"success"},{"name":"Simple Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":703457,"status":"success"},{"name":"With Query String","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":650433,"status":"success"},{"name":"Complex Path Structure","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":573535,"status":"success"},{"name":"Wildcard Path","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":527785,"status":"success"},{"name":"Multiple Wildcards","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":504796,"status":"success"},{"name":"Nested Groups","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":498324,"status":"success"},{"name":"Full URL Pattern","category":"routing","timestamp":"2025-12-20T03:40:05.762Z","duration":0,"opsPerSecond":422299,"status":"success"}]})[0];
+        if (firstCategory) {
+            document.getElementById(firstCategory).classList.add('active');
+            document.querySelector('.category-tab').classList.add('active');
+        }
+
+        function showCategory(categoryName) {
+            // Hide all categories
+            document.querySelectorAll('.category-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.category-tab').forEach(el => el.classList.remove('active'));
+
+            // Show selected category
+            document.getElementById(categoryName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        const performanceData = benchmarkData.flatMap(suite =>
+            suite.results.filter(r => r.opsPerSecond).map(r => ({
+                x: new Date(r.timestamp),
+                y: r.opsPerSecond,
+                name: r.name
+            }))
+        );
+
+        new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Operations/sec',
+                    data: performanceData,
+                    borderColor: 'rgba(66, 153, 225, 1)',
+                    backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Operations per Second'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.name + ': ' + context.parsed.y.toLocaleString() + ' ops/sec';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // DNS Cache Monitor Functionality - Simplified
+        let dnsMonitoringInterval = null;
+
+        function updateDNSStats() {
+            try {
+                // Simulate DNS stats (in real Bun: Bun.dns.getCacheStats())
+                const stats = {
+                    cacheHitsCompleted: Math.floor(Math.random() * 100),
+                    cacheHitsInflight: Math.floor(Math.random() * 10),
+                    cacheMisses: Math.floor(Math.random() * 50),
+                    size: Math.floor(Math.random() * 255),
+                    errors: Math.floor(Math.random() * 5),
+                    totalCount: 0
+                };
+                stats.totalCount = stats.cacheHitsCompleted + stats.cacheHitsInflight + stats.cacheMisses;
+
+                // Update display
+                document.getElementById('cacheHitsCompleted').textContent = stats.cacheHitsCompleted;
+                document.getElementById('cacheHitsInflight').textContent = stats.cacheHitsInflight;
+                document.getElementById('cacheMisses').textContent = stats.cacheMisses;
+                document.getElementById('cacheSize').textContent = stats.size;
+                document.getElementById('dnsErrors').textContent = stats.errors;
+                document.getElementById('totalRequests').textContent = stats.totalCount;
+
+                showDNSNotification('DNS stats updated', 'success');
+            } catch (error) {
+                showDNSNotification('Failed to get DNS stats', 'error');
+            }
+        }
+
+        function clearDNSCache() {
+            // Reset all stats to 0
+            document.getElementById('cacheHitsCompleted').textContent = '0';
+            document.getElementById('cacheHitsInflight').textContent = '0';
+            document.getElementById('cacheMisses').textContent = '0';
+            document.getElementById('cacheSize').textContent = '0';
+            document.getElementById('dnsErrors').textContent = '0';
+            document.getElementById('totalRequests').textContent = '0';
+            showDNSNotification('DNS cache cleared', 'success');
+        }
+
+        function simulateDNSActivity() {
+            showDNSNotification('Simulating DNS lookups...', 'info');
+            let count = 0;
+            const interval = setInterval(() => {
+                updateDNSStats();
+                count++;
+                if (count >= 5) {
+                    clearInterval(interval);
+                    showDNSNotification('Simulation complete', 'success');
+                }
+            }, 300);
+        }
+
+        function startDNSMonitoring() {
+            const btn = document.getElementById('monitorBtn');
+            if (!btn) return;
+
+            if (dnsMonitoringInterval) {
+                clearInterval(dnsMonitoringInterval);
+                dnsMonitoringInterval = null;
+                btn.textContent = '▶️ Start Monitoring';
+                showDNSNotification('Monitoring stopped', 'info');
+            } else {
+                dnsMonitoringInterval = setInterval(updateDNSStats, 3000);
+                btn.textContent = '⏹️ Stop Monitoring';
+                showDNSNotification('Monitoring started', 'success');
+            }
+        }
+
+        function showDNSNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = 'dns-notification ' + type;
+            notification.textContent = message;
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 10px 20px; border-radius: 8px; color: white; font-weight: 500; z-index: 1000; opacity: 1; transition: opacity 0.3s;';
+
+            if (type === 'success') notification.style.background = '#48bb78';
+            else if (type === 'error') notification.style.background = '#f56565';
+            else notification.style.background = '#4299e1';
+
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDNSStats();
+        });
+
+        // Universal Terminal Lab - Simplified Demo
+        let terminalActive = false;
+        let processHistory = [];
+        let rawMode = false;
+
+        function updateTerminalStatus(active) {
+            const indicator = document.getElementById('terminalStatus');
+            const cursor = document.getElementById('terminalCursor');
+            if (!indicator || !cursor) return;
+
+            terminalActive = active;
+            if (active) {
+                indicator.textContent = '🟢 Signal Active';
+                indicator.classList.add('active');
+                cursor.style.display = 'inline-block';
+            } else {
+                indicator.textContent = '⚫ Signal Inactive';
+                indicator.classList.remove('active');
+                cursor.style.display = 'none';
+            }
+        }
+
+        function addTerminalLine(type, content, command) {
+            const contentDiv = document.getElementById('terminalContent');
+            if (!contentDiv) return;
+
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'terminal-line ' + type;
+
+            if (command) {
+                lineDiv.innerHTML = '<span class="terminal-prompt">universal-terminal:~$ </span><span>' + command + '</span>';
+                contentDiv.appendChild(lineDiv);
+
+                setTimeout(function() {
+                    const outputDiv = document.createElement('div');
+                    outputDiv.className = 'terminal-line ' + type;
+                    outputDiv.innerHTML = '<span class="terminal-prompt"></span><span>' + content + '</span>';
+                    contentDiv.appendChild(outputDiv);
+                    contentDiv.scrollTop = contentDiv.scrollHeight;
+                }, 500);
+            } else {
+                const prompt = type === 'command' ? 'universal-terminal:~$ ' : '';
+                lineDiv.innerHTML = '<span class="terminal-prompt">' + prompt + '</span><span>' + content + '</span>';
+                contentDiv.appendChild(lineDiv);
+            }
+
+            contentDiv.scrollTop = contentDiv.scrollHeight;
+        }
+
+        function updateProcessList() {
+            const listDiv = document.getElementById('processList');
+            const processCount = document.getElementById('processCount');
+            if (!listDiv || !processCount) return;
+
+            if (processHistory.length === 0) {
+                listDiv.innerHTML = '<div class="process-item empty"><span>No processes yet</span></div>';
+                processCount.textContent = '0 processes';
+                return;
+            }
+
+            let html = '';
+            const maxItems = Math.min(processHistory.length, 10);
+            for (let i = 0; i < maxItems; i++) {
+                const process = processHistory[i];
+                const duration = process.endTime
+                    ? ((process.endTime - process.startTime) / 1000).toFixed(1) + 's'
+                    : 'running...';
+
+                html += '<div class="process-item ' + process.status + '">' +
+                    '<div>' +
+                        '<div class="process-name">' + process.command + '</div>' +
+                        '<div class="process-time">' + duration + '</div>' +
+                    '</div>' +
+                    '<div class="process-status">' + process.status + '</div>' +
+                '</div>';
+            }
+
+            listDiv.innerHTML = html;
+            processCount.textContent = processHistory.length + ' processes';
+        }
+
+        async function runCommand(cmd) {
+            updateTerminalStatus(true);
+
+            const process = {
+                id: Date.now(),
+                command: cmd,
+                status: 'running',
+                startTime: Date.now(),
+                endTime: null
+            };
+
+            processHistory.unshift(process);
+            updateProcessList();
+            addTerminalLine('command', '', cmd);
+
+            try {
+                const output = await simulateCommand(cmd);
+                addTerminalLine('output', output);
+                process.status = 'completed';
+                process.endTime = Date.now();
+            } catch (error) {
+                addTerminalLine('error', 'Command failed: ' + error.message);
+                process.status = 'failed';
+                process.endTime = Date.now();
+            }
+
+            updateProcessList();
+            updateTerminalStatus(false);
+        }
+
+        async function simulateCommand(cmd) {
+            const command = cmd.toLowerCase().trim();
+
+            if (command.startsWith('git fetch')) {
+                await new Promise(resolve => setTimeout.bind(null, 2000));
+                return 'From github.com:username/repo\n * [new branch] feature-branch -> origin/feature-branch\nFetching objects: 100% (50/50), done.';
+            }
+
+            if (command.startsWith('bun install')) {
+                await new Promise(resolve => setTimeout.bind(null, 3000));
+                return 'bun install v1.0.0\n\n+ @types/node@18.15.0\n+ typescript@5.0.0\n\n3 packages installed [50.00ms]';
+            }
+
+            if (command.startsWith('bun build')) {
+                await new Promise(resolve => setTimeout.bind(null, 2500));
+                return 'bun build v1.0.0\n\n  src/index.ts → dist/index.js 25.8kb\n\nBuild completed in 245ms';
+            }
+
+            return 'Command executed: ' + cmd + '\nOutput: Command completed successfully';
+        }
+
+        // Global functions for button clicks
+        window.runSequence = async function(commands) {
+            addTerminalLine('info', 'Starting sequence: ' + commands.join(' → '));
+            for (let i = 0; i < commands.length; i++) {
+                await runCommand(commands[i]);
+                if (i < commands.length - 1) {
+                    await new Promise(resolve => setTimeout.bind(null, 1000));
+                }
+            }
+            addTerminalLine('success', 'Sequence completed successfully');
+        };
+
+        window.clearTerminal = function() {
+            const contentDiv = document.getElementById('terminalContent');
+            if (contentDiv) contentDiv.innerHTML = '';
+            addTerminalLine('info', 'Terminal cleared');
+        };
+
+        window.resizeTerminal = function(cols, rows) {
+            const colsEl = document.getElementById('colsValue');
+            const rowsEl = document.getElementById('rowsValue');
+            const sizeEl = document.getElementById('terminalSize');
+            if (colsEl) colsEl.textContent = cols;
+            if (rowsEl) rowsEl.textContent = rows;
+            if (sizeEl) sizeEl.textContent = cols + 'x' + rows;
+            addTerminalLine('info', 'Terminal resized to ' + cols + 'x' + rows);
+        };
+
+        window.toggleRawMode = function() {
+            rawMode = !rawMode;
+            const btn = document.getElementById('rawModeBtn');
+            const modeEl = document.getElementById('modeValue');
+            const mode = rawMode ? 'RAW' : 'COOKED';
+
+            if (btn) btn.textContent = '🎛️ Raw Mode: ' + (rawMode ? 'ON' : 'OFF');
+            if (modeEl) modeEl.textContent = mode;
+            addTerminalLine('info', 'Terminal mode changed to ' + mode);
+        };
+
+        window.unrefTerminal = function() {
+            addTerminalLine('warning', 'Terminal unreferenced - process can continue in background');
+        };
+
+        // Initialize terminal
+        document.addEventListener('DOMContentLoaded', function() {
+            addTerminalLine('welcome', 'Welcome to the Universal Terminal Lab');
+            addTerminalLine('welcome', 'Use the controls above to interact with Bun.Terminal API');
+        });
+    </script>
+</body>
+</html>
+    

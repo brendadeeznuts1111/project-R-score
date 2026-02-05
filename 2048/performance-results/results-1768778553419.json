@@ -1,0 +1,77 @@
+{
+  "timestamp": 1768778553419,
+  "duration": 60,
+  "tests": [
+    {
+      "name": "fibonacci-recursive",
+      "duration": 38.81149999983609,
+      "memoryUsage": 0,
+      "operationsPerSecond": 25.765559177156856,
+      "metadata": {
+        "result": 9227465,
+        "iterations": 1
+      }
+    },
+    {
+      "name": "array-operations",
+      "duration": 0.1255000000819564,
+      "memoryUsage": 0,
+      "operationsPerSecond": 79681274.84836344,
+      "metadata": {
+        "result": 74985000,
+        "arraySize": 10000
+      }
+    },
+    {
+      "name": "string-processing",
+      "duration": 0.47683299984782934,
+      "memoryUsage": 0,
+      "operationsPerSecond": 10485851.443997456,
+      "metadata": {
+        "resultLength": 173890,
+        "iterations": 5000
+      }
+    },
+    {
+      "name": "object-creation",
+      "duration": 0.6265829997137189,
+      "memoryUsage": 0,
+      "operationsPerSecond": 7979788.794596187,
+      "metadata": {
+        "objectCount": 5000,
+        "totalObjects": 5000
+      }
+    },
+    {
+      "name": "math-operations",
+      "duration": 0.5728750000707805,
+      "operationsPerSecond": 174558149.66204613,
+      "metadata": {
+        "result": -44.9014555525699,
+        "iterations": 100000
+      }
+    },
+    {
+      "name": "json-processing",
+      "duration": 0.8101249998435378,
+      "memoryUsage": 0,
+      "operationsPerSecond": 1234377.4111317801,
+      "metadata": {
+        "jsonSize": 210381,
+        "itemCount": 1000
+      }
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "regressions": []
+  },
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "nodeVersion": "v24.3.0",
+    "bunVersion": "1.1.3"
+  }
+}

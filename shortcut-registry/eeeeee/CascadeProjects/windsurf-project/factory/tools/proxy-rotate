@@ -1,0 +1,217 @@
+#!/bin/bash
+# proxy-rotate - Proxy Floor Elevation & Rotation System
+# Genesis Phase-01: Anti-CAPTCHA proxy management with floor 8192
+
+set -euo pipefail
+
+# ============================================================================
+# 🛡️ PROXY ROTATION CONFIGURATION
+# ============================================================================
+
+PROXY_FLOOR="${PROXY_FLOOR:-8192}"
+PROXY_LIST_FILE="${PROXY_LIST_FILE:-./config/proxies.list}"
+ACTIVE_PROXY_FILE="${ACTIVE_PROXY_FILE:-./config/active-proxy.txt}"
+ROTATION_COOLDOWN="${ROTATION_COOLDOWN:-2000}"
+MAX_FAILURES="${MAX_FAILURES:-3}"
+
+# ============================================================================
+# 🔄 PROXY MANAGEMENT FUNCTIONS
+# ============================================================================
+
+# Initialize proxy system
+init_proxy_system() {
+    echo "🛡️ Initializing Proxy System - Floor: ${PROXY_FLOOR}"
+    
+    # Create config directory
+    mkdir -p "$(dirname "${PROXY_LIST_FILE}")"
+    
+    # Create default proxy list if not exists
+    if [[ ! -f "${PROXY_LIST_FILE}" ]]; then
+        cat > "${PROXY_LIST_FILE}" << 'EOF'
+# Genesis Phase-01 Proxy Pool - Floor 8192
+# Format: ip:port:username:password
+proxy1.example.com:8080:user1:pass1
+proxy2.example.com:8080:user2:pass2
+proxy3.example.com:8080:user3:pass3
+proxy4.example.com:8080:user4:pass4
+proxy5.example.com:8080:user5:pass5
+EOF
+        echo "📝 Created default proxy list: ${PROXY_LIST_FILE}"
+    fi
+    
+    # Initialize active proxy file
+    if [[ ! -f "${ACTIVE_PROXY_FILE}" ]]; then
+        echo "proxy1.example.com:8080" > "${ACTIVE_PROXY_FILE}"
+        echo "✅ Active proxy initialized"
+    fi
+}
+
+# Get current active proxy
+get_active_proxy() {
+    if [[ -f "${ACTIVE_PROXY_FILE}" ]]; then
+        cat "${ACTIVE_PROXY_FILE}"
+    else
+        echo "proxy1.example.com:8080"
+    fi
+}
+
+# Rotate to next proxy
+rotate_proxy() {
+    echo "🔄 Rotating proxy..."
+    
+    local current_proxy=$(get_active_proxy)
+    local next_proxy=$(get_next_proxy "${current_proxy}")
+    
+    echo "${next_proxy}" > "${ACTIVE_PROXY_FILE}"
+    echo "✅ Proxy rotated: ${current_proxy} → ${next_proxy}"
+    
+    # Set environment variables
+    export HTTP_PROXY="http://${next_proxy}"
+    export HTTPS_PROXY="http://${next_proxy}"
+    
+    # Apply rotation cooldown
+    sleep "${ROTATION_COOLDOWN}"
+}
+
+# Get next proxy in list
+get_next_proxy() {
+    local current_proxy="$1"
+    local next_proxy=""
+    
+    while IFS= read -r line; do
+        # Skip comments and empty lines
+        [[ "${line}" =~ ^#.*$ ]] && continue
+        [[ -z "${line}" ]] && continue
+        
+        # Extract proxy IP:port
+        local proxy=$(echo "${line}" | cut -d: -f1,2)
+        
+        if [[ -n "${next_proxy}" && "${current_proxy}" != "${proxy}" ]]; then
+            echo "${proxy}"
+            return
+        fi
+        
+        if [[ "${current_proxy}" == "${proxy}" ]]; then
+            next_proxy="found"
+        fi
+    done < "${PROXY_LIST_FILE}"
+    
+    # If we reach here, return the first proxy
+    head -1 "${PROXY_LIST_FILE}" | cut -d: -f1,2
+}
+
+# Test proxy connectivity
+test_proxy() {
+    local proxy="$1"
+    echo "🔍 Testing proxy: ${proxy}"
+    
+    # Test with curl (timeout 10s)
+    if curl -x "http://${proxy}" \
+        --connect-timeout 10 \
+        --max-time 15 \
+        --silent \
+        --head \
+        "https://www.google.com" >/dev/null 2>&1; then
+        echo "✅ Proxy ${proxy} is responsive"
+        return 0
+    else
+        echo "❌ Proxy ${proxy} failed connectivity test"
+        return 1
+    fi
+}
+
+# Elevate proxy floor (increase request capacity)
+elevate_floor() {
+    local new_floor="${1:-8192}"
+    echo "📈 Elevating proxy floor to: ${new_floor}"
+    
+    # Update floor in environment
+    export PROXY_FLOOR="${new_floor}"
+    
+    # Notify proxy pool of elevation
+    echo "📊 Floor elevation signal sent to proxy pool"
+    
+    # Apply elevation delay
+    sleep 1000
+}
+
+# Get proxy statistics
+get_proxy_stats() {
+    echo "📊 Proxy Pool Statistics:"
+    echo "  Active Proxy: $(get_active_proxy)"
+    echo "  Floor Level: ${PROXY_FLOOR}"
+    echo "  Total Proxies: $(grep -v '^#' "${PROXY_LIST_FILE}" | wc -l)"
+    echo "  Cooldown: ${ROTATION_COOLDOWN}ms"
+    
+    # Test active proxy
+    local active=$(get_active_proxy)
+    if test_proxy "${active}"; then
+        echo "  Status: ✅ Online"
+    else
+        echo "  Status: ❌ Offline"
+    fi
+}
+
+# ============================================================================
+# 🚀 COMMAND LINE INTERFACE
+# ============================================================================
+
+case "${1:-}" in
+    init)
+        init_proxy_system
+        ;;
+        
+    rotate|next)
+        rotate_proxy
+        ;;
+        
+    test)
+        local proxy="${2:-$(get_active_proxy)}"
+        test_proxy "${proxy}"
+        ;;
+        
+    elevate)
+        local new_floor="${2:-8192}"
+        elevate_floor "${new_floor}"
+        ;;
+        
+    stats|status)
+        get_proxy_stats
+        ;;
+        
+    active)
+        get_active_proxy
+        ;;
+        
+    floor)
+        echo "${PROXY_FLOOR}"
+        ;;
+        
+    *)
+        echo "🛡️ Genesis Proxy Rotation System"
+        echo ""
+        echo "Usage: $0 [command] [options]"
+        echo ""
+        echo "Commands:"
+        echo "  init                    Initialize proxy system"
+        echo "  rotate, next            Rotate to next proxy"
+        echo "  test [proxy]            Test proxy connectivity"
+        echo "  elevate [floor]         Elevate proxy floor (default: 8192)"
+        echo "  stats, status           Show proxy statistics"
+        echo "  active                  Show current active proxy"
+        echo "  floor                   Show current floor level"
+        echo ""
+        echo "Environment Variables:"
+        echo "  PROXY_FLOOR             Request floor level (default: 8192)"
+        echo "  PROXY_LIST_FILE         Proxy list file path"
+        echo "  ACTIVE_PROXY_FILE       Active proxy file path"
+        echo "  ROTATION_COOLDOWN       Rotation cooldown in ms (default: 2000)"
+        echo ""
+        echo "Examples:"
+        echo "  $0 init                 # Initialize proxy system"
+        echo "  $0 rotate               # Rotate to next proxy"
+        echo "  $0 elevate 8192         # Elevate to floor 8192"
+        echo "  $0 stats                # Show statistics"
+        exit 1
+        ;;
+esac

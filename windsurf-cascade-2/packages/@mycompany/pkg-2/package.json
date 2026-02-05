@@ -1,0 +1,19 @@
+{
+  "name": "@mycompany/pkg-2",
+  "version": "2.0.0",
+  "description": "Example package 2 for local registry",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "bun test"
+  },
+  "keywords": ["example", "local", "registry", "utils"],
+  "author": "MyCompany",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "types": "./index.d.ts"
+    }
+  }
+}

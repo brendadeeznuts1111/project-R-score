@@ -1,0 +1,131 @@
+{
+  "name": "@brendadeeznuts1111/kal-poly-bot",
+  "version": "2.4.2",
+  "description": "Surgical Precision Platform - Golden Matrix v2.4.2 with zero-collateral financial operations and Bun-native performance",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "operation-surgical-precision",
+    "surgical-precision-mcp"
+  ],
+  "scripts": {
+    "install:all": "bun install && cd operation-surgical-precision && bun install && cd ../surgical-precision-mcp && bun install",
+    "build:all": "bun run build -w",
+    "test:all": "bun test && cd operation-surgical-precision && bun test && cd ../surgical-precision-mcp && bun test",
+    "precision-dev": "cd operation-surgical-precision && bun run dev",
+    "matrix-server": "bun services/matrix/matrix-mcp-server.ts",
+    "lint": "bunx eslint .",
+    "lint:check": "bunx eslint .",
+    "lint:strict": "bunx eslint . --max-warnings=0",
+    "lint:fix": "bunx eslint . --fix",
+    "type-check": "bunx tsc --noEmit",
+    "worker:build": "bun build workers/factory-wager.ts --outdir data/build-artifacts/worker --target bun",
+    "worker:dev": "bunx wrangler dev",
+    "worker:deploy": "bunx wrangler deploy",
+    "worker:deploy:staging": "bunx wrangler deploy --env staging",
+    "worker:tail": "bunx wrangler tail",
+    "worker:secret": "bunx wrangler secret put",
+    "mcp:start": "bun mcp/server.ts",
+    "mcp:search": "curl -X POST http://localhost:8787/mcp/codesearch -H 'Content-Type: application/json' -d '{\"query\":\"Terminal\",\"type\":\"ts\"}'",
+    "mcp:dev": "bun --watch mcp/server.ts",
+    "mcp:health": "curl http://localhost:8787/health",
+    "terminal:server": "bun src/terminal-server.ts",
+    "terminal:examples": "bun examples/terminal-pty-examples.ts",
+    "terminal:client": "open demo-app/terminal-client.html",
+    "terminal:test": "bun test __tests__/terminal-pty.test.ts",
+    "terminal:dev": "bun --watch src/terminal-server.ts",
+    "bunwhy:speed": "bun scripts/bunwhy-speed.ts",
+    "search:lightning": "bun scripts/search-term.ts",
+    "history:enhanced": "bun scripts/enhanced-history-cli.ts",
+    "benchmark:all": "bun bunwhy:speed && bun test __tests__/mcp-codesearch.test.ts",
+    "build:ab-test": "bun run build:ab-variant-a && bun run build:ab-variant-b",
+    "build:ab-variant-a": "bun build src/ab-testing-config.ts --define A_TEST_VARIANT=1 --define UI_VARIANT=minimal --define PERF_MODE=balanced --outdir data/build-artifacts/ab-test-a",
+    "build:ab-variant-b": "bun build src/ab-testing-config.ts --define A_TEST_VARIANT=2 --define UI_VARIANT=feature-rich --define PERF_MODE=performance --outdir data/build-artifacts/ab-test-b",
+    "test:ab-validation": "bun test __tests__/ab-testing.test.ts",
+    "compare:bundles": "bun scripts/compare-bundles.ts",
+    "demo:ab-testing": "bun examples/ab-testing-demo.ts",
+    "golden-matrix:build": "bun build infrastructure/v2-4-2/index.ts --outdir data/build-artifacts/golden-matrix --target bun --minify --sourcemap --splitting",
+    "golden-matrix:dev": "bun --watch infrastructure/v2-4-2/index.ts",
+    "golden-matrix:test": "bun test infrastructure/v2-4-2/__tests__/",
+    "golden-matrix:lint": "bunx eslint infrastructure/v2-4-2/",
+    "golden-matrix:types": "bunx tsc --noEmit infrastructure/v2-4-2/**/*.ts",
+    "golden-matrix:bench": "bun run benchmark:infrastructure",
+    "golden-matrix:validate": "bun infrastructure/v2-4-2/feature-registry.ts",
+    "build:infrastructure": "bun run golden-matrix:build",
+    "test:infrastructure": "bun run golden-matrix:test",
+    "dev:infrastructure": "bun run golden-matrix:dev",
+    "benchmark:infrastructure": "bun scripts/benchmark-infrastructure.ts",
+    "validate:infrastructure": "bun scripts/validate-infrastructure.ts",
+    "demo:golden-matrix": "bun examples/golden-matrix-demo.ts",
+    "demo:security-hardening": "bun infrastructure/v2-4-2/security-hardening-layer.ts",
+    "demo:nodejs-compatibility": "bun infrastructure/v2-4-2/nodejs-compatibility-bridge.ts",
+    "build:production": "bun run build:infrastructure && bun run build:all",
+    "test:production": "bun run test:infrastructure && bun run test:all",
+    "deploy:production": "bun run build:production && bun run worker:deploy"
+  },
+  "keywords": [
+    "surgical-precision",
+    "golden-matrix",
+    "bun",
+    "zero-collateral",
+    "mcp",
+    "arbitrage",
+    "microservices",
+    "infrastructure",
+    "security-hardening",
+    "nodejs-compatibility",
+    "urlpattern",
+    "sqlite-optimization",
+    "performance"
+  ],
+  "author": "SERO Operations",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brendadeeznuts1111/kal-poly-bot.git"
+  },
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "dependencies": {
+    "node-forge": "^1.3.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^20.19.30",
+    "@types/ws": "^8.18.1",
+    "eslint": "^9.39.2",
+    "typescript-eslint": "^8.54.0",
+    "zod": "^4.3.6"
+  },
+  "optionalDependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "peerDependencies": {
+    "bun-types": "latest"
+  },
+  "goldenMatrix": {
+    "version": "2.4.2",
+    "components": {
+      "urlPatternEngine": 42,
+      "fakeTimersEngine": 43,
+      "proxyHeadersHandler": 44,
+      "httpAgentConnectionPool": 45,
+      "standaloneExecutableOptimizer": 46,
+      "consoleJSONFormatter": 47,
+      "sqlite3511Engine": 48,
+      "securityHardeningLayer": 49,
+      "nodejsCompatibilityBridge": 50
+    },
+    "features": {
+      "zeroCostAbstractions": true,
+      "securityHardening": true,
+      "nodejsCompatibility": true,
+      "performanceOptimization": true,
+      "productionReady": true
+    }
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

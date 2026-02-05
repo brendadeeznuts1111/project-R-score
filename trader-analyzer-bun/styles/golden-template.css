@@ -1,0 +1,886 @@
+/**
+ * Golden CSS Template
+ * 
+ * Elite CSS patterns using modern syntax with Bun's CSS bundler syntax lowering.
+ * 
+ * A huge thanks goes to the amazing work from the authors of LightningCSS and esbuild.
+ * 
+ * This template demonstrates:
+ * - CSS Nesting (LightningCSS)
+ * - Color functions (color-mix, relative colors, LAB colors)
+ * - Logical properties (RTL/LTR support)
+ * - Modern selectors (:is, :not, :dir, :lang)
+ * - Math functions (clamp, round)
+ * - Media query ranges
+ * - Modern shorthands and gradients
+ * - light-dark() theme support
+ * - CSS custom properties with color-mix
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ * LightningCSS: https://lightningcss.dev/
+ */
+
+/* ==========================================================================
+   CSS Custom Properties (Design Tokens)
+   ========================================================================== */
+
+:root {
+	color-scheme: light dark;
+	
+	/* Base Colors - Using LAB colors for perceptual uniformity */
+	--color-base-00: oklch(98% 0.01 250); /* Pure white */
+	--color-base-05: oklch(95% 0.01 250); /* Off-white */
+	--color-base-10: oklch(90% 0.02 250); /* Light gray */
+	--color-base-20: oklch(80% 0.02 250); /* Medium light */
+	--color-base-30: oklch(70% 0.03 250); /* Medium */
+	--color-base-40: oklch(60% 0.03 250); /* Medium dark */
+	--color-base-50: oklch(50% 0.04 250); /* Dark */
+	--color-base-60: oklch(40% 0.04 250); /* Darker */
+	--color-base-70: oklch(30% 0.05 250); /* Very dark */
+	--color-base-80: oklch(20% 0.05 250); /* Almost black */
+	--color-base-90: oklch(10% 0.05 250); /* Near black */
+	--color-base-100: oklch(5% 0.05 250);  /* Pure black */
+	
+	/* Brand Colors - Using hex with color-mix variants */
+	--color-brand-primary: #667eea;
+	--color-brand-primary-light: color-mix(in srgb, var(--color-brand-primary) 80%, white);
+	--color-brand-primary-dark: color-mix(in srgb, var(--color-brand-primary) 80%, black);
+	--color-brand-primary-alpha: color-mix(in srgb, var(--color-brand-primary) 50%, transparent);
+	
+	--color-brand-secondary: #00d4ff;
+	--color-brand-secondary-light: color-mix(in srgb, var(--color-brand-secondary) 80%, white);
+	--color-brand-secondary-dark: color-mix(in srgb, var(--color-brand-secondary) 80%, black);
+	
+	/* Semantic Colors - Using relative colors for variations */
+	/* Bun computes these at build time when values are constants */
+	--color-success: #10b981;
+	--color-success-light: lch(from var(--color-success) calc(l + 15%) c h);
+	--color-success-dark: lch(from var(--color-success) calc(l - 15%) c h);
+	--color-success-muted: lch(from var(--color-success) l calc(c * 0.6) h);
+	
+	--color-warning: #f59e0b;
+	--color-warning-light: lch(from var(--color-warning) calc(l + 15%) c h);
+	--color-warning-dark: lch(from var(--color-warning) calc(l - 15%) c h);
+	--color-warning-muted: lch(from var(--color-warning) l calc(c * 0.6) h);
+	
+	--color-error: #ef4444;
+	--color-error-light: lch(from var(--color-error) calc(l + 15%) c h);
+	--color-error-dark: lch(from var(--color-error) calc(l - 15%) c h);
+	--color-error-muted: lch(from var(--color-error) l calc(c * 0.6) h);
+	
+	--color-info: #3b82f6;
+	--color-info-light: lch(from var(--color-info) calc(l + 15%) c h);
+	--color-info-dark: lch(from var(--color-info) calc(l - 15%) c h);
+	--color-info-muted: lch(from var(--color-info) l calc(c * 0.6) h);
+	
+	/* Color scale example - theme generation */
+	--color-scale-base: #667eea;
+	--color-scale-50: lch(from var(--color-scale-base) calc(l + 40%) calc(c * 0.3) h);
+	--color-scale-100: lch(from var(--color-scale-base) calc(l + 30%) calc(c * 0.4) h);
+	--color-scale-500: var(--color-scale-base);
+	--color-scale-900: lch(from var(--color-scale-base) calc(l - 30%) c h);
+	
+	/* Theme Colors - Using light-dark() for automatic theme support */
+	--color-bg-primary: light-dark(var(--color-base-00), var(--color-base-100));
+	--color-bg-secondary: light-dark(var(--color-base-05), var(--color-base-90));
+	--color-bg-tertiary: light-dark(var(--color-base-10), var(--color-base-80));
+	
+	--color-text-primary: light-dark(var(--color-base-100), var(--color-base-00));
+	--color-text-secondary: light-dark(var(--color-base-70), var(--color-base-30));
+	--color-text-muted: light-dark(var(--color-base-60), var(--color-base-40));
+	
+	--color-border: light-dark(var(--color-base-20), var(--color-base-70));
+	--color-border-subtle: light-dark(var(--color-base-10), var(--color-base-80));
+	
+	/* Spacing Scale - Using clamp() for responsive spacing */
+	--space-xs: clamp(0.25rem, 0.5vw, 0.5rem);
+	--space-sm: clamp(0.5rem, 1vw, 0.75rem);
+	--space-md: clamp(1rem, 2vw, 1.5rem);
+	--space-lg: clamp(1.5rem, 3vw, 2rem);
+	--space-xl: clamp(2rem, 4vw, 3rem);
+	--space-2xl: clamp(3rem, 6vw, 4rem);
+	
+	/* Typography Scale - Using clamp() for fluid typography */
+	--font-size-xs: clamp(0.75rem, 1.5vw, 0.875rem);
+	--font-size-sm: clamp(0.875rem, 2vw, 1rem);
+	--font-size-base: clamp(1rem, 2.5vw, 1.125rem);
+	--font-size-lg: clamp(1.125rem, 3vw, 1.25rem);
+	--font-size-xl: clamp(1.25rem, 3.5vw, 1.5rem);
+	--font-size-2xl: clamp(1.5rem, 4vw, 2rem);
+	--font-size-3xl: clamp(2rem, 5vw, 2.5rem);
+	--font-size-4xl: clamp(2.5rem, 6vw, 3.5rem);
+	
+	/* Border Radius - Using round() for precise values */
+	--radius-sm: round(4px, 1px);
+	--radius-md: round(8px, 2px);
+	--radius-lg: round(12px, 2px);
+	--radius-xl: round(16px, 4px);
+	--radius-full: 9999px;
+	
+	/* Math Functions - Evaluated at build time when constants */
+	--scale-factor: pow(1.25, 3);
+	--sqrt-value: sqrt(2);
+	--pi-approx: 3.14159;
+	
+	/* Shadows - Using modern color notation */
+	--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+	--shadow-md: 0 4px 6px rgb(0 0 0 / 0.1);
+	--shadow-lg: 0 10px 15px rgb(0 0 0 / 0.1);
+	--shadow-xl: 0 20px 25px rgb(0 0 0 / 0.15);
+	--shadow-2xl: 0 25px 50px rgb(0 0 0 / 0.25);
+	
+	/* Transitions */
+	--transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	
+	/* Z-index Scale */
+	--z-base: 0;
+	--z-dropdown: 1000;
+	--z-sticky: 1020;
+	--z-fixed: 1030;
+	--z-modal-backdrop: 1040;
+	--z-modal: 1050;
+	--z-popover: 1060;
+	--z-tooltip: 1070;
+}
+
+/* ==========================================================================
+   Reset & Base Styles
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+body {
+	/* system-ui automatically expanded by Bun to cross-platform font stack */
+	font-family: system-ui, sans-serif;
+	font-size: var(--font-size-base);
+	line-height: 1.6;
+	color: var(--color-text-primary);
+	background-color: var(--color-bg-primary);
+	transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--color-text-primary);
+	margin-block-end: var(--space-md);
+	
+	:lang(en, fr, de) & {
+		font-weight: 600;
+	}
+}
+
+h1 {
+	font-size: var(--font-size-4xl);
+}
+
+h2 {
+	font-size: var(--font-size-3xl);
+}
+
+h3 {
+	font-size: var(--font-size-2xl);
+}
+
+h4 {
+	font-size: var(--font-size-xl);
+}
+
+h5 {
+	font-size: var(--font-size-lg);
+}
+
+h6 {
+	font-size: var(--font-size-base);
+}
+
+p {
+	margin-block-end: var(--space-md);
+}
+
+a {
+	color: var(--color-brand-primary);
+	text-decoration: none;
+	transition: color var(--transition-fast);
+	
+	&:hover {
+		color: var(--color-brand-primary-dark);
+		text-decoration: underline;
+	}
+	
+	&:focus-visible {
+		outline: 2px solid var(--color-brand-primary);
+		outline-offset: 2px;
+		border-radius: var(--radius-sm);
+	}
+}
+
+/* ==========================================================================
+   Layout Components
+   ========================================================================== */
+
+.container {
+	width: 100%;
+	margin-inline: auto;
+	padding-inline: var(--space-md);
+	
+	@media (width >= 640px) {
+		max-width: 640px;
+	}
+	
+	@media (width >= 768px) {
+		max-width: 768px;
+	}
+	
+	@media (width >= 1024px) {
+		max-width: 1024px;
+	}
+	
+	@media (width >= 1280px) {
+		max-width: 1280px;
+	}
+}
+
+.grid {
+	display: grid;
+	gap: var(--space-md);
+	grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 30%, 400px), 1fr));
+	place-items: start center;
+}
+
+.flex {
+	display: flex;
+	gap: var(--space-md);
+	
+	&.flex-col {
+		flex-direction: column;
+	}
+	
+	&.flex-wrap {
+		flex-wrap: wrap;
+	}
+	
+	&.items-center {
+		align-items: center;
+	}
+	
+	&.justify-between {
+		justify-content: space-between;
+	}
+	
+	&.justify-center {
+		justify-content: center;
+	}
+}
+
+/* ==========================================================================
+   Card Component (Golden Pattern)
+   ========================================================================== */
+
+.card {
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-lg);
+	padding-block: var(--space-lg);
+	padding-inline: var(--space-lg);
+	border: 1px solid var(--color-border-subtle);
+	box-shadow: var(--shadow-md);
+	transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+	overflow: hidden auto;
+	
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-lg);
+		border-color: var(--color-border);
+	}
+	
+	&:focus-within {
+		outline: 2px solid var(--color-brand-primary);
+		outline-offset: 2px;
+	}
+	
+	/* Card Header */
+	.card-header {
+		margin-block-end: var(--space-md);
+		padding-block-end: var(--space-md);
+		border-block-end: 1px solid var(--color-border-subtle);
+		
+		h2, h3, h4 {
+			margin-block-end: var(--space-xs);
+		}
+	}
+	
+	/* Card Body */
+	.card-body {
+		color: var(--color-text-secondary);
+	}
+	
+	/* Card Footer */
+	.card-footer {
+		margin-block-start: var(--space-md);
+		padding-block-start: var(--space-md);
+		border-block-start: 1px solid var(--color-border-subtle);
+		display: flex;
+		gap: var(--space-sm);
+		justify-content: flex-end;
+	}
+	
+	/* Card Variants */
+	&.card-elevated {
+		box-shadow: var(--shadow-xl);
+		
+		&:hover {
+			box-shadow: var(--shadow-2xl);
+		}
+	}
+	
+	&.card-bordered {
+		border-width: 2px;
+		border-color: var(--color-border);
+	}
+	
+	&.card-interactive {
+		cursor: pointer;
+		
+		&:active {
+			transform: translateY(0);
+		}
+	}
+	
+	/* RTL Support */
+	:dir(rtl) & {
+		text-align: right;
+	}
+}
+
+/* ==========================================================================
+   Button Component (Golden Pattern)
+   ========================================================================== */
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-sm);
+	padding-block: round(12px, 2px);
+	padding-inline: round(24px, 4px);
+	font-size: var(--font-size-base);
+	font-weight: 600;
+	line-height: 1;
+	border-radius: var(--radius-md);
+	border: none;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+	text-decoration: none;
+	
+	/* Base Styles */
+	background: var(--color-brand-primary);
+	color: white;
+	
+	&:hover {
+		background: var(--color-brand-primary-dark);
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-md);
+	}
+	
+	&:active {
+		transform: translateY(0);
+		box-shadow: var(--shadow-sm);
+	}
+	
+	&:focus-visible {
+		outline: 2px solid var(--color-brand-primary);
+		outline-offset: 2px;
+	}
+	
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+	
+	/* Variants */
+	&.button-primary {
+		background: var(--color-brand-primary);
+		color: white;
+		
+		&:hover {
+			background: var(--color-brand-primary-dark);
+		}
+	}
+	
+	&.button-secondary {
+		background: var(--color-brand-secondary);
+		color: white;
+		
+		&:hover {
+			background: var(--color-brand-secondary-dark);
+		}
+	}
+	
+	&.button-success {
+		background: var(--color-success);
+		color: white;
+		
+		&:hover {
+			background: var(--color-success-dark);
+		}
+	}
+	
+	&.button-warning {
+		background: var(--color-warning);
+		color: white;
+		
+		&:hover {
+			background: var(--color-warning-dark);
+		}
+	}
+	
+	&.button-error {
+		background: var(--color-error);
+		color: white;
+		
+		&:hover {
+			background: var(--color-error-dark);
+		}
+	}
+	
+	&.button-ghost {
+		background: transparent;
+		color: var(--color-brand-primary);
+		border: 1px solid var(--color-brand-primary);
+		
+		&:hover {
+			background: var(--color-brand-primary-alpha);
+		}
+	}
+	
+	&.button-outline {
+		background: transparent;
+		color: var(--color-brand-primary);
+		border: 2px solid var(--color-brand-primary);
+		
+		&:hover {
+			background: var(--color-brand-primary);
+			color: white;
+		}
+	}
+	
+	/* Sizes */
+	&.button-sm {
+		padding-block: round(8px, 2px);
+		padding-inline: round(16px, 4px);
+		font-size: var(--font-size-sm);
+	}
+	
+	&.button-lg {
+		padding-block: round(16px, 2px);
+		padding-inline: round(32px, 4px);
+		font-size: var(--font-size-lg);
+	}
+}
+
+/* ==========================================================================
+   Badge Component (Golden Pattern)
+   ========================================================================== */
+
+.badge {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	padding-block: round(4px, 1px);
+	padding-inline: round(8px, 2px);
+	font-size: var(--font-size-xs);
+	font-weight: 600;
+	line-height: 1;
+	border-radius: var(--radius-full);
+	
+	&.badge-success {
+		background: color-mix(in srgb, var(--color-success) 20%, transparent);
+		color: var(--color-success);
+	}
+	
+	&.badge-warning {
+		background: color-mix(in srgb, var(--color-warning) 20%, transparent);
+		color: var(--color-warning);
+	}
+	
+	&.badge-error {
+		background: color-mix(in srgb, var(--color-error) 20%, transparent);
+		color: var(--color-error);
+	}
+	
+	&.badge-info {
+		background: color-mix(in srgb, var(--color-info) 20%, transparent);
+		color: var(--color-info);
+	}
+	
+	&.badge-primary {
+		background: color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
+		color: var(--color-brand-primary);
+	}
+}
+
+/* ==========================================================================
+   Input Component (Golden Pattern)
+   ========================================================================== */
+
+.input {
+	width: 100%;
+	padding-block: round(10px, 2px);
+	padding-inline: round(15px, 2px);
+	font-size: var(--font-size-base);
+	line-height: 1.5;
+	color: var(--color-text-primary);
+	background: var(--color-bg-secondary);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-md);
+	transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+	
+	&:focus {
+		outline: none;
+		border-color: var(--color-brand-primary);
+		box-shadow: 0 0 0 3px var(--color-brand-primary-alpha);
+	}
+	
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+	
+	&::placeholder {
+		color: var(--color-text-muted);
+	}
+	
+	:dir(rtl) & {
+		text-align: right;
+	}
+}
+
+/* ==========================================================================
+   Modern Color Notation Examples
+   ========================================================================== */
+
+.modern-styling {
+	/* Space-separated RGB - Bun converts to comma format for older browsers */
+	color: rgb(50 100 200);
+	
+	/* Alpha channels handled appropriately */
+	border-color: rgba(100 50 200 / 0.75);
+	
+	/* Hex+alpha converted to rgba when needed */
+	background-color: #00aaff80; /* Converted to rgba(0, 170, 255, 0.5) */
+	
+	box-shadow: 0 5px 10px rgb(38 115 153 / 0.4);
+}
+
+/* ==========================================================================
+   Theme Override Examples
+   ========================================================================== */
+
+/* Override system preference when needed */
+.light-theme {
+	color-scheme: light;
+	
+	.themed-component {
+		background-color: #ffffff;
+		color: #333333;
+		border-color: #dddddd;
+	}
+}
+
+.dark-theme {
+	color-scheme: dark;
+	
+	.themed-component {
+		background-color: #121212;
+		color: #eeeeee;
+		border-color: #555555;
+	}
+}
+
+/* ==========================================================================
+   Modern Selectors - :is() Pattern Examples
+   ========================================================================== */
+
+/* Instead of writing these separately */
+/* 
+.article h1,
+.article h2,
+.article h3 {
+  margin-top: 1.5em;
+}
+*/
+
+/* You can write this */
+.article :is(h1, h2, h3) {
+	margin-block-start: 1.5em;
+}
+
+/* Complex example with multiple groups */
+:is(header, main, footer) :is(h1, h2, .title) {
+	font-family: "Heading Font", system-ui, sans-serif;
+	font-weight: 700;
+}
+
+/* Combining :is() with other selectors */
+:is(.card, .panel, .widget) :is(h1, h2, h3) {
+	color: var(--color-brand-primary);
+	margin-block-end: var(--space-md);
+}
+
+/* :is() with pseudo-classes */
+:is(.button, .link, .nav-item):hover {
+	color: var(--color-brand-primary-dark);
+	transform: translateY(-1px);
+}
+
+/* :is() with :not() */
+:is(.card, .button, .badge):not(.disabled, .hidden) {
+	transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+/* ==========================================================================
+   Utility Classes (Golden Patterns)
+   ========================================================================== */
+
+/* Spacing Utilities */
+.mt-auto { margin-block-start: auto; }
+.mb-auto { margin-block-end: auto; }
+.ml-auto { margin-inline-start: auto; }
+.mr-auto { margin-inline-end: auto; }
+
+/* Text Utilities */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+:dir(rtl) {
+	.text-left { text-align: right; }
+	.text-right { text-align: left; }
+}
+
+/* Display Utilities */
+.hidden { display: none; }
+.block { display: block; }
+.inline { display: inline; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.grid { display: grid; }
+
+/* ==========================================================================
+   Math Functions (Golden Patterns)
+   ========================================================================== */
+
+.dynamic-sizing {
+	/* Clamp a value between minimum and maximum */
+	width: clamp(200px, 50%, 800px);
+	
+	/* Round to the nearest multiple */
+	padding: round(14.8px, 5px);
+	
+	/* Trigonometry for animations or layouts */
+	transform: rotate(calc(sin(45deg) * 50deg));
+	
+	/* Complex math with multiple functions */
+	--scale-factor: pow(1.25, 3);
+	font-size: calc(16px * var(--scale-factor));
+}
+
+/* Math functions evaluated at build time when constants */
+.math-examples {
+	/* Standard math functions */
+	width: clamp(200px, 50%, 800px);
+	padding: round(14.8px, 5px);
+	margin: mod(100px, 30px);
+	opacity: abs(-0.8);
+	
+	/* Trigonometric functions */
+	transform: rotate(calc(sin(45deg) * 50deg));
+	transform-origin: calc(cos(30deg) * 100px) calc(sin(30deg) * 100px);
+	
+	/* Exponential functions */
+	--scale: pow(1.25, 3);
+	--distance: sqrt(pow(100px, 2) + pow(50px, 2));
+	font-size: calc(16px * var(--scale));
+	
+	/* Combined calculations */
+	--base-size: 16px;
+	--ratio: 1.618; /* Golden ratio */
+	--size-1: calc(var(--base-size) * pow(var(--ratio), 1));
+	--size-2: calc(var(--base-size) * pow(var(--ratio), 2));
+	--size-3: calc(var(--base-size) * pow(var(--ratio), 3));
+}
+
+/* ==========================================================================
+   Animations (Golden Patterns)
+   ========================================================================== */
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slide-in {
+	from {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.animate-fade-in {
+	animation: fade-in var(--transition-base) ease-out;
+}
+
+.animate-slide-in {
+	animation: slide-in var(--transition-base) ease-out;
+}
+
+/* ==========================================================================
+   Responsive Design - Media Query Ranges (Golden Patterns)
+   ========================================================================== */
+
+/* Modern syntax with comparison operators - Bun converts to traditional syntax */
+
+/* Single breakpoint */
+@media (width >= 640px) {
+	/* Tablet styles */
+	.container {
+		max-width: 600px;
+	}
+}
+
+/* Inclusive range using <= and >= */
+@media (768px <= width <= 1199px) {
+	/* Desktop styles */
+	.sidebar {
+		display: flex;
+	}
+	
+	.container {
+		max-width: 720px;
+	}
+}
+
+/* Exclusive range using < and > */
+@media (width > 320px) and (width < 768px) {
+	/* Mobile-only styles */
+	.mobile-only {
+		display: block;
+	}
+}
+
+/* Multiple conditions */
+@media (width >= 768px) and (width <= 1024px) {
+	/* Tablet to desktop range */
+	.grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (width >= 1024px) {
+	/* Large desktop styles */
+	.grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+/* Height-based media queries */
+@media (height >= 600px) {
+	.header {
+		padding: 40px;
+	}
+}
+
+/* Orientation with range */
+@media (width >= 768px) and (orientation: landscape) {
+	.layout {
+		display: flex;
+		flex-direction: row;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* ==========================================================================
+   System UI Font Examples
+   ========================================================================== */
+
+.native-interface {
+	/* Use the system's default UI font */
+	/* Bun automatically expands to cross-platform font stack */
+	font-family: system-ui;
+}
+
+.fallback-aware {
+	/* System UI font with explicit fallbacks */
+	/* Bun expands system-ui and preserves fallbacks */
+	font-family: system-ui, sans-serif;
+}
+
+/* Bun expands system-ui to:
+ * font-family:
+ *   system-ui,
+ *   -apple-system,
+ *   BlinkMacSystemFont,
+ *   "Segoe UI",
+ *   Roboto,
+ *   "Noto Sans",
+ *   Ubuntu,
+ *   Cantarell,
+ *   "Helvetica Neue",
+ *   sans-serif;
+ */
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+	* {
+		background: white !important;
+		color: black !important;
+		box-shadow: none !important;
+	}
+	
+	.button,
+	.badge {
+		border: 1px solid black;
+	}
+}

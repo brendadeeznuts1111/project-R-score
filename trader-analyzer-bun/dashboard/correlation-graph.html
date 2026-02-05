@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correlation Graph Dashboard</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network@latest/dist/vis-network.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 30px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            color: white;
+            font-weight: 700;
+        }
+
+        .header-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .filters-panel {
+            width: 320px;
+            background: #1a1f3a;
+            border-right: 2px solid rgba(102, 126, 234, 0.3);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .filters-section {
+            margin-bottom: 25px;
+        }
+
+        .filters-title {
+            color: #00d4ff;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: #9ca3af;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.9em;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .layer-filters {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .layer-filter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .layer-filter-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .layer-filter-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .layer-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .layer-label {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .layer-stats {
+            font-size: 0.85em;
+            color: #9ca3af;
+        }
+
+        .severity-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .severity-btn {
+            padding: 8px 15px;
+            background: rgba(102, 126, 234, 0.3);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85em;
+        }
+
+        .severity-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .severity-btn.low { border-color: #10b981; }
+        .severity-btn.medium { border-color: #f59e0b; }
+        .severity-btn.high { border-color: #ef4444; }
+        .severity-btn.critical { border-color: #dc2626; }
+
+        .correlation-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 5px;
+            color: #9ca3af;
+            font-size: 0.85em;
+        }
+
+        .graph-container {
+            flex: 1;
+            position: relative;
+            background: #0f1429;
+        }
+
+        #graph-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .node-details-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: rgba(26, 31, 58, 0.95);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            display: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .node-details-panel.visible {
+            display: block;
+        }
+
+        .node-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .node-details-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .close-btn {
+            background: rgba(239, 68, 68, 0.3);
+            border: none;
+            color: #ef4444;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.5);
+        }
+
+        .detail-item {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            color: #9ca3af;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .deeplink-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .deeplink-btn:hover {
+            background: #764ba2;
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00d4ff;
+            font-size: 1.2em;
+        }
+
+        .error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ef4444;
+            text-align: center;
+            padding: 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(26, 31, 58, 0.95);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 10px 15px;
+            pointer-events: none;
+            display: none;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .tooltip.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <h1>Correlation Graph Dashboard</h1>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="../docs/DOCUMENTATION-INDEX.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">📚 Docs</a>
+                <a href="../docs/MARKET-DATA-ROUTER-17-COMPLETE.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">🔀 Router</a>
+                <a href="../dashboard/multi-layer-graph.html" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">🌐 Multi-Layer</a>
+            </div>
+        </div>
+        <div class="header-info">
+            <span id="event-id-display">Event: -</span>
+            <span id="time-window-display">Window: 24h</span>
+            <span id="node-count">Nodes: 0</span>
+            <span id="edge-count">Edges: 0</span>
+        </div>
+        <!-- Developer Workspace Navigation -->
+        <div class="header-nav" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
+            <a href="/api/changelog" target="_blank" style="color: #00d4ff; text-decoration: none; padding: 8px 16px; background: rgba(0, 212, 255, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(0, 212, 255, 0.3);" onmouseover="this.style.background='rgba(0, 212, 255, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(0, 212, 255, 0.1)'; this.style.transform='translateY(0)';">
+                📋 Changelog
+            </a>
+            <a href="/api/changelog?limit=50" target="_blank" style="color: #84cc16; text-decoration: none; padding: 8px 16px; background: rgba(132, 204, 22, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(132, 204, 22, 0.3);" onmouseover="this.style.background='rgba(132, 204, 22, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(132, 204, 22, 0.1)'; this.style.transform='translateY(0)';">
+                📜 Git Logs
+            </a>
+            <a href="/api/rss.xml" target="_blank" style="color: #f59e0b; text-decoration: none; padding: 8px 16px; background: rgba(245, 158, 11, 0.1); border-radius: 6px; font-size: 0.9em; transition: all 0.2s; border: 1px solid rgba(245, 158, 11, 0.3);" onmouseover="this.style.background='rgba(245, 158, 11, 0.2)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.transform='translateY(0)';">
+                📡 RSS Feed
+            </a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="filters-panel">
+            <div class="filters-section">
+                <div class="filters-title">Layer Filter</div>
+                <div class="layer-filters" id="layer-filters">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="filters-section">
+                <div class="filters-title">Bookmaker Filter</div>
+                <div class="filter-group">
+                    <select id="bookmaker-filter" multiple size="5">
+                        <!-- Populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="filters-section">
+                <div class="filters-title">Severity Filter</div>
+                <div class="severity-filter">
+                    <button class="severity-btn active" data-severity="all">All</button>
+                    <button class="severity-btn low" data-severity="low">Low</button>
+                    <button class="severity-btn medium" data-severity="medium">Medium</button>
+                    <button class="severity-btn high" data-severity="high">High</button>
+                    <button class="severity-btn critical" data-severity="critical">Critical</button>
+                </div>
+            </div>
+
+            <div class="filters-section">
+                <div class="filters-title">Correlation Strength</div>
+                <div class="filter-group">
+                    <input type="range" id="correlation-slider" min="0" max="1" step="0.01" value="0" class="correlation-slider">
+                    <div class="slider-value">
+                        Min: <span id="correlation-min">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="graph-container">
+            <div id="graph-canvas"></div>
+            <div class="loading" id="loading">Loading graph data...</div>
+            <div class="error" id="error" style="display: none;"></div>
+            <div class="tooltip" id="tooltip"></div>
+            <div class="node-details-panel" id="node-details">
+                <div class="node-details-header">
+                    <div class="node-details-title">Node Details</div>
+                    <button class="close-btn" id="close-details">&times;</button>
+                </div>
+                <div id="node-details-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let graphData = null;
+        let network = null;
+        let filterState = {
+            layers: [1, 2, 3, 4],
+            bookmakers: [],
+            severity: 'all',
+            correlationMin: 0
+        };
+
+        // Debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Get URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                event_id: params.get('event_id') || '',
+                time_window: parseInt(params.get('time_window') || '24', 10)
+            };
+        }
+
+        // Load graph data from API
+        async function loadGraphData(eventId, timeWindow) {
+            const startTime = performance.now();
+            console.log(`[correlation-graph] Loading graph data: eventId=${eventId}, timeWindow=${timeWindow}h`);
+            
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+
+                const fetchStartTime = performance.now();
+                const response = await fetch(`/api/dashboard/correlation-graph?event_id=${encodeURIComponent(eventId)}&time_window=${timeWindow}`);
+                const fetchDuration = performance.now() - fetchStartTime;
+                
+                console.log(`[correlation-graph] API fetch completed in ${fetchDuration.toFixed(2)}ms, status=${response.status}`);
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error(`[correlation-graph] API error:`, error);
+                    throw new Error(error.error || 'Failed to load graph data');
+                }
+
+                const parseStartTime = performance.now();
+                graphData = await response.json();
+                const parseDuration = performance.now() - parseStartTime;
+                
+                console.log(
+                    `[correlation-graph] Data parsed in ${parseDuration.toFixed(2)}ms: ` +
+                    `${graphData.nodes.length} nodes, ${graphData.edges.length} edges, ` +
+                    `${graphData.statistics.bookmakers.length} bookmakers`
+                );
+                
+                document.getElementById('event-id-display').textContent = `Event: ${graphData.eventId}`;
+                document.getElementById('time-window-display').textContent = `Window: ${graphData.timeWindow}h`;
+                document.getElementById('node-count').textContent = `Nodes: ${graphData.statistics.totalNodes}`;
+                document.getElementById('edge-count').textContent = `Edges: ${graphData.statistics.totalEdges}`;
+
+                const filterStartTime = performance.now();
+                initializeFilters();
+                const filterDuration = performance.now() - filterStartTime;
+                console.log(`[correlation-graph] Filters initialized in ${filterDuration.toFixed(2)}ms`);
+
+                const renderStartTime = performance.now();
+                renderGraph();
+                const renderDuration = performance.now() - renderStartTime;
+                console.log(`[correlation-graph] Graph rendered in ${renderDuration.toFixed(2)}ms`);
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                const totalDuration = performance.now() - startTime;
+                console.log(`[correlation-graph] Total load time: ${totalDuration.toFixed(2)}ms`);
+            } catch (error) {
+                const errorDuration = performance.now() - startTime;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = `Error: ${error.message}`;
+                console.error(`[correlation-graph] Failed to load graph data after ${errorDuration.toFixed(2)}ms:`, error);
+            }
+        }
+
+        // Initialize filter UI
+        function initializeFilters() {
+            // Layer filters
+            const layerFilters = document.getElementById('layer-filters');
+            layerFilters.innerHTML = '';
+            
+            const layerColors = {
+                1: '#ef4444',
+                2: '#14b8a6',
+                3: '#3b82f6',
+                4: '#10b981'
+            };
+
+            graphData.layers.forEach(layer => {
+                const item = document.createElement('div');
+                item.className = 'layer-filter-item';
+                item.innerHTML = `
+                    <input type="checkbox" id="layer-${layer.layer}" data-layer="${layer.layer}" checked>
+                    <div class="layer-color" style="background: ${layerColors[layer.layer]}"></div>
+                    <div class="layer-label">Layer ${layer.layer}</div>
+                    <div class="layer-stats">${layer.nodeCount} nodes, ${layer.edgeCount} edges</div>
+                `;
+                item.querySelector('input').addEventListener('change', handleLayerFilterChange);
+                layerFilters.appendChild(item);
+            });
+
+            // Bookmaker filter
+            const bookmakerFilter = document.getElementById('bookmaker-filter');
+            bookmakerFilter.innerHTML = '';
+            const bookmakers = [...new Set(graphData.nodes.map(n => n.bookmaker).filter(Boolean))];
+            bookmakers.forEach(bm => {
+                const option = document.createElement('option');
+                option.value = bm;
+                option.textContent = `${bm} (${graphData.nodes.filter(n => n.bookmaker === bm).length})`;
+                bookmakerFilter.appendChild(option);
+            });
+
+            // Correlation slider
+            const slider = document.getElementById('correlation-slider');
+            const maxCorrelation = graphData.statistics.maxCorrelationStrength;
+            slider.max = maxCorrelation.toFixed(2);
+            slider.value = 0;
+            updateCorrelationDisplay();
+        }
+
+        // Handle layer filter changes
+        function handleLayerFilterChange() {
+            const checked = Array.from(document.querySelectorAll('#layer-filters input:checked'))
+                .map(input => parseInt(input.dataset.layer));
+            filterState.layers = checked;
+            applyFilters();
+        }
+
+        // Handle bookmaker filter changes
+        document.getElementById('bookmaker-filter').addEventListener('change', function() {
+            filterState.bookmakers = Array.from(this.selectedOptions).map(opt => opt.value);
+            applyFilters();
+        });
+
+        // Handle severity filter
+        document.querySelectorAll('.severity-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                filterState.severity = this.dataset.severity;
+                applyFilters();
+            });
+        });
+
+        // Handle correlation slider
+        const correlationSlider = document.getElementById('correlation-slider');
+        correlationSlider.addEventListener('input', debounce(function() {
+            filterState.correlationMin = parseFloat(this.value);
+            updateCorrelationDisplay();
+            applyFilters();
+        }, 300));
+
+        function updateCorrelationDisplay() {
+            document.getElementById('correlation-min').textContent = filterState.correlationMin.toFixed(2);
+        }
+
+        // Apply filters to graph
+        function applyFilters() {
+            if (!graphData || !network) return;
+
+            const filterStartTime = performance.now();
+            const filterStateLog = {
+                layers: filterState.layers,
+                bookmakers: filterState.bookmakers.length,
+                severity: filterState.severity,
+                correlationMin: filterState.correlationMin
+            };
+            console.log(`[correlation-graph] Applying filters:`, filterStateLog);
+
+            const filteredNodes = graphData.nodes.filter(node => {
+                if (!filterState.layers.includes(node.layer)) return false;
+                if (filterState.bookmakers.length > 0 && !filterState.bookmakers.includes(node.bookmaker)) return false;
+                if (filterState.severity !== 'all' && node.severity !== filterState.severity) return false;
+                return true;
+            });
+
+            const nodeIds = new Set(filteredNodes.map(n => n.id));
+            const filteredEdges = graphData.edges.filter(edge => {
+                if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) return false;
+                if (edge.correlationStrength < filterState.correlationMin) return false;
+                return true;
+            });
+
+            const nodes = filteredNodes.map(node => ({
+                id: node.id,
+                label: node.label,
+                color: getNodeColor(node.layer, node.severity),
+                size: 10 + (node.correlationStrength * 20),
+                borderWidth: getSeverityBorderWidth(node.severity),
+                title: getNodeTooltip(node)
+            }));
+
+            const edges = filteredEdges.map(edge => ({
+                id: edge.id,
+                from: edge.source,
+                to: edge.target,
+                color: getEdgeColor(edge.layer, edge.confidence),
+                width: 1 + (edge.correlationStrength * 4),
+                dashes: edge.confidence < 0.5,
+                title: `Correlation: ${edge.correlationStrength.toFixed(2)}, Confidence: ${edge.confidence.toFixed(2)}`
+            }));
+
+            network.setData({ nodes, edges });
+            
+            const filterDuration = performance.now() - filterStartTime;
+            console.log(
+                `[correlation-graph] Filters applied in ${filterDuration.toFixed(2)}ms: ` +
+                `${filteredNodes.length}/${graphData.nodes.length} nodes, ` +
+                `${filteredEdges.length}/${graphData.edges.length} edges visible`
+            );
+        }
+
+        // Get node color by layer
+        function getNodeColor(layer, severity) {
+            const layerColors = {
+                1: '#ef4444',
+                2: '#14b8a6',
+                3: '#3b82f6',
+                4: '#10b981'
+            };
+            return layerColors[layer] || '#666';
+        }
+
+        // Get edge color by layer and confidence
+        function getEdgeColor(layer, confidence) {
+            const layerColors = {
+                1: '#ef4444',
+                2: '#14b8a6',
+                3: '#3b82f6',
+                4: '#10b981'
+            };
+            const color = layerColors[layer] || '#666';
+            const opacity = Math.max(0.3, confidence);
+            return color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+        }
+
+        // Get severity border width
+        function getSeverityBorderWidth(severity) {
+            const widths = { low: 1, medium: 2, high: 3, critical: 4 };
+            return widths[severity] || 2;
+        }
+
+        // Get node tooltip text
+        function getNodeTooltip(node) {
+            return `${node.label}\nLayer: ${node.layer}\nSeverity: ${node.severity}\nCorrelation: ${node.correlationStrength.toFixed(2)}`;
+        }
+
+        // Render graph with vis.js
+        function renderGraph() {
+            const container = document.getElementById('graph-canvas');
+            
+            const nodes = graphData.nodes.map(node => ({
+                id: node.id,
+                label: node.label,
+                color: getNodeColor(node.layer, node.severity),
+                size: 10 + (node.correlationStrength * 20),
+                borderWidth: getSeverityBorderWidth(node.severity),
+                title: getNodeTooltip(node)
+            }));
+
+            const edges = graphData.edges.map(edge => ({
+                id: edge.id,
+                from: edge.source,
+                to: edge.target,
+                color: getEdgeColor(edge.layer, edge.confidence),
+                width: 1 + (edge.correlationStrength * 4),
+                dashes: edge.confidence < 0.5,
+                title: `Correlation: ${edge.correlationStrength.toFixed(2)}, Confidence: ${edge.confidence.toFixed(2)}`
+            }));
+
+            const data = { nodes, edges };
+            const options = {
+                nodes: {
+                    shape: 'dot',
+                    font: { color: '#e0e0e0', size: 12 },
+                    borderWidth: 2
+                },
+                edges: {
+                    smooth: { type: 'continuous' },
+                    arrows: { to: { enabled: false } }
+                },
+                physics: {
+                    enabled: true,
+                    stabilization: { iterations: 200 }
+                },
+                interaction: {
+                    hover: true,
+                    tooltipDelay: 100,
+                    zoomView: true,
+                    dragView: true
+                }
+            };
+
+            network = new vis.Network(container, data, options);
+
+            // Event handlers
+            network.on('hoverNode', function(params) {
+                const node = graphData.nodes.find(n => n.id === params.node);
+                if (node) {
+                    showTooltip(node, params.event);
+                }
+            });
+
+            network.on('blurNode', function() {
+                hideTooltip();
+            });
+
+            network.on('click', function(params) {
+                if (params.nodes.length > 0) {
+                    const nodeId = params.nodes[0];
+                    const node = graphData.nodes.find(n => n.id === nodeId);
+                    if (node) {
+                        console.log(`[correlation-graph] Node clicked: ${nodeId} (${node.label})`);
+                        showNodeDetails(node);
+                    }
+                } else {
+                    console.log(`[correlation-graph] Background clicked, hiding details`);
+                    hideNodeDetails();
+                }
+            });
+
+            network.on('stabilizationEnd', function() {
+                console.log(`[correlation-graph] Graph stabilization complete`);
+            });
+        }
+
+        // Show tooltip
+        function showTooltip(node, event) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.innerHTML = `
+                <strong>${node.label}</strong><br>
+                Layer: ${node.layer} | Severity: ${node.severity}<br>
+                Correlation: ${node.correlationStrength.toFixed(2)}
+            `;
+            tooltip.style.left = event.clientX + 10 + 'px';
+            tooltip.style.top = event.clientY + 10 + 'px';
+            tooltip.classList.add('visible');
+        }
+
+        // Hide tooltip
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('visible');
+        }
+
+        // Show node details panel
+        function showNodeDetails(node) {
+            const panel = document.getElementById('node-details');
+            const content = document.getElementById('node-details-content');
+            
+            content.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-label">Node ID</div>
+                    <div class="detail-value">${node.id}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Label</div>
+                    <div class="detail-value">${node.label}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Layer</div>
+                    <div class="detail-value">${node.layer}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Bookmaker</div>
+                    <div class="detail-value">${node.bookmaker || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Severity</div>
+                    <div class="detail-value">${node.severity}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Correlation Strength</div>
+                    <div class="detail-value">${node.correlationStrength.toFixed(2)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Anomaly Count</div>
+                    <div class="detail-value">${node.summaryData.anomalyCount || 0}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Movement Count</div>
+                    <div class="detail-value">${node.summaryData.movementCount || 0}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Threat Level</div>
+                    <div class="detail-value">${node.summaryData.threatLevel || 'N/A'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Last Seen</div>
+                    <div class="detail-value">${node.summaryData.lastSeen ? new Date(node.summaryData.lastSeen).toLocaleString() : 'N/A'}</div>
+                </div>
+                <button class="deeplink-btn" onclick="window.open('${node.deeplinkUrl}', '_blank')">
+                    Open in Dashboard
+                </button>
+            `;
+            
+            panel.classList.add('visible');
+        }
+
+        // Hide node details panel
+        function hideNodeDetails() {
+            document.getElementById('node-details').classList.remove('visible');
+        }
+
+        // Close details button
+        document.getElementById('close-details').addEventListener('click', hideNodeDetails);
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', function() {
+            const params = getUrlParams();
+            if (params.event_id) {
+                loadGraphData(params.event_id, params.time_window);
+            } else {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error: event_id parameter is required. Add ?event_id=YOUR_EVENT_ID to the URL.';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NEXUS Registry System - Unified registry browser for all platform registries including Bun TypeScript patterns and breaking changes">
+    <meta name="keywords" content="registry, Bun, TypeScript, patterns, breaking changes, Bun.serve, Bun.Server generic">
+    <meta name="og:description" content="NEXUS Registry System - Browse Bun TypeScript patterns and breaking changes">
+    <meta name="theme-color" content="#667eea">
+    <title>NEXUS Registry Browser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .btn-icon {
+            font-size: 1.1em;
+            margin-right: 5px;
+        }
+
+        /* Stats Dashboard */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #00d4ff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-detail {
+            font-size: 0.8em;
+            color: #667eea;
+            margin-top: 8px;
+        }
+
+        /* Summary Row */
+        .summary-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            flex: 1;
+            min-width: 280px;
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .summary-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-list {
+            list-style: none;
+        }
+
+        .summary-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .summary-list li:last-child {
+            border-bottom: none;
+        }
+
+        .summary-list .label {
+            color: #9ca3af;
+        }
+
+        .summary-list .value {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        /* Registry Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin: 0;
+        }
+
+        .card .category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 6px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-data { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .category-tooling { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+        .category-security { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .category-research { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .category-integration { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+        .card .type-badge {
+            font-size: 0.7em;
+            padding: 3px 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            color: #00d4ff;
+            margin-left: 10px;
+        }
+
+        .card .description {
+            color: #9ca3af;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-healthy { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-degraded { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .status-offline { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-unknown { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 3px 10px;
+            background: rgba(0, 212, 255, 0.15);
+            border-radius: 4px;
+            font-size: 0.75em;
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .use-cases {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .use-cases h3 {
+            font-size: 0.85em;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .use-cases ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .use-cases li {
+            padding: 4px 0;
+            color: #9ca3af;
+            font-size: 0.85em;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .use-cases li:before {
+            content: "→";
+            color: #667eea;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .card-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #00d4ff;
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.7em;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .card-footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-footer a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+
+        .card-footer a:hover {
+            color: #667eea;
+        }
+
+        .schema-info {
+            font-size: 0.75em;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            color: #ef4444;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .error-icon {
+            font-size: 2em;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding: 30px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer a:hover {
+            color: #667eea;
+        }
+
+        /* Search */
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: #6b7280;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #1a1f3a;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            animation: slideUp 0.3s;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #1a1f3a;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.4);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-section {
+            margin-bottom: 30px;
+        }
+
+        .modal-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+            padding-bottom: 10px;
+        }
+
+        /* Advanced Filtering */
+        .filters-panel {
+            background: #1a1f3a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filters-header h3 {
+            color: #667eea;
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: #9ca3af;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-checkbox:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .filter-checkbox input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        .filter-checkbox input[type="checkbox"]:checked + span {
+            color: #00d4ff;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .filter-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.2);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            color: #00d4ff;
+            font-size: 0.85em;
+        }
+
+        .filter-badge .remove {
+            cursor: pointer;
+            color: #ef4444;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .filter-badge .remove:hover {
+            color: #ff6b6b;
+        }
+
+        /* Sorting & View Options */
+        .view-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+            background: rgba(26, 31, 58, 0.8);
+            border-radius: 6px;
+            padding: 4px;
+        }
+
+        .view-toggle-btn {
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: rgba(102, 126, 234, 0.3);
+            color: #667eea;
+        }
+
+        .view-toggle-btn:hover {
+            color: #667eea;
+        }
+
+        /* Enhanced Cards */
+        .card-favorite {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 5;
+        }
+
+        .card-favorite:hover {
+            color: #f59e0b;
+            transform: scale(1.2);
+        }
+
+        .card-favorite.active {
+            color: #f59e0b;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .card-action-btn {
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            color: #00d4ff;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .card-action-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .card-timestamp {
+            font-size: 0.75em;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+
+        /* List View */
+        .grid.list-view {
+            grid-template-columns: 1fr;
+        }
+
+        .grid.list-view .card {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .grid.list-view .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Compact View */
+        .grid.compact-view {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .grid.compact-view .card {
+            padding: 15px;
+        }
+
+        .grid.compact-view .card h2 {
+            font-size: 1.1em;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-panel {
+                padding: 15px;
+            }
+
+            .filter-checkboxes {
+                flex-direction: column;
+            }
+
+            .view-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                max-height: 95vh;
+                margin: 10px;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        *:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- Shared timezone utilities - Load in body to avoid execution context issues -->
+    <script src="./js/timezone-utils.js" onerror="console.error('Failed to load timezone-utils.js')"></script>
+    <div class="header">
+        <h1>📚 NEXUS Registry System</h1>
+        <p class="header-subtitle">Unified browser for all platform registries: properties, data sources, tools, errors, and more</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search registries by name, tag, or description..." oninput="handleSearch(event)" aria-label="Search registries">
+        </div>
+        
+        <div class="controls">
+            <button class="btn active" onclick="filterCategory('all')" aria-label="Show all registries"><span class="btn-icon">📋</span>All</button>
+            <button class="btn" onclick="filterCategory('data')" aria-label="Filter by data category"><span class="btn-icon">💾</span>Data</button>
+            <button class="btn" onclick="filterCategory('tooling')" aria-label="Filter by tooling category"><span class="btn-icon">🔧</span>Tooling</button>
+            <button class="btn" onclick="filterCategory('security')" aria-label="Filter by security category"><span class="btn-icon">🔐</span>Security</button>
+            <button class="btn" onclick="filterCategory('research')" aria-label="Filter by research category"><span class="btn-icon">🔬</span>Research</button>
+            <button class="btn" onclick="filterCategory('integration')" aria-label="Filter by integration category"><span class="btn-icon">🔗</span>Integration</button>
+            <button class="btn" onclick="toggleFilters()" aria-label="Toggle advanced filters"><span class="btn-icon">🔍</span>Filters</button>
+            <button class="btn" onclick="refreshRegistries()" aria-label="Refresh registries"><span class="btn-icon">🔄</span>Refresh</button>
+            <a href="./index.html" class="btn" style="text-decoration: none;" aria-label="Go to dashboard"><span class="btn-icon">←</span>Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Advanced Filters Panel -->
+    <div id="filtersPanel" class="filters-panel" style="display: none;">
+        <div class="filters-header">
+            <h3>🔍 Advanced Filters</h3>
+            <button class="btn" onclick="toggleFilters()" style="padding: 5px 15px; font-size: 0.85em;">Close</button>
+        </div>
+        
+        <div class="filter-group">
+            <label>Categories</label>
+            <div class="filter-checkboxes" id="categoryFilters"></div>
+        </div>
+        
+        <div class="filter-group">
+            <label>Status</label>
+            <div class="filter-checkboxes" id="statusFilters"></div>
+        </div>
+        
+        <div class="filter-group">
+            <label>Type</label>
+            <div class="filter-checkboxes" id="typeFilters"></div>
+        </div>
+        
+        <div class="filter-group">
+            <label>Tags</label>
+            <div class="filter-checkboxes" id="tagFilters"></div>
+        </div>
+        
+        <div class="active-filters" id="activeFilters"></div>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button class="btn" onclick="clearFilters()" style="flex: 1;">Clear All</button>
+            <button class="btn" onclick="applyFilters()" style="flex: 1; background: rgba(102, 126, 234, 0.3);">Apply Filters</button>
+        </div>
+    </div>
+
+    <!-- View Controls -->
+    <div class="view-controls">
+        <div class="sort-controls">
+            <label for="sortSelect" style="color: #9ca3af; margin-right: 10px;">Sort by:</label>
+            <select id="sortSelect" class="sort-select" onchange="handleSortChange(event)" aria-label="Sort registries">
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="category-asc">Category</option>
+                <option value="status-asc">Status</option>
+                <option value="itemCount-desc">Item Count (High-Low)</option>
+                <option value="itemCount-asc">Item Count (Low-High)</option>
+                <option value="lastUpdated-desc">Last Updated (Recent)</option>
+            </select>
+        </div>
+        
+        <div class="view-toggle">
+            <button class="view-toggle-btn active" onclick="setViewMode('grid')" aria-label="Grid view" title="Grid View">⊞</button>
+            <button class="view-toggle-btn" onclick="setViewMode('list')" aria-label="List view" title="List View">☰</button>
+            <button class="view-toggle-btn" onclick="setViewMode('compact')" aria-label="Compact view" title="Compact View">⊟</button>
+        </div>
+    </div>
+
+    <div id="errorContainer"></div>
+
+    <!-- Server-rendered timestamp (updated by HTMLRewriter) -->
+    <div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 0.85em;" data-debug>
+        Server Time: <span data-server-timestamp data-format="locale">Loading...</span> | 
+        Last Refresh: <span id="lastRefresh">Never</span>
+    </div>
+
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <div>Loading registries...</div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div id="statsContainer" style="display: none;">
+        <div class="stats-dashboard">
+            <div class="stat-card">
+                <span class="stat-value" id="totalRegistries">-</span>
+                <span class="stat-label">Total Registries</span>
+                <div class="stat-detail" id="registriesDetail">Loading...</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="totalItems">-</span>
+                <span class="stat-label">Total Items</span>
+                <div class="stat-detail" id="itemsDetail">Across all registries</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="totalCategories">-</span>
+                <span class="stat-label">Categories</span>
+                <div class="stat-detail" id="categoriesDetail">Loading...</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="healthyCount">-</span>
+                <span class="stat-label">Healthy</span>
+                <div class="stat-detail" style="color: #10b981;">All systems operational</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="miniappStatus">Loading...</span>
+                <span class="stat-label">Mini App</span>
+                <div class="stat-detail" id="miniappDetail">Factory Wager Status</div>
+            </div>
+        </div>
+
+        <!-- Feature-specific sections (conditionally rendered by HTMLRewriter) -->
+        <section id="shadow-graph-section" data-feature="shadowGraph" data-access="admin" style="display: none; margin-top: 30px; padding: 20px; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
+            <h2 style="color: #667eea; margin-bottom: 15px;">🔍 Shadow Market Graph Visualization</h2>
+            <div id="graph-container" style="min-height: 300px; background: rgba(26, 31, 58, 0.5); border-radius: 8px; padding: 20px;">
+                <p style="color: #9ca3af; text-align: center;">Graph visualization will be loaded here</p>
+            </div>
+        </section>
+
+        <section id="covert-steam-alerts-section" data-feature="covertSteamAlerts" style="display: none; margin-top: 30px; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 2px solid rgba(245, 158, 11, 0.3);">
+            <h2 style="color: #f59e0b; margin-bottom: 15px;">🚨 Covert Steam Alerts</h2>
+            <div id="alerts-list" style="min-height: 200px;">
+                <p style="color: #9ca3af; text-align: center;">Alerts will be displayed here</p>
+            </div>
+        </section>
+
+        <section id="statistical-analysis-section" data-feature="statisticalAnalysis" style="display: none; margin-top: 30px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border: 2px solid rgba(16, 185, 129, 0.3);">
+            <h2 style="color: #10b981; margin-bottom: 15px;">📊 Statistical Analysis Dashboard</h2>
+            <div id="statistical-analysis-container">
+                <p style="color: #9ca3af; text-align: center;">Statistical analysis tools will be loaded here</p>
+            </div>
+        </section>
+
+        <!-- Summary Cards -->
+        <div class="summary-row">
+            <div class="summary-card">
+                <h3>📊 By Category</h3>
+                <ul class="summary-list" id="categoryList"></ul>
+            </div>
+            <div class="summary-card">
+                <h3>🏷️ By Type</h3>
+                <ul class="summary-list" id="typeList"></ul>
+            </div>
+            <div class="summary-card">
+                <h3>⚡ System Status</h3>
+                <ul class="summary-list" id="statusList"></ul>
+            </div>
+            <div class="summary-card">
+                <h3>📚 Documentation</h3>
+                <ul class="summary-list">
+                    <li>
+                        <span class="label">Cross-Reference Analysis</span>
+                        <span class="value"><a href="/docs/CROSS-REFERENCE-ANALYSIS-REPORT.md" target="_blank" style="color: #00d4ff; text-decoration: none;">View Report →</a></span>
+                    </li>
+                    <li>
+                        <span class="label">HTMLRewriter</span>
+                        <span class="value">454 refs</span>
+                    </li>
+                    <li>
+                        <span class="label">Bun Utils</span>
+                        <span class="value">271 refs</span>
+                    </li>
+                    <li>
+                        <span class="label">Telegram</span>
+                        <span class="value">733 refs</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="registriesContainer" class="grid"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination" style="display: none;"></div>
+
+    <!-- Registry Detail Modal -->
+    <div id="registryModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle">Registry Details</h2>
+                <button class="modal-close" onclick="closeModal()" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>Loading registry details...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(102, 126, 234, 0.2); color: #9ca3af; font-size: 0.9em;">
+                <p style="margin-bottom: 10px;">
+                    <strong style="color: #667eea;">NEXUS Trading Platform</strong> v1.0.0 | Built with Bun 1.3.x + Hono<br>
+                    System Time: <span id="headerSystemTime">--:--:--</span> | Last Update: <span id="headerLastUpdate">Never</span><br>
+                    <span style="font-size: 0.85em; opacity: 0.7;" id="headerTimezoneConstants">[$TZ][Etc/UTC][setSystemTime]</span>
+                </p>
+                <p style="margin-top: 10px; opacity: 0.7;">
+                    System Time: <span id="footerSystemTime">--:--:--</span> | Last Update: <span id="footerLastUpdate">Never</span><br>
+                    <span style="font-size: 0.85em;" id="footerTimezoneConstants">[$TZ][Etc/UTC][setSystemTime]</span>
+                </p>
+        </div>
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="./index.html">Dashboard</a>
+            <a href="./examples.html">Examples</a>
+            <a href="https://staging.factory-wager-miniapp.pages.dev" target="_blank">Mini App</a>
+            <a href="/api/miniapp/status">Mini App API</a>
+            <a href="/api/registry">Registry API</a>
+            <a href="/docs">Documentation</a>
+            <a href="/docs/CROSS-REFERENCE-ANALYSIS-REPORT.md" target="_blank">📊 Cross-Reference Analysis</a>
+        </p>
+    </div>
+
+    <script>
+        // Ensure timezone utilities are loaded before proceeding
+        if (!window.timezoneUtils) {
+            console.warn('[Registry] timezone-utils.js not loaded, timezone features may not work');
+        }
+        
+        // Consume comprehensive UI context injected by HTMLRewriter
+        const uiContext = window.HYPERBUN_UI_CONTEXT || {
+            apiBaseUrl: window.location.origin === 'http://localhost:8080' 
+                ? 'http://localhost:3001' 
+                : (window.location.origin || 'http://localhost:3001'),
+            featureFlags: {},
+            userRole: 'guest',
+            debugMode: false,
+            currentTimestamp: Date.now()
+        };
+        
+        // Extract API_BASE from UI context for backward compatibility
+        const API_BASE = uiContext.apiBaseUrl;
+        
+        // Debug logging if enabled
+        if (uiContext.debugMode) {
+            console.log('[Registry] UI Context:', uiContext);
+            console.log('[Registry] Feature Flags:', uiContext.featureFlags);
+            console.log('[Registry] User Role:', uiContext.userRole);
+        }
+
+        let allRegistries = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+        
+        // Enhanced state management
+        let activeFilters = {
+            categories: [],
+            tags: [],
+            status: [],
+            types: []
+        };
+        let sortBy = 'name';
+        let sortDirection = 'asc';
+        let viewMode = 'grid';
+        let itemsPerPage = 20;
+        let currentPage = 1;
+        let favorites = JSON.parse(localStorage.getItem('registryFavorites') || '[]');
+        let debounceTimer = null;
+
+        // Initialize filters on load
+        function initializeFilters() {
+            const categories = [...new Set(allRegistries.map(r => r.category))];
+            const statuses = [...new Set(allRegistries.map(r => r.status || 'healthy'))];
+            const types = [...new Set(allRegistries.map(r => r.type))];
+            const allTags = new Set();
+            allRegistries.forEach(r => r.tags.forEach(t => allTags.add(t)));
+            const tags = Array.from(allTags).sort();
+
+            // Render category filters
+            const categoryFilters = document.getElementById('categoryFilters');
+            if (categoryFilters) {
+                categoryFilters.innerHTML = categories.map(cat => `
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="${cat}" onchange="toggleFilter('categories', '${cat}')">
+                        <span>${cat}</span>
+                    </label>
+                `).join('');
+            }
+
+            // Render status filters
+            const statusFilters = document.getElementById('statusFilters');
+            if (statusFilters) {
+                statusFilters.innerHTML = statuses.map(status => `
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="${status}" onchange="toggleFilter('status', '${status}')">
+                        <span>${status}</span>
+                    </label>
+                `).join('');
+            }
+
+            // Render type filters
+            const typeFilters = document.getElementById('typeFilters');
+            if (typeFilters) {
+                typeFilters.innerHTML = types.map(type => `
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="${type}" onchange="toggleFilter('types', '${type}')">
+                        <span>${type}</span>
+                    </label>
+                `).join('');
+            }
+
+            // Render tag filters (limit to top 20)
+            const tagFilters = document.getElementById('tagFilters');
+            if (tagFilters) {
+                tagFilters.innerHTML = tags.slice(0, 20).map(tag => `
+                    <label class="filter-checkbox">
+                        <input type="checkbox" value="${tag}" onchange="toggleFilter('tags', '${tag}')">
+                        <span>${tag}</span>
+                    </label>
+                `).join('');
+            }
+        }
+
+        // Toggle filter
+        function toggleFilter(filterType, value) {
+            const index = activeFilters[filterType].indexOf(value);
+            if (index > -1) {
+                activeFilters[filterType].splice(index, 1);
+            } else {
+                activeFilters[filterType].push(value);
+            }
+            updateActiveFiltersDisplay();
+        }
+
+        // Update active filters display
+        function updateActiveFiltersDisplay() {
+            const container = document.getElementById('activeFilters');
+            if (!container) return;
+
+            const badges = [];
+            Object.entries(activeFilters).forEach(([type, values]) => {
+                values.forEach(value => {
+                    badges.push({ type, value });
+                });
+            });
+
+            container.innerHTML = badges.map(badge => `
+                <span class="filter-badge">
+                    ${badge.type}: ${badge.value}
+                    <span class="remove" onclick="removeFilter('${badge.type}', '${badge.value}')">×</span>
+                </span>
+            `).join('');
+        }
+
+        // Remove filter
+        function removeFilter(filterType, value) {
+            const index = activeFilters[filterType].indexOf(value);
+            if (index > -1) {
+                activeFilters[filterType].splice(index, 1);
+                // Uncheck checkbox
+                const checkbox = document.querySelector(`input[type="checkbox"][value="${value}"]`);
+                if (checkbox) checkbox.checked = false;
+                updateActiveFiltersDisplay();
+                applyFilters();
+            }
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            activeFilters = { categories: [], tags: [], status: [], types: [] };
+            document.querySelectorAll('#filtersPanel input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateActiveFiltersDisplay();
+            applyFilters();
+        }
+
+        // Apply filters
+        function applyFilters() {
+            renderRegistries(filterRegistries(allRegistries));
+        }
+
+        // Toggle filters panel
+        function toggleFilters() {
+            const panel = document.getElementById('filtersPanel');
+            if (panel) {
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        // Handle sort change
+        function handleSortChange(event) {
+            const [field, direction] = event.target.value.split('-');
+            sortBy = field;
+            sortDirection = direction;
+            renderRegistries(filterRegistries(allRegistries));
+        }
+
+        // Set view mode
+        function setViewMode(mode) {
+            viewMode = mode;
+            const container = document.getElementById('registriesContainer');
+            container.className = `grid ${mode}-view`;
+            
+            // Update toggle buttons
+            document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick')?.includes(`'${mode}'`)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            renderRegistries(filterRegistries(allRegistries));
+        }
+
+        // Show registry modal
+        async function showRegistryModal(registryId) {
+            const modal = document.getElementById('registryModal');
+            const modalBody = document.getElementById('modalBody');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            if (!modal || !modalBody || !modalTitle) return;
+
+            modal.classList.add('active');
+            modalBody.innerHTML = '<div class="loading"><div class="loading-spinner"></div><div>Loading registry details...</div></div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/registry/${registryId}/detail`);
+                if (!response.ok) throw new Error('Failed to load details');
+                
+                const registry = await response.json();
+                
+                modalTitle.textContent = registry.name;
+                modalBody.innerHTML = `
+                    <div class="modal-section">
+                        <h3>Overview</h3>
+                        <p style="color: #9ca3af; margin-bottom: 15px;">${registry.description}</p>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <span class="category category-${registry.category}">${registry.category}</span>
+                            <span class="type-badge">${registry.type}</span>
+                            <div class="status-indicator status-${registry.status || 'healthy'}">
+                                <span class="status-dot"></span>
+                                ${(registry.status || 'healthy').charAt(0).toUpperCase() + (registry.status || 'healthy').slice(1)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>Tags</h3>
+                        <div class="tags">
+                            ${registry.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>Use Cases</h3>
+                        <ul class="use-cases">
+                            ${registry.useCases.map(uc => `<li>${uc}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    ${registry.metrics ? `
+                    <div class="modal-section">
+                        <h3>Metrics</h3>
+                        <div class="card-metrics">
+                            <div class="metric">
+                                <span class="metric-value">${registry.metrics.totalItems || 0}</span>
+                                <span class="metric-label">Total Items</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">${registry.metrics.activeItems || 0}</span>
+                                <span class="metric-label">Active Items</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">${registry.metrics.avgResponseMs || 0}ms</span>
+                                <span class="metric-label">Avg Response</span>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    ${registry.schema ? `
+                    <div class="modal-section">
+                        <h3>Schema</h3>
+                        <p style="color: #9ca3af;">Version: <strong style="color: #00d4ff;">${registry.schema.version}</strong></p>
+                        <p style="color: #9ca3af; margin-top: 10px;">Properties:</p>
+                        <div class="tags">
+                            ${registry.schema.properties.map(prop => `<span class="tag">${prop}</span>`).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <div class="modal-section">
+                        <h3>API Endpoint</h3>
+                        <code style="background: rgba(26, 31, 58, 0.8); padding: 10px; border-radius: 6px; display: block; color: #00d4ff;">
+                            GET ${API_BASE}${registry.endpoint}
+                        </code>
+                    </div>
+
+                    ${registry.usageExamples ? `
+                    <div class="modal-section">
+                        <h3>Usage Examples</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            ${registry.usageExamples.map(example => `
+                                <code style="background: rgba(26, 31, 58, 0.8); padding: 10px; border-radius: 6px; color: #00d4ff;">
+                                    ${example}
+                                </code>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    ${registry.relatedRegistries && registry.relatedRegistries.length > 0 ? `
+                    <div class="modal-section">
+                        <h3>Related Registries</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            ${registry.relatedRegistries.map(rel => `
+                                <div style="padding: 10px; background: rgba(102, 126, 234, 0.1); border-radius: 6px; cursor: pointer;" 
+                                     onclick="closeModal(); showRegistryModal('${rel.id}')">
+                                    <strong style="color: #667eea;">${rel.name}</strong>
+                                    <p style="color: #9ca3af; font-size: 0.9em; margin: 5px 0 0 0;">${rel.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+            } catch (error) {
+                modalBody.innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">⚠️</div>
+                        <div>
+                            <strong>Error loading details:</strong> ${error.message}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Close modal
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            const modal = document.getElementById('registryModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        // Toggle favorite
+        function toggleFavorite(registryId, event) {
+            event.stopPropagation();
+            const index = favorites.indexOf(registryId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(registryId);
+            }
+            localStorage.setItem('registryFavorites', JSON.stringify(favorites));
+            renderRegistries(filterRegistries(allRegistries));
+        }
+
+        // Copy endpoint to clipboard
+        function copyEndpoint(endpoint, event) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(`${API_BASE}${endpoint}`).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Share registry
+        function shareRegistry(registryId, event) {
+            event.stopPropagation();
+            const url = `${window.location.origin}${window.location.pathname}?registry=${registryId}`;
+            if (navigator.share) {
+                navigator.share({ title: 'Registry', url });
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓ Link Copied!';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        }
+
+        async function loadRegistries() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('registriesContainer');
+            const errorContainer = document.getElementById('errorContainer');
+
+            try {
+                loading.style.display = 'block';
+                container.innerHTML = '';
+                errorContainer.innerHTML = '';
+
+                const response = await fetch(`${API_BASE}/api/registry`);
+                
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+
+                const data = await response.json();
+                allRegistries = data.registries;
+
+                // Update stats
+                updateStats(data);
+
+                // Initialize filters
+                initializeFilters();
+
+                // Render registries
+                renderRegistries(filterRegistries(allRegistries));
+
+                loading.style.display = 'none';
+                document.getElementById('statsContainer').style.display = 'block';
+                const refreshTime = formatSystemTime();
+                
+                // Update header and footer times
+                const headerLastUpdateEl = document.getElementById('headerLastUpdate');
+                const footerLastUpdate = document.getElementById('footerLastUpdate');
+                const lastRefreshEl = document.getElementById('lastRefresh');
+                if (headerLastUpdateEl) {
+                    headerLastUpdateEl.textContent = refreshTime;
+                }
+                if (footerLastUpdate) {
+                    footerLastUpdate.textContent = refreshTime;
+                }
+                if (lastRefreshEl) {
+                    lastRefreshEl.textContent = refreshTime;
+                }
+                
+                // Initialize feature-specific components based on UI context
+                initializeFeatureComponents();
+            } catch (error) {
+                loading.style.display = 'none';
+                errorContainer.innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">⚠️</div>
+                        <div>
+                            <strong>Error loading registries:</strong> ${error.message}<br>
+                            <span style="font-size: 0.9em;">Make sure the API server is running: <code>bun run dev</code></span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalRegistries').textContent = data.total;
+            document.getElementById('totalItems').textContent = data.totalItems.toLocaleString();
+            document.getElementById('totalCategories').textContent = Object.keys(data.categories).length;
+            document.getElementById('healthyCount').textContent = data.summary?.healthy || data.total;
+            
+            document.getElementById('registriesDetail').textContent =
+                `${data.summary?.healthy || data.total} healthy, ${data.summary?.degraded || 0} degraded`;
+
+            // Update mini-app status
+            updateMiniappStatus();
+
+            // Reload visualizations if they're enabled
+            if (uiContext.featureFlags.statisticalAnalysis) {
+                setTimeout(() => loadStatisticalAnalysis(), 100);
+            }
+
+            // Category list
+            const categoryList = document.getElementById('categoryList');
+            categoryList.innerHTML = Object.entries(data.categories)
+                .sort((a, b) => b[1] - a[1])
+                .map(([cat, count]) => `
+                    <li>
+                        <span class="label">${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+                        <span class="value">${count}</span>
+                    </li>
+                `).join('');
+
+            // Type list
+            const typeList = document.getElementById('typeList');
+            if (data.byType) {
+                typeList.innerHTML = Object.entries(data.byType)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([type, count]) => `
+                        <li>
+                            <span class="label">${type}</span>
+                            <span class="value">${count}</span>
+                        </li>
+                    `).join('');
+            }
+
+            // Status list
+            const statusList = document.getElementById('statusList');
+            if (data.byStatus) {
+                let statusHtml = Object.entries(data.byStatus)
+                    .map(([status, count]) => `
+                        <li>
+                            <span class="label">${status}</span>
+                            <span class="value" style="color: ${getStatusColor(status)}">${count}</span>
+                        </li>
+                    `).join('');
+                // Add mini-app status
+                statusHtml += '<li><span class="label">Mini App</span><span class="value" id="miniappStatusList">-</span></li>';
+                statusList.innerHTML = statusHtml;
+            } else {
+                statusList.innerHTML = `
+                    <li><span class="label">Healthy</span><span class="value" style="color: #10b981">${data.total}</span></li>
+                    <li><span class="label">Degraded</span><span class="value" style="color: #f59e0b">0</span></li>
+                    <li><span class="label">Offline</span><span class="value" style="color: #ef4444">0</span></li>
+                    <li><span class="label">Mini App</span><span class="value" id="miniappStatusList">-</span></li>
+                `;
+            }
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                healthy: '#10b981',
+                degraded: '#f59e0b',
+                offline: '#ef4444',
+                unknown: '#6b7280'
+            };
+            return colors[status] || '#6b7280';
+        }
+
+        async function updateMiniappStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/miniapp/status`);
+                if (response.ok) {
+                    const status = await response.json();
+                    const statusElement = document.getElementById('miniappStatus');
+                    const detailElement = document.getElementById('miniappDetail');
+                    const statusListElement = document.getElementById('miniappStatusList');
+
+                    const displayStatus = status.status === 'online' ? 'Online' :
+                                        status.status === 'degraded' ? 'Degraded' : 'Offline';
+                    const statusColor = status.status === 'online' ? '#10b981' :
+                                       status.status === 'degraded' ? '#f59e0b' : '#ef4444';
+
+                    if (statusElement && detailElement) {
+                        statusElement.textContent = displayStatus;
+                        statusElement.style.color = statusColor;
+
+                        const responseTime = status.responseTime ? `${status.responseTime}ms` : 'Unknown';
+                        detailElement.textContent = `Response: ${responseTime}`;
+                        detailElement.style.color = statusColor;
+                    }
+
+                    if (statusListElement) {
+                        statusListElement.textContent = displayStatus;
+                        statusListElement.style.color = statusColor;
+                    }
+                } else {
+                    const statusElement = document.getElementById('miniappStatus');
+                    const detailElement = document.getElementById('miniappDetail');
+                    const statusListElement = document.getElementById('miniappStatusList');
+
+                    if (statusElement) statusElement.textContent = 'Error';
+                    if (detailElement) detailElement.textContent = 'Failed to load';
+                    if (statusListElement) {
+                        statusListElement.textContent = 'Error';
+                        statusListElement.style.color = '#ef4444';
+                    }
+                }
+            } catch (error) {
+                const statusElement = document.getElementById('miniappStatus');
+                const detailElement = document.getElementById('miniappDetail');
+                const statusListElement = document.getElementById('miniappStatusList');
+
+                if (statusElement) statusElement.textContent = 'Offline';
+                if (detailElement) detailElement.textContent = 'Connection failed';
+                if (statusListElement) {
+                    statusListElement.textContent = 'Offline';
+                    statusListElement.style.color = '#ef4444';
+                }
+            }
+        }
+
+        function filterRegistries(registries) {
+            let filtered = registries;
+
+            // Category filter (legacy)
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(r => r.category === currentCategory);
+            }
+
+            // Advanced filters
+            if (activeFilters.categories.length > 0) {
+                filtered = filtered.filter(r => activeFilters.categories.includes(r.category));
+            }
+
+            if (activeFilters.status.length > 0) {
+                filtered = filtered.filter(r => activeFilters.status.includes(r.status || 'healthy'));
+            }
+
+            if (activeFilters.types.length > 0) {
+                filtered = filtered.filter(r => activeFilters.types.includes(r.type));
+            }
+
+            if (activeFilters.tags.length > 0) {
+                filtered = filtered.filter(r => 
+                    activeFilters.tags.some(tag => r.tags.includes(tag))
+                );
+            }
+
+            // Search filter (debounced)
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter(r => 
+                    r.name.toLowerCase().includes(query) ||
+                    r.description.toLowerCase().includes(query) ||
+                    r.tags.some(t => t.toLowerCase().includes(query)) ||
+                    r.id.toLowerCase().includes(query)
+                );
+            }
+
+            // Sorting
+            filtered.sort((a, b) => {
+                let aVal, bVal;
+                switch (sortBy) {
+                    case 'name':
+                        aVal = a.name.toLowerCase();
+                        bVal = b.name.toLowerCase();
+                        break;
+                    case 'category':
+                        aVal = a.category;
+                        bVal = b.category;
+                        break;
+                    case 'status':
+                        aVal = a.status || 'healthy';
+                        bVal = b.status || 'healthy';
+                        break;
+                    case 'itemCount':
+                        aVal = a.itemCount || 0;
+                        bVal = b.itemCount || 0;
+                        break;
+                    case 'lastUpdated':
+                        aVal = a.lastUpdated || 0;
+                        bVal = b.lastUpdated || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            return filtered;
+        }
+
+        function renderRegistries(registries) {
+            const container = document.getElementById('registriesContainer');
+            
+            if (registries.length === 0) {
+                container.innerHTML = '<div class="empty-state" role="status" aria-live="polite">No registries found matching your criteria</div>';
+                document.getElementById('pagination').style.display = 'none';
+                announceToScreenReader('No registries found');
+                return;
+            }
+
+            announceToScreenReader(`Displaying ${registries.length} registries`);
+
+            // Pagination
+            const totalPages = Math.ceil(registries.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedRegistries = registries.slice(startIndex, endIndex);
+
+            container.innerHTML = paginatedRegistries.map(registry => {
+                const isFavorite = favorites.includes(registry.id);
+                const lastUpdated = registry.lastUpdated ? new Date(registry.lastUpdated).toLocaleDateString() : 'Unknown';
+                
+                return `
+                <div class="card" onclick="showRegistryModal('${registry.id}')" style="position: relative;" 
+                     role="button" tabindex="0" 
+                     aria-label="View details for ${registry.name}"
+                     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showRegistryModal('${registry.id}');}">
+                    <button class="card-favorite ${isFavorite ? 'active' : ''}" 
+                            onclick="toggleFavorite('${registry.id}', event)" 
+                            aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}"
+                            aria-pressed="${isFavorite}">
+                        ${isFavorite ? '★' : '☆'}
+                    </button>
+                    
+                    <div class="card-header">
+                        <div>
+                            <span class="category category-${registry.category}">${registry.category}</span>
+                            ${registry.type ? `<span class="type-badge">${registry.type}</span>` : ''}
+                        </div>
+                        <div class="status-indicator status-${registry.status || 'healthy'}">
+                            <span class="status-dot"></span>
+                            ${(registry.status || 'healthy').charAt(0).toUpperCase() + (registry.status || 'healthy').slice(1)}
+                        </div>
+                    </div>
+                    
+                    <h2>${registry.name}</h2>
+                    <p class="description">${registry.description}</p>
+                    
+                    <div class="tags">
+                        ${registry.tags.slice(0, 8).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        ${registry.tags.length > 8 ? `<span class="tag">+${registry.tags.length - 8}</span>` : ''}
+                    </div>
+
+                    <div class="use-cases">
+                        <h3>Use Cases</h3>
+                        <ul>
+                            ${registry.useCases.slice(0, 4).map(uc => `<li>${uc}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="card-metrics">
+                        <div class="metric">
+                            <span class="metric-value">${registry.itemCount !== undefined ? registry.itemCount.toLocaleString() : '-'}</span>
+                            <span class="metric-label">Items</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">${registry.tags.length}</span>
+                            <span class="metric-label">Tags</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">${registry.useCases.length}</span>
+                            <span class="metric-label">Use Cases</span>
+                        </div>
+                    </div>
+
+                    <div class="card-timestamp">
+                        Last updated: ${lastUpdated}
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="card-action-btn" onclick="showRegistryModal('${registry.id}'); event.stopPropagation();">
+                            View Details
+                        </button>
+                        <button class="card-action-btn" onclick="copyEndpoint('${registry.endpoint}', event)">
+                            Copy Endpoint
+                        </button>
+                        <button class="card-action-btn" onclick="shareRegistry('${registry.id}', event)">
+                            Share
+                        </button>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="${API_BASE}${registry.endpoint}" target="_blank" onclick="event.stopPropagation();">
+                            View API Endpoint →
+                        </a>
+                        ${registry.schema ? `<span class="schema-info">v${registry.schema.version}</span>` : ''}
+                    </div>
+                </div>
+            `;
+            }).join('');
+
+            // Render pagination
+            if (totalPages > 1) {
+                renderPagination(totalPages);
+            } else {
+                document.getElementById('pagination').style.display = 'none';
+            }
+        }
+
+        function renderPagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+
+            pagination.style.display = 'flex';
+            let html = '';
+
+            // Previous button
+            html += `<button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+
+            // Page numbers
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                html += `<button class="pagination-btn" onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) html += `<span style="color: #9ca3af;">...</span>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<span style="color: #9ca3af;">...</span>`;
+                html += `<button class="pagination-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+
+            // Next button
+            html += `<button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filterRegistries(allRegistries).length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderRegistries(filterRegistries(allRegistries));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update button states
+            document.querySelectorAll('.controls .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.btn').classList.add('active');
+
+            // Re-render
+            renderRegistries(filterRegistries(allRegistries));
+        }
+
+        function handleSearch(event) {
+            // Debounce search
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                searchQuery = event.target.value;
+                currentPage = 1; // Reset to first page on new search
+                renderRegistries(filterRegistries(allRegistries));
+            }, 300);
+        }
+
+        function viewRegistry(registryId) {
+            showRegistryModal(registryId);
+        }
+
+        // Keyboard shortcuts and navigation
+        document.addEventListener('keydown', (e) => {
+            // ESC to close modal or clear filters
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('registryModal');
+                if (modal && modal.classList.contains('active')) {
+                    closeModal();
+                    e.preventDefault();
+                } else {
+                    const filtersPanel = document.getElementById('filtersPanel');
+                    if (filtersPanel && filtersPanel.style.display !== 'none') {
+                        toggleFilters();
+                    }
+                }
+            }
+            // / to focus search
+            if (e.key === '/' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'SELECT') {
+                e.preventDefault();
+                document.getElementById('searchInput')?.focus();
+            }
+            // Ctrl/Cmd + K for quick actions (open filters)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                toggleFilters();
+            }
+        });
+
+        // Add ARIA live region for screen readers
+        const ariaLive = document.createElement('div');
+        ariaLive.setAttribute('role', 'status');
+        ariaLive.setAttribute('aria-live', 'polite');
+        ariaLive.setAttribute('aria-atomic', 'true');
+        ariaLive.className = 'sr-only';
+        ariaLive.id = 'ariaLive';
+        document.body.appendChild(ariaLive);
+
+        function announceToScreenReader(message) {
+            const liveRegion = document.getElementById('ariaLive');
+            if (liveRegion) {
+                liveRegion.textContent = message;
+                setTimeout(() => {
+                    liveRegion.textContent = '';
+                }, 1000);
+            }
+        }
+
+        function refreshRegistries() {
+            loadRegistries();
+        }
+
+        /**
+         * Initialize feature-specific components based on UI context
+         * Components are conditionally rendered server-side by HTMLRewriter,
+         * but we can enhance them client-side here
+         */
+        function initializeFeatureComponents() {
+            // Shadow Graph Visualization (admin-only feature)
+            if (uiContext.featureFlags.shadowGraph && uiContext.userRole === 'admin') {
+                const shadowGraphSection = document.getElementById('shadow-graph-section');
+                if (shadowGraphSection) {
+                    shadowGraphSection.style.display = 'block';
+                    loadShadowGraphVisualization();
+                    if (uiContext.debugMode) {
+                        console.log('[Registry] Initializing Shadow Graph component');
+                    }
+                }
+            }
+
+            // Covert Steam Alerts
+            if (uiContext.featureFlags.covertSteamAlerts) {
+                const alertsSection = document.getElementById('covert-steam-alerts-section');
+                if (alertsSection) {
+                    alertsSection.style.display = 'block';
+                    loadCovertSteamAlerts();
+                    if (uiContext.debugMode) {
+                        console.log('[Registry] Initializing Covert Steam Alerts');
+                    }
+                }
+            }
+
+            // Statistical Analysis Dashboard
+            if (uiContext.featureFlags.statisticalAnalysis) {
+                const statsSection = document.getElementById('statistical-analysis-section');
+                if (statsSection) {
+                    statsSection.style.display = 'block';
+                    loadStatisticalAnalysis();
+                    if (uiContext.debugMode) {
+                        console.log('[Registry] Initializing Statistical Analysis Dashboard');
+                    }
+                }
+            }
+        }
+
+        /**
+         * Load Shadow Graph Visualization
+         */
+        async function loadShadowGraphVisualization() {
+            const container = document.getElementById('graph-container');
+            if (!container) return;
+
+            try {
+                // Create SVG canvas for graph visualization
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '400');
+                svg.setAttribute('viewBox', '0 0 800 400');
+                svg.style.display = 'block';
+                svg.style.margin = '0 auto';
+
+                // Sample graph data - nodes and edges
+                const nodes = [
+                    { id: 'node1', x: 150, y: 200, label: 'Market A', color: '#667eea' },
+                    { id: 'node2', x: 400, y: 100, label: 'Market B', color: '#764ba2' },
+                    { id: 'node3', x: 650, y: 200, label: 'Market C', color: '#f093fb' },
+                    { id: 'node4', x: 400, y: 300, label: 'Hub', color: '#00d4ff' },
+                ];
+
+                const edges = [
+                    { from: 'node1', to: 'node2', weight: 0.85 },
+                    { from: 'node2', to: 'node3', weight: 0.72 },
+                    { from: 'node1', to: 'node4', weight: 0.91 },
+                    { from: 'node4', to: 'node3', weight: 0.68 },
+                ];
+
+                // Draw edges
+                edges.forEach(edge => {
+                    const fromNode = nodes.find(n => n.id === edge.from);
+                    const toNode = nodes.find(n => n.id === edge.to);
+                    if (fromNode && toNode) {
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', fromNode.x);
+                        line.setAttribute('y1', fromNode.y);
+                        line.setAttribute('x2', toNode.x);
+                        line.setAttribute('y2', toNode.y);
+                        line.setAttribute('stroke', `rgba(102, 126, 234, ${edge.weight})`);
+                        line.setAttribute('stroke-width', edge.weight * 3);
+                        line.setAttribute('opacity', '0.6');
+                        svg.appendChild(line);
+
+                        // Add weight label
+                        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        text.setAttribute('x', (fromNode.x + toNode.x) / 2);
+                        text.setAttribute('y', (fromNode.y + toNode.y) / 2 - 5);
+                        text.setAttribute('fill', '#00d4ff');
+                        text.setAttribute('font-size', '12');
+                        text.setAttribute('text-anchor', 'middle');
+                        text.textContent = (edge.weight * 100).toFixed(0) + '%';
+                        svg.appendChild(text);
+                    }
+                });
+
+                // Draw nodes
+                nodes.forEach(node => {
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', node.x);
+                    circle.setAttribute('cy', node.y);
+                    circle.setAttribute('r', '30');
+                    circle.setAttribute('fill', node.color);
+                    circle.setAttribute('stroke', '#fff');
+                    circle.setAttribute('stroke-width', '2');
+                    circle.style.cursor = 'pointer';
+                    svg.appendChild(circle);
+
+                    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    label.setAttribute('x', node.x);
+                    label.setAttribute('y', node.y + 50);
+                    label.setAttribute('fill', '#e0e0e0');
+                    label.setAttribute('font-size', '14');
+                    label.setAttribute('text-anchor', 'middle');
+                    label.setAttribute('font-weight', '600');
+                    label.textContent = node.label;
+                    svg.appendChild(label);
+                });
+
+                container.innerHTML = '';
+                container.appendChild(svg);
+
+                // Add legend
+                const legend = document.createElement('div');
+                legend.style.marginTop = '20px';
+                legend.style.display = 'flex';
+                legend.style.justifyContent = 'center';
+                legend.style.gap = '20px';
+                legend.style.flexWrap = 'wrap';
+                legend.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 20px; height: 20px; border-radius: 50%; background: #667eea;"></div>
+                        <span style="color: #9ca3af; font-size: 0.9em;">Market Nodes</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 30px; height: 2px; background: rgba(102, 126, 234, 0.6);"></div>
+                        <span style="color: #9ca3af; font-size: 0.9em;">Correlation Edges</span>
+                    </div>
+                `;
+                container.appendChild(legend);
+            } catch (error) {
+                container.innerHTML = `<p style="color: #ef4444;">Error loading graph: ${error.message}</p>`;
+            }
+        }
+
+        /**
+         * Load Covert Steam Alerts
+         */
+        async function loadCovertSteamAlerts() {
+            const container = document.getElementById('alerts-list');
+            if (!container) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/miniapp/alerts/covert-steam`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const alerts = data.alerts || [];
+                    
+                    if (alerts.length > 0) {
+                        // Create header with stats
+                        const header = document.createElement('div');
+                        header.style.display = 'flex';
+                        header.style.justifyContent = 'space-between';
+                        header.style.alignItems = 'center';
+                        header.style.marginBottom = '15px';
+                        header.style.paddingBottom = '15px';
+                        header.style.borderBottom = '2px solid rgba(245, 158, 11, 0.3)';
+                        header.innerHTML = `
+                            <div>
+                                <strong style="color: #f59e0b; font-size: 1.1em;">Total Alerts: ${data.total || alerts.length}</strong>
+                            </div>
+                            <div style="display: flex; gap: 15px; font-size: 0.9em;">
+                                <span style="color: #ef4444;">🔴 Critical: ${alerts.filter(a => a.severity >= 9).length}</span>
+                                <span style="color: #f59e0b;">🟠 High: ${alerts.filter(a => a.severity >= 7 && a.severity < 9).length}</span>
+                                <span style="color: #10b981;">🟢 Low: ${alerts.filter(a => a.severity < 7).length}</span>
+                            </div>
+                        `;
+                        
+                        const alertsHTML = alerts.slice(0, 10).map(alert => {
+                            const severity = alert.severity || 0;
+                            const severityColor = severity >= 9 ? '#ef4444' : severity >= 7 ? '#f59e0b' : '#10b981';
+                            const severityLabel = severity >= 9 ? 'Critical' : severity >= 7 ? 'High' : 'Low';
+                            const timestamp = new Date(alert.timestamp || Date.now());
+                            
+                            return `
+                                <div style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid ${severityColor}; padding: 15px; margin-bottom: 12px; border-radius: 8px; transition: all 0.2s; cursor: pointer;" 
+                                     onmouseover="this.style.background='rgba(245, 158, 11, 0.2)'; this.style.transform='translateX(4px)'"
+                                     onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.transform='translateX(0)'"
+                                     onclick="window.open('${alert.deep_link || '#'}', '_blank')">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                        <div style="flex: 1;">
+                                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                                <strong style="color: #f59e0b; font-size: 1em;">${alert.title || alert.event_identifier || 'Unknown Alert'}</strong>
+                                                <span style="background: ${severityColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 600;">
+                                                    ${severityLabel} (${severity.toFixed(1)})
+                                                </span>
+                                            </div>
+                                            <div style="display: flex; gap: 15px; font-size: 0.85em; color: #9ca3af; margin-top: 5px;">
+                                                <span>📊 ${alert.bookmaker || 'Unknown Bookmaker'}</span>
+                                                <span>🕐 ${timestamp.toLocaleString()}</span>
+                                                ${alert.market_node_id ? `<span>🔗 Node: ${alert.market_node_id.substring(0, 8)}...</span>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p style="color: #e0e0e0; margin: 0; font-size: 0.9em; line-height: 1.5;">
+                                        ${alert.description || `Event detected on ${alert.bookmaker || 'unknown bookmaker'} with severity score ${severity.toFixed(1)}`}
+                                    </p>
+                                    ${alert.deep_link ? `
+                                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(245, 158, 11, 0.2);">
+                                            <a href="${alert.deep_link}" target="_blank" 
+                                               style="color: #00d4ff; text-decoration: none; font-size: 0.85em; display: inline-flex; align-items: center; gap: 5px;"
+                                               onclick="event.stopPropagation()">
+                                                🔗 Open in Mini App →
+                                            </a>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('');
+                        
+                        container.innerHTML = '';
+                        container.appendChild(header);
+                        container.insertAdjacentHTML('beforeend', alertsHTML);
+                        
+                        // Add refresh button
+                        const refreshBtn = document.createElement('button');
+                        refreshBtn.textContent = '🔄 Refresh Alerts';
+                        refreshBtn.style.cssText = 'width: 100%; padding: 10px; margin-top: 15px; background: rgba(245, 158, 11, 0.2); border: 2px solid #f59e0b; border-radius: 6px; color: #f59e0b; cursor: pointer; font-weight: 600; transition: all 0.2s;';
+                        refreshBtn.onmouseover = () => {
+                            refreshBtn.style.background = 'rgba(245, 158, 11, 0.3)';
+                        };
+                        refreshBtn.onmouseout = () => {
+                            refreshBtn.style.background = 'rgba(245, 158, 11, 0.2)';
+                        };
+                        refreshBtn.onclick = () => loadCovertSteamAlerts();
+                        container.appendChild(refreshBtn);
+                    } else {
+                        container.innerHTML = `
+                            <div style="text-align: center; padding: 40px;">
+                                <div style="font-size: 3em; margin-bottom: 15px;">✅</div>
+                                <p style="color: #10b981; font-size: 1.1em; margin-bottom: 5px;">No Active Alerts</p>
+                                <p style="color: #9ca3af; font-size: 0.9em;">All systems are operating normally</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: #9ca3af;">
+                            <p>⚠️ Alerts API not available</p>
+                            <p style="font-size: 0.85em; margin-top: 5px;">Status: ${response.status} ${response.statusText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #ef4444;">
+                        <p>❌ Error loading alerts</p>
+                        <p style="font-size: 0.85em; margin-top: 5px; color: #9ca3af;">${error.message}</p>
+                        <button onclick="loadCovertSteamAlerts()" 
+                                style="margin-top: 10px; padding: 8px 16px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 4px; color: #ef4444; cursor: pointer;">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Load Statistical Analysis Dashboard
+         */
+        async function loadStatisticalAnalysis() {
+            const container = document.getElementById('statistical-analysis-container');
+            if (!container) return;
+
+            try {
+                // Create visual charts using SVG
+                const chartsContainer = document.createElement('div');
+                chartsContainer.style.display = 'grid';
+                chartsContainer.style.gridTemplateColumns = 'repeat(auto-fit, minmax(300px, 1fr))';
+                chartsContainer.style.gap = '20px';
+
+                // Category Distribution Chart
+                const categoryChart = createBarChart('Category Distribution', allRegistries.reduce((acc, r) => {
+                    acc[r.category] = (acc[r.category] || 0) + 1;
+                    return acc;
+                }, {}), '#10b981');
+                chartsContainer.appendChild(categoryChart);
+
+                // Status Distribution Chart
+                const statusChart = createBarChart('Status Distribution', allRegistries.reduce((acc, r) => {
+                    const status = r.status || 'healthy';
+                    acc[status] = (acc[status] || 0) + 1;
+                    return acc;
+                }, {}), '#667eea');
+                chartsContainer.appendChild(statusChart);
+
+                container.innerHTML = '';
+                container.appendChild(chartsContainer);
+            } catch (error) {
+                container.innerHTML = `<p style="color: #ef4444;">Error loading statistics: ${error.message}</p>`;
+            }
+        }
+
+        /**
+         * Create a simple bar chart using SVG
+         */
+        function createBarChart(title, data, color) {
+            const chartDiv = document.createElement('div');
+            chartDiv.style.background = 'rgba(26, 31, 58, 0.5)';
+            chartDiv.style.borderRadius = '8px';
+            chartDiv.style.padding = '20px';
+
+            const titleEl = document.createElement('h3');
+            titleEl.textContent = title;
+            titleEl.style.color = '#667eea';
+            titleEl.style.marginBottom = '20px';
+            titleEl.style.fontSize = '1em';
+            chartDiv.appendChild(titleEl);
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '200');
+            svg.setAttribute('viewBox', '0 0 300 200');
+
+            const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+            const maxValue = Math.max(...entries.map(([_, v]) => v));
+            const barWidth = 250 / entries.length;
+            const maxBarHeight = 150;
+
+            entries.forEach(([label, value], index) => {
+                const barHeight = (value / maxValue) * maxBarHeight;
+                const x = 30 + index * barWidth;
+                const y = 180 - barHeight;
+
+                // Bar
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x);
+                rect.setAttribute('y', y);
+                rect.setAttribute('width', barWidth - 5);
+                rect.setAttribute('height', barHeight);
+                rect.setAttribute('fill', color);
+                rect.setAttribute('rx', '4');
+                svg.appendChild(rect);
+
+                // Value label
+                const valueText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                valueText.setAttribute('x', x + barWidth / 2 - 5);
+                valueText.setAttribute('y', y - 5);
+                valueText.setAttribute('fill', '#e0e0e0');
+                valueText.setAttribute('font-size', '12');
+                valueText.setAttribute('text-anchor', 'middle');
+                valueText.textContent = value;
+                svg.appendChild(valueText);
+
+                // Label
+                const labelText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                labelText.setAttribute('x', x + barWidth / 2 - 5);
+                labelText.setAttribute('y', 195);
+                labelText.setAttribute('fill', '#9ca3af');
+                labelText.setAttribute('font-size', '10');
+                labelText.setAttribute('text-anchor', 'middle');
+                labelText.textContent = label.substring(0, 8);
+                svg.appendChild(labelText);
+            });
+
+            chartDiv.appendChild(svg);
+            return chartDiv;
+        }
+
+        /**
+         * Format system time (matches Bun CLI dashboard format)
+         * Uses toLocaleTimeString() to match test runner and CLI output
+         */
+        function formatSystemTime(date) {
+            if (!date) {
+                date = new Date();
+            }
+            return date.toLocaleTimeString();
+        }
+
+        // Update header system time and last update
+        function updateHeaderTime() {
+            const timeStr = formatSystemTime();
+            const headerTimeEl = document.getElementById('headerSystemTime');
+            if (headerTimeEl) {
+                headerTimeEl.textContent = timeStr;
+            }
+        }
+        
+        // Update footer times
+        function updateFooterTimes() {
+            const timeStr = formatSystemTime();
+            const footerSystemTime = document.getElementById('footerSystemTime');
+            if (footerSystemTime) {
+                footerSystemTime.textContent = timeStr;
+            }
+            if (window.timezoneUtils) {
+                window.timezoneUtils.updateTimezoneConstantsDisplay();
+            }
+        }
+        
+        // Update header time every second
+        setInterval(updateHeaderTime, 1000);
+        updateHeaderTime(); // Initial update
+        
+        // Update footer times every second
+        setInterval(updateFooterTimes, 1000);
+        updateFooterTimes(); // Initial update
+        
+        // Initial load
+        loadRegistries();
+
+        // Auto-refresh every 60 seconds
+        setInterval(loadRegistries, 60000);
+    </script>
+</body>
+</html>

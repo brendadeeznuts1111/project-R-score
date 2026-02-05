@@ -1,0 +1,45 @@
+{
+  "name": "@bench/core",
+  "version": "1.0.0",
+  "description": "Core benchmarking utilities for NEXUS monorepo",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "bun test",
+    "bench": "bun run src/cli.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.internal.yourcompany.com",
+    "access": "restricted"
+  },
+  "metadata": {
+    "team": {
+      "lead": "bench-core-lead@company.com",
+      "maintainers": [
+        "bench-maintainer-1@company.com"
+      ],
+      "owners": [
+        "bench-owner-1@company.com"
+      ]
+    },
+    "ownership": {
+      "scope": "@bench",
+      "team": "bench-core-team",
+      "repository": "github.com/company/monorepo/packages/bench/core"
+    },
+    "benchmarks": {
+      "enabled": true,
+      "suite": "@bench/core",
+      "thresholds": {
+        "performance": 100,
+        "memory": 50,
+        "regression": 0.05
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "col_93_mcp_search_score": 0.8612858659258902,
+    "col_94_acp_latency_ns": 417911291,
+    "col_89_query_hash": "1tqh8pxdwppqk",
+    "col_90_scope": "all",
+    "request_id": "8003ccda-8fc7-4c5f-881c-d15674cb1238",
+    "timestamp": "2026-01-31T05:15:55.234Z"
+  },
+  {
+    "col_93_mcp_search_score": 0.99,
+    "col_94_acp_latency_ns": 408902125,
+    "col_89_query_hash": "2e2ejnitjxye",
+    "col_90_scope": "all",
+    "request_id": "7e476a0d-a407-48e2-9b60-5bb5deab2e2e",
+    "timestamp": "2026-01-31T05:16:04.449Z"
+  },
+  {
+    "col_93_mcp_search_score": 0.99,
+    "col_94_acp_latency_ns": 413963792,
+    "col_89_query_hash": "2e2ejnitjxye",
+    "col_90_scope": "all",
+    "request_id": "31f05c1c-25dd-4460-a824-cff765295235",
+    "timestamp": "2026-01-31T05:16:15.536Z"
+  },
+  {
+    "col_93_mcp_search_score": 0.99,
+    "col_94_acp_swarm_size": 3,
+    "col_91_agent_status": "MCP_ENHANCED_V3",
+    "col_89_compliance": false,
+    "col_90_quantum_hash": "11894225264962412778",
+    "latency_ns": 426028750,
+    "timestamp": "2026-01-31T05:16:15.538Z"
+  }
+]

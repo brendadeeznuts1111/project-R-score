@@ -1,0 +1,55 @@
+{
+  "mode": "SIMULATED",
+  "components": {
+    "r2": {
+      "real": false,
+      "source": "Demo Configuration",
+      "warning": "Using local filesystem simulation",
+      "details": {
+        "accountId": false,
+        "accessKey": false,
+        "secretKey": false,
+        "endpoint": false
+      }
+    },
+    "mcp": {
+      "real": false,
+      "source": "partial/missing",
+      "warning": "Missing: filesystem, git, fetch, context7",
+      "details": {
+        "installed": [
+          "github"
+        ],
+        "missing": [
+          "filesystem",
+          "git",
+          "fetch",
+          "context7"
+        ],
+        "count": "1/5"
+      }
+    },
+    "secrets": {
+      "real": false,
+      "source": "None",
+      "warning": "No secure secret storage configured",
+      "details": {
+        "osKeychainWorking": false,
+        "envSecretsCount": 0,
+        "testPassed": false
+      }
+    }
+  },
+  "risks": [
+    "R2 storage simulated — no cloud redundancy",
+    "MCP servers partially installed",
+    "Secrets management not fully configured"
+  ],
+  "recommendations": [
+    "✅ System operational in secure local-only mode",
+    "To connect cloud: bun run setup:r2 for R2 configuration",
+    "To configure secrets: bun run secrets:enterprise:set",
+    "Use --mode=simulate explicitly for development work"
+  ],
+  "timestamp": "2026-02-01T19:03:58.366Z"
+}

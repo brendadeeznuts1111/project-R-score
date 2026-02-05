@@ -1,0 +1,26 @@
+
+# Enterprise Tenant Configuration
+tenant:
+  id: demo-enterprise-tenant
+  name: Demo Enterprise Tenant
+  tier: enterprise
+
+enterprise:
+  storage:
+    provider: r2
+    encryption: true
+    retention_days: 90
+
+  domains:
+    provider: cloudflare
+    pattern: "{tenant}.factory-wager.com"
+
+  monitoring:
+    openclaw: true
+    alerts: ["backup", "domain", "security"]
+
+  compliance:
+    level: SOC2
+    audit_log: true
+    data_residency: US
+  

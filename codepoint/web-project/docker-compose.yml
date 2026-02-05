@@ -1,0 +1,165 @@
+# Docker Compose configuration for Bun Proxy API
+# Supports private registry integration and development
+
+version: '3.8'
+
+services:
+  # Development service
+  bun-proxy-dev:
+    build:
+      context: .
+      target: dev
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DEBUG=true
+      - PORT=3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    secrets:
+      - npm_token
+    command: bun --watch run index.ts
+    profiles:
+      - dev
+
+  # Production service
+  bun-proxy:
+    build:
+      context: .
+      target: production
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    secrets:
+      - npm_token
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    profiles:
+      - prod
+
+  # Package publishing service
+  publisher:
+    build:
+      context: .
+      target: publisher
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    environment:
+      - NODE_ENV=production
+      - REGISTRY_URL=${REGISTRY_URL:-https://registry.your-org.com}
+      - PACKAGE_NAME=${PACKAGE_NAME:-@your-org/bun-proxy-api}
+    secrets:
+      - npm_token
+    command: bun run publish
+    profiles:
+      - publish
+
+  # Private registry (Verdaccio) for testing
+  registry:
+    image: verdaccio/verdaccio:5
+    ports:
+      - "4873:4873"
+    environment:
+      - VERDACCIO_PORT=4873
+    volumes:
+      - ./docker/verdaccio/conf:/verdaccio/conf
+      - ./docker/verdaccio/storage:/verdaccio/storage
+      - ./docker/verdaccio/plugins:/verdaccio/plugins
+    profiles:
+      - registry
+
+  # Redis for caching (if using Redis cache)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - cache
+
+  # PostgreSQL for metrics storage (if using database persistence)
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=bun_proxy_metrics
+      - POSTGRES_USER=bun_proxy
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-bun_proxy_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bun_proxy -d bun_proxy_metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - database
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    profiles:
+      - monitoring
+
+  # Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+    profiles:
+      - monitoring
+
+volumes:
+  redis_data:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+
+secrets:
+  npm_token:
+    file: .npmrc
+    environment: NPM_AUTH_TOKEN
+
+networks:
+  default:
+    name: bun-proxy-network
+    driver: bridge

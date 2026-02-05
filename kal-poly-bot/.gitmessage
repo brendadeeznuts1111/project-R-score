@@ -1,0 +1,46 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+
+# Type must be one of the following:
+#   feat:     A new feature
+#   fix:      A bug fix
+#   docs:     Documentation only changes
+#   style:    Changes that do not affect the meaning of the code
+#   refactor: A code change that neither fixes a bug nor adds a feature
+#   perf:     A code change that improves performance
+#   test:     Adding missing tests or correcting existing tests
+#   chore:    Changes to the build process or auxiliary tools
+#   build:    Changes that affect the build system or external dependencies
+#   ci:       Changes to CI configuration files and scripts
+#
+# Scope is optional and can be anything specifying the place of the commit change
+# Examples: bun-utils, plugin-system, matrix-tool, lsp-integration
+#
+# Subject line:
+#   - Use imperative, present tense: "change" not "changed" nor "changes"
+#   - Don't capitalize the first letter
+#   - No period (.) at the end
+#   - Maximum 72 characters
+#
+# Body:
+#   - Use imperative, present tense: "change" not "changed" nor "changes"
+#   - Include motivation for the change and contrast with previous behavior
+#   - Wrap at 72 characters
+#   - Reference issues and pull requests liberally
+#
+# Footer:
+#   - Reference issues and pull requests
+#   - Breaking changes should be marked with BREAKING CHANGE:
+#
+# Examples:
+#   feat(bun-utils): add PrecisionLogger with Bun.write() support
+#
+#   Add immutable logging utility using Bun-native APIs for zero-collateral
+#   operations. Includes microsecond precision timing and atomic file writes.
+#
+#   Closes #123
+#
+#   BREAKING CHANGE: Removed legacy Node.js logging utilities

@@ -1,0 +1,19 @@
+# Hot Reloading Demo Configuration
+# This file will be monitored for changes
+
+server:
+  port: 3000
+  host: localhost
+
+features:
+  debug: true
+  verbose: false
+  newDashboard: false
+
+logging:
+  level: info
+  format: pretty
+
+performance:
+  simdEnabled: true
+  workerThreads: 4

@@ -1,0 +1,17 @@
+name = "tier1380-production"
+main = "tier1380-worker.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[[env.production.r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "scanner-cookies"
+
+[env.staging]
+vars = { ENVIRONMENT = "staging" }
+
+[[env.staging.r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "scanner-cookies"

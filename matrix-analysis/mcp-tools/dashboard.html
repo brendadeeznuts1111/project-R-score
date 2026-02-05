@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tier-1380 Live Violation Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 8px;
+            border: 1px solid #2a2a3e;
+        }
+        
+        .header h1 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+        
+        .status {
+            color: #888;
+            margin-top: 10px;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        
+        .metric-card h3 {
+            color: #00ff88;
+            margin: 0 0 10px 0;
+            font-size: 0.9em;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .chart-container {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+            height: 400px;
+        }
+        
+        .violation-log {
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .violation-log h3 {
+            color: #00ff88;
+            margin: 0 0 20px 0;
+        }
+        
+        .violation {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid;
+            background: rgba(255, 255, 255, 0.02);
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.9em;
+        }
+        
+        .violation.critical {
+            border-left-color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+        
+        .violation.warning {
+            border-left-color: #ffaa00;
+            background: rgba(255, 170, 0, 0.1);
+        }
+        
+        .violation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .timestamp {
+            color: #888;
+            font-size: 0.8em;
+        }
+        
+        .location {
+            color: #00aaff;
+            font-weight: bold;
+        }
+        
+        .cols {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .preview {
+            background: #0a0a0a;
+            padding: 8px;
+            border-radius: 3px;
+            overflow-x: auto;
+            white-space: pre;
+            color: #ccc;
+            font-size: 0.85em;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .connection-status.connected {
+            background: #00ff88;
+            color: #000;
+        }
+        
+        .connection-status.disconnected {
+            background: #ff4444;
+            color: #fff;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: #00cc6a;
+            transform: translateY(-1px);
+        }
+        
+        .btn.danger {
+            background: #ff4444;
+            color: #fff;
+        }
+        
+        .btn.danger:hover {
+            background: #cc3333;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🔴 Tier-1380 Live Violation Dashboard</h1>
+            <div class="status">Real-time Col-89 width violation monitoring</div>
+        </div>
+        
+        <div class="connection-status" id="connection-status">
+            Connecting...
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <h3>Total Violations</h3>
+                <div class="metric-value" id="total-violations">0</div>
+            </div>
+            <div class="metric-card">
+                <h3>Critical</h3>
+                <div class="metric-value" id="critical-violations" style="color: #ff4444;">0</div>
+            </div>
+            <div class="metric-card">
+                <h3>Warnings</h3>
+                <div class="metric-value" id="warning-violations" style="color: #ffaa00;">0</div>
+            </div>
+            <div class="metric-card">
+                <h3>Active Connections</h3>
+                <div class="metric-value" id="active-connections">0</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="triggerTestViolation()">Trigger Test Violation</button>
+            <button class="btn danger" onclick="clearLog()">Clear Log</button>
+            <button class="btn" onclick="exportViolations()">Export Data</button>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="violation-chart"></canvas>
+        </div>
+        
+        <div class="violation-log">
+            <h3>📋 Live Violation Log</h3>
+            <div id="violation-log-content">
+                <div style="text-align: center; color: #666; padding: 40px;">
+                    Waiting for violations...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        let source;
+        let chart;
+        let metrics = {
+            total: 0,
+            critical: 0,
+            warning: 0
+        };
+        
+        // Initialize Chart.js
+        const ctx = document.getElementById('violation-chart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Line Width (chars)',
+                    data: [],
+                    borderColor: '#00ff88',
+                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Critical Threshold',
+                    data: [],
+                    borderColor: '#ff4444',
+                    borderDash: [5, 5],
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#e0e0e0' }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#888' },
+                        grid: { color: '#333' }
+                    },
+                    y: {
+                        ticks: { color: '#888' },
+                        grid: { color: '#333' },
+                        suggestedMin: 80,
+                        suggestedMax: 120
+                    }
+                }
+            }
+        });
+        
+        // Get CSRF token (mock for demo)
+        async function getCSRFToken() {
+            return 'valid-csrf-token';
+        }
+        
+        // Connect to SSE stream
+        async function connectStream() {
+            const token = await getCSRFToken();
+            source = new EventSource(`http://localhost:1381/mcp/alerts/stream?tenant=*`, {
+                headers: { 'X-CSRF-Token': token }
+            });
+            
+            source.addEventListener('violation', (e) => {
+                const data = JSON.parse(e.data);
+                handleViolation(data);
+            });
+            
+            source.addEventListener('connected', (e) => {
+                console.log('🔴 Live violation stream connected:', e.data);
+                updateConnectionStatus(true);
+                const connData = JSON.parse(e.data);
+                document.getElementById('active-connections').textContent = 
+                    CONNECTIONS.size || 1;
+            });
+            
+            source.addEventListener('error', (e) => {
+                console.error('SSE connection error:', e);
+                updateConnectionStatus(false);
+                
+                // Auto-reconnect after 3 seconds
+                setTimeout(() => {
+                    console.log('🔄 Attempting to reconnect...');
+                    connectStream();
+                }, 3000);
+            });
+        }
+        
+        function handleViolation(data) {
+            // Update metrics
+            metrics.total++;
+            if (data.severity === 'critical') {
+                metrics.critical++;
+            } else {
+                metrics.warning++;
+            }
+            
+            updateMetricsDisplay();
+            
+            // Add to log
+            appendViolationToLog(data);
+            
+            // Update chart
+            updateChart(data);
+            
+            // Browser notification for critical violations
+            if (data.severity === 'critical' && document.hidden) {
+                new Notification('Tier-1380 Critical Violation', {
+                    body: `${data.file}:${data.line} → ${data.column} cols`,
+                    icon: '/favicon.ico'
+                });
+            }
+        }
+        
+        function updateMetricsDisplay() {
+            document.getElementById('total-violations').textContent = metrics.total;
+            document.getElementById('critical-violations').textContent = metrics.critical;
+            document.getElementById('warning-violations').textContent = metrics.warning;
+        }
+        
+        function appendViolationToLog(data) {
+            const logContent = document.getElementById('violation-log-content');
+            
+            // Clear placeholder if this is the first violation
+            if (metrics.total === 1) {
+                logContent.innerHTML = '';
+            }
+            
+            const entry = document.createElement('div');
+            entry.className = `violation ${data.severity}`;
+            entry.innerHTML = `
+                <div class="violation-header">
+                    <span class="timestamp">${new Date(data.timestamp).toLocaleTimeString()}</span>
+                    <span class="location">${data.file}:${data.line}</span>
+                    <span class="cols">${data.column}c</span>
+                </div>
+                <div class="preview">${data.preview}</div>
+            `;
+            
+            logContent.prepend(entry);
+            
+            // Keep only last 50 violations
+            while (logContent.children.length > 50) {
+                logContent.removeChild(logContent.lastChild);
+            }
+        }
+        
+        function updateChart(data) {
+            const time = new Date(data.timestamp).toLocaleTimeString();
+            
+            chart.data.labels.push(time);
+            chart.data.datasets[0].data.push(data.column);
+            chart.data.datasets[1].data.push(89); // Critical threshold line
+            
+            // Keep only last 20 data points
+            if (chart.data.labels.length > 20) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+                chart.data.datasets[1].data.shift();
+            }
+            
+            chart.update('none'); // Efficient update without animation
+        }
+        
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connection-status');
+            status.textContent = connected ? 'Connected' : 'Disconnected';
+            status.className = `connection-status ${connected ? 'connected' : 'disconnected'}`;
+        }
+        
+        // Control functions
+        window.triggerTestViolation = async () => {
+            try {
+                const response = await fetch('http://localhost:1381/mcp/alerts/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cookie': 'session=session-demo',
+                        'X-CSRF-Token': 'valid-csrf-token'
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Test violation triggered');
+                }
+            } catch (error) {
+                console.error('❌ Failed to trigger test violation:', error);
+            }
+        };
+        
+        window.clearLog = () => {
+            document.getElementById('violation-log-content').innerHTML = 
+                '<div style="text-align: center; color: #666; padding: 40px;">Log cleared</div>';
+            metrics = { total: 0, critical: 0, warning: 0 };
+            updateMetricsDisplay();
+        };
+        
+        window.exportViolations = () => {
+            const violations = Array.from(document.querySelectorAll('.violation')).map(el => {
+                const header = el.querySelector('.violation-header');
+                const preview = el.querySelector('.preview');
+                return {
+                    timestamp: header.querySelector('.timestamp').textContent,
+                    location: header.querySelector('.location').textContent,
+                    cols: header.querySelector('.cols').textContent,
+                    preview: preview.textContent,
+                    severity: el.classList.contains('critical') ? 'critical' : 'warning'
+                };
+            });
+            
+            const blob = new Blob([JSON.stringify(violations, null, 2)], { 
+                type: 'application/json' 
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `violations-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+        // Request notification permissions
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+        
+        // Initialize connection
+        connectStream();
+    </script>
+</body>
+</html>

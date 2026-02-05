@@ -1,0 +1,136 @@
+# Bun 1.3 Performance Alerting Rules
+# Performance Validated Alerting Configuration
+
+groups:
+  - name: bun_performance_alerts
+    rules:
+      # High Request Rate Alert
+      - alert: HighRequestRate
+        expr: rate(http_requests_total[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: betting-platform
+        annotations:
+          summary: "High request rate detected"
+          description: "Request rate is {{ $value | printf \"%.2f\" }} req/s, above threshold of 1000 req/s"
+          runbook_url: "https://docs.betting-platform.com/alerts/high-request-rate"
+
+      # High Error Rate Alert
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: betting-platform
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | printf \"%.2f%%\" }}, above threshold of 5%"
+          runbook_url: "https://docs.betting-platform.com/alerts/high-error-rate"
+
+      # High Response Time Alert
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 0.01
+        for: 3m
+        labels:
+          severity: warning
+          service: betting-platform
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value | printf \"%.3f\" }}s, above threshold of 10ms"
+          runbook_url: "https://docs.betting-platform.com/alerts/high-response-time"
+
+      # High Memory Usage Alert
+      - alert: HighMemoryUsage
+        expr: process_memory_heap_used / process_memory_heap_total > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: betting-platform
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | printf \"%.1f%%\" }}, above threshold of 90%"
+          runbook_url: "https://docs.betting-platform.com/alerts/high-memory-usage"
+
+      # Database Connection Pool Exhausted
+      - alert: DatabaseConnectionPoolExhausted
+        expr: pg_stat_database_numbackends > 180
+        for: 2m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Database has {{ $value }} connections, approaching limit of 200"
+          runbook_url: "https://docs.betting-platform.com/alerts/db-connection-pool"
+
+      # Redis Memory Usage High
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: cache
+        annotations:
+          summary: "Redis memory usage high"
+          description: "Redis memory usage is {{ $value | printf \"%.1f%%\" }}, above threshold of 90%"
+          runbook_url: "https://docs.betting-platform.com/alerts/redis-memory"
+
+      # Service Down Alert
+      - alert: BettingPlatformDown
+        expr: up{job="betting-platform"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: betting-platform
+        annotations:
+          summary: "Betting Platform is down"
+          description: "Betting Platform has been down for more than 1 minute"
+          runbook_url: "https://docs.betting-platform.com/alerts/service-down"
+
+      # WebSocket Connection Issues
+      - alert: WebSocketConnectionIssues
+        expr: rate(websocket_connections_total{status="error"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: betting-platform
+        annotations:
+          summary: "WebSocket connection errors detected"
+          description: "WebSocket connection error rate is {{ $value | printf \"%.1f\" }}/s"
+          runbook_url: "https://docs.betting-platform.com/alerts/websocket-errors"
+
+  - name: system_performance_alerts
+    rules:
+      # System CPU High
+      - alert: SystemCPUHigh
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "System CPU usage high"
+          description: "CPU usage is {{ $value | printf \"%.1f%%\" }}, above threshold of 90%"
+
+      # System Memory High
+      - alert: SystemMemoryHigh
+        expr: 100 - ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "System memory usage high"
+          description: "Memory usage is {{ $value | printf \"%.1f%%\" }}, above threshold of 90%"
+
+      # Disk Space Low
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Disk space running low"
+          description: "Disk space available is {{ $value | printf \"%.1f%%\" }}, below threshold of 10%"

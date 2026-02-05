@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Shortcuts Lite - Live Usage Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes shortcut-highlight {
+            0% { background-color: rgba(59, 130, 246, 0.1); }
+            50% { background-color: rgba(59, 130, 246, 0.3); }
+            100% { background-color: rgba(59, 130, 246, 0.1); }
+        }
+        
+        .shortcut-active {
+            animation: shortcut-highlight 0.5s ease-in-out;
+        }
+        
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .shortcut-key {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-family: monospace;
+            font-size: 12px;
+            display: inline-block;
+        }
+        
+        .tab-button {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 6px 6px 0 0;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button.active {
+            background: #1f2937;
+            border-bottom-color: #1f2937;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">🚀 Keyboard Shortcuts Lite - Live Usage Demo</h1>
+            <div class="flex space-x-4">
+                <button onclick="showShortcuts()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+                    Show All Shortcuts (Ctrl+/)
+                </button>
+                <button onclick="toggleTheme()" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded">
+                    Toggle Theme (Ctrl+Shift+T)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Tab Navigation -->
+        <div class="flex space-x-2 mb-6">
+            <button class="tab-button active" onclick="switchTab('basic')">Basic Usage</button>
+            <button class="tab-button" onclick="switchTab('advanced')">Advanced Features</button>
+            <button class="tab-button" onclick="switchTab('react')">React Integration</button>
+            <button class="tab-button" onclick="switchTab('vue')">Vue Integration</button>
+            <button class="tab-button" onclick="switchTab('performance')">Performance</button>
+        </div>
+
+        <!-- Basic Usage Tab -->
+        <div id="basic-tab" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Interactive Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">🎮 Interactive Demo</h2>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Try these shortcuts:</label>
+                            <div class="space-y-2 text-sm">
+                                <div><span class="shortcut-key">Ctrl+S</span> Save (simulated)</div>
+                                <div><span class="shortcut-key">Ctrl+N</span> New file</div>
+                                <div><span class="shortcut-key">Ctrl+O</span> Open file</div>
+                                <div><span class="shortcut-key">Ctrl+Z</span> Undo</div>
+                                <div><span class="shortcut-key">Ctrl+Y</span> Redo</div>
+                                <div><span class="shortcut-key">Ctrl+B</span> Bold text</div>
+                                <div><span class="shortcut-key">Ctrl+I</span> Italic text</div>
+                                <div><span class="shortcut-key">F11</span> Toggle fullscreen</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Text Editor:</label>
+                            <textarea 
+                                id="textEditor" 
+                                class="w-full h-32 bg-gray-700 border border-gray-600 rounded p-3 text-sm"
+                                placeholder="Type here and try the shortcuts... (Ctrl+B for bold, Ctrl+I for italic)"
+                            ></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Status:</label>
+                            <div id="status" class="bg-gray-700 rounded p-3 text-sm font-mono">
+                                Ready. Try pressing Ctrl+S to save...
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Action Log:</label>
+                            <div id="actionLog" class="bg-gray-700 rounded p-3 h-32 overflow-y-auto text-xs font-mono">
+                                <div class="text-gray-400">Actions will appear here...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Example -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">💻 Basic Usage Code</h2>
+                    <div class="code-block">
+                        <pre class="text-green-400">// Import the library
+import { shortcuts } from 'keyboard-shortcuts-lite';
+
+// Register shortcuts
+shortcuts.register('ctrl+s', () => {
+    console.log('Save triggered!');
+    saveFile();
+});
+
+shortcuts.register('ctrl+n', () => {
+    console.log('New file created');
+    createNewFile();
+});
+
+shortcuts.register('ctrl+b', () => {
+    document.execCommand('bold');
+});
+
+// Initialize the system
+shortcuts.init();
+
+// Your application continues...</pre>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold mb-2">Installation:</h3>
+                        <div class="code-block">
+                            <pre class="text-blue-400"># Using npm
+npm install keyboard-shortcuts-lite
+
+# Using yarn
+yarn add keyboard-shortcuts-lite
+
+# Using bun (recommended)
+bun add keyboard-shortcuts-lite</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Features Tab -->
+        <div id="advanced-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Advanced Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">🚀 Advanced Features</h2>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Advanced Shortcuts:</label>
+                            <div class="space-y-2 text-sm">
+                                <div><span class="shortcut-key">Ctrl+K Ctrl+S</span> Save and close (sequence)</div>
+                                <div><span class="shortcut-key">Ctrl+Shift+P</span> Command palette</div>
+                                <div><span class="shortcut-key">Ctrl+Enter</span> Toggle edit mode</div>
+                                <div><span class="shortcut-key">Ctrl+Shift+T</span> Toggle theme</div>
+                                <div><span class="shortcut-key">Ctrl+1-9</span> Switch to tab</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Command Palette:</label>
+                            <div id="commandPalette" class="bg-gray-700 rounded p-3 hidden">
+                                <input 
+                                    type="text" 
+                                    id="commandInput"
+                                    class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-sm"
+                                    placeholder="Type a command..."
+                                />
+                                <div id="commandResults" class="mt-2 space-y-1 text-xs"></div>
+                            </div>
+                            <button onclick="toggleCommandPalette()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">
+                                Open Command Palette (Ctrl+Shift+P)
+                            </button>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Edit Mode:</label>
+                            <div id="editMode" class="bg-gray-700 rounded p-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">Edit Mode: <span id="editModeStatus" class="font-bold">OFF</span></span>
+                                    <button onclick="toggleEditMode()" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs">
+                                        Toggle (Ctrl+Enter)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">⚡ Advanced Code</h2>
+                    <div class="code-block">
+                        <pre class="text-green-400">// Advanced configuration
+const config = {
+    preventDefault: true,
+    stopPropagation: true,
+    throttle: 16,
+    debug: true
+};
+
+// Multi-key sequences
+shortcuts.register('ctrl+k ctrl+s', () => {
+    saveAndClose();
+}, { sequence: true });
+
+// Conditional shortcuts
+shortcuts.register('ctrl+enter', () => {
+    if (isEditMode()) {
+        exitEditMode();
+    } else {
+        enterEditMode();
+    }
+}, { condition: () => true });
+
+// Dynamic shortcuts
+shortcuts.register('ctrl+shift+p', () => {
+    showCommandPalette();
+}, { dynamic: true });
+
+// Initialize with config
+shortcuts.init(config);</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- React Integration Tab -->
+        <div id="react-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- React Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">⚛️ React Integration</h2>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">React Component Features:</label>
+                            <div class="space-y-2 text-sm">
+                                <div>✅ Context-based shortcut management</div>
+                                <div>✅ Automatic cleanup on unmount</div>
+                                <div>✅ Type-safe shortcut registration</div>
+                                <div>✅ Component-scoped shortcuts</div>
+                                <div>✅ Hook-based API</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">React Shortcuts:</label>
+                            <div class="space-y-2 text-sm">
+                                <div><span class="shortcut-key">Ctrl+S</span> Save in React</div>
+                                <div><span class="shortcut-key">Ctrl+Z</span> Undo in React</div>
+                                <div><span class="shortcut-key">Ctrl+Shift+R</span> Reset state</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- React Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">📝 React Code</h2>
+                    <div class="code-block">
+                        <pre class="text-blue-400">// React Hook Integration
+import { useKeyboardShortcuts } from './useKeyboardShortcuts';
+
+const TextEditor = () => {
+    const [content, setContent] = useState('');
+    const { registerShortcut } = useKeyboardShortcuts();
+    
+    useEffect(() => {
+        registerShortcut('ctrl+s', () => {
+            saveContent();
+        });
+        
+        registerShortcut('ctrl+z', () => {
+            undo();
+        });
+    }, [registerShortcut]);
+    
+    return (
+        &lt;textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+        /&gt;
+    );
+};
+
+// Context Provider
+export const KeyboardShortcutsProvider = ({ children }) => {
+    // Provider implementation
+};</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vue Integration Tab -->
+        <div id="vue-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Vue Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">🟢 Vue Integration</h2>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Vue Composable Features:</label>
+                            <div class="space-y-2 text-sm">
+                                <div>✅ Composition API integration</div>
+                                <div>✅ Reactive shortcut management</div>
+                                <div>✅ Lifecycle-aware cleanup</div>
+                                <div>✅ TypeScript support</div>
+                                <div>✅ Plugin system ready</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Vue Shortcuts:</label>
+                            <div class="space-y-2 text-sm">
+                                <div><span class="shortcut-key">Ctrl+S</span> Save in Vue</div>
+                                <div><span class="shortcut-key">Ctrl+R</span> Refresh data</div>
+                                <div><span class="shortcut-key">Ctrl+E</span> Edit mode</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vue Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">📝 Vue Code</h2>
+                    <div class="code-block">
+                        <pre class="text-green-400">// Vue Composable
+import { useKeyboardShortcuts } from './useKeyboardShortcuts';
+
+export default {
+    setup() {
+        const content = ref('');
+        const { register } = useKeyboardShortcuts();
+        
+        onMounted(() => {
+            register('ctrl+s', () => {
+                saveContent();
+            });
+            
+            register('ctrl+r', () => {
+                refreshData();
+            });
+        });
+        
+        return {
+            content
+        };
+    }
+};
+
+// Composable implementation
+export function useKeyboardShortcuts() {
+    const manager = shortcuts;
+    
+    onMounted(() => manager.init());
+    onUnmounted(() => manager.destroy());
+    
+    return {
+        register: manager.register.bind(manager),
+        unregister: manager.unregister.bind(manager)
+    };
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Tab -->
+        <div id="performance-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Performance Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">📊 Performance Monitoring</h2>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Performance Metrics:</label>
+                            <div id="performanceMetrics" class="space-y-2 text-sm font-mono">
+                                <div>Registrations: <span id="regCount" class="text-green-400">0</span></div>
+                                <div>Executions: <span id="execCount" class="text-blue-400">0</span></div>
+                                <div>Avg Time: <span id="avgTime" class="text-yellow-400">0ms</span></div>
+                                <div>Errors: <span id="errorCount" class="text-red-400">0</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <button onclick="runPerformanceTest()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm">
+                                Run Performance Test
+                            </button>
+                            <button onclick="resetMetrics()" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-sm ml-2">
+                                Reset Metrics
+                            </button>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Stress Test:</label>
+                            <button onclick="runStressTest()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm">
+                                Run Stress Test (1000 shortcuts)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">⚡ Performance Code</h2>
+                    <div class="code-block">
+                        <pre class="text-purple-400">// Performance Monitoring
+class PerformanceMonitor {
+    constructor() {
+        this.metrics = {
+            registrations: 0,
+            executions: 0,
+            averageTime: 0,
+            errors: 0
+        };
+        
+        this.setupTracking();
+    }
+    
+    setupTracking() {
+        // Track registration time
+        const originalRegister = shortcuts.register;
+        shortcuts.register = (key, callback, options) => {
+            const start = performance.now();
+            const result = originalRegister(key, callback, options);
+            const end = performance.now();
+            
+            this.metrics.registrations++;
+            console.log(`Registered ${key} in ${(end-start).toFixed(2)}ms`);
+            return result;
+        };
+    }
+    
+    getMetrics() {
+        return this.metrics;
+    }
+}
+
+const monitor = new PerformanceMonitor();</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 px-6 py-4 mt-12">
+        <div class="max-w-7xl mx-auto text-center text-sm text-gray-400">
+            <p>🚀 Keyboard Shortcuts Lite - Live Usage Demo</p>
+            <p>Press <span class="shortcut-key">Ctrl+/</span> to see all registered shortcuts</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        // Simulated keyboard-shortcuts-lite implementation for demo
+        class KeyboardShortcutsLite {
+            constructor() {
+                this.shortcuts = new Map();
+                this.isInitialized = false;
+                this.metrics = {
+                    registrations: 0,
+                    executions: 0,
+                    totalTime: 0,
+                    errors: 0
+                };
+            }
+            
+            register(key, callback, options = {}) {
+                const start = performance.now();
+                
+                this.shortcuts.set(key.toLowerCase(), {
+                    callback,
+                    options: {
+                        preventDefault: true,
+                        stopPropagation: true,
+                        ...options
+                    }
+                });
+                
+                this.metrics.registrations++;
+                const end = performance.now();
+                this.metrics.totalTime += (end - start);
+                
+                console.log(`✅ Registered shortcut: ${key}`);
+                return () => this.unregister(key);
+            }
+            
+            unregister(key) {
+                this.shortcuts.delete(key.toLowerCase());
+                console.log(`❌ Unregistered shortcut: ${key}`);
+            }
+            
+            init(config = {}) {
+                if (this.isInitialized) return;
+                
+                this.isInitialized = true;
+                this.config = config;
+                
+                document.addEventListener('keydown', this.handleKeyDown.bind(this));
+                console.log('🚀 Keyboard shortcuts initialized');
+            }
+            
+            handleKeyDown(event) {
+                const key = this.getKeyString(event);
+                const shortcut = this.shortcuts.get(key);
+                
+                if (shortcut) {
+                    const start = performance.now();
+                    
+                    try {
+                        if (shortcut.options.preventDefault) {
+                            event.preventDefault();
+                        }
+                        
+                        if (shortcut.options.stopPropagation) {
+                            event.stopPropagation();
+                        }
+                        
+                        shortcut.callback(event);
+                        this.metrics.executions++;
+                        
+                        const end = performance.now();
+                        this.metrics.totalTime += (end - start);
+                        
+                        // Visual feedback
+                        document.body.classList.add('shortcut-active');
+                        setTimeout(() => {
+                            document.body.classList.remove('shortcut-active');
+                        }, 500);
+                        
+                    } catch (error) {
+                        this.metrics.errors++;
+                        console.error('Shortcut error:', error);
+                    }
+                }
+            }
+            
+            getKeyString(event) {
+                const parts = [];
+                
+                if (event.ctrlKey) parts.push('ctrl');
+                if (event.altKey) parts.push('alt');
+                if (event.shiftKey) parts.push('shift');
+                if (event.metaKey) parts.push('meta');
+                
+                let key = event.key.toLowerCase();
+                if (key === ' ') key = 'space';
+                if (key === 'arrowup') key = 'up';
+                if (key === 'arrowdown') key = 'down';
+                if (key === 'arrowleft') key = 'left';
+                if (key === 'arrowright') key = 'right';
+                
+                parts.push(key);
+                return parts.join('+');
+            }
+            
+            getRegisteredShortcuts() {
+                return Array.from(this.shortcuts.keys());
+            }
+            
+            getMetrics() {
+                return {
+                    ...this.metrics,
+                    averageTime: this.metrics.executions > 0 ? 
+                        this.metrics.totalTime / this.metrics.executions : 0
+                };
+            }
+        }
+        
+        // Initialize the demo
+        const shortcuts = new KeyboardShortcutsLite();
+        let editMode = false;
+        let commandPaletteOpen = false;
+        let isFullscreen = false;
+        let currentTheme = 'dark';
+        
+        // Demo state
+        let files = [];
+        let activeFile = null;
+        let actionHistory = [];
+        
+        // Basic shortcuts
+        shortcuts.register('ctrl+s', () => {
+            updateStatus('💾 Saving file...');
+            logAction('File saved');
+            setTimeout(() => updateStatus('✅ File saved successfully!'), 500);
+        });
+        
+        shortcuts.register('ctrl+n', () => {
+            const fileName = `Untitled-${files.length + 1}.txt`;
+            files.push({ name: fileName, content: '' });
+            activeFile = files[files.length - 1];
+            updateStatus(`📄 Created new file: ${fileName}`);
+            logAction(`Created file: ${fileName}`);
+        });
+        
+        shortcuts.register('ctrl+o', () => {
+            updateStatus('📁 Opening file dialog...');
+            logAction('File dialog opened');
+        });
+        
+        shortcuts.register('ctrl+z', () => {
+            updateStatus('↩️ Undo action');
+            logAction('Undo performed');
+        });
+        
+        shortcuts.register('ctrl+y', () => {
+            updateStatus('↪️ Redo action');
+            logAction('Redo performed');
+        });
+        
+        shortcuts.register('ctrl+b', () => {
+            document.execCommand('bold');
+            updateStatus('📝 Bold applied');
+            logAction('Bold text applied');
+        });
+        
+        shortcuts.register('ctrl+i', () => {
+            document.execCommand('italic');
+            updateStatus('📝 Italic applied');
+            logAction('Italic text applied');
+        });
+        
+        shortcuts.register('f11', () => {
+            isFullscreen = !isFullscreen;
+            if (isFullscreen) {
+                document.documentElement.requestFullscreen();
+                updateStatus('🖥️ Fullscreen mode');
+            } else {
+                document.exitFullscreen();
+                updateStatus('📐 Windowed mode');
+            }
+            logAction(`Fullscreen ${isFullscreen ? 'enabled' : 'disabled'}`);
+        });
+        
+        shortcuts.register('ctrl+/', () => {
+            showShortcuts();
+        });
+        
+        shortcuts.register('ctrl+shift+t', () => {
+            toggleTheme();
+        });
+        
+        // Advanced shortcuts
+        shortcuts.register('ctrl+k ctrl+s', () => {
+            updateStatus('💾 Saving and closing...');
+            logAction('Save and close');
+            setTimeout(() => updateStatus('✅ File saved and closed'), 500);
+        }, { sequence: true });
+        
+        shortcuts.register('ctrl+shift+p', () => {
+            toggleCommandPalette();
+        });
+        
+        shortcuts.register('ctrl+enter', () => {
+            toggleEditMode();
+        });
+        
+        shortcuts.register('ctrl+1', () => switchTab('basic'));
+        shortcuts.register('ctrl+2', () => switchTab('advanced'));
+        shortcuts.register('ctrl+3', () => switchTab('react'));
+        shortcuts.register('ctrl+4', () => switchTab('vue'));
+        shortcuts.register('ctrl+5', () => switchTab('performance'));
+        
+        // Helper functions
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+        
+        function logAction(action) {
+            const log = document.getElementById('actionLog');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.textContent = `[${time}] ${action}`;
+            entry.className = 'text-green-400';
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            actionHistory.push({ time, action });
+        }
+        
+        function showShortcuts() {
+            const registered = shortcuts.getRegisteredShortcuts();
+            alert(`Registered Shortcuts:\n\n${registered.map(s => `• ${s.toUpperCase()}`).join('\n')}`);
+        }
+        
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            if (currentTheme === 'light') {
+                document.body.classList.add('light-theme');
+                updateStatus('☀️ Light theme enabled');
+            } else {
+                document.body.classList.remove('light-theme');
+                updateStatus('🌙 Dark theme enabled');
+            }
+            logAction(`Theme changed to ${currentTheme}`);
+        }
+        
+        function toggleCommandPalette() {
+            commandPaletteOpen = !commandPaletteOpen;
+            const palette = document.getElementById('commandPalette');
+            const input = document.getElementById('commandInput');
+            
+            if (commandPaletteOpen) {
+                palette.classList.remove('hidden');
+                input.focus();
+                updateStatus('🔍 Command palette opened');
+                logAction('Command palette opened');
+            } else {
+                palette.classList.add('hidden');
+                updateStatus('Command palette closed');
+                logAction('Command palette closed');
+            }
+        }
+        
+        function toggleEditMode() {
+            editMode = !editMode;
+            document.getElementById('editModeStatus').textContent = editMode ? 'ON' : 'OFF';
+            updateStatus(`✏️ Edit mode ${editMode ? 'enabled' : 'disabled'}`);
+            logAction(`Edit mode ${editMode ? 'enabled' : 'disabled'}`);
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+            
+            updateStatus(`📑 Switched to ${tabName} tab`);
+            logAction(`Switched to ${tabName} tab`);
+        }
+        
+        function runPerformanceTest() {
+            updateStatus('🏃 Running performance test...');
+            const start = performance.now();
+            
+            // Register 100 shortcuts rapidly
+            for (let i = 0; i < 100; i++) {
+                shortcuts.register(`ctrl+${i}`, () => {
+                    console.log(`Test shortcut ${i}`);
+                });
+            }
+            
+            const end = performance.now();
+            const metrics = shortcuts.getMetrics();
+            
+            updateStatus(`✅ Performance test completed in ${(end - start).toFixed(2)}ms`);
+            updatePerformanceMetrics();
+            logAction(`Performance test: 100 shortcuts registered in ${(end - start).toFixed(2)}ms`);
+        }
+        
+        function runStressTest() {
+            updateStatus('🔥 Running stress test...');
+            const start = performance.now();
+            
+            // Register 1000 shortcuts
+            for (let i = 0; i < 1000; i++) {
+                shortcuts.register(`ctrl+shift+${i}`, () => {
+                    console.log(`Stress test shortcut ${i}`);
+                });
+            }
+            
+            const end = performance.now();
+            updateStatus(`🔥 Stress test completed: 1000 shortcuts in ${(end - start).toFixed(2)}ms`);
+            updatePerformanceMetrics();
+            logAction(`Stress test: 1000 shortcuts registered in ${(end - start).toFixed(2)}ms`);
+        }
+        
+        function resetMetrics() {
+            shortcuts.metrics = {
+                registrations: 0,
+                executions: 0,
+                totalTime: 0,
+                errors: 0
+            };
+            updatePerformanceMetrics();
+            updateStatus('📊 Metrics reset');
+            logAction('Performance metrics reset');
+        }
+        
+        function updatePerformanceMetrics() {
+            const metrics = shortcuts.getMetrics();
+            document.getElementById('regCount').textContent = metrics.registrations;
+            document.getElementById('execCount').textContent = metrics.executions;
+            document.getElementById('avgTime').textContent = metrics.averageTime.toFixed(2) + 'ms';
+            document.getElementById('errorCount').textContent = metrics.errors;
+        }
+        
+        // Initialize
+        shortcuts.init();
+        updateStatus('🚀 Keyboard shortcuts demo ready!');
+        updatePerformanceMetrics();
+        
+        // Make functions globally available
+        window.switchTab = switchTab;
+        window.showShortcuts = showShortcuts;
+        window.toggleTheme = toggleTheme;
+        window.toggleCommandPalette = toggleCommandPalette;
+        window.toggleEditMode = toggleEditMode;
+        window.runPerformanceTest = runPerformanceTest;
+        window.runStressTest = runStressTest;
+        window.resetMetrics = resetMetrics;
+        
+        console.log('🎮 Keyboard Shortcuts Lite Demo Initialized');
+        console.log('Try pressing Ctrl+S, Ctrl+N, Ctrl+B, Ctrl+I, F11, or Ctrl+/');
+    </script>
+</body>
+</html>

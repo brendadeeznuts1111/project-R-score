@@ -1,0 +1,13 @@
+{
+  "region": "sa-east-1",
+  "status": "active",
+  "lastUpdate": 1769814201689,
+  "metrics": {
+    "parseTime": 1.923516998485007,
+    "testCount": 98,
+    "passRate": 0.8597122040837312,
+    "coverage": 0.9307625092640145,
+    "duration": 1111.9765416957653
+  },
+  "sealId": "tier1380-1769814201689-jr3jk4rmp2s"
+}

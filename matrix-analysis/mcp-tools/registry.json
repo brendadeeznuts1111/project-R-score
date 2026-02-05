@@ -1,0 +1,134 @@
+{
+  "rss/query": {
+    "name": "rss/query",
+    "description": "Query unified RSS feed with pattern matching",
+    "input": {
+      "pattern": "string",
+      "limit": "number",
+      "tier": 1380
+    },
+    "required": ["pattern"],
+    "returns": "array",
+    "category": "rss",
+    "tier": 1380
+  },
+  "rss/generate": {
+    "name": "rss/generate",
+    "description": "Generate RSS feed from audit data",
+    "input": {
+      "format": "string",
+      "include_metadata": "boolean",
+      "tenant": "string"
+    },
+    "required": ["format"],
+    "returns": "string",
+    "category": "rss",
+    "tier": 1380
+  },
+  "cdn/purge": {
+    "name": "cdn/purge",
+    "description": "Purge CDN cache for domain or path",
+    "input": {
+      "domain": "string",
+      "recursive": "boolean",
+      "confirm": true
+    },
+    "required": ["domain", "confirm"],
+    "returns": "object",
+    "category": "cdn",
+    "tier": 1380
+  },
+  "cdn/status": {
+    "name": "cdn/status",
+    "description": "Check CDN deployment status",
+    "input": {
+      "region": "string",
+      "detailed": "boolean"
+    },
+    "required": [],
+    "returns": "object",
+    "category": "cdn",
+    "tier": 1380
+  },
+  "audit/log": {
+    "name": "audit/log",
+    "description": "Append Col-89 violation or event to immutable log",
+    "input": {
+      "event": "string",
+      "width": "number",
+      "preview": "string",
+      "tenant": "string"
+    },
+    "required": ["event"],
+    "returns": "object",
+    "category": "audit",
+    "tier": 1380
+  },
+  "audit/scan": {
+    "name": "audit/scan",
+    "description": "Scan files for Col-89 violations",
+    "input": {
+      "path": "string",
+      "extensions": ["string"],
+      "max_width": "number",
+      "recursive": "boolean"
+    },
+    "required": ["path"],
+    "constraints": {
+      "max_width": { "minimum": 80, "maximum": 120 }
+    },
+    "returns": "array",
+    "category": "audit",
+    "tier": 1380
+  },
+  "telemetry/metrics": {
+    "name": "telemetry/metrics",
+    "description": "Collect system performance metrics",
+    "input": {
+      "interval": "number",
+      "metrics": ["string"],
+      "format": "string"
+    },
+    "required": ["metrics"],
+    "returns": "object",
+    "category": "telemetry",
+    "tier": 1380
+  },
+  "security/validate": {
+    "name": "security/validate",
+    "description": "Validate security context and permissions",
+    "input": {
+      "token": "string",
+      "action": "string",
+      "resource": "string"
+    },
+    "required": ["token", "action", "resource"],
+    "returns": "object",
+    "category": "security",
+    "tier": 1380
+  },
+  "system/info": {
+    "name": "system/info",
+    "description": "Get system information and status",
+    "input": {
+      "component": "string",
+      "verbose": "boolean"
+    },
+    "required": [],
+    "returns": "object",
+    "category": "system",
+    "tier": 1380
+  },
+  "system/health": {
+    "name": "system/health",
+    "description": "Perform comprehensive health check",
+    "input": {
+      "timeout": "number",
+      "include_external": "boolean"
+    },
+    "required": [],
+    "returns": "object",
+    "category": "system",
+    "tier": 1380
+  }
+}

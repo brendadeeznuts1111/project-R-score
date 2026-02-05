@@ -1,0 +1,42 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": true,
+    "declaration": false,
+    "sourceMap": false,
+    "removeComments": false,
+    "importHelpers": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    "downlevelIteration": true,
+    "types": []
+  },
+  "include": [
+    "./*.ts",
+    "./types.d.ts"
+  ],
+  "exclude": [
+    "../src/**/*",
+    "../node_modules/**/*"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "ESNext"
+    }
+  }
+}

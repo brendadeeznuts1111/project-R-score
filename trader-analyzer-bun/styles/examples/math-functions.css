@@ -1,0 +1,141 @@
+/**
+ * CSS Math Functions Examples
+ * 
+ * Demonstrates CSS mathematical functions that Bun evaluates at build time
+ * when all values are known constants (not variables).
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ * 
+ * Note: This file focuses on math functions. See media-query-ranges.css
+ * for modern media query range syntax examples.
+ */
+
+/* ==========================================================================
+   Standard Math Functions
+   ========================================================================== */
+
+.dynamic-sizing {
+	/* Clamp a value between minimum and maximum */
+	width: clamp(200px, 50%, 800px);
+	
+	/* Round to the nearest multiple */
+	padding: round(14.8px, 5px);
+	
+	/* Modulo - remainder after division */
+	margin: mod(100px, 30px);
+	
+	/* Remainder - similar to mod but handles negative differently */
+	spacing: rem(100px, 30px);
+	
+	/* Absolute value */
+	opacity: abs(-0.8);
+	
+	/* Sign - returns -1, 0, or 1 */
+	direction: sign(-5);
+}
+
+/* ==========================================================================
+   Trigonometric Functions
+   ========================================================================== */
+
+.trigonometry {
+	/* Sine - for circular motion */
+	transform: rotate(calc(sin(45deg) * 50deg));
+	
+	/* Cosine - for horizontal positioning */
+	transform-origin-x: calc(cos(30deg) * 100px);
+	
+	/* Tangent - for angles */
+	slope: tan(45deg);
+	
+	/* Inverse trigonometric functions */
+	angle-from-sine: asin(0.707);
+	angle-from-cosine: acos(0.866);
+	angle-from-tangent: atan(1);
+	
+	/* Two-argument arctangent */
+	angle-from-coords: atan2(50px, 100px);
+}
+
+/* ==========================================================================
+   Exponential Functions
+   ========================================================================== */
+
+.exponential {
+	/* Power - raise to exponent */
+	--scale-factor: pow(1.25, 3);
+	font-size: calc(16px * var(--scale-factor));
+	
+	/* Square root */
+	--sqrt-value: sqrt(2);
+	width: calc(100px * var(--sqrt-value));
+	
+	/* Exponential - e^x */
+	--exp-value: exp(1);
+	
+	/* Natural logarithm */
+	--log-value: log(2.718);
+	
+	/* Hypotenuse - sqrt(x² + y²) */
+	--distance: hypot(100px, 50px);
+	diagonal: var(--distance);
+}
+
+/* ==========================================================================
+   Complex Math Examples
+   ========================================================================== */
+
+.complex-math {
+	/* Golden ratio calculations */
+	--base-size: 16px;
+	--ratio: 1.618;
+	--size-1: calc(var(--base-size) * pow(var(--ratio), 1));
+	--size-2: calc(var(--base-size) * pow(var(--ratio), 2));
+	--size-3: calc(var(--base-size) * pow(var(--ratio), 3));
+	
+	font-size: var(--size-1);
+	line-height: var(--size-2);
+	margin: var(--size-3);
+}
+
+/* Circular positioning using trigonometry */
+.circular-layout {
+	--radius: 100px;
+	--angle: 45deg;
+	
+	/* Position element on circle */
+	transform: translate(
+		calc(cos(var(--angle)) * var(--radius)),
+		calc(sin(var(--angle)) * var(--radius))
+	);
+}
+
+/* Responsive scaling with exponential growth */
+.exponential-scaling {
+	--base: 1rem;
+	--exponent: 2;
+	
+	font-size: calc(var(--base) * pow(1.2, var(--exponent)));
+	padding: calc(var(--base) * pow(1.15, var(--exponent)));
+}
+
+/* ==========================================================================
+   Build-Time Evaluation Examples
+   ========================================================================== */
+
+/* These are evaluated at build time by Bun when values are constants */
+.build-time-evaluated {
+	/* Constants - evaluated at build time */
+	width: clamp(200px, 50%, 800px);
+	padding: round(14.8px, 5px); /* Evaluated to 15px */
+	transform: rotate(calc(sin(45deg) * 50deg)); /* Evaluated to 35.36deg */
+	--scale-factor: pow(1.25, 3); /* Evaluated to 1.953125 */
+	font-size: calc(16px * var(--scale-factor));
+}
+
+/* Variables - evaluated at runtime */
+.runtime-evaluated {
+	--dynamic-value: var(--user-input);
+	width: clamp(200px, var(--dynamic-value), 800px);
+	font-size: calc(16px * pow(1.25, var(--dynamic-exponent)));
+}

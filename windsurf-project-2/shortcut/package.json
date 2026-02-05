@@ -1,0 +1,63 @@
+{
+  "name": "lightning-shortcut-system",
+  "version": "1.0.0",
+  "type": "module",
+  "module": "src/main.ts",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "bun --watch src/main.ts",
+    "dev:3342": "bun --watch src/main.ts --port 3342",
+    "dev:unicode": "bun --watch src/main-unicode.ts",
+    "start": "bun src/main.ts",
+    "start:unicode": "bun src/main-unicode.ts",
+    "build": "bun build src/main.ts --outdir dist --target bun --minify",
+    "build:unicode": "bun build src/main-unicode.ts --outdir dist --target bun --minify",
+    "test": "bun test",
+    "test:core": "bun test src/tests/bun-v1.3.6-simple.test.ts",
+    "test:db": "bun test src/tests/toml-db-integration.test.ts",
+    "test:features": "bun test src/tests/bun-v1.3.6-simple.test.ts",
+    "test:integration": "bun test src/tests/toml-db-integration.test.ts",
+    "test:performance": "bun test src/tests/bun-v1.3.6-simple.test.ts",
+    "test:unicode": "bun test tests/unicode.test.ts",
+    "test:watch": "bun test --watch",
+    "db:migrate": "bun src/database/migrate.ts",
+    "generate": "bun src/scripts/generate-shortcuts.ts",
+    "toml:demo": "bun src/examples/toml-demo.ts",
+    "toml:validate": "bun src/examples/toml-validation.ts",
+    "toml:app": "bun src/examples/toml-app.ts",
+    "loaders:demo": "bun src/examples/bun-loaders-demo.ts",
+    "unicode:demo": "bun src/examples/unicode-demo.ts",
+    "unicode:benchmark": "bun run src/benchmarks/unicode-benchmark.ts",
+    "config:dev": "bun src/config/development.ts",
+    "config:prod": "bun src/config/production.ts",
+    "benchmark": "bun src/benchmarks/performance.ts",
+    "toml:build": "bun run build.sh",
+    "toml:dev": "bun src/cli/toml-cli.ts",
+    "toml:edit": "bun src/cli/toml-cli.ts edit",
+    "toml:validate": "bun src/cli/toml-cli.ts validate",
+    "toml:optimize": "bun src/cli/toml-cli.ts optimize",
+    "toml:audit": "bun src/cli/toml-cli.ts audit",
+    "toml:interactive": "bun src/cli/toml-cli.ts interactive",
+    "toml:patterns": "bun src/cli/toml-cli.ts patterns"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^25.0.10",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^1.6.0",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tailwind-merge": "^3.4.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

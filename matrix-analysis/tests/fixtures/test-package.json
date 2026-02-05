@@ -1,0 +1,29 @@
+{
+  "name": "test-package",
+  "version": "1.0.0",
+  "description": "Test package for testing infrastructure",
+  "main": "index.js",
+  "scripts": {
+    "test": "bun test",
+    "test:unit": "bun test src/**/*.test.ts",
+    "test:integration": "bun test tests/integration/**/*.test.ts",
+    "test:e2e": "bun test tests/e2e/**/*.test.ts",
+    "test:coverage": "bun test --coverage",
+    "test:watch": "bun test --watch"
+  },
+  "keywords": ["test", "bun", "typescript"],
+  "author": "Test Author",
+  "license": "MIT",
+  "dependencies": {
+    "bun": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.0"
+  },
+  "testConfig": {
+    "timeout": 10000,
+    "coverage": true,
+    "retryCount": 2,
+    "concurrency": 4
+  }
+}

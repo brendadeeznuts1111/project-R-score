@@ -1,0 +1,15 @@
+
+# This is my_file.toml - demonstrating the exact syntax from docs
+[app]
+name = "Bun Loader Demo"
+version = "1.0.0"
+port = 3000
+
+[database]
+type = "sqlite"
+path = "./data.db"
+
+[features]
+authentication = true
+caching = true
+logging = true

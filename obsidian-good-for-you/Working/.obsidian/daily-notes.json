@@ -1,0 +1,7 @@
+{
+  "format": "YYYY-MM-DD",
+  "template": "02 - SYSTEM/Templates/Daily Note Template.md",
+  "folder": "03 - REVIEWS/DAILY NOTES",
+  "folderFormat": "YYYY-MM",
+  "autorun": false
+}

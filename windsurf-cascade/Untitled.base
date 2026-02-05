@@ -1,0 +1,12 @@
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - type
+      - tags
+    sort:
+      - property: tags
+        direction: DESC
+      - property: type
+        direction: DESC

@@ -1,0 +1,86 @@
+# Bun Integration Configuration
+# This file demonstrates Bun's TOML support and advanced configuration
+
+[transpilation]
+# JSX transform mode: "react", "automatic", or "classic"
+jsx_transform = "automatic"
+
+# Module resolution strategy
+module_resolution = "auto"
+
+# Enable tree-shaking for production builds
+enable_tree_shaking = true
+
+# Drop console statements in production
+drop_console = false
+
+[loaders]
+# Custom file extension loaders
+".custom" = "js"
+".config" = "json"
+".locale" = "text"
+
+[define]
+# Build-time constants
+"process.env.NODE_ENV" = "development"
+"process.env.BUN_VERSION" = "auto"
+"process.env.PLATFORM" = "bun"
+"process.env.INTEGRATION_VERSION" = "1.0.0"
+
+[bundler]
+# Bundling configuration
+target = "browser"
+minify = true
+sourcemap = true
+splitting = true
+
+[server]
+# Static file server configuration
+port = 3000
+static_dir = "./public"
+host = "localhost"
+
+# MIME type mappings
+[server.mime_types]
+"js" = "application/javascript"
+"jsx" = "application/javascript"
+"ts" = "application/typescript"
+"tsx" = "application/typescript"
+"css" = "text/css"
+"html" = "text/html"
+"json" = "application/json"
+"toml" = "application/toml"
+"yaml" = "application/yaml"
+
+[features]
+# Enable/disable specific Bun features
+typescript_support = true
+jsx_support = true
+sqlite_support = true
+websocket_support = true
+file_watcher = true
+http_server = true
+
+[performance]
+# Performance optimization settings
+max_memory_usage = "512MB"
+gc_aggressive = false
+concurrent_compilation = true
+
+[logging]
+# Logging configuration
+level = "info"
+verbose = false
+log_file = "./logs/bun-integration.log"
+
+[development]
+# Development-specific settings
+hot_reload = true
+fast_refresh = true
+error_overlay = true
+
+[production]
+# Production-specific settings
+minify_all = true
+compress_output = true
+optimize_for_size = true

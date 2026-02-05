@@ -1,0 +1,18 @@
+{
+  "id": "demo-enterprise-tenant",
+  "name": "Demo Enterprise Tenant: demo-enterprise-tenant",
+  "tier": "enterprise",
+  "features": [
+    "r2-storage",
+    "custom-domains",
+    "openclaw-notifications",
+    "bunx-tools"
+  ],
+  "createdAt": "2026-02-01T04:00:21.739Z",
+  "enterprise": {
+    "domainPattern": "{tenant}.factory-wager.com",
+    "backupRetention": 90,
+    "monitoring": true,
+    "compliance": "SOC2"
+  }
+}

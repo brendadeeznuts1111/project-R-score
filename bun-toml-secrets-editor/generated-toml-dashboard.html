@@ -1,0 +1,715 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>TOML Editor Dashboard | Bun Dashboard</title>
+      <style>
+        
+  :root {
+    /* Bun Brand Colors */
+    --bun-primary: #fbf0df;
+    --bun-secondary: #000000;
+    --bun-accent: #3b82f6;
+    --bun-success: #22c55e;
+    --bun-warning: #f59e0b;
+    --bun-error: #ef4444;
+    
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-full: 9999px;
+    
+    /* Typography */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+        
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        
+        body {
+          background: var(--bun-secondary);
+          color: var(--bun-primary);
+          font-family: var(--font-sans);
+          line-height: 1.6;
+          min-height: 100vh;
+        }
+        
+        .dashboard-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: var(--space-xl);
+        }
+        
+        .dashboard-header {
+          text-align: center;
+          margin-bottom: var(--space-xl);
+        }
+        
+        .dashboard-title {
+          font-size: 2.5rem;
+          font-weight: 800;
+          margin-bottom: var(--space-sm);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: var(--space-sm);
+        }
+        
+        .dashboard-subtitle {
+          font-size: 1.125rem;
+          opacity: 0.8;
+        }
+        
+        .dashboard-content {
+          display: grid;
+          gap: var(--space-lg);
+        }
+        
+        .bun-button:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2);
+        }
+        
+        .bun-card {
+          transition: transform 0.2s ease;
+        }
+        
+        .bun-card:hover {
+          transform: translateY(-2px);
+        }
+      </style>
+    </head>
+    <body>
+      <div class="dashboard-container">
+        <header class="dashboard-header">
+          <h1 class="dashboard-title">
+            <span>🍞</span>
+            TOML Editor Dashboard
+          </h1>
+          <p class="dashboard-subtitle">Advanced TOML editing with validation and auto-completion</p>
+        </header>
+        
+        <main class="dashboard-content">
+          
+      
+    <div class="bun-version-display ">
+      
+        <div class="version-badge">
+          <span class="version-icon">🍞</span>
+          <span class="version-text">Bun v1.3.7</span>
+        </div>
+      
+      
+      
+        <div class="performance-features">
+          <span class="feature-badge">88x faster ANSI</span>
+          <span class="feature-badge">51.1% faster JSON5</span>
+          <span class="feature-badge">Native profiling</span>
+        </div>
+      
+    </div>
+  
+      
+    <div class="bun-card " style="
+      background: var(--bun-primary);
+      color: var(--bun-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      font-family: var(--font-sans);
+    ">
+      
+        <h3 class="card-title" style="
+          margin: 0 0 var(--space-md) 0;
+          font-size: 1.25rem;
+          font-weight: 700;
+        ">Active Files</h3>
+      
+      <div class="card-content">
+        
+          <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
+            <div>📄 config/golden-template.toml - Modified</div>
+            <div>📄 config/rss.toml - Saved</div>
+            <div>📄 config/secrets.toml - Encrypted</div>
+          </div>
+        
+      </div>
+    </div>
+  
+
+    <div class="bun-card " style="
+      background: var(--bun-primary);
+      color: var(--bun-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      font-family: var(--font-sans);
+    ">
+      
+        <h3 class="card-title" style="
+          margin: 0 0 var(--space-md) 0;
+          font-size: 1.25rem;
+          font-weight: 700;
+        ">Validation Status</h3>
+      
+      <div class="card-content">
+        ✅ All TOML files valid. 0 errors, 0 warnings.
+      </div>
+    </div>
+  
+      <div style="text-align: center; margin-top: var(--space-xl);">
+        
+    <button class="bun-button " style="
+      background: var(--bun-primary); color: var(--bun-secondary);
+      padding: var(--space-md) var(--space-lg); font-size: 1.125rem;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    ">
+      🚀 Refresh Dashboard
+    </button>
+  
+      </div>
+    
+        </main>
+      </div>
+    
+    <footer class="bun-footer footer-minimal theme-light">
+      <div class="footer-container">
+        
+    <div class="footer-content">
+      
+    <div class="footer-branding">
+      <div class="brand-logo">
+        <span class="brand-icon">🍞</span>
+        <span class="brand-text">Bun</span>
+      </div>
+      <p class="brand-description">
+        Ultra-fast JavaScript runtime, bundler, transpiler, and package manager all-in-one.
+      </p>
+      <div class="brand-version">
+        <span class="version-badge">v1.3.7</span>
+        <span class="performance-badge">88x faster</span>
+      </div>
+    </div>
+  
+      
+      
+    <div class="footer-links">
+      
+        <a href="#docs" class="footer-link" >
+          <span class="link-icon">📚</span>
+          <span class="link-text">Documentation</span>
+        </a>
+      
+        <a href="#api" class="footer-link" >
+          <span class="link-icon">🔧</span>
+          <span class="link-text">API Reference</span>
+        </a>
+      
+        <a href="https://github.com/oven-sh/bun" class="footer-link" target="_blank" rel="noopener noreferrer">
+          <span class="link-icon">🐙</span>
+          <span class="link-text">GitHub</span>
+        </a>
+      
+        <a href="https://discord.gg/bun" class="footer-link" target="_blank" rel="noopener noreferrer">
+          <span class="link-icon">💬</span>
+          <span class="link-text">Discord</span>
+        </a>
+      
+    </div>
+  
+      
+      
+    <div class="footer-social">
+      <h4 class="social-title">Connect</h4>
+      <div class="social-links">
+        
+          <a href="https://twitter.com/bunjavascript" class="social-link" target="_blank" rel="noopener noreferrer" title="Twitter/X">
+            <span class="social-icon">🐦</span>
+          </a>
+        
+          <a href="https://github.com/oven-sh/bun" class="social-link" target="_blank" rel="noopener noreferrer" title="GitHub">
+            <span class="social-icon">🐙</span>
+          </a>
+        
+          <a href="https://discord.gg/bun" class="social-link" target="_blank" rel="noopener noreferrer" title="Discord">
+            <span class="social-icon">💬</span>
+          </a>
+        
+          <a href="https://youtube.com/@bunjavascript" class="social-link" target="_blank" rel="noopener noreferrer" title="YouTube">
+            <span class="social-icon">📺</span>
+          </a>
+        
+          <a href="https://bun.sh/blog" class="social-link" target="_blank" rel="noopener noreferrer" title="Blog">
+            <span class="social-icon">📝</span>
+          </a>
+        
+      </div>
+    </div>
+  
+      
+      
+    <div class="footer-legal">
+      <div class="legal-links">
+        
+          <a href="#privacy" class="legal-link">Privacy Policy</a>
+        
+          <a href="#terms" class="legal-link">Terms of Service</a>
+        
+          <a href="#cookies" class="legal-link">Cookie Policy</a>
+        
+          <a href="#license" class="legal-link">License</a>
+        
+      </div>
+    </div>
+  
+    </div>
+  
+      </div>
+    </footer>
+    
+    <style>
+      /* Footer Base Styles */
+      .bun-footer {
+        background: var(--bun-secondary, #000000);
+        color: var(--bun-primary, #fbf0df);
+        font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+        margin-top: var(--space-2xl, 3rem);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .bun-footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+          transparent, 
+          var(--bun-primary, #fbf0df), 
+          transparent
+        );
+        opacity: 0.3;
+      }
+
+      .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--space-xl, 2rem);
+      }
+
+      /* Standard Footer */
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-lg, 1.5rem);
+      }
+
+      /* Comprehensive Footer */
+      .footer-comprehensive {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2xl, 3rem);
+      }
+
+      .footer-main {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+        gap: var(--space-xl, 2rem);
+      }
+
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: var(--space-lg, 1.5rem);
+        border-top: 1px solid rgba(251, 240, 223, 0.2);
+        flex-wrap: wrap;
+        gap: var(--space-md, 1rem);
+      }
+
+      /* Branding Section */
+      .footer-branding {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md, 1rem);
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm, 0.5rem);
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+
+      .brand-icon {
+        font-size: 1.8em;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-5px); }
+        60% { transform: translateY(-2px); }
+      }
+
+      .brand-description {
+        opacity: 0.8;
+        line-height: 1.6;
+        max-width: 300px;
+      }
+
+      .brand-version {
+        display: flex;
+        gap: var(--space-sm, 0.5rem);
+      }
+
+      .version-badge, .performance-badge {
+        background: var(--bun-primary, #fbf0df);
+        color: var(--bun-secondary, #000000);
+        padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+        border-radius: var(--radius-full, 9999px);
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      /* Links Section */
+      .footer-links {
+        display: flex;
+        gap: var(--space-lg, 1.5rem);
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs, 0.25rem);
+        color: var(--bun-primary, #fbf0df);
+        text-decoration: none;
+        opacity: 0.8;
+        transition: all var(--transition-base, 0.2s ease);
+        font-weight: 500;
+      }
+
+      .footer-link:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+      }
+
+      .link-icon {
+        font-size: 1em;
+      }
+
+      /* Social Section */
+      .footer-social {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md, 1rem);
+      }
+
+      .social-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .social-links {
+        display: flex;
+        gap: var(--space-sm, 0.5rem);
+      }
+
+      .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(251, 240, 223, 0.1);
+        border-radius: var(--radius-md, 0.5rem);
+        color: var(--bun-primary, #fbf0df);
+        text-decoration: none;
+        transition: all var(--transition-base, 0.2s ease);
+      }
+
+      .social-link:hover {
+        background: var(--bun-primary, #fbf0df);
+        color: var(--bun-secondary, #000000);
+        transform: translateY(-2px);
+      }
+
+      .social-icon {
+        font-size: 1.2em;
+      }
+
+      /* Legal Section */
+      .footer-legal {
+        display: flex;
+        justify-content: center;
+      }
+
+      .legal-links {
+        display: flex;
+        gap: var(--space-lg, 1.5rem);
+        flex-wrap: wrap;
+      }
+
+      .legal-link {
+        color: var(--bun-primary, #fbf0df);
+        text-decoration: none;
+        opacity: 0.6;
+        font-size: 0.875rem;
+        transition: opacity var(--transition-base, 0.2s ease);
+      }
+
+      .legal-link:hover {
+        opacity: 1;
+      }
+
+      /* Section Content */
+      .footer-section-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md, 1rem);
+      }
+
+      .section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: var(--space-xs, 0.25rem);
+      }
+
+      .section-links {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs, 0.25rem);
+      }
+
+      .section-link {
+        color: var(--bun-primary, #fbf0df);
+        text-decoration: none;
+        opacity: 0.8;
+        transition: all var(--transition-base, 0.2s ease);
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs, 0.25rem);
+      }
+
+      .section-link:hover {
+        opacity: 1;
+        transform: translateX(2px);
+      }
+
+      /* Stats Section */
+      .footer-stats {
+        display: flex;
+        gap: var(--space-lg, 1.5rem);
+        margin-top: var(--space-md, 1rem);
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--bun-accent, #3b82f6);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.7;
+      }
+
+      /* Newsletter Section */
+      .footer-newsletter {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md, 1rem);
+      }
+
+      .newsletter-title {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .newsletter-description {
+        opacity: 0.8;
+        font-size: 0.875rem;
+      }
+
+      .newsletter-form {
+        display: flex;
+        gap: var(--space-sm, 0.5rem);
+      }
+
+      .newsletter-input {
+        flex: 1;
+        background: rgba(251, 240, 223, 0.1);
+        border: 1px solid rgba(251, 240, 223, 0.3);
+        color: var(--bun-primary, #fbf0df);
+        padding: var(--space-sm, 0.5rem);
+        border-radius: var(--radius-md, 0.5rem);
+        font-family: inherit;
+      }
+
+      .newsletter-input::placeholder {
+        color: rgba(251, 240, 223, 0.5);
+      }
+
+      .newsletter-button {
+        background: var(--bun-primary, #fbf0df);
+        color: var(--bun-secondary, #000000);
+        border: none;
+        padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
+        border-radius: var(--radius-md, 0.5rem);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-base, 0.2s ease);
+      }
+
+      .newsletter-button:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+      }
+
+      /* Copyright Section */
+      .footer-copyright {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs, 0.25rem);
+        text-align: center;
+        opacity: 0.6;
+        font-size: 0.875rem;
+      }
+
+      /* Theme Variants */
+      .theme-light {
+        background: var(--bun-primary, #fbf0df);
+        color: var(--bun-secondary, #000000);
+      }
+
+      .theme-light .footer-link,
+      .theme-light .section-link,
+      .theme-light .legal-link {
+        color: var(--bun-secondary, #000000);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .footer-main {
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-lg, 1.5rem);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .footer-container {
+          padding: var(--space-lg, 1.5rem);
+        }
+
+        .footer-content {
+          flex-direction: column;
+          text-align: center;
+          gap: var(--space-lg, 1.5rem);
+        }
+
+        .footer-main {
+          grid-template-columns: 1fr;
+          gap: var(--space-xl, 2rem);
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          text-align: center;
+          gap: var(--space-md, 1rem);
+        }
+
+        .footer-links {
+          justify-content: center;
+        }
+
+        .footer-stats {
+          justify-content: center;
+        }
+
+        .newsletter-form {
+          flex-direction: column;
+        }
+      }
+
+      /* Minimal Footer Variant */
+      .footer-minimal .footer-container {
+        padding: var(--space-lg, 1.5rem) var(--space-xl, 2rem);
+      }
+
+      .footer-minimal .footer-content {
+        justify-content: center;
+        text-align: center;
+      }
+
+      /* Enterprise Footer Variant */
+      .footer-enterprise {
+        border-top: 2px solid var(--bun-accent, #3b82f6);
+      }
+
+      .footer-enterprise::before {
+        height: 2px;
+        background: linear-gradient(90deg, 
+          var(--bun-accent, #3b82f6),
+          var(--bun-success, #22c55e),
+          var(--bun-accent, #3b82f6)
+        );
+      }
+    </style>
+    <script>
+      // Newsletter form handler
+      function handleNewsletterSubmit(event) {
+        event.preventDefault();
+        const email = event.target.querySelector('input[type="email"]').value;
+        console.log('Newsletter subscription:', email);
+        alert('Thank you for subscribing! 🎉');
+        event.target.reset();
+      }
+
+      // Footer analytics
+      document.addEventListener('DOMContentLoaded', () => {
+        const footerLinks = document.querySelectorAll('.footer-link, .section-link, .social-link');
+        footerLinks.forEach(link => {
+          link.addEventListener('click', function() {
+            console.log('Footer link clicked:', this.textContent.trim(), this.href);
+          });
+        });
+      });
+    </script>
+  
+  </body>
+    
+  

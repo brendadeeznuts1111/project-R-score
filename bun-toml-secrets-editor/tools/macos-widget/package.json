@@ -1,0 +1,61 @@
+{
+	"name": "bun-secrets-editor-widget",
+	"version": "1.0.0",
+	"description": "macOS status bar widget for Bun TOML Secrets Editor",
+	"main": "status-bar-widget.ts",
+	"scripts": {
+		"dev": "bun run simple-widget.ts",
+		"build": "bun build simple-widget.ts --outdir ./dist --target bun-darwin-x64",
+		"build:arm64": "bun build simple-widget.ts --outdir ./dist --target bun-darwin-arm64",
+		"start": "bun run simple-widget.ts",
+		"install:global": "npm install -g ."
+	},
+	"keywords": [
+		"macos",
+		"widget",
+		"status-bar",
+		"bun",
+		"toml",
+		"secrets",
+		"monitoring"
+	],
+	"author": "Bun TOML Secrets Editor Team",
+	"license": "MIT",
+	"dependencies": {
+		"@tauri-apps/api": "^1.5.0",
+		"electron": "^27.0.0",
+		"menubar": "^9.4.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"electron-builder": "^24.0.0",
+		"typescript": "^5.0.0"
+	},
+	"build": {
+		"appId": "com.bunsecrets.editor.widget",
+		"productName": "Bun Secrets Editor Widget",
+		"directories": {
+			"output": "dist-electron"
+		},
+		"files": [
+			"status-bar-widget.ts",
+			"widget.html",
+			"icon.png"
+		],
+		"mac": {
+			"category": "public.app-category.developer-tools",
+			"target": [
+				{
+					"target": "dmg",
+					"arch": [
+						"x64",
+						"arm64"
+					]
+				}
+			]
+		}
+	},
+	"bin": {
+		"secrets-widget": "./status-bar-widget.ts"
+	}
+}

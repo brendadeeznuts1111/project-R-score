@@ -1,0 +1,67 @@
+# Full test configuration with multiple servers and routes
+version = "2.4.1"
+tier = "hardened"
+runtime = "bun-1.3.6_STABLE"
+global_pops = 300
+
+[performance]
+bundle_size_kb = 9.64
+p99_response_ms = 10.8
+cold_start_ms = 0
+
+[[servers]]
+name = "core-runtime"
+transport = "stdio"
+command = "bun"
+args = ["run", "src/index.ts"]
+enabled = true
+
+[[servers]]
+name = "filesystem"
+transport = "http"
+command = "bun"
+args = ["run", "servers/fs.ts"]
+enabled = true
+
+[[servers]]
+name = "web-tools"
+transport = "sse"
+command = "bun"
+args = ["run", "servers/web.ts"]
+enabled = true
+
+[[routes]]
+pattern = "/mcp/registry/:scope?/:name"
+target = "core-runtime"
+method = "GET"
+enabled = true
+
+[[routes]]
+pattern = "/mcp/health"
+target = "core-runtime"
+method = "GET"
+enabled = true
+
+[[routes]]
+pattern = "/mcp/metrics"
+target = "core-runtime"
+method = "GET"
+enabled = true
+
+[[routes]]
+pattern = "/mcp/tools/fs/*"
+target = "filesystem"
+method = "POST"
+enabled = true
+
+[[routes]]
+pattern = "/mcp/tools/web/*"
+target = "web-tools"
+method = "*"
+enabled = true
+
+[[routes]]
+pattern = "/pty/:program(vim|bash|htop)/:id"
+target = "core-runtime"
+method = "GET"
+enabled = true

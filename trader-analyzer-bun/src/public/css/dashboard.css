@@ -1,0 +1,271 @@
+/**
+ * @fileoverview Styling for HyperBun MLGS Operations Portal
+ * @description Visual theme, layout, and component styling
+ * @module public/css/dashboard
+ * @version 1.8.0.0.0.0.0
+ *
+ * 1.8.0.0.0.0.0: Styling for HyperBun MLGS Operations Portal.
+ * [DoD][CSS:DashboardPortal][SCOPE:UI-Kit]
+ * Defines the visual theme, layout, and component styling for the dashboard.
+ * Leverages modern CSS features (e.g., CSS Variables, Flexbox/Grid) for maintainability.
+ *
+ * @see {@link docs/1.0.0.0.0.0.0-API-DASHBOARD-PORTAL-INTEGRATION.md|API-Dashboard-Portal Integration Documentation}
+ * @see {@link docs/1.4.0.0.0.0.0|Dashboard Portal HTML}
+ * @see {@link docs/1.5.0.0.0.0.0|Dashboard Client JavaScript}
+ *
+ * Ripgrep Pattern: 1\.8\.0\.0\.0\.0\.0|dashboard\.css|portal-container
+ */
+
+/* 1.8.1.0.0.0.0: CSS Variables for Theming */
+:root {
+	--bg-primary: #0a0a0a;
+	--bg-secondary: #1a1a1a;
+	--bg-tertiary: #2a2a2a;
+	--accent-green: #00ff9f;
+	--accent-blue: #00a8ff;
+	--accent-red: #ff3b5c;
+	--accent-orange: #ffb23d;
+	--text-primary: #e6e6e6;
+	--text-secondary: #8a8a8a;
+	--font-mono: 'JetBrains Mono', monospace; /* Preferred monospaced font */
+}
+
+/* 1.8.2.0.0.0.0: Global Box Sizing */
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* 1.8.3.0.0.0.0: Base Body Styles */
+body {
+	font-family: var(--font-mono);
+	background: var(--bg-primary);
+	color: var(--text-primary);
+	overflow: hidden; /* Prevents scrollbars */
+}
+
+/* 1.8.4.0.0.0.0: Main Layout Container */
+.portal-container {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+/* 1.8.5.0.0.0.0: Top-Level Portal Header */
+.portal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 2rem;
+	background: var(--bg-secondary);
+	border-bottom: 2px solid var(--accent-green);
+}
+
+/* 1.8.6.0.0.0.0: Status Bar Metrics */
+.status-bar .metric {
+	margin-left: 1.5rem;
+	font-size: 0.9rem;
+}
+
+/* 1.8.6.1.0.0.0: Error Metric Color */
+.metric.errors {
+	color: var(--accent-red);
+}
+
+/* 1.8.6.2.0.0.0: Warning Metric Color */
+.metric.warnings {
+	color: var(--accent-orange);
+}
+
+/* 1.8.7.0.0.0.0: Main Content Grid Layout */
+.portal-grid {
+	display: grid;
+	grid-template-columns: 2fr 1fr; /* Graph panel wider than logs */
+	grid-template-rows: 1fr 250px; /* Top panels taller than bottom metrics */
+	gap: 1rem;
+	padding: 1rem;
+	flex: 1; /* Occupy remaining vertical space */
+}
+
+/* 1.8.8.0.0.0.0: Generic Panel Styling */
+.panel {
+	background: var(--bg-secondary);
+	border: 1px solid var(--bg-tertiary);
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden; /* Clip content within panel */
+}
+
+/* 1.8.9.0.0.0.0: Panel Header Styling */
+.panel-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.75rem 1rem;
+	background: var(--bg-tertiary);
+	border-bottom: 1px solid var(--accent-blue);
+}
+
+/* 1.8.10.0.0.0.0: Content Area Styling */
+.graph-container,
+.log-container {
+	flex: 1;
+	overflow: auto; /* Enable scrolling for content */
+	padding: 1rem;
+}
+
+/* 1.8.11.0.0.0.0: Individual Log Entry Styling */
+.log-entry {
+	padding: 0.5rem;
+	border-left: 3px solid var(--bg-tertiary);
+	font-size: 0.85rem;
+	transition: background 0.2s;
+}
+
+.log-entry:hover {
+	background: var(--bg-tertiary);
+} /* Hover effect */
+
+/* 1.8.11.1.0.0.0: Error Log Indicator */
+.log-entry.severity-error {
+	border-left-color: var(--accent-red);
+}
+
+/* 1.8.11.2.0.0.0: Warn Log Indicator */
+.log-entry.severity-warn {
+	border-left-color: var(--accent-orange);
+}
+
+/* 1.8.11.3.0.0.0: Info Log Indicator */
+.log-entry.severity-info {
+	border-left-color: var(--accent-blue);
+}
+
+/* 1.8.11.4.0.0.0: Debug Log Indicator */
+.log-entry.severity-debug {
+	border-left-color: var(--text-secondary);
+}
+
+/* 1.8.12.0.0.0.0: Log Timestamp Style */
+.log-timestamp {
+	color: var(--text-secondary);
+	margin-right: 1rem;
+}
+
+/* 1.8.13.0.0.0.0: Log Level Style */
+.log-level {
+	font-weight: bold;
+	margin-right: 0.5rem;
+}
+
+/* 1.8.14.0.0.0.0: Log Code Style */
+.log-code {
+	color: var(--accent-green);
+	margin-right: 0.5rem;
+}
+
+/* 1.8.15.0.0.0.0: Log Context Style */
+.log-context {
+	margin-top: 0.5rem;
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+}
+
+/* 1.8.16.0.0.0.0: Metrics Panel Grid Layout */
+.metrics-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 1rem;
+	padding: 1rem;
+}
+
+/* 1.8.17.0.0.0.0: Individual Metric Card Style */
+.metric-card {
+	background: var(--bg-tertiary);
+	padding: 1rem;
+	border-radius: 4px;
+	text-align: center;
+}
+
+/* 1.8.18.0.0.0.0: Metric Value Style */
+.metric-value {
+	font-size: 2rem;
+	font-weight: bold;
+	color: var(--accent-green);
+}
+
+/* 1.8.19.0.0.0.0: Metric Unit Style */
+.metric-unit {
+	font-size: 0.85rem;
+	color: var(--text-secondary);
+}
+
+/* 1.8.20.0.0.0.0: Debug Panel Styles (Cross-reference: 1.5.9.0.0.0.0 Debug Panel Integration) */
+.debug-panel {
+	position: fixed;
+	top: 50px;
+	left: 50px;
+	width: 480px;
+	height: 600px;
+	background: var(--bg-secondary);
+	border: 2px solid var(--accent-blue);
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	z-index: 1000;
+	box-shadow: 0 0 20px rgba(0, 168, 255, 0.3);
+}
+
+/* 1.8.20.1.0.0.0: Debug Panel Header */
+.debug-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.75rem;
+	background: var(--bg-tertiary);
+	border-bottom: 1px solid var(--accent-blue);
+	cursor: move;
+}
+
+/* 1.8.20.2.0.0.0: Debug Panel Resize Handle */
+.resize-handle {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 20px;
+	height: 20px;
+	cursor: nwse-resize;
+	background: linear-gradient(45deg, transparent 50%, var(--accent-blue) 50%);
+}
+
+/* 1.8.20.3.0.0.0: Debug Panel Content Area */
+.debug-content {
+	flex: 1;
+	padding: 1rem;
+	overflow: auto;
+}
+
+/* 1.8.20.4.0.0.0: Debug Panel Output Preformatted Text */
+#debug-output {
+	font-size: 0.85rem;
+	white-space: pre-wrap;
+	font-family: var(--font-mono);
+}
+
+/* 1.8.21.0.0.0.0: Connection Status Indicator Styling */
+.status-indicator.connected {
+	color: var(--accent-green);
+}
+
+.status-indicator.disconnected {
+	color: var(--accent-red);
+}
+
+/* 1.8.22.0.0.0.0: Responsive Adjustments */
+@media (max-width: 1200px) {
+	.portal-grid {
+		grid-template-columns: 1fr;
+	}
+}

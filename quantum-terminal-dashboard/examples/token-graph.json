@@ -1,0 +1,124 @@
+{
+  "timestamp": "2026-01-18T16:10:07.453Z",
+  "version": "1.5.0",
+  "components": 8,
+  "tokens": 8,
+  "graph": {
+    "nodes": [
+      {
+        "id": "qsimd-scene@1.5.0",
+        "label": "THREE.Scene",
+        "color": "220,100%,3%",
+        "tension": 0,
+        "domain": "WEBGL_RENDERING",
+        "size": 10
+      },
+      {
+        "id": "qsimd-particles@1.5.0",
+        "label": "ParticleSystem",
+        "color": "180,100%,50%",
+        "tension": 0.5,
+        "domain": "WEBGL_RENDERING",
+        "size": 20
+      },
+      {
+        "id": "qsimd-network@1.5.0",
+        "label": "NetworkNode",
+        "color": "270,100%,50%",
+        "tension": 0.8,
+        "domain": "NETWORK_VISUALIZATION",
+        "size": 26
+      },
+      {
+        "id": "qsimd-connections@1.5.0",
+        "label": "ConnectionLine",
+        "color": "180,80%,60%",
+        "tension": 0.9,
+        "domain": "NETWORK_VISUALIZATION",
+        "size": 28
+      },
+      {
+        "id": "qsimd-ui@1.5.0",
+        "label": "GlassCard",
+        "color": "180,100%,50%,0.1",
+        "tension": 0.3,
+        "domain": "USER_INTERFACE",
+        "size": 16
+      },
+      {
+        "id": "qsimd-data@1.5.0",
+        "label": "DataStream",
+        "color": "60,100%,50%",
+        "tension": 0.6,
+        "domain": "DATA_PROCESSING",
+        "size": 22
+      },
+      {
+        "id": "qsimd-shaders@1.5.0",
+        "label": "ShaderUniform",
+        "color": "300,100%,50%",
+        "tension": 0.9,
+        "domain": "WEBGL_RENDERING",
+        "size": 28
+      },
+      {
+        "id": "qsimd-interaction@1.5.0",
+        "label": "Raycaster",
+        "color": "30,100%,50%",
+        "tension": 0.7,
+        "domain": "USER_INTERFACE",
+        "size": 24
+      }
+    ],
+    "edges": [
+      {
+        "from": "qsimd-scene@1.5.0",
+        "label": "Static→Render",
+        "color": "220,100%,3%",
+        "width": 1
+      },
+      {
+        "from": "qsimd-particles@1.5.0",
+        "label": "uTime→Vertex",
+        "color": "180,100%,50%",
+        "width": 2.5
+      },
+      {
+        "from": "qsimd-network@1.5.0",
+        "label": "API→Visual",
+        "color": "270,100%,50%",
+        "width": 3.4000000000000004
+      },
+      {
+        "from": "qsimd-connections@1.5.0",
+        "label": "Event→GSAP→Alpha",
+        "color": "180,80%,60%",
+        "width": 3.7
+      },
+      {
+        "from": "qsimd-ui@1.5.0",
+        "label": "Mouse→Transform",
+        "color": "180,100%,50%,0.1",
+        "width": 1.9
+      },
+      {
+        "from": "qsimd-data@1.5.0",
+        "label": "Fetch→Normalize",
+        "color": "60,100%,50%",
+        "width": 2.8
+      },
+      {
+        "from": "qsimd-shaders@1.5.0",
+        "label": "JS→GPU→Shader",
+        "color": "300,100%,50%",
+        "width": 3.7
+      },
+      {
+        "from": "qsimd-interaction@1.5.0",
+        "label": "Mouse→Ray→Rotate",
+        "color": "30,100%,50%",
+        "width": 3.0999999999999996
+      }
+    ]
+  }
+}

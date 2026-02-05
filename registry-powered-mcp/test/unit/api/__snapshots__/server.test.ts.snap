@@ -1,0 +1,64 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Server API health check response format 1`] = `
+{
+  "healthy": true,
+  "issues": [],
+}
+`;
+
+exports[`Server API statistics response format 1`] = `
+{
+  "global_pops": 300,
+  "performance": {
+    "bundle_size_kb": 9.64,
+    "cold_start_ms": 0,
+    "p99_response_ms": 10.8,
+    "search_acceleration": "SIMD-ES2023",
+  },
+  "routes": 8,
+  "runtime": "bun-1.3.6_STABLE",
+  "servers": 3,
+  "tier": "hardened",
+  "version": "2.4.1",
+}
+`;
+
+exports[`Server API route match response format 1`] = `
+{
+  "params": {
+    "0": "",
+    "name": "package",
+    "scope": "@test",
+  },
+  "route": {
+    "method": "GET",
+    "originalPattern": "/mcp/registry/:scope?/:name",
+    "target": "core-runtime",
+  },
+}
+`;
+
+exports[`Server API server configuration format 1`] = `
+{
+  "args": [
+    "run",
+    "servers/core-runtime.ts",
+  ],
+  "command": "bun",
+  "description": "Core MCP runtime primitives",
+  "enabled": true,
+  "name": "core-runtime",
+  "protocol": "workspace",
+  "transport": "stdio",
+}
+`;
+
+exports[`Server API route list format 1`] = `
+{
+  "enabled": undefined,
+  "method": "GET",
+  "originalPattern": "/mcp/health",
+  "target": "core-runtime",
+}
+`;

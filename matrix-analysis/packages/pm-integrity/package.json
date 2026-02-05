@@ -1,0 +1,62 @@
+{
+  "name": "@bun/pm-integrity",
+  "version": "1.0.0",
+  "description": "Tier-1380 Lifecycle Integrity Seal for BUN PM Pack operations",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./secure-packager": "./dist/secure-packager.js",
+    "./quantum-audit": "./dist/quantum-audit.js",
+    "./threat-intelligence": "./dist/threat-intelligence.js",
+    "./col93-matrix": "./dist/col93-matrix.js",
+    "./cli": "./dist/cli/index.js"
+  },
+  "bin": {
+    "bun-pm-seal": "./dist/cli/pack.js"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun --minify",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "test:integrity": "bun test test/integrity.test.ts",
+    "bench": "bun run bench/integrity-bench.ts",
+    "pack:secure": "bun run dist/cli/pack.js --seal-tier=1380",
+    "pack:verify": "bun run dist/cli/pack.js --dry-run",
+    "integrity:audit": "bun run dist/audit-analyzer.js",
+    "matrix:update": "bun run dist/col93-updater.js",
+    "seal:3d": "bun run dist/ws/3d-dashboard.ts",
+    "deploy:integrity": "bun run scripts/deploy.ts"
+  },
+  "dependencies": {
+    "fast-diff": "^1.3.0",
+    "ws": "^8.16.0",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10",
+    "@types/bun": "latest"
+  },
+  "keywords": [
+    "bun",
+    "package-manager",
+    "integrity",
+    "security",
+    "audit",
+    "lifecycle",
+    "seal",
+    "tier-1380"
+  ],
+  "author": "BUN PM Integrity Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oven-sh/bun",
+    "directory": "packages/pm-integrity"
+  },
+  "engines": {
+    "bun": ">=1.3.8"
+  }
+}

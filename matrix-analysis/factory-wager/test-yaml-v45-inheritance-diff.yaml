@@ -1,0 +1,59 @@
+---
+# Document 1: Environment configurations with inheritance diff demo
+_document_index: 0
+_schema_version: v4.5
+
+# Base configuration anchor
+defaults: &defaults
+  timeout: 5000
+  retries: 3
+  log_level: info
+  cache:
+    enabled: true
+    ttl: 3600
+  api:
+    version: "v1"
+    rate_limit: 100
+
+---
+# Document 2: Environment-specific configurations with progressive hardening
+_document_index: 1
+is_config: true
+
+# Development environment - full inheritance
+development:
+  <<: *defaults
+  debug: true
+  hot_reload: true
+  api:
+    url: "http://localhost:4000"
+    key: "dev_key_12345"
+
+# Staging environment - inheritance + env vars
+staging:
+  <<: *defaults
+  log_level: warn
+  debug: false
+  api:
+    url: "https://staging-api.example.com"
+    key: ${STAGING_API_KEY}
+    rate_limit: 200
+  cache:
+    ttl: 7200
+
+# Production environment - inheritance + overrides + env vars
+production:
+  <<: *defaults
+  log_level: error
+  debug: false
+  api:
+    url: "https://api.example.com"
+    key: ${PROD_API_KEY}
+    version: "v2"
+    rate_limit: 500
+  cache:
+    ttl: 86400
+    enabled: true
+  monitoring:
+    enabled: true
+    alerts: true

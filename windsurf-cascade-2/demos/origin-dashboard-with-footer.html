@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <title>🚀 Origin Dashboard with Unified Footer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --color-background: #0f172a;
+            --color-foreground: #f1f5f9;
+            --color-accent: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-info: #06b6d4;
+            --color-neutral: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--color-background) 0%, #1e293b 100%);
+            color: var(--color-foreground);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .origin-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .origin-header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .origin-main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .origin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .origin-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .origin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-info));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .origin-card:hover::before {
+            opacity: 1;
+        }
+
+        .origin-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .origin-metric {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .origin-metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-info));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .origin-metric-label {
+            font-size: 0.875rem;
+            color: var(--color-neutral);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .origin-chart {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            padding: 1rem;
+            height: 250px;
+            position: relative;
+        }
+
+        .origin-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .origin-nav-item {
+            padding: 0.75rem 1.5rem;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--color-foreground);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .origin-nav-item:hover {
+            background: var(--color-accent);
+            transform: translateY(-1px);
+        }
+
+        .origin-nav-item.active {
+            background: var(--color-accent);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .origin-section {
+            display: none;
+        }
+
+        .origin-section.active {
+            display: block;
+        }
+
+        h1, h2 {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+        }
+    </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Origin Dashboard",
+        "description": "Real-time performance monitoring and analytics dashboard",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any"
+    }
+</script>
+</head>
+<body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">Skip to main content</a>
+    <main id="main-content" class="origin-container>
+        <!-- Header -->
+        <header class="origin-header">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+            <div class="max-w-7xl mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1>Origin Dashboard with Unified Footer</h1>
+                            <p class="text-sm text-gray-400">Unified System Control & Monitoring with Enhanced Footers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="origin-main">
+            <!-- Navigation -->
+            <nav class="origin-nav">
+                <div class="origin-nav-item active" data-section="overview">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Overview
+                </div>
+                <div class="origin-nav-item" data-section="config">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                    Configuration
+                </div>
+                <div class="origin-nav-item" data-section="latency">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Latency
+                </div>
+            </nav>
+
+            <!-- Overview Section -->
+            <section id="overview" class="origin-section active">
+                <h2>System Overview</h2>
+                <p class="text-gray-400 mb-6">Real-time monitoring of all system components with unified footer integration.</p>
+                
+                <div class="origin-grid">
+                    <div class="origin-card">
+                        <div class="origin-metric">
+                            <div>
+                                <div class="origin-metric-value" id="total-operations">0</div>
+                                <div class="origin-metric-label">Total Operations</div>
+                            </div>
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="origin-card">
+                        <div class="origin-metric">
+                            <div>
+                                <div class="origin-metric-value" id="avg-latency">0ms</div>
+                                <div class="origin-metric-label">Average Latency</div>
+                            </div>
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="origin-card">
+                        <div class="origin-metric">
+                            <div>
+                                <div class="origin-metric-value" id="system-health">100%</div>
+                                <div class="origin-metric-label">System Health</div>
+                            </div>
+                            <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuration Section -->
+            <section id="config" class="origin-section">
+                <h2>Configuration Management</h2>
+                <p class="text-gray-400 mb-6">13-byte configuration system with real-time tracking and pattern analysis.</p>
+                
+                <div class="origin-grid">
+                    <div class="origin-card">
+                        <h3 class="text-lg font-semibold mb-4">Current Configuration</h3>
+                        <div class="font-mono text-sm bg-gray-800 p-4 rounded" id="config-display">
+                            Loading configuration...
+                        </div>
+                    </div>
+
+                    <div class="origin-card">
+                        <h3 class="text-lg font-semibold mb-4">Pattern Detection</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Spikes Detected:</span>
+                                <span id="spikes-count">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Gradual Changes:</span>
+                                <span id="gradual-count">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Oscillations:</span>
+                                <span id="oscillation-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Latency Section -->
+            <section id="latency" class="origin-section">
+                <h2>Performance Monitoring</h2>
+                <p class="text-gray-400 mb-6">Real-time latency tracking and performance analytics across all endpoints.</p>
+                
+                <div class="origin-grid">
+                    <div class="origin-card">
+                        <h3 class="text-lg font-semibold mb-4">Endpoint Performance</h3>
+                        <div class="origin-chart">
+                            <canvas id="latency-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="origin-card">
+                        <h3 class="text-lg font-semibold mb-4">System Metrics</h3>
+                        <div class="origin-chart">
+                            <canvas id="performance-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        // Import and initialize unified footer
+        import { unifiedFooter } from './src/ui/unified-footer.js';
+
+        // Initialize unified footer system
+        unifiedFooter.initialize({
+            showTimestamp: true,
+            showSystemInfo: true,
+            showQuickActions: true,
+            showMetrics: true,
+            theme: 'dark',
+            position: 'bottom',
+            animation: 'slide'
+        });
+
+        // Add dashboard-specific quick actions
+        unifiedFooter.addQuickAction({
+            id: 'refresh-dashboard',
+            label: 'Refresh',
+            icon: '🔄',
+            action: () => {
+                location.reload();
+            },
+            color: '#3b82f6'
+        });
+
+        unifiedFooter.addQuickAction({
+            id: 'export-metrics',
+            label: 'Export',
+            icon: '📊',
+            action: () => {
+                const data = {
+                    metrics: unifiedFooter.getMetrics(),
+                    timestamp: new Date().toISOString()
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'dashboard-metrics.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            },
+            color: '#10b981'
+        });
+
+        // Dashboard functionality
+        class OriginDashboard {
+            constructor() {
+                this.config = new Uint8Array(13);
+                this.charts = {};
+                this.initialize();
+            }
+
+            initialize() {
+                this.setupNavigation();
+                this.initializeCharts();
+                this.startRealTimeUpdates();
+                this.loadConfiguration();
+            }
+
+            setupNavigation() {
+                const navItems = document.querySelectorAll('.origin-nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const section = e.currentTarget.dataset.section;
+                        this.switchSection(section);
+                    });
+                });
+            }
+
+            switchSection(section) {
+                // Update navigation
+                document.querySelectorAll('.origin-nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector(`[data-section="${section}"]`).classList.add('active');
+
+                // Update sections
+                document.querySelectorAll('.origin-section').forEach(sec => {
+                    sec.classList.remove('active');
+                });
+                document.getElementById(section).classList.add('active');
+
+                // Update footer metrics
+                this.updateFooterMetrics();
+            }
+
+            initializeCharts() {
+                // Latency Chart
+                const latencyCtx = document.getElementById('latency-chart').getContext('2d');
+                this.charts.latency = new Chart(latencyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['API 1', 'API 2', 'API 3', 'API 4'],
+                        datasets: [{
+                            label: 'Latency (ms)',
+                            data: [120, 250, 180, 450],
+                            backgroundColor: '#f59e0b'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: { 
+                                grid: { color: 'rgba(100, 116, 139, 0.2)' },
+                                ticks: { color: '#64748b' }
+                            },
+                            y: { 
+                                grid: { color: 'rgba(100, 116, 139, 0.2)' },
+                                ticks: { color: '#64748b' }
+                            }
+                        }
+                    }
+                });
+
+                // Performance Chart
+                const perfCtx = document.getElementById('performance-chart').getContext('2d');
+                this.charts.performance = new Chart(perfCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Performance',
+                            data: [],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: { display: false },
+                            y: { 
+                                grid: { color: 'rgba(100, 116, 139, 0.2)' },
+                                ticks: { color: '#64748b' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            startRealTimeUpdates() {
+                setInterval(() => {
+                    this.updateMetrics();
+                    this.updateFooterMetrics();
+                }, 2000);
+            }
+
+            updateMetrics() {
+                // Update overview metrics
+                document.getElementById('total-operations').textContent = 
+                    Math.floor(Math.random() * 10000).toLocaleString();
+                document.getElementById('avg-latency').textContent = 
+                    Math.floor(Math.random() * 100) + 'ms';
+                document.getElementById('system-health').textContent = 
+                    Math.floor(Math.random() * 20 + 80) + '%';
+
+                // Update performance chart
+                const now = new Date().toLocaleTimeString();
+                this.charts.performance.data.labels.push(now);
+                this.charts.performance.data.datasets[0].data.push(Math.random() * 100);
+                
+                if (this.charts.performance.data.labels.length > 10) {
+                    this.charts.performance.data.labels.shift();
+                    this.charts.performance.data.datasets[0].data.shift();
+                }
+                this.charts.performance.update();
+            }
+
+            updateFooterMetrics() {
+                const metrics = {
+                    totalOperations: parseInt(document.getElementById('total-operations').textContent.replace(/,/g, '')),
+                    averageLatency: parseInt(document.getElementById('avg-latency').textContent),
+                    systemHealth: parseInt(document.getElementById('system-health').textContent),
+                    cacheEfficiency: Math.floor(Math.random() * 30 + 70),
+                    uptime: Math.floor(Math.random() * 1000)
+                };
+                
+                unifiedFooter.updateMetrics(metrics);
+            }
+
+            loadConfiguration() {
+                // Generate random 13-byte config
+                for (let i = 0; i < 13; i++) {
+                    this.config[i] = Math.floor(Math.random() * 256);
+                }
+                this.updateConfigDisplay();
+            }
+
+            updateConfigDisplay() {
+                const display = document.getElementById('config-display');
+                display.textContent = Array.from(this.config)
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join(' ')
+                    .toUpperCase();
+            }
+        }
+
+        // Initialize dashboard
+        const dashboard = new OriginDashboard();
+
+        // Add some dynamic headers to demonstrate footer system
+        setTimeout(() => {
+            const dynamicH2 = document.createElement('h2');
+            dynamicH2.textContent = 'Dynamic Section';
+            dynamicH2.id = 'dynamic-section';
+            document.querySelector('#overview').appendChild(dynamicH2);
+            
+            const dynamicContent = document.createElement('p');
+            dynamicContent.className = 'text-gray-400 mb-6';
+            dynamicContent.textContent = 'This section was added dynamically to demonstrate the unified footer system automatically adding footers to new headers.';
+            document.querySelector('#overview').appendChild(dynamicContent);
+        }, 3000);
+    </script>
+</body>
+</html>

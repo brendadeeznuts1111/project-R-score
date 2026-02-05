@@ -1,0 +1,29 @@
+name: Deploy Dashboards
+
+on:
+  push:
+    paths:
+      - 'dashboards/**'
+      - 'assets/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+      
+      - name: Deploy to R2
+        run: bun run cli/commands/dashboard.ts deploy --scope ENTERPRISE
+        env:
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+      
+      - name: Update Grafana
+        run: bun run dashboards/grafana/update-dashboards.ts
+      
+      - name: Notify Slack
+        run: bun run cli/commands/notifications.ts slack "Dashboards deployed [ENTERPRISE]"

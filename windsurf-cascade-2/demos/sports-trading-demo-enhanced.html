@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <title>🏆 Global Sports Trading System - Enhanced Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        @keyframes data-flow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .glow-effect {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        .data-stream {
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+            animation: data-flow 3s linear infinite;
+        }
+        
+        .nano-timer {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #10b981;
+        }
+        
+        .config-byte {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 1px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .config-byte.active {
+            background: #3b82f6;
+            transform: scale(1.2);
+        }
+        
+        .platform-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .platform-card.active {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        
+        .trade-flash {
+            animation: flash 0.5s ease;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Origin Dashboard",
+        "description": "Real-time performance monitoring and analytics dashboard",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any"
+    }
+</script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">Skip to main content</a>
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="trending-up" class="w-8 h-8 text-blue-500"></i>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    Global Sports Trading System
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="nano-timer">
+                    <span id="config-speed">23.8ns</span> config updates
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm">Live</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- 13-Byte Configuration Display -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i data-lucide="cpu" class="w-5 h-5 mr-2 text-blue-500"></i>
+                        13-Byte Configuration Register
+                    </h2>
+                    <button id="randomize-config" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition-colors">
+                        Randomize Config
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Byte Visualization -->
+                    <div>
+                        <h3 class="text-sm text-gray-400 mb-3">Memory Layout</h3>
+                        <div class="bg-gray-900 rounded-lg p-4">
+                            <div class="grid grid-cols-13 gap-1 mb-3">
+                                <!-- 13 bytes will be inserted here -->
+                                <div id="byte-visualization"></div>
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                <div>Bytes 0-2: Feature Flags (3 bits)</div>
+                                <div>Bytes 3-5: Regional Settings (3 bytes)</div>
+                                <div>Bytes 6-8: Platform Config (3 bytes)</div>
+                                <div>Bytes 9-12: Performance (4 bytes)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Configuration Panel -->
+                    <div>
+                        <h3 class="text-sm text-gray-400 mb-3">Current Settings</h3>
+                        <div class="bg-gray-900 rounded-lg p-4">
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span>Terminal Mode:</span>
+                                    <span id="terminal-mode" class="text-blue-400">Standard</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Region:</span>
+                                    <span id="region" class="text-green-400">US East</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Performance:</span>
+                                    <span id="performance" class="text-yellow-400">High</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Debug Mode:</span>
+                                    <span id="debug-mode" class="text-red-400">Disabled</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Arbitrage:</span>
+                                    <span id="arbitrage" class="text-purple-400">Enabled</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Integration -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="globe" class="w-5 h-5 mr-2 text-green-500"></i>
+                    Multi-Platform Integration
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Polymarket Card -->
+                    <div id="polymarket-card" class="platform-card bg-gray-900 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-purple-400">Polymarket</h3>
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Status:</span>
+                                <span class="text-green-400">Connected</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Markets:</span>
+                                <span id="polymarket-markets">247</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Latency:</span>
+                                <span class="text-yellow-400">45ms</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Volume:</span>
+                                <span id="polymarket-volume">$2.3M</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fanduel Card -->
+                    <div id="fanduel-card" class="platform-card bg-gray-900 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-green-400">Fanduel</h3>
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Status:</span>
+                                <span class="text-green-400">Connected</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Events:</span>
+                                <span id="fanduel-events">156</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Latency:</span>
+                                <span class="text-yellow-400">38ms</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Volume:</span>
+                                <span id="fanduel-volume">$5.7M</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Regional Processor Card -->
+                    <div id="regional-card" class="platform-card bg-gray-900 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-blue-400">Regional Processor</h3>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Regions:</span>
+                                <span>4 Active</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>US East:</span>
+                                <span class="text-green-400">15ms</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Europe:</span>
+                                <span class="text-yellow-400">25ms</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Asia:</span>
+                                <span class="text-orange-400">35ms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Trading Activity -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="activity" class="w-5 h-5 mr-2 text-red-500"></i>
+                    Live Trading Activity
+                </h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Recent Trades -->
+                    <div>
+                        <h3 class="text-sm text-gray-400 mb-3">Recent Trades</h3>
+                        <div class="bg-gray-900 rounded-lg p-4 h-64 overflow-y-auto">
+                            <div id="trades-list" class="space-y-2">
+                                <!-- Trades will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Chart -->
+                    <div>
+                        <h3 class="text-sm text-gray-400 mb-3">Performance Metrics</h3>
+                        <div class="bg-gray-900 rounded-lg p-4 h-64">
+                            <canvas id="performance-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Arbitrage Opportunities -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="zap" class="w-5 h-5 mr-2 text-yellow-500"></i>
+                    Arbitrage Opportunities
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">NFL - Chiefs vs Bills</div>
+                        <div class="text-lg font-semibold text-green-400">+2.3%</div>
+                        <div class="text-xs text-gray-500">Polymarket → Fanduel</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">NBA - Lakers vs Celtics</div>
+                        <div class="text-lg font-semibold text-green-400">+1.8%</div>
+                        <div class="text-xs text-gray-500">Fanduel → Polymarket</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">EPL - Man U vs Liverpool</div>
+                        <div class="text-lg font-semibold text-green-400">+3.1%</div>
+                        <div class="text-xs text-gray-500">Polymarket → Fanduel</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <div class="text-sm text-gray-400 mb-1">NHL - Rangers vs Devils</div>
+                        <div class="text-lg font-semibold text-green-400">+1.5%</div>
+                        <div class="text-xs text-gray-500">Fanduel → Polymarket</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Performance -->
+        <section class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 mr-2 text-purple-500"></i>
+                    System Performance
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-blue-400" id="ops-per-sec">42M</div>
+                        <div class="text-sm text-gray-400">Ops/Second</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-green-400" id="latency">23.8ns</div>
+                        <div class="text-sm text-gray-400">Config Latency</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-yellow-400" id="uptime">99.9%</div>
+                        <div class="text-sm text-gray-400">Uptime</div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-purple-400" id="trades">1,247</div>
+                        <div class="text-sm text-gray-400">Trades Today</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // 13-Byte Configuration System
+        class ThirteenByteConfig {
+            constructor() {
+                this.bytes = new Uint8Array(13);
+                this.randomize();
+            }
+
+            randomize() {
+                for (let i = 0; i < 13; i++) {
+                    this.bytes[i] = Math.floor(Math.random() * 256);
+                }
+                this.updateDisplay();
+            }
+
+            get terminalMode() {
+                const modes = ['Minimal', 'Standard', 'Advanced', 'Debug'];
+                return modes[this.bytes[0] & 0x03];
+            }
+
+            get region() {
+                const regions = ['US West', 'US East', 'Europe', 'Asia'];
+                return regions[(this.bytes[1] & 0x03)];
+            }
+
+            get performance() {
+                const levels = ['Low', 'Medium', 'High', 'Maximum'];
+                return levels[(this.bytes[2] & 0x03)];
+            }
+
+            get debugMode() {
+                return !!(this.bytes[3] & 0x01);
+            }
+
+            get arbitrage() {
+                return !!(this.bytes[3] & 0x02);
+            }
+
+            updateDisplay() {
+                // Update byte visualization
+                const byteViz = document.getElementById('byte-visualization');
+                byteViz.innerHTML = '';
+                for (let i = 0; i < 13; i++) {
+                    const byte = document.createElement('div');
+                    byte.className = 'config-byte';
+                    byte.style.background = `rgb(${this.bytes[i]}, ${100 + this.bytes[i] / 2}, ${200 - this.bytes[i] / 2})`;
+                    byte.title = `Byte ${i}: ${this.bytes[i].toString(16).padStart(2, '0').toUpperCase()}`;
+                    byteViz.appendChild(byte);
+                }
+
+                // Update configuration display
+                document.getElementById('terminal-mode').textContent = this.terminalMode;
+                document.getElementById('region').textContent = this.region;
+                document.getElementById('performance').textContent = this.performance;
+                document.getElementById('debug-mode').textContent = this.debugMode ? 'Enabled' : 'Disabled';
+                document.getElementById('arbitrage').textContent = this.arbitrage ? 'Enabled' : 'Disabled';
+            }
+        }
+
+        // Trading System Simulator
+        class TradingSimulator {
+            constructor() {
+                this.trades = [];
+                this.performanceData = {
+                    labels: [],
+                    datasets: [{
+                        label: 'Trades per Second',
+                        data: [],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                };
+                this.initChart();
+            }
+
+            initChart() {
+                const ctx = document.getElementById('performance-chart').getContext('2d');
+                this.chart = new Chart(ctx, {
+                    type: 'line',
+                    data: this.performanceData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: false
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            generateTrade() {
+                const platforms = ['Polymarket', 'Fanduel'];
+                const events = [
+                    'NFL - Chiefs vs Bills',
+                    'NBA - Lakers vs Celtics',
+                    'EPL - Man U vs Liverpool',
+                    'NHL - Rangers vs Devils'
+                ];
+                const outcomes = ['Yes', 'No', 'Buy', 'Sell'];
+                
+                const trade = {
+                    platform: platforms[Math.floor(Math.random() * platforms.length)],
+                    event: events[Math.floor(Math.random() * events.length)],
+                    outcome: outcomes[Math.floor(Math.random() * outcomes.length)],
+                    amount: (Math.random() * 10000).toFixed(2),
+                    price: (Math.random() * 2).toFixed(3),
+                    timestamp: new Date().toLocaleTimeString()
+                };
+
+                this.trades.unshift(trade);
+                if (this.trades.length > 10) {
+                    this.trades.pop();
+                }
+
+                this.updateTradesList();
+                this.updateChart();
+            }
+
+            updateTradesList() {
+                const tradesList = document.getElementById('trades-list');
+                tradesList.innerHTML = this.trades.map(trade => `
+                    <div class="bg-gray-800 rounded p-2 text-xs trade-flash">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-400">${trade.platform}</span>
+                                <span class="text-gray-400 ml-2">${trade.event}</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-green-400">$${trade.amount}</div>
+                                <div class="text-gray-500">${trade.price}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateChart() {
+                const now = new Date().toLocaleTimeString();
+                const tradesPerSec = Math.floor(Math.random() * 50) + 10;
+
+                this.performanceData.labels.push(now);
+                this.performanceData.datasets[0].data.push(tradesPerSec);
+
+                if (this.performanceData.labels.length > 20) {
+                    this.performanceData.labels.shift();
+                    this.performanceData.datasets[0].data.shift();
+                }
+
+                this.chart.update();
+            }
+        }
+
+        // Initialize Demo
+        const config = new ThirteenByteConfig();
+        const simulator = new TradingSimulator();
+
+        // Event Listeners
+        document.getElementById('randomize-config').addEventListener('click', () => {
+            config.randomize();
+        });
+
+        // Start simulation
+        setInterval(() => {
+            simulator.generateTrade();
+        }, 2000);
+
+        // Update platform stats
+        setInterval(() => {
+            document.getElementById('polymarket-markets').textContent = 
+                (247 + Math.floor(Math.random() * 20) - 10).toString();
+            document.getElementById('polymarket-volume').textContent = 
+                `$${(2.3 + Math.random() * 0.5).toFixed(1)}M`;
+            
+            document.getElementById('fanduel-events').textContent = 
+                (156 + Math.floor(Math.random() * 15) - 7).toString();
+            document.getElementById('fanduel-volume').textContent = 
+                `$${(5.7 + Math.random() * 1.0).toFixed(1)}M`;
+        }, 5000);
+
+        // Update performance metrics
+        setInterval(() => {
+            document.getElementById('ops-per-sec').textContent = 
+                `${(42 + Math.random() * 5).toFixed(0)}M`;
+            document.getElementById('latency').textContent = 
+                `${(23.8 + Math.random() * 2).toFixed(1)}ns`;
+            document.getElementById('trades').textContent = 
+                (1247 + Math.floor(Math.random() * 100)).toLocaleString();
+        }, 3000);
+
+        // Platform card interactions
+        document.querySelectorAll('.platform-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

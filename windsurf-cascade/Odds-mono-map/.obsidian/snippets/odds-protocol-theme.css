@@ -1,0 +1,434 @@
+/* 🎨 Odds Protocol Vault - Enhanced Design System */
+
+/* ===== 🎯 COLOR PALETTE ===== */
+:root {
+    /* Primary Colors */
+    --odds-primary: #6366f1;
+    --odds-primary-light: #818cf8;
+    --odds-primary-dark: #4f46e5;
+
+    /* Secondary Colors */
+    --odds-secondary: #22d3ee;
+    --odds-secondary-light: #67e8f9;
+    --odds-secondary-dark: #06b6d4;
+
+    /* Success/Warning/Error */
+    --odds-success: #10b981;
+    --odds-warning: #f59e0b;
+    --odds-error: #ef4444;
+
+    /* Neutral Colors */
+    --odds-gray-50: #f9fafb;
+    --odds-gray-100: #f3f4f6;
+    --odds-gray-200: #e5e7eb;
+    --odds-gray-300: #d1d5db;
+    --odds-gray-400: #9ca3af;
+    --odds-gray-500: #6b7280;
+    --odds-gray-600: #4b5563;
+    --odds-gray-700: #374151;
+    --odds-gray-800: #1f2937;
+    --odds-gray-900: #111827;
+
+    /* Background Colors */
+    --odds-bg-primary: #ffffff;
+    --odds-bg-secondary: #f8fafc;
+    --odds-bg-tertiary: #f1f5f9;
+
+    /* Text Colors */
+    --odds-text-primary: #1e293b;
+    --odds-text-secondary: #64748b;
+    --odds-text-muted: #94a3b8;
+
+    /* Border Colors */
+    --odds-border-light: #e2e8f0;
+    --odds-border-medium: #cbd5e1;
+    --odds-border-strong: #94a3b8;
+}
+
+/* ===== 🏗️ LAYOUT ENHANCEMENTS ===== */
+
+/* Enhanced Workspace */
+.workspace {
+    --background-primary: var(--odds-bg-primary);
+    --background-secondary: var(--odds-bg-secondary);
+    --background-tertiary: var(--odds-bg-tertiary);
+}
+
+/* Professional Typography */
+.markdown-preview-view {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.7;
+    color: var(--odds-text-primary);
+}
+
+/* Enhanced Headings */
+.markdown-preview-view h1 {
+    color: var(--odds-primary);
+    font-weight: 700;
+    font-size: 2.5rem;
+    border-bottom: 2px solid var(--odds-primary-light);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.markdown-preview-view h2 {
+    color: var(--odds-primary-dark);
+    font-weight: 600;
+    font-size: 2rem;
+    border-bottom: 1px solid var(--odds-border-light);
+    padding-bottom: 0.25rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.markdown-preview-view h3 {
+    color: var(--odds-gray-800);
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.markdown-preview-view h4 {
+    color: var(--odds-gray-700);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+/* ===== 🎨 COMPONENT ENHANCEMENTS ===== */
+
+/* Enhanced Blockquotes */
+.markdown-preview-view blockquote {
+    border-left: 4px solid var(--odds-primary);
+    background: var(--odds-bg-secondary);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-preview-view blockquote p {
+    margin: 0;
+    color: var(--odds-text-secondary);
+    font-style: italic;
+}
+
+/* Enhanced Code Blocks */
+.markdown-preview-view code {
+    background: var(--odds-gray-100);
+    color: var(--odds-primary-dark);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+}
+
+.markdown-preview-view pre {
+    background: var(--odds-gray-900);
+    color: var(--odds-gray-100);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--odds-gray-700);
+}
+
+.markdown-preview-view pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: 0.875rem;
+}
+
+/* Enhanced Tables */
+.markdown-preview-view table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5rem 0;
+    background: var(--odds-bg-primary);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-preview-view th {
+    background: var(--odds-primary);
+    color: white;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.markdown-preview-view td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--odds-border-light);
+}
+
+.markdown-preview-view tr:last-child td {
+    border-bottom: none;
+}
+
+.markdown-preview-view tr:nth-child(even) {
+    background: var(--odds-bg-secondary);
+}
+
+/* ===== 🏷️ TAG ENHANCEMENTS ===== */
+
+/* Professional Tags */
+.tag {
+    background: var(--odds-primary-light);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* Tag Color Variations */
+.tag[data-tag="system"] {
+    background: var(--odds-primary);
+}
+
+.tag[data-tag="dashboard"] {
+    background: var(--odds-secondary);
+}
+
+.tag[data-tag="architecture"] {
+    background: var(--odds-success);
+}
+
+.tag[data-tag="development"] {
+    background: var(--odds-warning);
+    color: var(--odds-gray-900);
+}
+
+.tag[data-tag="guide"] {
+    background: var(--odds-error);
+}
+
+/* ===== 📋 FRONTMATTER ENHANCEMENTS ===== */
+
+.frontmatter {
+    background: var(--odds-bg-secondary);
+    border: 1px solid var(--odds-border-light);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.frontmatter-container {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    color: var(--odds-text-secondary);
+}
+
+/* ===== 🔗 LINK ENHANCEMENTS ===== */
+
+/* Internal Links */
+.markdown-preview-view a.internal-link {
+    color: var(--odds-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.markdown-preview-view a.internal-link:hover {
+    color: var(--odds-primary-dark);
+    border-bottom-color: var(--odds-primary-dark);
+}
+
+/* External Links */
+.markdown-preview-view a.external-link {
+    color: var(--odds-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.markdown-preview-view a.external-link:hover {
+    color: var(--odds-secondary-dark);
+    border-bottom-color: var(--odds-secondary-dark);
+}
+
+/* ===== 📊 CALL OUTS & ADMONITIONS ===== */
+
+/* Enhanced Callouts */
+.callout {
+    border-left: 4px solid var(--odds-primary);
+    background: var(--odds-bg-secondary);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.callout[data-callout="info"] {
+    border-left-color: var(--odds-primary);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(99, 102, 241, 0.05) 100%);
+}
+
+.callout[data-callout="success"] {
+    border-left-color: var(--odds-success);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+.callout[data-callout="warning"] {
+    border-left-color: var(--odds-warning);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(245, 158, 11, 0.05) 100%);
+}
+
+.callout[data-callout="error"] {
+    border-left-color: var(--odds-error);
+    background: linear-gradient(135deg, var(--odds-bg-secondary) 0%, rgba(239, 68, 68, 0.05) 100%);
+}
+
+.callout-title {
+    font-weight: 600;
+    color: var(--odds-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* ===== 📱 SIDEBAR ENHANCEMENTS ===== */
+
+.workspace-leaf {
+    background: var(--odds-bg-primary);
+}
+
+.nav-folder-title {
+    color: var(--odds-text-primary);
+    font-weight: 600;
+}
+
+.nav-file-title {
+    color: var(--odds-text-secondary);
+}
+
+.nav-file-title.is-active {
+    color: var(--odds-primary);
+    background: var(--odds-bg-secondary);
+}
+
+/* ===== 🎯 SPECIAL COMPONENTS ===== */
+
+/* Status Indicators */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.status-indicator.active {
+    background: var(--odds-success);
+    color: white;
+}
+
+.status-indicator.inactive {
+    background: var(--odds-gray-400);
+    color: white;
+}
+
+.status-indicator.warning {
+    background: var(--odds-warning);
+    color: var(--odds-gray-900);
+}
+
+/* Progress Bars */
+.progress-bar {
+    width: 100%;
+    height: 0.5rem;
+    background: var(--odds-gray-200);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--odds-primary);
+    transition: width 0.3s ease;
+}
+
+/* ===== 📋 PRINT STYLES ===== */
+@media print {
+
+    .workspace-split.mod-left-split,
+    .workspace-split.mod-right-split,
+    .status-bar {
+        display: none !important;
+    }
+
+    .markdown-preview-view {
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+
+    .markdown-preview-view h1 {
+        font-size: 18pt;
+        color: #000 !important;
+        border-bottom: 2px solid #000;
+    }
+
+    .markdown-preview-view h2 {
+        font-size: 14pt;
+        color: #000 !important;
+        border-bottom: 1px solid #000;
+    }
+}
+
+/* ===== 🌙 DARK MODE SUPPORT ===== */
+.theme-dark {
+    --odds-bg-primary: #1e293b;
+    --odds-bg-secondary: #334155;
+    --odds-bg-tertiary: #475569;
+    --odds-text-primary: #f1f5f9;
+    --odds-text-secondary: #cbd5e1;
+    --odds-text-muted: #94a3b8;
+    --odds-border-light: #475569;
+    --odds-border-medium: #64748b;
+    --odds-border-strong: #94a3b8;
+}
+
+/* ===== 🎨 ANIMATIONS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.markdown-preview-view>div> :first-child {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ===== 📊 RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .markdown-preview-view {
+        font-size: 0.9rem;
+    }
+
+    .markdown-preview-view h1 {
+        font-size: 2rem;
+    }
+
+    .markdown-preview-view h2 {
+        font-size: 1.5rem;
+    }
+
+    .markdown-preview-view h3 {
+        font-size: 1.25rem;
+    }
+}

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Dashboard - RBAC Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .card { @apply bg-white rounded-lg shadow-md p-6; }
+        .metric { @apply text-2xl font-bold text-blue-600; }
+        .status-badge { @apply px-2 py-1 rounded-full text-xs font-medium; }
+        .status-pending { @apply bg-yellow-100 text-yellow-800; }
+        .status-processing { @apply bg-blue-100 text-blue-800; }
+        .status-shipped { @apply bg-purple-100 text-purple-800; }
+        .status-delivered { @apply bg-green-100 text-green-800; }
+        .status-cancelled { @apply bg-red-100 text-red-800; }
+        .role-badge { @apply px-3 py-1 rounded-full text-sm font-medium; }
+        .role-admin { @apply bg-red-100 text-red-800; }
+        .role-manager { @apply bg-orange-100 text-orange-800; }
+        .role-cashier { @apply bg-blue-100 text-blue-800; }
+        .role-customer { @apply bg-green-100 text-green-800; }
+        .role-viewer { @apply bg-gray-100 text-gray-800; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i data-lucide="shopping-cart" class="w-8 h-8 text-blue-600 mr-3"></i>
+                    <h1 class="text-xl font-semibold text-gray-900">Shopping Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="userRole" class="role-badge role-admin">Admin</span>
+                    <span id="userName" class="text-sm text-gray-600">Admin User</span>
+                    <button onclick="logout()" class="text-sm text-red-600 hover:text-red-800">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+                        <p id="totalRevenue" class="metric">$0</p>
+                    </div>
+                    <i data-lucide="dollar-sign" class="w-8 h-8 text-green-600"></i>
+                </div>
+            </div>
+            <div class="card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Orders</p>
+                        <p id="totalOrders" class="metric">0</p>
+                    </div>
+                    <i data-lucide="shopping-bag" class="w-8 h-8 text-blue-600"></i>
+                </div>
+            </div>
+            <div class="card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Products</p>
+                        <p id="totalProducts" class="metric">0</p>
+                    </div>
+                    <i data-lucide="package" class="w-8 h-8 text-purple-600"></i>
+                </div>
+            </div>
+            <div class="card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Active Users</p>
+                        <p id="activeUsers" class="metric">0</p>
+                    </div>
+                    <i data-lucide="users" class="w-8 h-8 text-orange-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow mb-8">
+            <div class="border-b border-gray-200">
+                <nav class="flex -mb-px">
+                    <button onclick="showTab('dashboard')" class="tab-btn active px-6 py-3 border-b-2 border-blue-500 text-blue-600 font-medium">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 inline mr-2"></i>
+                        Dashboard
+                    </button>
+                    <button onclick="showTab('orders')" class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i data-lucide="shopping-cart" class="w-4 h-4 inline mr-2"></i>
+                        Orders
+                    </button>
+                    <button onclick="showTab('products')" class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i data-lucide="package" class="w-4 h-4 inline mr-2"></i>
+                        Products
+                    </button>
+                    <button onclick="showTab('users')" class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i data-lucide="users" class="w-4 h-4 inline mr-2"></i>
+                        Users
+                    </button>
+                    <button onclick="showTab('analytics')" class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i data-lucide="bar-chart" class="w-4 h-4 inline mr-2"></i>
+                        Analytics
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Order Status Chart -->
+                        <div class="card">
+                            <h3 class="text-lg font-semibold mb-4">Order Status</h3>
+                            <div id="orderStatusChart" class="space-y-3">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- User Roles Chart -->
+                        <div class="card">
+                            <h3 class="text-lg font-semibold mb-4">User Roles</h3>
+                            <div id="userRolesChart" class="space-y-3">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="card mt-8">
+                        <h3 class="text-lg font-semibold mb-4">Recent Orders</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersTable" class="bg-white divide-y divide-gray-200">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Tab -->
+                <div id="orders-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">All Orders</h3>
+                        <button onclick="refreshOrders()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                            Refresh
+                        </button>
+                    </div>
+                    <div id="ordersList" class="space-y-4">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Products Tab -->
+                <div id="products-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">Products</h3>
+                        <button onclick="showCreateProductModal()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                            <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
+                            Add Product
+                        </button>
+                    </div>
+                    <div id="productsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div id="users-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">Users</h3>
+                        <button onclick="showCreateUserModal()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                            <i data-lucide="user-plus" class="w-4 h-4 inline mr-2"></i>
+                            Add User
+                        </button>
+                    </div>
+                    <div id="usersList" class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable" class="bg-white divide-y divide-gray-200">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics-tab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Top Products -->
+                        <div class="card">
+                            <h3 class="text-lg font-semibold mb-4">Top Products</h3>
+                            <div id="topProductsList" class="space-y-3">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- System Metrics -->
+                        <div class="card">
+                            <h3 class="text-lg font-semibold mb-4">System Metrics</h3>
+                            <div id="systemMetrics" class="space-y-3">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="createUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Create New User</h3>
+                <form id="createUserForm">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="newUsername" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="newEmail" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Role</label>
+                        <select id="newRole" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                            <option value="admin">Admin</option>
+                            <option value="manager">Manager</option>
+                            <option value="cashier">Cashier</option>
+                            <option value="customer">Customer</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="hideCreateUserModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Create User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let authToken = localStorage.getItem('authToken') || 'admin-token';
+        let currentUser = null;
+        const API_BASE = window.location.hostname === 'api.factory-wager.com' 
+            ? 'http://api.factory-wager.com:3005' 
+            : `http://${window.location.hostname}:3005`; // Dynamic hostname
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            loadDashboard();
+            setupEventListeners();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('createUserForm').addEventListener('submit', handleCreateUser);
+        }
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-500', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            
+            // Add active class to selected tab button
+            event.target.classList.add('active', 'border-blue-500', 'text-blue-600');
+            event.target.classList.remove('border-transparent', 'text-gray-500');
+            
+            // Load tab-specific data
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'orders':
+                    loadOrders();
+                    break;
+                case 'products':
+                    loadProducts();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+            }
+        }
+
+        // API calls
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            const response = await apiCall('/dashboard');
+            if (response.success) {
+                const data = response.data;
+                
+                // Update overview cards
+                document.getElementById('totalRevenue').textContent = `$${data.overview.totalRevenue.toFixed(2)}`;
+                document.getElementById('totalOrders').textContent = data.overview.totalOrders;
+                document.getElementById('totalProducts').textContent = data.overview.totalProducts;
+                document.getElementById('activeUsers').textContent = data.overview.activeUsers;
+                
+                // Update order status chart
+                updateOrderStatusChart(data.orderStatus);
+                
+                // Update user roles chart
+                updateUserRolesChart(data.userRoles);
+                
+                // Update recent orders table
+                updateRecentOrdersTable(data.recentOrders);
+            }
+        }
+
+        // Update order status chart
+        function updateOrderStatusChart(orderStatus) {
+            const container = document.getElementById('orderStatusChart');
+            container.innerHTML = '';
+            
+            const statusColors = {
+                pending: 'bg-yellow-500',
+                processing: 'bg-blue-500',
+                shipped: 'bg-purple-500',
+                delivered: 'bg-green-500',
+                cancelled: 'bg-red-500'
+            };
+            
+            Object.entries(orderStatus).forEach(([status, count]) => {
+                const percentage = (count / Object.values(orderStatus).reduce((a, b) => a + b, 0)) * 100;
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 ${statusColors[status]} rounded-full mr-2"></div>
+                        <span class="capitalize">${status}</span>
+                    </div>
+                    <span class="font-semibold">${count}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Update user roles chart
+        function updateUserRolesChart(userRoles) {
+            const container = document.getElementById('userRolesChart');
+            container.innerHTML = '';
+            
+            Object.entries(userRoles).forEach(([role, count]) => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                        <span class="capitalize">${role}s</span>
+                    </div>
+                    <span class="font-semibold">${count}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Update recent orders table
+        function updateRecentOrdersTable(orders) {
+            const tbody = document.getElementById('recentOrdersTable');
+            tbody.innerHTML = '';
+            
+            orders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${order.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.customerId}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${order.total.toFixed(2)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="status-badge status-${order.status}">${order.status}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(order.createdAt).toLocaleDateString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Load orders
+        async function loadOrders() {
+            const response = await apiCall('/orders');
+            if (response.success) {
+                const container = document.getElementById('ordersList');
+                container.innerHTML = '';
+                
+                response.data.forEach(order => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold">Order ${order.id}</h4>
+                                <p class="text-sm text-gray-600">Customer: ${order.customerId}</p>
+                                <p class="text-sm text-gray-600">Total: $${order.total.toFixed(2)}</p>
+                                <p class="text-sm text-gray-600">Items: ${order.items.length}</p>
+                            </div>
+                            <span class="status-badge status-${order.status}">${order.status}</span>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // Load products
+        async function loadProducts() {
+            const response = await apiCall('/products');
+            if (response.success) {
+                const container = document.getElementById('productsList');
+                container.innerHTML = '';
+                
+                response.data.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="font-semibold">${product.name}</h4>
+                            <span class="text-lg font-bold text-green-600">$${product.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${product.description}</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500">Category: ${product.category}</span>
+                            <span class="text-gray-500">Stock: ${product.stock}</span>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            const response = await apiCall('/users');
+            if (response.success) {
+                const tbody = document.getElementById('usersTable');
+                tbody.innerHTML = '';
+                
+                response.data.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3">
+                                    ${user.username.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">${user.username}</div>
+                                    <div class="text-sm text-gray-500">ID: ${user.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.email}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="role-badge role-${user.role}">${user.role}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full ${user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${user.active ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                            <button class="text-red-600 hover:text-red-900">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Load analytics
+        async function loadAnalytics() {
+            const response = await apiCall('/dashboard');
+            if (response.success) {
+                const data = response.data;
+                
+                // Update top products
+                const topProductsContainer = document.getElementById('topProductsList');
+                topProductsContainer.innerHTML = '';
+                
+                data.topProducts.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center p-3 bg-gray-50 rounded';
+                    div.innerHTML = `
+                        <div>
+                            <div class="font-medium">${product.name}</div>
+                            <div class="text-sm text-gray-500">${product.category}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-semibold">$${product.price.toFixed(2)}</div>
+                            <div class="text-sm text-gray-500">Stock: ${product.stock}</div>
+                        </div>
+                    `;
+                    topProductsContainer.appendChild(div);
+                });
+                
+                // Update system metrics
+                const systemMetricsContainer = document.getElementById('systemMetrics');
+                systemMetricsContainer.innerHTML = `
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <span>Uptime</span>
+                        <span class="font-semibold">${Math.floor(data.systemMetrics.uptime / 1000 / 60)} minutes</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <span>Request Count</span>
+                        <span class="font-semibold">${data.systemMetrics.requestCount}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <span>Memory Usage</span>
+                        <span class="font-semibold">${(data.systemMetrics.memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Modal functions
+        function showCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('hidden');
+        }
+
+        function hideCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('hidden');
+            document.getElementById('createUserForm').reset();
+        }
+
+        async function handleCreateUser(event) {
+            event.preventDefault();
+            
+            const userData = {
+                username: document.getElementById('newUsername').value,
+                email: document.getElementById('newEmail').value,
+                role: document.getElementById('newRole').value,
+                active: true
+            };
+            
+            const response = await apiCall('/users', 'POST', userData);
+            if (response.success) {
+                hideCreateUserModal();
+                loadUsers();
+                alert('User created successfully!');
+            } else {
+                alert('Failed to create user: ' + response.error);
+            }
+        }
+
+        // Refresh functions
+        function refreshOrders() {
+            loadOrders();
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>

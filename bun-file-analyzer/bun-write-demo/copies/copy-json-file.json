@@ -1,0 +1,13 @@
+{
+  "name": "Bun.write() Demo",
+  "version": "1.0.0",
+  "timestamp": "2026-01-21T01:50:48.829Z",
+  "features": [
+    "Write strings",
+    "Write Blobs",
+    "Write ArrayBuffers",
+    "Write TypedArrays",
+    "Write Response objects",
+    "Write BunFile objects"
+  ]
+}

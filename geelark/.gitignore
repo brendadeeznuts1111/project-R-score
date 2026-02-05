@@ -1,0 +1,22 @@
+# Environment files with sensitive credentials
+.env
+.env.*
+.env.local
+.env.test
+.env.production
+.env.development
+
+# API credentials and secrets
+*.key
+*.pem
+*.p12
+secrets/
+**/secrets/
+
+# Note: scripts/test-geelark-api.ts is kept in repo (it's safe)
+# Only .env files with actual credentials are ignored
+
+# Temporary files
+*.tmp
+*.log
+*.cache

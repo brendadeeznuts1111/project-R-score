@@ -1,0 +1,41 @@
+/**
+ * @fileoverview {{{fileoverview}}}
+ * @module {{{modulePath}}}
+ * @description {{{description}}}
+{{{authorInfo}}}
+ * @created {{{createdDate}}}
+{{{depsInfo}}}
+{{{exportsInfo}}}
+ *
+ * {{{metadata}}}
+ *
+ * @ref {{{ref}}}
+ */
+
+/**
+ * {{{interfaceName}}} interface
+ * {{{description}}}
+ */
+export interface {{{interfaceName}}} {
+	// TODO: Define interface properties and methods
+	id: string;
+	name: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+/**
+ * {{{interfaceName}}} creation options
+ */
+export interface {{{interfaceName}}}CreateOptions {
+	// TODO: Define creation options
+	name: string;
+}
+
+/**
+ * {{{interfaceName}}} update options
+ */
+export interface {{{interfaceName}}}UpdateOptions {
+	// TODO: Define update options
+	name?: string;
+}

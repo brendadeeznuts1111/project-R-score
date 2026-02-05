@@ -1,0 +1,53 @@
+#!/usr/bin/env bun
+/**
+ * @fileoverview {{{fileoverview}}}
+ * @module {{{modulePath}}}
+ * @description {{{description}}}
+{{{authorInfo}}}
+ * @created {{{createdDate}}}
+{{{teamInfo}}}
+{{{depsInfo}}}
+{{{exportsInfo}}}
+ *
+ * {{{metadata}}}
+ *
+ * @ref {{{ref}}}
+ *
+ * Usage:
+ *   bun run {{{modulePath}}} [options]
+ */
+
+interface {{{pascalName}}}ScriptOptions {
+	// TODO: Define options interface
+}
+
+/**
+ * Parse command-line arguments
+ */
+function parseArgs(): {{{pascalName}}}ScriptOptions {
+	const args = process.argv.slice(2);
+	const options: Partial<{{{pascalName}}}ScriptOptions> = {};
+
+	// TODO: Parse command-line arguments
+
+	return options as {{{pascalName}}}ScriptOptions;
+}
+
+/**
+ * Main script execution function
+ */
+async function main() {
+	const options = parseArgs();
+
+	try {
+		// TODO: Implement script logic
+		console.log('✅ {{{name}}} completed successfully');
+	} catch (error) {
+		console.error('❌ Error:', error);
+		process.exit(1);
+	}
+}
+{{{exportFunctions}}}
+if (import.meta.main) {
+	main();
+}

@@ -1,0 +1,13 @@
+{
+  "region": "us-west-2",
+  "status": "active",
+  "lastUpdate": 1769814241694,
+  "metrics": {
+    "parseTime": 1.7651829643979993,
+    "testCount": 5,
+    "passRate": 0.8634503060533925,
+    "coverage": 0.929262500486244,
+    "duration": 1654.0509757835252
+  },
+  "sealId": "tier1380-1769814241694-ffvo8hdep7k"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Bun Feature Flag Architect",
+  "description": "A high-performance dashboard for visualizing compile-time feature flags, dead code elimination, and bundle size impact in Bun-powered applications.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

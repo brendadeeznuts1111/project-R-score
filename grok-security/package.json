@@ -1,0 +1,69 @@
+{
+  "name": "grok-security",
+  "version": "1.0.0",
+  "description": "Grok Security - Enterprise-Grade Bun.inspect Utilities with Headscale + Cloudflare + Tailscale Integration",
+  "type": "module",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "scripts": {
+    "table-doctor": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts",
+    "table-doctor:analyze": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts --analyze",
+    "table-doctor:domain": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts --analyze --domain",
+    "table-doctor:report": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts --report",
+    "table-doctor:interactive": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts --interactive",
+    "table-doctor:watch": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts --watch",
+    "table-doctor:fix": "cd bun-inspect-utils && bun run ./src/cli/table-doctor.ts --fix",
+    "table-tutorial": "bun run ./bin/table-tutorial.ts",
+    "path:audit": "bun run ./tools/verify-path.ts",
+    "version": "bun tools/quantum-semver-engine.ts --version",
+    "version:bump": "bun tools/quantum-semver-engine.ts --bump",
+    "version:bump:major": "bun tools/quantum-semver-engine.ts --bump major",
+    "version:bump:minor": "bun tools/quantum-semver-engine.ts --bump minor",
+    "version:bump:patch": "bun tools/quantum-semver-engine.ts --bump patch",
+    "version:check": "bun tools/quantum-semver-engine.ts --check",
+    "build:canary": "bun tools/quantum-semver-engine.ts --build canary",
+    "build:nightly": "bun tools/quantum-semver-engine.ts --build nightly",
+    "build:alpha": "bun tools/quantum-semver-engine.ts --build alpha",
+    "build:beta": "bun tools/quantum-semver-engine.ts --build beta",
+    "build:rc": "bun tools/quantum-semver-engine.ts --build rc",
+    "build:stable": "bun tools/quantum-semver-engine.ts --build stable",
+    "build:all": "bun tools/quantum-semver-engine.ts --build canary && bun tools/quantum-semver-engine.ts --build stable",
+    "deploy:dev": "bun tools/quantum-semver-engine.ts --deploy dev",
+    "deploy:staging": "bun tools/quantum-semver-engine.ts --deploy rc",
+    "deploy:production": "bun tools/quantum-semver-engine.ts --deploy stable",
+    "headscale:up": "./bin/opr headscale:up",
+    "headscale:down": "./bin/opr headscale:down",
+    "health": "./bin/opr health:full",
+    "opr": "./bin/opr"
+  },
+  "bin": {
+    "opr": "./bin/opr"
+  },
+  "workspaces": [
+    "bun-inspect-utils"
+  ],
+  "release": {
+    "channels": [
+      "canary",
+      "nightly",
+      "alpha",
+      "beta",
+      "rc",
+      "stable"
+    ],
+    "retention": {
+      "canary": "7d",
+      "nightly": "30d",
+      "alpha": "30d",
+      "beta": "90d",
+      "rc": "180d",
+      "stable": "forever"
+    }
+  },
+  "author": "mike.hunt@factory.wager.com",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

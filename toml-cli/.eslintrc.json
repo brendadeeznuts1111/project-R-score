@@ -1,0 +1,61 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es2023": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2023,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "no-console": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "warn",
+    "no-restricted-imports": [
+      "error",
+      {
+        "name": "axios",
+        "message": "❌ Use Bun native fetch instead of axios"
+      },
+      {
+        "name": "node-fetch",
+        "message": "❌ Use Bun native fetch instead of node-fetch"
+      },
+      {
+        "name": "form-data",
+        "message": "❌ Use Bun FormData API instead of form-data package"
+      },
+      {
+        "name": "dotenv",
+        "message": "❌ Bun automatically loads .env files - no need for dotenv"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-types": "warn"
+      }
+    }
+  ]
+}

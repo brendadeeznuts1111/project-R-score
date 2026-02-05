@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Benchmark Metadata Schema",
+  "description": "Schema for benchmark metadata files",
+  "type": "object",
+  "required": ["id", "name", "createdAt", "gitCommit", "profile"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the benchmark",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the benchmark"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what this benchmark measures"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when benchmark was created"
+    },
+    "gitCommit": {
+      "type": "string",
+      "description": "Git commit hash (full or short)",
+      "pattern": "^[a-f0-9]{7,40}$"
+    },
+    "gitBranch": {
+      "type": "string",
+      "description": "Git branch name"
+    },
+    "system": {
+      "type": "object",
+      "description": "System configuration when benchmark was run",
+      "properties": {
+        "os": {
+          "type": "string",
+          "enum": ["darwin", "linux", "win32"]
+        },
+        "arch": {
+          "type": "string",
+          "enum": ["arm64", "x64", "x86"]
+        },
+        "nodeVersion": {
+          "type": "string",
+          "description": "Bun/Node.js version"
+        },
+        "cpu": {
+          "type": "string",
+          "description": "CPU model/description"
+        },
+        "memory": {
+          "type": "string",
+          "description": "Total system memory"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "description": "Profile file information",
+      "required": ["type", "file"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["cpu", "heap"]
+        },
+        "file": {
+          "type": "string",
+          "description": "Relative path to profile file from benchmarks/ directory"
+        },
+        "durationMs": {
+          "type": "number",
+          "description": "Profile duration in milliseconds"
+        },
+        "sampleCount": {
+          "type": "number",
+          "description": "Number of samples collected"
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "description": "Analysis report information",
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Relative path to analysis JSON file"
+        },
+        "hotspots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of hot functions identified"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Performance optimization recommendations"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for categorizing benchmarks"
+    },
+    "relatedBenchmarks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of related benchmarks (e.g., baseline, optimized)"
+    }
+  }
+}

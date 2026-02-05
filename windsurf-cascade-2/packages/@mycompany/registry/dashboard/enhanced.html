@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Enhanced Registry Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      color: #00ff00;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(45deg, #00ff00, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+    }
+    
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .card {
+      background: rgba(17, 17, 17, 0.9);
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00ff00, #00ffff, #ff00ff);
+      animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .card:hover {
+      border-color: #00ff00;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .card h2 {
+      color: #00ffff;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .metric:last-child {
+      border-bottom: none;
+    }
+    
+    .metric-label {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+    
+    .metric-value {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    .metric-value.good { color: #00ff00; }
+    .metric-value.warning { color: #ffaa00; }
+    .metric-value.critical { color: #ff4444; }
+    
+    .bytes-grid {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 0.3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .byte {
+      background: #0a0a0a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 0.4rem;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .byte:hover {
+      background: #2a2a2a;
+      border-color: #00ff00;
+      transform: scale(1.1);
+    }
+    
+    .byte.updated {
+      animation: byteUpdate 1s ease-out;
+    }
+    
+    @keyframes byteUpdate {
+      0% { background: #10b981; color: white; transform: scale(1.2); }
+      100% { background: #0a0a0a; color: #00ff00; transform: scale(1); }
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-indicator.online { background: #00ff00; }
+    .status-indicator.warning { background: #ffaa00; }
+    .status-indicator.offline { background: #ff4444; }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .chart-container {
+      height: 150px;
+      margin-top: 1rem;
+      position: relative;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    
+    .mini-chart {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .alert {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid #ff4444;
+      border-radius: 6px;
+      padding: 0.8rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .alert.warning {
+      background: rgba(255, 170, 0, 0.1);
+      border-color: #ffaa00;
+    }
+    
+    .alert.info {
+      background: rgba(0, 170, 255, 0.1);
+      border-color: #00aaff;
+    }
+    
+    .button {
+      background: linear-gradient(45deg, #00ff00, #00ffff);
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      padding: 0.5rem 1rem;
+      font-family: monospace;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
+    }
+    
+    .button.danger {
+      background: linear-gradient(45deg, #ff4444, #ff6666);
+      color: #fff;
+    }
+    
+    .terminal {
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+      height: 200px;
+      overflow-y: auto;
+      margin-top: 1rem;
+    }
+    
+    .terminal-output {
+      color: #00ff00;
+      white-space: pre-wrap;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ff00, #00ffff);
+      transition: width 0.3s ease;
+    }
+    
+    .feature-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    
+    .toggle-switch.active {
+      background: #00ff00;
+    }
+    
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+    
+    .toggle-switch.active::after {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Enhanced Registry Dashboard</h1>
+    
+    <div class="dashboard-grid">
+      <!-- Performance Metrics -->
+      <div class="card">
+        <h2>📊 Performance Metrics</h2>
+        <div id="performance-metrics">
+          <div class="metric">
+            <span class="metric-label">CPU Usage</span>
+            <span class="metric-value" id="cpu-usage">--%</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Memory Usage</span>
+            <span class="metric-value" id="memory-usage">--%</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Active Connections</span>
+            <span class="metric-value" id="active-connections">--</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Requests/sec</span>
+            <span class="metric-value" id="requests-per-second">--</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Latency</span>
+            <span class="metric-value" id="latency">--ms</span>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="performance-chart" class="mini-chart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Security Status -->
+      <div class="card">
+        <h2>🔐 Security Status</h2>
+        <div id="security-metrics">
+          <div class="metric">
+            <span class="metric-label">Security Status</span>
+            <span class="metric-value good">
+              <span class="status-indicator online"></span>
+              Secured
+            </span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Rate Limit Hits</span>
+            <span class="metric-value" id="rate-limit-hits">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Auth Failures</span>
+            <span class="metric-value" id="auth-failures">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Blocked Requests</span>
+            <span class="metric-value" id="blocked-requests">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Active API Keys</span>
+            <span class="metric-value" id="active-api-keys">3</span>
+          </div>
+        </div>
+        <div style="margin-top: 1rem;">
+          <button class="button" onclick="generateApiKey()">Generate API Key</button>
+          <button class="button danger" onclick="resetSecurityMetrics()">Reset Metrics</button>
+        </div>
+      </div>
+      
+      <!-- 13-Byte Config -->
+      <div class="card">
+        <h2>⚙️ 13-Byte Configuration</h2>
+        <div class="bytes-grid" id="config-bytes">
+          <!-- Bytes will be populated by JavaScript -->
+        </div>
+        <div class="metric">
+          <span class="metric-label">Version</span>
+          <span class="metric-value" id="config-version">2</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Registry Hash</span>
+          <span class="metric-value" id="registry-hash">0x12345678</span>
+        </div>
+        <div class="feature-toggle">
+          <span>Private Registry</span>
+          <div class="toggle-switch active" id="toggle-private-registry" onclick="toggleFeature('PRIVATE_REGISTRY', this)"></div>
+        </div>
+        <div class="feature-toggle">
+          <span>Premium Types</span>
+          <div class="toggle-switch active" id="toggle-premium-types" onclick="toggleFeature('PREMIUM_TYPES', this)"></div>
+        </div>
+        <div class="feature-toggle">
+          <span>Debug Mode</span>
+          <div class="toggle-switch" id="toggle-debug" onclick="toggleFeature('DEBUG', this)"></div>
+        </div>
+      </div>
+      
+      <!-- Registry Status -->
+      <div class="card">
+        <h2>📦 Registry Status</h2>
+        <div id="registry-status">
+          <div class="metric">
+            <span class="metric-label">Status</span>
+            <span class="metric-value good">
+              <span class="status-indicator online"></span>
+              Running
+            </span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Package Count</span>
+            <span class="metric-value" id="package-count">42</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Publish Rate</span>
+            <span class="metric-value" id="publish-rate">0.5/s</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Download Rate</span>
+            <span class="metric-value" id="download-rate">2.3/s</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Cache Hit Rate</span>
+            <span class="metric-value" id="cache-hit-rate">87%</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Alerts -->
+      <div class="card">
+        <h2>🚨 System Alerts</h2>
+        <div id="alerts-container">
+          <div class="alert info">
+            <strong>INFO:</strong> System operating normally
+          </div>
+        </div>
+      </div>
+      
+      <!-- Terminal -->
+      <div class="card" style="grid-column: 1 / -1;">
+        <h2>💻 Terminal Interface</h2>
+        <div class="terminal" id="terminal">
+          <div class="terminal-output" id="terminal-output">
+            🔗 Terminal connected to registry dashboard
+            💡 Using binary subprotocol: registry-v1
+            📊 Registry is running at http://localhost:4873
+            🔧 Binary config updates enabled
+            📈 Performance monitoring active
+            
+            &gt; 
+          </div>
+        </div>
+        <div style="margin-top: 1rem;">
+          <input type="text" id="terminal-input" placeholder="Enter command..." style="width: 70%; padding: 0.5rem; background: #1a1a1a; border: 1px solid #333; color: #00ff00; font-family: monospace;">
+          <button class="button" onclick="sendTerminalCommand()">Send</button>
+          <button class="button" onclick="clearTerminal()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // WebSocket connection for real-time updates
+    let ws = null;
+    let performanceChart = null;
+    let performanceData = [];
+    
+    // Initialize dashboard
+    function initDashboard() {
+      connectWebSocket();
+      initConfigBytes();
+      initPerformanceChart();
+      loadInitialData();
+      setInterval(updateMetrics, 1000);
+    }
+    
+    // Connect to WebSocket for real-time updates
+    function connectWebSocket() {
+      try {
+        ws = new WebSocket('ws://localhost:4873/_dashboard/terminal', 'registry-v1');
+        
+        ws.onopen = function() {
+          console.log('WebSocket connected');
+          addTerminalOutput('🔗 Connected to registry terminal');
+        };
+        
+        ws.onmessage = function(event) {
+          if (event.data instanceof Blob) {
+            // Handle binary data (config updates)
+            event.data.arrayBuffer().then(buffer => {
+              handleBinaryUpdate(new Uint8Array(buffer));
+            });
+          } else {
+            // Handle text data (terminal output)
+            addTerminalOutput(event.data);
+          }
+        };
+        
+        ws.onclose = function() {
+          console.log('WebSocket disconnected');
+          addTerminalOutput('❌ Disconnected from registry');
+          // Attempt to reconnect after 3 seconds
+          setTimeout(connectWebSocket, 3000);
+        };
+        
+        ws.onerror = function(error) {
+          console.error('WebSocket error:', error);
+          addTerminalOutput('❌ WebSocket error occurred');
+        };
+      } catch (error) {
+        console.error('Failed to connect WebSocket:', error);
+        addTerminalOutput('❌ Failed to connect to registry terminal');
+      }
+    }
+    
+    // Initialize 13-byte config display
+    function initConfigBytes() {
+      const container = document.getElementById('config-bytes');
+      const byteNames = ['Ver', 'Hash1', 'Hash2', 'Hash3', 'Hash4', 'Flag1', 'Flag2', 'Flag3', 'Flag4', 'Term', 'Rows', 'Cols', 'Res'];
+      
+      for (let i = 0; i < 13; i++) {
+        const byte = document.createElement('div');
+        byte.className = 'byte';
+        byte.id = `byte-${i}`;
+        byte.textContent = '00';
+        byte.title = byteNames[i];
+        byte.onclick = () => editByte(i);
+        container.appendChild(byte);
+      }
+      
+      // Load current config
+      loadConfig();
+    }
+    
+    // Load current configuration
+    async function loadConfig() {
+      try {
+        const response = await fetch('/_dashboard/api/config');
+        if (response.ok) {
+          const config = await response.json();
+          updateConfigDisplay(config);
+        }
+      } catch (error) {
+        console.error('Failed to load config:', error);
+      }
+    }
+    
+    // Update config display
+    function updateConfigDisplay(config) {
+      // Update byte display
+      const bytes = [
+        config.version,
+        (config.registryHash >> 0) & 0xFF,
+        (config.registryHash >> 8) & 0xFF,
+        (config.registryHash >> 16) & 0xFF,
+        (config.registryHash >> 24) & 0xFF,
+        (config.featureFlags >> 0) & 0xFF,
+        (config.featureFlags >> 8) & 0xFF,
+        (config.featureFlags >> 16) & 0xFF,
+        (config.featureFlags >> 24) & 0xFF,
+        config.terminal.mode,
+        config.terminal.rows,
+        config.terminal.cols,
+        0
+      ];
+      
+      bytes.forEach((byte, index) => {
+        const element = document.getElementById(`byte-${index}`);
+        if (element) {
+          element.textContent = byte.toString(16).padStart(2, '0').toUpperCase();
+        }
+      });
+      
+      // Update feature toggles
+      document.getElementById('toggle-private-registry').className = 
+        config.features.PRIVATE_REGISTRY ? 'toggle-switch active' : 'toggle-switch';
+      document.getElementById('toggle-premium-types').className = 
+        config.features.PREMIUM_TYPES ? 'toggle-switch active' : 'toggle-switch';
+      document.getElementById('toggle-debug').className = 
+        config.features.DEBUG ? 'toggle-switch active' : 'toggle-switch';
+      
+      // Update other fields
+      document.getElementById('config-version').textContent = config.version;
+      document.getElementById('registry-hash').textContent = `0x${config.registryHash.toString(16).padStart(8, '0').toUpperCase()}`;
+    }
+    
+    // Toggle feature flag
+    function toggleFeature(feature, element) {
+      element.classList.toggle('active');
+      const enabled = element.classList.contains('active');
+      
+      // Send binary update via WebSocket
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        const featureMap = {
+          'PRIVATE_REGISTRY': 2,
+          'PREMIUM_TYPES': 1,
+          'DEBUG': 4
+        };
+        
+        const frame = new Uint8Array([0x02, featureMap[feature], enabled ? 1 : 0]);
+        ws.send(frame);
+        
+        addTerminalOutput(`🔧 Toggling ${feature}: ${enabled ? 'ON' : 'OFF'}`);
+      }
+    }
+    
+    // Edit individual byte
+    function editByte(index) {
+      const currentValue = document.getElementById(`byte-${index}`).textContent;
+      const newValue = prompt(`Edit byte ${index} (hex):`, currentValue);
+      
+      if (newValue && /^[0-9A-Fa-f]{2}$/.test(newValue)) {
+        const byteValue = parseInt(newValue, 16);
+        
+        // Send binary update via WebSocket
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          const frame = new Uint8Array([0x01, index, byteValue]);
+          ws.send(frame);
+          
+          // Animate the byte
+          const element = document.getElementById(`byte-${index}`);
+          element.classList.add('updated');
+          setTimeout(() => element.classList.remove('updated'), 1000);
+          
+          addTerminalOutput(`⚡ Updated byte ${index} to 0x${newValue.toUpperCase()}`);
+        }
+      }
+    }
+    
+    // Initialize performance chart
+    function initPerformanceChart() {
+      const canvas = document.getElementById('performance-chart');
+      const ctx = canvas.getContext('2d');
+      
+      // Simple line chart implementation
+      performanceChart = {
+        ctx: ctx,
+        width: canvas.width = canvas.offsetWidth,
+        height: canvas.height = canvas.offsetHeight,
+        data: [],
+        maxPoints: 60
+      };
+    }
+    
+    // Load initial data
+    async function loadInitialData() {
+      try {
+        // Load performance metrics
+        const perfResponse = await fetch('/_api/performance/summary');
+        if (perfResponse.ok) {
+          const perfData = await perfResponse.json();
+          updatePerformanceDisplay(perfData);
+        }
+        
+        // Load security metrics
+        const secResponse = await fetch('/_api/security/metrics');
+        if (secResponse.ok) {
+          const secData = await secResponse.json();
+          updateSecurityDisplay(secData);
+        }
+      } catch (error) {
+        console.error('Failed to load initial data:', error);
+      }
+    }
+    
+    // Update metrics periodically
+    async function updateMetrics() {
+      try {
+        // Update performance metrics
+        const perfResponse = await fetch('/_api/performance/metrics');
+        if (perfResponse.ok) {
+          const metrics = await perfResponse.json();
+          updatePerformanceMetrics(metrics);
+        }
+        
+        // Update alerts
+        const alertsResponse = await fetch('/_api/performance/alerts');
+        if (alertsResponse.ok) {
+          const alerts = await alertsResponse.json();
+          updateAlerts(alerts);
+        }
+      } catch (error) {
+        console.error('Failed to update metrics:', error);
+      }
+    }
+    
+    // Update performance metrics display
+    function updatePerformanceMetrics(metrics) {
+      document.getElementById('cpu-usage').textContent = `${metrics.cpu.usage.toFixed(1)}%`;
+      document.getElementById('memory-usage').textContent = `${metrics.memory.percentage.toFixed(1)}%`;
+      document.getElementById('active-connections').textContent = metrics.websocket.activeConnections;
+      document.getElementById('requests-per-second').textContent = metrics.network.requestsPerSecond.toFixed(1);
+      document.getElementById('latency').textContent = `${metrics.websocket.latency.toFixed(1)}ms`;
+      
+      // Update colors based on thresholds
+      updateMetricColor('cpu-usage', metrics.cpu.usage, 80, 90);
+      updateMetricColor('memory-usage', metrics.memory.percentage, 85, 95);
+      updateMetricColor('latency', metrics.websocket.latency, 500, 1000);
+      
+      // Update chart
+      updatePerformanceChart(metrics);
+    }
+    
+    // Update metric color based on thresholds
+    function updateMetricColor(elementId, value, warningThreshold, criticalThreshold) {
+      const element = document.getElementById(elementId);
+      element.className = 'metric-value';
+      
+      if (value >= criticalThreshold) {
+        element.classList.add('critical');
+      } else if (value >= warningThreshold) {
+        element.classList.add('warning');
+      } else {
+        element.classList.add('good');
+      }
+    }
+    
+    // Update performance chart
+    function updatePerformanceChart(metrics) {
+      if (!performanceChart) return;
+      
+      performanceChart.data.push({
+        timestamp: Date.now(),
+        cpu: metrics.cpu.usage,
+        memory: metrics.memory.percentage
+      });
+      
+      // Keep only last 60 points
+      if (performanceChart.data.length > performanceChart.maxPoints) {
+        performanceChart.data.shift();
+      }
+      
+      // Simple chart drawing
+      const ctx = performanceChart.ctx;
+      const width = performanceChart.width;
+      const height = performanceChart.height;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      // Draw CPU line
+      ctx.strokeStyle = '#00ff00';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      
+      performanceChart.data.forEach((point, index) => {
+        const x = (index / (performanceChart.maxPoints - 1)) * width;
+        const y = height - (point.cpu / 100) * height;
+        
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      
+      ctx.stroke();
+      
+      // Draw memory line
+      ctx.strokeStyle = '#00ffff';
+      ctx.beginPath();
+      
+      performanceChart.data.forEach((point, index) => {
+        const x = (index / (performanceChart.maxPoints - 1)) * width;
+        const y = height - (point.memory / 100) * height;
+        
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      
+      ctx.stroke();
+    }
+    
+    // Update security display
+    function updateSecurityDisplay(metrics) {
+      document.getElementById('rate-limit-hits').textContent = metrics.rateLimitHits;
+      document.getElementById('auth-failures').textContent = metrics.authFailures;
+      document.getElementById('blocked-requests').textContent = metrics.blockedRequests;
+      document.getElementById('active-api-keys').textContent = metrics.activeAPIKeys;
+    }
+    
+    // Update alerts display
+    function updateAlerts(alerts) {
+      const container = document.getElementById('alerts-container');
+      container.innerHTML = '';
+      
+      if (alerts.length === 0) {
+        container.innerHTML = '<div class="alert info"><strong>INFO:</strong> System operating normally</div>';
+        return;
+      }
+      
+      alerts.slice(-5).reverse().forEach(alert => {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert ${alert.severity === 'critical' ? '' : alert.severity === 'high' ? 'warning' : 'info'}`;
+        alertDiv.innerHTML = `<strong>${alert.type.toUpperCase()}:</strong> ${alert.message}`;
+        container.appendChild(alertDiv);
+      });
+    }
+    
+    // Handle binary updates from WebSocket
+    function handleBinaryUpdate(frame) {
+      if (frame.length >= 3) {
+        const type = frame[0];
+        const index = frame[1];
+        const value = frame[2];
+        
+        if (type === 0x01) {
+          // Config byte update
+          const element = document.getElementById(`byte-${index}`);
+          if (element) {
+            element.textContent = value.toString(16).padStart(2, '0').toUpperCase();
+            element.classList.add('updated');
+            setTimeout(() => element.classList.remove('updated'), 1000);
+          }
+        }
+      }
+    }
+    
+    // Terminal functions
+    function addTerminalOutput(text) {
+      const output = document.getElementById('terminal-output');
+      output.textContent += text + '\n';
+      output.scrollTop = output.scrollHeight;
+    }
+    
+    function sendTerminalCommand() {
+      const input = document.getElementById('terminal-input');
+      const command = input.value.trim();
+      
+      if (command && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(command);
+        addTerminalOutput(`> ${command}`);
+        input.value = '';
+      }
+    }
+    
+    function clearTerminal() {
+      const output = document.getElementById('terminal-output');
+      output.textContent = '> ';
+    }
+    
+    // Security functions
+    async function generateApiKey() {
+      try {
+        const response = await fetch('/_api/security/keys', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer admin-key-placeholder'
+          },
+          body: JSON.stringify({
+            id: 'dashboard-key-' + Date.now(),
+            permissions: ['read'],
+            rateLimit: 100
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          alert(`Generated API Key: ${data.apiKey}\n\nSave this key securely!`);
+        } else {
+          alert('Failed to generate API key');
+        }
+      } catch (error) {
+        console.error('Failed to generate API key:', error);
+        alert('Error generating API key');
+      }
+    }
+    
+    async function resetSecurityMetrics() {
+      try {
+        // This would require admin permissions
+        alert('Security metrics reset (admin function)');
+      } catch (error) {
+        console.error('Failed to reset metrics:', error);
+      }
+    }
+    
+    // Handle Enter key in terminal input
+    document.addEventListener('DOMContentLoaded', function() {
+      const input = document.getElementById('terminal-input');
+      if (input) {
+        input.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            sendTerminalCommand();
+          }
+        });
+      }
+      
+      // Initialize dashboard
+      initDashboard();
+    });
+  </script>
+</body>
+</html>

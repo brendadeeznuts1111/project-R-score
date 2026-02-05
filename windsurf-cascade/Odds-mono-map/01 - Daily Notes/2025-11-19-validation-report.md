@@ -1,0 +1,1280 @@
+# 🔍 Vault Validation Report - 2025-11-19
+
+## Summary
+- **Total files**: 18
+- **Valid files**: 0
+- **Invalid files**: 18
+- **Orphaned files**: 2
+- **Issues**: 18
+- **Warnings**: 1205
+
+## Issues (18)
+- ❌ Invalid naming in 06 - Templates: Template-System-Excellence-Complete-Success.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: Template-System-Review-Comprehensive-Analysis.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 06 - Registry Aware Template With Version Management.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 00 - Tasks Plugin Integration And Enhancement.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: Template-System-Optimization-Complete-Success.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: Bun-Utilities-Mastery-Complete-Integration-Guide.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 09 - Dynamic Project Template With Script Integration.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: Bun-Utilities-Mastery-Ultimate-Achievement-Summary.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 01 - Templates Organization Summary.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: Research-Notebook-Template.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 05 - Webpage HTML Export Configuration Guide.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 08 - Enhanced Semver With Bun Semver Order.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 04 - Advanced Templater Configuration.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 07 - Bun Native Enhanced Template With Performance Metrics.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 02 - Template Index.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 📚-Template-Library-Master-Collection.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: Analytics-Dashboard-Template.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+- ❌ Invalid naming in 06 - Templates: 03 - Template Index Quick Navigation.md (expected: /^[A-Z][a-zA-Z0-9\s-]+\s+Template\.md$/)
+
+## Warnings (1205)
+- ⚠️ Missing recommended subfolder: 02 - Architecture/System Design
+- ⚠️ Missing recommended subfolder: 02 - Architecture/Data Models
+- ⚠️ Missing recommended subfolder: 03 - Development/Code Snippets
+- ⚠️ Missing recommended subfolder: 03 - Development/Testing
+- ⚠️ Missing recommended subfolder: 04 - Documentation/Guides
+- ⚠️ Missing recommended subfolder: 04 - Documentation/API
+- ⚠️ Missing recommended subfolder: 05 - Assets/Images
+- ⚠️ Markdown file in root directory should be organized: 00 - Dashboard.md
+- ⚠️ Markdown file in root directory should be organized: TEMPLATE_MASTER_INDEX.md
+- ⚠️ Broken link in OddsTick.md: [[SyntheticArbitrageFactory]]
+- ⚠️ Broken link in OddsTick.md: [[Stream Processor]]
+- ⚠️ Broken link in OddsTick.md: [[SyntheticArbitrageFactory]]
+- ⚠️ Broken link in OddsTick.md: [[Stream Processor]]
+- ⚠️ Broken link in Reference System Types.md: [[Internal Link]]
+- ⚠️ Broken link in Reference System Types.md: [[Alias]]
+- ⚠️ Broken link in Reference System Types.md: [[Embedded Content]]
+- ⚠️ Broken link in Reference System Types.md: [[04 - Development/Type System/type-system-overview.md]]
+- ⚠️ Broken link in Reference System Types.md: [[04 - Development/Type System/tick-processor-types-reference.md]]
+- ⚠️ Broken link in Reference System Types.md: [[04 - Development/Type System/canvas-types-guide.md]]
+- ⚠️ Broken link in Reference System Types.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in Reference System Types.md: [Text](path.md)
+- ⚠️ Broken link in API Gateway Architecture.md: [[Odds API]]
+- ⚠️ Broken link in API Gateway Architecture.md: [[Arbitrage API]]
+- ⚠️ Broken link in API Gateway Architecture.md: [[Analytics API]]
+- ⚠️ Broken link in API Gateway Architecture.md: [[Stream API]]
+- ⚠️ Broken link in API Gateway Architecture.md: [[Odds API Architecture]]
+- ⚠️ Broken link in API Gateway Architecture.md: [[Arbitrage Engine Architecture]]
+- ⚠️ Broken link in API Gateway Architecture.md: [[Stream Processing Architecture]]
+- ⚠️ Broken link in Bun Optimized Scripts.md: [[Project Dashboard]]
+- ⚠️ Broken link in Bun Optimized Scripts.md: [[Team Directory]]
+- ⚠️ Broken link in Bun Optimized Scripts.md: [[Resource Allocation]]
+- ⚠️ Broken link in Bun Optimized Scripts.md: [[Risk Register]]
+- ⚠️ Broken link in Document Types.md: [[04 - Development/Type System/type-system-overview.md]]
+- ⚠️ Broken link in Document Types.md: [[04 - Development/Type System/tick-processor-types-reference.md]]
+- ⚠️ Broken link in Document Types.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in Bun Native Integration Guide.md: [[VAULT_ORGANIZATION_GUIDE]]
+- ⚠️ Broken link in Bun Native Integration Guide.md: [[VAULT_SCAFFOLDING_GUIDE]]
+- ⚠️ Broken link in Bun Native Integration Guide.md: [[TEMPLATE_VALIDATION_SYSTEM]]
+- ⚠️ Broken link in Metadata Engine Types.md: [[04 - Development/Type System/type-system-overview.md]]
+- ⚠️ Broken link in Metadata Engine Types.md: [[04 - Development/Type System/tick-processor-types-reference.md]]
+- ⚠️ Broken link in Metadata Engine Types.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[File Name]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[File Name]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[Directory/File Name]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[#Section Header]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[File Name#Section Header]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[VAULT_ORGANIZATION_GUIDE]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[VAULT_SCAFFOLDING_GUIDE]]
+- ⚠️ Broken link in Vault Naming Standards.md: [[QUICK_START_GUIDE]]
+- ⚠️ Broken link in Template Master Index.md: [00 - Enhanced Daily Note Template](06%20-%20Templates/01%20-%20Note%20Templates/00%20-%20Enhanced%20Daily%20Note%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [01 - Guide Template](06%20-%20Templates/01%20-%20Note%20Templates/01%20-%20Guide%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [02 - Enhanced Note Template](06%20-%20Templates/01%20-%20Note%20Templates/02%20-%20Enhanced%20Note%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Research Notebook Template](06%20-%20Templates/Research-Notebook-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Meeting Template](06%20-%20Templates/02%20-%20Project%20Templates/01%20-%20Meeting%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Analytics Dashboard Template](06%20-%20Templates/Analytics-Dashboard-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [00 - Enhanced Project Template](06%20-%20Templates/02%20-%20Project%20Templates/00%20-%20Enhanced%20Project%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [00 - Project Template](06%20-%20Templates/02%20-%20Project%20Templates/00%20-%20Project%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [01 - Meeting Template](06%20-%20Templates/02%20-%20Project%20Templates/01%20-%20Meeting%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [02 - Specification Template](06%20-%20Templates/02%20-%20Project%20Templates/02%20-%20Specification%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [03 - Research Template](06%20-%20Templates/02%20-%20Project%20Templates/03%20-%20Research%20Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Analytics Dashboard Template](06%20-%20Templates/Analytics-Dashboard-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Dashboard Template](06%20-%20Templates/03%20-%20Dashboard%20Templates/Dashboard-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [API Documentation Template](06%20-%20Templates/04%20-%20Development%20Templates/API-Documentation-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Code Review Template](06%20-%20Templates/04%20-%20Development%20Templates/Code-Review-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Technical Design Template](06%20-%20Templates/04%20-%20Development%20Templates/Technical-Design-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Design System Template](06%20-%20Templates/05%20-%20Design%20Templates/Design-System-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [User Research Template](06%20-%20Templates/05%20-%20Design%20Templates/User-Research-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Prototype Template](06%20-%20Templates/05%20-%20Design%20Templates/Prototype-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [System Design Template](06%20-%20Templates/06%20-%20Architecture%20Templates/System-Design-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Data Model Template](06%20-%20Templates/06%20-%20Architecture%20Templates/Data-Model-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Integration Template](06%20-%20Templates/06%20-%20Architecture%20Templates/Integration-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Environment Configuration Template](06%20-%20Templates/07%20-%20Configuration%20Templates/Environment-Configuration-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Deployment Template](06%20-%20Templates/07%20-%20Configuration%20Templates/Deployment-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Monitoring Template](06%20-%20Templates/07%20-%20Configuration%20Templates/Monitoring-Template.md)
+- ⚠️ Broken link in Template Master Index.md: [Bun Native Enhanced Template](06%20-%20Templates/07%20-%20Bun%20Native%20Enhanced%20Template%20With%20Performance%20Metrics.md)
+- ⚠️ Broken link in Template Master Index.md: [Dynamic Project Template](06%20-%20Templates/09%20-%20Dynamic%20Project%20Template%20With%20Script%20Integration.md)
+- ⚠️ Broken link in Template Master Index.md: [Registry Aware Template](06%20-%20Templates/06%20-%20Registry%20Aware%20Template%20With%20Version%20Management.md)
+- ⚠️ Broken link in Welcome To Vault.md: [[VAULT_ORGANIZATION_GUIDE]]
+- ⚠️ Broken link in Welcome To Vault.md: [[VAULT_SCAFFOLDING_GUIDE]]
+- ⚠️ Broken link in Welcome To Vault.md: [[VAULT_ORGANIZATION_GUIDE]]
+- ⚠️ Broken link in Welcome To Vault.md: [[VAULT_SCAFFOLDING_GUIDE]]
+- ⚠️ Broken link in Welcome To Vault.md: [[Analytics Dashboard Template]]
+- ⚠️ Broken link in Style Implementation Dashboard.md: [[${p.file.name}]]
+- ⚠️ Broken link in Style Implementation Dashboard.md: [[🔧 Fix Tag ${tag}]]
+- ⚠️ Broken link in Style Implementation Dashboard.md: [[🎨 Comprehensive Style Guide]]
+- ⚠️ Broken link in Style Implementation Dashboard.md: [[📋 Comprehensive Template System]]
+- ⚠️ Broken link in Style Implementation Dashboard.md: [[🤖 Style Enforcement Automation]]
+- ⚠️ Broken link in Style Implementation Dashboard.md: [[📊 Enhanced Dataview Scripts]]
+- ⚠️ Broken link in 🏠 Home.md: [[01 - daily notes]]
+- ⚠️ Broken link in 🏠 Home.md: [[02 - architecture]]
+- ⚠️ Broken link in 🏠 Home.md: [[02 - Architecture/System Design]]
+- ⚠️ Broken link in 🏠 Home.md: [[02 - Architecture/Data Models]]
+- ⚠️ Broken link in 🏠 Home.md: [[03 - development]]
+- ⚠️ Broken link in 🏠 Home.md: [[03 - Development/Code Snippets]]
+- ⚠️ Broken link in 🏠 Home.md: [[03 - Development/Testing]]
+- ⚠️ Broken link in 🏠 Home.md: [[04 - documentation]]
+- ⚠️ Broken link in 🏠 Home.md: [[04 - Documentation/API]]
+- ⚠️ Broken link in 🏠 Home.md: [[04 - Documentation/Guides]]
+- ⚠️ Broken link in 🏠 Home.md: [[05 - assets]]
+- ⚠️ Broken link in 🏠 Home.md: [[05 - Assets/Excalidraw]]
+- ⚠️ Broken link in 🏠 Home.md: [[05 - Assets/Images]]
+- ⚠️ Broken link in 🏠 Home.md: [[06 - templates]]
+- ⚠️ Broken link in 🏠 Home.md: [[07 - archive]]
+- ⚠️ Broken link in 🏠 Home.md: [[07 - Archive/Old Notes]]
+- ⚠️ Broken link in 🏠 Home.md: [[Synthetic Arbitrage Factory]]
+- ⚠️ Broken link in 🏠 Home.md: [[Circuit Breaker Architecture]]
+- ⚠️ Broken link in 🏠 Home.md: [[Rotation Number Schemes]]
+- ⚠️ Broken link in 🏠 Home.md: [[Market Convention Mapping]]
+- ⚠️ Broken link in 🏠 Home.md: [[Risk Management Integration]]
+- ⚠️ Broken link in Enhanced Progress Bar System.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in Enhanced Progress Bar System.md: [[scripts/enhanced-progress-bar.ts]]
+- ⚠️ Broken link in Enhanced Progress Bar System.md: [[04 - Development/Type System/type-validation-patterns.md]]
+- ⚠️ Broken link in Deep Architectural Integration.md: [[04 - Development/Type System/type-system-overview.md]]
+- ⚠️ Broken link in Deep Architectural Integration.md: [[📊 Metadata Engine Types]]
+- ⚠️ Broken link in Deep Architectural Integration.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🔗 Link This File]]
+- ⚠️ Broken link in 00   Dashboard.md: [[📋 Bun.inspect.table() Complete Reference Guide]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🎨 Enhanced Progress Bar System]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🚀 Ultimate Template Dashboard]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🏭 Production Dashboard System]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🏆 Bun Utilities Mastery - Complete Integration Guide]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🏆 Bun Utilities Mastery - Ultimate Achievement Summary]]
+- ⚠️ Broken link in 00   Dashboard.md: [[📊 Metadata Engine Types]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🏗️ Deep Architectural Integration]]
+- ⚠️ Broken link in 00   Dashboard.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[📊 Document Types]]
+- ⚠️ Broken link in 00   Dashboard.md: [[04 - Documentation/04 - Reference/00 - Template System Types]]
+- ⚠️ Broken link in 00   Dashboard.md: [[🛡️ Error Handling Types]]
+- ⚠️ Broken link in 00   Dashboard.md: [[.obsidian/]]
+- ⚠️ Broken link in 00   Dashboard.md: [[apps/api-gateway/]]
+- ⚠️ Broken link in 00   Dashboard.md: [[apps/dashboard/]]
+- ⚠️ Broken link in 00   Dashboard.md: [[apps/stream-processor/]]
+- ⚠️ Broken link in 00   Dashboard.md: [[11 - Workshop/]]
+- ⚠️ Broken link in 00   Dashboard.md: [[11 - Workshop/Canvas Demos/Canvas-Vault-Integration-Demo.canvas]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/demo-workshop-canvas.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[docs/CANVAS_VAULT_INTEGRATION.md]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/bun-inspect-table-guide.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/enhanced-progress-bar.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/ultimate-template-dashboard.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/production-dashboard.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/demonstrate-bun-api-types.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/demonstrate-ref-meta-types.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/deep-architectural-integration.ts]]
+- ⚠️ Broken link in 00   Dashboard.md: [[scripts/analyze-obsidian-config.ts]]
+- ⚠️ Broken link in Bun Inspect Table Complete Reference Guide.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in Bun Inspect Table Complete Reference Guide.md: [[04 - Development/Type System/type-validation-patterns.md]]
+- ⚠️ Broken link in Bun Inspect Table Complete Reference Guide.md: [[Bun-Native-Integration-Guide.md]]
+- ⚠️ Broken link in Enhanced File Deletion Architecture.md: [[Obsidian Graph Database Architecture]]
+- ⚠️ Broken link in STANDARDS.md: [[Page Name]]
+- ⚠️ Broken link in STANDARDS.md: [[Display Text]]
+- ⚠️ Broken link in Quick Start Guide.md: [[VAULT_ORGANIZATION_GUIDE]]
+- ⚠️ Broken link in Quick Start Guide.md: [[VAULT_SCAFFOLDING_GUIDE]]
+- ⚠️ Broken link in Template Validation System.md: [[VAULT_ORGANIZATION_GUIDE]]
+- ⚠️ Broken link in Template Validation System.md: [[VAULT_NAMING_STANDARDS]]
+- ⚠️ Broken link in Template Validation System.md: [[VAULT_SCAFFOLDING_GUIDE]]
+- ⚠️ Broken link in Error Handling Types.md: [[04 - Development/Type System/type-system-overview.md]]
+- ⚠️ Broken link in Error Handling Types.md: [[04 - Development/Type System/type-validation-patterns.md]]
+- ⚠️ Broken link in Error Handling Types.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[New Daily Note]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[New System Design]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[New Code Snippet]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[New Guide]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Parent System]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[create a link]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[01 - Daily Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/System Design]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/Data Models]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Code Snippets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Testing]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/API]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/Guides]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Excalidraw]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Images]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[06 - Templates]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive/Old Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Synthetic Arbitrage Factory]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Circuit Breaker Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Rotation Number Schemes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Market Convention Mapping]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Risk Management Integration]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Parent System]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[01 - Daily Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/System Design]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/Data Models]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Code Snippets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Testing]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/API]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/Guides]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Excalidraw]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Images]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[06 - Templates]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive/Old Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Synthetic Arbitrage Factory]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Circuit Breaker Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Rotation Number Schemes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Market Convention Mapping]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Risk Management Integration]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[01 - Daily Notes/2025-11-18]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/System Design/Bookmaker
+    Registry
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Code Snippets/Registry
+    Integration
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/Guides/Getting Started]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[create a link]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Parent System]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[01 - Daily Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/System Design]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/Data Models]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Code Snippets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Testing]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/API]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/Guides]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Excalidraw]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Images]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[06 - Templates]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive/Old Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Synthetic Arbitrage Factory]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Circuit Breaker Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Rotation Number Schemes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Market Convention Mapping]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Risk Management Integration]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[01 - Daily Notes/2025-11-18]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/System Design/Bookmaker
+    Registry
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Code Snippets/Registry
+    Integration
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/Guides/Getting Started]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[create a link]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Guide 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related Note 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Related System 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[API Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Parent System]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 1]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Child Component 2]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[01 - Daily Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/System Design]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/Data Models]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Code Snippets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Testing]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/API]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/Guides]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Excalidraw]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[05 - Assets/Images]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[06 - Templates]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[07 - Archive/Old Notes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Synthetic Arbitrage Factory]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Circuit Breaker Architecture]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Rotation Number Schemes]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Market Convention Mapping]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Risk Management Integration]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[01 - Daily Notes/2025-11-18]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[02 - Architecture/System Design/Bookmaker Registry System]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[03 - Development/Code Snippets/Registry Integration Examples]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[04 - Documentation/Guides/Getting Started]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[create a link]]
+- ⚠️ Broken link in 2025-11-18-validation-report.md: [[Page Name]]
+- ⚠️ Broken link in 00 - API Integration Template.md: [[API-Integration-Advanced]]
+- ⚠️ Broken link in 00 - API Integration Template.md: [[API-Integration-Simple]]
+- ⚠️ Broken link in 00 - API Integration Template.md: [Template System Guide](./Template-System-Guide.md)
+- ⚠️ Broken link in 00 - API Integration Template.md: [Configuration Reference](./Configuration-Reference.md)
+- ⚠️ Broken link in 00 - API Integration Template.md: [Best Practices](./Best-Practices.md)
+- ⚠️ Broken link in 02 - Code Snippet Template.md: [[Related System 1]]
+- ⚠️ Broken link in 02 - Code Snippet Template.md: [[Related System 2]]
+- ⚠️ Broken link in 02 - Code Snippet Template.md: [[API Documentation]]
+- ⚠️ Broken link in 01 - API Documentation Template.md: [[📋 {Related Specification}]]
+- ⚠️ Broken link in 01 - API Documentation Template.md: [[🎨 {Design Document}]]
+- ⚠️ Broken link in 01 - API Documentation Template.md: [[📊 {Monitoring Dashboard}]]
+- ⚠️ Broken link in 01 - API Documentation Template.md: [[🔧 {Developer Guide}]]
+- ⚠️ Broken link in 02 - Enhanced API Documentation Template.md: [[API Gateway Dashboard]]
+- ⚠️ Broken link in 02 - Enhanced API Documentation Template.md: [[Authentication Guide]]
+- ⚠️ Broken link in 02 - Enhanced API Documentation Template.md: [[Rate Limiting Policy]]
+- ⚠️ Broken link in 02 - Enhanced API Documentation Template.md: [[Error Code Reference]]
+- ⚠️ Broken link in 02 - Enhanced API Documentation Template.md: [[SDK Documentation]]
+- ⚠️ Broken link in 02 - Enhanced API Documentation Template.md: [[Change Log]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[04 - Documentation/Guides]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[02 - Architecture/System Design]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[03 - Development/Code Snippets]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[05 - Projects/Active Projects]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[06 - Templates]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[04 - Documentation/Guides/Theme Activation Checklist]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[06 - Templates/Design System Guide]]
+- ⚠️ Broken link in 01 - Enhanced Dashboard Template.md: [[04 - Documentation/Guides/Troubleshooting]]
+- ⚠️ Broken link in 00 - Tasks Plugin Integration And Enhancement.md: [[{{project}}]]
+- ⚠️ Broken link in 00 - Tasks Plugin Integration And Enhancement.md: [[${dep}]]
+- ⚠️ Broken link in 03 - Research Template.md: [[Related System 1]]
+- ⚠️ Broken link in 03 - Research Template.md: [[Related System 2]]
+- ⚠️ Broken link in 03 - Research Template.md: [[API Documentation]]
+- ⚠️ Broken link in 03 - Research Template.md: [[Parent System]]
+- ⚠️ Broken link in 03 - Research Template.md: [[Child Component 1]]
+- ⚠️ Broken link in 03 - Research Template.md: [[Child Component 2]]
+- ⚠️ Broken link in 00 - Project Template.md: [[{ project-name } - Requirements]]
+- ⚠️ Broken link in 00 - Project Template.md: [[{ project-name } - Technical Design]]
+- ⚠️ Broken link in 00 - Project Template.md: [[{ project-name } - Test Plan]]
+- ⚠️ Broken link in 00 - Project Template.md: [[{ project-name } - Deployment Guide]]
+- ⚠️ Broken link in 04 - Enhanced Meeting Template.md: [[Project Dashboard]]
+- ⚠️ Broken link in 04 - Enhanced Meeting Template.md: [[Action Items Tracker]]
+- ⚠️ Broken link in 04 - Enhanced Meeting Template.md: [[Decision Log]]
+- ⚠️ Broken link in 04 - Enhanced Meeting Template.md: [[Team Directory]]
+- ⚠️ Broken link in 04 - Enhanced Meeting Template.md: [[Previous Meeting - {{previous_meeting_date}}]]
+- ⚠️ Broken link in 04 - Enhanced Meeting Template.md: [[Next Meeting - {{next_meeting_date}}]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[{project_name} - Requirements]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[{project_name} - Technical Design]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[{project_name} - Test Plan]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[{project_name} - Deployment Guide]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[{project_name} - User Guide]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[Project Dashboard]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[Team Directory]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[Resource Allocation]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[Risk Register]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[Quality Metrics]]
+- ⚠️ Broken link in 00 - Enhanced Project Template.md: [[Weekly Review - {{date:YYYY-WW}}]]
+- ⚠️ Broken link in 05 - Enhanced Research Template.md: [[Research Dashboard]]
+- ⚠️ Broken link in 05 - Enhanced Research Template.md: [[Literature Review Matrix]]
+- ⚠️ Broken link in 05 - Enhanced Research Template.md: [[Data Analysis Tools]]
+- ⚠️ Broken link in 05 - Enhanced Research Template.md: [[Research Collaboration]]
+- ⚠️ Broken link in 05 - Enhanced Research Template.md: [[Publication Pipeline]]
+- ⚠️ Broken link in 05 - Enhanced Research Template.md: [[Funding Opportunities]]
+- ⚠️ Broken link in 01 - Meeting Template.md: [[🎯 {Related Project}]]
+- ⚠️ Broken link in 01 - Meeting Template.md: [[📋 {Previous Meeting}]]
+- ⚠️ Broken link in 01 - Meeting Template.md: [[📊 {Related Dashboard}]]
+- ⚠️ Broken link in 01 - Meeting Template.md: [[🔧 {Related Specification}]]
+- ⚠️ Broken link in 02 - Specification Template.md: [[🎯 {Related Project}]]
+- ⚠️ Broken link in 02 - Specification Template.md: [[🔧 {Related API}]]
+- ⚠️ Broken link in 02 - Specification Template.md: [[📊 {Related Specification}]]
+- ⚠️ Broken link in 02 - Specification Template.md: [[🎨 {Design Document}]]
+- ⚠️ Broken link in 09 - Dynamic Project Template With Script Integration.md: [[📋 需求规格说明书]]
+- ⚠️ Broken link in 09 - Dynamic Project Template With Script Integration.md: [[🔧 技术设计文档]]
+- ⚠️ Broken link in 09 - Dynamic Project Template With Script Integration.md: [[📡 API文档]]
+- ⚠️ Broken link in 09 - Dynamic Project Template With Script Integration.md: [[📖 用户手册]]
+- ⚠️ Broken link in 09 - Dynamic Project Template With Script Integration.md: [[🧪 测试计划]]
+- ⚠️ Broken link in 09 - Dynamic Project Template With Script Integration.md: [[🚀 部署指南]]
+- ⚠️ Broken link in 01 - Templates Organization Summary.md: [[00 - Template Index]]
+- ⚠️ Broken link in 01 - Templates Organization Summary.md: [[00 - Template Index]]
+- ⚠️ Broken link in 01 - Templates Organization Summary.md: [[📊 Enhanced Standards Implementation]]
+- ⚠️ Broken link in 01 - Templates Organization Summary.md: [[🔧 Style Enforcement Automation]]
+- ⚠️ Broken link in 01 - Templates Organization Summary.md: [[🔗 Advanced Link Integration System]]
+- ⚠️ Broken link in 01 - Templates Organization Summary.md: [[🤖 Vault Automation System]]
+- ⚠️ Broken link in 01 - Enhanced Design System Template.md: [[Component Library]]
+- ⚠️ Broken link in 01 - Enhanced Design System Template.md: [[Design Tokens]]
+- ⚠️ Broken link in 01 - Enhanced Design System Template.md: [[Accessibility Guide]]
+- ⚠️ Broken link in 01 - Enhanced Design System Template.md: [[Implementation Guide]]
+- ⚠️ Broken link in 01 - Enhanced Design System Template.md: [[Design Principles]]
+- ⚠️ Broken link in 01 - Enhanced Design System Template.md: [[Brand Guidelines]]
+- ⚠️ Broken link in 00 - Enhanced Daily Note Template.md: [[Weekly Review - {{date:YYYY-WW}}]]
+- ⚠️ Broken link in 00 - Enhanced Daily Note Template.md: [[Monthly Review - {{date:YYYY-MM}}]]
+- ⚠️ Broken link in 00 - Enhanced Daily Note Template.md: [[Project Dashboard]]
+- ⚠️ Broken link in 00 - Enhanced Daily Note Template.md: [[Goals & Objectives]]
+- ⚠️ Broken link in 00 - Enhanced Daily Note Template.md: [[Habit Tracker]]
+- ⚠️ Broken link in 01 - Guide Template.md: [[Related Guide 1]]
+- ⚠️ Broken link in 01 - Guide Template.md: [[Related Guide 2]]
+- ⚠️ Broken link in 01 - Guide Template.md: [[API Documentation]]
+- ⚠️ Broken link in 00 - Daily Note Template.md: [[Related Note 1]]
+- ⚠️ Broken link in 00 - Daily Note Template.md: [[Related Note 2]]
+- ⚠️ Broken link in Research-Notebook-Template.md: [[Research-Notebook-Advanced]]
+- ⚠️ Broken link in Research-Notebook-Template.md: [[Research-Notebook-Simple]]
+- ⚠️ Broken link in Research-Notebook-Template.md: [Template System Guide](./Template-System-Guide.md)
+- ⚠️ Broken link in Research-Notebook-Template.md: [Configuration Reference](./Configuration-Reference.md)
+- ⚠️ Broken link in Research-Notebook-Template.md: [Best Practices](./Best-Practices.md)
+- ⚠️ Broken link in 01 - Enhanced System Design Template.md: [[Architecture Dashboard]]
+- ⚠️ Broken link in 01 - Enhanced System Design Template.md: [[API Documentation]]
+- ⚠️ Broken link in 01 - Enhanced System Design Template.md: [[Database Schema]]
+- ⚠️ Broken link in 01 - Enhanced System Design Template.md: [[Deployment Guide]]
+- ⚠️ Broken link in 01 - Enhanced System Design Template.md: [[Security Documentation]]
+- ⚠️ Broken link in 01 - Enhanced System Design Template.md: [[Performance Monitoring]]
+- ⚠️ Broken link in ��️-Folder-Structure-Template.md: [[00 - 🏠 Dashboard]]
+- ⚠️ Broken link in ��️-Folder-Structure-Template.md: [[02 - 🏗️ Architecture]]
+- ⚠️ Broken link in ��️-Folder-Structure-Template.md: [[03 - 💻 Development]]
+- ⚠️ Broken link in 02 - Template Index.md: [[04 - Development Templates/00 - API Integration Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[07 - Configuration Templates/01 - Comprehensive Style Guide]]
+- ⚠️ Broken link in 02 - Template Index.md: [[05 - Design Templates/00 - Design System Guide]]
+- ⚠️ Broken link in 02 - Template Index.md: [[05 - Design Templates/01 - Interactive Components Showcase]]
+- ⚠️ Broken link in 02 - Template Index.md: [[02 - Project Templates/00 - Project Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[04 - Development Templates/02 - Code Snippet Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[01 - Note Templates/00 - Daily Note Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[02 - Project Templates/01 - Meeting Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[03 - Dashboard Templates/01 - Enhanced Dashboard Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[03 - Dashboard Templates/00 - Dashboard Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[07 - Configuration Templates/03 - Comprehensive Template System]]
+- ⚠️ Broken link in 02 - Template Index.md: [[01 - Note Templates/01 - Guide Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[02 - Project Templates/02 - Specification Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[01 - Note Templates/02 - Enhanced Note Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[07 - Configuration Templates/02 - Advanced Link Integration System]]
+- ⚠️ Broken link in 02 - Template Index.md: [[04 - Development Templates/01 - API Documentation Template]]
+- ⚠️ Broken link in 02 - Template Index.md: [[07 - Configuration Templates/00 - Enhanced Standards Implementation]]
+- ⚠️ Broken link in 02 - Template Index.md: [[07 - Configuration Templates/04 - Type Heading Templates Configuration]]
+- ⚠️ Broken link in 02 - Template Index.md: [[02 - Project Templates/03 - Research Template]]
+- ⚠️ Broken link in 📚-Template-Library-Master-Collection.md: [[🔧 Advanced Templater Configuration]]
+- ⚠️ Broken link in 📚-Template-Library-Master-Collection.md: [[🚀 Dynamic Project Template]]
+- ⚠️ Broken link in 📚-Template-Library-Master-Collection.md: [[🔐 Registry-Aware Template]]
+- ⚠️ Broken link in 📚-Template-Library-Master-Collection.md: [[🚀 Bun-Native Enhanced Template]]
+- ⚠️ Broken link in 📚-Template-Library-Master-Collection.md: [[scripts/template-utils.js]]
+- ⚠️ Broken link in 📚-Template-Library-Master-Collection.md: [[scripts/template-generators.js]]
+- ⚠️ Broken link in 📚-Template-Library-Master-Collection.md: [[06 - Templates/🔧 Advanced Templater Configuration]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[Bookmaker Registry]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[bookmaker-registry]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[\]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[\]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[${suggestion}]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[Page#^block-id]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[\]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[Architecture#System Design]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[\]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[\]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[${file}#${closest}]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[image.png]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[note#section]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[${n.path}${displayName !==
+      n.path.split('/').pop()?.replace('.md', '') ? `]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[${target.path}${target.path !== phrase ? `]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[${target.path}]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[${target.path}]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[') ]]
+- ⚠️ Broken link in 02 - Advanced Link Integration System.md: [[') && fixed.includes(']]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Bookmaker Registry]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[bookmaker-registry]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[\]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[\]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[${suggestion}]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Page#^block-id]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[\]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Architecture#System Design]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[\]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[\]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[${file}#${closest}]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[image.png]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[note#section]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[${n.path}${displayName !==
+      n.path.split('/').pop()?.replace('.md', '') ? `]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[')) {
+        continue;
+      }
+
+      const target = this.graph.findNodeByTitleOrAlias(phrase);
+      
+      if (target && target.path !== filePath) {
+        suggestions.push({
+          type: 'unlinked-mention',
+          position: match.index!,
+          original: phrase,
+          suggestion: `[[${target.path}${target.path !== phrase ? `]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[')) {
+          menu.addItem((item) => {
+            item.setTitle('Convert to wiki-link')
+              .setIcon('link')
+              .onClick(() => {
+                editor.replaceSelection(`[[${selection}]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Authentication]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Market API]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Wallet API]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Bet Settlement]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Rate Limiting]]
+- ⚠️ Broken link in 00 - Enhanced Standards Implementation.md: [[Analytics API]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[🎨 Style Guide Quick Start]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[📝 Template Usage Guide]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[🎨 Canvas Creation Guide]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[📊 Base Setup Guide]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[🔧 Custom Template Creation]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[🎨 Advanced Styling]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[🤖 Automation Configuration]]
+- ⚠️ Broken link in 01 - Comprehensive Style Guide.md: [[📊 Analytics Integration]]
+- ⚠️ Broken link in Analytics-Dashboard-Template.md: [[Analytics-Dashboard-Advanced]]
+- ⚠️ Broken link in Analytics-Dashboard-Template.md: [[Analytics-Dashboard-Simple]]
+- ⚠️ Broken link in Analytics-Dashboard-Template.md: [Template System Guide](./Template-System-Guide.md)
+- ⚠️ Broken link in Analytics-Dashboard-Template.md: [Configuration Reference](./Configuration-Reference.md)
+- ⚠️ Broken link in Analytics-Dashboard-Template.md: [Best Practices](./Best-Practices.md)
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📅 Daily Note Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📅 Meeting Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📅 Weekly Review Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🎯 Project Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🚀 Dynamic Project Template with Script Integration]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📋 Specification Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📝 Enhanced Note Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📋 Guide Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🔧 API Documentation Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[💻 Code Snippet Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🧪 Test Case Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🔬 Research Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📈 Enhanced Dashboard Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🎨 Design System Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🎨 UI Component Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🔐 Registry-Aware Template with Version Management]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🚀 Bun-Native Enhanced Template with Performance Metrics]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🚀 Enhanced Semver with Bun.semver.order()]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📚 Template Library - Master Collection]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🔧 Advanced Templater Configuration]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🚀 Dynamic Project Template with Script Integration]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📚 Template Library - Master Collection]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🔧 Advanced Templater Configuration]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[scripts/template-utils.js]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[scripts/template-generators.js]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📅 Daily Note Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[🎯 Project Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[📝 Enhanced Note Template]]
+- ⚠️ Broken link in 03 - Template Index Quick Navigation.md: [[💻 Code Snippet Template]]
+- ⚠️ Broken link in 🚀 Vault Optimization Complete - Status Report.md: [[📊 Enhanced Standards Implementation]]
+- ⚠️ Broken link in 🚀 Vault Optimization Complete - Status Report.md: [[🔧 Style Enforcement Automation]]
+- ⚠️ Broken link in 🚀 Vault Optimization Complete - Status Report.md: [[🤖 Vault Automation System]]
+- ⚠️ Broken link in 🔧 TypeScript Errors Fixed - EnhancedValidatorManager.md: [[🔍 Enhanced Validator Integration Analysis]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[📊 Enhanced Standards Implementation]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[🔧 Style Enforcement Automation]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[🔗 Advanced Link Integration System]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[🤖 Vault Automation System]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[.vault-config.json]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[.vault-status.json]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[package.json]]
+- ⚠️ Broken link in 🔍 Comprehensive Vault Review Report.md: [[.obsidian/core-plugins.json]]
+- ⚠️ Broken link in Vault Automation System.md: [[🔧 Automation Setup Guide]]
+- ⚠️ Broken link in Vault Automation System.md: [[📊 Configuration Reference]]
+- ⚠️ Broken link in Vault Automation System.md: [[🛠️ Custom Rules Guide]]
+- ⚠️ Broken link in Vault Automation System.md: [[📈 Performance Optimization]]
+- ⚠️ Broken link in Dashboard.md: [[01 - Daily Notes/2025-11-18]]
+- ⚠️ Broken link in Dashboard.md: [[02 - Architecture/System Design/Bookmaker Registry System]]
+- ⚠️ Broken link in Dashboard.md: [[03 - Development/Code Snippets/Registry Integration Examples]]
+- ⚠️ Broken link in Dashboard.md: [[04 - Documentation/Guides/Getting Started]]
+- ⚠️ Broken link in Getting Started.md: [[create a link]]
+- ⚠️ Broken link in Vault Theme Setup Guide.md: [[🎨 Design System Guide]]
+- ⚠️ Broken link in Vault Theme Setup Guide.md: [[📁 Folder Structure Template]]
+- ⚠️ Broken link in Vault Theme Setup Guide.md: [[📝 Enhanced Note Template]]
+- ⚠️ Broken link in Vault Theme Setup Guide.md: [[🚀 Project Template]]
+- ⚠️ Broken link in Enhanced Dataview Scripts.md: [[🎨 Style Enforcement Automation]]
+- ⚠️ Broken link in Enhanced Dataview Scripts.md: [[📋 Comprehensive Template System]]
+- ⚠️ Broken link in Enhanced Dataview Scripts.md: [[🤖 Vault Automation System]]
+- ⚠️ Broken link in Enhanced Dataview Scripts.md: [[${orphan.file.name}]]
+- ⚠️ Broken link in Enhanced Dataview Scripts.md: [[🔧 Run Style Validation]]
+- ⚠️ Broken link in Enhanced Dataview Scripts.md: [[🎨 Apply Templates]]
+- ⚠️ Broken link in Enhanced Dataview Scripts.md: [[📊 View Detailed Metrics]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[Wiki Links]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[File#^block-ref]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[File#heading]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[Embedded Files]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[🔗 Advanced Link Integration System]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[🤖 Vault Automation System]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[📊 Enhanced Standards Implementation]]
+- ⚠️ Broken link in 🔍 Enhanced Validator Integration - buildVaultGraph Method Analysis.md: [[🎨 Comprehensive Style Guide]]
+- ⚠️ Broken link in 00 - Template System Types.md: [[04 - Development/Type System/type-system-overview.md]]
+- ⚠️ Broken link in 00 - Template System Types.md: [[04 - Development/Type System/tick-processor-types-reference.md]]
+- ⚠️ Broken link in 00 - Template System Types.md: [[📊 Metadata Engine Types]]
+- ⚠️ Broken link in 00 - Template System Types.md: [[src/types/tick-processor-types.ts]]
+- ⚠️ Broken link in Unit Test Suite.md: [[Integration Testing]]
+- ⚠️ Broken link in Unit Test Suite.md: [[End-to-End Testing]]
+- ⚠️ Broken link in Unit Test Suite.md: [[Continuous Integration]]
+- ⚠️ Broken link in Enhanced Deletion Tests.md: [[${targetFile}]]
+- ⚠️ Broken link in Enhanced Deletion Tests.md: [[${targetFile}]]
+- ⚠️ Broken link in Enhanced Deletion Tests.md: [[Obsidian Graph Database Architecture]]
+- ⚠️ Broken link in 00 - Dashboard.md: [[02 - Architecture]]
+- ⚠️ Broken link in 00 - Dashboard.md: [[03 - Development]]
+- ⚠️ Broken link in 00 - Dashboard.md: [[04 - Documentation]]
+- ⚠️ Broken link in 00 - Dashboard.md: [[06 - Templates]]
+- ⚠️ Broken link in 00 - Dashboard.md: [[08 - Logs]]
+- ⚠️ Broken link in 00 - Dashboard.md: [[10 - Benchmarking]]
+- ⚠️ Broken link in 00 - Dashboard.md: [[11 - Workshop]]
+- ⚠️ Unknown tag in OddsTick.md: #data-model
+- ⚠️ Unknown tag in OddsTick.md: #interface
+- ⚠️ Unknown tag in OddsTick.md: #odds
+- ⚠️ Unknown tag in OddsTick.md: #tick-data
+- ⚠️ Unknown tag in YAML of Reference System Types.md: cross-link
+- ⚠️ Unknown tag in YAML of Reference System Types.md: management
+- ⚠️ Unknown tag in YAML of Reference System Types.md: types
+- ⚠️ Unknown tag in YAML of Reference System Types.md: system
+- ⚠️ Unknown tag in API Gateway Architecture.md: #api-gateway
+- ⚠️ Unknown tag in API Gateway Architecture.md: #microservices
+- ⚠️ Unknown tag in Bun Optimized Scripts.md: #journal
+- ⚠️ Unknown tag in Bun Optimized Scripts.md: #project
+- ⚠️ Unknown tag in Bun Optimized Scripts.md: #bun-scripts
+- ⚠️ Unknown tag in Bun Optimized Scripts.md: #vault-automation
+- ⚠️ Unknown tag in Bun Optimized Scripts.md: #performance-optimization
+- ⚠️ Unknown tag in Bun Optimized Scripts.md: #native-bun
+- ⚠️ Unknown tag in Bun Optimized Scripts.md: #automation-scripts
+- ⚠️ Unknown tag in YAML of Document Types.md: document
+- ⚠️ Unknown tag in YAML of Document Types.md: types
+- ⚠️ Unknown tag in YAML of Document Types.md: vault
+- ⚠️ Unknown tag in YAML of Document Types.md: enum
+- ⚠️ Unknown tag in YAML of Document Types.md: classification
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #6366F1
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #6366F1
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #14B8A6
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #059669
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #F97316
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #10B981
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #A855F7
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #3B82F6
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #8B5CF6
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #F59E0B
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #6B7280
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #10B981
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #EAB308
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #EF4444
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #8B5CF6
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #F97316
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #3B82F6
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #10B981
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #EAB308
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #8B5CF6
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #06B6D4
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #F97316
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #6366F1
+- ⚠️ Unknown tag in Odds Mono Map HEX Color Integration Complete.md: #0F172A
+- ⚠️ Unknown tag in Bun Native Integration Guide.md: #bun-integration
+- ⚠️ Unknown tag in Bun Native Integration Guide.md: #native-performance
+- ⚠️ Unknown tag in Bun Native Integration Guide.md: #bun-optimizations
+- ⚠️ Unknown tag in Bun Native Integration Guide.md: #bun-features
+- ⚠️ Unknown tag in Bun Native Integration Guide.md: #vault-automation
+- ⚠️ Unknown tag in Bun Native Integration Guide.md: #performance
+- ⚠️ Unknown tag in Bun Native Integration Guide.md: #webassembly
+- ⚠️ Unknown tag in YAML of Metadata Engine Types.md: metadata
+- ⚠️ Unknown tag in YAML of Metadata Engine Types.md: engine
+- ⚠️ Unknown tag in YAML of Metadata Engine Types.md: types
+- ⚠️ Unknown tag in YAML of Metadata Engine Types.md: lifecycle
+- ⚠️ Unknown tag in YAML of Metadata Engine Types.md: document
+- ⚠️ Unknown tag in Vault Naming Standards.md: #project
+- ⚠️ Unknown tag in Vault Naming Standards.md: #meeting
+- ⚠️ Unknown tag in Vault Naming Standards.md: #research
+- ⚠️ Unknown tag in Vault Naming Standards.md: #template
+- ⚠️ Unknown tag in Vault Naming Standards.md: #active
+- ⚠️ Unknown tag in Vault Naming Standards.md: #archived
+- ⚠️ Unknown tag in Vault Naming Standards.md: #draft
+- ⚠️ Unknown tag in Vault Naming Standards.md: #completed
+- ⚠️ Unknown tag in Vault Naming Standards.md: #in-progress
+- ⚠️ Unknown tag in Vault Naming Standards.md: #high
+- ⚠️ Unknown tag in Vault Naming Standards.md: #medium
+- ⚠️ Unknown tag in Vault Naming Standards.md: #low
+- ⚠️ Unknown tag in Vault Naming Standards.md: #urgent
+- ⚠️ Unknown tag in Vault Naming Standards.md: #design
+- ⚠️ Unknown tag in Vault Naming Standards.md: #YYYY-MM-DD
+- ⚠️ Unknown tag in Vault Naming Standards.md: #YYYY-MM
+- ⚠️ Unknown tag in Vault Naming Standards.md: #YYYY
+- ⚠️ Unknown tag in Vault Naming Standards.md: #Q1
+- ⚠️ Unknown tag in Vault Naming Standards.md: #Q2
+- ⚠️ Unknown tag in Vault Naming Standards.md: #Q3
+- ⚠️ Unknown tag in Vault Naming Standards.md: #Q4
+- ⚠️ Unknown tag in Vault Naming Standards.md: #MyTag
+- ⚠️ Unknown tag in Vault Naming Standards.md: #my-tag
+- ⚠️ Unknown tag in Vault Naming Standards.md: #tag_with_underscores
+- ⚠️ Unknown tag in Vault Naming Standards.md: #tag-with-hyphens
+- ⚠️ Unknown tag in Vault Naming Standards.md: #tagwithspaces
+- ⚠️ Unknown tag in Vault Naming Standards.md: #tag-with-spaces
+- ⚠️ Unknown tag in Vault Naming Standards.md: #TOOMANYTAGS
+- ⚠️ Unknown tag in Vault Naming Standards.md: #focused-tagging
+- ⚠️ Unknown tag in Vault Naming Standards.md: #naming-standards
+- ⚠️ Unknown tag in Vault Naming Standards.md: #conventions
+- ⚠️ Unknown tag in Vault Naming Standards.md: #file-organization
+- ⚠️ Unknown tag in Vault Naming Standards.md: #consistency
+- ⚠️ Unknown tag in Vault Naming Standards.md: #vault-standards
+- ⚠️ Unknown tag in Vault Naming Standards.md: #best-practices
+- ⚠️ Unknown tag in Vault Naming Standards.md: #automation
+- ⚠️ Unknown tag in Canvas System Overview.md: #4A90E2
+- ⚠️ Unknown tag in Canvas System Overview.md: #7B68EE
+- ⚠️ Unknown tag in Canvas System Overview.md: #50C878
+- ⚠️ Unknown tag in Canvas System Overview.md: #FF6B6B
+- ⚠️ Unknown tag in Canvas System Overview.md: #FFB347
+- ⚠️ Unknown tag in Canvas System Overview.md: #FF69B4
+- ⚠️ Unknown tag in Canvas System Overview.md: #20B2AA
+- ⚠️ Unknown tag in Canvas System Overview.md: #FFD700
+- ⚠️ Unknown tag in Canvas System Overview.md: #98FB98
+- ⚠️ Unknown tag in Canvas System Overview.md: #DDA0DD
+- ⚠️ Unknown tag in Canvas System Overview.md: #F0E68C
+- ⚠️ Unknown tag in Canvas System Overview.md: #87CEEB
+- ⚠️ Unknown tag in Canvas System Overview.md: #4A90E2
+- ⚠️ Unknown tag in Canvas System Overview.md: #20B2AA
+- ⚠️ Unknown tag in Canvas System Overview.md: #7B68EE
+- ⚠️ Unknown tag in Canvas System Overview.md: #FF6B6B
+- ⚠️ Unknown tag in Canvas System Overview.md: #20B2AA
+- ⚠️ Unknown tag in Canvas System Overview.md: #FFD700
+- ⚠️ Unknown tag in Canvas System Overview.md: #FF69B4
+- ⚠️ Unknown tag in Canvas System Overview.md: #98FB98
+- ⚠️ Unknown tag in Canvas System Overview.md: #DDA0DD
+- ⚠️ Unknown tag in Canvas System Overview.md: #F0E68C
+- ⚠️ Unknown tag in Canvas System Overview.md: #87CEEB
+- ⚠️ Unknown tag in Canvas System Overview.md: #4A90E2
+- ⚠️ Unknown tag in Canvas System Overview.md: #canvas-system
+- ⚠️ Unknown tag in Canvas System Overview.md: #directory-organization
+- ⚠️ Unknown tag in Canvas System Overview.md: #node-properties
+- ⚠️ Unknown tag in Canvas System Overview.md: #color-coding
+- ⚠️ Unknown tag in Canvas System Overview.md: #visualization
+- ⚠️ Unknown tag in Canvas System Overview.md: #vault-structure
+- ⚠️ Unknown tag in Welcome To Vault.md: #welcome
+- ⚠️ Unknown tag in Welcome To Vault.md: #getting-started
+- ⚠️ Unknown tag in Welcome To Vault.md: #vault-introduction
+- ⚠️ Unknown tag in Welcome To Vault.md: #onboarding
+- ⚠️ Unknown tag in Welcome To Vault.md: #templates
+- ⚠️ Unknown tag in Welcome To Vault.md: #automation
+- ⚠️ Unknown tag in Welcome To Vault.md: #best-practices
+- ⚠️ Unknown tag in YAML of Enhanced Progress Bar System.md: progress
+- ⚠️ Unknown tag in YAML of Enhanced Progress Bar System.md: bar
+- ⚠️ Unknown tag in YAML of Enhanced Progress Bar System.md: dynamic
+- ⚠️ Unknown tag in YAML of Enhanced Progress Bar System.md: visual
+- ⚠️ Unknown tag in YAML of Enhanced Progress Bar System.md: feedback
+- ⚠️ Unknown tag in YAML of Enhanced Progress Bar System.md: bun
+- ⚠️ Unknown tag in YAML of Deep Architectural Integration.md: integration
+- ⚠️ Unknown tag in YAML of Deep Architectural Integration.md: unified
+- ⚠️ Unknown tag in YAML of Deep Architectural Integration.md: system
+- ⚠️ Unknown tag in YAML of Deep Architectural Integration.md: design
+- ⚠️ Unknown tag in 00   Dashboard.md: #dashboard
+- ⚠️ Unknown tag in 00   Dashboard.md: #system
+- ⚠️ Unknown tag in 00   Dashboard.md: #daily
+- ⚠️ Unknown tag in 00   Dashboard.md: #bun-integration
+- ⚠️ Unknown tag in 00   Dashboard.md: #tick-processor-types
+- ⚠️ Unknown tag in 00   Dashboard.md: #monitoring
+- ⚠️ Unknown tag in 00   Dashboard.md: #enterprise
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #8B5CF6
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EAB308
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EAB308
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #8B5CF6
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #F59E0B
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #F97316
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EAB308
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #1E40AF
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #14B8A6
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #3B82F6
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced Semantic Color Assignment.md: #F59E0B
+- ⚠️ Unknown tag in Enhanced File Deletion Architecture.md: #file-deletion
+- ⚠️ Unknown tag in Enhanced File Deletion Architecture.md: #soft-deletion
+- ⚠️ Unknown tag in Enhanced File Deletion Architecture.md: #archive-management
+- ⚠️ Unknown tag in Enhanced File Deletion Architecture.md: #graph-database
+- ⚠️ Unknown tag in STANDARDS.md: #documentation-standards
+- ⚠️ Unknown tag in STANDARDS.md: #formatting-consistency
+- ⚠️ Unknown tag in STANDARDS.md: #vault-quality
+- ⚠️ Unknown tag in STANDARDS.md: #enhanced-standards
+- ⚠️ Unknown tag in Quick Start Guide.md: #quick-start
+- ⚠️ Unknown tag in Quick Start Guide.md: #tutorial
+- ⚠️ Unknown tag in Quick Start Guide.md: #getting-started
+- ⚠️ Unknown tag in Quick Start Guide.md: #automation
+- ⚠️ Unknown tag in Quick Start Guide.md: #templates
+- ⚠️ Unknown tag in Quick Start Guide.md: #10-minute-setup
+- ⚠️ Unknown tag in Template Validation System.md: #template-validation
+- ⚠️ Unknown tag in Template Validation System.md: #quality-assurance
+- ⚠️ Unknown tag in Template Validation System.md: #automation
+- ⚠️ Unknown tag in Template Validation System.md: #management-system
+- ⚠️ Unknown tag in Template Validation System.md: #vault-standards
+- ⚠️ Unknown tag in Template Validation System.md: #lifecycle-management
+- ⚠️ Unknown tag in YAML of Error Handling Types.md: error
+- ⚠️ Unknown tag in YAML of Error Handling Types.md: handling
+- ⚠️ Unknown tag in YAML of Error Handling Types.md: validation
+- ⚠️ Unknown tag in YAML of Error Handling Types.md: system
+- ⚠️ Unknown tag in YAML of Error Handling Types.md: types
+- ⚠️ Unknown tag in YAML of ROOT-ORGANIZATION-PLAN.md: organization
+- ⚠️ Unknown tag in YAML of ROOT-ORGANIZATION-PLAN.md: structure
+- ⚠️ Unknown tag in YAML of ROOT-ORGANIZATION-PLAN.md: cleanup
+- ⚠️ Unknown tag in YAML of ROOT-ORGANIZATION-PLAN.md: standards
+- ⚠️ Unknown tag in BUN_COLOR_INTEGRATION_GUIDE.md: #10B981
+- ⚠️ Unknown tag in BUN_COLOR_INTEGRATION_GUIDE.md: #EAB308
+- ⚠️ Unknown tag in BUN_COLOR_INTEGRATION_GUIDE.md: #EF4444
+- ⚠️ Unknown tag in BUN_COLOR_INTEGRATION_GUIDE.md: #8B5CF6
+- ⚠️ Unknown tag in 01 - API Documentation Template.md: #api-doc
+- ⚠️ Unknown tag in 01 - API Documentation Template.md: #technical
+- ⚠️ Unknown tag in 01 - API Documentation Template.md: #rest-api
+- ⚠️ Unknown tag in 01 - API Documentation Template.md: #integration
+- ⚠️ Unknown tag in 02 - Enhanced API Documentation Template.md: #rest
+- ⚠️ Unknown tag in 02 - Enhanced API Documentation Template.md: #webhooks
+- ⚠️ Unknown tag in 00 - Dashboard Template.md: #dashboard
+- ⚠️ Unknown tag in 00 - Dashboard Template.md: #system
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #template-system
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #analysis
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #validation
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #utilities
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #compliance
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #performance
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #enterprise
+- ⚠️ Unknown tag in Template-System-Review-Comprehensive-Analysis.md: #improvement-plan
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #template-system
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #optimization
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #completed
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #success
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #utilities
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #performance
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #compliance
+- ⚠️ Unknown tag in Template-System-Optimization-Complete-Success.md: #automation
+- ⚠️ Unknown tag in 04 - Enhanced Meeting Template.md: #meeting
+- ⚠️ Unknown tag in 04 - Enhanced Meeting Template.md: #action-items
+- ⚠️ Unknown tag in 04 - Enhanced Meeting Template.md: #decisions
+- ⚠️ Unknown tag in 00 - Enhanced Project Template.md: #project
+- ⚠️ Unknown tag in 00 - Enhanced Project Template.md: #active
+- ⚠️ Unknown tag in 05 - Enhanced Research Template.md: #research
+- ⚠️ Unknown tag in 05 - Enhanced Research Template.md: #findings
+- ⚠️ Unknown tag in 05 - Enhanced Research Template.md: #methodology
+- ⚠️ Unknown tag in 05 - Enhanced Research Template.md: #analysis
+- ⚠️ Unknown tag in 01 - Meeting Template.md: #meeting
+- ⚠️ Unknown tag in 01 - Meeting Template.md: #project-management
+- ⚠️ Unknown tag in 01 - Meeting Template.md: #team-collaboration
+- ⚠️ Unknown tag in 01 - Meeting Template.md: #action-items
+- ⚠️ Unknown tag in 02 - Specification Template.md: #specification
+- ⚠️ Unknown tag in 02 - Specification Template.md: #technical
+- ⚠️ Unknown tag in 02 - Specification Template.md: #requirements
+- ⚠️ Unknown tag in 02 - Specification Template.md: #performance
+- ⚠️ Unknown tag in 01 - Enhanced Design System Template.md: #design-system
+- ⚠️ Unknown tag in 01 - Enhanced Design System Template.md: #ui-components
+- ⚠️ Unknown tag in 01 - Enhanced Design System Template.md: #design-tokens
+- ⚠️ Unknown tag in 01 - Enhanced Design System Template.md: #style-guide
+- ⚠️ Unknown tag in 01 - Enhanced Design System Template.md: #accessibility
+- ⚠️ Unknown tag in 00 - Enhanced Daily Note Template.md: #personal-growth
+- ⚠️ Unknown tag in 01 - Enhanced System Design Template.md: #technical-specification
+- ⚠️ Unknown tag in 01 - Enhanced System Design Template.md: #infrastructure
+- ⚠️ Unknown tag in ��️-Folder-Structure-Template.md: #6366f1
+- ⚠️ Unknown tag in ��️-Folder-Structure-Template.md: #8b5cf6
+- ⚠️ Unknown tag in ��️-Folder-Structure-Template.md: #10b981
+- ⚠️ Unknown tag in ��️-Folder-Structure-Template.md: #f59e0b
+- ⚠️ Unknown tag in ��️-Folder-Structure-Template.md: #ef4444
+- ⚠️ Unknown tag in ��️-Folder-Structure-Template.md: #14b8a6
+- ⚠️ Unknown tag in ��️-Folder-Structure-Template.md: #6b7280
+- ⚠️ Unknown tag in complete-bun-utilities-template.md: #benchmark
+- ⚠️ Unknown tag in complete-bun-utilities-template.md: #bun-utilities
+- ⚠️ Unknown tag in complete-bun-utilities-template.md: #complete-coverage
+- ⚠️ Unknown tag in complete-bun-utilities-template.md: #official-docs
+- ⚠️ Unknown tag in complete-bun-utilities-template.md: #runtime-utils
+- ⚠️ Unknown tag in complete-bun-utilities-template.md: #performance
+- ⚠️ Unknown tag in complete-bun-utilities-template.md: #enterprise
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #6366F1
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #6366F1
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #14B8A6
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #059669
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #F97316
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #10B981
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #A855F7
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #3B82F6
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #8B5CF6
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #F59E0B
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #6B7280
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #10B981
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #EAB308
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #EF4444
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #8B5CF6
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #F97316
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #3B82F6
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #10B981
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #EAB308
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #8B5CF6
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #06B6D4
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #F97316
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #6366F1
+- ⚠️ Unknown tag in Odds-Mono-Map-HEX-Color-Integration-Complete.md: #0F172A
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #8B5CF6
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EAB308
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EAB308
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #8B5CF6
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #84CC16
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #F59E0B
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #F97316
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EAB308
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #1E40AF
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #14B8A6
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #3B82F6
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #10B981
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #EF4444
+- ⚠️ Unknown tag in Enhanced-Semantic-Color-Assignment.md: #F59E0B
+- ⚠️ Unknown tag in HEX-Color-Integration-Workshop.md: #RRGGBB
+- ⚠️ Unknown tag in HEX-Color-Integration-Workshop.md: #RGB
+- ⚠️ Unknown tag in Cross-Market-Synthetic-Arbs-Implementation.md: #cross-market-arbitrage
+- ⚠️ Unknown tag in Cross-Market-Synthetic-Arbs-Implementation.md: #synthetic-betting
+- ⚠️ Unknown tag in Cross-Market-Synthetic-Arbs-Implementation.md: #covariance-hedging
+- ⚠️ Unknown tag in Cross-Market-Synthetic-Arbs-Implementation.md: #statistical-arbitrage
+- ⚠️ Unknown tag in Cross-Market-Synthetic-Arbs-Implementation.md: #odds-protocol
+- ⚠️ Unknown tag in YAML of Cross-Market-Synthetic-Arbs-Implementation.md: cross-market-arbitrage
+- ⚠️ Unknown tag in YAML of Cross-Market-Synthetic-Arbs-Implementation.md: synthetic-betting
+- ⚠️ Unknown tag in YAML of Cross-Market-Synthetic-Arbs-Implementation.md: covariance-hedging
+- ⚠️ Unknown tag in YAML of Cross-Market-Synthetic-Arbs-Implementation.md: statistical-arbitrage
+- ⚠️ Unknown tag in YAML of Cross-Market-Synthetic-Arbs-Implementation.md: odds-protocol
+- ⚠️ Unknown tag in Dashboard.md: #dashboard
+- ⚠️ Unknown tag in Dashboard.md: #monitoring
+- ⚠️ Unknown tag in Dashboard.md: #organization
+- ⚠️ Unknown tag in Dashboard.md: #automation
+- ⚠️ Unknown tag in YAML of 00 - Template System Types.md: template
+- ⚠️ Unknown tag in YAML of 00 - Template System Types.md: system
+- ⚠️ Unknown tag in YAML of 00 - Template System Types.md: types
+- ⚠️ Unknown tag in YAML of 00 - Template System Types.md: engine
+- ⚠️ Unknown tag in YAML of 00 - Template System Types.md: generation
+- ⚠️ Unknown tag in Registry Integration Examples.md: #code-snippets
+- ⚠️ Unknown tag in Registry Integration Examples.md: #registry-integration
+- ⚠️ Unknown tag in Unit Test Suite.md: #unit-tests
+- ⚠️ Unknown tag in Unit Test Suite.md: #quality-assurance
+- ⚠️ Unknown tag in Enhanced Deletion Tests.md: #deletion-system
+- ⚠️ Unknown tag in Enhanced Deletion Tests.md: #archive-management
+- ⚠️ Unknown tag in Enhanced Deletion Tests.md: #integration-tests
+- ⚠️ Unknown tag in Enhanced Deletion Tests.md: #performance-testing
+- ⚠️ Unknown tag in YAML of canvas-types-guide.md: canvas
+- ⚠️ Unknown tag in YAML of canvas-types-guide.md: types
+- ⚠️ Unknown tag in YAML of canvas-types-guide.md: integration
+- ⚠️ Unknown tag in YAML of canvas-types-guide.md: vault
+- ⚠️ Unknown tag in YAML of type-system-overview.md: types
+- ⚠️ Unknown tag in YAML of type-system-overview.md: typescript
+- ⚠️ Unknown tag in YAML of type-system-overview.md: vault
+- ⚠️ Unknown tag in YAML of type-system-overview.md: canvas
+- ⚠️ Unknown tag in YAML of type-system-overview.md: integration
+- ⚠️ Unknown tag in YAML of type-system-overview.md: overview
+- ⚠️ Unknown tag in YAML of tick-processor-types-reference.md: types
+- ⚠️ Unknown tag in YAML of tick-processor-types-reference.md: vault
+- ⚠️ Unknown tag in YAML of 00 - Dashboard.md: dashboard
+- ⚠️ Unknown tag in YAML of 00 - Dashboard.md: overview
+- ⚠️ Unknown tag in YAML of 00 - Dashboard.md: metrics
+- ⚠️ Unknown tag in YAML of 00 - Dashboard.md: monitoring
+- ⚠️ Multiple trailing spaces detected in OddsTick.md
+- ⚠️ Missing overview section in Reference System Types.md
+- ⚠️ Multiple trailing spaces detected in Reference System Types.md
+- ⚠️ Missing overview section in ORGANIZATION_SUCCESS.md
+- ⚠️ Multiple trailing spaces detected in ORGANIZATION_SUCCESS.md
+- ⚠️ Missing overview section in ERROR_HANDLING_TYPES_ANALYSIS.md
+- ⚠️ Multiple trailing spaces detected in ERROR_HANDLING_TYPES_ANALYSIS.md
+- ⚠️ Multiple trailing spaces detected in API Gateway Architecture.md
+- ⚠️ Missing overview section in BUN_COLOR_ANSI_OFFICIAL_COMPLIANCE.md
+- ⚠️ Missing overview section in Bun Optimized Scripts.md
+- ⚠️ Multiple trailing spaces detected in Bun Optimized Scripts.md
+- ⚠️ Missing overview section in Document Types.md
+- ⚠️ Multiple trailing spaces detected in Document Types.md
+- ⚠️ Missing overview section in CLEANUP_ANALYSIS.md
+- ⚠️ Code block without language specified in CLEANUP_ANALYSIS.md
+- ⚠️ Multiple trailing spaces detected in CLEANUP_ANALYSIS.md
+- ⚠️ Missing overview section in Odds Mono Map HEX Color Integration Complete.md
+- ⚠️ Multiple trailing spaces detected in Odds Mono Map HEX Color Integration Complete.md
+- ⚠️ Missing overview section in ENHANCED_CONSOLE_ANSI_MASTERY_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in ENHANCED_CONSOLE_ANSI_MASTERY_SUMMARY.md
+- ⚠️ Missing overview section in IMPLEMENTATION_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in IMPLEMENTATION_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in Integration Iterations.md
+- ⚠️ Missing overview section in BUN_COLOR_OFFICIAL_SPECIFICATION_COMPLIANCE.md
+- ⚠️ Missing overview section in Bun Native Integration Guide.md
+- ⚠️ Multiple trailing spaces detected in Bun Native Integration Guide.md
+- ⚠️ Missing overview section in Bun Color Ansi 256 Mastery.md
+- ⚠️ Missing overview section in SUCCESS_FORMULA_ANALYSIS.md
+- ⚠️ Code block without language specified in SUCCESS_FORMULA_ANALYSIS.md
+- ⚠️ Missing overview section in CONSOLE_ISSUES_ANALYSIS.md
+- ⚠️ Multiple trailing spaces detected in CONSOLE_ISSUES_ANALYSIS.md
+- ⚠️ Missing overview section in Metadata Engine Types.md
+- ⚠️ Multiple trailing spaces detected in Metadata Engine Types.md
+- ⚠️ Missing overview section in Vault Naming Standards.md
+- ⚠️ Multiple trailing spaces detected in Vault Naming Standards.md
+- ⚠️ Missing overview section in BUN_COLOR_COMPLETE_IMPLEMENTATION.md
+- ⚠️ Multiple trailing spaces detected in BUN_COLOR_COMPLETE_IMPLEMENTATION.md
+- ⚠️ Missing overview section in Bun Vault Optimization Complete.md
+- ⚠️ Missing overview section in Canvas System Overview.md
+- ⚠️ Code block without language specified in Canvas System Overview.md
+- ⚠️ Multiple trailing spaces detected in Canvas System Overview.md
+- ⚠️ Missing overview section in ABSOLUTE_DOMINANCE_COMPLETE.md
+- ⚠️ Missing overview section in INTEGRATION_COMMANDS_STATUS.md
+- ⚠️ Multiple trailing spaces detected in INTEGRATION_COMMANDS_STATUS.md
+- ⚠️ Missing overview section in TEMPLATE_LOGGING_FIXES_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in TEMPLATE_LOGGING_FIXES_SUMMARY.md
+- ⚠️ Missing overview section in Welcome To Vault.md
+- ⚠️ Multiple trailing spaces detected in Welcome To Vault.md
+- ⚠️ Missing overview section in Style Implementation Dashboard.md
+- ⚠️ Multiple trailing spaces detected in Style Implementation Dashboard.md
+- ⚠️ Missing overview section in BUN_COLOR_OFFICIAL_COMPLIANCE.md
+- ⚠️ Multiple trailing spaces detected in BUN_COLOR_OFFICIAL_COMPLIANCE.md
+- ⚠️ Missing overview section in README.md
+- ⚠️ Missing overview section in Enhanced Progress Bar System.md
+- ⚠️ Multiple trailing spaces detected in Enhanced Progress Bar System.md
+- ⚠️ Missing overview section in Table Formatting Excellence Achievement.md
+- ⚠️ Missing overview section in Deep Architectural Integration.md
+- ⚠️ Multiple trailing spaces detected in Deep Architectural Integration.md
+- ⚠️ Missing overview section in FRONTCMATTER_AND_CODE_BLOCKS_ANALYSIS.md
+- ⚠️ Missing overview section in CLEANUP_COMPLETE.md
+- ⚠️ Multiple trailing spaces detected in CLEANUP_COMPLETE.md
+- ⚠️ Missing overview section in 00   Dashboard.md
+- ⚠️ Multiple trailing spaces detected in 00   Dashboard.md
+- ⚠️ Missing overview section in Bun Vault Naming Best Practices.md
+- ⚠️ Missing overview section in HEX Color Integration Complete Guide.md
+- ⚠️ Multiple trailing spaces detected in HEX Color Integration Complete Guide.md
+- ⚠️ Missing overview section in Vault Scaffolding Guide.md
+- ⚠️ No headers found in 🔗 Reference System Types.md
+- ⚠️ Missing overview section in 🔗 Reference System Types.md
+- ⚠️ Very short content in 🔗 Reference System Types.md (0 characters)
+- ⚠️ Missing overview section in Industry Dominance Achievement.md
+- ⚠️ Code block without language specified in Industry Dominance Achievement.md
+- ⚠️ Missing overview section in Enhanced Semantic Color Assignment.md
+- ⚠️ Multiple trailing spaces detected in Enhanced Semantic Color Assignment.md
+- ⚠️ Missing overview section in BUN_COLOR_ANSI_256_MASTERY.md
+- ⚠️ Missing overview section in Bun Inspect Table Complete Reference Guide.md
+- ⚠️ Multiple trailing spaces detected in Bun Inspect Table Complete Reference Guide.md
+- ⚠️ Missing overview section in ABSOLUTE_DOMINANCE_INTEGRATION_COMPLETE.md
+- ⚠️ Multiple trailing spaces detected in ABSOLUTE_DOMINANCE_INTEGRATION_COMPLETE.md
+- ⚠️ Missing overview section in INDUSTRY_DOMINANCE_IMPLEMENTATION.md
+- ⚠️ Missing overview section in Advanced Semantic Metadata System.md
+- ⚠️ Multiple trailing spaces detected in Advanced Semantic Metadata System.md
+- ⚠️ Multiple trailing spaces detected in Enhanced File Deletion Architecture.md
+- ⚠️ Multiple trailing spaces detected in Bookmaker Registry System.md
+- ⚠️ Missing overview section in Vault Organization Guide.md
+- ⚠️ Multiple trailing spaces detected in Vault Organization Guide.md
+- ⚠️ Missing overview section in Bun Color Official Compliance.md
+- ⚠️ Multiple trailing spaces detected in Bun Color Official Compliance.md
+- ⚠️ Missing overview section in BUN_COLOR_RGBA_HEX_COMPLETE.md
+- ⚠️ Multiple trailing spaces detected in BUN_COLOR_RGBA_HEX_COMPLETE.md
+- ⚠️ Missing overview section in Quick Start Guide.md
+- ⚠️ Multiple trailing spaces detected in Quick Start Guide.md
+- ⚠️ Missing overview section in BUN_COLOR_IMPLEMENTATION_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in BUN_COLOR_IMPLEMENTATION_SUMMARY.md
+- ⚠️ Missing overview section in BUN_COLOR_ANSI_16M_TRUE_COLOR_MASTERY.md
+- ⚠️ Missing overview section in Error Handling Types.md
+- ⚠️ Multiple trailing spaces detected in Error Handling Types.md
+- ⚠️ Missing overview section in TYPESCRIPT_ERRORS_FIXED.md
+- ⚠️ Multiple trailing spaces detected in TYPESCRIPT_ERRORS_FIXED.md
+- ⚠️ Missing overview section in Bun Color Ansi 16m True Color Mastery.md
+- ⚠️ Multiple trailing spaces detected in Bun Color Ansi 16m True Color Mastery.md
+- ⚠️ Missing overview section in INDUSTRY_DOMINANCE_ACHIEVED.md
+- ⚠️ Missing overview section in Canvas-Visual-Monitoring-Complete-Success.md
+- ⚠️ Multiple trailing spaces detected in Canvas-Visual-Monitoring-Complete-Success.md
+- ⚠️ Missing overview section in Comprehensive-Monitoring-System-Summary.md
+- ⚠️ Missing overview section in ROOT-ORGANIZATION-PLAN.md
+- ⚠️ Multiple trailing spaces detected in ROOT-ORGANIZATION-PLAN.md
+- ⚠️ Missing overview section in CANVAS_VAULT_INTEGRATION.md
+- ⚠️ Multiple trailing spaces detected in CANVAS_VAULT_INTEGRATION.md
+- ⚠️ Missing overview section in BUN_COLOR_INTEGRATION_GUIDE.md
+- ⚠️ Multiple trailing spaces detected in BUN_COLOR_INTEGRATION_GUIDE.md
+- ⚠️ Multiple trailing spaces detected in 00 - Tasks Plugin Integration And Enhancement.md
+- ⚠️ Missing overview section in Bun-Utilities-Mastery-Complete-Integration-Guide.md
+- ⚠️ Missing overview section in Bun-Utilities-Mastery-Ultimate-Achievement-Summary.md
+- ⚠️ Code block without language specified in 01 - Interactive Components Showcase.md
+- ⚠️ Code block without language specified in 00 - Design System Guide.md
+- ⚠️ Multiple trailing spaces detected in 00 - Design System Guide.md
+- ⚠️ Multiple trailing spaces detected in 08 - Enhanced Semver With Bun Semver Order.md
+- ⚠️ Multiple trailing spaces detected in 02 - Advanced Link Integration System.md
+- ⚠️ Multiple trailing spaces detected in 00 - Enhanced Standards Implementation.md
+- ⚠️ Multiple trailing spaces detected in 01 - Comprehensive Style Guide.md
+- ⚠️ Missing overview section in complete-bun-utilities-template.md
+- ⚠️ Missing overview section in V8_HEAP_SNAPSHOT_IMPLEMENTATION_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in V8_HEAP_SNAPSHOT_IMPLEMENTATION_SUMMARY.md
+- ⚠️ Missing overview section in Enterprise-Error-Handling-Tracking-System.md
+- ⚠️ Missing overview section in Advanced-Semantic-Metadata-System.md
+- ⚠️ Multiple trailing spaces detected in Advanced-Semantic-Metadata-System.md
+- ⚠️ Missing overview section in UDP_SEND_MANY_COMPLETE_GUIDE.md
+- ⚠️ Multiple trailing spaces detected in UDP_SEND_MANY_COMPLETE_GUIDE.md
+- ⚠️ Missing overview section in FETCH_OPTIMIZATION_DEEP_DIVE_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in FETCH_OPTIMIZATION_DEEP_DIVE_SUMMARY.md
+- ⚠️ Missing overview section in Enhanced-Project-Environment-Dashboard.md
+- ⚠️ Missing overview section in Odds-Mono-Map-HEX-Color-Integration-Complete.md
+- ⚠️ Multiple trailing spaces detected in Odds-Mono-Map-HEX-Color-Integration-Complete.md
+- ⚠️ Missing overview section in BUN_V1.2.18_FEATURES_SUMMARY.md
+- ⚠️ Missing overview section in Enhanced-Semantic-Color-Assignment.md
+- ⚠️ Multiple trailing spaces detected in Enhanced-Semantic-Color-Assignment.md
+- ⚠️ Missing overview section in FETCH_COMPLETE_DOCUMENTATION_SUMMARY.md
+- ⚠️ Missing overview section in Enhanced-Error-Handling-Guide.md
+- ⚠️ Missing overview section in DNS_USER_AGENT_PREFETCH_SUMMARY.md
+- ⚠️ Missing overview section in Advanced-Ultra-Clean-Dashboard.md
+- ⚠️ Missing overview section in Bun-Console-Stdin-Guide.md
+- ⚠️ Multiple trailing spaces detected in Bun-Console-Stdin-Guide.md
+- ⚠️ Missing overview section in Bun-Debugging-Guide.md
+- ⚠️ Multiple trailing spaces detected in Bun-Debugging-Guide.md
+- ⚠️ Missing overview section in Clean-Bun-Console-Guide.md
+- ⚠️ Multiple trailing spaces detected in Clean-Bun-Console-Guide.md
+- ⚠️ Missing overview section in BUN_V1.2.18_ADVANCED_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in BUN_V1.2.18_ADVANCED_SUMMARY.md
+- ⚠️ Missing overview section in Clean-Console-Output-System.md
+- ⚠️ Missing overview section in README.md
+- ⚠️ Multiple trailing spaces detected in README.md
+- ⚠️ Missing overview section in Comprehensive-Bun-Console-Guide.md
+- ⚠️ Multiple trailing spaces detected in Comprehensive-Bun-Console-Guide.md
+- ⚠️ Missing overview section in HEX-Color-Integration-Workshop.md
+- ⚠️ Multiple trailing spaces detected in HEX-Color-Integration-Workshop.md
+- ⚠️ Missing overview section in COMPLETE_DEBUGGING_IMPLEMENTATION_SUMMARY.md
+- ⚠️ Missing overview section in Ultimate-Custom-Inspection-Dashboard.md
+- ⚠️ Multiple trailing spaces detected in Ultimate-Custom-Inspection-Dashboard.md
+- ⚠️ Missing overview section in DNS_COMPLETE_DOCUMENTATION_SUMMARY.md
+- ⚠️ Missing overview section in COMPREHENSIVE_BUN_APIS_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in COMPREHENSIVE_BUN_APIS_SUMMARY.md
+- ⚠️ Missing overview section in enterprise-integration-report.md
+- ⚠️ Missing overview section in Ultimate-Color-Formatting-Dashboard.md
+- ⚠️ Multiple trailing spaces detected in Ultimate-Color-Formatting-Dashboard.md
+- ⚠️ Missing overview section in Web-Console-API-Guide.md
+- ⚠️ Multiple trailing spaces detected in Web-Console-API-Guide.md
+- ⚠️ Missing overview section in clean-integration-report.md
+- ⚠️ Missing overview section in BUN_ODDS_INTEGRATED_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in BUN_ODDS_INTEGRATED_SUMMARY.md
+- ⚠️ Missing overview section in BUN_INSPECT_FEATURES_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in BUN_INSPECT_FEATURES_SUMMARY.md
+- ⚠️ Missing overview section in DNS_CACHE_EFFECTIVENESS_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in DNS_CACHE_EFFECTIVENESS_SUMMARY.md
+- ⚠️ Missing overview section in Ultra-Clean-Environment-Dashboard.md
+- ⚠️ Missing overview section in FETCH_OPTIMIZATION_FIXES_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in FETCH_OPTIMIZATION_FIXES_SUMMARY.md
+- ⚠️ Missing overview section in Complete-Enhanced-Table-Demonstration.md
+- ⚠️ Multiple trailing spaces detected in Complete-Enhanced-Table-Demonstration.md
+- ⚠️ Missing overview section in Ultimate-Enhanced-Table-StringWidth-Integration.md
+- ⚠️ Multiple trailing spaces detected in Ultimate-Enhanced-Table-StringWidth-Integration.md
+- ⚠️ Missing overview section in FETCH_FIXES_SUMMARY.md
+- ⚠️ Missing overview section in Ultimate-Properties-Configuration-Dashboard.md
+- ⚠️ Multiple trailing spaces detected in Ultimate-Properties-Configuration-Dashboard.md
+- ⚠️ Missing overview section in HEX-Color-Integration-Complete-Guide.md
+- ⚠️ Multiple trailing spaces detected in HEX-Color-Integration-Complete-Guide.md
+- ⚠️ Missing overview section in WORKSHOP_ACHIEVEMENT_SUMMARY.md
+- ⚠️ Multiple trailing spaces detected in WORKSHOP_ACHIEVEMENT_SUMMARY.md
+- ⚠️ Missing overview section in WORKSHOP_USAGE_GUIDELINES.md
+- ⚠️ Multiple trailing spaces detected in WORKSHOP_USAGE_GUIDELINES.md
+- ⚠️ Missing overview section in WORKSHOP_INVENTORY.md
+- ⚠️ Missing overview section in WORKSHOP_ORGANIZATION_ANALYSIS.md
+- ⚠️ Missing overview section in README.md
+- ⚠️ Missing overview section in Canvas Dashboard.md
+- ⚠️ Missing overview section in Environment Variables Dashboard.md
+- ⚠️ Multiple trailing spaces detected in 🚀 Vault Optimization Complete - Status Report.md
+- ⚠️ Multiple trailing spaces detected in 🔧 TypeScript Errors Fixed - EnhancedValidatorManager.md
+- ⚠️ Multiple trailing spaces detected in 🚀 EnhancedValidatorManager Usage Examples.md
+- ⚠️ Multiple trailing spaces detected in 🔄 Directory Structure Migration Guide.md
+- ⚠️ Multiple trailing spaces detected in Cross-Market-Synthetic-Arbs-Implementation.md
+- ⚠️ Multiple trailing spaces detected in Vault Automation System.md
+- ⚠️ Code block without language specified in Dashboard.md
+- ⚠️ Code block without language specified in Vault Theme Setup Guide.md
+- ⚠️ Code block without language specified in Theme Activation Checklist.md
+- ⚠️ Multiple trailing spaces detected in Style Enforcement Automation.md
+- ⚠️ Multiple trailing spaces detected in Enhanced Dataview Scripts.md
+- ⚠️ Missing overview section in 🍞 Bun Native API Types.md
+- ⚠️ No headers found in Untitled.md
+- ⚠️ Missing overview section in Untitled.md
+- ⚠️ Missing overview section in 📁 Directory Structure Guide.md
+- ⚠️ Code block without language specified in 📁 Directory Structure Guide.md
+- ⚠️ Multiple trailing spaces detected in 📁 Directory Structure Guide.md
+- ⚠️ Missing overview section in SCRIPTS_ORGANIZATION_COMPLETE.md
+- ⚠️ Multiple trailing spaces detected in SCRIPTS_ORGANIZATION_COMPLETE.md
+- ⚠️ Missing overview section in README.md
+- ⚠️ Missing overview section in SCRIPTS_ORGANIZATION_ANALYSIS.md
+- ⚠️ Code block without language specified in SCRIPTS_ORGANIZATION_ANALYSIS.md
+- ⚠️ Missing overview section in JSDOC_STANDARDIZATION_COMPLETE.md
+- ⚠️ Multiple trailing spaces detected in JSDOC_STANDARDIZATION_COMPLETE.md
+- ⚠️ Missing overview section in SCRIPTS_INVENTORY.md
+- ⚠️ No headers found in Untitled.md
+- ⚠️ Missing overview section in Untitled.md
+- ⚠️ Code block without language specified in Untitled.md
+- ⚠️ No headers found in HOMEPAGE.md
+- ⚠️ Missing overview section in HOMEPAGE.md
+- ⚠️ Very short content in HOMEPAGE.md (0 characters)
+- ⚠️ Multiple trailing spaces detected in Registry Integration Examples.md
+- ⚠️ Multiple trailing spaces detected in Unit Test Suite.md
+- ⚠️ Multiple trailing spaces detected in Enhanced Deletion Tests.md
+- ⚠️ Missing overview section in TECHNICAL_DEBT_TICK_PROCESSOR_TYPES.md
+- ⚠️ Missing overview section in canvas-types-guide.md
+- ⚠️ Multiple trailing spaces detected in canvas-types-guide.md
+- ⚠️ Missing overview section in type-system-overview.md
+- ⚠️ Multiple trailing spaces detected in type-system-overview.md
+- ⚠️ Missing overview section in tick-processor-types-reference.md
+- ⚠️ Missing overview section in type-validation-patterns.md
+- ⚠️ Multiple trailing spaces detected in type-validation-patterns.md
+- ⚠️ Missing overview section in 00 - Dashboard.md
+- ⚠️ Code block without language specified in 00 - Dashboard.md
+- ⚠️ Code block without language specified in Drawing 2025-11-18 13.12.35.excalidraw.md
+- ⚠️ Code block without language specified in Drawing 2025-11-18 13.12.31.excalidraw.md
+- ⚠️ No headers found in TEMPLATE_MASTER_INDEX.md
+- ⚠️ Missing overview section in TEMPLATE_MASTER_INDEX.md
+- ⚠️ Very short content in TEMPLATE_MASTER_INDEX.md (0 characters)
+
+## Recommendations
+
+1. Fix critical issues first to maintain vault integrity
+2. Review warnings and improve content quality
+3. Run organization script to clean up orphaned files
+4. Consider adding missing templates or documentation
+
+
+## Next Steps
+- [ ] Address all critical issues
+- [ ] Review and fix warnings
+- [ ] Update templates if needed
+- [ ] Schedule regular validation
+
+---
+**Generated**: 2025-11-19T08:03:19.602Z
+**System**: Automated Vault Validator

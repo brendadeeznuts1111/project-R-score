@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Bun HMR Dashboard - Profile & Accessibility Management</title>
+    <meta name="description" content="Bun HMR Dashboard - Advanced user profile management and accessibility controls with hot reload capabilities">
+    <meta name="theme-color" content="#2563eb">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Accessibility styles */
+        .high-contrast {
+            filter: contrast(1.5);
+        }
+        
+        .large-text {
+            font-size: 120% !important;
+        }
+        
+        .reduced-motion * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+        
+        .dark-mode {
+            background-color: #1f2937 !important;
+            color: #f9fafb !important;
+        }
+        
+        .dark-mode .bg-white {
+            background-color: #374151 !important;
+        }
+        
+        .dark-mode .text-gray-800 {
+            color: #f9fafb !important;
+        }
+        
+        .dark-mode .text-gray-600 {
+            color: #d1d5db !important;
+        }
+        
+        .dark-mode .border-gray-200 {
+            border-color: #4b5563 !important;
+        }
+        
+        .focus-visible:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        /* Profile card animations */
+        .profile-card {
+            transition: all 0.3s ease;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        /* Tab styles */
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+        
+        /* Accessibility button states */
+        .accessibility-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        /* Notification styles */
+        .notification {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #3b82f6;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+        }
+        
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Skip to main content -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Screen reader announcements -->
+    <div aria-live="polite" aria-atomic="true" class="sr-only" id="announcements"></div>
+    
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg border-b border-blue-700" role="banner">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-md" aria-hidden="true">
+                        <span class="text-blue-600 font-bold text-xl">🚀</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Bun HMR Dashboard</h1>
+                        <p class="text-blue-100 text-sm">User Profile & Accessibility Management</p>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4 ml-8">
+                        <span class="px-3 py-1 bg-white/20 text-white rounded-full text-sm backdrop-blur-sm">
+                            ⚡ Lightning Fast
+                        </span>
+                        <span class="px-3 py-1 bg-white/20 text-white rounded-full text-sm backdrop-blur-sm">
+                            🔥 Hot Reload
+                        </span>
+                        <span class="px-3 py-1 bg-white/20 text-white rounded-full text-sm backdrop-blur-sm">
+                            🛠️ Developer Tools
+                        </span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="current-user-display" class="text-sm text-blue-100 hidden md:block">No profile selected</span>
+                    <button onclick="toggleProfileManager()" 
+                            class="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors focus-visible:focus font-medium shadow-md"
+                            aria-label="Toggle profile manager">
+                        👤 Profile Manager
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container mx-auto px-4 py-8" role="main">
+        <!-- Accessibility Controls -->
+        <section class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-6 shadow-lg" aria-labelledby="accessibility-controls">
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="accessibility-controls" class="text-lg font-semibold text-blue-800 flex items-center gap-2">
+                    <span class="text-2xl">♿</span>
+                    Accessibility Controls
+                    <span class="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded-full" id="active-controls-count">0 active</span>
+                </h2>
+                <button onclick="resetAccessibilitySettings()" 
+                        class="px-3 py-1 bg-gray-200 text-gray-600 rounded text-sm hover:bg-gray-300 focus-visible:focus transition-colors"
+                        aria-label="Reset all accessibility settings to default">
+                    🔄 Reset All
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <button onclick="toggleAccessibility('highContrast')" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle high contrast mode. Currently disabled"
+                        data-feature="high-contrast">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">🔳</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">High Contrast</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+                
+                <button onclick="toggleAccessibility('largeText')" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle large text mode. Currently disabled"
+                        data-feature="large-text">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">🔍</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">Large Text</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+                
+                <button onclick="toggleAccessibility('reducedMotion')" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle reduced motion. Currently disabled"
+                        data-feature="reduced-motion">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">⏸️</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">Reduced Motion</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+                
+                <button onclick="toggleAccessibility('darkMode')" 
+                        class="accessibility-btn group relative overflow-hidden bg-white border-2 border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition-all duration-200 focus-visible:focus"
+                        aria-label="Toggle dark mode. Currently disabled"
+                        data-feature="dark-mode">
+                    <span class="text-2xl mb-2 block group-hover:scale-110 transition-transform">🌙</span>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">Dark Mode</span>
+                    <span class="status-indicator absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-300" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <div class="mt-4 p-3 bg-blue-100 rounded-lg">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-blue-700" id="accessibility-status">All accessibility features are disabled</span>
+                    <button onclick="exportAccessibilitySettings()" 
+                            class="text-blue-600 hover:text-blue-800 underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+                            aria-label="Export current accessibility settings">
+                        📤 Export Settings
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Manager -->
+        <section id="profile-manager" class="hidden" aria-labelledby="profile-manager-heading">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 id="profile-manager-heading" class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                        <span class="text-2xl">👤</span>
+                        Profile Manager
+                        <span class="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded-full" id="profile-count">0 profiles</span>
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="importProfileFromFile()" 
+                                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors focus-visible:focus"
+                                aria-label="Import profile from file">
+                            📥 Import
+                        </button>
+                        <button onclick="createNewProfile()" 
+                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus-visible:focus"
+                                aria-label="Create new user profile">
+                            ➕ Create New Profile
+                        </button>
+                        <button onclick="toggleProfileManager()" 
+                                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors focus-visible:focus"
+                                aria-label="Close profile manager">
+                            ✖️ Close
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label for="profile-search" class="block text-sm font-medium text-gray-700 mb-1">Search Profiles</label>
+                            <div class="relative">
+                                <input type="text" 
+                                       id="profile-search"
+                                       placeholder="Search by name or username..." 
+                                       class="w-full px-3 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       oninput="filterProfiles(this.value)">
+                                <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 items-end">
+                            <select id="role-filter" 
+                                    onchange="filterByRole(this.value)"
+                                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="all">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                                <option value="guest">Guest</option>
+                            </select>
+                            <select id="sort-order" 
+                                    onchange="sortProfiles(this.value)"
+                                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="recent">Recent Login</option>
+                                <option value="name">Name</option>
+                                <option value="created">Created Date</option>
+                                <option value="role">Role</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profile Selector -->
+                <div id="profile-selector" class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-medium text-gray-700">
+                            Select Profile 
+                            <span class="text-sm text-gray-500 ml-2" id="filtered-count">(0 total)</span>
+                        </h3>
+                        <div class="flex gap-2">
+                            <button onclick="selectAllProfiles()" 
+                                    class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 focus-visible:focus"
+                                    aria-label="Select all profiles">
+                                Select All
+                            </button>
+                            <button onclick="deselectAllProfiles()" 
+                                    class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300 focus-visible:focus"
+                                    aria-label="Deselect all profiles">
+                                Deselect All
+                            </button>
+                            <button onclick="deleteSelectedProfiles()" 
+                                    class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 focus-visible:focus"
+                                    aria-label="Delete selected profiles">
+                                🗑️ Delete Selected
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="profile-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Profiles will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Current Profile -->
+                <div id="current-profile" class="hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-4">
+                            <div id="profile-avatar" class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                                U
+                            </div>
+                            <div>
+                                <h3 id="profile-name" class="text-xl font-semibold text-gray-800">User Name</h3>
+                                <p id="profile-details" class="text-sm text-gray-600">@username • Role</p>
+                                <div class="flex items-center gap-4 mt-1">
+                                    <span class="text-xs text-gray-500">Created: <span id="profile-created">Never</span></span>
+                                    <span class="text-xs text-gray-500">Last Login: <span id="profile-last-login">Never</span></span>
+                                    <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded" id="profile-status">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="duplicateCurrentProfile()" 
+                                    class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors focus-visible:focus"
+                                    aria-label="Duplicate current profile">
+                                📋 Duplicate
+                            </button>
+                            <button onclick="editCurrentProfile()" 
+                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus-visible:focus"
+                                    aria-label="Edit current profile">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="exportCurrentProfile()" 
+                                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors focus-visible:focus"
+                                    aria-label="Export current profile">
+                                📤 Export
+                            </button>
+                            <button onclick="logoutCurrentProfile()" 
+                                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors focus-visible:focus"
+                                    aria-label="Logout from current profile">
+                                🚪 Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Profile Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="text-2xl mb-1">📊</div>
+                            <div class="text-sm text-blue-600 font-medium">Usage Stats</div>
+                            <div class="text-xs text-blue-500 mt-1">
+                                <span id="login-count">0</span> logins • <span id="days-active">0</span> days
+                            </div>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="text-2xl mb-1">♿</div>
+                            <div class="text-sm text-green-600 font-medium">Accessibility</div>
+                            <div class="text-xs text-green-500 mt-1">
+                                <span id="accessibility-count">0</span> features enabled
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <div class="text-2xl mb-1">⚙️</div>
+                            <div class="text-sm text-purple-600 font-medium">Preferences</div>
+                            <div class="text-xs text-purple-500 mt-1">
+                                <span id="preference-count">0</span> custom settings
+                            </div>
+                        </div>
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                            <div class="text-2xl mb-1">💾</div>
+                            <div class="text-sm text-orange-600 font-medium">Storage</div>
+                            <div class="text-xs text-orange-500 mt-1">
+                                <span id="storage-size">0</span> KB used
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Tabs -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="flex gap-6" role="tablist">
+                            <button onclick="switchProfileTab('info')" 
+                                    class="profile-tab pb-2 px-1 border-b-2 font-medium text-sm transition-colors tab-active"
+                                    role="tab" 
+                                    aria-selected="true"
+                                    aria-controls="profile-info-panel">
+                                📋 Profile Info
+                            </button>
+                            <button onclick="switchProfileTab('preferences')" 
+                                    class="profile-tab pb-2 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    role="tab" 
+                                    aria-selected="false"
+                                    aria-controls="profile-preferences-panel">
+                                ⚙️ Preferences
+                            </button>
+                            <button onclick="switchProfileTab('accessibility')" 
+                                    class="profile-tab pb-2 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    role="tab" 
+                                    aria-selected="false"
+                                    aria-controls="profile-accessibility-panel">
+                                ♿ Accessibility
+                            </button>
+                            <button onclick="switchProfileTab('advanced')" 
+                                    class="profile-tab pb-2 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    role="tab" 
+                                    aria-selected="false"
+                                    aria-controls="profile-advanced-panel">
+                                🔧 Advanced
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Tab Panels -->
+                    <div id="profile-info-panel" role="tabpanel" aria-labelledby="profile-info-tab">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                                <input type="text" id="edit-display-name" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       placeholder="Enter display name">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="edit-email" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       placeholder="Enter email address">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                                <textarea id="edit-bio" rows="3"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                          placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                                <input type="text" id="edit-location" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       placeholder="City, Country">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button onclick="saveProfileInfo()" 
+                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus-visible:focus"
+                                    aria-label="Save profile information">
+                                💾 Save Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="profile-preferences-panel" role="tabpanel" aria-labelledby="profile-preferences-tab" class="hidden">
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">UI Preferences</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                                        <select id="pref-theme" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onchange="updatePreference('ui', 'theme', this.value)">
+                                            <option value="light">Light</option>
+                                            <option value="dark">Dark</option>
+                                            <option value="auto">Auto</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                                        <select id="pref-language" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onchange="updatePreference('ui', 'language', this.value)">
+                                            <option value="en">English</option>
+                                            <option value="es">Español</option>
+                                            <option value="fr">Français</option>
+                                            <option value="de">Deutsch</option>
+                                            <option value="ja">日本語</option>
+                                            <option value="zh">中文</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                                        <select id="pref-timezone" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onchange="updatePreference('ui', 'timezone', this.value)">
+                                            <option value="UTC">UTC</option>
+                                            <option value="America/New_York">Eastern Time</option>
+                                            <option value="America/Los_Angeles">Pacific Time</option>
+                                            <option value="Europe/London">London</option>
+                                            <option value="Asia/Tokyo">Tokyo</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Date Format</label>
+                                        <select id="pref-dateFormat" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onchange="updatePreference('ui', 'dateFormat', this.value)">
+                                            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                            <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Behavior Preferences</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3">
+                                        <input type="checkbox" id="pref-autoRefresh" 
+                                               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                               onchange="updatePreference('ui', 'autoRefresh', this.checked)">
+                                        <span class="text-sm font-medium text-gray-700">Auto-refresh data</span>
+                                    </label>
+                                    <label class="flex items-center gap-3">
+                                        <input type="checkbox" id="pref-showNotifications" 
+                                               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                               onchange="updatePreference('ui', 'showNotifications', this.checked)">
+                                        <span class="text-sm font-medium text-gray-700">Show notifications</span>
+                                    </label>
+                                    <label class="flex items-center gap-3">
+                                        <input type="checkbox" id="pref-enableSounds" 
+                                               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                               onchange="updatePreference('ui', 'enableSounds', this.checked)">
+                                        <span class="text-sm font-medium text-gray-700">Enable sound effects</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="profile-accessibility-panel" role="tabpanel" aria-labelledby="profile-accessibility-tab" class="hidden">
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Saved Accessibility Settings</h4>
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <p class="text-sm text-gray-600 mb-2">Your accessibility preferences are automatically saved and applied when you log in.</p>
+                                    <div id="saved-accessibility-settings" class="mt-4 space-y-2">
+                                        <!-- Saved settings will be displayed here -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button onclick="applyCurrentAccessibilityToAll()" 
+                                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors focus-visible:focus">
+                                        🌐 Apply to All Profiles
+                                    </button>
+                                    <button onclick="resetAccessibilityForCurrent()" 
+                                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors focus-visible:focus">
+                                        🔄 Reset to Default
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="profile-advanced-panel" role="tabpanel" aria-labelledby="profile-advanced-tab" class="hidden">
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Profile Management</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="font-medium text-gray-800">Profile ID</div>
+                                            <div class="text-sm text-gray-600" id="profile-id-display">Not available</div>
+                                        </div>
+                                        <button onclick="copyProfileId()" 
+                                                class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 focus-visible:focus">
+                                            📋 Copy
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="font-medium text-gray-800">Profile Size</div>
+                                            <div class="text-sm text-gray-600" id="profile-size-display">Calculating...</div>
+                                        </div>
+                                        <button onclick="optimizeProfile()" 
+                                                class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 focus-visible:focus">
+                                            ⚡ Optimize
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="font-medium text-gray-800">Last Backup</div>
+                                            <div class="text-sm text-gray-600" id="last-backup-display">Never</div>
+                                        </div>
+                                        <button onclick="backupProfile()" 
+                                                class="px-3 py-1 bg-purple-500 text-white rounded text-sm hover:bg-purple-600 focus-visible:focus">
+                                            💾 Backup Now
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Danger Zone</h4>
+                                <div class="border border-red-200 rounded-lg p-4">
+                                    <p class="text-sm text-red-600 mb-4">⚠️ These actions cannot be undone.</p>
+                                    <div class="flex gap-4">
+                                        <button onclick="clearProfileData()" 
+                                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors focus-visible:focus">
+                                            🗑️ Clear All Data
+                                        </button>
+                                        <button onclick="deleteCurrentProfileForever()" 
+                                                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors focus-visible:focus">
+                                            💀 Delete Profile Forever
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo Content -->
+        <section class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">🚀</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800">Bun HMR Dashboard Features</h2>
+                    <p class="text-sm text-gray-600">Experience lightning-fast development with advanced profile management</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-700 flex items-center gap-2">
+                        <span class="text-blue-500">⚡</span>
+                        Hot Reload Capabilities
+                    </h3>
+                    <p class="text-gray-600">Built with Bun's lightning-fast HMR system for instant development feedback:</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>🔥 Instant hot reload on profile changes</li>
+                        <li>⚡ Zero-configuration setup</li>
+                        <li>🛠️ Developer-optimized workflow</li>
+                        <li>📊 Real-time performance monitoring</li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-700 flex items-center gap-2">
+                        <span class="text-purple-500">👤</span>
+                        Advanced Profile Management
+                    </h3>
+                    <p class="text-gray-600">Enterprise-grade user profiles with persistent preferences:</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>🔐 Multi-profile support with secure switching</li>
+                        <li>♿ Accessibility settings saved per user</li>
+                        <li>📤 Export/import profiles for backup</li>
+                        <li>🔄 Cross-session preference persistence</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Feature Highlights -->
+            <div class="mt-8 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-semibold text-blue-800">🚀 Bun HMR Integration</h4>
+                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">Active</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-500">✓</span>
+                        <span>Lightning-fast builds</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-500">✓</span>
+                        <span>Hot module replacement</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-500">✓</span>
+                        <span>TypeScript support</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-500">✓</span>
+                        <span>Zero dependencies</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-500">✓</span>
+                        <span>Bundled optimization</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-500">✓</span>
+                        <span>Developer tools</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notifications Container -->
+    <div id="notifications-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // Translation system for HTML demo
+        const translations = {
+            en: {
+                // Header
+                profileManager: 'Profile Manager',
+                noProfileSelected: 'No profile selected',
+                
+                // Profile List
+                profileCount: '{count} profiles',
+                filteredCount: '({total} total)',
+                searchPlaceholder: 'Search profiles...',
+                filterByRole: 'Filter by role',
+                sortProfiles: 'Sort profiles',
+                
+                // Roles
+                all: 'All',
+                admin: 'Admin',
+                user: 'User',
+                guest: 'Guest',
+                
+                // Sort options
+                recent: 'Recent',
+                name: 'Name',
+                created: 'Created',
+                
+                // Actions
+                createNewProfile: 'Create New Profile',
+                selectAll: 'Select All',
+                deselectAll: 'Deselect All',
+                deleteSelected: 'Delete Selected',
+                importProfile: 'Import Profile',
+                closeManager: 'Close Manager',
+                
+                // Profile Info
+                profileInfo: 'Profile Info',
+                preferences: 'Preferences',
+                accessibility: 'Accessibility',
+                advanced: 'Advanced',
+                
+                // Form fields
+                displayName: 'Display Name',
+                email: 'Email',
+                bio: 'Bio',
+                location: 'Location',
+                enterBio: 'Tell us about yourself...',
+                enterLocation: 'City, Country',
+                saveChanges: 'Save Changes',
+                
+                // Preferences
+                uiPreferences: 'UI Preferences',
+                theme: 'Theme',
+                language: 'Language',
+                timezone: 'Timezone',
+                dateFormat: 'Date Format',
+                autoRefresh: 'Auto-refresh data',
+                showNotifications: 'Show notifications',
+                enableSounds: 'Enable sound effects',
+                
+                // Accessibility
+                accessibilityControls: 'Accessibility Controls',
+                savedAccessibilitySettings: 'Saved Accessibility Settings',
+                noAccessibilityFeatures: 'No accessibility features enabled',
+                applyToAllProfiles: 'Apply to All Profiles',
+                resetToDefault: 'Reset to Default',
+                
+                // Advanced
+                profileId: 'Profile ID',
+                lastBackup: 'Last Backup',
+                copyProfileId: 'Copy Profile ID',
+                optimizeProfile: 'Optimize Profile',
+                backupProfile: 'Backup Profile',
+                duplicateProfile: 'Duplicate Profile',
+                
+                // Danger Zone
+                dangerZone: 'Danger Zone',
+                clearProfileData: 'Clear Profile Data',
+                deleteProfileForever: 'Delete Profile Forever',
+                
+                // Stats
+                usageStats: 'Usage Stats',
+                logins: 'logins',
+                daysActive: 'days active',
+                accessibilityCount: 'accessibility features',
+                preferenceCount: 'custom settings',
+                storageSize: 'KB used',
+                
+                // Messages
+                profileCreated: 'Profile created and logged in!',
+                profileUpdated: 'Profile updated successfully!',
+                profileDeleted: 'Profile deleted',
+                profileDuplicated: 'Profile duplicated',
+                profileExported: 'Profile exported successfully!',
+                profileImported: 'Profile imported successfully!',
+                profileOptimized: 'Profile optimized successfully!',
+                profileBackedUp: 'Profile backed up successfully!',
+                profileDataCleared: 'Profile data cleared!',
+                profileDeletedForever: 'Profile permanently deleted!',
+                accessibilityAppliedToAll: 'Accessibility settings applied to {count} profiles!',
+                accessibilityReset: 'Accessibility settings reset to default!',
+                profileIdCopied: 'Profile ID copied to clipboard!',
+                noProfilesFound: 'No profiles found. Click "Create New Profile" to get started.',
+                noProfileSelected: 'No profile selected',
+                loggedInAs: 'Logged in as',
+                never: 'Never',
+                
+                // Confirmation messages
+                confirmDeleteProfile: 'Are you sure you want to delete this profile?',
+                confirmDeleteSelected: 'Are you sure you want to delete {count} profile(s)? This action cannot be undone.',
+                confirmClearData: 'Are you sure you want to clear all profile data? This will reset preferences and personal information.',
+                confirmDeleteForever: '⚠️ DANGER: This will permanently delete the current profile and all its data. This cannot be undone!',
+                
+                // Prompts
+                enterDisplayName: 'Enter display name',
+                enterUsername: 'Enter username',
+                enterEmail: 'Enter email (optional)',
+                enterBio: 'Enter bio (optional)',
+                enterLocation: 'Enter location (optional)',
+                enterRole: 'Enter role (user/admin/guest)',
+            },
+            
+            es: {
+                // Header
+                profileManager: 'Gestor de Perfiles',
+                noProfileSelected: 'Ningún perfil seleccionado',
+                
+                // Profile List
+                profileCount: '{count} perfiles',
+                filteredCount: '({total} total)',
+                searchPlaceholder: 'Buscar perfiles...',
+                filterByRole: 'Filtrar por rol',
+                sortProfiles: 'Ordenar perfiles',
+                
+                // Roles
+                all: 'Todos',
+                admin: 'Administrador',
+                user: 'Usuario',
+                guest: 'Invitado',
+                
+                // Sort options
+                recent: 'Reciente',
+                name: 'Nombre',
+                created: 'Creado',
+                
+                // Actions
+                createNewProfile: 'Crear Nuevo Perfil',
+                selectAll: 'Seleccionar Todo',
+                deselectAll: 'Deseleccionar Todo',
+                deleteSelected: 'Eliminar Seleccionados',
+                importProfile: 'Importar Perfil',
+                closeManager: 'Cerrar Gestor',
+                
+                // Profile Info
+                profileInfo: 'Información del Perfil',
+                preferences: 'Preferencias',
+                accessibility: 'Accesibilidad',
+                advanced: 'Avanzado',
+                
+                // Form fields
+                displayName: 'Nombre para Mostrar',
+                email: 'Correo Electrónico',
+                bio: 'Biografía',
+                location: 'Ubicación',
+                enterBio: 'Cuéntanos sobre ti...',
+                enterLocation: 'Ciudad, País',
+                saveChanges: 'Guardar Cambios',
+                
+                // Preferences
+                uiPreferences: 'Preferencias de UI',
+                theme: 'Tema',
+                language: 'Idioma',
+                timezone: 'Zona Horaria',
+                dateFormat: 'Formato de Fecha',
+                autoRefresh: 'Auto-recargar datos',
+                showNotifications: 'Mostrar notificaciones',
+                enableSounds: 'Habilitar efectos de sonido',
+                
+                // Accessibility
+                accessibilityControls: 'Controles de Accesibilidad',
+                savedAccessibilitySettings: 'Configuraciones de Accesibilidad Guardadas',
+                noAccessibilityFeatures: 'No hay características de accesibilidad habilitadas',
+                applyToAllProfiles: 'Aplicar a Todos los Perfiles',
+                resetToDefault: 'Restablecer a Predeterminado',
+                
+                // Advanced
+                profileId: 'ID del Perfil',
+                lastBackup: 'Última Copia de Seguridad',
+                copyProfileId: 'Copiar ID del Perfil',
+                optimizeProfile: 'Optimizar Perfil',
+                backupProfile: 'Copia de Seguridad',
+                duplicateProfile: 'Duplicar Perfil',
+                
+                // Danger Zone
+                dangerZone: 'Zona de Peligro',
+                clearProfileData: 'Limpiar Todos los Datos',
+                deleteProfileForever: 'Eliminar Perfil Permanentemente',
+                
+                // Stats
+                usageStats: 'Estadísticas de Uso',
+                logins: 'inicios de sesión',
+                daysActive: 'días activo',
+                accessibilityCount: 'características de accesibilidad',
+                preferenceCount: 'configuraciones personalizadas',
+                storageSize: 'KB usados',
+                
+                // Messages
+                profileCreated: '¡Perfil creado e iniciado sesión!',
+                profileUpdated: '¡Perfil actualizado exitosamente!',
+                profileDeleted: 'Perfil eliminado',
+                profileDuplicated: 'Perfil duplicado',
+                profileExported: '¡Perfil exportado exitosamente!',
+                profileImported: '¡Perfil importado exitosamente!',
+                profileOptimized: '¡Perfil optimizado exitosamente!',
+                profileBackedUp: '¡Perfil respaldado exitosamente!',
+                profileDataCleared: '¡Datos del perfil limpiados!',
+                profileDeletedForever: '¡Perfil eliminado permanentemente!',
+                accessibilityAppliedToAll: '¡Configuraciones de accesibilidad aplicadas a {count} perfiles!',
+                accessibilityReset: '¡Configuraciones de accesibilidad restablecidas a predeterminado!',
+                profileIdCopied: '¡ID del perfil copiado al portapapeles!',
+                noProfilesFound: 'No se encontraron perfiles. Haz clic en "Crear Nuevo Perfil" para comenzar.',
+                noProfileSelected: 'Ningún perfil seleccionado',
+                loggedInAs: 'Sesión iniciada como',
+                never: 'Nunca',
+                
+                // Confirmation messages
+                confirmDeleteProfile: '¿Estás seguro de que quieres eliminar este perfil?',
+                confirmDeleteSelected: '¿Estás seguro de que quieres eliminar {count} perfil(es)? Esta acción no se puede deshacer.',
+                confirmClearData: '¿Estás seguro de que quieres limpiar todos los datos del perfil? Esto restablecerá las preferencias e información personal.',
+                confirmDeleteForever: '¡PELIGRO: Esto eliminará permanentemente el perfil actual y todos sus datos. ¡Esto no se puede deshacer!',
+                
+                // Prompts
+                enterDisplayName: 'Ingresa el nombre para mostrar',
+                enterUsername: 'Ingresa el nombre de usuario',
+                enterEmail: 'Ingresa el correo electrónico (opcional)',
+                enterBio: 'Ingresa la biografía (opcional)',
+                enterLocation: 'Ingresa la ubicación (opcional)',
+                enterRole: 'Ingresa el rol (usuario/administrador/invitado)',
+            },
+            
+            fr: {
+                // Header
+                profileManager: 'Gestionnaire de Profil',
+                noProfileSelected: 'Aucun profil sélectionné',
+                
+                // Profile List
+                profileCount: '{count} profils',
+                filteredCount: '({total} total)',
+                searchPlaceholder: 'Rechercher des profils...',
+                filterByRole: 'Filtrer par rôle',
+                sortProfiles: 'Trier les profils',
+                
+                // Roles
+                all: 'Tous',
+                admin: 'Administrateur',
+                user: 'Utilisateur',
+                guest: 'Invité',
+                
+                // Sort options
+                recent: 'Récent',
+                name: 'Nom',
+                created: 'Créé',
+                
+                // Actions
+                createNewProfile: 'Créer un Nouveau Profil',
+                selectAll: 'Tout Sélectionner',
+                deselectAll: 'Tout Désélectionner',
+                deleteSelected: 'Supprimer Sélectionnés',
+                importProfile: 'Importer un Profil',
+                closeManager: 'Fermer le Gestionnaire',
+                
+                // Profile Info
+                profileInfo: 'Informations du Profil',
+                preferences: 'Préférences',
+                accessibility: 'Accessibilité',
+                advanced: 'Avancé',
+                
+                // Form fields
+                displayName: "Nom d'Affichage",
+                email: 'Email',
+                bio: 'Biographie',
+                location: 'Localisation',
+                enterBio: 'Parlez-nous de vous...',
+                enterLocation: 'Ville, Pays',
+                saveChanges: 'Enregistrer les Modifications',
+                
+                // Preferences
+                uiPreferences: 'Préférences UI',
+                theme: 'Thème',
+                language: 'Langue',
+                timezone: 'Fuseau Horaire',
+                dateFormat: 'Format de Date',
+                autoRefresh: 'Actualiser automatiquement les données',
+                showNotifications: 'Afficher les notifications',
+                enableSounds: 'Activer les effets sonores',
+                
+                // Accessibility
+                accessibilityControls: 'Contrôles d\'Accessibilité',
+                savedAccessibilitySettings: 'Paramètres d\'Accessibilité Sauvegardés',
+                noAccessibilityFeatures: 'Aucune fonctionnalité d\'accessibilité activée',
+                applyToAllProfiles: 'Appliquer à Tous les Profils',
+                resetToDefault: 'Réinitialiser par Défaut',
+                
+                // Advanced
+                profileId: 'ID du Profil',
+                lastBackup: 'Dernière Sauvegarde',
+                copyProfileId: 'Copier l\'ID du Profil',
+                optimizeProfile: 'Optimiser le Profil',
+                backupProfile: 'Sauvegarder',
+                duplicateProfile: 'Dupliquer le Profil',
+                
+                // Danger Zone
+                dangerZone: 'Zone de Danger',
+                clearProfileData: 'Effacer Toutes les Données',
+                deleteProfileForever: 'Supprimer le Profil Définitivement',
+                
+                // Stats
+                usageStats: 'Statistiques d\'Utilisation',
+                logins: 'connexions',
+                daysActive: 'jours actifs',
+                accessibilityCount: 'fonctionnalités d\'accessibilité',
+                preferenceCount: 'paramètres personnalisés',
+                storageSize: 'KB utilisés',
+                
+                // Messages
+                profileCreated: 'Profil créé et connecté!',
+                profileUpdated: 'Profil mis à jour avec succès!',
+                profileDeleted: 'Profil supprimé',
+                profileDuplicated: 'Profil dupliqué',
+                profileExported: 'Profil exporté avec succès!',
+                profileImported: 'Profil importé avec succès!',
+                profileOptimized: 'Profil optimisé avec succès!',
+                profileBackedUp: 'Profil sauvegardé avec succès!',
+                profileDataCleared: 'Données du profil effacées!',
+                profileDeletedForever: 'Profil supprimé définitivement!',
+                accessibilityAppliedToAll: 'Paramètres d\'accessibilité appliqués à {count} profils!',
+                accessibilityReset: 'Paramètres d\'accessibilité réinitialisés par défaut!',
+                profileIdCopied: 'ID du profil copié dans le presse-papiers!',
+                noProfilesFound: 'Aucun profil trouvé. Cliquez sur "Créer un Nouveau Profil" pour commencer.',
+                noProfileSelected: 'Aucun profil sélectionné',
+                loggedInAs: 'Connecté en tant que',
+                never: 'Jamais',
+                
+                // Confirmation messages
+                confirmDeleteProfile: 'Êtes-vous sûr de vouloir supprimer ce profil?',
+                confirmDeleteSelected: 'Êtes-vous sûr de vouloir supprimer {count} profil(s)? Cette action ne peut être annulée.',
+                confirmClearData: 'Êtes-vous sûr de vouloir effacer toutes les données du profil? Cela réinitialisera les préférences et les informations personnelles.',
+                confirmDeleteForever: 'DANGER: Ceci supprimera définitivement le profil actuel et toutes ses données. Ceci ne peut pas être annulé!',
+                
+                // Prompts
+                enterDisplayName: 'Entrez le nom d\'affichage',
+                enterUsername: 'Entrez le nom d\'utilisateur',
+                enterEmail: 'Entrez l\'adresse email (facultatif)',
+                enterBio: 'Entrez la biographie (facultatif)',
+                enterLocation: 'Entrez la localisation (facultatif)',
+                enterRole: 'Entrez le rôle (utilisateur/administrateur/invité)',
+            }
+        };
+
+        // i18n functions
+        let currentLanguage = localStorage.getItem('language') || navigator.language.split('-')[0] || 'en';
+
+        function t(key, params = {}) {
+            const translation = translations[currentLanguage]?.[key] || translations['en'][key] || key;
+            
+            // Replace parameters
+            return Object.keys(params).reduce((str, param) => {
+                return str.replace(new RegExp(`{${param}}`, 'g'), String(params[param]));
+            }, translation);
+        }
+
+        function changeLanguage(lang) {
+            if (translations[lang]) {
+                currentLanguage = lang;
+                localStorage.setItem('language', lang);
+                updateAllText();
+                showNotification(t('profileUpdated'), 'success');
+            }
+        }
+
+        function updateAllText() {
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const params = element.getAttribute('data-i18n-params');
+                const paramObj = params ? JSON.parse(params) : {};
+                element.textContent = t(key, paramObj);
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                element.placeholder = t(key);
+            });
+
+            // Update titles
+            document.querySelectorAll('[data-i18n-title]').forEach(element => {
+                const key = element.getAttribute('data-i18n-title');
+                element.title = t(key);
+            });
+
+            // Update aria-labels
+            document.querySelectorAll('[data-i18n-aria-label]').forEach(element => {
+                const key = element.getAttribute('data-i18n-aria-label');
+                element.setAttribute('aria-label', t(key));
+            });
+        }
+        // User Profile Management System
+        class UserProfileManager {
+            constructor() {
+                this.profiles = new Map();
+                this.currentProfileId = null;
+                this.selectedProfiles = new Set();
+                this.filteredProfiles = [];
+                this.searchTerm = '';
+                this.roleFilter = 'all';
+                this.sortOrder = 'recent';
+                this.loadProfiles();
+                this.loadCurrentProfile();
+            }
+
+            generateId() {
+                return `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            }
+
+            createProfile(userData) {
+                const profile = {
+                    id: this.generateId(),
+                    username: userData.username || `user_${Date.now()}`,
+                    displayName: userData.displayName || userData.username || 'Anonymous User',
+                    email: userData.email || '',
+                    bio: userData.bio || '',
+                    location: userData.location || '',
+                    role: userData.role || 'user',
+                    createdAt: new Date(),
+                    lastLogin: new Date(),
+                    loginCount: 0,
+                    stats: {
+                        totalLogins: 0,
+                        daysActive: 0,
+                        lastBackup: null,
+                        profileSize: 0
+                    },
+                    preferences: {
+                        accessibility: {
+                            highContrast: false,
+                            largeText: false,
+                            reducedMotion: false,
+                            darkMode: false,
+                            focusIndicator: 'default',
+                            readingMode: 'normal',
+                            colorBlindness: 'none'
+                        },
+                        ui: {
+                            theme: 'auto',
+                            language: 'en',
+                            timezone: 'UTC',
+                            dateFormat: 'MM/DD/YYYY',
+                            timeFormat: '12h',
+                            defaultView: 'treemap',
+                            autoRefresh: true,
+                            refreshInterval: 30,
+                            showNotifications: true,
+                            enableSounds: false
+                        },
+                        notifications: {
+                            email: true,
+                            push: true,
+                            desktop: false,
+                            sound: false
+                        },
+                        privacy: {
+                            analytics: true,
+                            crashReports: true,
+                            usageData: false,
+                            shareProfile: false
+                        },
+                        performance: {
+                            enableAnimations: true,
+                            enableTransitions: true,
+                            enableParticles: false,
+                            enableShadows: true,
+                            enableBlur: false
+                        }
+                    }
+                };
+
+                this.profiles.set(profile.id, profile);
+                this.saveProfiles();
+                return profile;
+            }
+
+            getProfile(id) {
+                return this.profiles.get(id);
+            }
+
+            getCurrentProfile() {
+                return this.currentProfileId ? this.getProfile(this.currentProfileId) : null;
+            }
+
+            updateProfile(id, updates) {
+                const profile = this.getProfile(id);
+                if (!profile) return null;
+
+                const updatedProfile = { ...profile, ...updates };
+                this.profiles.set(id, updatedProfile);
+                this.saveProfiles();
+
+                if (this.currentProfileId === id) {
+                    this.applyPreferences(updatedProfile.preferences);
+                    this.updateProfileStats(updatedProfile);
+                }
+
+                return updatedProfile;
+            }
+
+            duplicateProfile(id) {
+                const profile = this.getProfile(id);
+                if (!profile) return null;
+
+                const duplicated = this.createProfile({
+                    displayName: `${profile.displayName} (Copy)`,
+                    username: `${profile.username}_copy`,
+                    email: profile.email,
+                    bio: profile.bio,
+                    location: profile.location,
+                    role: profile.role,
+                    preferences: JSON.parse(JSON.stringify(profile.preferences))
+                });
+
+                return duplicated;
+            }
+
+            login(profileId) {
+                const profile = this.getProfile(profileId);
+                if (!profile) return null;
+
+                this.currentProfileId = profileId;
+                profile.lastLogin = new Date();
+                profile.stats.totalLogins = (profile.stats.totalLogins || 0) + 1;
+                
+                // Calculate days active
+                const daysSinceCreated = Math.floor((Date.now() - profile.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+                profile.stats.daysActive = daysSinceCreated;
+                
+                this.updateProfile(profileId, { 
+                    lastLogin: new Date(),
+                    stats: profile.stats
+                });
+                this.saveCurrentProfile();
+                this.applyPreferences(profile.preferences);
+
+                return profile;
+            }
+
+            logout() {
+                this.currentProfileId = null;
+                localStorage.removeItem('currentProfileId');
+                this.resetToDefaultPreferences();
+            }
+
+            deleteProfile(id) {
+                const success = this.profiles.delete(id);
+                if (success) {
+                    this.selectedProfiles.delete(id);
+                    this.saveProfiles();
+                    if (this.currentProfileId === id) {
+                        this.logout();
+                    }
+                }
+                return success;
+            }
+
+            deleteSelectedProfiles() {
+                const deletedCount = this.selectedProfiles.size;
+                this.selectedProfiles.forEach(id => {
+                    this.deleteProfile(id);
+                });
+                this.selectedProfiles.clear();
+                return deletedCount;
+            }
+
+            searchProfiles(term) {
+                this.searchTerm = term.toLowerCase();
+                this.applyFilters();
+            }
+
+            filterByRole(role) {
+                this.roleFilter = role;
+                this.applyFilters();
+            }
+
+            sortProfiles(order) {
+                this.sortOrder = order;
+                this.applyFilters();
+            }
+
+            applyFilters() {
+                let profiles = Array.from(this.profiles.values());
+
+                // Apply search filter
+                if (this.searchTerm) {
+                    profiles = profiles.filter(profile => 
+                        profile.displayName.toLowerCase().includes(this.searchTerm) ||
+                        profile.username.toLowerCase().includes(this.searchTerm) ||
+                        profile.email.toLowerCase().includes(this.searchTerm)
+                    );
+                }
+
+                // Apply role filter
+                if (this.roleFilter !== 'all') {
+                    profiles = profiles.filter(profile => profile.role === this.roleFilter);
+                }
+
+                // Apply sorting
+                profiles.sort((a, b) => {
+                    switch (this.sortOrder) {
+                        case 'recent':
+                            return b.lastLogin.getTime() - a.lastLogin.getTime();
+                        case 'name':
+                            return a.displayName.localeCompare(b.displayName);
+                        case 'created':
+                            return b.createdAt.getTime() - a.createdAt.getTime();
+                        case 'role':
+                            return a.role.localeCompare(b.role);
+                        default:
+                            return 0;
+                    }
+                });
+
+                this.filteredProfiles = profiles;
+            }
+
+            selectAllProfiles() {
+                this.filteredProfiles.forEach(profile => {
+                    this.selectedProfiles.add(profile.id);
+                });
+            }
+
+            deselectAllProfiles() {
+                this.selectedProfiles.clear();
+            }
+
+            isProfileSelected(id) {
+                return this.selectedProfiles.has(id);
+            }
+
+            toggleProfileSelection(id) {
+                if (this.selectedProfiles.has(id)) {
+                    this.selectedProfiles.delete(id);
+                } else {
+                    this.selectedProfiles.add(id);
+                }
+            }
+
+            applyPreferences(preferences) {
+                // Apply accessibility preferences
+                const accessibility = preferences.accessibility;
+                Object.keys(accessibility).forEach(key => {
+                    const feature = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                    const isEnabled = accessibility[key];
+                    
+                    document.body.classList.toggle(feature, isEnabled);
+                    updateAccessibilityButton(feature, isEnabled);
+                });
+
+                // Apply UI preferences
+                if (preferences.ui.theme) {
+                    this.applyTheme(preferences.ui.theme);
+                }
+
+                updateAccessibilityStatus();
+            }
+
+            updateProfileStats(profile) {
+                // Calculate profile size
+                const profileData = JSON.stringify(profile);
+                const sizeInKB = Math.round(profileData.length / 1024);
+                profile.stats.profileSize = sizeInKB;
+
+                // Update UI stats
+                const accessibilityCount = Object.values(profile.preferences.accessibility).filter(Boolean).length;
+                const preferenceCount = this.countCustomPreferences(profile.preferences);
+
+                document.getElementById('login-count').textContent = profile.stats.totalLogins || 0;
+                document.getElementById('days-active').textContent = profile.stats.daysActive || 0;
+                document.getElementById('accessibility-count').textContent = accessibilityCount;
+                document.getElementById('preference-count').textContent = preferenceCount;
+                document.getElementById('storage-size').textContent = sizeInKB;
+            }
+
+            countCustomPreferences(preferences) {
+                let count = 0;
+                Object.values(preferences).forEach(category => {
+                    if (typeof category === 'object') {
+                        Object.values(category).forEach(value => {
+                            if (value !== false && value !== 'default' && value !== 'none' && value !== 'normal') {
+                                count++;
+                            }
+                        });
+                    }
+                });
+                return count;
+            }
+
+            applyTheme(theme) {
+                const body = document.body;
+                
+                if (theme === 'auto') {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    body.classList.toggle('dark-mode', prefersDark);
+                } else {
+                    body.classList.toggle('dark-mode', theme === 'dark');
+                }
+            }
+
+            saveProfiles() {
+                const profiles = Array.from(this.profiles.values());
+                localStorage.setItem('userProfiles', JSON.stringify(profiles));
+                this.updateProfileCount();
+            }
+
+            loadProfiles() {
+                try {
+                    const stored = localStorage.getItem('userProfiles');
+                    if (stored) {
+                        const profiles = JSON.parse(stored);
+                        profiles.forEach(profile => {
+                            profile.createdAt = new Date(profile.createdAt);
+                            profile.lastLogin = new Date(profile.lastLogin);
+                            this.profiles.set(profile.id, profile);
+                        });
+                    }
+                } catch (error) {
+                    console.warn('Failed to load profiles:', error);
+                }
+                this.applyFilters();
+            }
+
+            saveCurrentProfile() {
+                if (this.currentProfileId) {
+                    localStorage.setItem('currentProfileId', this.currentProfileId);
+                } else {
+                    localStorage.removeItem('currentProfileId');
+                }
+            }
+
+            loadCurrentProfile() {
+                const saved = localStorage.getItem('currentProfileId');
+                if (saved && this.profiles.has(saved)) {
+                    this.currentProfileId = saved;
+                    this.applyPreferences(this.getProfile(saved).preferences);
+                }
+            }
+
+            updateProfileCount() {
+                document.getElementById('profile-count').textContent = `${this.profiles.size} profiles`;
+            }
+
+            resetToDefaultPreferences() {
+                document.body.classList.remove('high-contrast', 'large-text', 'reduced-motion', 'dark-mode');
+                document.querySelectorAll('.accessibility-btn').forEach(btn => {
+                    const feature = btn.getAttribute('data-feature');
+                    updateAccessibilityButton(feature, false);
+                });
+                updateAccessibilityStatus();
+            }
+
+            exportProfile(id) {
+                const profile = this.getProfile(id);
+                if (!profile) return null;
+
+                return JSON.stringify({
+                    profile,
+                    exportedAt: new Date().toISOString(),
+                    version: '1.0',
+                    exportedBy: 'UserProfileManager'
+                }, null, 2);
+            }
+
+            importProfile(data) {
+                try {
+                    const parsed = JSON.parse(data);
+                    let profile = parsed.profile;
+                    
+                    // Handle different import formats
+                    if (parsed.profiles && Array.isArray(parsed.profiles)) {
+                        // Multiple profiles import
+                        const importedProfiles = [];
+                        parsed.profiles.forEach(p => {
+                            p.id = this.generateId();
+                            p.createdAt = new Date(p.createdAt);
+                            p.lastLogin = new Date(p.lastLogin);
+                            this.profiles.set(p.id, p);
+                            importedProfiles.push(p);
+                        });
+                        this.saveProfiles();
+                        return importedProfiles;
+                    } else {
+                        // Single profile import
+                        profile.id = this.generateId();
+                        profile.createdAt = new Date(profile.createdAt);
+                        profile.lastLogin = new Date(profile.lastLogin);
+                        
+                        this.profiles.set(profile.id, profile);
+                        this.saveProfiles();
+                        
+                        return [profile];
+                    }
+                } catch (error) {
+                    console.error('Failed to import profile:', error);
+                    return null;
+                }
+            }
+
+            optimizeProfile(id) {
+                const profile = this.getProfile(id);
+                if (!profile) return null;
+
+                // Remove unused preference keys
+                const optimizedPreferences = {};
+                Object.keys(profile.preferences).forEach(category => {
+                    optimizedPreferences[category] = {};
+                    Object.keys(profile.preferences[category]).forEach(key => {
+                        const value = profile.preferences[category][key];
+                        // Only keep non-default values
+                        if (value !== this.getDefaultValue(category, key)) {
+                            optimizedPreferences[category][key] = value;
+                        }
+                    });
+                });
+
+                const updatedProfile = this.updateProfile(id, { preferences: optimizedPreferences });
+                return updatedProfile;
+            }
+
+            getDefaultValue(category, key) {
+                const defaults = {
+                    accessibility: { highContrast: false, largeText: false, reducedMotion: false, darkMode: false, focusIndicator: 'default', readingMode: 'normal', colorBlindness: 'none' },
+                    ui: { theme: 'auto', language: 'en', timezone: 'UTC', dateFormat: 'MM/DD/YYYY', timeFormat: '12h', defaultView: 'treemap', autoRefresh: true, refreshInterval: 30, showNotifications: true, enableSounds: false },
+                    notifications: { email: true, push: true, desktop: false, sound: false },
+                    privacy: { analytics: true, crashReports: true, usageData: false, shareProfile: false },
+                    performance: { enableAnimations: true, enableTransitions: true, enableParticles: false, enableShadows: true, enableBlur: false }
+                };
+                return defaults[category]?.[key];
+            }
+
+            clearProfileData(id) {
+                const profile = this.getProfile(id);
+                if (!profile) return null;
+
+                const clearedProfile = this.updateProfile(id, {
+                    preferences: this.createDefaultPreferences(),
+                    bio: '',
+                    location: '',
+                    email: ''
+                });
+
+                return clearedProfile;
+            }
+
+            createDefaultPreferences() {
+                return {
+                    accessibility: { highContrast: false, largeText: false, reducedMotion: false, darkMode: false, focusIndicator: 'default', readingMode: 'normal', colorBlindness: 'none' },
+                    ui: { theme: 'auto', language: 'en', timezone: 'UTC', dateFormat: 'MM/DD/YYYY', timeFormat: '12h', defaultView: 'treemap', autoRefresh: true, refreshInterval: 30, showNotifications: true, enableSounds: false },
+                    notifications: { email: true, push: true, desktop: false, sound: false },
+                    privacy: { analytics: true, crashReports: true, usageData: false, shareProfile: false },
+                    performance: { enableAnimations: true, enableTransitions: true, enableParticles: false, enableShadows: true, enableBlur: false }
+                };
+            }
+
+            backupProfile(id) {
+                const profile = this.getProfile(id);
+                if (!profile) return null;
+
+                profile.stats.lastBackup = new Date();
+                this.updateProfile(id, { stats: profile.stats });
+
+                const backupData = this.exportProfile(id);
+                const blob = new Blob([backupData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup-${profile.username}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                return backupData;
+            }
+
+            applyAccessibilityToAll(accessibilitySettings) {
+                let updatedCount = 0;
+                this.profiles.forEach((profile, id) => {
+                    const updatedPreferences = {
+                        ...profile.preferences,
+                        accessibility: { ...accessibilitySettings }
+                    };
+                    this.updateProfile(id, { preferences: updatedPreferences });
+                    updatedCount++;
+                });
+                return updatedCount;
+            }
+        }
+
+        // Initialize profile manager
+        const profileManager = new UserProfileManager();
+
+        // Accessibility state
+        let accessibilityState = {
+            highContrast: false,
+            largeText: false,
+            reducedMotion: false,
+            darkMode: false
+        };
+
+        // UI Functions
+        function toggleProfileManager() {
+            const manager = document.getElementById('profile-manager');
+            const isHidden = manager.classList.contains('hidden');
+            
+            if (isHidden) {
+                manager.classList.remove('hidden');
+                renderProfileList();
+                renderCurrentProfile();
+            } else {
+                manager.classList.add('hidden');
+            }
+        }
+
+        function renderProfileList() {
+            const container = document.getElementById('profile-list');
+            const profiles = profileManager.filteredProfiles;
+            
+            if (profiles.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 col-span-full text-center py-8">No profiles found. Click "Create New Profile" to get started.</p>';
+                document.getElementById('filtered-count').textContent = '(0 total)';
+                return;
+            }
+
+            document.getElementById('filtered-count').textContent = `(${profiles.length} total)`;
+
+            container.innerHTML = profiles.map(profile => `
+                <div class="profile-card bg-white border ${profileManager.isProfileSelected(profile.id) ? 'border-blue-500 bg-blue-50' : 'border-gray-200'} rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-all"
+                     onclick="selectProfile('${profile.id}')"
+                     role="button"
+                     tabindex="0"
+                     onkeydown="if(event.key==='Enter'||event.key===' ') selectProfile('${profile.id}')"
+                     aria-label="Profile: ${profile.displayName}">
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                            ${profile.displayName.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-gray-800 truncate">${profile.displayName}</div>
+                            <div class="text-sm text-gray-600 truncate">@${profile.username}</div>
+                            ${profile.email ? `<div class="text-xs text-gray-500 truncate">${profile.email}</div>` : ''}
+                            ${profile.location ? `<div class="text-xs text-gray-500">📍 ${profile.location}</div>` : ''}
+                        </div>
+                        <input type="checkbox" 
+                               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                               ${profileManager.isProfileSelected(profile.id) ? 'checked' : ''}
+                               onclick="event.stopPropagation(); toggleProfileSelection('${profile.id}')"
+                               aria-label="Select profile">
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">${profile.role}</span>
+                            <span class="text-xs text-gray-500">${new Date(profile.lastLogin).toLocaleDateString()}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="event.stopPropagation(); duplicateProfileById('${profile.id}')" 
+                                    class="text-purple-500 hover:text-purple-700 text-sm p-1"
+                                    aria-label="Duplicate profile">
+                                📋
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteProfileById('${profile.id}')" 
+                                    class="text-red-500 hover:text-red-700 text-sm p-1"
+                                    aria-label="Delete profile">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCurrentProfile() {
+            const currentProfile = profileManager.getCurrentProfile();
+            const selector = document.getElementById('profile-selector');
+            const current = document.getElementById('current-profile');
+            const userDisplay = document.getElementById('current-user-display');
+
+            if (currentProfile) {
+                selector.classList.add('hidden');
+                current.classList.remove('hidden');
+                userDisplay.textContent = `${currentProfile.displayName} (@${currentProfile.username})`;
+                
+                // Update profile info
+                document.getElementById('profile-avatar').textContent = currentProfile.displayName.charAt(0).toUpperCase();
+                document.getElementById('profile-name').textContent = currentProfile.displayName;
+                document.getElementById('profile-details').textContent = `@${currentProfile.username} • ${currentProfile.role}`;
+                document.getElementById('profile-created').textContent = new Date(currentProfile.createdAt).toLocaleDateString();
+                document.getElementById('profile-last-login').textContent = new Date(currentProfile.lastLogin).toLocaleDateString();
+                
+                // Update form fields
+                document.getElementById('edit-display-name').value = currentProfile.displayName;
+                document.getElementById('edit-email').value = currentProfile.email;
+                document.getElementById('edit-bio').value = currentProfile.bio || '';
+                document.getElementById('edit-location').value = currentProfile.location || '';
+                
+                // Update preferences
+                document.getElementById('pref-theme').value = currentProfile.preferences.ui.theme;
+                document.getElementById('pref-language').value = currentProfile.preferences.ui.language;
+                document.getElementById('pref-timezone').value = currentProfile.preferences.ui.timezone;
+                document.getElementById('pref-dateFormat').value = currentProfile.preferences.ui.dateFormat;
+                document.getElementById('pref-autoRefresh').checked = currentProfile.preferences.ui.autoRefresh;
+                document.getElementById('pref-showNotifications').checked = currentProfile.preferences.ui.showNotifications;
+                document.getElementById('pref-enableSounds').checked = currentProfile.preferences.ui.enableSounds;
+                
+                // Update advanced info
+                document.getElementById('profile-id-display').textContent = currentProfile.id;
+                document.getElementById('last-backup-display').textContent = currentProfile.stats.lastBackup 
+                    ? new Date(currentProfile.stats.lastBackup).toLocaleDateString() 
+                    : 'Never';
+                
+                // Update stats
+                profileManager.updateProfileStats(currentProfile);
+                
+                // Update saved accessibility settings
+                renderSavedAccessibilitySettings(currentProfile.preferences.accessibility);
+            } else {
+                selector.classList.remove('hidden');
+                current.classList.add('hidden');
+                userDisplay.textContent = 'No profile selected';
+            }
+        }
+
+        function renderSavedAccessibilitySettings(accessibility) {
+            const container = document.getElementById('saved-accessibility-settings');
+            const settings = Object.entries(accessibility)
+                .filter(([key, value]) => value === true)
+                .map(([key]) => {
+                    const labels = {
+                        highContrast: 'High Contrast',
+                        largeText: 'Large Text',
+                        reducedMotion: 'Reduced Motion',
+                        darkMode: 'Dark Mode'
+                    };
+                    return labels[key] || key;
+                });
+
+            if (settings.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500">No accessibility features enabled</p>';
+            } else {
+                container.innerHTML = `
+                    <div class="flex flex-wrap gap-2">
+                        ${settings.map(setting => `
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                                ✓ ${setting}
+                            </span>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function filterProfiles(searchTerm) {
+            profileManager.searchProfiles(searchTerm);
+            renderProfileList();
+        }
+
+        function filterByRole(role) {
+            profileManager.filterByRole(role);
+            renderProfileList();
+        }
+
+        function sortProfiles(order) {
+            profileManager.sortProfiles(order);
+            renderProfileList();
+        }
+
+        function selectAllProfiles() {
+            profileManager.selectAllProfiles();
+            renderProfileList();
+        }
+
+        function deselectAllProfiles() {
+            profileManager.deselectAllProfiles();
+            renderProfileList();
+        }
+
+        function deleteSelectedProfiles() {
+            const count = profileManager.selectedProfiles.size;
+            if (count === 0) {
+                showNotification('No profiles selected', 'error');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete ${count} profile${count > 1 ? 's' : ''}? This action cannot be undone.`)) {
+                const deletedCount = profileManager.deleteSelectedProfiles();
+                renderProfileList();
+                renderCurrentProfile();
+                showNotification(`${deletedCount} profile${deletedCount > 1 ? 's' : ''} deleted`, 'success');
+            }
+        }
+
+        function toggleProfileSelection(profileId) {
+            profileManager.toggleProfileSelection(profileId);
+            renderProfileList();
+        }
+
+        function createNewProfile() {
+            const displayName = prompt('Enter display name:');
+            if (!displayName) return;
+
+            const username = prompt('Enter username:') || displayName.toLowerCase().replace(/\s+/g, '_');
+            const email = prompt('Enter email (optional):') || '';
+            const bio = prompt('Enter bio (optional):') || '';
+            const location = prompt('Enter location (optional):') || '';
+            const role = prompt('Enter role (user/admin/guest):') || 'user';
+
+            const profile = profileManager.createProfile({
+                displayName,
+                username,
+                email,
+                bio,
+                location,
+                role
+            });
+
+            profileManager.login(profile.id);
+            renderProfileList();
+            renderCurrentProfile();
+            showNotification(`Profile "${displayName}" created and logged in!`, 'success');
+        }
+
+        function selectProfile(profileId) {
+            profileManager.login(profileId);
+            renderProfileList();
+            renderCurrentProfile();
+            const profile = profileManager.getProfile(profileId);
+            showNotification(`Logged in as ${profile.displayName}`, 'success');
+        }
+
+        function duplicateProfileById(profileId) {
+            const duplicated = profileManager.duplicateProfile(profileId);
+            if (duplicated) {
+                renderProfileList();
+                showNotification(`Profile duplicated: ${duplicated.displayName}`, 'success');
+            }
+        }
+
+        function duplicateCurrentProfile() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            const duplicated = profileManager.duplicateProfile(currentProfile.id);
+            if (duplicated) {
+                profileManager.login(duplicated.id);
+                renderProfileList();
+                renderCurrentProfile();
+                showNotification(`Profile duplicated: ${duplicated.displayName}`, 'success');
+            }
+        }
+
+        function deleteProfileById(profileId) {
+            if (confirm('Are you sure you want to delete this profile?')) {
+                profileManager.deleteProfile(profileId);
+                renderProfileList();
+                renderCurrentProfile();
+                showNotification('Profile deleted', 'info');
+            }
+        }
+
+        function editCurrentProfile() {
+            // Switch to info tab
+            switchProfileTab('info');
+        }
+
+        function saveProfileInfo() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            const displayName = document.getElementById('edit-display-name').value;
+            const email = document.getElementById('edit-email').value;
+            const bio = document.getElementById('edit-bio').value;
+            const location = document.getElementById('edit-location').value;
+
+            profileManager.updateProfile(currentProfile.id, { displayName, email, bio, location });
+            renderCurrentProfile();
+            showNotification('Profile information saved!', 'success');
+        }
+
+        function exportCurrentProfile() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            const exportData = profileManager.exportProfile(currentProfile.id);
+            if (exportData) {
+                const blob = new Blob([exportData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `profile-${currentProfile.username}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showNotification('Profile exported successfully!', 'success');
+            }
+        }
+
+        function importProfileFromFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target?.result as string;
+                    const profiles = profileManager.importProfile(content);
+                    if (profiles) {
+                        renderProfileList();
+                        showNotification(`${profiles.length} profile${profiles.length > 1 ? 's' : ''} imported successfully!`, 'success');
+                    } else {
+                        showNotification('Failed to import profile', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function logoutCurrentProfile() {
+            profileManager.logout();
+            renderProfileList();
+            renderCurrentProfile();
+            showNotification('Logged out successfully', 'info');
+        }
+
+        function switchProfileTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.profile-tab').forEach(tab => {
+                tab.classList.remove('tab-active', 'text-blue-600');
+                tab.classList.add('border-transparent', 'text-gray-500');
+                tab.setAttribute('aria-selected', 'false');
+            });
+
+            // Hide all panels
+            document.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+
+            // Show selected tab and panel
+            const activeTab = document.querySelector(`[onclick="switchProfileTab('${tabName}')"]`);
+            const activePanel = document.getElementById(`profile-${tabName}-panel`);
+
+            if (activeTab && activePanel) {
+                activeTab.classList.add('tab-active', 'text-blue-600');
+                activeTab.classList.remove('border-transparent', 'text-gray-500');
+                activeTab.setAttribute('aria-selected', 'true');
+                activePanel.classList.remove('hidden');
+            }
+        }
+
+        function updatePreference(category, key, value) {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            const updatedPreferences = {
+                ...currentProfile.preferences,
+                [category]: {
+                    ...currentProfile.preferences[category],
+                    [key]: value
+                }
+            };
+
+            profileManager.updateProfile(currentProfile.id, { preferences: updatedPreferences });
+            showNotification('Preference updated!', 'success');
+        }
+
+        function copyProfileId() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            navigator.clipboard.writeText(currentProfile.id).then(() => {
+                showNotification('Profile ID copied to clipboard!', 'success');
+            });
+        }
+
+        function optimizeProfile() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            const optimized = profileManager.optimizeProfile(currentProfile.id);
+            if (optimized) {
+                renderCurrentProfile();
+                showNotification('Profile optimized successfully!', 'success');
+            }
+        }
+
+        function backupProfile() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            profileManager.backupProfile(currentProfile.id);
+            renderCurrentProfile();
+            showNotification('Profile backed up successfully!', 'success');
+        }
+
+        function clearProfileData() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            if (confirm('Are you sure you want to clear all profile data? This will reset preferences and personal information.')) {
+                profileManager.clearProfileData(currentProfile.id);
+                renderCurrentProfile();
+                showNotification('Profile data cleared!', 'info');
+            }
+        }
+
+        function deleteCurrentProfileForever() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            if (confirm('⚠️ DANGER: This will permanently delete the current profile and all its data. This cannot be undone!')) {
+                profileManager.deleteProfile(currentProfile.id);
+                renderProfileList();
+                renderCurrentProfile();
+                showNotification('Profile permanently deleted!', 'error');
+            }
+        }
+
+        function applyCurrentAccessibilityToAll() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            const updatedCount = profileManager.applyAccessibilityToAll(currentProfile.preferences.accessibility);
+            showNotification(`Accessibility settings applied to ${updatedCount} profile${updatedCount > 1 ? 's' : ''}!`, 'success');
+        }
+
+        function resetAccessibilityForCurrent() {
+            const currentProfile = profileManager.getCurrentProfile();
+            if (!currentProfile) return;
+
+            const defaultAccessibility = {
+                highContrast: false,
+                largeText: false,
+                reducedMotion: false,
+                darkMode: false,
+                focusIndicator: 'default',
+                readingMode: 'normal',
+                colorBlindness: 'none'
+            };
+
+            const updatedPreferences = {
+                ...currentProfile.preferences,
+                accessibility: defaultAccessibility
+            };
+
+            profileManager.updateProfile(currentProfile.id, { preferences: updatedPreferences });
+            renderCurrentProfile();
+            showNotification('Accessibility settings reset to default!', 'info');
+        }
+
+        // Accessibility Functions
+        function toggleAccessibility(feature) {
+            accessibilityState[feature] = !accessibilityState[feature];
+            document.body.classList.toggle(feature, accessibilityState[feature]);
+            updateAccessibilityButton(feature, accessibilityState[feature]);
+            updateAccessibilityStatus();
+
+            // Save to current profile if logged in
+            const currentProfile = profileManager.getCurrentProfile();
+            if (currentProfile) {
+                const camelCaseKey = feature.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+                const updatedPreferences = {
+                    ...currentProfile.preferences,
+                    accessibility: {
+                        ...currentProfile.preferences.accessibility,
+                        [camelCaseKey]: accessibilityState[feature]
+                    }
+                };
+                profileManager.updateProfile(currentProfile.id, { preferences: updatedPreferences });
+                renderSavedAccessibilitySettings(updatedPreferences.accessibility);
+            }
+
+            announceToScreenReader(`${feature.replace('-', ' ')} ${accessibilityState[feature] ? 'enabled' : 'disabled'}`);
+        }
+
+        function updateAccessibilityButton(feature, isActive) {
+            const button = document.querySelector(`[data-feature="${feature}"]`);
+            if (!button) return;
+
+            const indicator = button.querySelector('.status-indicator');
+            const ariaLabel = button.getAttribute('aria-label');
+
+            if (isActive) {
+                button.classList.add('active');
+                indicator.classList.remove('bg-gray-300');
+                indicator.classList.add('bg-green-500');
+                button.setAttribute('aria-label', ariaLabel.replace('disabled', 'enabled'));
+            } else {
+                button.classList.remove('active');
+                indicator.classList.add('bg-gray-300');
+                indicator.classList.remove('bg-green-500');
+                button.setAttribute('aria-label', ariaLabel.replace('enabled', 'disabled'));
+            }
+        }
+
+        function updateAccessibilityStatus() {
+            const activeFeatures = Object.entries(accessibilityState)
+                .filter(([key, value]) => value)
+                .map(([key]) => key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()));
+
+            const countElement = document.getElementById('active-controls-count');
+            const statusElement = document.getElementById('accessibility-status');
+
+            countElement.textContent = `${activeFeatures.length} active`;
+
+            if (activeFeatures.length === 0) {
+                statusElement.textContent = 'All accessibility features are disabled';
+            } else {
+                statusElement.textContent = `Active: ${activeFeatures.join(', ')}`;
+            }
+        }
+
+        function resetAccessibilitySettings() {
+            Object.keys(accessibilityState).forEach(key => {
+                accessibilityState[key] = false;
+                document.body.classList.remove(key);
+                updateAccessibilityButton(key, false);
+            });
+            updateAccessibilityStatus();
+            announceToScreenReader('All accessibility settings have been reset');
+        }
+
+        function exportAccessibilitySettings() {
+            const settings = {
+                ...accessibilityState,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
+
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `accessibility-settings-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            announceToScreenReader('Accessibility settings exported successfully');
+        }
+
+        function announceToScreenReader(message) {
+            const announcements = document.getElementById('announcements');
+            announcements.textContent = message;
+            setTimeout(() => {
+                announcements.textContent = '';
+            }, 1000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notifications-container');
+            const notification = document.createElement('div');
+            
+            const colors = {
+                success: 'bg-green-100 border-green-400 text-green-700',
+                error: 'bg-red-100 border-red-400 text-red-700',
+                info: 'bg-blue-100 border-blue-400 text-blue-700'
+            };
+
+            notification.className = `notification border px-4 py-3 rounded ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    container.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load current profile if exists
+            renderCurrentProfile();
+            
+            // Initialize accessibility status
+            updateAccessibilityStatus();
+            
+            // Initialize profile count
+            profileManager.updateProfileCount();
+            
+            // Check system preferences
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                toggleAccessibility('reducedMotion');
+            }
+            
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                toggleAccessibility('darkMode');
+            }
+
+            announceToScreenReader('User profile and accessibility demo loaded');
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) return;
+
+            switch(e.key) {
+                case 'h':
+                case 'H':
+                    e.preventDefault();
+                    toggleProfileManager();
+                    break;
+                case 'r':
+                case 'R':
+                    e.preventDefault();
+                    resetAccessibilitySettings();
+                    break;
+                case 'n':
+                case 'N':
+                    e.preventDefault();
+                    createNewProfile();
+                    break;
+                case 'f':
+                case 'F':
+                    e.preventDefault();
+                    document.getElementById('profile-search')?.focus();
+                    break;
+                case 'Escape':
+                    const manager = document.getElementById('profile-manager');
+                    if (!manager.classList.contains('hidden')) {
+                        toggleProfileManager();
+                    }
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+	"lastUpdate": "2026-01-28T10:37:35.893Z",
+	"currentStatus": {
+		"api": "error",
+		"bucket": "connected",
+		"profiles": 119,
+		"lastUpdate": "2026-01-28T10:37:35.893Z",
+		"responseTime": 131.71116700000002,
+		"uptime": 0,
+		"memoryUsage": {
+			"rss": 27459584,
+			"heapTotal": 1233920,
+			"heapUsed": 210336,
+			"external": 27760,
+			"arrayBuffers": 0
+		},
+		"cpuUsage": {
+			"user": 8606,
+			"system": 6541
+		},
+		"errorCount": 1,
+		"successRate": 0,
+		"historicalData": [
+			{
+				"timestamp": "2026-01-28T10:37:35.893Z",
+				"apiStatus": "error",
+				"bucketStatus": "connected",
+				"responseTime": 131.71116700000002,
+				"memoryUsage": 210336
+			}
+		]
+	},
+	"config": {
+		"theme": "auto",
+		"refreshInterval": 30000,
+		"maxHistorySize": 100,
+		"notifications": {
+			"enabled": true,
+			"apiFailure": true,
+			"bucketFailure": true,
+			"performanceThreshold": 1000,
+			"soundEnabled": false
+		},
+		"analytics": true,
+		"logging": true
+	}
+}

@@ -1,0 +1,8 @@
+{
+  "timestamp": 1769819790611,
+  "error": {
+    "code": "TENSION_303",
+    "message": "Security breach detected",
+    "stack": "Error\n    at createError (/Users/nolarose/my-wager-v3/src/tension-field/error-handler.ts:104:23)\n    at <anonymous> (/Users/nolarose/my-wager-v3/src/__tests__/error-handler.test.ts:114:34)"
+  }
+}

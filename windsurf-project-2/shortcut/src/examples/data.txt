@@ -1,0 +1,9 @@
+
+# This is actually YAML content in a .txt file
+users:
+  - name: Alice
+    role: admin
+  - name: Bob
+    role: user
+  - name: Charlie
+    role: moderator

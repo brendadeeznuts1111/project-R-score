@@ -1,0 +1,60 @@
+# ===========================================
+# DATAPIPE CONFIGURATION - Sportswidgets API
+# ===========================================
+# Copy this file to .env and fill in your values
+
+# === OBSIDIAN VAULT LOCATION ===
+# Path to your Obsidian vault (leave empty for current directory)
+# OBSIDIAN_VAULT=/path/to/your/obsidian/vault
+
+# === SPORTSWIDGETS API CONFIGURATION ===
+# Get these from F12 → Network → Copy as cURL when viewing your dashboard
+
+# Full cookie string from browser (required) - REPLACE THIS WITH YOUR COOKIE
+DATAPIPE_COOKIE="YOUR_FULL_COOKIE_STRING_HERE_FROM_F12_NETWORK_TAB"
+
+# API endpoint (usually doesn't change)
+DATAPIPE_URL=https://plive.sportswidgets.pro/manager-tools/ajax.php
+
+# Request headers (usually don't change)
+DATAPIPE_HEADERS='{"accept":"application/json, gzip, deflate, br","accept-language":"en-US,en;q=0.9","content-type":"application/json","origin":"https://plive.sportswidgets.pro","priority":"u=1, i","referer":"https://plive.sportswidgets.pro/manager-tools/","sec-ch-ua":"\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"","sec-ch-ua-mobile":"?1","sec-ch-ua-platform":"\"Android\"","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36"}'
+
+# Request body template
+DATAPIPE_BODY='{"action":"getBetReport","partnerUserId":"","agent":"","eventId":"","freeBetId":"","state":"","sId":"","minVolume":"0","maxTimeUntilScore":"0","mId":"","from":0,"fromTime":0,"to":0,"toTime":86399,"betId":"","betGroupId":"","group":null,"dateFilterBy":"calcTime","partnerIds":"","period":null}'
+
+# === ALERT THRESHOLDS ===
+# Profit threshold for alerts ($)
+DATAPIPE_ALERT_THRESHOLD=10000
+
+# Volume threshold for warnings
+DATAPIPE_VOLUME_THRESHOLD=1000
+
+# === SYSTEM CONFIG ===
+# Watch interval in minutes
+DATAPIPE_WATCH_INTERVAL=5
+
+# Maximum agents to show in reports
+DATAPIPE_MAX_AGENTS=50
+
+# === TELEGRAM INTEGRATION ===
+# (Configure in telegram.ts if using alerts)
+# TELEGRAM_BOT_TOKEN=your_bot_token
+# TELEGRAM_API_ID=your_api_id
+# TELEGRAM_API_HASH=your_api_hash
+
+# ===========================================
+# SETUP INSTRUCTIONS
+# ===========================================
+#
+# 1. Open your Sportswidgets dashboard in Chrome
+# 2. Press F12 to open Developer Tools
+# 3. Go to Network tab
+# 4. Navigate to Reports section
+# 5. Find the AJAX request to ajax.php
+# 6. Right-click → "Copy as cURL"
+# 7. Extract the cookie from the cURL command
+# 8. Paste the full cookie string above
+# 9. Test with: bun run datapipe:raw
+# 10. Run: bun run datapipe:fetch
+#
+# ===========================================

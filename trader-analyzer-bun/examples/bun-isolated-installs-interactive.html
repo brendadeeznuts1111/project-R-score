@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bun Isolated Installs Visualizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .content-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        .tree-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .mermaid-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 400px;
+        }
+
+        .node-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .node-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .node-card:hover {
+            border-color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .node-card.store {
+            border-left: 4px solid #4a90e2;
+        }
+
+        .node-card.symlink {
+            border-left: 4px solid #00ff88;
+        }
+
+        .node-card.workspace {
+            border-left: 4px solid #ff6b9d;
+        }
+
+        .node-card.package {
+            border-left: 4px solid #a78bfa;
+        }
+
+        .node-card.peer {
+            border-left: 4px solid #fbbf24;
+        }
+
+        .node-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #00ff88;
+        }
+
+        .node-type {
+            font-size: 0.85em;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+        }
+
+        .node-path {
+            font-size: 0.8em;
+            color: #888;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #0a0e27;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .info-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .info-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .info-key {
+            color: #00d4ff;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .info-value {
+            color: #e0e0e0;
+            font-family: monospace;
+        }
+
+        .pkg-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .pkg-control-group {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pkg-control-group h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+        }
+
+        .input-group label {
+            display: block;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-family: monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .output-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .output-box.show {
+            display: block;
+        }
+
+        .output-line {
+            margin: 5px 0;
+            color: #b0b0b0;
+        }
+
+        .output-line.success {
+            color: #00ff88;
+        }
+
+        .output-line.error {
+            color: #ff4444;
+        }
+
+        .output-line.info {
+            color: #00d4ff;
+        }
+
+        .color-scheme {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .color-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .color-swatch {
+            width: 100%;
+            height: 60px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .color-hex {
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Bun Isolated Installs Visualizer</h1>
+            <p>Interactive visualization with bun info, bun pm pkg, and Mermaid trees</p>
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="../benchmarks/" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">⚡ Benchmarks</a>
+                <a href="../docs/BUN-V1.51-IMPACT-ANALYSIS.md" target="_blank" style="color: rgba(255, 255, 255, 0.9); text-decoration: none; padding: 8px 15px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; font-size: 0.9em; transition: background 0.3s;" onmouseover="this.style.background='rgba(0, 0, 0, 0.4)'" onmouseout="this.style.background='rgba(0, 0, 0, 0.2)'">🚀 Performance</a>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="tree">Tree Structure</div>
+            <div class="tab" data-tab="mermaid">Mermaid Diagram</div>
+            <div class="tab" data-tab="packages">Package Info</div>
+            <div class="tab" data-tab="pkg">Package.json</div>
+            <div class="tab" data-tab="pm">Bun PM Commands</div>
+            <div class="tab" data-tab="benchmarks">Benchmarks</div>
+            <div class="tab" data-tab="colors">Color Scheme</div>
+        </div>
+
+        <!-- Tree Structure Tab -->
+        <div id="tree-panel" class="content-panel active">
+            <h2>📦 Isolated Installs Tree Structure</h2>
+            <div class="node-list" id="nodeList"></div>
+            <div class="info-panel" id="treeInfo" style="display: none;">
+                <h3>Package Information</h3>
+                <div id="treeInfoContent"></div>
+            </div>
+        </div>
+
+        <!-- Mermaid Diagram Tab -->
+        <div id="mermaid-panel" class="content-panel">
+            <h2>📊 Mermaid Diagram</h2>
+            <div class="mermaid-container">
+                <div class="mermaid" id="mermaidDiagram"></div>
+            </div>
+        </div>
+
+        <!-- Package Info Tab -->
+        <div id="packages-panel" class="content-panel">
+            <h2>📋 Package Information (bun info)</h2>
+            <p style="color: #b0b0b0; margin-bottom: 20px;">Get package metadata from npm registry. Click any package node in the tree to get its info.</p>
+            
+            <div class="input-group">
+                <label>Package Name</label>
+                <input type="text" id="packageNameInput" placeholder="e.g., react, zod, react@18.2.0" value="react">
+            </div>
+            
+            <div class="input-group">
+                <label>Property (optional, e.g., version, dependencies, repository.url)</label>
+                <input type="text" id="packagePropertyInput" placeholder="Leave empty for full info">
+            </div>
+            
+            <div style="margin: 15px 0;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="jsonOutputCheck">
+                    <span>JSON output</span>
+                </label>
+            </div>
+            
+            <button class="btn btn-primary" onclick="getPackageInfo()">Get Package Info (bun info)</button>
+            <div class="output-box" id="packageInfoOutput"></div>
+            
+            <div class="tips" style="margin-top: 20px;">
+                <div class="tips-title">💡 Examples</div>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #b0b0b0;">
+                    <li><code>bun info react</code> - Full package info</li>
+                    <li><code>bun info react@18.2.0</code> - Specific version</li>
+                    <li><code>bun info react version</code> - Get version property</li>
+                    <li><code>bun info react dependencies</code> - Get dependencies</li>
+                    <li><code>bun info react --json</code> - JSON output</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Package.json Tab -->
+        <div id="pkg-panel" class="content-panel">
+            <h2>📝 Package.json Management</h2>
+            
+            <div class="pkg-controls">
+                <div class="pkg-control-group">
+                    <h3>Get Property</h3>
+                    <div class="input-group">
+                        <label>Property (e.g., name, version, scripts.build)</label>
+                        <input type="text" id="getPropertyInput" placeholder="name">
+                    </div>
+                    <button class="btn btn-primary" onclick="getPackageProperty()">Get (bun pm pkg get)</button>
+                    <div class="output-box" id="getOutput"></div>
+                </div>
+
+                <div class="pkg-control-group">
+                    <h3>Set Property</h3>
+                    <div class="input-group">
+                        <label>Property</label>
+                        <input type="text" id="setPropertyInput" placeholder="scripts.test">
+                    </div>
+                    <div class="input-group">
+                        <label>Value</label>
+                        <input type="text" id="setValueInput" placeholder="jest">
+                    </div>
+                    <button class="btn btn-primary" onclick="setPackageProperty()">Set (bun pm pkg set)</button>
+                    <div class="output-box" id="setOutput"></div>
+                </div>
+
+                <div class="pkg-control-group">
+                    <h3>Delete Property</h3>
+                    <div class="input-group">
+                        <label>Property</label>
+                        <input type="text" id="deletePropertyInput" placeholder="description">
+                    </div>
+                    <button class="btn btn-secondary" onclick="deletePackageProperty()">Delete (bun pm pkg delete)</button>
+                    <div class="output-box" id="deleteOutput"></div>
+                </div>
+
+                <div class="pkg-control-group">
+                    <h3>Fix Package.json</h3>
+                    <p style="color: #b0b0b0; margin-bottom: 15px;">Auto-fix common issues in package.json</p>
+                    <button class="btn btn-primary" onclick="fixPackageJson()">Fix (bun pm pkg fix)</button>
+                    <div class="output-box" id="fixOutput"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bun PM Commands Tab -->
+        <div id="pm-panel" class="content-panel">
+            <h2>🛠️ Bun PM Commands</h2>
+            <p style="color: #b0b0b0; margin-bottom: 20px;">Complete set of bun pm utilities with interactive buttons.</p>
+            
+            <div class="pkg-controls">
+                <!-- Pack -->
+                <div class="pkg-control-group">
+                    <h3>📦 Pack (bun pm pack)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Create a tarball of the current workspace</p>
+                    <div class="input-group">
+                        <label>Destination (optional)</label>
+                        <input type="text" id="packDestinationInput" placeholder="./dist">
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="packDryRunCheck">
+                            <span>Dry run</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 5px;">
+                            <input type="checkbox" id="packQuietCheck">
+                            <span>Quiet mode</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="runPack()">Pack (bun pm pack)</button>
+                    <div class="output-box" id="packOutput"></div>
+                </div>
+
+                <!-- Bin -->
+                <div class="pkg-control-group">
+                    <h3>📁 Bin (bun pm bin)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Print path to bin directory</p>
+                    <div style="margin: 10px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="binGlobalCheck">
+                            <span>Global (-g)</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="runBin()">Get Bin Path</button>
+                    <div class="output-box" id="binOutput"></div>
+                </div>
+
+                <!-- List -->
+                <div class="pkg-control-group">
+                    <h3>📋 List (bun pm ls)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">List installed dependencies</p>
+                    <div style="margin: 10px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="listAllCheck">
+                            <span>All dependencies (--all)</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="runList()">List Dependencies</button>
+                    <div class="output-box" id="listOutput"></div>
+                </div>
+
+                <!-- Whoami -->
+                <div class="pkg-control-group">
+                    <h3>👤 Whoami (bun pm whoami)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Print npm username</p>
+                    <button class="btn btn-primary" onclick="runWhoami()">Get Username</button>
+                    <div class="output-box" id="whoamiOutput"></div>
+                </div>
+
+                <!-- Hash -->
+                <div class="pkg-control-group">
+                    <h3>🔐 Hash (bun pm hash)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Lockfile hash operations</p>
+                    <div class="input-group">
+                        <label>Operation</label>
+                        <select id="hashOperationSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #e0e0e0;">
+                            <option value="hash">hash - Generate and print hash</option>
+                            <option value="hash-string">hash-string - Print hash string</option>
+                            <option value="hash-print">hash-print - Print stored hash</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="runHash()">Get Hash</button>
+                    <div class="output-box" id="hashOutput"></div>
+                </div>
+
+                <!-- Cache -->
+                <div class="pkg-control-group">
+                    <h3>💾 Cache (bun pm cache)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Cache management</p>
+                    <div class="input-group">
+                        <label>Operation</label>
+                        <select id="cacheOperationSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #e0e0e0;">
+                            <option value="cache">cache - Print cache path</option>
+                            <option value="cache rm">cache rm - Clear cache</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="runCache()">Run Cache Command</button>
+                    <div class="output-box" id="cacheOutput"></div>
+                </div>
+
+                <!-- Migrate -->
+                <div class="pkg-control-group">
+                    <h3>🔄 Migrate (bun pm migrate)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Migrate lockfile from other package managers</p>
+                    <button class="btn btn-primary" onclick="runMigrate()">Migrate Lockfile</button>
+                    <div class="output-box" id="migrateOutput"></div>
+                </div>
+
+                <!-- Untrusted -->
+                <div class="pkg-control-group">
+                    <h3>⚠️ Untrusted (bun pm untrusted)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">List untrusted dependencies</p>
+                    <button class="btn btn-secondary" onclick="runUntrusted()">List Untrusted</button>
+                    <div class="output-box" id="untrustedOutput"></div>
+                </div>
+
+                <!-- Trust -->
+                <div class="pkg-control-group">
+                    <h3>✅ Trust (bun pm trust)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Trust dependencies</p>
+                    <div class="input-group">
+                        <label>Package Name</label>
+                        <input type="text" id="trustPackageInput" placeholder="@biomejs/biome">
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="trustAllCheck">
+                            <span>Trust all (--all)</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="runTrust()">Trust Package</button>
+                    <div class="output-box" id="trustOutput"></div>
+                </div>
+
+                <!-- Default Trusted -->
+                <div class="pkg-control-group">
+                    <h3>📜 Default Trusted (bun pm default-trusted)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Print default trusted dependencies list</p>
+                    <button class="btn btn-secondary" onclick="runDefaultTrusted()">Show Default Trusted</button>
+                    <div class="output-box" id="defaultTrustedOutput"></div>
+                </div>
+
+                <!-- Version -->
+                <div class="pkg-control-group">
+                    <h3>🔢 Version (bun pm version)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Version management</p>
+                    <div class="input-group">
+                        <label>Increment (patch, minor, major, etc.)</label>
+                        <input type="text" id="versionIncrementInput" placeholder="patch">
+                    </div>
+                    <div class="input-group">
+                        <label>Message (optional, use %s for version)</label>
+                        <input type="text" id="versionMessageInput" placeholder="Release: %s">
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="versionNoGitCheck">
+                            <span>No git tag (--no-git-tag-version)</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="runVersion()">Bump Version</button>
+                    <button class="btn btn-secondary" onclick="runVersionInfo()">Show Version Info</button>
+                    <div class="output-box" id="versionOutput"></div>
+                </div>
+
+                <!-- Patch -->
+                <div class="pkg-control-group">
+                    <h3>🔧 Patch (bun patch)</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Persistently patch node_modules packages in a git-friendly way</p>
+                    <div class="tips" style="margin-bottom: 15px;">
+                        <div class="tips-title">💡 How it works</div>
+                        <ol style="margin-left: 20px; margin-top: 10px; color: #b0b0b0; font-size: 0.9em;">
+                            <li>Prepare: <code>bun patch &lt;pkg&gt;</code> - Makes package editable</li>
+                            <li>Edit: Modify files in <code>node_modules/&lt;pkg&gt;/</code></li>
+                            <li>Commit: <code>bun patch --commit &lt;pkg&gt;</code> - Creates .patch file</li>
+                        </ol>
+                    </div>
+                    <div class="input-group">
+                        <label>Package Name (e.g., react, react@17.0.2, or node_modules/react)</label>
+                        <input type="text" id="patchPackageInput" placeholder="react">
+                    </div>
+                    <div class="input-group">
+                        <label>Patches Directory (optional, default: patches/)</label>
+                        <input type="text" id="patchDirInput" placeholder="patches">
+                    </div>
+                    <div style="margin: 10px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="patchCommitCheck">
+                            <span>Commit patch (--commit) - Generate .patch file</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="runPatch()">Prepare/Commit Patch</button>
+                    <div class="output-box" id="patchOutput"></div>
+                    <div class="tips" style="margin-top: 15px;">
+                        <div class="tips-title">✅ Benefits</div>
+                        <ul style="margin-left: 20px; margin-top: 10px; color: #b0b0b0; font-size: 0.9em;">
+                            <li>Git-friendly: .patch files can be committed</li>
+                            <li>Reusable: Works across installs, projects, and machines</li>
+                            <li>Safe: Preserves Bun's Global Cache integrity</li>
+                            <li>Tracked: Added to <code>patchedDependencies</code> in package.json</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benchmarks Tab -->
+        <div id="benchmarks-panel" class="content-panel">
+            <h2>⚡ Performance Benchmarking</h2>
+            <p style="color: #b0b0b0; margin-bottom: 20px;">Track install performance and compare isolated vs hoisted installs.</p>
+            
+            <div class="pkg-controls">
+                <div class="pkg-control-group">
+                    <h3>📊 Benchmark Install Performance</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Profile bun install with CPU profiling</p>
+                    <div class="input-group">
+                        <label>Install Type</label>
+                        <select id="installTypeSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #e0e0e0;">
+                            <option value="isolated">Isolated (default)</option>
+                            <option value="hoisted">Hoisted</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="benchmarkInstall()">Benchmark Install</button>
+                    <div class="output-box" id="installBenchmarkOutput"></div>
+                    <div class="tips" style="margin-top: 15px;">
+                        <div class="tips-title">💡 Benchmark Command</div>
+                        <code style="display: block; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                            bun --cpu-prof install<br>
+                            bun run scripts/benchmarks/create-benchmark.ts \<br>
+                            &nbsp;&nbsp;--profile=install.cpuprofile \<br>
+                            &nbsp;&nbsp;--name="Install Performance" \<br>
+                            &nbsp;&nbsp;--tags="install,isolated"
+                        </code>
+                    </div>
+                </div>
+
+                <div class="pkg-control-group">
+                    <h3>📈 Compare Install Types</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Compare isolated vs hoisted install performance</p>
+                    <div class="input-group">
+                        <label>Baseline Benchmark ID</label>
+                        <input type="text" id="compareBaselineId" placeholder="install-isolated-baseline">
+                    </div>
+                    <div class="input-group">
+                        <label>Current Benchmark ID</label>
+                        <input type="text" id="compareCurrentId" placeholder="install-hoisted-baseline">
+                    </div>
+                    <button class="btn btn-primary" onclick="compareInstallBenchmarks()">Compare</button>
+                    <div class="output-box" id="compareBenchmarkOutput"></div>
+                    <div class="tips" style="margin-top: 15px;">
+                        <div class="tips-title">💡 Comparison Command</div>
+                        <code style="display: block; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                            bun run scripts/benchmarks/compare.ts \<br>
+                            &nbsp;&nbsp;--baseline=install-isolated-baseline \<br>
+                            &nbsp;&nbsp;--current=install-hoisted-baseline \<br>
+                            &nbsp;&nbsp;--threshold=5
+                        </code>
+                    </div>
+                </div>
+
+                <div class="pkg-control-group">
+                    <h3>📋 Benchmark Information</h3>
+                    <p style="color: #b0b0b0; font-size: 0.9em; margin-bottom: 15px;">Get benchmark tools and documentation</p>
+                    <button class="btn btn-secondary" onclick="loadBenchmarkInfo()">Load Benchmark Info</button>
+                    <div class="output-box" id="benchmarkInfoOutput"></div>
+                    <div class="tips" style="margin-top: 15px;">
+                        <div class="tips-title">📚 Resources</div>
+                        <ul style="margin-left: 20px; margin-top: 10px; color: #b0b0b0; font-size: 0.9em;">
+                            <li><a href="../benchmarks/README.md" target="_blank" style="color: #00d4ff;">Benchmarks README</a></li>
+                            <li><a href="../docs/BUN-V1.51-IMPACT-ANALYSIS.md" target="_blank" style="color: #00d4ff;">Performance Guide</a></li>
+                            <li><a href="../docs/BUN-CPU-PROFILING.md" target="_blank" style="color: #00d4ff;">CPU Profiling Guide</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color Scheme Tab -->
+        <div id="colors-panel" class="content-panel">
+            <h2>🎨 Color Scheme</h2>
+            <div class="color-scheme" id="colorScheme"></div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+        const colorScheme = {
+            store: { hex: "#4a90e2", name: "Store" },
+            symlink: { hex: "#00ff88", name: "Symlink" },
+            workspace: { hex: "#ff6b9d", name: "Workspace" },
+            package: { hex: "#a78bfa", name: "Package" },
+            peer: { hex: "#fbbf24", name: "Peer" },
+            primary: { hex: "#00ff88", name: "Primary" },
+            secondary: { hex: "#00d4ff", name: "Secondary" },
+            accent: { hex: "#ffaa00", name: "Accent" },
+            success: { hex: "#10b981", name: "Success" },
+            warning: { hex: "#f59e0b", name: "Warning" },
+            error: { hex: "#ef4444", name: "Error" },
+            info: { hex: "#3b82f6", name: "Info" },
+        };
+
+        const treeData = {
+            name: "node_modules",
+            type: "package",
+            path: "node_modules",
+            children: [
+                {
+                    name: ".bun",
+                    type: "store",
+                    path: "node_modules/.bun",
+                    properties: { description: "Central package store", strategy: "isolated" },
+                    children: [
+                        {
+                            name: "react@18.2.0",
+                            type: "store",
+                            path: "node_modules/.bun/react@18.2.0",
+                            properties: { version: "18.2.0", peerDependencies: {} },
+                        },
+                        {
+                            name: "zod@3.21.4",
+                            type: "store",
+                            path: "node_modules/.bun/zod@3.21.4",
+                            properties: { version: "3.21.4", peerDependencies: {} },
+                        },
+                        {
+                            name: "react-dom@18.2.0_react@18.2.0",
+                            type: "peer",
+                            path: "node_modules/.bun/react-dom@18.2.0_react@18.2.0",
+                            properties: { version: "18.2.0", peerDependencies: { react: "18.2.0" } },
+                        },
+                    ],
+                },
+                { name: "react", type: "symlink", path: "node_modules/react", properties: { target: ".bun/react@18.2.0/node_modules/react" } },
+                { name: "react-dom", type: "symlink", path: "node_modules/react-dom", properties: { target: ".bun/react-dom@18.2.0_react@18.2.0/node_modules/react-dom" } },
+                { name: "zod", type: "symlink", path: "node_modules/zod", properties: { target: ".bun/zod@3.21.4/node_modules/zod" } },
+                { name: "@nexus-radiance/core", type: "workspace", path: "node_modules/@nexus-radiance/core", properties: { target: "../../packages/core", workspace: true } },
+            ],
+        };
+
+        function showTab(tabName, clickedElement = null) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+            
+            // Find the tab element
+            const tabElement = clickedElement || document.querySelector(`[data-tab="${tabName}"]`);
+            
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
+            
+            document.getElementById(`${tabName}-panel`).classList.add('active');
+
+            if (tabName === 'mermaid') {
+                renderMermaid();
+            } else if (tabName === 'tree') {
+                renderTree();
+            } else if (tabName === 'colors') {
+                renderColors();
+            }
+        }
+        
+        // Set up tab click handlers
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                if (tabName) {
+                    showTab(tabName, tab);
+                }
+            });
+        });
+
+        function renderTree() {
+            const container = document.getElementById('nodeList');
+            container.innerHTML = '';
+            
+            function renderNode(node, parent = null) {
+                const card = document.createElement('div');
+                card.className = `node-card ${node.type}`;
+                card.onclick = () => showNodeInfo(node);
+                
+                card.innerHTML = `
+                    <div class="node-name">${node.name}</div>
+                    <div class="node-type">[${node.type}]</div>
+                    <div class="node-path">${node.path}</div>
+                `;
+                
+                container.appendChild(card);
+                
+                if (node.children) {
+                    node.children.forEach(child => renderNode(child, node));
+                }
+            }
+            
+            renderNode(treeData);
+        }
+
+        function showNodeInfo(node) {
+            const infoPanel = document.getElementById('treeInfo');
+            const infoContent = document.getElementById('treeInfoContent');
+            
+            infoPanel.style.display = 'block';
+            infoContent.innerHTML = `
+                <div class="info-item">
+                    <span class="info-key">Name:</span>
+                    <span class="info-value">${node.name}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-key">Type:</span>
+                    <span class="info-value">${node.type}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-key">Path:</span>
+                    <span class="info-value">${node.path}</span>
+                </div>
+                ${node.properties ? Object.entries(node.properties).map(([key, value]) => `
+                    <div class="info-item">
+                        <span class="info-key">${key}:</span>
+                        <span class="info-value">${JSON.stringify(value)}</span>
+                    </div>
+                `).join('') : ''}
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="getPackageInfoByName('${node.name.split('@')[0]}')">Get Info (bun info)</button>
+                </div>
+            `;
+        }
+
+        function renderMermaid() {
+            mermaidNodeCounter = 0;
+            mermaidNodeMap.clear();
+            
+            const mermaidCode = `graph TD\n${generateMermaidCode(treeData)}`;
+            const container = document.getElementById('mermaidDiagram');
+            container.innerHTML = '';
+            
+            mermaid.render('mermaid-diagram', mermaidCode, (svgCode) => {
+                container.innerHTML = svgCode;
+            });
+        }
+
+        let mermaidNodeCounter = 0;
+        const mermaidNodeMap = new Map();
+
+        function generateMermaidCode(node, parentId = null) {
+            let id = mermaidNodeMap.get(node);
+            if (!id) {
+                id = `node${mermaidNodeCounter++}`;
+                mermaidNodeMap.set(node, id);
+            }
+            
+            const shape = node.type === "symlink" ? "((symlink))" : 
+                         node.type === "workspace" ? "{{workspace}}" : 
+                         node.type === "store" ? "[store]" : "[package]";
+            
+            let code = `    ${id}${shape}["${node.name.replace(/"/g, '&quot;')}\\n${node.type}"]\n`;
+            
+            if (parentId) {
+                code += `    ${parentId} --> ${id}\n`;
+            }
+            
+            if (node.children) {
+                for (const child of node.children) {
+                    code += generateMermaidCode(child, id);
+                }
+            }
+            
+            return code;
+        }
+
+        function renderColors() {
+            const container = document.getElementById('colorScheme');
+            container.innerHTML = '';
+            
+            Object.entries(colorScheme).forEach(([key, color]) => {
+                const item = document.createElement('div');
+                item.className = 'color-item';
+                item.innerHTML = `
+                    <div class="color-swatch" style="background: ${color.hex}"></div>
+                    <div class="color-name">${color.name}</div>
+                    <div class="color-hex">${color.hex}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function getPackageInfo() {
+            const packageName = document.getElementById('packageNameInput').value;
+            if (!packageName) {
+                showOutput('packageInfoOutput', 'error', 'Please enter a package name');
+                return;
+            }
+            
+            const property = document.getElementById('packagePropertyInput').value;
+            const jsonOutput = document.getElementById('jsonOutputCheck').checked;
+            
+            getPackageInfoByName(packageName, property, jsonOutput);
+        }
+
+        async function getPackageInfoByName(packageName, property = '', jsonOutput = false) {
+            const outputEl = document.getElementById('packageInfoOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Fetching package info...</div>';
+
+            try {
+                const args = ['--interactive', 'info', packageName];
+                if (property) {
+                    args.push(property);
+                }
+                if (jsonOutput) {
+                    args.push('--json');
+                }
+                
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-isolated-installs-visualizer.ts',
+                        args: args
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.error) {
+                        outputEl.innerHTML = `<div class="output-line error">❌ ${data.error}</div>`;
+                    } else {
+                        let content = data.output || data.raw || '';
+                        if (jsonOutput && typeof data.output === 'object') {
+                            content = JSON.stringify(data.output, null, 2);
+                        }
+                        outputEl.innerHTML = `<div class="output-line success">✅ Package Info:</div><div class="output-line" style="white-space: pre-wrap; font-family: monospace;">${content}</div>`;
+                    }
+                } else {
+                    const cmd = `bun info ${packageName}${property ? ' ' + property : ''}${jsonOutput ? ' --json' : ''}`;
+                    outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+                }
+            } catch (error) {
+                const cmd = `bun info ${packageName}${property ? ' ' + property : ''}${jsonOutput ? ' --json' : ''}`;
+                outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+            }
+        }
+
+        async function getPackageProperty() {
+            const property = document.getElementById('getPropertyInput').value;
+            const outputEl = document.getElementById('getOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Getting property...</div>';
+
+            try {
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-isolated-installs-visualizer.ts',
+                        args: ['--interactive', 'pkg-get', property || '']
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.error) {
+                        outputEl.innerHTML = `<div class="output-line error">❌ ${data.error}</div>`;
+                    } else {
+                        outputEl.innerHTML = `<div class="output-line success">✅ Value:</div><div class="output-line">${data.value || data.output || JSON.stringify(data, null, 2)}</div>`;
+                    }
+                } else {
+                    const cmd = property ? `bun pm pkg get ${property}` : 'bun pm pkg get';
+                    outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+                }
+            } catch (error) {
+                const cmd = property ? `bun pm pkg get ${property}` : 'bun pm pkg get';
+                outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+            }
+        }
+
+        async function setPackageProperty() {
+            const property = document.getElementById('setPropertyInput').value;
+            const value = document.getElementById('setValueInput').value;
+            
+            if (!property || !value) {
+                showOutput('setOutput', 'error', 'Please enter both property and value');
+                return;
+            }
+
+            const outputEl = document.getElementById('setOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Setting property...</div>';
+
+            try {
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-isolated-installs-visualizer.ts',
+                        args: ['--interactive', 'pkg-set', property, value]
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.error) {
+                        outputEl.innerHTML = `<div class="output-line error">❌ ${data.error}</div>`;
+                    } else {
+                        outputEl.innerHTML = `<div class="output-line success">✅ Property set successfully</div><div class="output-line">${data.output || ''}</div>`;
+                    }
+                } else {
+                    outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>bun pm pkg set ${property}=${value}</code></div>`;
+                }
+            } catch (error) {
+                outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>bun pm pkg set ${property}=${value}</code></div>`;
+            }
+        }
+
+        async function deletePackageProperty() {
+            const property = document.getElementById('deletePropertyInput').value;
+            
+            if (!property) {
+                showOutput('deleteOutput', 'error', 'Please enter a property name');
+                return;
+            }
+
+            const outputEl = document.getElementById('deleteOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line warning">⚠️ Deleting property...</div>';
+
+            if (!confirm(`Are you sure you want to delete "${property}" from package.json?`)) {
+                outputEl.innerHTML = '<div class="output-line info">Cancelled</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-isolated-installs-visualizer.ts',
+                        args: ['--interactive', 'pkg-delete', property]
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.error) {
+                        outputEl.innerHTML = `<div class="output-line error">❌ ${data.error}</div>`;
+                    } else {
+                        outputEl.innerHTML = `<div class="output-line success">✅ Property deleted successfully</div><div class="output-line">${data.output || ''}</div>`;
+                    }
+                } else {
+                    outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>bun pm pkg delete ${property}</code></div>`;
+                }
+            } catch (error) {
+                outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>bun pm pkg delete ${property}</code></div>`;
+            }
+        }
+
+        async function fixPackageJson() {
+            const outputEl = document.getElementById('fixOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Fixing package.json...</div>';
+
+            try {
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-isolated-installs-visualizer.ts',
+                        args: ['--interactive', 'pkg-fix']
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.error) {
+                        outputEl.innerHTML = `<div class="output-line error">❌ ${data.error}</div>`;
+                    } else {
+                        outputEl.innerHTML = `<div class="output-line success">✅ Package.json fixed</div><div class="output-line">${data.output || 'No issues found or fixed'}</div>`;
+                    }
+                } else {
+                    outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>bun pm pkg fix</code></div>`;
+                }
+            } catch (error) {
+                outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>bun pm pkg fix</code></div>`;
+            }
+        }
+
+        function showOutput(elementId, type, message) {
+            const outputEl = document.getElementById(elementId);
+            outputEl.classList.add('show');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            outputEl.innerHTML = `<div class="output-line ${className}">${message}</div>`;
+        }
+
+        async function runBunPmCommand(command, args = [], outputElementId) {
+            const outputEl = document.getElementById(outputElementId);
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Running command...</div>';
+
+            try {
+                // Try via visualizer script first
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-isolated-installs-visualizer.ts',
+                        args: ['--interactive', 'pm', command, ...args]
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.error) {
+                        outputEl.innerHTML = `<div class="output-line error">❌ ${data.error}</div>`;
+                    } else {
+                        const output = data.output || data.stdout || JSON.stringify(data, null, 2);
+                        outputEl.innerHTML = `<div class="output-line success">✅ Output:</div><div class="output-line" style="white-space: pre-wrap; font-family: monospace;">${output}</div>`;
+                    }
+                } else {
+                    // Fallback: show command
+                    const cmd = `bun pm ${command} ${args.join(' ')}`.trim();
+                    outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+                }
+            } catch (error) {
+                // Fallback: show command
+                const cmd = `bun pm ${command} ${args.join(' ')}`.trim();
+                outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+            }
+        }
+
+        async function runPack() {
+            const destination = document.getElementById('packDestinationInput').value;
+            const dryRun = document.getElementById('packDryRunCheck').checked;
+            const quiet = document.getElementById('packQuietCheck').checked;
+            
+            const args = [];
+            if (destination) args.push('--destination', destination);
+            if (dryRun) args.push('--dry-run');
+            if (quiet) args.push('--quiet');
+            
+            await runBunPmCommand('pack', args, 'packOutput');
+        }
+
+        async function runBin() {
+            const global = document.getElementById('binGlobalCheck').checked;
+            const args = global ? ['-g'] : [];
+            await runBunPmCommand('bin', args, 'binOutput');
+        }
+
+        async function runList() {
+            const all = document.getElementById('listAllCheck').checked;
+            const args = all ? ['--all'] : [];
+            await runBunPmCommand('ls', args, 'listOutput');
+        }
+
+        async function runWhoami() {
+            await runBunPmCommand('whoami', [], 'whoamiOutput');
+        }
+
+        async function runHash() {
+            const operation = document.getElementById('hashOperationSelect').value;
+            await runBunPmCommand(operation, [], 'hashOutput');
+        }
+
+        async function runCache() {
+            const operation = document.getElementById('cacheOperationSelect').value;
+            const parts = operation.split(' ');
+            const command = parts[0];
+            const args = parts.slice(1);
+            await runBunPmCommand(command, args, 'cacheOutput');
+        }
+
+        async function runMigrate() {
+            await runBunPmCommand('migrate', [], 'migrateOutput');
+        }
+
+        async function runUntrusted() {
+            await runBunPmCommand('untrusted', [], 'untrustedOutput');
+        }
+
+        async function runTrust() {
+            const packageName = document.getElementById('trustPackageInput').value;
+            const trustAll = document.getElementById('trustAllCheck').checked;
+            
+            if (!packageName && !trustAll) {
+                showOutput('trustOutput', 'error', 'Please enter a package name or check "Trust all"');
+                return;
+            }
+            
+            const args = trustAll ? ['--all'] : [packageName];
+            await runBunPmCommand('trust', args, 'trustOutput');
+        }
+
+        async function runDefaultTrusted() {
+            await runBunPmCommand('default-trusted', [], 'defaultTrustedOutput');
+        }
+
+        async function runVersion() {
+            const increment = document.getElementById('versionIncrementInput').value;
+            const message = document.getElementById('versionMessageInput').value;
+            const noGit = document.getElementById('versionNoGitCheck').checked;
+            
+            if (!increment) {
+                showOutput('versionOutput', 'error', 'Please enter an increment (patch, minor, major, etc.)');
+                return;
+            }
+            
+            const args = [increment];
+            if (message) args.push('--message', message);
+            if (noGit) args.push('--no-git-tag-version');
+            
+            await runBunPmCommand('version', args, 'versionOutput');
+        }
+
+        async function runVersionInfo() {
+            await runBunPmCommand('version', [], 'versionOutput');
+        }
+
+        async function runPatch() {
+            const packageName = document.getElementById('patchPackageInput').value;
+            const patchesDir = document.getElementById('patchDirInput').value;
+            const commit = document.getElementById('patchCommitCheck').checked;
+            
+            if (!packageName) {
+                showOutput('patchOutput', 'error', 'Please enter a package name');
+                return;
+            }
+            
+            const outputEl = document.getElementById('patchOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Running patch command...</div>';
+
+            try {
+                const args = [];
+                if (commit) {
+                    args.push('--commit');
+                    if (patchesDir) {
+                        args.push('--patches-dir', patchesDir);
+                    }
+                }
+                args.push(packageName);
+                
+                const response = await fetch('/api/run-script', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        script: 'examples/bun-isolated-installs-visualizer.ts',
+                        args: ['--interactive', 'patch', packageName, ...(commit ? ['--commit'] : []), ...(patchesDir ? ['--patches-dir', patchesDir] : [])]
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.error) {
+                        outputEl.innerHTML = `<div class="output-line error">❌ ${data.error}</div>`;
+                    } else {
+                        const output = data.output || data.stdout || '';
+                        let message = commit ? 
+                            '<div class="output-line success">✅ Patch committed successfully!</div>' :
+                            '<div class="output-line success">✅ Package prepared for patching</div>';
+                        message += `<div class="output-line" style="white-space: pre-wrap; font-family: monospace;">${output}</div>`;
+                        if (commit) {
+                            message += '<div class="output-line info" style="margin-top: 10px;">💡 Edit files in node_modules/' + packageName.split('@')[0] + '/ then test your changes</div>';
+                        }
+                        outputEl.innerHTML = message;
+                    }
+                } else {
+                    const cmd = `bun patch${commit ? ' --commit' : ''}${patchesDir ? ' --patches-dir ' + patchesDir : ''} ${packageName}`.trim();
+                    outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+                }
+            } catch (error) {
+                const cmd = `bun patch${commit ? ' --commit' : ''}${patchesDir ? ' --patches-dir ' + patchesDir : ''} ${packageName}`.trim();
+                outputEl.innerHTML = `<div class="output-line info">⚠️ Run in terminal: <code>${cmd}</code></div>`;
+            }
+        }
+
+        // Benchmark install performance
+        async function benchmarkInstall() {
+            const installType = document.getElementById('installTypeSelect').value;
+            const outputEl = document.getElementById('installBenchmarkOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Generating benchmark command...</div>';
+
+            const command = `bun --cpu-prof install`;
+            const createCommand = `bun run scripts/benchmarks/create-benchmark.ts \\
+  --profile=install-${installType}.cpuprofile \\
+  --name="Install Performance (${installType})" \\
+  --description="bun install performance with ${installType} linker" \\
+  --tags="install,${installType}"`;
+
+            outputEl.innerHTML = `
+                <div class="output-line success">✅ Benchmark Commands:</div>
+                <div class="output-line" style="white-space: pre-wrap; font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">
+# Step 1: Profile install
+${command}
+
+# Step 2: Create benchmark
+${createCommand}
+                </div>
+                <div class="output-line info">Run these commands in your terminal to benchmark install performance.</div>
+            `;
+        }
+
+        // Compare install benchmarks
+        async function compareInstallBenchmarks() {
+            const baseline = document.getElementById('compareBaselineId').value;
+            const current = document.getElementById('compareCurrentId').value;
+            const outputEl = document.getElementById('compareBenchmarkOutput');
+            
+            if (!baseline || !current) {
+                outputEl.classList.add('show');
+                outputEl.innerHTML = '<div class="output-line error">Please enter both baseline and current benchmark IDs</div>';
+                return;
+            }
+
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Generating comparison command...</div>';
+
+            const command = `bun run scripts/benchmarks/compare.ts \\
+  --baseline=${baseline} \\
+  --current=${current} \\
+  --threshold=5`;
+
+            outputEl.innerHTML = `
+                <div class="output-line success">✅ Comparison Command:</div>
+                <div class="output-line" style="white-space: pre-wrap; font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; margin: 10px 0; border-radius: 4px;">
+${command}
+                </div>
+                <div class="output-line info">Run this command to compare install performance benchmarks.</div>
+            `;
+        }
+
+        // Load benchmark information
+        async function loadBenchmarkInfo() {
+            const outputEl = document.getElementById('benchmarkInfoOutput');
+            outputEl.classList.add('show');
+            outputEl.innerHTML = '<div class="output-line info">Loading benchmark information...</div>';
+
+            try {
+                const response = await fetch('/api/workspace/benchmarks');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.benchmarks) {
+                        const bm = data.benchmarks;
+                        outputEl.innerHTML = `
+                            <div class="output-line success">✅ Benchmark Tools Available</div>
+                            <div class="output-line info">
+                                <strong>Directory:</strong> ${bm.directory}<br>
+                                <strong>Tools:</strong> ${Object.values(bm.tools).join(', ')}<br>
+                                <strong>Documentation:</strong> Available
+                            </div>
+                            <div class="output-line info" style="margin-top: 10px;">
+                                <a href="../benchmarks/README.md" target="_blank" style="color: #00d4ff;">📖 View Benchmarks README</a>
+                            </div>
+                        `;
+                    } else {
+                        outputEl.innerHTML = '<div class="output-line info">⚠️ Benchmark API not available. See benchmarks/README.md for manual usage.</div>';
+                    }
+                } else {
+                    outputEl.innerHTML = '<div class="output-line info">⚠️ Benchmark endpoint not found. See benchmarks/README.md for manual usage.</div>';
+                }
+            } catch (error) {
+                outputEl.innerHTML = `<div class="output-line info">⚠️ See <a href="../benchmarks/README.md" target="_blank" style="color: #00d4ff;">benchmarks/README.md</a> for benchmarking guide.</div>`;
+            }
+        }
+
+        // Initialize
+        renderTree();
+        renderColors();
+        
+        // Show tree tab by default
+        showTab('tree');
+    </script>
+</body>
+</html>

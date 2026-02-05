@@ -1,0 +1,223 @@
+name: Tier-1380 Deployment
+
+on:
+  push:
+    branches: [main, production]
+    paths: ['patches/**', '.env.local', 'apps/**', 'scripts/**']
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+env:
+  NODE_VERSION: '18'
+  BUN_VERSION: '1.3.7'
+
+jobs:
+  verify-patches:
+    name: Verify Patch Integrity
+    runs-on: ubuntu-latest
+    outputs:
+      patch-count: ${{ steps.check.outputs.patch-count }}
+      lockfile-clean: ${{ steps.check.outputs.lockfile-clean }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: ${{ env.BUN_VERSION }}
+
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+
+    - name: Check lockfile status
+      id: check
+      run: |
+        if git diff --name-only HEAD~1 HEAD | grep -q "bun.lockb"; then
+          echo "lockfile-clean=false" >> $GITHUB_OUTPUT
+          echo "::error::Lockfile was modified - patches should not change lockfile"
+          exit 1
+        else
+          echo "lockfile-clean=true" >> $GITHUB_OUTPUT
+        fi
+
+        # Count available patches
+        PATCH_COUNT=$(ls patches/*.patch 2>/dev/null | wc -l)
+        echo "patch-count=$PATCH_COUNT" >> $GITHUB_OUTPUT
+        echo "Found $PATCH_COUNT patches"
+
+    - name: Run dev-tools checks
+      run: |
+        echo "🔧 Running Tier-1380 dev-tools checks..."
+        chmod +x scripts/dev-tools.sh
+        ./scripts/dev-tools.sh
+
+        # Capture results for status
+        BUNDLE_SIZE=$(bunx -p bundlesize bundlesize -f dist/dashboard/index.js -s 200Kb 2>/dev/null || echo "N/A")
+        echo "Bundle size: $BUNDLE_SIZE"
+
+    - name: Verify patches apply cleanly
+      run: |
+        # Test Redis patch
+        bun pm patch --dry-run redis@4.6.5 --patch-file patches/redis-hll-volume.patch
+
+        # Test ONNX patch
+        bun pm patch --dry-run onnxruntime-node --patch-file patches/onnx-simd-accel.patch
+
+        echo "✅ All patches verified"
+
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    needs: verify-patches
+    if: needs.verify-patches.outputs.lockfile-clean == 'true'
+
+    strategy:
+      matrix:
+        environment: [staging, production]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: ${{ env.BUN_VERSION }}
+
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+
+    - name: Verify PUBLIC_ env vars
+      run: |
+        # Load .env.local
+        if [[ -f .env.local ]]; then
+          source .env.local
+        fi
+
+        # Check required PUBLIC_ vars
+        test -n "${PUBLIC_WS_URL:-}" || (echo "Missing PUBLIC_WS_URL" && exit 1)
+        test -n "${PUBLIC_ANOMALY_THRESHOLD:-}" || (echo "Missing PUBLIC_ANOMALY_THRESHOLD" && exit 1)
+        test -n "${PUBLIC_PROFILE_STATION_VERSION:-}" || (echo "Missing PUBLIC_PROFILE_STATION_VERSION" && exit 1)
+
+        echo "✅ PUBLIC_ env vars verified"
+
+    - name: Apply patches
+      run: |
+        bun pm patch redis@4.6.5 --patch-file patches/redis-hll-volume.patch
+        bun pm patch onnxruntime-node --patch-file patches/onnx-simd-accel.patch
+
+        # List active patches
+        bun pm patch --list
+
+    - name: Build dashboard
+      run: |
+        # Load .env.local for PUBLIC_ vars
+        if [[ -f .env.local ]]; then
+          source .env.local
+        fi
+
+        # Build with integrity check
+        bun run scripts/build-dashboard.ts
+
+        # Verify build metadata
+        cat dist/dashboard/build-metadata.json
+
+    - name: Run comprehensive dev-tools checks
+      run: |
+        echo "🔧 Running post-build dev-tools checks..."
+        chmod +x scripts/dev-tools.sh
+        ./scripts/dev-tools.sh
+
+        # Additional post-build checks
+        echo "📊 Post-build validation:"
+
+        # Check bundle integrity
+        if [ -f "dist/dashboard/index.js" ]; then
+          BUNDLE_CHECKSUM=$(bunx -p bundlesize bundlesize -f dist/dashboard/index.js -s 200Kb)
+          echo "✅ Bundle size validated: $BUNDLE_CHECKSUM"
+        fi
+
+        # Verify no secrets in build
+        echo "🔍 Scanning for secret leaks..."
+        if grep -r "sk_live\|sk-ant\|CF_API_TOKEN" dist/dashboard/; then
+          echo "::error::Secret leak detected in build"
+          exit 1
+        fi
+        echo "✅ No secrets detected in build"
+
+    - name: Check for secret leaks
+      run: |
+        # Scan bundles for secrets
+        if grep -r "sk_live\|sk-ant\|CF_API_TOKEN\|BUN_ENCRYPTION_KEY\|JWT_SECRET" dist/dashboard/; then
+          echo "::error::Secret leak detected in bundle"
+          exit 1
+        fi
+
+        echo "✅ No secrets detected"
+
+    - name: Calculate bundle checksum
+      id: checksum
+      run: |
+        CHECKSUM=$(bun -e "
+          const f = Bun.file('./dist/dashboard/index.js');
+          const b = await f.arrayBuffer();
+          console.log(Bun.hash.crc32(new Uint8Array(b)).toString(16))
+        ")
+        echo "checksum=$CHECKSUM" >> $GITHUB_OUTPUT
+        echo "Bundle checksum: $CHECKSUM"
+
+    - name: Deploy to ${{ matrix.environment }}
+      if: github.ref == 'refs/heads/production' && matrix.environment == 'production' || github.ref == 'refs/heads/main' && matrix.environment == 'staging'
+      run: |
+        # Load .env.local
+        if [[ -f .env.local ]]; then
+          source .env.local
+        fi
+
+        # Deploy with pipeline
+        bun run deploy/pipeline.ts ${{ matrix.environment }}
+        bun run deploy/pipeline.ts deploy ${{ steps.checksum.outputs.checksum }}
+
+        # Store deployment info
+        cat > dist/dashboard/deployment-${{ matrix.environment }}.json << EOF
+        {
+          "deployment": {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)",
+            "tier": "1380",
+            "environment": "${{ matrix.environment }}",
+            "bundleChecksum": "${{ steps.checksum.outputs.checksum }}",
+            "patchCount": "${{ needs.verify-patches.outputs.patch-count }}",
+            "lockfilePristine": true,
+            "secretLeakCheck": false,
+            "commit": "${{ github.sha }}"
+          }
+        }
+        EOF
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: dashboard-${{ matrix.environment }}
+        path: |
+          dist/dashboard/
+          deployment-${{ matrix.environment }}.json
+        retention-days: 30
+
+    - name: Notify deployment
+      if: success()
+      run: |
+        echo "🚀 Tier-1380 deployment to ${{ matrix.environment }} complete!"
+        echo "Bundle: ${{ steps.checksum.outputs.checksum }}"
+        echo "Patches: ${{ needs.verify-patches.outputs.patch-count }}"

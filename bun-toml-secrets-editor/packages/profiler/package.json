@@ -1,0 +1,17 @@
+{
+	"name": "@bun-toml/profiler",
+	"version": "1.0.0",
+	"description": "Performance profiling and integrations",
+	"main": "./src/index.ts",
+	"bin": {
+		"bun-profiler": "./src/cli/profiling-cli.ts"
+	},
+	"scripts": {
+		"build": "bun build ./src/index.ts --compile --outfile ./dist/profiler",
+		"test": "bun test",
+		"smoke": "bun -e \"import { V137ProfileRssIntegration } from './src/integration/v137-profile-rss-integration.ts'; new V137ProfileRssIntegration(); console.log('✓ Profiler smoke passed')\""
+	},
+	"dependencies": {
+		"@bun-toml/core": "workspace:*"
+	}
+}

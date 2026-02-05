@@ -1,0 +1,25 @@
+#!/bin/bash
+# Pre-commit hook: diagnose-constants
+# Validates environment variables, secrets, and typos
+
+export GIT_RUNNING=true
+
+echo "🔍 Running pre-commit checks..."
+echo "🔍 Checking environment variable documentation..."
+
+# Run diagnostic
+bun ~/.claude/skills/diagnose-constants.ts
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+  echo ""
+  echo "❌ Pre-commit checks failed."
+  echo "   Fix issues or use --no-verify to bypass (not recommended)."
+  echo ""
+  echo "📊 Event: $(date -Iseconds), Fix Time Estimate: 30s, Project: $(basename $PWD)"
+  echo ""
+  exit 1
+fi
+
+echo "✅ All checks passed"
+exit 0

@@ -1,0 +1,24 @@
+#!/usr/bin/env bun
+/**
+ * Dedicated executable for bun-type-fixes
+ * This script sets up the dedicated PATH and runs the CLI
+ */
+
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+
+// Get the project root directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectRoot = dirname(__dirname);
+const binDir = join(projectRoot, "bin");
+
+// Add dedicated bin directory to PATH
+process.env.PATH = binDir + ":" + process.env.PATH;
+
+// Export the dedicated PATH for child processes
+process.env.BUN_TYPE_FIXES_BIN = binDir;
+process.env.BUN_TYPE_FIXES_ROOT = projectRoot;
+
+// Run the CLI
+await import(join(projectRoot, "cli.ts"));

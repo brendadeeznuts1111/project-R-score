@@ -1,0 +1,86 @@
+{
+	"name": "@rss-feed/optimization",
+	"version": "1.0.0",
+	"description": "High-performance RSS feed optimization library for Bun.js",
+	"type": "module",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"bin": {
+		"rss-parser": "./dist/cli.js"
+	},
+	"package": {
+		"bunx": "rss-parser"
+	},
+	"exports": {
+		".": {
+			"import": "./src/index.ts",
+			"types": "./src/index.ts"
+		},
+		"./config": {
+			"import": "./src/config/index.js",
+			"types": "./src/config/index.d.ts"
+		},
+		"./streaming": {
+			"import": "./src/utils/streaming.js",
+			"types": "./src/utils/streaming.d.ts"
+		},
+		"./resilience": {
+			"import": "./src/utils/circuit-breaker.js",
+			"types": "./src/utils/circuit-breaker.d.ts"
+		},
+		"./dns": {
+			"import": "./src/utils/dns-optimizer.js",
+			"types": "./src/utils/dns-optimizer.d.ts"
+		},
+		"./parser": {
+			"import": "./src/services/rss-parser.js",
+			"types": "./src/types/index.d.ts"
+		},
+		"./generator": {
+			"import": "./src/services/rss-generator.js",
+			"types": "./src/types/index.d.ts"
+		},
+		"./performance": {
+			"import": "./src/utils/performance-monitor.js",
+			"types": "./src/utils/performance-monitor.d.ts"
+		}
+	},
+	"files": ["dist", "README.md", "LICENSE"],
+	"scripts": {
+		"build": "bun build ./src/index.ts --outdir ./dist --target bun",
+		"build:cli": "bun build ./src/cli.js --outdir ./dist --target bun",
+		"build:types": "tsc --declaration --emitDeclarationOnly --outDir ./dist",
+		"build:all": "bun run build && bun run build:cli && bun run build:types",
+		"test": "bun test",
+		"dev": "bun run --watch ./src/cli.js",
+		"prepublishOnly": "bun run build:all",
+		"prepack": "node -e \"const pkg=require('./package.json');delete pkg.devDependencies;require('fs').writeFileSync('./package.json',JSON.stringify(pkg,null,2))\"",
+		"postpack": "git checkout package.json"
+	},
+	"keywords": [
+		"rss",
+		"feed",
+		"optimization",
+		"bun",
+		"streaming",
+		"performance",
+		"cloudflare-r2",
+		"jsonl",
+		"circuit-breaker"
+	],
+	"author": "RSS Feed Optimization Contributors",
+	"license": "MIT",
+	"engines": {
+		"bun": ">=1.3.7"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/brendadeeznuts1111/rss-feed-optimization.git",
+		"directory": "packages/rss-feed-lib"
+	},
+	"bugs": {
+		"url": "https://github.com/brendadeeznuts1111/rss-feed-optimization/issues"
+	},
+	"homepage": "https://github.com/brendadeeznuts1111/rss-feed-optimization/tree/main/packages/rss-feed-lib#readme"
+}

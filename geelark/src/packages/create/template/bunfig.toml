@@ -1,0 +1,13 @@
+[workspace]
+workspace = "packages/*"
+
+[install.scopes."@dev-hq"]
+token = "$DEV_HQ_TOKEN"
+url = "https://npm.pkg.github.com/your-org"
+
+[scripts]
+dev = "bun --hot run packages/server/src/index.ts"
+test = "bun test --workspace"
+release = "bun run build && npm publish --workspace"
+
+

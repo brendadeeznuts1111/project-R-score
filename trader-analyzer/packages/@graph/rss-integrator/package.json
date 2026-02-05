@@ -1,0 +1,17 @@
+{
+  "name": "@graph/rss-integrator",
+  "version": "0.1.0",
+  "description": "RSS feed integration with team architecture",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "bun test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DuoPlus Profile Analytics Dashboard</title>
+  
+  <!-- DNS Prefetch -->
+  <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  
+  <!-- Preload Critical Resources -->
+  <link rel="preload" href="https://cdn.tailwindcss.com" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.tailwindcss.com"></noscript>
+  
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+  
+  <!-- Prefetch Non-Critical Resources -->
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" as="script">
+  
+  <!-- Critical CSS Inline -->
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      background: #0f172a; 
+      color: #f1f5f9; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; 
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    
+    .metric-card {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      border: 1px solid #475569;
+    }
+    
+    .metric-card:hover { transform: translateY(-2px); }
+    
+    .total-users { color: #3b82f6; font-size: 2.5rem; font-weight: 900; }
+    .active-users { color: #10b981; font-size: 2.5rem; font-weight: 900; }
+    .high-risk { color: #ef4444; font-size: 2.5rem; font-weight: 900; }
+    .risk-score { color: #f59e0b; font-size: 2.5rem; font-weight: 900; }
+    .proxy-users { color: #8b5cf6; font-size: 2.5rem; font-weight: 900; }
+    .new-users { color: #06b6d4; font-size: 2.5rem; font-weight: 900; }
+    
+    .risk-low { background: #10b981; }
+    .risk-medium { background: #f59e0b; }
+    .risk-high { background: #ef4444; }
+    .risk-critical { background: #991b1b; }
+    
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-healthy { background-color: #10b981; }
+    .status-warning { background-color: #f59e0b; }
+    .status-critical { background-color: #ef4444; }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #475569;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo i { color: #3b82f6; font-size: 2rem; }
+    .logo h1 { font-size: 2rem; font-weight: 700; margin: 0; }
+    
+    .live-badge {
+      background: #10b981;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    
+    .refresh-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .refresh-btn:hover { background: #2563eb; }
+    
+    .grid { display: grid; gap: 1.5rem; }
+    .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+    .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+    
+    @media (min-width: 768px) {
+      .grid-cols-1-md { grid-template-columns: repeat(1, 1fr); }
+      .grid-cols-2-md { grid-template-columns: repeat(2, 1fr); }
+      .grid-cols-3-md { grid-template-columns: repeat(3, 1fr); }
+      .grid-cols-4-md { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    @media (min-width: 1024px) {
+      .grid-cols-1-lg { grid-template-columns: repeat(1, 1fr); }
+      .grid-cols-2-lg { grid-template-columns: repeat(2, 1fr); }
+      .grid-cols-3-lg { grid-template-columns: repeat(3, 1fr); }
+      .grid-cols-4-lg { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    .chart-container {
+      background: #1e293b;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-top: 2rem;
+      border: 1px solid #475569;
+    }
+    
+    .progress-bar {
+      background: #475569;
+      border-radius: 9999px;
+      height: 8px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    
+    .user-card {
+      background: #1e293b;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      border: 1px solid #475569;
+      margin-bottom: 0.75rem;
+    }
+    
+    .integration-status {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .integration-connected {
+      background: #10b981;
+      color: white;
+    }
+    
+    .integration-error {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .integration-disconnected {
+      background: #6b7280;
+      color: white;
+    }
+    
+    .risk-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .risk-badge-low {
+      background: #10b981;
+      color: white;
+    }
+    
+    .risk-badge-medium {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    .risk-badge-high {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .risk-badge-critical {
+      background: #991b1b;
+      color: white;
+    }
+  </style>
+  
+  <!-- Data embedded directly -->
+  <script>
+    // Embedded profile analytics data
+    window.DATA = {
+      "profile": {
+        "totalUsers": 150,
+        "activeUsers": 127,
+        "highRiskUsers": 23,
+        "averageRiskScore": 42.7,
+        "proxyUsers": 18,
+        "vpnUsers": 12,
+        "newUsersToday": 8,
+        "applicationsPerUser": 2.3,
+        "integrationsPerUser": 1.8,
+        "topCountries": [
+          { "country": "US", "users": 85, "riskScore": 38.2 },
+          { "country": "CA", "users": 23, "riskScore": 41.5 },
+          { "country": "GB", "users": 15, "riskScore": 45.8 },
+          { "country": "DE", "users": 12, "riskScore": 39.1 },
+          { "country": "FR", "users": 8, "riskScore": 43.2 }
+        ],
+        "riskDistribution": { "low": 75, "medium": 52, "high": 18, "critical": 5 },
+        "applicationUsage": [
+          { "appName": "Analytics", "users": 120, "riskLevel": "low" },
+          { "appName": "CRM", "users": 95, "riskLevel": "medium" },
+          { "appName": "Email", "users": 88, "riskLevel": "low" },
+          { "appName": "Storage", "users": 67, "riskLevel": "medium" },
+          { "appName": "Security", "users": 45, "riskLevel": "high" }
+        ],
+        "integrationHealth": {
+          "email": { "connected": 85, "error": 12 },
+          "sms": { "connected": 67, "error": 8 },
+          "webhook": { "connected": 45, "error": 5 },
+          "api": { "connected": 120, "error": 15 },
+          "oauth": { "connected": 95, "error": 7 }
+        }
+      },
+      "trends": [
+        { "timestamp": "2026-01-26T18:00:00.000Z", "value": 120, "metric": "active_users" },
+        { "timestamp": "2026-01-26T19:00:00.000Z", "value": 125, "metric": "active_users" },
+        { "timestamp": "2026-01-26T20:00:00.000Z", "value": 118, "metric": "active_users" },
+        { "timestamp": "2026-01-26T21:00:00.000Z", "value": 130, "metric": "active_users" },
+        { "timestamp": "2026-01-26T22:00:00.000Z", "value": 127, "metric": "active_users" }
+      ],
+      "alerts": { "critical": 2, "warning": 3, "info": 4 },
+      "performance": {
+        "health": 96.1,
+        "cpu": 0.25,
+        "memory": 0.42,
+        "disk": 0.31,
+        "network": 0.18
+      },
+      "recentUsers": [
+        {
+          "userId": "user_142",
+          "email": "user142@gmail.com",
+          "ip": "192.168.1.142",
+          "riskScore": 23.5,
+          "status": "active",
+          "lastActive": "2026-01-26T22:15:00.000Z",
+          "applications": [{ "appName": "Analytics", "riskLevel": "low" }],
+          "integrations": [{ "type": "email", "status": "connected" }]
+        },
+        {
+          "userId": "user_143",
+          "email": "user143@company.com",
+          "ip": "192.168.1.143",
+          "riskScore": 67.8,
+          "status": "active",
+          "lastActive": "2026-01-26T22:12:00.000Z",
+          "applications": [{ "appName": "CRM", "riskLevel": "medium" }],
+          "integrations": [{ "type": "api", "status": "connected" }]
+        }
+      ],
+      "topRisks": [
+        {
+          "userId": "user_001",
+          "email": "user001@suspicious.com",
+          "ip": "192.168.1.001",
+          "riskScore": 94.2,
+          "status": "suspended",
+          "lastActive": "2026-01-26T21:45:00.000Z",
+          "applications": [{ "appName": "Security", "riskLevel": "high" }],
+          "integrations": [{ "type": "webhook", "status": "error" }]
+        },
+        {
+          "userId": "user_002",
+          "email": "user002@risky.net",
+          "ip": "192.168.1.002",
+          "riskScore": 87.6,
+          "status": "pending",
+          "lastActive": "2026-01-26T20:30:00.000Z",
+          "applications": [{ "appName": "Storage", "riskLevel": "high" }],
+          "integrations": [{ "type": "oauth", "status": "error" }]
+        }
+      ]
+    };
+    window.TIMESTAMP = "2026-01-27T04:09:00.000Z";
+    window.PERFORMANCE_START = performance.now();
+    window.OFFLINE_MODE = true;
+  </script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <i class="fas fa-users-cog"></i>
+      <h1>DuoPlus Profile Analytics</h1>
+      <span class="live-badge">Live</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="color: #94a3b8; font-size: 0.875rem;">
+        Last Updated: <span id="lastUpdated">--:--:--</span>
+      </span>
+      <button class="refresh-btn" onclick="refreshDashboard()">
+        <i class="fas fa-sync-alt" style="margin-right: 0.5rem;"></i>Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- User Overview -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-users" style="color: #3b82f6; margin-right: 0.5rem;"></i>
+        User Overview
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-md grid-cols-4-lg">
+        <!-- Total Users -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">Total Users</p>
+              <p class="total-users" id="totalUsers">--</p>
+            </div>
+            <i class="fas fa-users" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8;">
+            <span class="status-indicator status-healthy"></span>
+            Registered Accounts
+          </div>
+        </div>
+        
+        <!-- Active Users -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">Active Users</p>
+              <p class="active-users" id="activeUsers">--</p>
+            </div>
+            <i class="fas fa-user-check" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8;">
+            <span class="status-indicator status-healthy"></span>
+            Currently Active
+          </div>
+        </div>
+        
+        <!-- High Risk Users -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">High Risk Users</p>
+              <p class="high-risk" id="highRiskUsers">--</p>
+            </div>
+            <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8;">
+            <span class="status-indicator status-warning"></span>
+            Risk Score > 70
+          </div>
+        </div>
+        
+        <!-- Average Risk Score -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">Avg Risk Score</p>
+              <p class="risk-score" id="averageRiskScore">--</p>
+            </div>
+            <i class="fas fa-shield-alt" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem;">
+            <div class="progress-bar">
+              <div class="progress-fill risk-medium" id="riskScoreBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security Analysis -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-shield-virus" style="color: #ef4444; margin-right: 0.5rem;"></i>
+        Security Analysis
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-lg">
+        <!-- Risk Distribution -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Risk Distribution</h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Low Risk</span>
+              <span style="font-weight: 600; color: #10b981;" id="riskLow">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-low" id="riskLowBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Medium Risk</span>
+              <span style="font-weight: 600; color: #f59e0b;" id="riskMedium">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-medium" id="riskMediumBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">High Risk</span>
+              <span style="font-weight: 600; color: #ef4444;" id="riskHigh">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-high" id="riskHighBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Critical</span>
+              <span style="font-weight: 600; color: #991b1b;" id="riskCritical">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-critical" id="riskCriticalBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Proxy/VPN Analysis -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Proxy/VPN Detection</h3>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">Proxy Users</span>
+                <span style="font-weight: 600; color: #8b5cf6;" id="proxyUsers">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="background: #8b5cf6;" id="proxyUsersBar" style="width: 0%;"></div>
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">VPN Users</span>
+                <span style="font-weight: 600; color: #06b6d4;" id="vpnUsers">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="background: #06b6d4;" id="vpnUsersBar" style="width: 0%;"></div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #475569;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="font-size: 0.875rem;">New Users Today</span>
+                <span style="font-weight: 600; color: #10b981;" id="newUsersToday">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Top Countries -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Top Countries</h3>
+          <div id="topCountries" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Identity Analytics -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-id-card" style="color: #8b5cf6; margin-right: 0.5rem;"></i>
+        User Identity Analytics
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-lg">
+        <!-- Name Analytics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-user" style="margin-right: 0.5rem;"></i>Name Coverage
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Users with Names</span>
+              <span style="font-weight: 600; color: #3b82f6;" id="usersWithNames">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="background: #3b82f6;" id="usersWithNamesBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Name Confidence</span>
+              <span style="font-weight: 600; color: #10b981;" id="averageNameConfidence">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-low" id="nameConfidenceBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Address Analytics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-home" style="margin-right: 0.5rem;"></i>Address Coverage
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Users with Addresses</span>
+              <span style="font-weight: 600; color: #3b82f6;" id="usersWithAddresses">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="background: #3b82f6;" id="usersWithAddressesBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Verified Addresses</span>
+              <span style="font-weight: 600; color: #10b981;" id="verifiedAddresses">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-low" id="verifiedAddressesBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Phone Analytics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>Phone Analytics
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Users with Phones</span>
+              <span style="font-weight: 600; color: #3b82f6;" id="usersWithPhones">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="background: #3b82f6;" id="usersWithPhonesBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Phone GeoIP Coverage</span>
+              <span style="font-weight: 600; color: #06b6d4;" id="phoneGeoIPCoverage">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="background: #06b6d4;" id="phoneGeoIPBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phone Age & Type Analytics -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-calendar-alt" style="color: #f59e0b; margin-right: 0.5rem;"></i>
+        Phone Age & Type Analysis
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-lg">
+        <!-- Phone Age Analytics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Phone Age Distribution</h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Average Age (Days)</span>
+              <span style="font-weight: 600; color: #10b981;" id="averagePhoneAge">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Recent Activations</span>
+              <span style="font-weight: 600; color: #ef4444;" id="recentPhoneActivations">--</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Phone Type Distribution -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Phone Types</h3>
+          <div id="phoneTypes" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <!-- Phone Location Coverage -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Phone Location Coverage</h3>
+          <div id="phoneLocationCoverage" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Behavior Pattern Analytics -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-chart-line" style="color: #10b981; margin-right: 0.5rem;"></i>
+        Behavior Pattern Analytics
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-lg">
+        <!-- Login Patterns -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>Login Patterns
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Behavior Anomalies</span>
+              <span style="font-weight: 600; color: #ef4444;" id="behaviorAnomalies">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">High Frequency Logins</span>
+              <span style="font-weight: 600; color: #f59e0b;" id="highFrequencyLogins">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Unusual Locations</span>
+              <span style="font-weight: 600; color: #8b5cf6;" id="unusualLocations">--</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Cross-Platform Activity -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-devices" style="margin-right: 0.5rem;"></i>Cross-Platform Activity
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Cross-Platform Users</span>
+              <span style="font-weight: 600; color: #06b6d4;" id="crossPlatformActivity">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Multi-Device Usage</span>
+              <span style="font-weight: 600; color: #3b82f6;" id="multiDeviceUsage">--</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Risk Indicators -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>Risk Indicators
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">High Risk Patterns</span>
+              <span style="font-weight: 600; color: #ef4444;" id="highRiskPatterns">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Suspicious Behavior</span>
+              <span style="font-weight: 600; color: #f59e0b;" id="suspiciousBehavior">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KYC Text Analytics -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-file-alt" style="color: #22c55e; margin-right: 0.5rem;"></i>
+        KYC Text Analytics
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-lg">
+        <!-- Document Processing -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-file-invoice" style="margin-right: 0.5rem;"></i>Document Processing
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">KYC Text Processed</span>
+              <span style="font-weight: 600; color: #3b82f6;" id="kycTextProcessed">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">KYC Verified</span>
+              <span style="font-weight: 600; color: #10b981;" id="kycTextVerified">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Avg Confidence</span>
+              <span style="font-weight: 600; color: #06b6d4;" id="averageKycConfidence">--</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Text Extraction -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-text-height" style="margin-right: 0.5rem;"></i>Text Extraction
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Extraction Success</span>
+              <span style="font-weight: 600; color: #10b981;" id="documentExtractionSuccess">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-low" id="extractionSuccessBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Verification Status -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>Verification Status
+          </h3>
+          <div id="verificationStatus" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Apple Integration Analytics -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fab fa-apple" style="color: #000000; margin-right: 0.5rem;"></i>
+        Apple Integration Analytics
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-lg">
+        <!-- Apple Device Analytics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-mobile-alt" style="margin-right: 0.5rem;"></i>Device Analytics
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Apple Users</span>
+              <span style="font-weight: 600; color: #000000;" id="appleIntegratedUsers">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Avg Devices/User</span>
+              <span style="font-weight: 600; color: #3b82f6;" id="averageAppleDevices">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Security Score</span>
+              <span style="font-weight: 600; color: #10b981;" id="averageAppleSecurityScore">--</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Apple Security Features -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-shield-alt" style="margin-right: 0.5rem;"></i>Security Features
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Two-Factor Enabled</span>
+              <span style="font-weight: 600; color: #10b981;" id="appleTwoFactorEnabled">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Find My Enabled</span>
+              <span style="font-weight: 600; color: #06b6d4;" id="appleFindMyEnabled">--</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Active Subscriptions</span>
+              <span style="font-weight: 600; color: #22c55e;" id="appleSubscriptionActive">--</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Apple Device Types -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-laptop" style="margin-right: 0.5rem;"></i>Device Distribution
+          </h3>
+          <div id="appleDeviceTypes" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-2-lg">
+        <!-- Application Usage -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-th-large" style="margin-right: 0.5rem;"></i>Application Usage
+          </h3>
+          <div style="margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+              <span style="font-size: 0.875rem;">Apps per User</span>
+              <span style="font-weight: 600; color: #3b82f6;" id="applicationsPerUser">--</span>
+            </div>
+          </div>
+          <div id="applicationUsage" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <!-- Integration Health -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-network-wired" style="margin-right: 0.5rem;"></i>Integration Health
+          </h3>
+          <div style="margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+              <span style="font-size: 0.875rem;">Integrations per User</span>
+              <span style="font-weight: 600; color: #8b5cf6;" id="integrationsPerUser">--</span>
+            </div>
+          </div>
+          <div id="integrationHealth" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Details -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-user-friends" style="color: #06b6d4; margin-right: 0.5rem;"></i>
+        User Activity
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-2-lg">
+        <!-- Recent Users -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>Recent Activity
+          </h3>
+          <div id="recentUsers" style="max-height: 300px; overflow-y: auto;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <!-- Top Risk Users -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>High Risk Users
+          </h3>
+          <div id="topRisks" style="max-height: 300px; overflow-y: auto;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="chart-container">
+      <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-chart-area" style="color: #10b981; margin-right: 0.5rem;"></i>
+        User Activity Trends (Last 24 Hours)
+      </h3>
+      <canvas id="profileTrendsChart" style="max-height: 400px;"></canvas>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer style="margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #475569; display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: #94a3b8;">
+    <div>
+      <i class="fas fa-users-cog" style="margin-right: 0.5rem;"></i>
+      DuoPlus Profile Analytics | User Intelligence & Security
+    </div>
+    <div style="display: flex; gap: 1rem;">
+      <span><i class="fas fa-bolt" style="margin-right: 0.25rem;"></i>Load: <span id="loadTime">--</span>ms</span>
+      <span><i class="fas fa-clock" style="margin-right: 0.25rem;"></i>Real-time</span>
+      <span><i class="fas fa-database" style="margin-right: 0.25rem;"></i>Profile Data</span>
+    </div>
+  </footer>
+
+  <!-- Main Application Script -->
+  <script>
+    let _profileTrendsChart = null;
+    
+    // Initialize Profile dashboard
+    function initializeDashboard() {
+      const data = window.DATA || {};
+      const loadTime = performance.now() - window.PERFORMANCE_START;
+      
+      updateProfileMetrics(data);
+      initializeChart(data);
+      updatePerformanceMetrics(loadTime);
+      
+      console.log(`🚀 Profile Dashboard loaded in ${loadTime.toFixed(0)}ms`);
+    }
+    
+    function updateProfileMetrics(data) {
+      const profile = data.profile || {};
+      
+      // User overview metrics
+      document.getElementById('totalUsers').textContent = profile.totalUsers || 0;
+      document.getElementById('activeUsers').textContent = profile.activeUsers || 0;
+      document.getElementById('highRiskUsers').textContent = profile.highRiskUsers || 0;
+      document.getElementById('averageRiskScore').textContent = (profile.averageRiskScore || 0).toFixed(1);
+      
+      // Risk score bar
+      document.getElementById('riskScoreBar').style.width = `${Math.min(profile.averageRiskScore || 0, 100)}%`;
+      
+      // Risk distribution
+      const riskDist = profile.riskDistribution || {};
+      const totalRisk = Object.values(riskDist).reduce((a, b) => a + b, 0);
+      
+      document.getElementById('riskLow').textContent = riskDist.low || 0;
+      document.getElementById('riskMedium').textContent = riskDist.medium || 0;
+      document.getElementById('riskHigh').textContent = riskDist.high || 0;
+      document.getElementById('riskCritical').textContent = riskDist.critical || 0;
+      
+      if (totalRisk > 0) {
+        document.getElementById('riskLowBar').style.width = `${(riskDist.low / totalRisk) * 100}%`;
+        document.getElementById('riskMediumBar').style.width = `${(riskDist.medium / totalRisk) * 100}%`;
+        document.getElementById('riskHighBar').style.width = `${(riskDist.high / totalRisk) * 100}%`;
+        document.getElementById('riskCriticalBar').style.width = `${(riskDist.critical / totalRisk) * 100}%`;
+      }
+      
+      // Security analysis
+      document.getElementById('proxyUsers').textContent = profile.proxyUsers || 0;
+      document.getElementById('vpnUsers').textContent = profile.vpnUsers || 0;
+      document.getElementById('newUsersToday').textContent = profile.newUsersToday || 0;
+      
+      if (profile.totalUsers > 0) {
+        document.getElementById('proxyUsersBar').style.width = `${(profile.proxyUsers / profile.totalUsers) * 100}%`;
+        document.getElementById('vpnUsersBar').style.width = `${(profile.vpnUsers / profile.totalUsers) * 100}%`;
+      }
+      
+      // Top countries
+      const countries = profile.topCountries || [];
+      const countriesContainer = document.getElementById('topCountries');
+      countriesContainer.innerHTML = '';
+      
+      countries.slice(0, 5).forEach((country, index) => {
+        const countryDiv = document.createElement('div');
+        countryDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+        countryDiv.innerHTML = `
+          <span style="font-size: 0.875rem;">
+            <span style="margin-right: 0.5rem;">${index + 1}.</span>
+            ${country.country}
+          </span>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-weight: 600; color: #3b82f6;">${country.users}</span>
+            <span style="font-size: 0.75rem; color: #94a3b8;">${country.riskScore.toFixed(1)}</span>
+          </div>
+        `;
+        countriesContainer.appendChild(countryDiv);
+      });
+      
+      // Application usage
+      document.getElementById('applicationsPerUser').textContent = (profile.applicationsPerUser || 0).toFixed(1);
+      
+      const appUsage = profile.applicationUsage || [];
+      const appContainer = document.getElementById('applicationUsage');
+      appContainer.innerHTML = '';
+      
+      appUsage.slice(0, 5).forEach(app => {
+        const appDiv = document.createElement('div');
+        appDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+        appDiv.innerHTML = `
+          <span style="font-size: 0.875rem;">${app.appName}</span>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="risk-badge risk-badge-${app.riskLevel}">${app.riskLevel}</span>
+            <span style="font-weight: 600; color: #3b82f6;">${app.users}</span>
+          </div>
+        `;
+        appContainer.appendChild(appDiv);
+      });
+      
+      // Integration health
+      document.getElementById('integrationsPerUser').textContent = (profile.integrationsPerUser || 0).toFixed(1);
+      
+      const integrationHealth = profile.integrationHealth || {};
+      const integrationContainer = document.getElementById('integrationHealth');
+      integrationContainer.innerHTML = '';
+      
+      Object.entries(integrationHealth).forEach(([type, health]) => {
+        const integrationDiv = document.createElement('div');
+        integrationDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+        integrationDiv.innerHTML = `
+          <span style="font-size: 0.875rem; text-transform: capitalize;">${type}</span>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="integration-status integration-connected">${health.connected}</span>
+            <span class="integration-status integration-error">${health.error}</span>
+          </div>
+        `;
+        integrationContainer.appendChild(integrationDiv);
+      });
+      
+      // Recent users
+      const recentUsers = data.recentUsers || [];
+      const recentContainer = document.getElementById('recentUsers');
+      recentContainer.innerHTML = '';
+      
+      recentUsers.forEach(user => {
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-card';
+        userDiv.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <div style="font-weight: 600; margin-bottom: 0.25rem;">${user.fullName || user.email}</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">ID: ${user.userId}</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">${user.address?.city || 'No location'}, ${user.address?.state || 'N/A'}</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Phone: ${user.phoneNumber || 'Not provided'}</div>
+              <div style="font-size: 0.75rem; color: #94a3b8;">Last: ${new Date(user.lastActive).toLocaleString()}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: end; gap: 0.25rem;">
+              <span style="font-weight: 600; color: #f59e0b;">${user.riskScore.toFixed(1)}</span>
+              <span style="font-size: 0.75rem; text-transform: uppercase; color: #10b981;">${user.status}</span>
+              ${user.appleIntegration ? '<span style="font-size: 0.75rem; color: #000000;">🍎</span>' : ''}
+            </div>
+          </div>
+        `;
+        recentContainer.appendChild(userDiv);
+      });
+      
+      // Top risk users
+      const topRisks = data.topRisks || [];
+      const riskContainer = document.getElementById('topRisks');
+      riskContainer.innerHTML = '';
+      
+      topRisks.forEach(user => {
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-card';
+        userDiv.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <div style="font-weight: 600; margin-bottom: 0.25rem; color: #ef4444;">${user.fullName || user.email}</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">ID: ${user.userId}</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">${user.address?.city || 'No location'}, ${user.address?.state || 'N/A'}</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Phone Age: ${user.phoneAge?.daysOld || 'Unknown'} days</div>
+              <div style="font-size: 0.75rem; color: #94a3b8;">Last: ${new Date(user.lastActive).toLocaleString()}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: end; gap: 0.25rem;">
+              <span style="font-weight: 600; color: #ef4444;">${user.riskScore.toFixed(1)}</span>
+              <span style="font-size: 0.75rem; text-transform: uppercase; color: #f59e0b;">${user.status}</span>
+              ${user.phoneAge?.isRecent ? '<span style="font-size: 0.75rem; color: #ef4444;">📱 New</span>' : ''}
+            </div>
+          </div>
+        `;
+        riskContainer.appendChild(userDiv);
+      });
+      
+      // Name and Address Analytics
+      document.getElementById('usersWithNames').textContent = profile.usersWithNames || 0;
+      document.getElementById('usersWithAddresses').textContent = profile.usersWithAddresses || 0;
+      document.getElementById('verifiedAddresses').textContent = profile.verifiedAddresses || 0;
+      document.getElementById('averageNameConfidence').textContent = (profile.averageNameConfidence || 0).toFixed(1);
+      
+      if (profile.totalUsers > 0) {
+        document.getElementById('usersWithNamesBar').style.width = `${(profile.usersWithNames / profile.totalUsers) * 100}%`;
+        document.getElementById('usersWithAddressesBar').style.width = `${(profile.usersWithAddresses / profile.totalUsers) * 100}%`;
+        document.getElementById('verifiedAddressesBar').style.width = `${(profile.verifiedAddresses / profile.totalUsers) * 100}%`;
+        document.getElementById('nameConfidenceBar').style.width = `${profile.averageNameConfidence || 0}%`;
+      }
+      
+      // Phone Analytics
+      document.getElementById('usersWithPhones').textContent = profile.usersWithPhones || 0;
+      document.getElementById('phoneGeoIPCoverage').textContent = profile.phoneGeoIPCoverage || 0;
+      document.getElementById('averagePhoneAge').textContent = Math.round(profile.averagePhoneAge || 0);
+      document.getElementById('recentPhoneActivations').textContent = profile.recentPhoneActivations || 0;
+      
+      if (profile.totalUsers > 0) {
+        document.getElementById('usersWithPhonesBar').style.width = `${(profile.usersWithPhones / profile.totalUsers) * 100}%`;
+        document.getElementById('phoneGeoIPBar').style.width = `${(profile.phoneGeoIPCoverage / profile.totalUsers) * 100}%`;
+      }
+      
+      // Phone Types
+      const phoneTypes = profile.phoneTypes || {};
+      const phoneTypesContainer = document.getElementById('phoneTypes');
+      phoneTypesContainer.innerHTML = '';
+      
+      Object.entries(phoneTypes).forEach(([type, count]) => {
+        if (count > 0) {
+          const typeDiv = document.createElement('div');
+          typeDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+          typeDiv.innerHTML = `
+            <span style="font-size: 0.875rem; text-transform: capitalize;">${type}</span>
+            <span style="font-weight: 600; color: #3b82f6;">${count}</span>
+          `;
+          phoneTypesContainer.appendChild(typeDiv);
+        }
+      });
+      
+      // Phone Location Coverage
+      const phoneLocationCoverage = profile.phoneLocationCoverage || [];
+      const phoneLocationContainer = document.getElementById('phoneLocationCoverage');
+      phoneLocationContainer.innerHTML = '';
+      
+      phoneLocationCoverage.slice(0, 5).forEach((location, _index) => {
+        const locationDiv = document.createElement('div');
+        locationDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+        locationDiv.innerHTML = `
+          <span style="font-size: 0.875rem;">${location.country}</span>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-weight: 600; color: #3b82f6;">${location.users}</span>
+            <span style="font-size: 0.75rem; color: #94a3b8;">${location.accuracy.toFixed(1)}%</span>
+          </div>
+        `;
+        phoneLocationContainer.appendChild(locationDiv);
+      });
+      
+      // Pattern Analytics
+      document.getElementById('behaviorAnomalies').textContent = profile.behaviorAnomalies || 0;
+      document.getElementById('highFrequencyLogins').textContent = profile.highFrequencyLogins || 0;
+      document.getElementById('unusualLocations').textContent = profile.unusualLocations || 0;
+      document.getElementById('crossPlatformActivity').textContent = profile.crossPlatformActivity || 0;
+      
+      // Mock additional pattern metrics
+      document.getElementById('multiDeviceUsage').textContent = Math.floor((profile.crossPlatformActivity || 0) * 0.7);
+      document.getElementById('highRiskPatterns').textContent = Math.floor((profile.behaviorAnomalies || 0) * 0.6);
+      document.getElementById('suspiciousBehavior').textContent = Math.floor((profile.behaviorAnomalies || 0) * 0.4);
+      
+      // KYC Text Analytics
+      document.getElementById('kycTextProcessed').textContent = profile.kycTextProcessed || 0;
+      document.getElementById('kycTextVerified').textContent = profile.kycTextVerified || 0;
+      document.getElementById('averageKycConfidence').textContent = (profile.averageKycConfidence || 0).toFixed(1);
+      document.getElementById('documentExtractionSuccess').textContent = profile.documentExtractionSuccess || 0;
+      
+      if (profile.kycTextProcessed > 0) {
+        document.getElementById('extractionSuccessBar').style.width = `${(profile.documentExtractionSuccess / profile.kycTextProcessed) * 100}%`;
+      }
+      
+      // Verification Status
+      const verificationStatus = document.getElementById('verificationStatus');
+      verificationStatus.innerHTML = '';
+      
+      const verificationData = [
+        { status: 'Verified', count: profile.kycTextVerified || 0, color: '#10b981' },
+        { status: 'Pending', count: (profile.kycTextProcessed || 0) - (profile.kycTextVerified || 0), color: '#f59e0b' },
+        { status: 'Rejected', count: Math.floor((profile.kycTextProcessed || 0) * 0.1), color: '#ef4444' }
+      ];
+      
+      verificationData.forEach(item => {
+        if (item.count > 0) {
+          const statusDiv = document.createElement('div');
+          statusDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+          statusDiv.innerHTML = `
+            <span style="font-size: 0.875rem;">${item.status}</span>
+            <span style="font-weight: 600; color: ${item.color};">${item.count}</span>
+          `;
+          verificationStatus.appendChild(statusDiv);
+        }
+      });
+      
+      // Apple Integration Analytics
+      document.getElementById('appleIntegratedUsers').textContent = profile.appleIntegratedUsers || 0;
+      document.getElementById('averageAppleDevices').textContent = (profile.averageAppleDevices || 0).toFixed(1);
+      document.getElementById('averageAppleSecurityScore').textContent = (profile.averageAppleSecurityScore || 0).toFixed(1);
+      document.getElementById('appleTwoFactorEnabled').textContent = profile.appleTwoFactorEnabled || 0;
+      document.getElementById('appleFindMyEnabled').textContent = profile.appleFindMyEnabled || 0;
+      document.getElementById('appleSubscriptionActive').textContent = profile.appleSubscriptionActive || 0;
+      
+      // Apple Device Types
+      const appleDeviceTypes = document.getElementById('appleDeviceTypes');
+      appleDeviceTypes.innerHTML = '';
+      
+      const deviceTypes = [
+        { type: 'iPhone', count: Math.floor((profile.appleIntegratedUsers || 0) * 0.6), color: '#000000' },
+        { type: 'iPad', count: Math.floor((profile.appleIntegratedUsers || 0) * 0.2), color: '#3b82f6' },
+        { type: 'Mac', count: Math.floor((profile.appleIntegratedUsers || 0) * 0.15), color: '#8b5cf6' },
+        { type: 'Watch', count: Math.floor((profile.appleIntegratedUsers || 0) * 0.05), color: '#ef4444' }
+      ];
+      
+      deviceTypes.forEach(item => {
+        if (item.count > 0) {
+          const deviceDiv = document.createElement('div');
+          deviceDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+          deviceDiv.innerHTML = `
+            <span style="font-size: 0.875rem;">${item.type}</span>
+            <span style="font-weight: 600; color: ${item.color};">${item.count}</span>
+          `;
+          appleDeviceTypes.appendChild(deviceDiv);
+        }
+      });
+    }
+    
+    function initializeChart(data) {
+      const ctx = document.getElementById('profileTrendsChart');
+      if (!ctx) return;
+      
+      const trends = data.trends || [];
+      const userTrends = trends.filter(t => t.metric === 'active_users');
+      const labels = userTrends.map(t => new Date(t.timestamp).toLocaleTimeString());
+      const values = userTrends.map(t => t.value);
+      
+      if (typeof Chart !== 'undefined') {
+        _profileTrendsChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Active Users',
+                data: values,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: '#f1f5f9' } }
+            },
+            scales: {
+              x: { 
+                grid: { color: '#475569' }, 
+                ticks: { color: '#94a3b8' } 
+              },
+              y: { 
+                grid: { color: '#475569' }, 
+                ticks: { color: '#94a3b8' } 
+              }
+            }
+          }
+        });
+      }
+    }
+    
+    function updatePerformanceMetrics(loadTime) {
+      document.getElementById('loadTime').textContent = loadTime.toFixed(0);
+      document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+    }
+    
+    function _refreshDashboard() {
+      if (window.OFFLINE_MODE) {
+        showNotification('Offline mode - start server for live data', 'warning');
+        return;
+      }
+      
+      showNotification('Refreshing profile data...', 'info');
+    }
+    
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      `;
+      
+      if (type === 'success') {
+        notification.style.background = '#10b981';
+      } else if (type === 'error') {
+        notification.style.background = '#ef4444';
+      } else if (type === 'warning') {
+        notification.style.background = '#f59e0b';
+      } else {
+        notification.style.background = '#3b82f6';
+      }
+      
+      notification.innerHTML = `<i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>${message}`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+    
+    // Initialize on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeDashboard);
+    } else {
+      initializeDashboard();
+    }
+    
+    // Log performance metrics
+    window.addEventListener('load', () => {
+      const loadTime = performance.now() - window.PERFORMANCE_START;
+      console.log(`🚀 DuoPlus Profile Dashboard Performance:`);
+      console.log(`  Load Time: ${loadTime.toFixed(0)}ms`);
+      console.log(`  Mode: Standalone (embedded data)`);
+    });
+  </script>
+</body>
+</html>

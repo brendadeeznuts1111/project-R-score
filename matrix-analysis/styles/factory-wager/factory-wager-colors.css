@@ -1,0 +1,15 @@
+
+:root {
+  --fw-primary: #3b82f6;
+  --fw-success: #22c55e;
+  --fw-warning: #f59e0b;
+  --fw-error: #ef4444;
+  --fw-background: #1f2937;
+  --fw-text: #f3f4f6;
+
+  /* RGB values for calculations */
+  --fw-primary-rgb: rgb(59, 130, 246);
+  --fw-success-rgb: rgb(34, 197, 94);
+  --fw-warning-rgb: rgb(245, 158, 11);
+  --fw-error-rgb: rgb(239, 68, 68);
+}

@@ -1,0 +1,75 @@
+// Changelog for github skill
+// Tracks version history and breaking changes
+{
+  "skillId": "github",
+  "skillName": "GitHub CLI",
+  "currentVersion": "2.45.0",
+  "versions": [
+    {
+      "version": "2.45.0",
+      "date": "2025-01-15",
+      "changes": [
+        "Added support for GitHub Copilot CLI integration",
+        "Improved PR review workflow"
+      ],
+      "added": [
+        "gh copilot command",
+        "PR review templates"
+      ],
+      "fixed": [
+        "Authentication token refresh issue"
+      ]
+    },
+    {
+      "version": "2.44.0",
+      "date": "2025-01-01",
+      "changes": [
+        "New issue templates feature",
+        "Enhanced search capabilities"
+      ],
+      "added": [
+        "gh issue template command",
+        "Advanced search filters"
+      ]
+    },
+    {
+      "version": "2.43.0",
+      "date": "2024-12-15",
+      "breaking": true,
+      "changes": [
+        "Breaking: Changed default branch detection",
+        "Removed legacy auth method"
+      ],
+      "removed": [
+        "Legacy OAuth flow",
+        "gh config get/set syntax (use gh config list)"
+      ],
+      "deprecated": [
+        "gh alias import (use gh alias set --clobber)"
+      ]
+    },
+    {
+      "version": "2.42.0",
+      "date": "2024-12-01",
+      "changes": [
+        "Performance improvements",
+        "Bug fixes for Windows"
+      ],
+      "fixed": [
+        "Windows path handling",
+        "SSH key detection"
+      ]
+    },
+    {
+      "version": "2.41.0",
+      "date": "2024-11-15",
+      "changes": [
+        "Added attestation commands",
+        "Improved error messages"
+      ],
+      "added": [
+        "gh attestation command"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+# =============================================================================
+# [h1] BUN CONFIGURATION
+# =============================================================================
+# Bun package manager and build tool configuration
+
+# =============================================================================
+# [h2] DEVELOPMENT SERVER
+# =============================================================================
+[serve]
+# Static file serving configuration
+[serve.static]
+plugins = ["bun-plugin-tailwind"]
+env = "BUN_PUBLIC_*"
+# Server settings
+port = 3000
+host = "localhost"
+hot_reload = true
+open_browser = true
+
+# =============================================================================
+# [h2] BUILD CONFIGURATION
+# =============================================================================
+[build]
+# Entry points and output
+entry_points = ["src/app.js", "src/main.tsx"]
+outdir = "dist"
+target = "browser"
+# Optimization settings
+minify = true
+sourcemap = true
+tree_shaking = true
+
+# =============================================================================
+# [h3] DEVELOPMENT DEPENDENCIES
+# =============================================================================
+[dev-dependencies]
+# Testing and development tools
+"jest" = "^29.6.0"
+"@types/jest" = "^29.5.0"
+"eslint" = "^8.45.0"
+"prettier" = "^3.0.0"
+
+# =============================================================================
+# [h3] PRODUCTION DEPENDENCIES
+# =============================================================================
+[dependencies]
+# Core runtime
+react = "^18.2.0"
+react-dom = "^18.2.0"
+# Build tools
+tailwindcss = "^3.3.0"
+autoprefixer = "^10.4.0"
+
+# =============================================================================
+# [h4] SCRIPTS
+# =============================================================================
+[scripts]
+dev = "bun --hot src/app.js"
+build = "bun build src/app.js --outdir dist"
+test = "bun test"
+lint = "eslint src --ext .js,.jsx"

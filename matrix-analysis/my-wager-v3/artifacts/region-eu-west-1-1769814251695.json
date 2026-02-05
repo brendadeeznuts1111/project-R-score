@@ -1,0 +1,13 @@
+{
+  "region": "eu-west-1",
+  "status": "active",
+  "lastUpdate": 1769814251695,
+  "metrics": {
+    "parseTime": 0.04180209107841182,
+    "testCount": 33,
+    "passRate": 0.9991753901555154,
+    "coverage": 0.9986922837737711,
+    "duration": 2049.2067524323475
+  },
+  "sealId": "tier1380-1769814251695-la0z7055s1"
+}

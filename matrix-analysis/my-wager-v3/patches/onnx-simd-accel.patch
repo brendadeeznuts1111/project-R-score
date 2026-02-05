@@ -1,0 +1,71 @@
+--- a/node_modules/onnxruntime-node/dist/ort.js
++++ b/node_modules/onnxruntime-node/dist/ort.js
+@@ -500,6 +500,32 @@
+ class InferenceSession {
+   constructor(modelPath, options = {}) {
+     this.modelPath = modelPath;
++    // Tension Field GNN SIMD Acceleration
++    this.simdEnabled = options.enableSimd !== false;
++    this.arm64Optimized = process.arch === 'arm64';
++    
++    if (this.simdEnabled && this.arm64Optimized) {
++      console.log('🚀 ONNX ARM64 SIMD acceleration enabled for Tension GNN');
++      this.initializeArm64Simd();
++    }
++  }
++  
++  initializeArm64Simd() {
++    // Override tensor operations for ARM64 SIMD
++    this.originalRun = this.run;
++    this.run = async function(feeds, fetches, options = {}) {
++      // Pre-process tensors for SIMD alignment
++      const simdFeeds = {};
++      for (const [key, tensor] of Object.entries(feeds)) {
++        simdFeeds[key] = this.alignTensorForSimd(tensor);
++      }
++      
++      // Run with optimized tensors
++      const results = await this.originalRun(simdFeeds, fetches, {
++        ...options,
++        executionMode: 'parallel', // Force parallel execution
++        graphOptimizationLevel: 'all',
++      });
++      
++      return results;
++    };
++  }
++  
++  alignTensorForSimd(tensor) {
++    // Ensure 16-byte alignment for ARM64 SIMD operations
++    if (tensor.data instanceof Float32Array) {
++      const size = tensor.data.length;
++      const alignedSize = Math.ceil(size * 4 / 16) * 16 / 4;
++      
++      if (alignedSize !== size) {
++        const alignedData = new Float32Array(alignedSize);
++        alignedData.set(tensor.data);
++        return new ort.Tensor(tensor.type, alignedData, tensor.dims);
++      }
++    }
++    return tensor;
++  }
++  
++  // Tension Field GNN batch optimization
++  async runTensionBatch(nodeTensors, edgeTensors, batchSize = 32) {
++    const batches = [];
++    for (let i = 0; i < nodeTensors.length; i += batchSize) {
++      const nodeBatch = nodeTensors.slice(i, i + batchSize);
++      const edgeBatch = edgeTensors.slice(i, i + batchSize);
++      
++      const results = await this.run(
++        { nodes: nodeBatch, edges: edgeBatch },
++        { tensions: 'tensions', anomalies: 'anomaly_scores' }
++      );
++      
++      batches.push(results);
++    }
++    
++    return batches;
++  }
+   
+   async run(feeds, fetches, options = {}) {

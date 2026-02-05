@@ -1,0 +1,8 @@
+tenant:
+  id: tenant-a
+  name: Tenant tenant-a
+  created: 2026-02-01T03:54:12.533Z
+
+settings:
+  theme: dark
+  timezone: UTC

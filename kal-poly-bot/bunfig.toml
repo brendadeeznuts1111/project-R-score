@@ -1,0 +1,52 @@
+# Bun Configuration for Surgical Precision Platform
+# Generated on: 2026-01-13T22:25:52.260Z
+
+[install]
+exact = true
+# Cache configuration
+cache = true
+cache-dir = "./.bun-cache"
+# Registry configuration
+registry = "https://npm.factory-wager.com"
+# Lockfile configuration
+lockfile = true
+lockfile-save = true
+
+[run]
+# Script execution configuration
+shell = "system"
+preload = ["./scripts/preload.ts"]
+
+[build]
+# Build configuration
+target = "bun"
+minify = false
+sourcemap = true
+outdir = "./data/build-artifacts"
+
+[test]
+# Test configuration
+preload = ["./scripts/test-setup.ts"]
+coverage = true
+coverageDir = "./coverage"
+
+[debug]
+# Debug configuration
+port = 9229
+host = "localhost"
+
+# Environment-specific settings
+
+[dev]
+hotReload = true
+liveReload = true
+
+
+
+
+[publish]
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }

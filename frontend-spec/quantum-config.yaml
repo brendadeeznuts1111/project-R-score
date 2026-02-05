@@ -1,0 +1,66 @@
+# quantum-config.yaml
+version: "2.0.0"
+environment: production
+
+build:
+  profiles:
+    - name: universal
+      target: browser
+      features: ["TERMINAL", "WEBGL", "REACT_FAST_REFRESH"]
+      minify: true
+      sourcemap: false
+      
+    - name: light
+      target: browser
+      features: []
+      minify: true
+      sourcemap: false
+
+deployment:
+  strategy: canary
+  canary_percentage: 10
+  health_check_interval: 30s
+  rollback_on_failure: true
+
+terminal:
+  enabled: true
+  default_dimensions:
+    cols: 80
+    rows: 24
+  scripts:
+    ticker: "scripts/financial-ticker.sh"
+    monitor: "scripts/system-monitor.sh"
+    network: "scripts/network-traffic.sh"
+
+monitoring:
+  metrics:
+    - memory_usage
+    - response_time
+    - error_rate
+    - terminal_connections
+  alerts:
+    - metric: memory_usage
+      threshold: 90%
+      action: restart
+    - metric: error_rate
+      threshold: 5%
+      action: rollback
+
+cdn:
+  provider: bunny.net
+  zones:
+    - name: quantum-assets
+      domain: assets.quantum.cash
+      
+database:
+  primary: postgresql://localhost/quantum
+  replica: postgresql://replica/quantum
+  pool_size: 10
+
+logging:
+  level: info
+  format: json
+  outputs:
+    - console
+    - file://logs/quantum.log
+    - loki://monitoring/loki

@@ -1,0 +1,89 @@
+# headscale/config.yaml - Tailscale-Compatible Configuration
+
+server_url: https://api.example.com
+listen_addr: 0.0.0.0:8080
+metrics_listen_addr: 0.0.0.0:9090
+
+# Disable TLS - handled by Cloudflare
+tls_cert_path: ""
+tls_key_path: ""
+
+# Database
+database:
+  type: sqlite
+  path: /var/lib/headscale/sqlite.db
+
+# DERP (WebSocket support required)
+derp:
+  server:
+    enabled: true
+    region_id: 999
+    region_code: "headscale"
+    region_name: "Headscale DERP"
+    stun_listen_addr: 0.0.0.0:3478
+
+  # Cloudflare-friendly DERP configuration
+  urls:
+    - https://api.example.com/derp
+
+  auto_update_enabled: false
+
+# OIDC (for Cloudflare Access integration)
+oidc:
+  only_start_if_oidc_is_available: false
+  issuer: https://your-domain.cloudflareaccess.com
+  client_id: ${CF_ACCESS_CLIENT_ID}
+  client_secret: ${CF_ACCESS_CLIENT_SECRET}
+
+# API Key for Worker authentication
+api_key: ${HEADSCALE_API_KEY}
+
+# Logging (structured for Cloudflare)
+log:
+  format: json
+  level: info
+
+# Policy - integrate with Cloudflare Zero Trust
+policy:
+  mode: file
+  path: /etc/headscale/policy.yaml
+
+# DNS
+dns:
+  magic_dns: true
+  base_domain: example.com
+
+# Disable direct access when behind Cloudflare
+server_latitude: 0.0
+server_longitude: 0.0
+
+# Prefixes
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+
+# IP allocation
+ip_prefixes:
+  - 100.64.0.0/10
+
+# Randomize client port
+randomize_client_port: false
+
+# Tuning
+tuning:
+  batch_change_delay: 100ms
+  window_update_delay: 1s
+  monkey_patching: false
+
+# Disable registration
+disable_check_updates: true
+
+# gRPC configuration
+grpc:
+  listen_addr: 0.0.0.0:50443
+  allow_insecure: false
+
+# Experimental features
+experimental:
+  feature_flag_new_policy_engine: true
+

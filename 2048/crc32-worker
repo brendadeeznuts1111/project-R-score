@@ -1,0 +1,6 @@
+#!/bin/bash
+# CRC32 Worker CLI Wrapper
+# Usage: ./crc32-worker --benchmark --limit=100000 --json --archive
+
+cd "$(dirname "$0")"
+bun run workers/crc32-worker.ts "$@"

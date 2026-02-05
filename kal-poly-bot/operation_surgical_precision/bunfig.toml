@@ -1,0 +1,49 @@
+# Surgical Precision Platform - Bun Configuration
+# Optimized for maximum Bun-native performance and zero-collateral operations
+
+[install]
+# Trust all dependencies for surgical precision workflow
+trust-dependencies = true
+
+# Lockfile configuration for reproducible builds
+frozen-lockfile = true
+
+# Cache configuration for rapid development iterations
+cache-dir = ".bun/cache"
+lockfile = "bun.lock"
+
+[dev]
+# Hot reload configuration optimized for surgical precision
+hot-reload = true
+watch-mode = true
+port = 8080
+
+[build]
+# Surgical precision build configuration
+minify = true
+splitting = true
+no-bundle = false
+target = "bun"
+outdir = "./dist"
+
+# External packages for surgical precision operations
+external = ["kubectl", "docker"]
+
+# Performance optimizations
+source-maps = false
+tree-shaking = true
+
+[debug]
+# Editor integration for surgical precision workflow
+editor = "code"
+
+[run]
+# Environment configuration for surgical precision
+smol = false
+hot = false
+
+[test]
+# Test configuration optimized for Bun performance
+timeout = "30s"
+bail = false
+coverage = false

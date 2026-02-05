@@ -1,0 +1,153 @@
+{
+  "name": "matrix-agent",
+  "version": "1.0.0",
+  "description": "Matrix Analysis Platform - AI Agent Integration",
+  "wizard": {
+    "lastRunAt": "2026-01-31T03:57:09.730Z",
+    "lastRunVersion": "1.0.0",
+    "lastRunCommand": "init",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "openrouter:default": {
+        "provider": "openrouter",
+        "mode": "api_key"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/minimax/minimax-m2.1"
+      },
+      "models": {
+        "openrouter/auto": {
+          "alias": "auto"
+        },
+        "openrouter/minimax/minimax-m2.1": {
+          "alias": "mini"
+        },
+        "openrouter/anthropic/claude-sonnet-4": {
+          "alias": "sonnet"
+        },
+        "openrouter/anthropic/claude-opus-4": {
+          "alias": "opus"
+        },
+        "openrouter/openai/gpt-4o": {
+          "alias": "gpt"
+        }
+      },
+      "workspace": "/Users/nolarose",
+      "contextPruning": {
+        "mode": "adaptive"
+      }
+    }
+  },
+  "messages": {
+    "ackReaction": "eyes",
+    "ackReactionScope": "group-mentions",
+    "removeAckAfterReply": true
+  },
+  "commands": {
+    "native": true,
+    "nativeSkills": "auto"
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "allowlist",
+      "replyToMode": "first",
+      "groups": {
+        "*": {
+          "requireMention": true,
+          "enabled": true
+        }
+      },
+      "groupPolicy": "open",
+      "streamMode": "partial",
+      "mediaMaxMb": 10
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "allowTailscale": true
+    },
+    "tailscale": {
+      "mode": "serve",
+      "resetOnExit": false
+    }
+  },
+  "skills": {
+    "install": {
+      "nodeManager": "bun"
+    },
+    "entries": {
+      "things-mac": {
+        "enabled": true
+      },
+      "summarize": {
+        "enabled": true
+      },
+      "skill-creator": {
+        "enabled": true
+      },
+      "gemini": {
+        "enabled": true
+      },
+      "brave-search": {
+        "apiKey": "env:BRAVE_API_KEY"
+      },
+      "local-places": {
+        "apiKey": "env:GOOGLE_PLACES_KEY"
+      },
+      "nano-banana-pro": {
+        "apiKey": "env:GEMINI_API_KEY"
+      },
+      "openai-image-gen": {
+        "apiKey": "env:OPENAI_API_KEY"
+      },
+      "openai-whisper-api": {
+        "apiKey": "env:OPENAI_API_KEY"
+      },
+      "trello": {
+        "apiKey": "env:TRELLO_API_KEY"
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      }
+    }
+  },
+  "integration": {
+    "profiles": {
+      "enabled": true,
+      "configPath": "~/.matrix/profiles"
+    },
+    "terminal": {
+      "enabled": true,
+      "bindingManager": ".claude/core/terminal"
+    },
+    "tier1380": {
+      "enabled": true,
+      "cliPath": "cli/tier1380.ts"
+    },
+    "mcp": {
+      "enabled": true,
+      "configPath": ".mcp.json"
+    }
+  },
+  "meta": {
+    "migratedFrom": "clawdbot",
+    "migratedAt": "2026-01-31T03:57:09.730Z",
+    "lastTouchedVersion": "1.0.0",
+    "lastTouchedAt": "2026-01-31T03:57:09.730Z"
+  }
+}

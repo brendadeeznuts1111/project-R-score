@@ -1,0 +1,88 @@
+[run.production]
+# Production run configuration - optimized for stability and performance
+# Use Bun's shell for consistent production behavior
+shell = "bun"
+# Auto-alias node to bun for production script compatibility
+bun = true
+# Enable silent mode in production to reduce log noise
+silent = true
+
+[permissions.production]
+allowRead = [".", "~/.bun/install/cache", "./config", "./src", "./public"]
+allowWrite = ["./logs", "./temp", "./dist", "./coverage"]
+allowRun = ["bun", "git", "rg"]
+allowEnv = ["NODE_ENV", "BUN_ENV", "BUN_INSPECTOR_VERSION"]
+allowNet = ["https://registry.npmjs.org", "https://api.github.com"]
+allowSpawn = ["bun", "git", "rg"]
+allowFFI = []
+
+[install]
+registry = "https://registry.npmjs.org/"
+cache = true
+preferOffline = true
+saveTextLockfile = true
+skipInstallScripts = false
+
+[frameworks.production]
+react = { "fastRefresh": false, "development": false }
+next = { "development": false }
+svelte = { "development": false }
+vue = { "development": false }
+
+[inspector.production]
+memoryLimit = "8GB"
+cpuLimit = 4
+profilingMode = "production"
+gcThreshold = 0.90
+strictMode = true
+performanceMode = "high"
+debugMode = false
+typedArrayLimit = 1048576
+concurrentModificationDetection = true
+endiannessCheck = true
+boundsChecking = true
+typeValidation = true
+deprecationWarnings = false
+
+[inspector.metrics]
+enabled = true
+interval = 1000
+retention = 604800000
+exportOnExit = true
+format = "json"
+
+[inspector.export]
+format = ["json", "csv", "html", "parquet"]
+compression = "gzip"
+includeSensitive = false
+maxFileSize = "10MB"
+
+[test.production]
+coverage = true
+coverageThreshold = { "global": { "lines": 90, "functions": 90, "branches": 90, "statements": 90 } }
+bail = true
+timeout = 30000
+workers = 4
+reporter = ["tap", "json"]
+outputFile = "./coverage/lcov.info"
+
+[build.production]
+minify = true
+sourcemap = false
+target = "browser"
+format = "esm"
+splitting = true
+outdir = "./dist"
+publicPath = "/assets/"
+
+[dev.production]
+port = 0
+host = "localhost"
+https = false
+watch = false
+spa = false
+
+[env.production]
+NODE_ENV = "production"
+BUN_ENV = "production"
+BUN_DEBUG_MODE = "0"

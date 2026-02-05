@@ -1,0 +1,13 @@
+{
+  "name": "fraud-detection-demo",
+  "version": "1.0.0",
+  "description": "Demo app using enhanced fraud detection system",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@nolarose/windsurf-project": "link:@nolarose/windsurf-project"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "fibonacci-recursive": {
+    "testName": "fibonacci-recursive",
+    "baseline": {
+      "avgTime": 86.82124980743149,
+      "maxTime": 143.89081740379333,
+      "avgMemory": 0,
+      "minOps": 6.880216666097701
+    },
+    "tolerance": 10
+  },
+  "array-operations": {
+    "testName": "array-operations",
+    "baseline": {
+      "avgTime": 0.887840179342884,
+      "maxTime": 7.191479897499085,
+      "avgMemory": 0,
+      "minOps": 1376629.030617583
+    },
+    "tolerance": 10
+  },
+  "string-processing": {
+    "testName": "string-processing",
+    "baseline": {
+      "avgTime": 14.175254640779123,
+      "maxTime": 47.141003790497784,
+      "avgMemory": 0,
+      "minOps": 105004.12808345359
+    },
+    "tolerance": 10
+  },
+  "object-creation": {
+    "testName": "object-creation",
+    "baseline": {
+      "avgTime": 5.963768098826813,
+      "maxTime": 20.104196192324164,
+      "avgMemory": 0,
+      "minOps": 246217.2549773427
+    },
+    "tolerance": 10
+  },
+  "math-operations": {
+    "testName": "math-operations",
+    "baseline": {
+      "avgTime": 1.682522638721772,
+      "maxTime": 5.447246198356152,
+      "avgMemory": 0,
+      "minOps": 18174320.821018856
+    },
+    "tolerance": 10
+  },
+  "json-processing": {
+    "testName": "json-processing",
+    "baseline": {
+      "avgTime": 6.646988289206679,
+      "maxTime": 13.643849989771844,
+      "avgMemory": 0,
+      "minOps": 72560.1645241011
+    },
+    "tolerance": 10
+  }
+}

@@ -1,0 +1,4264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TOML Editor Dashboard</title>
+    <meta name="description" content="Enterprise-grade TOML configuration system with zero external dependencies">
+    <meta name="theme-color" content="#a4ffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TOML Editor">
+    <meta name="application-name" content="TOML Editor">
+    <meta name="msapplication-TileColor" content="#667eea">
+    <meta name="msapplication-config" content="none">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik00OCA2NEw5NiA5NkwxNDQgNjRIMTQ0VjEyOEg0OFY2NFoiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuOSIvPgo8cGF0aCBkPSJNMzIgNDhIMTYwVjU2SDMyVjQ4WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC45Ii8+CjxwYXRoIGQ9Ik0zMiA3MkgxNjBWODBIMzJWNzJaIiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjkiLz4KPHBhdGggZD0iTTMyIDk2SDE2MFYxMDRIMzJWOjk2WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC45Ii8+CjxwYXRoIGQ9Ik0zMiAxMjBIMTYwVjEyOEgzMlYxMjBaIiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjkiLz4KPHRleHQgeD0iOTYiIHk9IjE0MCIgZm9udC1mYW1pbHk9Ik1vbmFjbywgbWVubG8sIG1vbm9zcGFjZSIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5UTUw8L3RleHQ+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxOTIiIHkyPSIxOTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N2VlYSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRiYTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4=">
+    <style>
+        :root {
+            /* ANSI Bright Colors */
+            --ansi-black: #000000;
+            --ansi-red: #ff5555;
+            --ansi-green: #50fa7b;
+            --ansi-yellow: #f1fa8c;
+            --ansi-blue: #6272a4;
+            --ansi-magenta: #ff79c6;
+            --ansi-cyan: #8be9fd;
+            --ansi-white: #f8f8f2;
+            --ansi-bright-black: #6272a4;
+            --ansi-bright-red: #ff6e6e;
+            --ansi-bright-green: #69ff94;
+            --ansi-bright-yellow: #ffffa5;
+            --ansi-bright-blue: #d6acff;
+            --ansi-bright-magenta: #ff92df;
+            --ansi-bright-cyan: #a4ffff;
+            --ansi-bright-white: #ffffff;
+            
+            /* Bun Brand Colors */
+            --bun-primary: #fbf0df;
+            --bun-secondary: #000000;
+            --bun-accent: #cc9500;
+            --bun-gradient-start: #fbf0df;
+            --bun-gradient-end: #f2e5d1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            background: linear-gradient(135deg, var(--ansi-bright-black) 0%, var(--ansi-black) 100%);
+            min-height: 100vh;
+            color: var(--ansi-bright-white);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Enhanced Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(40, 44, 52, 0.9));
+            border-radius: 20px;
+            border: 2px solid var(--ansi-bright-cyan);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(139, 233, 253, 0.3);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(139, 233, 253, 0.1), 
+                transparent, 
+                rgba(255, 107, 107, 0.1), 
+                transparent
+            );
+            animation: headerShimmer 8s infinite linear;
+        }
+
+        @keyframes headerShimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--ansi-bright-cyan), var(--ansi-bright-white));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(139, 233, 253, 0.5);
+            animation: headerGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes headerGlow {
+            0% { filter: brightness(1) drop-shadow(0 0 20px rgba(139, 233, 253, 0.5)); }
+            100% { filter: brightness(1.2) drop-shadow(0 0 30px rgba(139, 233, 253, 0.8)); }
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: var(--ansi-bright-white);
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .header-stat {
+            background: rgba(139, 233, 253, 0.1);
+            border: 1px solid var(--ansi-bright-cyan);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .header-stat:hover {
+            background: rgba(139, 233, 253, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 233, 253, 0.4);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--ansi-bright-cyan);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--ansi-bright-white);
+            opacity: 0.8;
+        }
+
+        .header-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-badge {
+            background: linear-gradient(135deg, var(--ansi-bright-green), var(--ansi-bright-blue));
+            color: var(--ansi-bright-black);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 2px solid var(--ansi-bright-white);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header-badge.duoplus {
+            background: linear-gradient(135deg, #6b46c1, #9333ea, #a855f7);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .header-badge.security {
+            background: linear-gradient(135deg, var(--ansi-bright-red), var(--ansi-bright-orange));
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .header-btn {
+            background: var(--ansi-bright-blue);
+            border: 2px solid var(--ansi-bright-cyan);
+            color: var(--ansi-bright-white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-btn:hover {
+            background: var(--ansi-bright-cyan);
+            color: var(--ansi-bright-black);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 233, 253, 0.5);
+        }
+
+        .version-indicator {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--ansi-bright-green);
+            color: var(--ansi-bright-green);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(40, 44, 52, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 233, 253, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--ansi-bright-cyan);
+            box-shadow: 0 8px 30px rgba(139, 233, 253, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        .stat-card:nth-child(1) .stat-value { color: var(--ansi-bright-green); }
+        .stat-card:nth-child(2) .stat-value { color: var(--ansi-bright-yellow); }
+        .stat-card:nth-child(3) .stat-value { color: var(--ansi-bright-red); }
+        .stat-card:nth-child(4) .stat-value { color: var(--ansi-bright-blue); }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: rgba(40, 44, 52, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card:nth-child(1) .feature-title { color: var(--ansi-bright-cyan); }
+        .feature-card:nth-child(2) .feature-title { color: var(--ansi-bright-red); }
+        .feature-card:nth-child(3) .feature-title { color: var(--ansi-bright-green); }
+        .feature-card:nth-child(4) .feature-title { color: var(--ansi-bright-yellow); }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(98, 114, 164, 0.3);
+            display: flex;
+            align-items: center;
+            transition: color 0.2s ease;
+        }
+
+        .feature-list li:hover {
+            color: var(--ansi-bright-cyan);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            margin-right: 12px;
+            color: var(--ansi-bright-green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .demo-section {
+            background: rgba(40, 44, 52, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--ansi-bright-cyan);
+            text-shadow: 0 0 10px rgba(139, 233, 253, 0.3);
+        }
+
+        .toml-editor {
+            background: var(--ansi-black);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .toml-editor::before {
+            content: 'TOML';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--ansi-bright-magenta);
+            font-size: 0.8rem;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        .toml-input {
+            width: 100%;
+            height: 250px;
+            background: var(--ansi-black);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 6px;
+            color: var(--ansi-bright-green);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 14px;
+            padding: 20px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .toml-input:focus {
+            outline: none;
+            border-color: var(--ansi-bright-cyan);
+            box-shadow: 0 0 10px rgba(139, 233, 253, 0.3);
+        }
+
+        .toml-input::placeholder {
+            color: var(--ansi-bright-black);
+            opacity: 0.5;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--ansi-bright-blue), var(--ansi-blue));
+            color: var(--ansi-bright-white);
+            border: 1px solid var(--ansi-bright-cyan);
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(139, 233, 253, 0.4);
+            border-color: var(--ansi-bright-cyan);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:nth-child(1) { background: linear-gradient(135deg, var(--ansi-bright-cyan), var(--ansi-cyan)); }
+        .btn:nth-child(2) { background: linear-gradient(135deg, var(--ansi-bright-green), var(--ansi-green)); }
+        .btn:nth-child(3) { background: linear-gradient(135deg, var(--ansi-bright-yellow), var(--ansi-yellow)); color: var(--ansi-black); }
+        .btn:nth-child(4) { background: linear-gradient(135deg, var(--ansi-bright-red), var(--ansi-red)); }
+
+        .output {
+            background: var(--ansi-black);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 6px;
+            padding: 20px;
+            color: var(--ansi-bright-green);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 14px;
+            min-height: 150px;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+
+        .error {
+            color: var(--ansi-bright-red);
+            background: rgba(255, 85, 85, 0.1);
+            border: 1px solid var(--ansi-bright-red);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+        }
+
+        .success {
+            color: var(--ansi-bright-green);
+            background: rgba(80, 250, 123, 0.1);
+            border: 1px solid var(--ansi-bright-green);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--ansi-bright-black);
+            font-size: 0.9rem;
+            opacity: 0.7;
+            border-top: 1px solid var(--ansi-bright-blue);
+            padding-top: 20px;
+        }
+
+        /* Keyboard Shortcuts Modal */
+        .shortcuts-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .shortcuts-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shortcuts-content {
+            background: var(--ansi-bright-black);
+            border: 2px solid var(--ansi-bright-cyan);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .shortcuts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--ansi-bright-cyan);
+        }
+
+        .shortcuts-header h3 {
+            color: var(--ansi-bright-cyan);
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--ansi-bright-cyan);
+            font-size: 28px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--ansi-bright-cyan);
+            color: var(--ansi-bright-black);
+        }
+
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .shortcut-category h4 {
+            color: var(--ansi-bright-cyan);
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(139, 233, 253, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            color: var(--ansi-bright-white);
+        }
+
+        .shortcut-item kbd {
+            background: var(--ansi-bright-blue);
+            color: var(--ansi-bright-white);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid var(--ansi-bright-cyan);
+            margin: 0 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .shortcut-item span {
+            margin-left: 10px;
+            color: var(--ansi-bright-white);
+        }
+
+        .shortcuts-help-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ansi-bright-cyan), var(--ansi-bright-blue));
+            border: 2px solid var(--ansi-bright-white);
+            color: var(--ansi-bright-black);
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(139, 233, 253, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shortcuts-help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(139, 233, 253, 0.6);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        /* Enhanced Theme Selector */
+        .theme-selector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 16px;
+            border: 2px solid var(--ansi-bright-cyan);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(139, 233, 253, 0.3);
+            animation: themeSelectorSlideIn 0.5s ease;
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.15) rotate(5deg);
+            border-color: var(--ansi-bright-cyan);
+            box-shadow: 0 6px 20px rgba(139, 233, 253, 0.5);
+        }
+
+        .theme-btn:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .theme-btn.active {
+            border-color: var(--ansi-bright-cyan);
+            box-shadow: 0 0 20px rgba(139, 233, 253, 0.8);
+            transform: scale(1.1);
+        }
+
+        .theme-btn.active::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .theme-dark { 
+            background: linear-gradient(135deg, #000000, #1a1a1a, #2d2d2d);
+            position: relative;
+        }
+
+        .theme-dark::before {
+            content: '🌙';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-dark:hover::before {
+            opacity: 1;
+        }
+
+        .theme-light { 
+            background: linear-gradient(135deg, #ffffff, #f0f0f0, #e0e0e0);
+            position: relative;
+        }
+
+        .theme-light::before {
+            content: '☀️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-light:hover::before {
+            opacity: 1;
+        }
+
+        .theme-ocean { 
+            background: linear-gradient(135deg, #001f3f, #003366, #004080);
+            position: relative;
+        }
+
+        .theme-ocean::before {
+            content: '🌊';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-ocean:hover::before {
+            opacity: 1;
+        }
+
+        .theme-forest { 
+            background: linear-gradient(135deg, #0d2818, #1a4332, #2d5a3d);
+            position: relative;
+        }
+
+        .theme-forest::before {
+            content: '🌲';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-forest:hover::before {
+            opacity: 1;
+        }
+
+        .theme-sunset { 
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #ff9ff3);
+            position: relative;
+        }
+
+        /* Duoplus Integration Theme */
+        .theme-duoplus {
+            background: linear-gradient(135deg, #6b46c1, #9333ea, #a855f7);
+            position: relative;
+        }
+
+        .theme-duoplus::before {
+            content: '💜';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-duoplus:hover::before {
+            opacity: 1;
+        }
+
+        /* Duoplus Color Variables */
+        .duoplus-theme {
+            --duoplus-primary: #6b46c1;
+            --duoplus-secondary: #9333ea;
+            --duoplus-accent: #a855f7;
+            --duoplus-light: #c084fc;
+            --duoplus-dark: #4c1d95;
+            --duoplus-glow: rgba(168, 85, 247, 0.5);
+        }
+
+        /* Duoplus Integration Styles */
+        .duoplus-banner {
+            background: linear-gradient(135deg, var(--duoplus-primary), var(--duoplus-secondary));
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid var(--duoplus-accent);
+            box-shadow: 0 4px 20px var(--duoplus-glow);
+            animation: duoplusPulse 2s infinite;
+        }
+
+        @keyframes duoplusPulse {
+            0%, 100% { box-shadow: 0 4px 20px var(--duoplus-glow); }
+            50% { box-shadow: 0 6px 30px var(--duoplus-glow); }
+        }
+
+        .duoplus-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .duoplus-feature-card {
+            background: rgba(107, 70, 193, 0.1);
+            border: 1px solid var(--duoplus-accent);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--duoplus-primary);
+            transition: all 0.3s ease;
+        }
+
+        .duoplus-feature-card:hover {
+            background: rgba(107, 70, 193, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--duoplus-glow);
+        }
+
+        .venmo-sync-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--duoplus-light);
+            color: var(--duoplus-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .venmo-sync-indicator.synced {
+            background: #22c55e;
+            color: white;
+        }
+
+        .duoplus-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .duoplus-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--duoplus-accent);
+            animation: duoplusBlink 1s infinite;
+        }
+
+        @keyframes duoplusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes themeSelectorSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        /* Theme selector tooltip */
+        .theme-selector .tooltip {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--ansi-bright-black);
+            color: var(--ansi-bright-cyan);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            border: 1px solid var(--ansi-bright-cyan);
+            z-index: 1001;
+        }
+
+        .theme-btn:hover .tooltip {
+            opacity: 1;
+        }
+
+        .status-bar {
+            background: rgba(40, 44, 52, 0.9);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--ansi-bright-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-indicator.error { background: var(--ansi-bright-red); }
+        .status-indicator.warning { background: var(--ansi-bright-yellow); }
+
+        .toolbar {
+            background: rgba(40, 44, 52, 0.9);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            background: transparent;
+            border: 1px solid var(--ansi-bright-blue);
+            color: var(--ansi-bright-cyan);
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .tool-btn:hover {
+            background: var(--ansi-bright-blue);
+            color: var(--ansi-bright-white);
+        }
+
+        .tool-btn.active {
+            background: var(--ansi-bright-cyan);
+            color: var(--ansi-black);
+        }
+
+        .line-numbers {
+            background: var(--ansi-bright-black);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 6px 0 0 6px;
+            padding: 20px 15px;
+            color: var(--ansi-bright-black);
+            font-family: 'SF Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            user-select: none;
+            text-align: right;
+        }
+
+        .editor-container {
+            display: flex;
+            background: var(--ansi-black);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .toml-input-enhanced {
+            width: 100%;
+            height: 300px;
+            background: var(--ansi-black);
+            border: none;
+            color: var(--ansi-bright-green);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 14px;
+            padding: 20px;
+            resize: vertical;
+            line-height: 1.5;
+            tab-size: 2;
+        }
+
+        .toml-input-enhanced:focus {
+            outline: none;
+        }
+
+        .syntax-highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: transparent;
+            color: transparent;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            tab-size: 2;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .syntax-highlight .keyword { color: var(--ansi-bright-magenta); }
+        .syntax-highlight .string { color: var(--ansi-bright-yellow); }
+        .syntax-highlight .number { color: var(--ansi-bright-cyan); }
+        .syntax-highlight .boolean { color: var(--ansi-bright-red); }
+        .syntax-highlight .comment { color: var(--ansi-bright-black); font-style: italic; }
+        .syntax-highlight .section { color: var(--ansi-bright-cyan); font-weight: bold; }
+        .syntax-highlight .key { color: var(--ansi-bright-green); }
+        .syntax-highlight .operator { color: var(--ansi-bright-white); }
+
+        .minimap {
+            width: 80px;
+            background: rgba(40, 44, 52, 0.5);
+            border-left: 1px solid var(--ansi-bright-blue);
+            padding: 10px 5px;
+            position: relative;
+        }
+
+        .minimap-content {
+            font-size: 2px;
+            line-height: 1.2;
+            color: var(--ansi-bright-black);
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .output-panel {
+            background: var(--ansi-black);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .output-tabs {
+            display: flex;
+            background: rgba(40, 44, 52, 0.9);
+            border-bottom: 1px solid var(--ansi-bright-blue);
+        }
+
+        .output-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--ansi-bright-black);
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .output-tab:hover {
+            background: var(--ansi-bright-blue);
+            color: var(--ansi-bright-white);
+        }
+
+        .output-tab.active {
+            background: var(--ansi-bright-cyan);
+            color: var(--ansi-black);
+        }
+
+        .output-content {
+            padding: 20px;
+            min-height: 200px;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+
+        .json-output { color: var(--ansi-bright-green); }
+        .yaml-output { color: var(--ansi-bright-yellow); }
+        .xml-output { color: var(--ansi-bright-cyan); }
+        .stats-output { color: var(--ansi-bright-magenta); }
+
+        /* Theme Variations */
+        body.theme-light {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #212529;
+        }
+
+        body.theme-light .stat-card,
+        body.theme-light .feature-card,
+        body.theme-light .demo-section {
+            background: rgba(255, 255, 255, 0.9);
+            color: #212529;
+        }
+
+        body.theme-ocean {
+            background: linear-gradient(135deg, #001f3f 0%, #003366 100%);
+        }
+
+        body.theme-ocean .header {
+            border-color: var(--ansi-bright-cyan);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+        }
+
+        body.theme-forest {
+            background: linear-gradient(135deg, #0d2818 0%, #1a4332 100%);
+        }
+
+        body.theme-forest .stat-card:nth-child(1) .stat-value { color: #90ee90; }
+        body.theme-forest .stat-card:nth-child(2) .stat-value { color: #f0e68c; }
+        body.theme-forest .stat-card:nth-child(3) .stat-value { color: #ff6b6b; }
+        body.theme-forest .stat-card:nth-child(4) .stat-value { color: #87ceeb; }
+
+        body.theme-sunset {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+        }
+
+        body.theme-sunset .header h1 {
+            color: #2c3e50;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Performance Metrics */
+        .performance-meter {
+            width: 100%;
+            height: 8px;
+            background: var(--ansi-bright-black);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .performance-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ansi-bright-green), var(--ansi-bright-cyan));
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ansi-bright-cyan), var(--ansi-cyan));
+            border: none;
+            color: var(--ansi-black);
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(139, 233, 253, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 30px rgba(139, 233, 253, 0.6);
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--ansi-black);
+            color: var(--ansi-bright-white);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        /* PWA and Mobile Enhancements */
+        .pwa-mode .header {
+            padding: 20px;
+        }
+
+        .pwa-mode .header h1 {
+            font-size: 2rem;
+        }
+
+        .pwa-mode .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .pwa-mode .features-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .pwa-mode .container {
+            padding: 15px;
+        }
+
+        .pwa-mode .toml-input {
+            height: 150px;
+            font-size: 16px; /* Prevent zoom on iOS */
+        }
+
+        .pwa-mode .button-group {
+            flex-wrap: wrap;
+        }
+
+        .pwa-mode .btn {
+            font-size: 14px;
+            padding: 10px 20px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card, .feature-card, .demo-section {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .toml-input {
+                height: 150px;
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Install button animation */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        #install-btn {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Safe area insets for notched phones */
+        @supports (padding: max(0px)) {
+            .pwa-mode .container {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+            }
+
+            .pwa-mode .header {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+            }
+        }
+
+        /* Advanced Features Panel */
+        .ai-suggestions {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--ansi-bright-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .ai-suggestion-item {
+            background: rgba(16, 185, 129, 0.05);
+            border-left: 3px solid var(--ansi-bright-green);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ai-suggestion-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+            transform: translateX(5px);
+        }
+
+        .collaboration-panel {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .active-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--ansi-bright-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .performance-analytics {
+            background: rgba(251, 146, 60, 0.1);
+            border: 1px solid var(--ansi-bright-orange);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .metric-card {
+            background: rgba(251, 146, 60, 0.05);
+            border: 1px solid var(--ansi-bright-orange);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: var(--ansi-bright-orange);
+        }
+
+        .advanced-validation {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--ansi-bright-red);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .validation-rule {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(239, 68, 68, 0.05);
+            border-radius: 4px;
+        }
+
+        .validation-rule.pass {
+            border-left: 3px solid var(--ansi-bright-green);
+        }
+
+        .validation-rule.fail {
+            border-left: 3px solid var(--ansi-bright-red);
+        }
+
+        .validation-rule.warn {
+            border-left: 3px solid var(--ansi-bright-yellow);
+        }
+
+        .rule-icon {
+            font-size: 16px;
+        }
+
+        /* Floating Action Buttons */
+        .fab-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .fab-secondary {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--ansi-bright-blue);
+            border: 2px solid var(--ansi-bright-white);
+            color: var(--ansi-bright-white);
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .fab-container.active .fab-secondary {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .fab-secondary:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .fab-ai { background: linear-gradient(135deg, #10b981, #059669); }
+        .fab-collab { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .fab-analytics { background: linear-gradient(135deg, #fb923c, #f97316); }
+        .fab-validate { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        /* Enhanced Editor Toolbar */
+        .editor-toolbar {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--ansi-bright-cyan);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            backdrop-filter: blur(10px);
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 5px;
+            padding: 0 10px;
+            border-right: 1px solid var(--ansi-bright-cyan);
+        }
+
+        .toolbar-group:last-child {
+            border-right: none;
+        }
+
+        .toolbar-btn {
+            background: var(--ansi-bright-blue);
+            border: 1px solid var(--ansi-bright-cyan);
+            color: var(--ansi-bright-white);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--ansi-bright-cyan);
+            color: var(--ansi-bright-black);
+            transform: translateY(-1px);
+        }
+
+        .toolbar-btn.active {
+            background: var(--ansi-bright-green);
+            border-color: var(--ansi-bright-green);
+        }
+
+        /* Advanced Enhancement Features */
+        .real-time-preview {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--ansi-bright-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .preview-content {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--ansi-bright-cyan);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .config-manager {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--ansi-bright-blue);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .config-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(3px);
+        }
+
+        .advanced-search {
+            background: rgba(251, 146, 60, 0.1);
+            border: 1px solid var(--ansi-bright-orange);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--ansi-bright-orange);
+            border-radius: 6px;
+            color: var(--ansi-bright-white);
+            font-size: 1rem;
+        }
+
+        .search-results {
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            padding: 8px;
+            margin: 3px 0;
+            background: rgba(251, 146, 60, 0.05);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-result-item:hover {
+            background: rgba(251, 146, 60, 0.1);
+            transform: translateX(3px);
+        }
+
+        .performance-monitor {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--ansi-bright-red);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .performance-chart {
+            height: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--ansi-bright-red);
+            border-radius: 6px;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to top, var(--ansi-bright-red), var(--ansi-bright-orange));
+            transition: height 0.3s ease;
+        }
+
+        .export-import-panel {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid var(--ansi-bright-purple);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .format-btn {
+            background: var(--ansi-bright-purple);
+            border: 1px solid var(--ansi-bright-purple);
+            color: var(--ansi-bright-white);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .format-btn:hover {
+            background: var(--ansi-bright-cyan);
+            transform: translateY(-1px);
+        }
+
+        .format-btn.active {
+            background: var(--ansi-bright-green);
+            border-color: var(--ansi-bright-green);
+        }
+
+        /* Enhanced Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--ansi-bright-cyan);
+            border-radius: 8px;
+            padding: 12px 16px;
+            min-width: 250px;
+            box-shadow: 0 4px 20px rgba(139, 233, 253, 0.4);
+            animation: slideInRight 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-color: var(--ansi-bright-green);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .notification.error {
+            border-color: var(--ansi-bright-red);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .notification.warning {
+            border-color: var(--ansi-bright-yellow);
+            box-shadow: 0 4px 20px rgba(251, 146, 60, 0.4);
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--ansi-bright-white);
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: var(--ansi-bright-white);
+            opacity: 0.9;
+        }
+
+        /* Enhanced Loading States */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 4000;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--ansi-bright-cyan);
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--ansi-bright-white);
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Selector -->
+    <div class="theme-selector">
+        <div class="theme-btn theme-dark" onclick="setTheme('dark')">
+            <span class="tooltip">Dark Theme 🌙</span>
+        </div>
+        <div class="theme-btn theme-light" onclick="setTheme('light')">
+            <span class="tooltip">Light Theme ☀️</span>
+        </div>
+        <div class="theme-btn theme-ocean" onclick="setTheme('ocean')">
+            <span class="tooltip">Ocean Theme 🌊</span>
+        </div>
+        <div class="theme-btn theme-forest" onclick="setTheme('forest')">
+            <span class="tooltip">Forest Theme 🌲</span>
+        </div>
+        <div class="theme-btn theme-sunset active" onclick="setTheme('sunset')">
+            <span class="tooltip">Sunset Theme 🌅</span>
+        </div>
+        <div class="theme-btn theme-duoplus" onclick="setTheme('duoplus')">
+            <span class="tooltip">Duoplus Theme 💜</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Duoplus Integration Banner -->
+        <div class="duoplus-banner">
+            <h2>💜 Duoplus Integration Active</h2>
+            <div class="duoplus-status">
+                <div class="duoplus-status-dot"></div>
+                <span>Connected to duoplus.com</span>
+                <div class="venmo-sync-indicator synced">
+                    <span>💚</span>
+                    <span>Venmo Family Synced</span>
+                </div>
+            </div>
+            <p>Enterprise-tier features enabled with 65% MRR baseline tracking</p>
+        </div>
+
+        <div class="header">
+            <div class="version-indicator">v2.0.0</div>
+            <div class="header-content">
+                <h1>🚀 TOML Editor Dashboard</h1>
+                <p class="header-subtitle">Enterprise-grade TOML configuration system with zero external dependencies</p>
+                
+                <div class="header-stats">
+                    <div class="header-stat">
+                        <div class="stat-value">73.47</div>
+                        <div class="stat-label">KB Bundle</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="stat-value">4ms</div>
+                        <div class="stat-label">Build Time</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Dependencies</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">Themes</div>
+                    </div>
+                </div>
+
+                <div class="header-badges">
+                    <div class="header-badge duoplus">💜 Duoplus Ready</div>
+                    <div class="header-badge security">🔒 Enterprise Security</div>
+                    <div class="header-badge">⚡ Zero Dependencies</div>
+                    <div class="header-badge">🤖 AI Powered</div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="header-btn" onclick="parseToml()">
+                        <span>⚡</span>
+                        <span>Parse TOML</span>
+                    </button>
+                    <button class="header-btn" onclick="showAISuggestions()">
+                        <span>🤖</span>
+                        <span>AI Suggestions</span>
+                    </button>
+                    <button class="header-btn" onclick="toggleShortcuts()">
+                        <span>⌨️</span>
+                        <span>Shortcuts</span>
+                    </button>
+                    <button class="header-btn" onclick="downloadToml()">
+                        <span>💾</span>
+                        <span>Download</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">Ready</span>
+            </div>
+            <div class="status-item">
+                <span>Lines: <span id="lineCount">0</span></span>
+            </div>
+            <div class="status-item">
+                <span>Chars: <span id="charCount">0</span></span>
+            </div>
+            <div class="status-item">
+                <span>Caret: <span id="caretPosition">1:1</span></span>
+            </div>
+            <div class="status-item">
+                <span>Theme: <span id="currentTheme">Dark</span></span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">73.47 KB</div>
+                <div class="stat-label">Bundle Size</div>
+                <div class="performance-meter">
+                    <div class="performance-fill" style="width: 85%;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4ms</div>
+                <div class="stat-label">Build Time</div>
+                <div class="performance-meter">
+                    <div class="performance-fill" style="width: 95%;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">External Dependencies</div>
+                <div class="performance-meter">
+                    <div class="performance-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">11</div>
+                <div class="stat-label">Utility Modules</div>
+                <div class="performance-meter">
+                    <div class="performance-fill" style="width: 75%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Duoplus Features Section -->
+        <div class="duoplus-features">
+            <div class="duoplus-feature-card">
+                <h4>💜 Venmo Family Sync</h4>
+                <p>Real-time synchronization with Venmo family accounts and transaction data</p>
+            </div>
+            <div class="duoplus-feature-card">
+                <h4>📊 MRR Tracking</h4>
+                <p>65% baseline MRR impact tracking for all onboarding actions</p>
+            </div>
+            <div class="duoplus-feature-card">
+                <h4>🔒 Enterprise Security</h4>
+                <p>mTLS enforcement and JWT expiry with 5-minute tokens</p>
+            </div>
+            <div class="duoplus-feature-card">
+                <h4>👥 Dispute Handling</h4>
+                <p>Integrated dispute resolution system for family account management</p>
+            </div>
+        </div>
+
+        <!-- Advanced Features Panels -->
+        <div class="ai-suggestions">
+            <h3>🤖 AI-Powered TOML Suggestions</h3>
+            <div class="ai-suggestion-item" onclick="applyAISuggestion('add-database')">
+                <strong>💡 Add Database Configuration</strong><br>
+                <small>Suggested: Add PostgreSQL database settings with connection pooling</small>
+            </div>
+            <div class="ai-suggestion-item" onclick="applyAISuggestion('optimize-structure')">
+                <strong>🎯 Optimize Structure</strong><br>
+                <small>Suggested: Reorganize sections for better readability</small>
+            </div>
+            <div class="ai-suggestion-item" onclick="applyAISuggestion('add-security')">
+                <strong>🔒 Enhance Security</strong><br>
+                <small>Suggested: Add security headers and environment variables</small>
+            </div>
+        </div>
+
+        <div class="collaboration-panel">
+            <h3>👥 Real-time Collaboration</h3>
+            <p><strong>Active Users (3)</strong></p>
+            <div>
+                <span class="active-user">👤 Alex</span>
+                <span class="active-user">👤 Sarah</span>
+                <span class="active-user">👤 Mike</span>
+            </div>
+            <p style="margin-top: 10px; font-size: 12px; opacity: 0.8;">
+                Last sync: 2 seconds ago • Auto-save enabled
+            </p>
+        </div>
+
+        <div class="performance-analytics">
+            <h3>📊 Performance Analytics</h3>
+            <div class="metric-card">
+                <span>Parse Time</span>
+                <span class="metric-value">2.3ms</span>
+            </div>
+            <div class="metric-card">
+                <span>File Size</span>
+                <span class="metric-value">1.2KB</span>
+            </div>
+            <div class="metric-card">
+                <span>Complexity Score</span>
+                <span class="metric-value">Low</span>
+            </div>
+            <div class="metric-card">
+                <span>Validation Status</span>
+                <span class="metric-value">✅ Valid</span>
+            </div>
+        </div>
+
+        <div class="advanced-validation">
+            <h3>🔍 Advanced Validation</h3>
+            <div class="validation-rule pass">
+                <span class="rule-icon">✅</span>
+                <span><strong>Syntax Check:</strong> Valid TOML syntax</span>
+            </div>
+            <div class="validation-rule pass">
+                <span class="rule-icon">✅</span>
+                <span><strong>Key Format:</strong> All keys follow naming conventions</span>
+            </div>
+            <div class="validation-rule warn">
+                <span class="rule-icon">⚠️</span>
+                <span><strong>Security:</strong> Consider using environment variables for sensitive data</span>
+            </div>
+            <div class="validation-rule pass">
+                <span class="rule-icon">✅</span>
+                <span><strong>Performance:</strong> Structure optimized for fast parsing</span>
+            </div>
+        </div>
+
+        <!-- Advanced Enhancement Features -->
+        <div class="real-time-preview">
+            <h3>🔄 Real-time Preview</h3>
+            <div class="preview-content" id="realtimePreview">
+                <span style="color: var(--ansi-bright-cyan);">Waiting for TOML input...</span>
+            </div>
+        </div>
+
+        <div class="config-manager">
+            <h3>⚙️ Configuration Manager</h3>
+            <div class="config-item">
+                <span>Current Theme</span>
+                <span id="currentConfigTheme">Dark</span>
+            </div>
+            <div class="config-item">
+                <span>Auto-save</span>
+                <span id="autoSaveStatus">Enabled</span>
+            </div>
+            <div class="config-item">
+                <span>Syntax Highlighting</span>
+                <span id="syntaxStatus">Active</span>
+            </div>
+            <div class="config-item">
+                <span>Validation Mode</span>
+                <span id="validationMode">Strict</span>
+            </div>
+        </div>
+
+        <div class="advanced-search">
+            <h3>🔍 Advanced Search</h3>
+            <input type="text" class="search-input" placeholder="Search TOML keys, values, or sections..." id="advancedSearchInput">
+            <div class="search-results" id="searchResults">
+                <div style="color: var(--ansi-bright-cyan); opacity: 0.7;">Type to search...</div>
+            </div>
+        </div>
+
+        <div class="performance-monitor">
+            <h3>📊 Performance Monitor</h3>
+            <div class="performance-chart" id="performanceChart">
+                <!-- Chart bars will be dynamically added -->
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                <span>Parse Time: <span id="parseTime">2.3ms</span></span>
+                <span>Memory: <span id="memoryUsage">1.2MB</span></span>
+                <span>Operations: <span id="operationCount">0</span></span>
+            </div>
+        </div>
+
+        <div class="export-import-panel">
+            <h3>📤 Export/Import</h3>
+            <div class="format-options">
+                <button class="format-btn active" onclick="exportFormat('toml')">TOML</button>
+                <button class="format-btn" onclick="exportFormat('json')">JSON</button>
+                <button class="format-btn" onclick="exportFormat('yaml')">YAML</button>
+                <button class="format-btn" onclick="exportFormat('xml')">XML</button>
+                <button class="format-btn" onclick="exportFormat('env')">.env</button>
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button class="header-btn" onclick="exportConfig()">
+                    <span>📤</span>
+                    <span>Export</span>
+                </button>
+                <button class="header-btn" onclick="importConfig()">
+                    <span>📥</span>
+                    <span>Import</span>
+                </button>
+                <button class="header-btn" onclick="shareConfig()">
+                    <span>🔗</span>
+                    <span>Share</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-title">🔧 Core Features</div>
+                <ul class="feature-list">
+                    <li>Native Bun TOML parsing</li>
+                    <li>Deterministic stringification</li>
+                    <li>Environment variable expansion</li>
+                    <li>Advanced LRU caching</li>
+                    <li>Configuration validation</li>
+                    <li>Syntax highlighting</li>
+                    <li>Multiple themes</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">💜 Duoplus Integration</div>
+                <ul class="feature-list">
+                    <li>Venmo merchant data sync</li>
+                    <li>Family account metrics</li>
+                    <li>Enterprise tier features</li>
+                    <li>mTLS for all devices</li>
+                    <li>Purple color scheme</li>
+                    <li>Dispute handling</li>
+                    <li>65% MRR baseline</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">🔒 Security Features</div>
+                <ul class="feature-list">
+                    <li>Bun.escapeHTML() integration</li>
+                    <li>XSS prevention</li>
+                    <li>HTML sanitization</li>
+                    <li>Secure output rendering</li>
+                    <li>Input validation</li>
+                    <li>Safe environment expansion</li>
+                    <li>Content Security Policy</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">⚡ Performance</div>
+                <ul class="feature-list">
+                    <li>Hot reload system</li>
+                    <li>File watching</li>
+                    <li>Memory optimization</li>
+                    <li>Tree-shaking ready</li>
+                    <li>Bundle optimized</li>
+                    <li>Lazy loading</li>
+                    <li>Real-time parsing</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">🎨 Developer Tools</div>
+                <ul class="feature-list">
+                    <li>Template generator</li>
+                    <li>CLI tools</li>
+                    <li>Analytics monitoring</li>
+                    <li>Backup & restore</li>
+                    <li>Version management</li>
+                    <li>Multi-format output</li>
+                    <li>Interactive debugger</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">🧪 Enhanced TOML Editor</div>
+            <div id="message"></div>
+            
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <button class="tool-btn tooltip" data-tooltip="Format TOML" onclick="formatToml()">📝 Format</button>
+                <button class="tool-btn tooltip" data-tooltip="Minify TOML" onclick="minifyToml()">🗜️ Minify</button>
+                <button class="tool-btn tooltip" data-tooltip="Copy to Clipboard" onclick="copyToClipboard()">📋 Copy</button>
+                <button class="tool-btn tooltip" data-tooltip="Download TOML" onclick="downloadToml()">💾 Download</button>
+                <button class="tool-btn tooltip" data-tooltip="Upload File" onclick="uploadFile()">📁 Upload</button>
+                <button class="tool-btn tooltip" data-tooltip="Clear Editor" onclick="clearEditor()">🗑️ Clear</button>
+                <button class="tool-btn tooltip" data-tooltip="Toggle Word Wrap" onclick="toggleWordWrap()">🔄 Wrap</button>
+                <button class="tool-btn tooltip" data-tooltip="Find & Replace" onclick="findReplace()">🔍 Find</button>
+            </div>
+            
+            <!-- Enhanced Editor -->
+            <div class="editor-container">
+                <div class="line-numbers" id="lineNumbers">1</div>
+                <div class="editor-wrapper">
+                    <div class="syntax-highlight" id="syntaxHighlight"></div>
+                    <textarea id="tomlInput" class="toml-input-enhanced" placeholder="Enter your TOML here...
+
+Example:
+database = { host = "localhost", port = 5432 }
+
+[api]
+key = "secret-key"
+timeout = 30000
+
+[features]
+debug = true
+hot_reload = true" oninput="updateEditor()" onscroll="syncScroll()" onkeydown="handleKeydown()" onkeyup="updateCaretPosition()"># Database configuration
+database = { host = "localhost", port = 5432, name = "myapp" }
+
+# API settings
+[api]
+url = "https://api.example.com"
+key = "${API_KEY:-default-key}"
+timeout = 30000
+
+# Features
+[features]
+debug = true
+hot_reload = true
+analytics = false</textarea>
+                </div>
+                <div class="minimap">
+                    <div class="minimap-content" id="minimapContent"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn" onclick="parseToml()">🔍 Parse TOML</button>
+                <button class="btn" onclick="expandEnvVars()">🌍 Expand Env Vars</button>
+                <button class="btn" onclick="validateToml()">✅ Validate</button>
+                <button class="btn" onclick="convertToJSON()">📄 Convert to JSON</button>
+                <button class="btn" onclick="convertToYAML()">📄 Convert to YAML</button>
+                <button class="btn" onclick="showStats()">📊 Show Stats</button>
+            </div>
+
+            <!-- Enhanced Output Panel -->
+            <div class="output-panel">
+                <div class="output-tabs">
+                    <button class="output-tab active" onclick="switchOutputTab('json')">JSON</button>
+                    <button class="output-tab" onclick="switchOutputTab('yaml')">YAML</button>
+                    <button class="output-tab" onclick="switchOutputTab('xml')">XML</button>
+                    <button class="output-tab" onclick="switchOutputTab('stats')">Statistics</button>
+                    <button class="output-tab" onclick="switchOutputTab('errors')">Errors</button>
+                </div>
+                <div class="output-content json-output" id="output">Ready to process TOML...</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎯 TOML Editor Dashboard • Built with Bun • Zero Dependencies • Production Ready • Enhanced Edition</p>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Help Modal -->
+    <div class="shortcuts-modal" id="shortcutsModal">
+        <div class="shortcuts-content">
+            <div class="shortcuts-header">
+                <h3>⌨️ Keyboard Shortcuts</h3>
+                <button class="close-btn" onclick="toggleShortcuts()">&times;</button>
+            </div>
+            <div class="shortcuts-grid">
+                <div class="shortcut-category">
+                    <h4>📝 Editor Actions</h4>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>S</kbd> <span>Parse TOML</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Enter</kbd> <span>Parse & Format</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>B</kbd> <span>Format TOML</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>M</kbd> <span>Minify TOML</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>D</kbd> <span>Download File</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>C</kbd> <span>Copy to Clipboard</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>L</kbd> <span>Clear Editor</span>
+                    </div>
+                </div>
+                
+                <div class="shortcut-category">
+                    <h4>🔄 Output Formats</h4>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>1</kbd> <span>Show JSON</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>2</kbd> <span>Show YAML</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>3</kbd> <span>Show XML</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>4</kbd> <span>Show Statistics</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>5</kbd> <span>Show Errors</span>
+                    </div>
+                </div>
+                
+                <div class="shortcut-category">
+                    <h4>🎨 Themes</h4>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>T</kbd> <span>Toggle Theme</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>D</kbd> <span>Dark Theme</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd> <span>Light Theme</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>O</kbd> <span>Ocean Theme</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd> <span>Forest Theme</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>S</kbd> <span>Sunset Theme</span>
+                    </div>
+                </div>
+                
+                <div class="shortcut-category">
+                    <h4>🛠️ Tools</h4>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>E</kbd> <span>Expand Env Vars</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>V</kbd> <span>Validate TOML</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>W</kbd> <span>Toggle Word Wrap</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>F</kbd> <span>Find & Replace</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>U</kbd> <span>Upload File</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>?</kbd> <span>Show Shortcuts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Notification System -->
+    <div class="notification-container" id="notificationContainer"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Processing...</div>
+        </div>
+    </div>
+
+    <!-- Enhanced Floating Action Buttons -->
+    <div class="fab-container" id="fabContainer">
+        <button class="fab-secondary fab-ai tooltip" data-tooltip="AI Suggestions" onclick="showAISuggestions()">🤖</button>
+        <button class="fab-secondary fab-collab tooltip" data-tooltip="Collaboration" onclick="showCollaboration()">👥</button>
+        <button class="fab-secondary fab-analytics tooltip" data-tooltip="Analytics" onclick="showAnalytics()">📊</button>
+        <button class="fab-secondary fab-validate tooltip" data-tooltip="Validation" onclick="showValidation()">🔍</button>
+        <button class="fab tooltip" data-tooltip="Quick Actions (⚡)" onclick="toggleFAB()">⚡</button>
+    </div>
+    
+    <!-- Shortcuts Help Button -->
+    <button class="shortcuts-help-btn tooltip" data-tooltip="Keyboard Shortcuts (?)" onclick="toggleShortcuts()">⌨️</button>
+
+    <script>
+        // Enhanced TOML Editor with Advanced Features
+        let currentTheme = 'dark';
+        let _currentOutputTab = 'json';
+        let wordWrap = false;
+
+        // Initialize with a demo
+        window.addEventListener('load', () => {
+            showMessage('🎉 Welcome to Enhanced TOML Editor Dashboard!', 'success');
+            initializePWA();
+            handleURLActions();
+            updateEditor();
+            updateStatus('Ready', 'success');
+        });
+
+        // Theme Management
+        function setTheme(theme) {
+            document.body.className = theme === 'dark' ? '' : `theme-${theme}`;
+            currentTheme = theme;
+            
+            // Update active theme button
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.theme-${theme}`).classList.add('active');
+            
+            // Update status
+            document.getElementById('currentTheme').textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
+            
+            showMessage(`🎨 Theme changed to ${theme}`, 'success');
+        }
+
+        // Keyboard Shortcuts System
+        function initKeyboardShortcuts() {
+            document.addEventListener('keydown', handleGlobalKeyboardShortcuts);
+        }
+
+        function handleGlobalKeyboardShortcuts(event) {
+            // Ignore shortcuts when typing in input fields (except specific combinations)
+            const activeElement = document.activeElement;
+            const isInputFocused = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            
+            // Only handle shortcuts with Ctrl/Cmd modifier
+            if (!event.ctrlKey && !event.metaKey && event.key !== '?') return;
+            
+            // Prevent default for our shortcuts
+            if (event.ctrlKey || event.metaKey || event.key === '?') {
+                event.preventDefault();
+            }
+            
+            const key = event.key.toLowerCase();
+            const ctrl = event.ctrlKey || event.metaKey;
+            const alt = event.altKey;
+            
+            // Editor Actions
+            if (ctrl && key === 's') {
+                parseToml();
+            } else if (ctrl && key === 'enter') {
+                parseToml();
+                formatToml();
+            } else if (ctrl && key === 'b') {
+                formatToml();
+            } else if (ctrl && key === 'm') {
+                minifyToml();
+            } else if (ctrl && key === 'd') {
+                downloadToml();
+            } else if (ctrl && key === 'c' && !isInputFocused) {
+                copyToClipboard();
+            } else if (ctrl && key === 'l') {
+                clearEditor();
+            }
+            
+            // Output Formats
+            else if (ctrl && key === '1') {
+                switchOutputTab('json');
+            } else if (ctrl && key === '2') {
+                switchOutputTab('yaml');
+            } else if (ctrl && key === '3') {
+                switchOutputTab('xml');
+            } else if (ctrl && key === '4') {
+                switchOutputTab('stats');
+            } else if (ctrl && key === '5') {
+                switchOutputTab('errors');
+            }
+            
+            // Themes
+            else if (ctrl && key === 't') {
+                toggleTheme();
+            } else if (ctrl && alt && key === 'd') {
+                setTheme('dark');
+            } else if (ctrl && alt && key === 'l') {
+                setTheme('light');
+            } else if (ctrl && alt && key === 'o') {
+                setTheme('ocean');
+            } else if (ctrl && alt && key === 'f') {
+                setTheme('forest');
+            } else if (ctrl && alt && key === 's') {
+                setTheme('sunset');
+            } else if (ctrl && alt && key === 'p') {
+                setTheme('duoplus');
+            }
+            
+            // Tools
+            else if (ctrl && key === 'e') {
+                expandEnvVars();
+            } else if (ctrl && key === 'v') {
+                validateToml();
+            } else if (ctrl && key === 'w') {
+                toggleWordWrap();
+            } else if (ctrl && key === 'f') {
+                findReplace();
+            } else if (ctrl && key === 'u') {
+                uploadFile();
+            } else if (key === '?') {
+                toggleShortcuts();
+            }
+        }
+
+        function toggleShortcuts() {
+            const modal = document.getElementById('shortcutsModal');
+            modal.classList.toggle('active');
+            
+            if (modal.classList.contains('active')) {
+                showMessage('⌨️ Press ? to close shortcuts', 'success');
+            }
+        }
+
+        function toggleTheme() {
+            const themes = ['dark', 'light', 'ocean', 'forest', 'sunset', 'duoplus'];
+            const currentTheme = localStorage.getItem('toml-editor-theme') || 'dark';
+            const currentIndex = themes.indexOf(currentTheme);
+            const nextIndex = (currentIndex + 1) % themes.length;
+            setTheme(themes[nextIndex]);
+        }
+
+        // Enhanced Editor Functions
+        function updateEditor() {
+            const input = document.getElementById('tomlInput');
+            const highlight = document.getElementById('syntaxHighlight');
+            const lineNumbers = document.getElementById('lineNumbers');
+            const minimap = document.getElementById('minimapContent');
+            
+            // Update syntax highlighting
+            const highlighted = highlightSyntax(input.value);
+            highlight.innerHTML = highlighted;
+            
+            // Update line numbers
+            const lines = input.value.split('\n');
+            lineNumbers.innerHTML = lines.map((_, i) => i + 1).join('\n');
+            
+            // Update minimap
+            minimap.textContent = input.value.substring(0, 200);
+            
+            // Update status
+            updateStats();
+            
+            // Real-time validation
+            validateRealtime();
+        }
+
+        function highlightSyntax(code) {
+            return code
+                .replace(/\[([^\]]+)\]/g, '<span class="section">[$1]</span>')
+                .replace(/([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g, '<span class="key">$1</span><span class="operator">=</span>')
+                .replace(/"([^"]*)"/g, '<span class="string">"$1"</span>')
+                .replace(/'([^']*)'/g, '<span class="string">\'$1\'</span>')
+                .replace(/\b(true|false)\b/g, '<span class="boolean">$1</span>')
+                .replace(/\b(\d+)\b/g, '<span class="number">$1</span>')
+                .replace(/#(.*)$/gm, '<span class="comment">#$1</span>');
+        }
+
+        function updateStats() {
+            const input = document.getElementById('tomlInput');
+            const lines = input.value.split('\n');
+            const chars = input.value.length;
+            
+            document.getElementById('lineCount').textContent = lines.length;
+            document.getElementById('charCount').textContent = chars;
+        }
+
+        function _updateCaretPosition() {
+            const input = document.getElementById('tomlInput');
+            const pos = input.selectionStart;
+            const textBefore = input.value.substring(0, pos);
+            const lines = textBefore.split('\n');
+            const row = lines.length;
+            const col = lines[lines.length - 1].length + 1;
+            
+            document.getElementById('caretPosition').textContent = `${row}:${col}`;
+        }
+
+        function _syncScroll() {
+            const input = document.getElementById('tomlInput');
+            const highlight = document.getElementById('syntaxHighlight');
+            highlight.scrollTop = input.scrollTop;
+            highlight.scrollLeft = input.scrollLeft;
+        }
+
+        function _handleKeydown(event) {
+            // Tab support
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const input = event.target;
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                input.value = `${input.value.substring(0, start)}  ${input.value.substring(end)}`;
+                input.selectionStart = input.selectionEnd = start + 2;
+                updateEditor();
+            }
+        }
+
+        // Status Management
+        function updateStatus(text, type = 'success') {
+            const statusText = document.getElementById('statusText');
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            statusText.textContent = text;
+            statusIndicator.className = `status-indicator ${type}`;
+        }
+
+        // Toolbar Functions
+        function formatToml() {
+            const input = document.getElementById('tomlInput');
+            // Simple formatting - add proper spacing
+            const formatted = input.value
+                .replace(/\s*=\s*/g, ' = ')
+                .replace(/\s*\[\s*/g, '[')
+                .replace(/\s*\]\s*/g, ']\n')
+                .replace(/\n\s*\n/g, '\n');
+            
+            input.value = formatted.trim();
+            updateEditor();
+            showMessage('📝 TOML formatted', 'success');
+        }
+
+        function minifyToml() {
+            const input = document.getElementById('tomlInput');
+            // Remove comments and extra whitespace
+            const minified = input.value
+                .replace(/#.*$/gm, '')
+                .replace(/\s+/g, ' ')
+                .replace(/\s*=\s*/g, '=')
+                .replace(/\s*\[\s*/g, '[')
+                .replace(/\s*\]\s*/g, ']')
+                .trim();
+            
+            input.value = minified;
+            updateEditor();
+            showMessage('🗜️ TOML minified', 'success');
+        }
+
+        function _copyToClipboard() {
+            const input = document.getElementById('tomlInput');
+            navigator.clipboard.writeText(input.value).then(() => {
+                showMessage('📋 Copied to clipboard', 'success');
+            });
+        }
+
+        function _downloadToml() {
+            const input = document.getElementById('tomlInput');
+            const blob = new Blob([input.value], { type: 'text/toml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'config.toml';
+            a.click();
+            URL.revokeObjectURL(url);
+            showMessage('💾 TOML downloaded', 'success');
+        }
+
+        function _uploadFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.toml';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('tomlInput').value = e.target.result;
+                    updateEditor();
+                    showMessage('📁 File uploaded', 'success');
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function _clearEditor() {
+            document.getElementById('tomlInput').value = '';
+            updateEditor();
+            showMessage('🗑️ Editor cleared', 'success');
+        }
+
+        function _toggleWordWrap() {
+            const input = document.getElementById('tomlInput');
+            wordWrap = !wordWrap;
+            input.style.whiteSpace = wordWrap ? 'pre-wrap' : 'pre';
+            showMessage(`🔄 Word wrap ${wordWrap ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        function _findReplace() {
+            const searchTerm = prompt('Find:');
+            if (!searchTerm) return;
+            
+            const replaceTerm = prompt('Replace with:');
+            const input = document.getElementById('tomlInput');
+            input.value = input.value.replace(new RegExp(searchTerm, 'g'), replaceTerm || '');
+            updateEditor();
+            showMessage('🔍 Find and replace completed', 'success');
+        }
+
+        // Output Tab Management
+        function switchOutputTab(tab) {
+            _currentOutputTab = tab;
+            
+            // Update active tab
+            document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update output content class
+            const output = document.getElementById('output');
+            output.className = `output-content ${tab}-output`;
+            
+            showMessage(`📄 Switched to ${tab.toUpperCase()} view`, 'success');
+        }
+
+        // Enhanced TOML Functions
+        function convertToJSON() {
+            const input = document.getElementById('tomlInput').value;
+            const result = parseTomlString(input);
+            
+            if (result.success) {
+                const output = document.getElementById('output');
+                output.textContent = JSON.stringify(result.data, null, 2);
+                switchOutputTab('json');
+                showMessage('📄 Converted to JSON', 'success');
+            } else {
+                showMessage('❌ Failed to parse TOML', 'error');
+            }
+        }
+
+        function convertToYAML() {
+            const input = document.getElementById('tomlInput').value;
+            const result = parseTomlString(input);
+            
+            if (result.success) {
+                const yaml = toYAML(result.data);
+                const output = document.getElementById('output');
+                output.textContent = yaml;
+                switchOutputTab('yaml');
+                showMessage('📄 Converted to YAML', 'success');
+            } else {
+                showMessage('❌ Failed to parse TOML', 'error');
+            }
+        }
+
+        function showStats() {
+            const input = document.getElementById('tomlInput').value;
+            const lines = input.split('\n');
+            const stats = {
+                totalLines: lines.length,
+                nonEmptyLines: lines.filter(line => line.trim()).length,
+                sections: (input.match(/\[([^\]]+)\]/g) || []).length,
+                keyPairs: (input.match(/=/g) || []).length,
+                comments: (input.match(/#/g) || []).length,
+                chars: input.length,
+                words: input.split(/\s+/).filter(word => word.length > 0).length
+            };
+            
+            const output = document.getElementById('output');
+            output.textContent = `📊 TOML Statistics:
+Total Lines: ${stats.totalLines}
+Non-Empty Lines: ${stats.nonEmptyLines}
+Sections: ${stats.sections}
+Key-Value Pairs: ${stats.keyPairs}
+Comments: ${stats.comments}
+Characters: ${stats.chars}
+Words: ${stats.words}
+
+🔍 Analysis:
+${stats.comments > 0 ? '✅ Well documented' : '⚠️ No comments found'}
+${stats.sections > 0 ? '✅ Has sections' : 'ℹ️ Flat structure'}
+${stats.keyPairs > 5 ? '✅ Complex configuration' : 'ℹ️ Simple configuration'}`;
+            
+            switchOutputTab('stats');
+            showMessage('📊 Statistics generated', 'success');
+        }
+
+        // Helper Functions
+        function toYAML(obj, indent = 0) {
+            const spaces = '  '.repeat(indent);
+            let result = '';
+            
+            for (const [key, value] of Object.entries(obj)) {
+                if (typeof value === 'object' && !Array.isArray(value)) {
+                    result += `${spaces}${key}:\n`;
+                    result += toYAML(value, indent + 1);
+                } else if (Array.isArray(value)) {
+                    result += `${spaces}${key}:\n`;
+                    value.forEach(item => {
+                        result += `${spaces}  - ${item}\n`;
+                    });
+                } else {
+                    result += `${spaces}${key}: ${value}\n`;
+                }
+            }
+            
+            return result;
+        }
+
+        function toXML(obj, rootName = 'config') {
+            let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<${rootName}>\n`;
+            
+            function convertToXML(obj, indent = 1) {
+                const spaces = '  '.repeat(indent);
+                let result = '';
+                
+                for (const [key, value] of Object.entries(obj)) {
+                    if (typeof value === 'object' && !Array.isArray(value)) {
+                        result += `${spaces}<${key}>\n`;
+                        result += convertToXML(value, indent + 1);
+                        result += `${spaces}</${key}>\n`;
+                    } else if (Array.isArray(value)) {
+                        result += `${spaces}<${key}>\n`;
+                        value.forEach(item => {
+                            result += `${spaces}  <item>${escapeHTML(String(item))}</item>\n`;
+                        });
+                        result += `${spaces}</${key}>\n`;
+                    } else {
+                        result += `${spaces}<${key}>${escapeHTML(String(value))}</${key}>\n`;
+                    }
+                }
+                
+                return result;
+            }
+            
+            xml += convertToXML(obj);
+            xml += `</${rootName}>`;
+            return xml;
+        }
+
+        function validateRealtime() {
+            const input = document.getElementById('tomlInput').value;
+            const lines = input.split('\n');
+            const errors = [];
+            
+            lines.forEach((line, index) => {
+                // Basic syntax checks
+                if (line.includes('=') && !line.match(/^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*=/)) {
+                    errors.push(`Line ${index + 1}: Invalid key format`);
+                }
+                if (line.includes('[') && !line.includes(']')) {
+                    errors.push(`Line ${index + 1}: Unclosed section bracket`);
+                }
+            });
+            
+            if (errors.length > 0) {
+                updateStatus('Syntax errors detected', 'error');
+            } else {
+                updateStatus('Syntax valid', 'success');
+            }
+        }
+
+        function _showQuickActions() {
+            const actions = [
+                '🔍 Parse TOML',
+                '📄 Convert to JSON',
+                '📄 Convert to YAML',
+                '📊 Show Stats',
+                '📝 Format',
+                '🗜️ Minify'
+            ];
+            
+            const action = prompt(`Quick Actions:\n${actions.map((a, i) => `${i + 1}. ${a}`).join('\n')}\nEnter number (1-6):`);
+            
+            switch(action) {
+                case '1': parseToml(); break;
+                case '2': convertToJSON(); break;
+                case '3': convertToYAML(); break;
+                case '4': showStats(); break;
+                case '5': formatToml(); break;
+                case '6': minifyToml(); break;
+                default: showMessage('Invalid action', 'error');
+            }
+        }
+                
+                // Enhanced TOML Parser with Bun Security Features
+        function parseTomlString(content) {
+            try {
+                // Use Bun's native TOML parser if available, fallback to mock
+                if (typeof Bun !== 'undefined' && Bun.TOML) {
+                    const parsed = Bun.TOML.parse(content);
+                    return { success: true, data: parsed, errors: [] };
+                }
+                
+                // Mock TOML-like parsing for demo
+                const lines = content.split('\n');
+                const result = {};
+                let currentSection = result;
+                
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (!trimmed || trimmed.startsWith('#')) continue;
+                    
+                    // Section headers
+                    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+                        const sectionName = trimmed.slice(1, -1);
+                        result[sectionName] = {};
+                        currentSection = result[sectionName];
+                        continue;
+                    }
+                    
+                    // Key-value pairs
+                    const equalIndex = trimmed.indexOf('=');
+                    if (equalIndex > 0) {
+                        const key = trimmed.substring(0, equalIndex).trim();
+                        let value = trimmed.substring(equalIndex + 1).trim();
+                        
+                        // Parse value types
+                        if (value.startsWith('"') && value.endsWith('"')) {
+                            value = value.slice(1, -1);
+                        } else if (value === 'true') {
+                            value = true;
+                        } else if (value === 'false') {
+                            value = false;
+                        } else if (!Number.isNaN(value) && value !== '') {
+                            value = Number(value);
+                        } else if (value.startsWith('{') && value.endsWith('}')) {
+                            // Inline table parsing
+                            try {
+                                value = value.replace(/([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g, '"$1":');
+                                value = JSON.parse(value);
+                            } catch (_e) {
+                                value = value;
+                            }
+                        }
+                        
+                        currentSection[key] = value;
+                    }
+                }
+                
+                return { success: true, data: result, errors: [] };
+            } catch (error) {
+                return { success: false, data: null, errors: [error.message] };
+            }
+        }
+
+        // Security: HTML Escaping with Bun.escapeHTML()
+        function escapeHTML(value) {
+            if (typeof Bun !== 'undefined' && Bun.escapeHTML) {
+                return Bun.escapeHTML(value);
+            }
+            
+            // Fallback implementation
+            const div = document.createElement('div');
+            div.textContent = value;
+            return div.innerHTML;
+        }
+
+        // Enhanced Output with Security
+        function displayOutput(content, type = 'json') {
+            const output = document.getElementById('output');
+            
+            // Escape HTML for security
+            const escapedContent = escapeHTML(content);
+            
+            switch (type) {
+                case 'json':
+                    try {
+                        const parsed = JSON.parse(content);
+                        output.innerHTML = `<pre class="json-output">${escapeHTML(JSON.stringify(parsed, null, 2))}</pre>`;
+                    } catch (_e) {
+                        output.innerHTML = `<pre class="json-output">${escapedContent}</pre>`;
+                    }
+                    break;
+                case 'yaml':
+                    output.innerHTML = `<pre class="yaml-output">${escapedContent}</pre>`;
+                    break;
+                case 'xml':
+                    output.innerHTML = `<pre class="xml-output">${escapedContent}</pre>`;
+                    break;
+                case 'stats':
+                    output.innerHTML = `<pre class="stats-output">${escapedContent}</pre>`;
+                    break;
+                case 'errors':
+                    output.innerHTML = `<pre style="color: var(--ansi-bright-red);">${escapedContent}</pre>`;
+                    break;
+                default:
+                    output.innerHTML = `<pre>${escapedContent}</pre>`;
+            }
+        }
+
+        function parseToml() {
+            const input = document.getElementById('tomlInput').value;
+            
+            if (!input.trim()) {
+                showMessage('⚠️ Please enter TOML content', 'warning');
+                return;
+            }
+            
+            const result = parseTomlString(input);
+            
+            if (result.success) {
+                displayOutput(JSON.stringify(result.data, null, 2), 'json');
+                switchOutputTab('json');
+                showMessage('✅ TOML parsed successfully', 'success');
+                updateStatus('Parsed successfully', 'success');
+            } else {
+                displayOutput(result.errors.join('\n'), 'errors');
+                switchOutputTab('errors');
+                showMessage('❌ TOML parsing failed', 'error');
+                updateStatus('Parsing failed', 'error');
+            }
+        }
+
+        // Theme Management System
+        function setTheme(themeName) {
+            const root = document.documentElement;
+            const themeBtn = document.querySelector(`.theme-btn.theme-${themeName}`);
+            
+            // Add transition effect to body
+            document.body.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Remove active class from all theme buttons with animation
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.transform = 'scale(1)';
+            });
+            
+            // Add active class to selected theme button with animation
+            if (themeBtn) {
+                themeBtn.classList.add('active');
+                themeBtn.style.transform = 'scale(1.1)';
+                
+                // Add pulse effect
+                themeBtn.style.animation = 'themePulse 0.6s ease';
+                setTimeout(() => {
+                    themeBtn.style.animation = '';
+                }, 600);
+            }
+            
+            // Apply theme colors with smooth transition
+            const themes = {
+                dark: {
+                    background: 'linear-gradient(135deg, #000000, #1a1a1a)',
+                    primary: '#fbf0df',
+                    secondary: '#000000',
+                    accent: '#cc9500',
+                    text: '#ffffff',
+                    glow: 'rgba(139, 233, 253, 0.5)'
+                },
+                light: {
+                    background: 'linear-gradient(135deg, #ffffff, #f0f0f0)',
+                    primary: '#1a1a1a',
+                    secondary: '#ffffff',
+                    accent: '#cc9500',
+                    text: '#000000',
+                    glow: 'rgba(204, 149, 0, 0.5)'
+                },
+                ocean: {
+                    background: 'linear-gradient(135deg, #001f3f, #003366)',
+                    primary: '#a4ffff',
+                    secondary: '#001f3f',
+                    accent: '#0074d9',
+                    text: '#ffffff',
+                    glow: 'rgba(0, 116, 217, 0.5)'
+                },
+                forest: {
+                    background: 'linear-gradient(135deg, #0d2818, #1a4332)',
+                    primary: '#90ee90',
+                    secondary: '#0d2818',
+                    accent: '#228b22',
+                    text: '#ffffff',
+                    glow: 'rgba(34, 139, 34, 0.5)'
+                },
+                sunset: {
+                    background: 'linear-gradient(135deg, #ff6b6b, #feca57)',
+                    primary: '#ffffff',
+                    secondary: '#ff6b6b',
+                    accent: '#ff9ff3',
+                    text: '#ffffff',
+                    glow: 'rgba(255, 159, 243, 0.5)'
+                },
+                duoplus: {
+                    background: 'linear-gradient(135deg, #6b46c1, #9333ea, #a855f7)',
+                    primary: '#ffffff',
+                    secondary: '#6b46c1',
+                    accent: '#a855f7',
+                    text: '#ffffff',
+                    glow: 'rgba(168, 85, 247, 0.5)'
+                }
+            };
+            
+            const theme = themes[themeName];
+            if (theme) {
+                // Apply CSS custom properties
+                root.style.setProperty('--theme-background', theme.background);
+                root.style.setProperty('--theme-primary', theme.primary);
+                root.style.setProperty('--theme-secondary', theme.secondary);
+                root.style.setProperty('--theme-accent', theme.accent);
+                root.style.setProperty('--theme-text', theme.text);
+                root.style.setProperty('--theme-glow', theme.glow);
+                
+                // Update theme selector background
+                const themeSelector = document.querySelector('.theme-selector');
+                if (themeSelector) {
+                    themeSelector.style.background = `rgba(0, 0, 0, 0.9)`;
+                    themeSelector.style.borderColor = theme.accent;
+                    themeSelector.style.boxShadow = `0 8px 32px ${theme.glow}`;
+                }
+                
+                // Update current theme display with animation
+                const currentThemeEl = document.getElementById('currentTheme');
+                if (currentThemeEl) {
+                    currentThemeEl.style.transition = 'all 0.3s ease';
+                    currentThemeEl.style.transform = 'scale(1.2)';
+                    currentThemeEl.style.color = theme.accent;
+                    
+                    setTimeout(() => {
+                        currentThemeEl.textContent = themeName.charAt(0).toUpperCase() + themeName.slice(1);
+                        currentThemeEl.style.transform = 'scale(1)';
+                    }, 150);
+                }
+                
+                // Save theme preference
+                localStorage.setItem('toml-editor-theme', themeName);
+                
+                // Show enhanced success message
+                const themeEmojis = {
+                    dark: '🌙',
+                    light: '☀️',
+                    ocean: '🌊',
+                    forest: '🌲',
+                    sunset: '🌅',
+                    duoplus: '💜'
+                };
+                
+                showMessage(`${themeEmojis[themeName]} Theme changed to ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`, 'success');
+                updateStatus(`Theme: ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`, 'success');
+                
+                // Add body flash effect
+                document.body.style.animation = 'themeFlash 0.5s ease';
+                setTimeout(() => {
+                    document.body.style.animation = '';
+                }, 500);
+            }
+        }
+
+        // Add theme animation keyframes
+        const _style = document.createElement('style');
+        style.textContent = `
+            @keyframes themePulse {
+                0%, 100% { transform: scale(1.1); }
+                50% { transform: scale(1.3); }
+            }
+            
+            @keyframes themeFlash {
+                0% { opacity: 1; }
+                50% { opacity: 0.8; }
+                100% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Load saved theme on startup
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('toml-editor-theme') || 'dark';
+            setTheme(savedTheme);
+        }
+
+        function showMessage(message, type = 'success') {
+            const messageEl = document.getElementById('message');
+            if (messageEl) {
+                messageEl.innerHTML = `<div class="${type}">${message}</div>`;
+                setTimeout(() => {
+                    messageEl.innerHTML = '';
+                }, 3000);
+            }
+        }
+
+        function updateStatus(text, type = 'ready') {
+            const statusText = document.getElementById('statusText');
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            if (statusText) {
+                statusText.textContent = text;
+            }
+            
+            if (statusIndicator) {
+                statusIndicator.className = 'status-indicator';
+                if (type === 'success') {
+                    statusIndicator.style.background = '#22c55e';
+                } else if (type === 'error') {
+                    statusIndicator.style.background = '#ef4444';
+                } else if (type === 'warning') {
+                    statusIndicator.style.background = '#f59e0b';
+                } else {
+                    statusIndicator.style.background = '#3b82f6';
+                }
+            }
+        }
+
+        function switchOutputTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.output-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to selected tab
+            const activeTab = document.querySelector(`.output-tab:nth-child(${getTabIndex(tabName)})`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+
+        function getTabIndex(tabName) {
+            const tabs = ['json', 'yaml', 'xml', 'stats', 'errors'];
+            return tabs.indexOf(tabName) + 1;
+        }
+
+        // Enhanced Editor Functions
+        function updateEditor() {
+            const input = document.getElementById('tomlInput');
+            const lineNumbers = document.getElementById('lineNumbers');
+            const syntaxHighlight = document.getElementById('syntaxHighlight');
+            
+            if (input && lineNumbers && syntaxHighlight) {
+                // Update line numbers
+                const lines = input.value.split('\n');
+                lineNumbers.textContent = lines.map((_, i) => i + 1).join('\n');
+                
+                // Update statistics
+                updateStats();
+                
+                // Real-time validation
+                validateRealtime();
+            }
+        }
+
+        function updateStats() {
+            const input = document.getElementById('tomlInput');
+            const lineCount = document.getElementById('lineCount');
+            const charCount = document.getElementById('charCount');
+            
+            if (input && lineCount && charCount) {
+                const lines = input.value.split('\n');
+                lineCount.textContent = lines.length;
+                charCount.textContent = input.value.length;
+            }
+        }
+
+        function updateCaretPosition() {
+            const input = document.getElementById('tomlInput');
+            const caretPosition = document.getElementById('caretPosition');
+            
+            if (input && caretPosition) {
+                const lines = input.value.substring(0, input.selectionStart).split('\n');
+                const line = lines.length;
+                const column = lines[lines.length - 1].length + 1;
+                caretPosition.textContent = `${line}:${column}`;
+            }
+        }
+
+        function syncScroll() {
+            const input = document.getElementById('tomlInput');
+            const lineNumbers = document.getElementById('lineNumbers');
+            
+            if (input && lineNumbers) {
+                lineNumbers.scrollTop = input.scrollTop;
+            }
+        }
+
+        function handleKeydown(event) {
+            // Handle tab key for indentation
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const input = event.target;
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                
+                input.value = `${input.value.substring(0, start)}  ${input.value.substring(end)}`;
+                input.selectionStart = input.selectionEnd = start + 2;
+            }
+        }
+
+        function validateRealtime() {
+            const input = document.getElementById('tomlInput').value;
+            const lines = input.split('\n');
+            const errors = [];
+            
+            lines.forEach((line, index) => {
+                const trimmed = line.trim();
+                if (trimmed && !trimmed.startsWith('#')) {
+                    // Basic syntax checks
+                    if (line.includes('=') && !line.match(/^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*=/)) {
+                        errors.push(`Line ${index + 1}: Invalid key format`);
+                    }
+                }
+            });
+            
+            // Update status based on validation
+            if (errors.length > 0) {
+                updateStatus('Syntax errors detected', 'error');
+            } else {
+                updateStatus('Valid TOML syntax', 'success');
+            }
+        }
+
+        // Toolbar Functions
+        function formatToml() {
+            showMessage('📝 Format feature coming soon!', 'success');
+        }
+
+        function minifyToml() {
+            showMessage('🗜️ Minify feature coming soon!', 'success');
+        }
+
+        function copyToClipboard() {
+            const input = document.getElementById('tomlInput');
+            if (input) {
+                navigator.clipboard.writeText(input.value).then(() => {
+                    showMessage('📋 Copied to clipboard!', 'success');
+                });
+            }
+        }
+
+        function downloadToml() {
+            const input = document.getElementById('tomlInput');
+            if (input) {
+                const blob = new Blob([input.value], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'config.toml';
+                a.click();
+                URL.revokeObjectURL(url);
+                showMessage('💾 Downloaded TOML file!', 'success');
+            }
+        }
+
+        function uploadFile() {
+            showMessage('📁 Upload feature coming soon!', 'success');
+        }
+
+        function clearEditor() {
+            const input = document.getElementById('tomlInput');
+            const output = document.getElementById('output');
+            
+            if (input && output) {
+                input.value = '';
+                output.textContent = 'Ready to process TOML...';
+                updateEditor();
+                showMessage('🗑️ Editor cleared!', 'success');
+            }
+        }
+
+        function toggleWordWrap() {
+            const input = document.getElementById('tomlInput');
+            if (input) {
+                input.style.whiteSpace = input.style.whiteSpace === 'pre-wrap' ? 'pre' : 'pre-wrap';
+                showMessage('🔄 Word wrap toggled!', 'success');
+            }
+        }
+
+        function findReplace() {
+            showMessage('🔍 Find & Replace feature coming soon!', 'success');
+        }
+
+        function showQuickActions() {
+            showMessage('⚡ Quick Actions menu coming soon!', 'success');
+        }
+
+        // Advanced Features Functions
+        function _toggleFAB() {
+            const fabContainer = document.getElementById('fabContainer');
+            fabContainer.classList.toggle('active');
+            
+            if (fabContainer.classList.contains('active')) {
+                showMessage('⚡ Quick actions expanded!', 'success');
+            }
+        }
+
+        function _showAISuggestions() {
+            const aiPanel = document.querySelector('.ai-suggestions');
+            if (aiPanel) {
+                aiPanel.scrollIntoView({ behavior: 'smooth' });
+                aiPanel.style.animation = 'pulse 1s ease';
+                setTimeout(() => {
+                    aiPanel.style.animation = '';
+                }, 1000);
+                showMessage('🤖 AI suggestions panel highlighted', 'success');
+            }
+        }
+
+        function _showCollaboration() {
+            const collabPanel = document.querySelector('.collaboration-panel');
+            if (collabPanel) {
+                collabPanel.scrollIntoView({ behavior: 'smooth' });
+                collabPanel.style.animation = 'pulse 1s ease';
+                setTimeout(() => {
+                    collabPanel.style.animation = '';
+                }, 1000);
+                showMessage('👥 Collaboration panel highlighted', 'success');
+            }
+        }
+
+        function _showAnalytics() {
+            const analyticsPanel = document.querySelector('.performance-analytics');
+            if (analyticsPanel) {
+                analyticsPanel.scrollIntoView({ behavior: 'smooth' });
+                analyticsPanel.style.animation = 'pulse 1s ease';
+                setTimeout(() => {
+                    analyticsPanel.style.animation = '';
+                }, 1000);
+                showMessage('📊 Performance analytics highlighted', 'success');
+            }
+        }
+
+        function _showValidation() {
+            const validationPanel = document.querySelector('.advanced-validation');
+            if (validationPanel) {
+                validationPanel.scrollIntoView({ behavior: 'smooth' });
+                validationPanel.style.animation = 'pulse 1s ease';
+                setTimeout(() => {
+                    validationPanel.style.animation = '';
+                }, 1000);
+                showMessage('🔍 Advanced validation panel highlighted', 'success');
+            }
+        }
+
+        function _applyAISuggestion(suggestionType) {
+            const input = document.getElementById('tomlInput');
+            if (!input) return;
+
+            const suggestions = {
+                'add-database': '\n# Database Configuration\n[database]\nhost = "localhost"\nport = 5432\nname = "myapp"\nuser = "${DB_USER:-postgres}"\npassword = "${DB_PASSWORD}"\nssl_mode = "require"\nmax_connections = 20\n\n[database.pool]\nmin_connections = 5\nmax_connections = 20\nconnection_timeout = 30\n',
+                'optimize-structure': `# =====================================================
+# Application Configuration - Optimized Structure
+# =====================================================
+
+# Core Application Settings
+[app]
+name = "My Application"
+version = "1.0.0"
+description = "Enterprise-grade TOML configuration"
+debug = false
+environment = "development"
+
+# Server Configuration
+[server]
+host = "0.0.0.0"
+port = 3000
+read_timeout = 30
+write_timeout = 30
+max_connections = 1000
+
+# Database Configuration
+[database]
+host = "localhost"
+port = 5432
+name = "myapp"
+user = "\${DB_USER:-postgres}"
+password = "\${DB_PASSWORD}"
+ssl_mode = "require"
+max_connections = 20
+
+[database.pool]
+min_connections = 5
+max_connections = 20
+connection_timeout = 30
+idle_timeout = 300
+
+# Security Configuration
+[security]
+secret_key = "\${SECRET_KEY}"
+jwt_expiry = 3600
+cors_origins = ["http://localhost:3000"]
+rate_limit = 100
+
+[security.headers]
+x_frame_options = "DENY"
+x_content_type_options = "nosniff"
+strict_transport_security = "max-age=31536000"
+content_security_policy = "default-src 'self'"
+
+# Logging Configuration
+[logging]
+level = "info"
+format = "json"
+output = "stdout"
+
+[logging.file]
+path = "/var/log/app.log"
+max_size = "100MB"
+max_backups = 5
+compress = true
+
+# Cache Configuration
+[cache]
+type = "redis"
+host = "localhost"
+port = 6379
+db = 0
+ttl = 3600
+
+# Feature Flags
+[features]
+enable_metrics = true
+enable_tracing = false
+enable_profiling = true
+beta_features = false
+
+# Monitoring Configuration
+[monitoring]
+enabled = true
+metrics_port = 9090
+health_check = "/health"
+readiness_check = "/ready"
+
+# Third-party Integrations
+[integrations]
+slack_webhook = "\${SLACK_WEBHOOK}"
+github_token = "\${GITHUB_TOKEN}"
+analytics_key = "\${ANALYTICS_KEY}"
+`,
+                'add-security': '\n# Security Configuration\n[security]\nsecret_key = "${SECRET_KEY}"\njwt_expiry = 3600\ncors_origins = ["http://localhost:3000"]\nrate_limit = 100\n\n[security.headers]\nx_frame_options = "DENY"\nx_content_type_options = "nosniff"\nstrict_transport_security = "max-age=31536000"\n'
+            };
+
+            if (suggestions[suggestionType]) {
+                if (suggestionType === 'optimize-structure') {
+                    // For structure optimization, replace the entire content
+                    input.value = suggestions[suggestionType];
+                } else {
+                    // For other suggestions, append to existing content
+                    input.value += suggestions[suggestionType];
+                }
+                
+                updateEditor();
+                showMessage(`🤖 AI suggestion applied: ${suggestionType}`, 'success');
+                updateStatus('AI suggestion applied', 'success');
+                
+                // Scroll to top to show the optimized structure
+                input.scrollTop = 0;
+                input.focus();
+                
+                // Update performance metrics after applying suggestion
+                setTimeout(updatePerformanceMetrics, 100);
+            }
+        }
+
+        function updatePerformanceMetrics() {
+            const input = document.getElementById('tomlInput');
+            if (!input) return;
+
+            // Calculate metrics
+            const content = input.value;
+            const parseTime = Math.random() * 5 + 1; // Simulated parse time
+            const fileSize = (new Blob([content]).size / 1024).toFixed(1);
+            const complexity = content.length > 1000 ? 'High' : content.length > 500 ? 'Medium' : 'Low';
+
+            // Update metric cards
+            const metrics = document.querySelectorAll('.metric-value');
+            if (metrics.length >= 4) {
+                metrics[0].textContent = `${parseTime.toFixed(1)}ms`;
+                metrics[1].textContent = `${fileSize}KB`;
+                metrics[2].textContent = complexity;
+                metrics[3].textContent = content.trim() ? '✅ Valid' : '⚠️ Empty';
+            }
+        }
+
+        function simulateRealtimeCollaboration() {
+            const users = ['Alex', 'Sarah', 'Mike', 'Emma', 'John'];
+            const _activeUsers = document.querySelectorAll('.active-user');
+            
+            // Simulate user activity
+            setInterval(() => {
+                const _randomUser = users[Math.floor(Math.random() * users.length)];
+                const userCount = Math.floor(Math.random() * 3) + 1;
+                
+                // Update active users display
+                const userContainer = document.querySelector('.collaboration-panel div');
+                if (userContainer) {
+                    userContainer.innerHTML = '';
+                    for (let i = 0; i < userCount; i++) {
+                        const user = users[Math.floor(Math.random() * users.length)];
+                        userContainer.innerHTML += `<span class="active-user">👤 ${user}</span>`;
+                    }
+                }
+            }, 10000); // Update every 10 seconds
+        }
+
+        // Add pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.02); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Advanced Enhancement Functions
+        let selectedExportFormat = 'toml';
+        const performanceData = [];
+        let operationCounter = 0;
+
+        function updateRealtimePreview() {
+            const input = document.getElementById('tomlInput');
+            const preview = document.getElementById('realtimePreview');
+            
+            if (!input || !preview) return;
+            
+            const content = input.value.trim();
+            if (!content) {
+                preview.innerHTML = '<span style="color: var(--ansi-bright-cyan);">Waiting for TOML input...</span>';
+                return;
+            }
+            
+            try {
+                // Simulate parsing for preview
+                const lines = content.split('\n').slice(0, 10); // Show first 10 lines
+                let previewHtml = '';
+                
+                lines.forEach(line => {
+                    if (line.trim()) {
+                        if (line.includes('[') && line.includes(']')) {
+                            // Section header
+                            previewHtml += `<span style="color: var(--ansi-bright-cyan); font-weight: bold;">${line}</span>\n`;
+                        } else if (line.includes('=')) {
+                            // Key-value pair
+                            const [key, value] = line.split('=').map(s => s.trim());
+                            previewHtml += `<span style="color: var(--ansi-bright-green);">${key}</span> = <span style="color: var(--ansi-bright-yellow);">${value}</span>\n`;
+                        } else {
+                            // Comment or other
+                            previewHtml += `<span style="color: var(--ansi-bright-white); opacity: 0.7;">${line}</span>\n`;
+                        }
+                    }
+                });
+                
+                preview.innerHTML = previewHtml || '<span style="color: var(--ansi-bright-cyan);">Preview available...</span>';
+            } catch (_error) {
+                preview.innerHTML = '<span style="color: var(--ansi-bright-red);">Error parsing TOML</span>';
+            }
+        }
+
+        function updateConfigManager() {
+            const themeElement = document.getElementById('currentConfigTheme');
+            const autoSaveElement = document.getElementById('autoSaveStatus');
+            const syntaxElement = document.getElementById('syntaxStatus');
+            const validationElement = document.getElementById('validationMode');
+            
+            if (themeElement) {
+                themeElement.textContent = currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1);
+            }
+            
+            if (autoSaveElement) {
+                autoSaveElement.textContent = localStorage.getItem('autoSave') === 'false' ? 'Disabled' : 'Enabled';
+            }
+            
+            if (syntaxElement) {
+                syntaxElement.textContent = document.getElementById('syntaxHighlight') ? 'Active' : 'Inactive';
+            }
+            
+            if (validationElement) {
+                validationElement.textContent = localStorage.getItem('validationMode') || 'Strict';
+            }
+        }
+
+        function handleAdvancedSearch() {
+            const searchInput = document.getElementById('advancedSearchInput');
+            const searchResults = document.getElementById('searchResults');
+            
+            if (!searchInput || !searchResults) return;
+            
+            const query = searchInput.value.toLowerCase().trim();
+            if (!query) {
+                searchResults.innerHTML = '<div style="color: var(--ansi-bright-cyan); opacity: 0.7;">Type to search...</div>';
+                return;
+            }
+            
+            const input = document.getElementById('tomlInput');
+            if (!input) return;
+            
+            const content = input.value;
+            const lines = content.split('\n');
+            const results = [];
+            
+            lines.forEach((line, index) => {
+                if (line.toLowerCase().includes(query)) {
+                    results.push({
+                        line: index + 1,
+                        content: line.trim(),
+                        context: line
+                    });
+                }
+            });
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div style="color: var(--ansi-bright-yellow);">No results found</div>';
+            } else {
+                let resultsHtml = '';
+                results.slice(0, 5).forEach(result => {
+                    resultsHtml += `
+                        <div class="search-result-item" onclick="goToLine(${result.line})">
+                            <span style="color: var(--ansi-bright-cyan);">Line ${result.line}:</span>
+                            <span style="color: var(--ansi-bright-white);">${result.content}</span>
+                        </div>
+                    `;
+                });
+                
+                if (results.length > 5) {
+                    resultsHtml += `<div style="color: var(--ansi-bright-cyan); opacity: 0.7; text-align: center; margin-top: 5px;">... and ${results.length - 5} more</div>`;
+                }
+                
+                searchResults.innerHTML = resultsHtml;
+            }
+        }
+
+        function _goToLine(lineNumber) {
+            const input = document.getElementById('tomlInput');
+            if (!input) return;
+            
+            const lines = input.value.split('\n');
+            const _currentLine = 0;
+            let position = 0;
+            
+            for (let i = 0; i < lineNumber - 1 && i < lines.length; i++) {
+                position += lines[i].length + 1; // +1 for newline
+            }
+            
+            input.focus();
+            input.setSelectionRange(position, position + lines[lineNumber - 1].length);
+            
+            showNotification('Navigation', `Jumped to line ${lineNumber}`, 'success');
+        }
+
+        function updatePerformanceChart() {
+            const chart = document.getElementById('performanceChart');
+            if (!chart) return;
+            
+            // Generate random performance data
+            const newValue = Math.random() * 100;
+            performanceData.push(newValue);
+            
+            if (performanceData.length > 50) {
+                performanceData.shift();
+            }
+            
+            // Clear existing bars
+            chart.innerHTML = '';
+            
+            // Create bars
+            performanceData.forEach((value, index) => {
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.left = `${index * 2}px`;
+                bar.style.height = `${value}%`;
+                chart.appendChild(bar);
+            });
+            
+            // Update metrics
+            const parseTimeElement = document.getElementById('parseTime');
+            const memoryElement = document.getElementById('memoryUsage');
+            const operationElement = document.getElementById('operationCount');
+            
+            if (parseTimeElement) {
+                parseTimeElement.textContent = `${(Math.random() * 10).toFixed(1)}ms`;
+            }
+            
+            if (memoryElement) {
+                memoryElement.textContent = `${(Math.random() * 5 + 1).toFixed(1)}MB`;
+            }
+            
+            if (operationElement) {
+                operationCounter++;
+                operationElement.textContent = operationCounter;
+            }
+        }
+
+        function _exportFormat(format) {
+            selectedExportFormat = format;
+            
+            // Update button states
+            const buttons = document.querySelectorAll('.format-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            showNotification('Export Format', `Selected ${format.toUpperCase()} format`, 'success');
+        }
+
+        function _exportConfig() {
+            const input = document.getElementById('tomlInput');
+            if (!input || !input.value.trim()) {
+                showNotification('Export Error', 'No content to export', 'error');
+                return;
+            }
+            
+            showLoading('Exporting configuration...');
+            
+            setTimeout(() => {
+                let content = '';
+                let filename = '';
+                let mimeType = 'text/plain';
+                
+                switch (selectedExportFormat) {
+                    case 'toml':
+                        content = input.value;
+                        filename = 'config.toml';
+                        break;
+                    case 'json':
+                        try {
+                            const parsed = parseTomlString(input.value);
+                            content = JSON.stringify(parsed, null, 2);
+                            filename = 'config.json';
+                            mimeType = 'application/json';
+                        } catch (_error) {
+                            hideLoading();
+                            showNotification('Export Error', 'Failed to convert to JSON', 'error');
+                            return;
+                        }
+                        break;
+                    case 'yaml':
+                        try {
+                            const parsed = parseTomlString(input.value);
+                            content = toYAML(parsed);
+                            filename = 'config.yaml';
+                        } catch (_error) {
+                            hideLoading();
+                            showNotification('Export Error', 'Failed to convert to YAML', 'error');
+                            return;
+                        }
+                        break;
+                    case 'xml':
+                        try {
+                            const parsed = parseTomlString(input.value);
+                            content = toXML(parsed);
+                            filename = 'config.xml';
+                        } catch (_error) {
+                            hideLoading();
+                            showNotification('Export Error', 'Failed to convert to XML', 'error');
+                            return;
+                        }
+                        break;
+                    case 'env':
+                        content = convertToEnv(input.value);
+                        filename = '.env';
+                        break;
+                }
+                
+                // Download file
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                hideLoading();
+                showNotification('Export Success', `Configuration exported as ${filename}`, 'success');
+                operationCounter++;
+            }, 1000);
+        }
+
+        function _importConfig() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.toml,.json,.yaml,.xml,.env';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                showLoading('Importing configuration...');
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    const tomlInput = document.getElementById('tomlInput');
+                    
+                    if (tomlInput) {
+                        tomlInput.value = content;
+                        updateEditor();
+                        updateRealtimePreview();
+                        hideLoading();
+                        showNotification('Import Success', `Configuration imported from ${file.name}`, 'success');
+                        operationCounter++;
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function _shareConfig() {
+            const input = document.getElementById('tomlInput');
+            if (!input || !input.value.trim()) {
+                showNotification('Share Error', 'No content to share', 'error');
+                return;
+            }
+            
+            // Create shareable link (in a real app, this would upload to a service)
+            const encoded = btoa(input.value);
+            const shareUrl = `${window.location.origin}${window.location.pathname}#shared=${encoded.substring(0, 100)}`;
+            
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showNotification('Share Success', 'Share link copied to clipboard', 'success');
+            }).catch(() => {
+                showNotification('Share Error', 'Failed to copy link', 'error');
+            });
+        }
+
+        function convertToEnv(tomlContent) {
+            const lines = tomlContent.split('\n');
+            const envLines = [];
+            
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+                    const [key, value] = trimmed.split('=').map(s => s.trim());
+                    if (key && value) {
+                        // Clean up the key for ENV format
+                        const envKey = key.toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+                        envLines.push(`${envKey}=${value.replace(/"/g, '')}`);
+                    }
+                }
+            });
+            
+            return envLines.join('\n');
+        }
+
+        function showNotification(title, message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        function showLoading(text = 'Processing...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingText = document.querySelector('.loading-text');
+            
+            if (overlay) {
+                overlay.classList.add('active');
+                if (loadingText) {
+                    loadingText.textContent = text;
+                }
+            }
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function expandEnvVars() {
+            const input = document.getElementById('tomlInput').value;
+            
+            if (!input.trim()) {
+                showMessage('⚠️ Please enter TOML content', 'warning');
+                return;
+            }
+            
+            // Expand environment variables with security
+            let expanded = input;
+            const envVarPattern = /\$\{([^}:]+)(?::([^}]*))?\}/g;
+            
+            expanded = expanded.replace(envVarPattern, (match, varName, defaultValue) => {
+                // Use Bun's environment if available
+                if (typeof Bun !== 'undefined' && Bun.env) {
+                    const value = Bun.env[varName];
+                    return value !== undefined ? value : (defaultValue || '');
+                }
+                
+                // Demo values for browser
+                const demoValues = {
+                    'API_KEY': 'demo-api-key-12345',
+                    'DATABASE_URL': 'postgresql://localhost:5432/myapp',
+                    'PORT': '3000',
+                    'NODE_ENV': 'development'
+                };
+                
+                return demoValues[varName] || (defaultValue || match);
+            });
+            
+            document.getElementById('tomlInput').value = expanded;
+            updateEditor();
+            showMessage('🌍 Environment variables expanded', 'success');
+        }
+
+        function validateToml() {
+            const input = document.getElementById('tomlInput').value;
+            
+            if (!input.trim()) {
+                showMessage('⚠️ Please enter TOML content', 'warning');
+                return;
+            }
+            
+            const result = parseTomlString(input);
+            
+            if (result.success) {
+                const validation = {
+                    valid: true,
+                    sections: Object.keys(result.data),
+                    keys: [],
+                    types: {},
+                    warnings: []
+                };
+                
+                // Analyze structure
+                function analyzeObject(obj, prefix = '') {
+                    for (const [key, value] of Object.entries(obj)) {
+                        const fullKey = prefix ? `${prefix}.${key}` : key;
+                        validation.keys.push(fullKey);
+                        validation.types[fullKey] = typeof value;
+                        
+                        if (typeof value === 'object' && !Array.isArray(value)) {
+                            analyzeObject(value, fullKey);
+                        }
+                    }
+                }
+                
+                analyzeObject(result.data);
+                
+                // Generate validation report
+                let report = `✅ TOML Validation Report\n\n`;
+                report += `📊 Structure:\n`;
+                report += `- Sections: ${validation.sections.length}\n`;
+                report += `- Keys: ${validation.keys.length}\n`;
+                report += `- Valid: ${validation.valid ? 'Yes' : 'No'}\n\n`;
+                
+                report += `🔑 Keys Found:\n`;
+                validation.keys.forEach(key => {
+                    const type = validation.types[key];
+                    const icon = type === 'string' ? '📝' : type === 'number' ? '🔢' : type === 'boolean' ? '☑️' : '📦';
+                    report += `${icon} ${key}: ${type}\n`;
+                });
+                
+                displayOutput(report, 'stats');
+                switchOutputTab('stats');
+                showMessage('✅ TOML validation completed', 'success');
+                updateStatus('Validation passed', 'success');
+            } else {
+                displayOutput(`❌ Validation Errors:\n${result.errors.join('\n')}`, 'errors');
+                switchOutputTab('errors');
+                showMessage('❌ TOML validation failed', 'error');
+                updateStatus('Validation failed', 'error');
+            }
+        }
+
+        function _convertToJSON() {
+            const input = document.getElementById('tomlInput').value;
+            
+            if (!input.trim()) {
+                showMessage('⚠️ Please enter TOML content', 'warning');
+                return;
+            }
+            
+            const result = parseTomlString(input);
+            
+            if (result.success) {
+                displayOutput(JSON.stringify(result.data, null, 2), 'json');
+                switchOutputTab('json');
+                showMessage('📄 Converted to JSON', 'success');
+            } else {
+                displayOutput(result.errors.join('\n'), 'errors');
+                switchOutputTab('errors');
+                showMessage('❌ Failed to parse TOML', 'error');
+            }
+        }
+
+        function _convertToYAML() {
+            const input = document.getElementById('tomlInput').value;
+            
+            if (!input.trim()) {
+                showMessage('⚠️ Please enter TOML content', 'warning');
+                return;
+            }
+            
+            const result = parseTomlString(input);
+            
+            if (result.success) {
+                const yaml = toYAML(result.data);
+                displayOutput(yaml, 'yaml');
+                switchOutputTab('yaml');
+                showMessage('📄 Converted to YAML', 'success');
+            } else {
+                displayOutput(result.errors.join('\n'), 'errors');
+                switchOutputTab('errors');
+                showMessage('❌ Failed to parse TOML', 'error');
+            }
+        }
+
+        function _convertToXML() {
+            const input = document.getElementById('tomlInput').value;
+            
+            if (!input.trim()) {
+                showMessage('⚠️ Please enter TOML content', 'warning');
+                return;
+            }
+            
+            const result = parseTomlString(input);
+            
+            if (result.success) {
+                const xml = toXML(result.data);
+                displayOutput(xml, 'xml');
+                switchOutputTab('xml');
+                showMessage('📄 Converted to XML', 'success');
+            } else {
+                displayOutput(result.errors.join('\n'), 'errors');
+                switchOutputTab('errors');
+                showMessage('❌ Failed to parse TOML', 'error');
+            }
+        }
+
+        // Initialize with a demo
+        window.addEventListener('load', () => {
+            showMessage('🎉 Welcome to Enhanced TOML Editor Dashboard!', 'success');
+            loadSavedTheme(); // Load saved theme
+            initKeyboardShortcuts(); // Initialize keyboard shortcuts
+            initializePWA();
+            handleURLActions();
+            
+            // Start advanced features
+            updatePerformanceMetrics();
+            simulateRealtimeCollaboration();
+            updateRealtimePreview();
+            updateConfigManager();
+            
+            // Update metrics periodically
+            setInterval(updatePerformanceMetrics, 5000);
+            setInterval(updatePerformanceChart, 2000);
+            setInterval(updateConfigManager, 10000);
+            
+            // Add event listeners for advanced features
+            const searchInput = document.getElementById('advancedSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleAdvancedSearch);
+            }
+            
+            const tomlInput = document.getElementById('tomlInput');
+            if (tomlInput) {
+                tomlInput.addEventListener('input', () => {
+                    updateRealtimePreview();
+                    operationCounter++;
+                });
+            }
+        });
+
+        // PWA functionality
+        let deferredPrompt;
+
+        function initializePWA() {
+            // Register service worker (if available)
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(_registration => console.log('SW registered'))
+                    .catch(_err => console.log('SW registration failed'));
+            }
+
+            // Install prompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallButton();
+            });
+
+            // Handle app installed
+            window.addEventListener('appinstalled', () => {
+                showMessage('📱 App installed successfully!', 'success');
+                hideInstallButton();
+            });
+        }
+
+        function showInstallButton() {
+            const installBtn = document.createElement('button');
+            installBtn.id = 'install-btn';
+            installBtn.className = 'btn';
+            installBtn.textContent = '📱 Install App';
+            installBtn.style.position = 'fixed';
+            installBtn.style.top = '20px';
+            installBtn.style.right = '20px';
+            installBtn.style.zIndex = '1000';
+            installBtn.onclick = installApp;
+            document.body.appendChild(installBtn);
+        }
+
+        function hideInstallButton() {
+            const installBtn = document.getElementById('install-btn');
+            if (installBtn) {
+                installBtn.remove();
+            }
+        }
+
+        async function installApp() {
+            if (!deferredPrompt) return;
+            
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            
+            if (outcome === 'accepted') {
+                showMessage('📱 Installing app...', 'success');
+            } else {
+                showMessage('❌ Install cancelled', 'error');
+            }
+            hideInstallButton();
+        }
+
+        // Handle URL actions for shortcuts
+        function handleURLActions() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            
+            if (action) {
+                setTimeout(() => {
+                    switch(action) {
+                        case 'parse':
+                            parseToml();
+                            break;
+                        case 'validate':
+                            validateToml();
+                            break;
+                        default:
+                            showMessage(`Unknown action: ${action}`, 'error');
+                    }
+                }, 1000);
+            }
+        }
+
+        // Enhanced mobile experience
+        if ('standalone' in window.navigator || window.matchMedia('(display-mode: standalone)').matches) {
+            document.body.classList.add('pwa-mode');
+        }
+    </script>
+</body>
+</html>

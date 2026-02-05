@@ -1,0 +1,192 @@
+{
+  "inputs": {
+    "lib/automated-validation-system.ts": {
+      "bytes": 14956,
+      "imports": [
+        {
+          "path": "/Users/nolarose/Projects/lib/cli-constants-validation.ts",
+          "kind": "import-statement",
+          "original": "./cli-constants-validation"
+        },
+        {
+          "path": "/Users/nolarose/Projects/lib/documentation-validator.ts",
+          "kind": "import-statement",
+          "original": "./documentation-validator"
+        },
+        {
+          "path": "/Users/nolarose/Projects/lib/untracked-files-analyzer.ts",
+          "kind": "import-statement",
+          "original": "./untracked-files-analyzer"
+        },
+        {
+          "path": "fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "fs",
+          "kind": "require-call",
+          "external": true
+        },
+        {
+          "path": "fs",
+          "kind": "require-call",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "lib/untracked-files-analyzer.ts": {
+      "bytes": 13031,
+      "imports": [
+        {
+          "path": "fs",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "/bun-vfs$$/node_modules/path/index.js",
+          "kind": "import-statement",
+          "original": "path"
+        }
+      ],
+      "format": "esm"
+    },
+    "lib/cli-constants-validation.ts": {
+      "bytes": 25381,
+      "imports": [
+        {
+          "path": "./core-validation",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "./core-errors",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "./core-documentation",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "bun",
+          "kind": "dynamic-import",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "lib/documentation-validator.ts": {
+      "bytes": 10872,
+      "imports": [
+        {
+          "path": "/Users/nolarose/Projects/lib/cli-constants-validation.ts",
+          "kind": "import-statement",
+          "original": "./cli-constants-validation"
+        },
+        {
+          "path": "/Users/nolarose/Projects/lib/documentation/constants/cli.ts",
+          "kind": "import-statement",
+          "original": "./documentation/constants/cli"
+        },
+        {
+          "path": "/Users/nolarose/Projects/lib/documentation/constants/utils.ts",
+          "kind": "import-statement",
+          "original": "./documentation/constants/utils"
+        }
+      ],
+      "format": "esm"
+    },
+    "node:path": {
+      "bytes": 7223,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "lib/documentation/constants/utils.ts": {
+      "bytes": 3149,
+      "imports": [
+      ],
+      "format": "esm"
+    },
+    "lib/cli-constants-validation.ts": {
+      "bytes": 25381,
+      "imports": [
+        {
+          "path": "./core-validation",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "./core-errors",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "./core-documentation",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "bun",
+          "kind": "dynamic-import",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "lib/documentation/constants/cli.ts": {
+      "bytes": 2425,
+      "imports": [
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "./automated-validation-system.js": {
+      "bytes": 72332,
+      "inputs": {
+        "lib/cli-constants-validation.ts": {
+          "bytesInOutput": 12469
+        },
+        "lib/cli-constants-validation.ts": {
+          "bytesInOutput": 14455
+        },
+        "lib/documentation/constants/cli.ts": {
+          "bytesInOutput": 1289
+        },
+        "lib/documentation/constants/utils.ts": {
+          "bytesInOutput": 1955
+        },
+        "lib/documentation-validator.ts": {
+          "bytesInOutput": 8506
+        },
+        "node:path": {
+          "bytesInOutput": 10002
+        },
+        "lib/untracked-files-analyzer.ts": {
+          "bytesInOutput": 10470
+        },
+        "lib/automated-validation-system.ts": {
+          "bytesInOutput": 12478
+        }
+      },
+      "imports": [
+      ],
+      "exports": [],
+      "entryPoint": "lib/automated-validation-system.ts"
+    }
+  }
+}

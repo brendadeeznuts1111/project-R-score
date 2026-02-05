@@ -1,0 +1,117 @@
+# Prometheus Configuration for Bun 1.3 Betting Platform
+# Performance Validated Configuration
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+# Rule files for alerting
+rule_files:
+  - "rules/*.yml"
+  - "alerts/*.yml"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093  # Uncomment when alertmanager is added
+
+# Scrape configurations
+scrape_configs:
+  # Bun 1.3 Betting Platform Application
+  - job_name: 'betting-platform'
+    static_configs:
+      - targets: ['betting-platform:9090']
+        labels:
+          environment: 'production'
+          service: 'betting-platform'
+          version: '1.3.1'
+    metrics_path: /metrics
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    # Performance optimized settings
+    sample_limit: 5000
+    series_limit: 10000
+
+    # Relabeling for better metric organization
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(?::\d+)?'
+        replacement: '$1'
+
+  # Node Exporter for system metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          environment: 'production'
+          service: 'system'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+    # Filter out unnecessary metrics to reduce cardinality
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'node_cpu|node_memory|node_disk|node_network|node_load|node_filesystem'
+        action: keep
+
+  # PostgreSQL Exporter for database metrics
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          environment: 'production'
+          service: 'database'
+          db_instance: 'betting_platform'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+    # Database-specific metric filtering
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'pg_stat|pg_locks|pg_stat_bgwriter|pg_stat_database'
+        action: keep
+
+  # Redis Exporter for cache metrics
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          environment: 'production'
+          service: 'cache'
+          redis_instance: 'betting_cache'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+    # Redis-specific metric filtering
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'redis_keyspace|redis_memory|redis_clients|redis_commands'
+        action: keep
+
+  # Nginx metrics (if nginx exporter is added)
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+        labels:
+          environment: 'production'
+          service: 'load-balancer'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    enabled: false  # Enable when nginx exporter is added
+
+# Remote write configuration (optional, for long-term storage)
+# remote_write:
+#   - url: "http://victoriametrics:8428/api/v1/write"
+#     queue_config:
+#       max_samples_per_send: 1000
+#       max_shards: 200
+#       capacity: 5000
+
+# Remote read configuration (optional)
+# remote_read:
+#   - url: "http://victoriametrics:8428/api/v1/read"
+#     read_recent: true

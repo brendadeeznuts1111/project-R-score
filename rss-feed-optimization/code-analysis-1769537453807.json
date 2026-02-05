@@ -1,0 +1,974 @@
+{
+	"files": [
+		{
+			"file": "src/rss-generator.js",
+			"lines": 164,
+			"classes": [
+				{
+					"name": "RSSGenerator",
+					"exported": false,
+					"line": 3
+				}
+			],
+			"functions": [],
+			"imports": [],
+			"exports": [],
+			"complexity": 9,
+			"issues": []
+		},
+		{
+			"file": "src/server.js",
+			"lines": 305,
+			"classes": [],
+			"functions": [
+				{
+					"name": "evictCacheIfNeeded",
+					"async": false,
+					"exported": false,
+					"line": 22
+				},
+				{
+					"name": "getPostsCached",
+					"async": true,
+					"exported": false,
+					"line": 30
+				},
+				{
+					"name": "handleRequest",
+					"async": true,
+					"exported": false,
+					"line": 67
+				},
+				{
+					"name": "handleHome",
+					"async": true,
+					"exported": false,
+					"line": 107
+				},
+				{
+					"name": "handleRSS",
+					"async": true,
+					"exported": false,
+					"line": 161
+				},
+				{
+					"name": "handleCategoryRSS",
+					"async": true,
+					"exported": false,
+					"line": 173
+				},
+				{
+					"name": "handlePost",
+					"async": true,
+					"exported": false,
+					"line": 204
+				},
+				{
+					"name": "handleAdminRoutes",
+					"async": true,
+					"exported": false,
+					"line": 266
+				}
+			],
+			"imports": [
+				"./r2-client.js",
+				"./rss-generator.js",
+				"./profiler.js",
+				"./utils/error-handler.js",
+				"./utils/metrics.js"
+			],
+			"exports": [],
+			"complexity": 25,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				},
+				{
+					"type": "missing_error_handling",
+					"severity": "medium",
+					"message": "Many async functions without try-catch"
+				}
+			]
+		},
+		{
+			"file": "src/utils/metrics.js",
+			"lines": 104,
+			"classes": [
+				{
+					"name": "ServerMetrics",
+					"exported": false,
+					"line": 4
+				}
+			],
+			"functions": [
+				{
+					"name": "metricsMiddleware",
+					"async": false,
+					"exported": true,
+					"line": 86
+				}
+			],
+			"imports": [],
+			"exports": ["metrics", "metricsMiddleware"],
+			"complexity": 10,
+			"issues": []
+		},
+		{
+			"file": "src/utils/streaming.js",
+			"lines": 87,
+			"classes": [],
+			"functions": [
+				{
+					"name": "streamRSSFeed",
+					"async": false,
+					"exported": true,
+					"line": 8
+				},
+				{
+					"name": "streamJSONResponse",
+					"async": false,
+					"exported": true,
+					"line": 56
+				}
+			],
+			"imports": [],
+			"exports": ["streamRSSFeed", "streamJSONResponse"],
+			"complexity": 7,
+			"issues": []
+		},
+		{
+			"file": "src/utils/error-handler.js",
+			"lines": 110,
+			"classes": [
+				{
+					"name": "BlogError",
+					"exported": true,
+					"line": 4
+				},
+				{
+					"name": "NotFoundError",
+					"exported": true,
+					"line": 13
+				},
+				{
+					"name": "UnauthorizedError",
+					"exported": true,
+					"line": 20
+				},
+				{
+					"name": "ValidationError",
+					"exported": true,
+					"line": 27
+				}
+			],
+			"functions": [
+				{
+					"name": "handleError",
+					"async": false,
+					"exported": true,
+					"line": 38
+				},
+				{
+					"name": "asyncHandler",
+					"async": false,
+					"exported": true,
+					"line": 78
+				},
+				{
+					"name": "validateSlug",
+					"async": false,
+					"exported": true,
+					"line": 94
+				}
+			],
+			"imports": [],
+			"exports": [
+				"BlogError",
+				"NotFoundError",
+				"UnauthorizedError",
+				"ValidationError",
+				"handleError",
+				"asyncHandler",
+				"validateSlug"
+			],
+			"complexity": 8,
+			"issues": []
+		},
+		{
+			"file": "src/benchmark.js",
+			"lines": 79,
+			"classes": [],
+			"functions": [
+				{
+					"name": "benchmarkRSS",
+					"async": true,
+					"exported": false,
+					"line": 6
+				},
+				{
+					"name": "benchmarkR2",
+					"async": true,
+					"exported": false,
+					"line": 49
+				},
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 66
+				}
+			],
+			"imports": ["./rss-generator.js"],
+			"exports": [],
+			"complexity": 4,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				},
+				{
+					"type": "missing_error_handling",
+					"severity": "medium",
+					"message": "Many async functions without try-catch"
+				}
+			]
+		},
+		{
+			"file": "src/profiler.js",
+			"lines": 181,
+			"classes": [
+				{
+					"name": "PerformanceMonitor",
+					"exported": false,
+					"line": 4
+				}
+			],
+			"functions": [],
+			"imports": ["fs/promises"],
+			"exports": [],
+			"complexity": 14,
+			"issues": []
+		},
+		{
+			"file": "src/scripts/sync-posts.js",
+			"lines": 23,
+			"classes": [],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 6
+				}
+			],
+			"imports": ["../r2-client.js"],
+			"exports": [],
+			"complexity": 4,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				},
+				{
+					"type": "missing_error_handling",
+					"severity": "medium",
+					"message": "Many async functions without try-catch"
+				}
+			]
+		},
+		{
+			"file": "src/r2-client.js",
+			"lines": 219,
+			"classes": [
+				{
+					"name": "R2BlogStorage",
+					"exported": false,
+					"line": 6
+				}
+			],
+			"functions": [],
+			"imports": ["bun", "fs/promises", "path"],
+			"exports": [],
+			"complexity": 20,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/compatibility/release-matrix.js",
+			"lines": 297,
+			"classes": [
+				{
+					"name": "ReleaseCompatibilityMatrix",
+					"exported": false,
+					"line": 4
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 279
+				}
+			],
+			"imports": [],
+			"exports": [],
+			"complexity": 16,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/benchmark/adaptive-benchmark.js",
+			"lines": 285,
+			"classes": [
+				{
+					"name": "AdaptiveBenchmark",
+					"exported": false,
+					"line": 4
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 275
+				}
+			],
+			"imports": [],
+			"exports": [],
+			"complexity": 26,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/releases/full-timeline.js",
+			"lines": 373,
+			"classes": [
+				{
+					"name": "BunReleaseTimeline",
+					"exported": false,
+					"line": 4
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 363
+				}
+			],
+			"imports": [],
+			"exports": [],
+			"complexity": 24,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				},
+				{
+					"type": "missing_error_handling",
+					"severity": "medium",
+					"message": "Many async functions without try-catch"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/cli/migration-cli.js",
+			"lines": 193,
+			"classes": [
+				{
+					"name": "MigrationCLI",
+					"exported": false,
+					"line": 8
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 183
+				}
+			],
+			"imports": [
+				"../explore/parallel-explorer.js",
+				"../benchmark/adaptive-benchmark.js",
+				"../migrate/smart-migrator.js"
+			],
+			"exports": [],
+			"complexity": 11,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				},
+				{
+					"type": "missing_error_handling",
+					"severity": "medium",
+					"message": "Many async functions without try-catch"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/visualize/api-evolution.js",
+			"lines": 222,
+			"classes": [
+				{
+					"name": "APIEvolutionVisualizer",
+					"exported": false,
+					"line": 4
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 205
+				}
+			],
+			"imports": [],
+			"exports": [],
+			"complexity": 7,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				},
+				{
+					"type": "missing_error_handling",
+					"severity": "medium",
+					"message": "Many async functions without try-catch"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/explore/parallel-explorer.js",
+			"lines": 417,
+			"classes": [
+				{
+					"name": "ParallelBunExplorer",
+					"exported": false,
+					"line": 4
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 388
+				}
+			],
+			"imports": [],
+			"exports": [],
+			"complexity": 21,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/migrate/smart-migrator.js",
+			"lines": 367,
+			"classes": [
+				{
+					"name": "SmartMigrationAssistant",
+					"exported": false,
+					"line": 8
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 333
+				}
+			],
+			"imports": ["fs/promises", "fs/promises", "path"],
+			"exports": [],
+			"complexity": 29,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/analyze/dependency-mapper.js",
+			"lines": 320,
+			"classes": [
+				{
+					"name": "DependencyReleaseMapper",
+					"exported": false,
+					"line": 8
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 310
+				}
+			],
+			"imports": ["fs/promises", "fs/promises", "path"],
+			"exports": [],
+			"complexity": 14,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				}
+			]
+		},
+		{
+			"file": "bun-migration-suite/scripts/reports/comprehensive-report.js",
+			"lines": 246,
+			"classes": [
+				{
+					"name": "ComprehensiveReport",
+					"exported": false,
+					"line": 8
+				}
+			],
+			"functions": [
+				{
+					"name": "main",
+					"async": true,
+					"exported": false,
+					"line": 236
+				}
+			],
+			"imports": [
+				"../explore/parallel-explorer.js",
+				"../migrate/smart-migrator.js",
+				"../benchmark/adaptive-benchmark.js"
+			],
+			"exports": [],
+			"complexity": 11,
+			"issues": [
+				{
+					"type": "console_log",
+					"severity": "low",
+					"message": "console.log found (consider using proper logging)"
+				},
+				{
+					"type": "missing_error_handling",
+					"severity": "medium",
+					"message": "Many async functions without try-catch"
+				}
+			]
+		}
+	],
+	"classes": [
+		{
+			"name": "RSSGenerator",
+			"exported": false,
+			"line": 3,
+			"file": "src/rss-generator.js"
+		},
+		{
+			"name": "ServerMetrics",
+			"exported": false,
+			"line": 4,
+			"file": "src/utils/metrics.js"
+		},
+		{
+			"name": "BlogError",
+			"exported": true,
+			"line": 4,
+			"file": "src/utils/error-handler.js"
+		},
+		{
+			"name": "NotFoundError",
+			"exported": true,
+			"line": 13,
+			"file": "src/utils/error-handler.js"
+		},
+		{
+			"name": "UnauthorizedError",
+			"exported": true,
+			"line": 20,
+			"file": "src/utils/error-handler.js"
+		},
+		{
+			"name": "ValidationError",
+			"exported": true,
+			"line": 27,
+			"file": "src/utils/error-handler.js"
+		},
+		{
+			"name": "PerformanceMonitor",
+			"exported": false,
+			"line": 4,
+			"file": "src/profiler.js"
+		},
+		{
+			"name": "R2BlogStorage",
+			"exported": false,
+			"line": 6,
+			"file": "src/r2-client.js"
+		},
+		{
+			"name": "ReleaseCompatibilityMatrix",
+			"exported": false,
+			"line": 4,
+			"file": "bun-migration-suite/scripts/compatibility/release-matrix.js"
+		},
+		{
+			"name": "AdaptiveBenchmark",
+			"exported": false,
+			"line": 4,
+			"file": "bun-migration-suite/scripts/benchmark/adaptive-benchmark.js"
+		},
+		{
+			"name": "BunReleaseTimeline",
+			"exported": false,
+			"line": 4,
+			"file": "bun-migration-suite/scripts/releases/full-timeline.js"
+		},
+		{
+			"name": "MigrationCLI",
+			"exported": false,
+			"line": 8,
+			"file": "bun-migration-suite/scripts/cli/migration-cli.js"
+		},
+		{
+			"name": "APIEvolutionVisualizer",
+			"exported": false,
+			"line": 4,
+			"file": "bun-migration-suite/scripts/visualize/api-evolution.js"
+		},
+		{
+			"name": "ParallelBunExplorer",
+			"exported": false,
+			"line": 4,
+			"file": "bun-migration-suite/scripts/explore/parallel-explorer.js"
+		},
+		{
+			"name": "SmartMigrationAssistant",
+			"exported": false,
+			"line": 8,
+			"file": "bun-migration-suite/scripts/migrate/smart-migrator.js"
+		},
+		{
+			"name": "DependencyReleaseMapper",
+			"exported": false,
+			"line": 8,
+			"file": "bun-migration-suite/scripts/analyze/dependency-mapper.js"
+		},
+		{
+			"name": "ComprehensiveReport",
+			"exported": false,
+			"line": 8,
+			"file": "bun-migration-suite/scripts/reports/comprehensive-report.js"
+		}
+	],
+	"functions": [
+		{
+			"name": "evictCacheIfNeeded",
+			"async": false,
+			"exported": false,
+			"line": 22,
+			"file": "src/server.js"
+		},
+		{
+			"name": "getPostsCached",
+			"async": true,
+			"exported": false,
+			"line": 30,
+			"file": "src/server.js"
+		},
+		{
+			"name": "handleRequest",
+			"async": true,
+			"exported": false,
+			"line": 67,
+			"file": "src/server.js"
+		},
+		{
+			"name": "handleHome",
+			"async": true,
+			"exported": false,
+			"line": 107,
+			"file": "src/server.js"
+		},
+		{
+			"name": "handleRSS",
+			"async": true,
+			"exported": false,
+			"line": 161,
+			"file": "src/server.js"
+		},
+		{
+			"name": "handleCategoryRSS",
+			"async": true,
+			"exported": false,
+			"line": 173,
+			"file": "src/server.js"
+		},
+		{
+			"name": "handlePost",
+			"async": true,
+			"exported": false,
+			"line": 204,
+			"file": "src/server.js"
+		},
+		{
+			"name": "handleAdminRoutes",
+			"async": true,
+			"exported": false,
+			"line": 266,
+			"file": "src/server.js"
+		},
+		{
+			"name": "metricsMiddleware",
+			"async": false,
+			"exported": true,
+			"line": 86,
+			"file": "src/utils/metrics.js"
+		},
+		{
+			"name": "streamRSSFeed",
+			"async": false,
+			"exported": true,
+			"line": 8,
+			"file": "src/utils/streaming.js"
+		},
+		{
+			"name": "streamJSONResponse",
+			"async": false,
+			"exported": true,
+			"line": 56,
+			"file": "src/utils/streaming.js"
+		},
+		{
+			"name": "handleError",
+			"async": false,
+			"exported": true,
+			"line": 38,
+			"file": "src/utils/error-handler.js"
+		},
+		{
+			"name": "asyncHandler",
+			"async": false,
+			"exported": true,
+			"line": 78,
+			"file": "src/utils/error-handler.js"
+		},
+		{
+			"name": "validateSlug",
+			"async": false,
+			"exported": true,
+			"line": 94,
+			"file": "src/utils/error-handler.js"
+		},
+		{
+			"name": "benchmarkRSS",
+			"async": true,
+			"exported": false,
+			"line": 6,
+			"file": "src/benchmark.js"
+		},
+		{
+			"name": "benchmarkR2",
+			"async": true,
+			"exported": false,
+			"line": 49,
+			"file": "src/benchmark.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 66,
+			"file": "src/benchmark.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 6,
+			"file": "src/scripts/sync-posts.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 279,
+			"file": "bun-migration-suite/scripts/compatibility/release-matrix.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 275,
+			"file": "bun-migration-suite/scripts/benchmark/adaptive-benchmark.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 363,
+			"file": "bun-migration-suite/scripts/releases/full-timeline.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 183,
+			"file": "bun-migration-suite/scripts/cli/migration-cli.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 205,
+			"file": "bun-migration-suite/scripts/visualize/api-evolution.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 388,
+			"file": "bun-migration-suite/scripts/explore/parallel-explorer.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 333,
+			"file": "bun-migration-suite/scripts/migrate/smart-migrator.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 310,
+			"file": "bun-migration-suite/scripts/analyze/dependency-mapper.js"
+		},
+		{
+			"name": "main",
+			"async": true,
+			"exported": false,
+			"line": 236,
+			"file": "bun-migration-suite/scripts/reports/comprehensive-report.js"
+		}
+	],
+	"imports": {},
+	"exports": {},
+	"complexity": [
+		{
+			"file": "src/rss-generator.js",
+			"score": 9
+		},
+		{
+			"file": "src/server.js",
+			"score": 25
+		},
+		{
+			"file": "src/utils/metrics.js",
+			"score": 10
+		},
+		{
+			"file": "src/utils/streaming.js",
+			"score": 7
+		},
+		{
+			"file": "src/utils/error-handler.js",
+			"score": 8
+		},
+		{
+			"file": "src/benchmark.js",
+			"score": 4
+		},
+		{
+			"file": "src/profiler.js",
+			"score": 14
+		},
+		{
+			"file": "src/scripts/sync-posts.js",
+			"score": 4
+		},
+		{
+			"file": "src/r2-client.js",
+			"score": 20
+		},
+		{
+			"file": "bun-migration-suite/scripts/compatibility/release-matrix.js",
+			"score": 16
+		},
+		{
+			"file": "bun-migration-suite/scripts/benchmark/adaptive-benchmark.js",
+			"score": 26
+		},
+		{
+			"file": "bun-migration-suite/scripts/releases/full-timeline.js",
+			"score": 24
+		},
+		{
+			"file": "bun-migration-suite/scripts/cli/migration-cli.js",
+			"score": 11
+		},
+		{
+			"file": "bun-migration-suite/scripts/visualize/api-evolution.js",
+			"score": 7
+		},
+		{
+			"file": "bun-migration-suite/scripts/explore/parallel-explorer.js",
+			"score": 21
+		},
+		{
+			"file": "bun-migration-suite/scripts/migrate/smart-migrator.js",
+			"score": 29
+		},
+		{
+			"file": "bun-migration-suite/scripts/analyze/dependency-mapper.js",
+			"score": 14
+		},
+		{
+			"file": "bun-migration-suite/scripts/reports/comprehensive-report.js",
+			"score": 11
+		}
+	],
+	"issues": [],
+	"metrics": {
+		"totalFiles": 9,
+		"totalLines": 3992,
+		"totalClasses": 17,
+		"totalFunctions": 27,
+		"avgComplexity": 14.444444444444445
+	}
+}

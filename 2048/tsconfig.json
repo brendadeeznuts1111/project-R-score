@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "types": ["@cloudflare/workers-types", "@types/node", "bun-types"],
+    "strict": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "isolatedModules": true
+  },
+  "include": ["workers/**/*.ts", "test/**/*.ts", "tools/**/*.ts"],
+  "exclude": [
+    "src/performance/network-process-monitor.ts",
+    "quantum-toolkit-patch.ts",
+    "archive-cli.ts",
+    "workers/crc32-config.ts"
+  ]
+}

@@ -1,0 +1,182 @@
+[
+  {
+    "category": "🐰 Bun Basics",
+    "tip": "Run TypeScript directly",
+    "oneliner": "bun run script.ts",
+    "description": "No build step needed - Bun runs TypeScript natively"
+  },
+  {
+    "category": "🐰 Bun Basics",
+    "tip": "Install dependencies",
+    "oneliner": "bun add package-name",
+    "description": "Faster than npm/yarn with built-in lockfile"
+  },
+  {
+    "category": "🐰 Bun Basics",
+    "tip": "Install dev dependencies",
+    "oneliner": "bun add -d package-name",
+    "description": "Development dependencies with -d flag"
+  },
+  {
+    "category": "🐰 Bun Basics",
+    "tip": "Run tests",
+    "oneliner": "bun test",
+    "description": "Built-in test runner with native Bun APIs"
+  },
+  {
+    "category": "🐰 Bun Basics",
+    "tip": "Auto-reload server",
+    "oneliner": "bun --watch server.ts",
+    "description": "Development with hot reloading"
+  },
+  {
+    "category": "📁 File System",
+    "tip": "Read file as text",
+    "oneliner": "const content = await Bun.file('file.txt').text()",
+    "description": "Native file reading with Bun.file()"
+  },
+  {
+    "category": "📁 File System",
+    "tip": "Write file",
+    "oneliner": "await Bun.write('output.txt', 'data')",
+    "description": "Fast file writing with Bun.write()"
+  },
+  {
+    "category": "📁 File System",
+    "tip": "Glob patterns",
+    "oneliner": "await glob('**/*.ts').toArray()",
+    "description": "Fast file discovery with Bun.glob()"
+  },
+  {
+    "category": "🌐 HTTP Server",
+    "tip": "Simple HTTP server",
+    "oneliner": "Bun.serve({ port: 3000, fetch: () => new Response('Hello') })",
+    "description": "Native HTTP server with zero config"
+  },
+  {
+    "category": "🌐 HTTP Server",
+    "tip": "Static files",
+    "oneliner": "Bun.serve({ static: new URL('./public', import.meta.url) })",
+    "description": "Serve static files with built-in routing"
+  },
+  {
+    "category": "🔧 Spawn & Process",
+    "tip": "Spawn subprocess",
+    "oneliner": "const proc = Bun.spawn(['echo', 'hello'])",
+    "description": "Fast subprocess spawning with Bun.spawn()"
+  },
+  {
+    "category": "🔧 Spawn & Process",
+    "tip": "Spawn with PTY",
+    "oneliner": "new Bun.Terminal({ data: (t, d) => console.log(d) })",
+    "description": "Interactive terminal sessions with PTY support"
+  },
+  {
+    "category": "🔧 Spawn & Process",
+    "tip": "Shell execution",
+    "oneliner": "Bun.spawn(['bash', '-c', 'cmd1 | cmd2'], { shell: true })",
+    "description": "Complex shell commands with pipes and redirects"
+  },
+  {
+    "category": "🔨 Build & Bundle",
+    "tip": "Bundle for production",
+    "oneliner": "bun build ./app.ts --outdir ./dist --minify",
+    "description": "Production bundling with minification"
+  },
+  {
+    "category": "🔨 Build & Bundle",
+    "tip": "Inline env vars",
+    "oneliner": "bun build --env=INLINE ./app.ts",
+    "description": "Embed environment variables in bundle"
+  },
+  {
+    "category": "🔨 Build & Bundle",
+    "tip": "Generate sourcemaps",
+    "oneliner": "bun build --sourcemap=linked ./app.ts",
+    "description": "Debugging with linked sourcemaps"
+  },
+  {
+    "category": "🔨 Build & Bundle",
+    "tip": "Feature flags",
+    "oneliner": "bun build --feature=PREMIUM ./app.ts",
+    "description": "Dead-code elimination with feature flags"
+  },
+  {
+    "category": "📦 Serialization",
+    "tip": "Serialize data",
+    "oneliner": "const bytes = Bun.serialize(obj)",
+    "description": "Fast binary serialization"
+  },
+  {
+    "category": "📦 Serialization",
+    "tip": "Deserialize data",
+    "oneliner": "const obj = Bun.deserialize(bytes)",
+    "description": "Restore serialized objects"
+  },
+  {
+    "category": "📦 Serialization",
+    "tip": "Gzip compression",
+    "oneliner": "const compressed = Bun.gzipSync(new TextEncoder().encode(str))",
+    "description": "Compress data with gzip"
+  },
+  {
+    "category": "📦 Serialization",
+    "tip": "String width",
+    "oneliner": "Bun.stringWidth('👋🏿') // Returns 2",
+    "description": "Correct emoji width calculation"
+  },
+  {
+    "category": "🔐 Hash & Crypto",
+    "tip": "SHA-256 hash",
+    "oneliner": "await crypto.subtle.digest('SHA-256', data)",
+    "description": "Cryptographic hashing with Web Crypto API"
+  },
+  {
+    "category": "🔐 Hash & Crypto",
+    "tip": "Fast hash",
+    "oneliner": "Bun.hash(str).toString(16)",
+    "description": "Non-cryptographic fast hash"
+  },
+  {
+    "category": "🎨 Utilities",
+    "tip": "Escape HTML",
+    "oneliner": "Bun.escapeHtml('<script>alert(1)</script>')",
+    "description": "Safe HTML entity escaping"
+  },
+  {
+    "category": "🎨 Utilities",
+    "tip": "Deep inspect",
+    "oneliner": "Bun.inspect(obj)",
+    "description": "Detailed object inspection"
+  },
+  {
+    "category": "🧪 Testing",
+    "tip": "Write test",
+    "oneliner": "test('adds 1 + 2 to equal 3', () => { expect(1+2).toBe(3) })",
+    "description": "Built-in testing with Bun.test"
+  },
+  {
+    "category": "🧪 Testing",
+    "tip": "Mock fetch",
+    "oneliner": "import { mock } from 'bun:test'",
+    "description": "Mocking utilities for tests"
+  },
+  {
+    "category": "🚀 Performance",
+    "tip": "Concurrent execution",
+    "oneliner": "const results = await Promise.all(tasks.map(t => t()))",
+    "description": "Parallel execution for better performance"
+  },
+  {
+    "category": "🚀 Performance",
+    "tip": "Stream files",
+    "oneliner": "await Bun.write(file, Bun.file(input).stream())",
+    "description": "Streaming I/O for large files"
+  },
+  {
+    "category": "🚀 Performance",
+    "tip": "Timer",
+    "oneliner": "console.time('label'); /* code */ console.timeEnd('label')",
+    "description": "Quick performance profiling"
+  }
+]

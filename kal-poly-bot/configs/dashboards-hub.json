@@ -1,0 +1,65 @@
+{
+  "hub": {
+    "name": "Factory Wager Cloudflare Hub",
+    "description": "Central hub for all repositories, dashboards, and operational monitoring",
+    "url": "https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com",
+    "type": "cloudflare",
+    "domain": "factory-wager.com",
+    "accountId": "7a470541a704caaf91e71efccc78fd36",
+    "primary": true,
+    "categories": [
+      "infrastructure",
+      "cdn",
+      "dns",
+      "security",
+      "analytics",
+      "repositories"
+    ],
+    "accessLevel": "admin",
+    "lastUpdated": "2024-01-01T00:00:00Z"
+  },
+  "dashboards": [
+    {
+      "id": "cloudflare-hub",
+      "name": "Cloudflare Dashboard Hub",
+      "url": "https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com",
+      "type": "cloudflare",
+      "description": "Primary hub for all repos, dashboards, and infrastructure",
+      "category": "hub",
+      "primary": true
+    },
+    {
+      "id": "surgical-precision-dashboard",
+      "name": "Surgical Precision Dashboard",
+      "url": "https://brendadeeznuts1111.github.io/kal-poly-bot/surgical-precision-dashboard.html",
+      "type": "github-pages",
+      "description": "Real-time platform metrics and team coordination",
+      "category": "monitoring"
+    }
+  ],
+  "repositories": [
+    {
+      "name": "kal-poly-bot",
+      "url": "https://github.com/brendadeeznuts1111/kal-poly-bot",
+      "hub": "cloudflare-hub"
+    }
+  ],
+  "integrations": {
+    "cloudflare": {
+      "accountId": "7a470541a704caaf91e71efccc78fd36",
+      "domain": "factory-wager.com",
+      "dashboardUrl": "https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com",
+      "wrangler": {
+        "configFile": "wrangler.toml",
+        "workerName": "factory-wager",
+        "deployCommand": "bunx wrangler deploy",
+        "devCommand": "bunx wrangler dev",
+        "routes": [
+          "factory-wager.com/*",
+          "www.factory-wager.com/*"
+        ]
+      }
+    }
+  }
+}
+

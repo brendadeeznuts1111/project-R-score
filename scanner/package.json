@@ -1,0 +1,66 @@
+{
+	"name": "security-scanner-api",
+	"description": "Multi-project security scanner for Bun monorepos",
+	"version": "1.0.0",
+	"author": "brendadeeznuts1111",
+	"license": "MIT",
+	"type": "module",
+	"exports": {
+		"./package.json": "./package.json",
+		".": "./scan.ts"
+	},
+	"scripts": {
+		"scan": "bun run scan.ts",
+		"test": "bun test scan.test.ts",
+		"audit": "bun run scan.ts --audit",
+		"test:ci": "bun test --no-env-file scan.test.ts",
+		"scan:ci": "bun run --no-env-file scan.ts",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"lint": "bunx eslint .",
+		"lint:fix": "bunx eslint . --fix",
+		"fix": "bun run format && bun run lint:fix",
+		"check": "bun run format:check && bun run lint",
+		"precommit": "bun run fix && bun run lint",
+		"quality": "bun scripts/check-code-quality.ts",
+		"quality:fix": "bun scripts/check-code-quality.ts --fix",
+		"bench:init": "bun run benchmarks/team-init.ts",
+		"profile:cpu": "bun run --smol --cpu-prof --cpu-prof-dir .audit --cpu-prof-name cpu-profile scan.ts --audit",
+		"profile:cpu:md": "bun run --smol --cpu-prof --cpu-prof-md --cpu-prof-dir .audit --cpu-prof-name cpu-profile scan.ts --audit",
+		"profile:heap": "bun run --smol --heap-prof --heap-prof-dir .audit --heap-prof-name heap-profile scan.ts --audit",
+		"profile:heap:md": "bun run --smol --heap-prof-md --heap-prof-dir .audit --heap-prof-name heap-profile scan.ts --audit",
+		"extract:constants": "bun scripts/extract-bun-constants.ts",
+		"extract:docs-topics": "bun scripts/index-docs-topics.ts ../matrix-analysis/mcp-bun-docs/docs.json",
+		"visual:docs": "bun scripts/generate-visual-docs.ts",
+		"visual:dashboard": "bun scripts/generate-visual-docs.ts --serve",
+		"visual:badges": "bun scripts/generate-visual-docs.ts --badges-only",
+		"demo:wrap-ansi": "bun scripts/demo-wrap-ansi.ts",
+		"profile:example": "bun --cpu-prof-md --heap-prof-md scripts/profile-example.ts",
+		"validate:pointers": "bun scripts/validate-pointers.ts",
+		"validate:pointers:save": "bun scripts/validate-pointers.ts --save",
+		"validate:pointers:compare": "bun scripts/validate-pointers.ts --compare",
+		"prepare": "husky"
+	},
+	"keywords": [
+		"bun",
+		"security",
+		"scanner",
+		"monorepo",
+		"audit"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/brendadeeznuts1111/security-scanner-api.git"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"eslint": "^9.39.2",
+		"husky": "^9.1.7",
+		"prettier": "^3.8.1",
+		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.54.0"
+	},
+	"dependencies": {
+		"zod": "^4.3.6"
+	}
+}

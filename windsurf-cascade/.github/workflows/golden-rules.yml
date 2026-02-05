@@ -1,0 +1,223 @@
+# .github/workflows/golden-rules.yml
+name: Golden Rules Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  strict-testing:
+    name: Strict Testing (New CI Enforcement)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Run Strict Tests (No test.only, No new snapshots)
+        run: |
+          # Enable strict CI mode
+          export CI=true
+          
+          # Run tests with strict enforcement
+          bun test --timeout 30000 --coverage --threshold 80
+        env:
+          CI: true
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  validate-rules:
+    name: Validate Golden Rules
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Build packages
+        run: bun run build
+      
+      - name: Check Deployment Block
+        id: deployment-check
+        run: bun run scripts/block-deployment-on-violations.ts
+        continue-on-error: true
+      
+      - name: Validate Golden Rules
+        id: rules-validation
+        run: bun run scripts/validate-golden-rules.ts
+        continue-on-error: true
+      
+      - name: Organize Violations
+        if: steps.deployment-check.outcome == 'failure' || steps.rules-validation.outcome == 'failure'
+        run: bun run scripts/organize-violations.ts
+      
+      - name: Assign Critical Violations
+        if: steps.deployment-check.outcome == 'failure'
+        run: bun run scripts/assign-critical-violations.ts
+      
+      - name: Generate Daily Standup
+        if: steps.deployment-check.outcome == 'failure'
+        run: bun run scripts/daily-standup-automation.ts
+      
+      - name: Upload Validation Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: golden-rules-report
+          path: |
+            reports/golden-rules-*.md
+            reports/violations-*.md
+            reports/deployment-block-*.md
+            reports/team-assignments.md
+            reports/daily-standup.md
+      
+      - name: Upload JSON Data
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: golden-rules-data
+          path: |
+            reports/golden-rules-summary.json
+            reports/deployment-block-status.json
+            reports/team-assignments.json
+            reports/daily-standup.json
+            reports/historical-violations.json
+      
+      - name: Comment PR with Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let comment = '## 🎯 Golden Rules Validation Results\n\n';
+            
+            try {
+              const blockStatus = JSON.parse(fs.readFileSync('./reports/deployment-block-status.json', 'utf8'));
+              comment += blockStatus.blocked ? 
+                '🚫 **DEPLOYMENT BLOCKED** - Critical violations found\n\n' :
+                '✅ **DEPLOYMENT ALLOWED** - No critical violations\n\n';
+              
+              comment += `📊 **Summary**:\n`;
+              comment += `- Critical Violations: ${blockStatus.criticalViolations}\n`;
+              comment += `- Total Violations: ${blockStatus.totalViolations}\n\n`;
+              
+              if (blockStatus.blocked) {
+                comment += '🔧 **Required Actions**:\n';
+                comment += '1. Review deployment block report\n';
+                comment += '2. Fix all critical violations\n';
+                comment += '3. Re-run validation\n\n';
+                comment += '📋 **Reports Available**:\n';
+                comment += '- [Deployment Block Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+                comment += '- [Team Assignments](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+                comment += '- [Critical Issues](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
+              }
+            } catch (error) {
+              comment += '⚠️ Could not load validation results\n';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: Block Deployment on Critical Issues
+        if: steps.deployment-check.outcome == 'failure'
+        run: |
+          echo "🚨 DEPLOYMENT BLOCKED BY CRITICAL VIOLATIONS"
+          echo "See uploaded reports for details"
+          exit 1
+      
+      - name: Fail if Rules Violated
+        if: steps.rules-validation.outcome == 'failure'
+        run: |
+          echo "❌ Golden rules validation failed"
+          echo "Reports uploaded for review"
+          exit 1
+
+  # Additional job for team notifications
+  notify-team:
+    name: Notify Team
+    needs: validate-rules
+    if: failure()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download Reports
+        uses: actions/download-artifact@v3
+        with:
+          name: golden-rules-data
+          path: ./reports/
+      
+      - name: Send Slack Notification
+        run: |
+          echo "🚨 Golden Rules Validation Failed"
+          echo "Critical violations detected - deployment blocked"
+          echo "Check GitHub Actions for detailed reports"
+          # Add actual Slack webhook integration here
+      
+      - name: Create GitHub Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const blockStatus = JSON.parse(fs.readFileSync('./reports/deployment-block-status.json', 'utf8'));
+              
+              const title = `🚨 Golden Rules Violations - ${blockStatus.criticalViolations} Critical Issues`;
+              const body = `## Critical Violations Detected
+              
+              **Total Violations**: ${blockStatus.totalViolations}
+              **Critical Violations**: ${blockStatus.criticalViolations}
+              **Timestamp**: ${blockStatus.timestamp}
+              
+              ### Action Required
+              
+              - [ ] Review deployment block report
+              - [ ] Assign team members to critical violations
+              - [ ] Set up daily standup tracking
+              - [ ] Block deployments until resolved
+              
+              ### Reports
+              
+              - [Deployment Block Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+              - [Team Assignments](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+              - [Critical Issues](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+              
+              ---
+              
+              *Automatically created by Golden Rules Enforcement System*`;
+              
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['critical', 'golden-rules', 'code-quality']
+              });
+            } catch (error) {
+              console.log('Could not create issue:', error);
+            }

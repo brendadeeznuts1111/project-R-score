@@ -1,0 +1,85 @@
+/**
+ * @fileoverview {{{fileoverview}}}
+ * @module {{{modulePath}}}
+ * @description {{{description}}}
+{{{authorInfo}}}
+ * @created {{{createdDate}}}
+{{{teamInfo}}}
+{{{depsInfo}}}
+{{{exportsInfo}}}
+ * @version 1.3.4
+ *
+ * {{{metadata}}}
+ *
+ * @ref {{{ref}}}
+ */
+
+import { logger } from '../utils/logger.js';
+
+/**
+ * {{{pascalName}}} Service
+ * {{{description}}}
+ */
+export class {{{pascalName}}}Service {
+	private logger = logger;
+	private initialized = false;
+
+	constructor(loggerInstance?: typeof logger) {
+		this.logger = loggerInstance || logger;
+	}
+
+	/**
+	 * Initialize the service
+	 */
+	async initialize(): Promise<void> {
+		if (this.initialized) {
+			return;
+		}
+
+		try {
+			// TODO: Implement service initialization
+			this.logger.info('{{{pascalName}}}Service initialized successfully');
+			this.initialized = true;
+		} catch (error) {
+			this.logger.error('Failed to initialize {{{pascalName}}}Service', error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Shutdown the service
+	 */
+	async shutdown(): Promise<void> {
+		try {
+			// TODO: Implement service shutdown
+			this.logger.info('{{{pascalName}}}Service shutdown successfully');
+			this.initialized = false;
+		} catch (error) {
+			this.logger.error('Failed to shutdown {{{pascalName}}}Service', error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Check if service is healthy
+	 */
+	isHealthy(): boolean {
+		// TODO: Implement health check
+		return this.initialized;
+	}
+}
+
+/**
+ * Singleton instance
+ */
+let instance: {{{pascalName}}}Service | null = null;
+
+/**
+ * Get singleton instance of {{{pascalName}}}Service
+ */
+export function get{{{pascalName}}}Service(): {{{pascalName}}}Service {
+	if (!instance) {
+		instance = new {{{pascalName}}}Service();
+	}
+	return instance;
+}

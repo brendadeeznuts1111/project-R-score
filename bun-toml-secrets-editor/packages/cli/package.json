@@ -1,0 +1,26 @@
+{
+	"name": "@bun-tolm/cli",
+	"version": "1.0.0",
+	"description": "Command line tools",
+	"bin": {
+		"matrix": "./src/matrix-cli.ts",
+		"duoplus": "./src/duoplus-cli.ts",
+		"kimi": "./src/kimi-cli.ts",
+		"bun-v1.3.7": "./src/bun-v1.3.7-cli.ts"
+	},
+	"scripts": {
+		"build": "bun build ./src/index.ts --outdir ./dist",
+		"test": "bun test",
+		"test:cli": "bun test tests/bun-v1.3.7-cli.test.ts",
+		"test:performance": "bun test tests/performance-benchmarks.test.ts",
+		"test:interactive": "bun test tests/interactive-demo.test.ts",
+		"test:all": "bun test tests/",
+		"v1.3.7": "bun ./src/bun-v1.3.7-cli.ts"
+	},
+	"dependencies": {
+		"@bun-toml/core": "workspace:*",
+		"@bun-toml/rss": "workspace:*",
+		"@bun-toml/profiler": "workspace:*",
+		"commander": "^12.0.0"
+	}
+}

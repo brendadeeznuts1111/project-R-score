@@ -1,0 +1,71 @@
+{
+  "name": "@clawdbot/skills",
+  "version": "1.0.0",
+  "description": "Clawdbot Skills Management Platform",
+  "type": "module",
+  "scripts": {
+    "test": "CLAUDECODE=1 bun test --timeout 30000",
+    "test:coverage": "CLAUDECODE=1 bun test --timeout 30000 --coverage",
+    "test:watch": "bun test --timeout 30000 --watch",
+    "test:bail": "CLAUDECODE=1 bun test --timeout 30000 --bail",
+
+    "deploy": "bun run src/cli/deploy-s3.ts",
+    "skill-debug": "bun run src/cli/skill-debug.ts",
+
+    "debug": "bun run src/cli/skill-debug.ts debug",
+    "debug:repl": "bun run src/cli/skill-debug.ts repl",
+    "debug:profile": "bun run src/cli/skill-debug.ts profile",
+    "debug:watch": "bun run src/cli/skill-debug.ts watch",
+    "debug:record": "bun run src/cli/skill-debug.ts record",
+    "debug:replay": "bun run src/cli/skill-debug.ts replay",
+    "debug:devtools": "bun run src/cli/skill-debug.ts devtools",
+    "debug:attach": "bun run src/cli/skill-debug.ts attach",
+    "debug:test": "bun run src/cli/skill-debug.ts test",
+
+    "debug:weather": "bun run src/cli/skill-debug.ts debug weather",
+    "debug:weather:run": "bun run src/cli/skill-debug.ts debug weather --run",
+    "debug:weather:build": "bun run src/cli/skill-debug.ts debug weather --build",
+    "debug:weather:repl": "bun run src/cli/skill-debug.ts repl weather",
+    "debug:weather:profile": "bun run src/cli/skill-debug.ts profile weather --duration 30 --memory",
+    "debug:weather:watch": "bun run src/cli/skill-debug.ts watch weather --run",
+    "debug:weather:record": "bun run src/cli/skill-debug.ts record weather",
+    "debug:weather:devtools": "bun run src/cli/skill-debug.ts devtools weather",
+    "debug:weather:test": "bun run src/cli/skill-debug.ts test weather",
+
+    "pty-debug": "bun run src/cli/pty-debug-cli.ts",
+    "pty:interactive": "bun run src/cli/pty-debug-cli.ts interactive",
+    "pty:dashboard": "bun run src/cli/pty-debug-cli.ts dashboard",
+    "pty:debug": "bun run src/cli/pty-debug-cli.ts debug",
+    "pty:collab": "bun run src/cli/pty-debug-cli.ts collab",
+    "pty:record": "bun run src/cli/pty-debug-cli.ts record",
+    "pty:play": "bun run src/cli/pty-debug-cli.ts play",
+    "pty:attach": "bun run src/cli/pty-debug-cli.ts attach",
+    "pty:list": "bun run src/cli/pty-debug-cli.ts list",
+    "pty:kill": "bun run src/cli/pty-debug-cli.ts kill",
+
+    "pty:weather": "bun run src/cli/pty-debug-cli.ts interactive weather",
+    "pty:weather:debug": "bun run src/cli/pty-debug-cli.ts debug weather --inspect",
+    "pty:weather:record": "bun run src/cli/pty-debug-cli.ts record weather",
+
+    "show-metrics": "bun run scripts/show-metrics.ts",
+    "api": "bun run src/api-server.ts",
+    "api:dev": "bun --watch run src/api-server.ts",
+
+    "upload": "bun run src/cli/deploy-s3.ts upload",
+    "upload:all": "bun run src/cli/deploy-s3.ts upload --all-platforms",
+    "install-skill": "bun run src/cli/deploy-s3.ts install",
+    "list": "bun run src/cli/deploy-s3.ts list",
+    "info": "bun run src/cli/deploy-s3.ts info",
+    "verify": "bun run src/cli/deploy-s3.ts verify",
+    "cleanup": "bun run src/cli/deploy-s3.ts cleanup",
+    "metrics": "bun run src/cli/deploy-s3.ts metrics"
+  },
+  "bin": {
+    "deploy-s3": "./src/cli/deploy-s3.ts",
+    "skill-debug": "./src/cli/skill-debug.ts",
+    "pty-debug": "./src/cli/pty-debug-cli.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

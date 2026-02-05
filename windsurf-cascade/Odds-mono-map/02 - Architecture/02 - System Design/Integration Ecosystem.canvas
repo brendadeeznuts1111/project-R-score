@@ -1,0 +1,295 @@
+{
+  "nodes": [
+    {
+      "id": "integration-overview",
+      "x": -500,
+      "y": -400,
+      "width": 300,
+      "height": 200,
+      "type": "text",
+      "text": "# 🔄 Odds Protocol Integration\n\n## Complete Ecosystem View\n\n**Real-time Bridge System**\n- Obsidian ↔ Bun Services ↔ Web Dashboard\n- Validation Pipeline\n- Analytics Engine\n- Dashboard Synchronization\n\n---\n*Iteration 1: Overview*",
+      "color": "#6366F1",
+      "metadata": {
+        "domain": "integration",
+        "documentType": "general",
+        "complexity": "medium",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.integration",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "obsidian-vault",
+      "x": -1200,
+      "y": -200,
+      "width": 280,
+      "height": 180,
+      "type": "text",
+      "text": "# 📚 Obsidian Vault\n\n**Odds-mono-map/.obsidian/**\n- Knowledge Management\n- 17 Productivity Plugins\n- Dataview Queries\n- Template System\n- Dashboard Templates\n\n**Purpose**: Documentation & Knowledge",
+      "color": "#8B5CF6",
+      "metadata": {
+        "domain": "unknown",
+        "documentType": "documentation",
+        "complexity": "low",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "status.experimental",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "obsidian-dev",
+      "x": 400,
+      "y": -200,
+      "width": 280,
+      "height": 180,
+      "type": "text",
+      "text": "# 🔧 Obsidian Dev\n\n**.obsidian/**\n- Plugin Development\n- vault-standards Plugin\n- Bun Integration\n- TypeScript Definitions\n- Validation Tools\n\n**Purpose**: Development & Testing",
+      "color": "#8B5CF6",
+      "metadata": {
+        "domain": "integration",
+        "complexity": "low",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "status.experimental",
+        "documentType": "general",
+        "priority": "medium",
+        "status": "beta",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "bridge-service",
+      "x": -500,
+      "y": 100,
+      "width": 300,
+      "height": 160,
+      "type": "text",
+      "text": "# 🌉 Bridge Service\n\n**src/obsidian/bridge.ts**\n- Real-time Communication\n- Port 27123\n- Commands: notice, reload, update-cache\n- Connects Both Obsidian Instances\n\n**Heart of the System**",
+      "color": "#14B8A6",
+      "metadata": {
+        "domain": "service",
+        "documentType": "general",
+        "complexity": "low",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.service",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "validation-system",
+      "x": -1200,
+      "y": 350,
+      "width": 280,
+      "height": 180,
+      "type": "text",
+      "text": "# ✅ Validation System\n\n**src/validators/**\n- vault-lint.ts\n- ValidationOrchestrator\n- Real-time Rules\n- Hot Reload\n- Graph Analysis\n\n**Quality Enforcement**",
+      "color": "#10B981",
+      "metadata": {
+        "domain": "unknown",
+        "complexity": "low",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "status.active",
+        "documentType": "general",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "web-dashboard",
+      "x": 400,
+      "y": 350,
+      "width": 280,
+      "height": 180,
+      "type": "text",
+      "text": "# 📊 Web Dashboard\n\n**apps/dashboard/**\n- React/Vite App\n- Real-time WebSocket\n- Market Data\n- Performance Metrics\n- Arbitrage Detection\n\n**Technical Interface**",
+      "color": "#F97316",
+      "metadata": {
+        "domain": "unknown",
+        "complexity": "low",
+        "section": "analytics",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "status.maintenance",
+        "documentType": "general",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "analytics-engine",
+      "x": -500,
+      "y": 600,
+      "width": 300,
+      "height": 160,
+      "type": "text",
+      "text": "# 📈 Analytics Engine\n\n**src/analytics/**\n- VaultGraphAnalyzer\n- SQLite Database\n- Health Metrics\n- Performance Data\n- Compliance Scores\n\n**Data Processing Hub**",
+      "color": "#6366F1",
+      "metadata": {
+        "domain": "core",
+        "complexity": "low",
+        "section": "analytics",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.integration",
+        "documentType": "general",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "watcher-service",
+      "x": -1200,
+      "y": 850,
+      "width": 280,
+      "height": 160,
+      "type": "text",
+      "text": "# 👁️ Watcher Service\n\n**src/watchers/**\n- vault-watcher.ts\n- File System Monitoring\n- Debounced Events\n- Change Detection\n- Auto-validation\n\n**Real-time Monitoring**",
+      "color": "#14B8A6",
+      "metadata": {
+        "domain": "service",
+        "documentType": "general",
+        "complexity": "low",
+        "section": "implementation",
+        "healthScore": 100,
+        "colorType": "hex",
+        "colorCategory": "domain.service",
+        "priority": "medium",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    },
+    {
+      "id": "data-flow",
+      "x": 400,
+      "y": 850,
+      "width": 280,
+      "height": 160,
+      "type": "text",
+      "text": "# 🔄 Data Flow\n\n**Integration Pipeline**\n1. File Change Detected\n2. Validation Processed\n3. Bridge Updates Sent\n4. UIs Refreshed\n5. Metrics Updated\n\n**Complete Loop**",
+      "color": "#6366F1",
+      "metadata": {
+        "domain": "integration",
+        "complexity": "low",
+        "section": "implementation",
+        "healthScore": 95,
+        "colorType": "hex",
+        "colorCategory": "domain.integration",
+        "documentType": "general",
+        "priority": "low",
+        "status": "active",
+        "enhanced": true,
+        "enhancementDate": "2025-11-19T01:52:29.194Z"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "fromNode": "obsidian-vault",
+      "fromSide": "right",
+      "toNode": "bridge-service",
+      "toSide": "left",
+      "color": "#3B82F6",
+      "label": "Knowledge Updates"
+    },
+    {
+      "id": "edge2",
+      "fromNode": "obsidian-dev",
+      "fromSide": "left",
+      "toNode": "bridge-service",
+      "toSide": "right",
+      "color": "#10B981",
+      "label": "Dev Commands"
+    },
+    {
+      "id": "edge3",
+      "fromNode": "bridge-service",
+      "fromSide": "bottom",
+      "toNode": "analytics-engine",
+      "toSide": "top",
+      "color": "#EAB308",
+      "label": "Data Processing"
+    },
+    {
+      "id": "edge4",
+      "fromNode": "validation-system",
+      "fromSide": "top",
+      "toNode": "bridge-service",
+      "toSide": "left",
+      "color": "#F97316",
+      "label": "Validation Results"
+    },
+    {
+      "id": "edge5",
+      "fromNode": "web-dashboard",
+      "fromSide": "left",
+      "toNode": "bridge-service",
+      "toSide": "right",
+      "color": "#EF4444",
+      "label": "Technical Data"
+    },
+    {
+      "id": "edge6",
+      "fromNode": "validation-system",
+      "fromSide": "bottom",
+      "toNode": "watcher-service",
+      "toSide": "top",
+      "color": "#8B5CF6",
+      "label": "Triggers Validation"
+    },
+    {
+      "id": "edge7",
+      "fromNode": "analytics-engine",
+      "fromSide": "right",
+      "toNode": "data-flow",
+      "toSide": "left",
+      "color": "#06B6D4",
+      "label": "Metrics Flow"
+    },
+    {
+      "id": "edge8",
+      "fromNode": "watcher-service",
+      "fromSide": "right",
+      "toNode": "data-flow",
+      "toSide": "top",
+      "color": "#14B8A6",
+      "label": "Event Stream"
+    }
+  ],
+  "metadata": {
+    "colorMigration": {
+      "migrated": true,
+      "migrationDate": "2025-11-19T01:52:29.194Z",
+      "migrationVersion": "2.1.0",
+      "legacyColorsRemoved": true,
+      "semanticColorsApplied": true,
+      "errorHandling": "enhanced"
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "stats": {
+    "total": 141,
+    "active": 141,
+    "violations": 0,
+    "compliance": 100,
+    "byCategory": {
+      "Security": 41,
+      "Compliance": 21,
+      "Ops": 6,
+      "Alerts": 6,
+      "Git/Deploy": 5,
+      "Data": 4,
+      "WS/Live": 3,
+      "Telegram": 3,
+      "Agent": 17,
+      "Access": 30,
+      "BETS": 5
+    },
+    "byPriority": {
+      "REQUIRED": 79,
+      "CORE": 55,
+      "OPTIONAL": 7
+    },
+    "byStatus": {
+      "ACTIVE": 141
+    },
+    "automated": 136,
+    "manual": 5,
+    "recentValidations": [],
+    "lastUpdated": "2025-10-28T20:00:01.297Z",
+    "uptime": "1d 0h",
+    "performance": {
+      "avgValidationTime": "0.5s",
+      "rulesPerSecond": "15",
+      "memoryUsage": "45MB",
+      "cpuUsage": "2.1%"
+    }
+  },
+  "categories": [
+    {
+      "name": "Security",
+      "count": 41,
+      "violations": 0,
+      "priority": "REQUIRED",
+      "status": "🟢"
+    },
+    {
+      "name": "Compliance",
+      "count": 21,
+      "violations": 0,
+      "priority": "REQUIRED",
+      "status": "🟢"
+    },
+    {
+      "name": "Ops",
+      "count": 6,
+      "violations": 0,
+      "priority": "CORE",
+      "status": "🟢"
+    },
+    {
+      "name": "Alerts",
+      "count": 6,
+      "violations": 0,
+      "priority": "REQUIRED",
+      "status": "🟢"
+    },
+    {
+      "name": "Git/Deploy",
+      "count": 5,
+      "violations": 0,
+      "priority": "REQUIRED",
+      "status": "🟢"
+    },
+    {
+      "name": "Data",
+      "count": 4,
+      "violations": 0,
+      "priority": "CORE",
+      "status": "🟢"
+    },
+    {
+      "name": "WS/Live",
+      "count": 3,
+      "violations": 0,
+      "priority": "CORE",
+      "status": "🟢"
+    },
+    {
+      "name": "Telegram",
+      "count": 3,
+      "violations": 0,
+      "priority": "OPTIONAL",
+      "status": "🟢"
+    },
+    {
+      "name": "Agent",
+      "count": 17,
+      "violations": 0,
+      "priority": "CORE",
+      "status": "🟢"
+    },
+    {
+      "name": "Access",
+      "count": 30,
+      "violations": 0,
+      "priority": "CORE",
+      "status": "🟢"
+    },
+    {
+      "name": "BETS",
+      "count": 5,
+      "violations": 0,
+      "priority": "CORE",
+      "status": "🟢"
+    }
+  ],
+  "recentActivity": [
+    {
+      "time": "2 min ago",
+      "action": "✅ Rule validation passed",
+      "details": "All core rules compliant"
+    },
+    {
+      "time": "15 min ago",
+      "action": "🔄 Auto-validation triggered",
+      "details": "Scheduled check completed"
+    },
+    {
+      "time": "1 hour ago",
+      "action": "✅ Security scan passed",
+      "details": "No vulnerabilities detected"
+    },
+    {
+      "time": "2 hours ago",
+      "action": "🔄 Datapipe sync",
+      "details": "Agent data updated successfully"
+    },
+    {
+      "time": "4 hours ago",
+      "action": "✅ Deployment validated",
+      "details": "Production rules enforced"
+    }
+  ],
+  "complianceTimeline": [
+    {
+      "date": "2024-01-01",
+      "compliance": 85
+    },
+    {
+      "date": "2024-01-02",
+      "compliance": 88
+    },
+    {
+      "date": "2024-01-03",
+      "compliance": 92
+    },
+    {
+      "date": "2024-01-04",
+      "compliance": 95
+    },
+    {
+      "date": "2024-01-05",
+      "compliance": 97
+    },
+    {
+      "date": "2024-01-06",
+      "compliance": 99
+    },
+    {
+      "date": "2024-01-07",
+      "compliance": 100
+    }
+  ]
+}

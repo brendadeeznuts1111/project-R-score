@@ -1,0 +1,53 @@
+# Empire Pro CLI Configuration
+# Generated: 2026-01-17T06:09:15.122Z
+title = "Empire Pro CLI Config"
+version = "2.8.0"
+
+[server]
+port = 3000
+host = "localhost"
+timeout = 30
+ssl = false
+max_connections = 1000
+
+[database]
+redis = "redis://localhost:6379/0"
+postgres = "postgres://user:pass@localhost:5432/empire?sslmode=disable"
+pool_size = 25
+
+[features]
+phone_intel = true
+similarity_scan = true
+config_watch = true
+hyper_mode = false
+telemetry = false
+
+[duoplus]
+api_key = "dp_TG99I2UDZRQEWTXZ3IQDL7JZ7Z61YFTH"
+endpoint = "https://api.duoplus.com/v3/resolve"
+timeout = 5
+retries = 3
+
+[similarity]
+threshold = 85
+enable_fast = true
+tokenize_code = true
+algorithm = "jaccard"
+
+[[projects]]
+name = "proj1"
+port = 3001
+env = "dev"
+tags = ["api", "experimental"]
+
+[[projects]]
+name = "proj2"  
+port = 3002
+env = "prod"
+tags = ["web", "stable"]
+
+[[projects]]
+name = "proj3"
+port = 3003
+env = "dev"
+tags = ["worker", "experimental"]

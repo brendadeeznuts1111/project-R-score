@@ -1,0 +1,119 @@
+# Observatory Security Policy for TOML Secrets Management
+# This file defines security rules and validation policies
+
+[secrets]
+# Allowed prefixes for environment variables
+allowed_prefixes = ["PUBLIC_", "PRIVATE_", "SECRET_", "TRUSTED_"]
+
+# Blocked patterns that will cause validation to fail
+blocked_patterns = ["*PASSWORD*", "*TOKEN*", "*KEY", "*CREDENTIAL*"]
+
+# Maximum number of secrets allowed per file
+max_secrets_per_file = 50
+
+# Require default values for all environment variables
+require_defaults = true
+
+# Scan TOML values for URL patterns and security issues
+scan_toml_values = true
+
+[validation]
+# Security score threshold (0-100)
+min_security_score = 70
+
+# Fail validation on dangerous patterns
+fail_on_dangerous = true
+
+# Validate environment variable syntax
+validate_env_syntax = true
+
+# Check for hardcoded secrets
+detect_hardcoded_secrets = true
+
+[optimization]
+# Strip comments during optimization
+strip_comments = true
+
+# Sort keys alphabetically
+sort_keys = true
+
+# Minify output (remove extra whitespace)
+minify = false
+
+# Inline simple environment variables
+inline_env_vars = false
+
+[audit]
+# Enable audit logging
+enable_audit_trail = true
+
+# Audit database path
+audit_db_path = "toml-audit.db"
+
+# Retention period for audit logs (days)
+audit_retention_days = 30
+
+# Include user information in audit trail
+track_user_activity = true
+
+[export]
+# Include audit trail in exports
+include_audit_trail = true
+
+# Encrypt private variables at rest
+encrypt_private_vars = true
+
+# Export format (json, toml, yaml)
+default_export_format = "json"
+
+# Include security recommendations
+include_recommendations = true
+
+[patterns]
+# Trusted domains for URL patterns
+trusted_domains = [
+  "localhost",
+  "127.0.0.1", 
+  "0.0.0.0",
+  "*.internal",
+  "*.local",
+  "*.company.com"
+]
+
+# Dangerous environment variable patterns
+dangerous_env_patterns = [
+  "*USER_INPUT*",
+  "*REQUEST*",
+  "*BODY*",
+  "*QUERY*",
+  "*FORM*"
+]
+
+# Require validation for dynamic URL patterns
+require_pattern_validation = true
+
+[notifications]
+# Security issue notifications
+notify_on_issues = true
+
+# Notification channels (console, email, slack)
+notification_channels = ["console"]
+
+# Minimum severity for notifications
+min_notification_severity = "medium"
+
+[backup]
+# Enable automatic backups
+enable_backups = true
+
+# Backup location (local, s3, gcs)
+backup_location = "local"
+
+# Backup directory
+backup_dir = "./backups"
+
+# Backup retention (days)
+backup_retention_days = 7
+
+# Compress backups
+compress_backups = true

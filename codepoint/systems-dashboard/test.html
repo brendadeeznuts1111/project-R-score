@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Systems Dashboard Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white">
+  <div id="root">
+    <div class="min-h-screen flex items-center justify-center">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold mb-4">🖥️ Systems Dashboard</h1>
+        <p class="text-xl mb-8">Loading dashboard components...</p>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+        <div id="error" class="mt-8 text-red-400 hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    try {
+      console.log('Starting dashboard load...');
+
+      // Test basic React import
+      import React from 'react';
+      console.log('React imported successfully');
+
+      // Test ReactDOM import
+      import ReactDOM from 'react-dom/client';
+      console.log('ReactDOM imported successfully');
+
+      // Test SystemsDashboard import
+      import SystemsDashboard from './SystemsDashboard.tsx';
+      console.log('SystemsDashboard imported successfully');
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(
+        React.createElement(React.StrictMode, null,
+          React.createElement(SystemsDashboard)
+        )
+      );
+
+    } catch (error) {
+      console.error('Dashboard load error:', error);
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = `Error: ${error.message}`;
+      errorDiv.classList.remove('hidden');
+    }
+  </script>
+</body>
+
+</html>

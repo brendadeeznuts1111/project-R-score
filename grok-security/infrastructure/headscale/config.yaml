@@ -1,0 +1,116 @@
+# [HEADSCALE][CONFIG]{TAILSCALE-COMPATIBLE}
+# Headscale server configuration for Cloudflare Workers integration
+# https://github.com/juanfont/headscale
+
+# ===== Server Configuration =====
+# Use environment variables: HEADSCALE_LISTEN, HEADSCALE_METRICS, HEADSCALE_GRPC
+# Defaults: API=8080, Metrics=9090, gRPC=50443
+server_url: ${HEADSCALE_SERVER_URL:-https://api.example.com} # Cloudflare Worker URL
+listen_addr: ${HEADSCALE_LISTEN:-0.0.0.0:8080}
+metrics_listen_addr: ${HEADSCALE_METRICS:-0.0.0.0:9090}
+grpc_listen_addr: ${HEADSCALE_GRPC:-0.0.0.0:50443}
+grpc_allow_insecure: false
+
+# Disable TLS - handled by Cloudflare
+tls_cert_path: ""
+tls_key_path: ""
+
+# ===== Database =====
+database:
+  type: sqlite
+  path: /var/lib/headscale/db.sqlite
+  # Uncomment for PostgreSQL:
+  # type: postgres
+  # host: localhost
+  # port: 5432
+  # name: headscale
+  # user: headscale
+  # pass: ${POSTGRES_PASSWORD}
+
+# ===== DERP (Designated Encrypted Relay for Packets) =====
+# Use environment variable: DERP_STUN_PORT (default: 3478)
+derp:
+  server:
+    enabled: true
+    region_id: 999
+    region_code: "headscale"
+    region_name: "Headscale DERP"
+    stun_listen_addr: ${DERP_STUN_ADDR:-0.0.0.0:3478}
+    private_key_path: /var/lib/headscale/derp_server_private.key
+    automatically_add_embedded_derp_region: true
+    ipv4: 0.0.0.0
+    ipv6: "::"
+
+  # Cloudflare-friendly DERP URLs
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+
+  paths: []
+  auto_update_enabled: true
+  update_frequency: 24h
+
+# ===== OIDC (Cloudflare Access Integration) =====
+oidc:
+  only_start_if_oidc_is_available: false
+  issuer: https://your-domain.cloudflareaccess.com
+  client_id: ${CF_ACCESS_CLIENT_ID}
+  client_secret: ${CF_ACCESS_CLIENT_SECRET}
+  expiry: 180d
+  use_expiry_from_token: true
+  allowed_domains: []
+  allowed_users: []
+  allowed_groups: []
+  strip_email_domain: false
+
+# ===== IP Prefixes =====
+prefixes:
+  v4: 100.64.0.0/10 # Tailscale CGNAT range
+  v6: fd7a:115c:a1e0::/48
+  allocation: sequential
+
+# ===== DNS =====
+dns:
+  magic_dns: true
+  base_domain: example.com
+  nameservers:
+    global:
+      - 1.1.1.1
+      - 8.8.8.8
+  search_domains: []
+  extra_records: []
+
+# ===== Logging =====
+log:
+  format: json
+  level: info
+
+# ===== Policy / ACL =====
+policy:
+  mode: file
+  path: /etc/headscale/policy.yaml
+
+# ===== Ephemeral Node Settings =====
+ephemeral_node_inactivity_timeout: 30m
+
+# ===== Node Update Check =====
+node_update_check_interval: 10s
+
+# ===== Randomize Client Port =====
+randomize_client_port: false
+
+# ===== Unix Socket (for local CLI) =====
+unix_socket: /var/run/headscale/headscale.sock
+unix_socket_permission: "0770"
+
+# ===== Noise Protocol =====
+noise:
+  private_key_path: /var/lib/headscale/noise_private.key
+
+# ===== CLI API Key =====
+# Generate with: headscale apikeys create
+# Set via environment: HEADSCALE_API_KEY
+
+# ===== Tuning =====
+tuning:
+  batch_change_delay: 800ms
+  node_mapsession_buffered_chan_size: 30

@@ -1,0 +1,38 @@
+{
+  "name": "@dev/registry",
+  "version": "1.0.0",
+  "description": "Registry management and ownership verification tools",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "bin": {
+    "verify-ownership": "./src/verify-ownership.ts"
+  },
+  "scripts": {
+    "verify-ownership": "bun run src/verify-ownership.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.internal.yourcompany.com",
+    "access": "restricted"
+  },
+  "metadata": {
+    "team": {
+      "lead": "dev-registry-lead@company.com",
+      "maintainers": [
+        "dev-maintainer-1@company.com"
+      ],
+      "owners": [
+        "dev-owner-1@company.com"
+      ]
+    },
+    "ownership": {
+      "scope": "@dev",
+      "team": "dev-registry-team",
+      "repository": "github.com/company/monorepo/packages/dev/registry"
+    }
+  }
+}

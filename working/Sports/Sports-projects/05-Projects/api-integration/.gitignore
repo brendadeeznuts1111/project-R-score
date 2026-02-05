@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Database files
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Bun
+bun.lockb

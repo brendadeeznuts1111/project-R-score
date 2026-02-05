@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSP Dashboard Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+        
+        .demo-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .demo-header {
+            padding: 20px;
+            background-color: #252526;
+            border-bottom: 1px solid #3e3e42;
+            text-align: center;
+        }
+        
+        .demo-header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #007acc;
+        }
+        
+        .demo-header p {
+            margin: 8px 0 0 0;
+            opacity: 0.8;
+        }
+        
+        .dashboard-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        /* Loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 18px;
+        }
+        
+        .loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3e3e42;
+            border-top: 2px solid #007acc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Theme toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .theme-toggle button {
+            padding: 8px 16px;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            background-color: #252526;
+            color: #d4d4d4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle button:hover {
+            background-color: #3e3e42;
+        }
+        
+        /* Light theme overrides */
+        body.light {
+            background-color: #ffffff;
+            color: #333333;
+        }
+        
+        body.light .demo-header {
+            background-color: #f8f9fa;
+            border-bottom-color: #e0e0e0;
+        }
+        
+        body.light .theme-toggle button {
+            background-color: #f8f9fa;
+            color: #333333;
+            border-color: #e0e0e0;
+        }
+        
+        body.light .theme-toggle button:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🚀 LSP Development Dashboard</h1>
+            <p>Real-time Language Server Protocol integration with diagnostics, performance monitoring, and quick fixes</p>
+        </div>
+        
+        <div class="theme-toggle">
+            <button onclick="toggleTheme()">🌓 Toggle Theme</button>
+        </div>
+        
+        <div class="dashboard-container">
+            <div id="loading" class="loading">Initializing LSP Dashboard</div>
+            <div id="dashboard-root"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Mock implementation for demo purposes
+        class MockLSPDashboard {
+            constructor() {
+                this.diagnostics = [
+                    {
+                        range: { start: { line: 10, character: 5 }, end: { line: 10, character: 15 } },
+                        severity: 'error',
+                        code: 'missing-semicolon',
+                        source: 'JavaScript',
+                        message: 'Missing semicolon at end of statement'
+                    },
+                    {
+                        range: { start: { line: 15, character: 8 }, end: { line: 15, character: 20 } },
+                        severity: 'warning',
+                        code: 'unused-variable',
+                        source: 'TypeScript',
+                        message: 'Variable is declared but its value is never read'
+                    },
+                    {
+                        range: { start: { line: 20, character: 0 }, end: { line: 20, character: 10 } },
+                        severity: 'info',
+                        code: 'suggestion',
+                        source: 'ESLint',
+                        message: 'Consider using const instead of let for this variable'
+                    }
+                ];
+                
+                this.performance = {
+                    responseTime: 12.5,
+                    memoryUsage: 45.2 * 1024 * 1024,
+                    cpuUsage: 8.3,
+                    requestCount: 1247,
+                    errorCount: 2
+                };
+            }
+            
+            render() {
+                return `
+                    <div class="lsp-dashboard" data-theme="${document.body.classList.contains('light') ? 'light' : 'dark'}">
+                        <div class="header">
+                            <h2>LSP Development Dashboard</h2>
+                            <div class="status-bar">
+                                <span class="file-status">Active: src/lsp/demo.html</span>
+                                <span class="lsp-status connected">🟢 LSP Connected</span>
+                            </div>
+                        </div>
+                        
+                        <div class="main-content">
+                            <div class="code-editor">
+                                <div class="editor-header">
+                                    <h3>Code Editor</h3>
+                                    <div class="editor-controls">
+                                        <button class="btn" onclick="alert('Format document')">Format</button>
+                                        <button class="btn" onclick="alert('Show completions')">Completions</button>
+                                    </div>
+                                </div>
+                                <div class="editor-container" style="display: flex; align-items: center; justify-content: center; opacity: 0.6;">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+                                        <div>Monaco Editor Placeholder</div>
+                                        <div style="font-size: 12px; margin-top: 8px;">Real-time code editing with LSP integration</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="side-panel">
+                                <div class="diagnostics-panel">
+                                    <h3>Real-time Diagnostics</h3>
+                                    <div class="diagnostics-summary">
+                                        <span class="error-count">1 Errors</span>
+                                        <span class="warning-count">1 Warnings</span>
+                                        <span class="info-count">1 Info</span>
+                                    </div>
+                                    <div class="diagnostics-list">
+                                        ${this.renderDiagnostics()}
+                                    </div>
+                                </div>
+                                
+                                <div class="performance-panel">
+                                    <h3>LSP Performance</h3>
+                                    <div class="metrics-grid">
+                                        ${this.renderPerformanceMetrics()}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="footer">
+                            <div class="quick-actions">
+                                <button class="btn" onclick="alert('Applying all quick fixes...')">Apply All Fixes</button>
+                                <button class="btn" onclick="clearDiagnostics()">Clear Diagnostics</button>
+                                <button class="btn" onclick="alert('Restarting LSP server...')">Restart LSP</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            renderDiagnostics() {
+                return this.diagnostics.map(diagnostic => `
+                    <div class="diagnostic-item ${diagnostic.severity}">
+                        <div class="diagnostic-header">
+                            <span class="severity ${diagnostic.severity}">${this.getSeverityIcon(diagnostic.severity)}</span>
+                            <span class="line-number">Line ${diagnostic.range.start.line + 1}:${diagnostic.range.start.character + 1}</span>
+                            <span class="source">${diagnostic.source}</span>
+                        </div>
+                        <div class="message">${diagnostic.message}</div>
+                        <div class="actions">
+                            <button class="quick-fix" onclick="applyQuickFix('${diagnostic.code}')">Quick Fix</button>
+                            <button class="show-help" onclick="showHelp('${diagnostic.code}')">Help</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            renderPerformanceMetrics() {
+                const metrics = [
+                    { label: 'Response Time', value: `${this.performance.responseTime.toFixed(1)}ms`, icon: '⚡' },
+                    { label: 'Memory Usage', value: `${(this.performance.memoryUsage / 1024 / 1024).toFixed(1)}MB`, icon: '💾' },
+                    { label: 'CPU Usage', value: `${this.performance.cpuUsage.toFixed(1)}%`, icon: '🔥' },
+                    { label: 'Requests', value: this.performance.requestCount.toString(), icon: '📊' },
+                    { label: 'Errors', value: this.performance.errorCount.toString(), icon: '❌' }
+                ];
+                
+                return metrics.map(metric => `
+                    <div class="metric-item">
+                        <span class="metric-icon">${metric.icon}</span>
+                        <div class="metric-details">
+                            <span class="metric-label">${metric.label}</span>
+                            <span class="metric-value">${metric.value}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            getSeverityIcon(severity) {
+                const icons = {
+                    'error': '❌',
+                    'warning': '⚠️',
+                    'info': 'ℹ️',
+                    'hint': '💡'
+                };
+                return icons[severity] || '❓';
+            }
+        }
+        
+        // Global functions
+        window.applyQuickFix = (code) => {
+            alert(`Applying quick fix for: ${code}`);
+        };
+        
+        window.showHelp = (code) => {
+            alert(`Showing help for: ${code}`);
+        };
+        
+        window.clearDiagnostics = () => {
+            dashboard.diagnostics = [];
+            updateDashboard();
+        };
+        
+        window.toggleTheme = () => {
+            document.body.classList.toggle('light');
+            updateDashboard();
+        };
+        
+        function updateDashboard() {
+            const root = document.getElementById('dashboard-root');
+            if (root) {
+                root.innerHTML = dashboard.render();
+            }
+        }
+        
+        // Initialize dashboard
+        const dashboard = new MockLSPDashboard();
+        
+        // Simulate initialization
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            updateDashboard();
+            
+            // Simulate periodic updates
+            setInterval(() => {
+                dashboard.performance.responseTime = 10 + Math.random() * 20;
+                dashboard.performance.memoryUsage = (40 + Math.random() * 20) * 1024 * 1024;
+                dashboard.performance.cpuUsage = 5 + Math.random() * 15;
+                dashboard.performance.requestCount += Math.floor(Math.random() * 5);
+                updateDashboard();
+            }, 3000);
+        }, 1500);
+    </script>
+</body>
+</html>

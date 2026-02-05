@@ -1,0 +1,161 @@
+#!/bin/bash
+
+# Grep Assistant - Smart, fast, beautiful search in guide.md
+# Usage: ./grep-assistant [query] [options]
+
+set -euo pipefail
+
+GUIDE="guide.md"
+BUN_CMD="bun run src/tools/grep-assistant.ts suggest"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Emojis
+SEARCH="🔍"
+BOOK="📚"
+ROCKET="🚀"
+LIGHTNING="⚡"
+EYES="👁️"
+WRENCH="🔧"
+MAG="🔍"
+SPARKLES="✨"
+FIRE="🔥"
+BRAIN="🧠"
+
+# Print with emoji + color
+print() { echo -e "${2}${1}${NC}"; }
+
+# Help
+show_help() {
+    cat << EOF
+${CYAN}Grep Assistant - Search guide.md with style${NC}
+
+${YELLOW}Usage:${NC}
+  ${GREEN}./grep-assistant <query>${NC}        Search with fuzzy match
+  ${GREEN}./grep-assistant list${NC}           Show all patterns
+  ${GREEN}./grep-assistant --install${NC}      Install shell completion
+
+${YELLOW}Options:${NC}
+  ${BLUE}-p, --preview${NC}     Show 3-line preview of matches
+  ${BLUE}-l, --lines${NC}       Show line numbers
+  ${BLUE}-c, --count${NC}       Show match count only
+  ${BLUE}-a, --all${NC}         Show all lines (no limit)
+
+${YELLOW}Examples:${NC}
+  ./grep-assistant code --preview
+  ./grep-assistant setup -l
+  ./grep-assistant advanced --count
+
+${SPARKLES} Powered by Bun + TypeScript ${SPARKLES}
+EOF
+    exit 0
+}
+
+# List all patterns
+list_patterns() {
+    bun run src/tools/grep-assistant.ts list 2>/dev/null
+    echo
+    print "Tip: Use fuzzy search — 'db' matches 'PostgreSQL', 'Redis', etc." "$CYAN"
+    exit 0
+}
+
+# Install bash completion
+install_completion() {
+    local script_name="grep-assistant"
+    local completion_file="/usr/local/etc/bash_completion.d/$script_name-completion.sh"
+
+    if [[ "$OSTYPE" == "darwin"* ]] && ! command -v brew &> /dev/null; then
+        print "Homebrew not found. Install from https://brew.sh" "$RED"
+        exit 1
+    fi
+
+    print "Installing bash completion..." "$GREEN"
+
+    cat > "$completion_file" << 'EOF'
+_grep_assistant_completions() {
+    local patterns
+    patterns=$(grep-assistant list 2>/dev/null | awk '{print $1}' | tr '\n' ' ')
+    COMPREPLY=($(compgen -W "$patterns --preview --lines --count --all --install -p -l -c -a" "${COMP_WORDS[1]}"))
+}
+complete -F _grep_assistant_completions grep-assistant
+EOF
+
+    # Source for current session
+    source "$completion_file" 2>/dev/null || true
+
+    print "Completion installed! Restart shell or run: source $completion_file" "$GREEN"
+    exit 0
+}
+
+# Check if guide exists
+[[ ! -f "$GUIDE" ]] && print "guide.md not found in current directory!" "$RED" && exit 1
+
+# Parse args
+QUERY=""
+PREVIEW=false
+LINES=false
+COUNT=false
+ALL=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help) show_help ;;
+        list) list_patterns ;;
+        --install) install_completion ;;
+        -p|--preview) PREVIEW=true; shift ;;
+        -l|--lines) LINES=true; shift ;;
+        -c|--count) COUNT=true; shift ;;
+        -a|--all) ALL=true; shift ;;
+        *) QUERY="$1"; shift ;;
+    esac
+done
+
+[[ -z "$QUERY" ]] && show_help
+
+# Run TS assistant
+print "🔍 Searching for: $QUERY" "$MAG"
+
+RESULT=$(bun run src/tools/grep-assistant.ts suggest "$QUERY" 2>/dev/null || echo "ERROR")
+
+if [[ "$RESULT" == "ERROR" ]] || [[ -z "$RESULT" ]]; then
+    print "No matches found for '$QUERY'" "$RED"
+    print "Try: ./grep-assistant list" "$YELLOW"
+    exit 1
+fi
+
+# Run the actual grep command
+if [[ "$RESULT" == grep* ]]; then
+    print "Executing: $RESULT" "$CYAN"
+
+    # Count matches first
+    MATCH_COUNT=$(eval "$RESULT" | wc -l)
+    print "Found $MATCH_COUNT matches" "$GREEN"
+
+    if $COUNT; then
+        exit 0
+    fi
+
+    # Show results with options
+    if $PREVIEW; then
+        eval "$RESULT" | head -10 | nl -ba | sed 's/^/  /'
+        [[ $MATCH_COUNT -gt 10 ]] && [[ !$ALL ]] && echo "  ... (use --all to see more)"
+    elif $LINES; then
+        eval "$RESULT" | grep -n "" | head -20 | sed 's/^/  /'
+        [[ $MATCH_COUNT -gt 20 ]] && [[ !$ALL ]] && echo "  ... (use -a for all)"
+    else
+        eval "$RESULT" | head -20 | sed 's/^/  /'
+        [[ $MATCH_COUNT -gt 20 ]] && [[ !$ALL ]] && echo "  ... (use -a for all)"
+    fi
+
+    echo
+    print "Search complete • Use --preview for context" "$CYAN"
+else
+    echo "$RESULT"
+fi

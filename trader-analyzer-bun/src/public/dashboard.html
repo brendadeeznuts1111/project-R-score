@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!--
+  @fileoverview HyperBun MLGS Operations Portal Dashboard
+  @description Main HTML structure for real-time monitoring and analytics
+  @module public/dashboard
+  @version 1.4.0.0.0.0.0
+
+  1.4.0.0.0.0.0: Dashboard Portal HTML Structure
+  [DoD][HTML:DashboardPortal][SCOPE:UIOperations]
+  This HTML file defines the structure of the main HyperBun MLGS Operations Portal,
+  acting as the frontend for real-time monitoring and analytics.
+
+  @see {@link docs/1.0.0.0.0.0.0-API-DASHBOARD-PORTAL-INTEGRATION.md|API-Dashboard-Portal Integration Documentation}
+  @see {@link docs/1.5.0.0.0.0.0|Dashboard Client JavaScript}
+  @see {@link docs/1.8.0.0.0.0.0|Dashboard Styling}
+
+  Ripgrep Pattern: 1\.4\.0\.0\.0\.0\.0|dashboard\.html|Operations Portal
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HyperBun MLGS | Operations Portal</title>
+  
+  <!-- 1.8.0.0.0.0.0: Styling (Cross-reference: src/public/css/dashboard.css) -->
+  <link rel="stylesheet" href="/public/css/dashboard.css">
+  
+  <!-- Third-party graph library for correlation visualization -->
+  <!-- Cross-reference: 1.5.6.0.0.0.0 Graph Visualization Setup -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+  <div class="portal-container">
+    <!-- 1.4.1.0.0.0.0: Header Section -->
+    <header class="portal-header">
+      <h1>🌐 HyperBun MLGS Operations Portal</h1>
+      <div class="status-bar">
+        <!-- WebSocket connection status indicator -->
+        <!-- Cross-reference: 1.5.12.0.0.0.0 updateConnectionStatus() -->
+        <span id="connection-status" class="status-indicator">● Disconnected</span>
+        
+        <!-- Log count metrics -->
+        <!-- Cross-reference: 1.5.5.0.0.0.0 updateLogCounts() -->
+        <span id="log-count" class="metric">Logs: 0</span>
+        <span id="error-count" class="metric errors">ERR: 0</span>
+        <span id="warning-count" class="metric warnings">WARN: 0</span>
+      </div>
+    </header>
+
+    <!-- 1.4.2.0.0.0.0: Main Grid Layout -->
+    <main class="portal-grid">
+      <!-- 1.4.2.1.0.0.0: Left Panel: Correlation Graph -->
+      <section class="panel graph-panel">
+        <header class="panel-header">
+          <!-- Cross-reference: 4.2.2.0.0.0.0 Multi-Layer Correlation Graph -->
+          <h2>Layer 4 Correlation Graph</h2>
+          <!-- Cross-reference: 1.5.7.0.0.0.0 refreshGraph() -->
+          <input type="text" id="event-id-input" placeholder="Event ID (NFL-20241207-1345)" />
+        </header>
+        <!-- Cross-reference: 1.5.6.0.0.0.0 setupGraphVisualization() -->
+        <div id="graph-visualization" class="graph-container"></div>
+      </section>
+
+      <!-- 1.4.2.2.0.0.0: Right Panel: Real-Time Logs -->
+      <section class="panel logs-panel">
+        <header class="panel-header">
+          <!-- Cross-reference: 1.3.0.0.0.0.0 Real-Time WebSocket Logs -->
+          <h2>Live Event Stream</h2>
+          <div class="log-controls">
+            <!-- Cross-reference: 1.5.13.0.0.0.0 setupLogFiltering() -->
+            <select id="log-level-filter">
+              <option value="DEBUG">DEBUG</option>
+              <option value="INFO" selected>INFO</option>
+              <option value="WARN">WARN</option>
+              <option value="ERROR">ERROR</option>
+              <option value="CRITICAL">CRITICAL</option>
+            </select>
+            <input type="text" id="log-search" placeholder="Search logs..." />
+            <button id="clear-logs">Clear</button>
+          </div>
+        </header>
+        <!-- Cross-reference: 1.5.4.0.0.0.0 appendLogs() -->
+        <div id="log-stream" class="log-container"></div>
+      </section>
+
+      <!-- 1.4.2.3.0.0.0: Bottom Panel: Metrics -->
+      <section class="panel metrics-panel">
+        <header class="panel-header">
+          <h2>API Performance Metrics</h2>
+          <div class="time-range">
+            <button data-range="1m">1m</button>
+            <button data-range="5m" class="active">5m</button>
+            <button data-range="15m">15m</button>
+            <button data-range="1h">1h</button>
+          </div>
+        </header>
+        <div class="metrics-grid">
+          <!-- Cross-reference: 1.5.7.0.0.0.0 refreshGraph() updates graph-duration -->
+          <div class="metric-card">
+            <h3>Graph Build</h3>
+            <div class="metric-value" id="graph-duration">2.20 ms</div>
+            <div class="metric-unit">avg</div>
+          </div>
+          
+          <!-- Cross-reference: 1.5.8.0.0.0.0 setupMetricsPolling() updates anomaly-duration -->
+          <div class="metric-card">
+            <h3>Anomaly Detection</h3>
+            <div class="metric-value" id="anomaly-duration">3.91 ms</div>
+            <div class="metric-unit">avg</div>
+          </div>
+          
+          <!-- Cross-reference: 1.5.8.0.0.0.0 setupMetricsPolling() updates request-rate -->
+          <div class="metric-card">
+            <h3>API Requests</h3>
+            <div class="metric-value" id="request-rate">450</div>
+            <div class="metric-unit">rps</div>
+          </div>
+          
+          <!-- Cross-reference: 1.3.5.0.0.0.0 getHealth() provides active-sessions -->
+          <div class="metric-card">
+            <h3>Active Sessions</h3>
+            <div class="metric-value" id="active-sessions">3</div>
+            <div class="metric-unit">ops</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 1.4.3.0.0.0.0: Floating Debug Panel -->
+    <!-- Cross-reference: 1.5.9.0.0.0.0 setupDebugPanel() -->
+    <!-- Cross-reference: 7.3.0.0.0.0.0 Hyper-Bun Deep Console Inspector -->
+    <div id="debug-panel" class="debug-panel">
+      <header class="debug-header">
+        <h3>Debug Console</h3>
+        <!-- Cross-reference: 1.5.9.0.0.0.0 setupDebugPanel() reset button handler -->
+        <button id="reset-panel" title="Reset size">↻</button>
+      </header>
+      <div class="debug-content">
+        <!-- Cross-reference: 1.5.9.0.0.0.0 Debug panel content area -->
+        <pre id="debug-output">Debug panel ready. Drag header to move, drag corner to resize.</pre>
+      </div>
+      <!-- Cross-reference: 1.5.9.0.0.0.0 Resize handle for drag functionality -->
+      <div class="resize-handle">↘</div>
+    </div>
+  </div>
+
+  <!-- 1.5.0.0.0.0.0: Dashboard Client JavaScript -->
+  <!-- Cross-reference: src/public/js/dashboard.js -->
+  <script src="/public/js/dashboard.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "react-tailwind-spa",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "bun './**/*.html'",
+    "build": "bun 'SecretsDashboard.build.ts'"
+  },
+  "dependencies": {
+    "bun-plugin-tailwind": "^0.1.2",
+    "react": "19",
+    "react-dom": "19",
+    "tailwindcss": "^4.1.18"
+  }
+}

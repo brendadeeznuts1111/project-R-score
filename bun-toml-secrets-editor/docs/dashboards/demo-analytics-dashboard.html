@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Engine Dashboard Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes pulse-yellow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse-green { animation: pulse-green 2s infinite; }
+        .pulse-yellow { animation: pulse-yellow 2s infinite; }
+        .pulse-red { animation: pulse-red 2s infinite; }
+        .gauge {
+            background: conic-gradient(
+                from 180deg,
+                #ef4444 0deg,
+                #f59e0b 72deg,
+                #22c55e 144deg,
+                #e5e7eb 144deg
+            );
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .enterprise-card {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .ml-card {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <i class="fas fa-chart-line text-blue-500 text-2xl"></i>
+                <h1 class="text-2xl font-bold">Analytics Engine Dashboard</h1>
+                <span class="px-3 py-1 bg-green-600 text-white text-sm rounded-full">Enterprise Edition</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-400">Last Updated: <span id="lastUpdated">--:--:--</span></span>
+                <button onclick="refreshDashboard()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-6">
+        <!-- System Health Overview -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-heartbeat text-green-500 mr-2"></i>
+                System Health Overview
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="metric-card rounded-lg p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-80">Health Score</p>
+                            <p class="text-3xl font-bold" id="healthScore">85</p>
+                        </div>
+                        <i class="fas fa-heart text-4xl opacity-50"></i>
+                    </div>
+                    <div class="mt-2 text-sm opacity-80">
+                        <span class="inline-block w-2 h-2 bg-green-400 rounded-full pulse-green mr-1"></span>
+                        Healthy
+                    </div>
+                </div>
+                
+                <div class="enterprise-card rounded-lg p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-80">SLA Compliance</p>
+                            <p class="text-3xl font-bold" id="slaCompliance">99.9%</p>
+                        </div>
+                        <i class="fas fa-tachometer-alt text-4xl opacity-50"></i>
+                    </div>
+                    <div class="mt-2 text-sm opacity-80">
+                        <span class="inline-block w-2 h-2 bg-green-400 rounded-full pulse-green mr-1"></span>
+                        Compliant
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-yellow-600 to-orange-600 rounded-lg p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-80">Active Sessions</p>
+                            <p class="text-3xl font-bold" id="activeSessions">247</p>
+                        </div>
+                        <i class="fas fa-users text-4xl opacity-50"></i>
+                    </div>
+                    <div class="mt-2 text-sm opacity-80">
+                        <span class="inline-block w-2 h-2 bg-yellow-400 rounded-full pulse-yellow mr-1"></span>
+                        High Activity
+                    </div>
+                </div>
+                
+                <div class="ml-card rounded-lg p-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-80">ML Confidence</p>
+                            <p class="text-3xl font-bold" id="mlConfidence">92%</p>
+                        </div>
+                        <i class="fas fa-brain text-4xl opacity-50"></i>
+                    </div>
+                    <div class="mt-2 text-sm opacity-80">
+                        <span class="inline-block w-2 h-2 bg-green-400 rounded-full pulse-green mr-1"></span>
+                        High Accuracy
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Gauges -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-tachometer-alt text-blue-500 mr-2"></i>
+                Performance Metrics
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-400 mb-2">CPU Usage</h3>
+                    <div class="relative w-32 h-32 mx-auto">
+                        <div class="gauge w-full h-full rounded-full"></div>
+                        <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center">
+                            <span class="text-2xl font-bold" id="cpuUsage">45%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-400 mb-2">Memory Usage</h3>
+                    <div class="relative w-32 h-32 mx-auto">
+                        <div class="gauge w-full h-full rounded-full"></div>
+                        <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center">
+                            <span class="text-2xl font-bold" id="memoryUsage">67%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-400 mb-2">Disk Usage</h3>
+                    <div class="relative w-32 h-32 mx-auto">
+                        <div class="gauge w-full h-full rounded-full"></div>
+                        <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center">
+                            <span class="text-2xl font-bold" id="diskUsage">32%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-400 mb-2">Network Usage</h3>
+                    <div class="relative w-32 h-32 mx-auto">
+                        <div class="gauge w-full h-full rounded-full"></div>
+                        <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center">
+                            <span class="text-2xl font-bold" id="networkUsage">18%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-chart-line text-green-500 mr-2"></i>
+                Analytics Trends
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Performance Trends</h3>
+                    <canvas id="performanceChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">User Activity</h3>
+                    <canvas id="activityChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ML Insights & Predictions -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-brain text-purple-500 mr-2"></i>
+                ML Insights & Predictions
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 text-purple-400">Anomaly Detection</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm">Confidence Score</span>
+                            <span class="text-sm font-bold text-green-400" id="anomalyConfidence">92%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 92%"></div>
+                        </div>
+                        <p class="text-xs text-gray-400">No anomalies detected in the last hour</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 text-blue-400">Predictions</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-chart-line text-green-500 mr-2"></i>
+                            <span>Growth: +15% expected</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-server text-yellow-500 mr-2"></i>
+                            <span>Capacity: 78% utilized</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                            <span>Risk: Low level</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4 text-green-400">Optimization</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-rocket text-purple-500 mr-2"></i>
+                            <span>Cache hit rate: 85%</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                            <span>Avg response: 245ms</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-database text-blue-500 mr-2"></i>
+                            <span>Memory optimized</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alerts & Notifications -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-bell text-yellow-500 mr-2"></i>
+                Active Alerts & Integrations
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Alert Summary</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-red-900/30 border border-red-700 rounded">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                                <span class="text-sm">Critical Alerts</span>
+                            </div>
+                            <span class="text-lg font-bold text-red-400" id="criticalAlerts">0</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-yellow-900/30 border border-yellow-700 rounded">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-circle text-yellow-500 mr-3"></i>
+                                <span class="text-sm">Warning Alerts</span>
+                            </div>
+                            <span class="text-lg font-bold text-yellow-400" id="warningAlerts">2</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-blue-900/30 border border-blue-700 rounded">
+                            <div class="flex items-center">
+                                <i class="fas fa-info-circle text-blue-500 mr-3"></i>
+                                <span class="text-sm">Info Alerts</span>
+                            </div>
+                            <span class="text-lg font-bold text-blue-400" id="infoAlerts">5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Integration Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fab fa-slack text-purple-500 mr-2"></i>
+                                <span class="text-sm">Slack Integration</span>
+                            </div>
+                            <span class="text-xs px-2 py-1 bg-green-600 text-white rounded">Active</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fab fa-microsoft text-blue-500 mr-2"></i>
+                                <span class="text-sm">Teams Integration</span>
+                            </div>
+                            <span class="text-xs px-2 py-1 bg-green-600 text-white rounded">Active</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-webhook text-green-500 mr-2"></i>
+                                <span class="text-sm">Webhook Endpoints</span>
+                            </div>
+                            <span class="text-xs px-2 py-1 bg-green-600 text-white rounded">3 Active</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-cloud text-blue-500 mr-2"></i>
+                                <span class="text-sm">Cloud Storage</span>
+                            </div>
+                            <span class="text-xs px-2 py-1 bg-green-600 text-white rounded">Connected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Custom Metrics -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="fas fa-cogs text-orange-500 mr-2"></i>
+                Custom Metrics
+            </h2>
+            <div class="bg-gray-800 rounded-lg p-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <p class="text-sm text-gray-400 mb-1">Cache Efficiency</p>
+                        <p class="text-2xl font-bold text-green-400">85.2%</p>
+                        <p class="text-xs text-gray-500">Within Threshold</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-400 mb-1">Error Rate</p>
+                        <p class="text-2xl font-bold text-yellow-400">2.1%</p>
+                        <p class="text-xs text-gray-500">Above Target</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-400 mb-1">Avg Session</p>
+                        <p class="text-2xl font-bold text-blue-400">4m 32s</p>
+                        <p class="text-xs text-gray-500">Good Engagement</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-400 mb-1">Throughput</p>
+                        <p class="text-2xl font-bold text-purple-400">1,247/min</p>
+                        <p class="text-xs text-gray-500">High Volume</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 px-6 py-4 mt-8">
+        <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-400">
+                <i class="fas fa-server mr-2"></i>
+                Analytics Engine v2.0 | Enterprise Edition
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-gray-400">
+                <span><i class="fas fa-database mr-1"></i>Events: <span id="totalEvents">15,847</span></span>
+                <span><i class="fas fa-clock mr-1"></i>Uptime: <span id="uptime">47h 32m</span></span>
+                <span><i class="fas fa-memory mr-1"></i>Memory: <span id="memoryUsageFooter">512MB</span></span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Charts
+        let performanceChart, activityChart;
+
+        function initializeCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: [245, 238, 252, 267, 241, 235],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Error Rate (%)',
+                        data: [1.2, 1.5, 2.1, 1.8, 1.4, 1.1],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e5e7eb' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        y: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+
+            // Activity Chart
+            const actCtx = document.getElementById('activityChart').getContext('2d');
+            activityChart = new Chart(actCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Active Users',
+                        data: [1200, 1450, 1380, 1520, 1680, 980, 750],
+                        backgroundColor: '#10b981'
+                    }, {
+                        label: 'Events Processed',
+                        data: [8500, 9200, 8900, 9800, 10500, 6200, 4800],
+                        backgroundColor: '#8b5cf6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e5e7eb' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        y: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateMetrics() {
+            // Simulate real-time updates
+            const healthScore = 85 + Math.floor(Math.random() * 10) - 5;
+            const activeSessions = 247 + Math.floor(Math.random() * 50) - 25;
+            const mlConfidence = 92 + Math.floor(Math.random() * 6) - 3;
+            
+            document.getElementById('healthScore').textContent = healthScore;
+            document.getElementById('activeSessions').textContent = activeSessions;
+            document.getElementById('mlConfidence').textContent = `${mlConfidence}%`;
+            document.getElementById('anomalyConfidence').textContent = `${mlConfidence}%`;
+            
+            // Update performance gauges
+            document.getElementById('cpuUsage').textContent = `${45 + Math.floor(Math.random() * 20) - 10}%`;
+            document.getElementById('memoryUsage').textContent = `${67 + Math.floor(Math.random() * 15) - 7}%`;
+            document.getElementById('diskUsage').textContent = `${32 + Math.floor(Math.random() * 10) - 5}%`;
+            document.getElementById('networkUsage').textContent = `${18 + Math.floor(Math.random() * 15) - 7}%`;
+            
+            // Update time
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+            
+            // Update uptime
+            const uptime = 47 * 3600 + 32 * 60 + Math.floor(Math.random() * 3600);
+            const hours = Math.floor(uptime / 3600);
+            const minutes = Math.floor((uptime % 3600) / 60);
+            document.getElementById('uptime').textContent = `${hours}h ${minutes}m`;
+        }
+
+        function _refreshDashboard() {
+            updateMetrics();
+            
+            // Update charts with new data
+            if (performanceChart) {
+                performanceChart.data.datasets[0].data = performanceChart.data.datasets[0].data.map(
+                    v => v + Math.floor(Math.random() * 20) - 10
+                );
+                performanceChart.update();
+            }
+            
+            if (activityChart) {
+                activityChart.data.datasets[0].data = activityChart.data.datasets[0].data.map(
+                    v => v + Math.floor(Math.random() * 200) - 100
+                );
+                activityChart.update();
+            }
+            
+            // Show refresh notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Dashboard refreshed';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            updateMetrics();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(updateMetrics, 30000);
+        });
+    </script>
+</body>
+</html>

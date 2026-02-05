@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bun Secrets Editor Widget</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 200px;
+            user-select: none;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+        }
+        
+        .logo {
+            font-size: 18px;
+            margin-right: 8px;
+        }
+        
+        .title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .status-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-icon {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .status-label {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 2px;
+        }
+        
+        .status-value {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .metrics {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .metric-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .last-update {
+            font-size: 10px;
+            opacity: 0.7;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .online { color: #4ade80; }
+        .offline { color: #f87171; }
+        .error { color: #fbbf24; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🔐</div>
+        <div class="title">Bun TOML Secrets Editor</div>
+    </div>
+    
+    <div class="status-grid">
+        <div class="status-item">
+            <div class="status-icon" id="api-icon">🔴</div>
+            <div class="status-label">API Status</div>
+            <div class="status-value" id="api-status">Offline</div>
+        </div>
+        
+        <div class="status-item">
+            <div class="status-icon" id="bucket-icon">🔴</div>
+            <div class="status-label">R2 Bucket</div>
+            <div class="status-value" id="bucket-status">Disconnected</div>
+        </div>
+    </div>
+    
+    <div class="metrics">
+        <div class="metric-item">
+            <span>📁 Profile Files</span>
+            <span id="profile-count">119</span>
+        </div>
+        <div class="metric-item">
+            <span>⚡ API Response</span>
+            <span id="api-response">--ms</span>
+        </div>
+        <div class="metric-item">
+            <span>☁️ Bucket Size</span>
+            <span id="bucket-size">--MB</span>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <button class="btn" onclick="openDashboard()">Dashboard</button>
+        <button class="btn" onclick="openAPI()">API</button>
+        <button class="btn" onclick="openBucket()">R2</button>
+        <button class="btn" onclick="refreshStatus()">Refresh</button>
+    </div>
+    
+    <div class="last-update" id="last-update">
+        Last update: --:--:--
+    </div>
+    
+    <script>
+        const status = {
+            api: 'offline',
+            bucket: 'disconnected',
+            profiles: 119,
+            lastUpdate: new Date().toISOString()
+        };
+        
+        async function checkStatus() {
+            try {
+                // Check API status
+                const apiStart = Date.now();
+                const apiResponse = await fetch('http://localhost:3001/health', {
+                    signal: AbortSignal.timeout(5000)
+                });
+                const apiTime = Date.now() - apiStart;
+                
+                status.api = apiResponse.ok ? 'online' : 'error';
+                document.getElementById('api-response').textContent = apiTime + 'ms';
+                
+            } catch (error) {
+                status.api = 'offline';
+                document.getElementById('api-response').textContent = '--ms';
+            }
+            
+            try {
+                // Check bucket status
+                const bucketResponse = await fetch('https://pub-a471e86af24446498311933a2eca2454.r2.dev/profiles/README.md', {
+                    signal: AbortSignal.timeout(5000)
+                });
+                
+                status.bucket = bucketResponse.ok ? 'connected' : 'error';
+                
+            } catch (error) {
+                status.bucket = 'disconnected';
+            }
+            
+            status.lastUpdate = new Date().toISOString();
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            // Update API status
+            const apiIcon = document.getElementById('api-icon');
+            const apiStatus = document.getElementById('api-status');
+            
+            switch (status.api) {
+                case 'online':
+                    apiIcon.textContent = '🟢';
+                    apiStatus.textContent = 'Online';
+                    apiStatus.className = 'status-value online';
+                    break;
+                case 'error':
+                    apiIcon.textContent = '🟡';
+                    apiStatus.textContent = 'Error';
+                    apiStatus.className = 'status-value error';
+                    break;
+                default:
+                    apiIcon.textContent = '🔴';
+                    apiStatus.textContent = 'Offline';
+                    apiStatus.className = 'status-value offline';
+            }
+            
+            // Update bucket status
+            const bucketIcon = document.getElementById('bucket-icon');
+            const bucketStatus = document.getElementById('bucket-status');
+            
+            switch (status.bucket) {
+                case 'connected':
+                    bucketIcon.textContent = '🟢';
+                    bucketStatus.textContent = 'Connected';
+                    bucketStatus.className = 'status-value online';
+                    break;
+                case 'error':
+                    bucketIcon.textContent = '🟡';
+                    bucketStatus.textContent = 'Error';
+                    bucketStatus.className = 'status-value error';
+                    break;
+                default:
+                    bucketIcon.textContent = '🔴';
+                    bucketStatus.textContent = 'Disconnected';
+                    bucketStatus.className = 'status-value offline';
+            }
+            
+            // Update metrics
+            document.getElementById('profile-count').textContent = status.profiles;
+            document.getElementById('bucket-size').textContent = '~2.5MB'; // Estimated
+            
+            // Update last update
+            const updateTime = new Date(status.lastUpdate).toLocaleTimeString();
+            document.getElementById('last-update').textContent = `Last update: ${updateTime}`;
+        }
+        
+        function openDashboard() {
+            window.open('http://localhost:3001');
+        }
+        
+        function openAPI() {
+            window.open('http://localhost:3001/api');
+        }
+        
+        function openBucket() {
+            window.open('https://pub-a471e86af24446498311933a2eca2454.r2.dev');
+        }
+        
+        function refreshStatus() {
+            checkStatus();
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(checkStatus, 30000);
+        
+        // Initial check
+        checkStatus();
+        
+        // Handle window closing
+        if (window.require) {
+            const { remote } = window.require('electron');
+            const win = remote.getCurrentWindow();
+            
+            // Hide instead of close when clicking the close button
+            win.on('close', (event) => {
+                event.preventDefault();
+                win.hide();
+            });
+        }
+    </script>
+</body>
+</html>

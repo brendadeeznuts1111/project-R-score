@@ -1,0 +1,194 @@
+# .npmrc - NPM/Bun Package Manager Configuration
+# 
+# This file configures how npm/bun installs packages from registries
+# 
+# ⚠️  IMPORTANT SECURITY NOTE:
+# - This file should NOT contain actual tokens (use .env or CI/CD secrets instead)
+# - Use ${VAR?} syntax for required variables and ${VAR:-default} for optional ones
+# - Never commit files with actual authentication tokens
+# - Rotate tokens every 90 days
+# 
+# To use this file:
+# 1. Copy this to .npmrc in your project root
+# 2. Set environment variables for tokens (see below)
+# 3. Run: bun install
+# 
+# Environment Variables Required:
+# - GITHUB_NPM_TOKEN: GitHub Packages authentication token
+# - GITLAB_NPM_TOKEN: GitLab package registry token
+# - INTERNAL_REGISTRY_TOKEN: Internal registry authentication token
+# - GITHUB_PACKAGES_URL: (optional) GitHub Packages registry URL
+# - GITLAB_REGISTRY_URL: (optional) GitLab package registry URL
+# - INTERNAL_REGISTRY_URL: (optional) Internal registry URL
+
+# =============================================================================
+# DEFAULT REGISTRY
+# =============================================================================
+# Points to npm registry by default
+registry=https://registry.npmjs.org
+
+# =============================================================================
+# SCOPED REGISTRIES - ENTERPRISE
+# =============================================================================
+# @duoplus scope → GitHub Packages (Enterprise deployment)
+# Usage: npm install @duoplus/core
+@duoplus:registry=https://npm.pkg.github.com/duoplus
+
+# Authentication for GitHub Packages
+# Uses GITHUB_NPM_TOKEN environment variable
+# Token must have read:packages scope
+# Create at: https://github.com/settings/tokens
+//npm.pkg.github.com/:_authToken=${GITHUB_NPM_TOKEN?}
+
+# =============================================================================
+# SCOPED REGISTRIES - DEVELOPMENT  
+# =============================================================================
+# @duoplus-dev scope → GitLab Registry (Development/testing)
+# Usage: npm install @duoplus-dev/test-pkg
+@duoplus-dev:registry=${GITLAB_REGISTRY_URL?}
+
+# Authentication for GitLab package registry
+// Uses CI_JOB_TOKEN in CI/CD, personal token locally
+// Create at: https://gitlab.com/profile/personal_access_tokens
+//${GITLAB_REGISTRY_URL?/:_authToken=${GITLAB_NPM_TOKEN?}
+
+# =============================================================================
+# SCOPED REGISTRIES - INTERNAL
+# =============================================================================
+# @internal scope → Internal registry
+# Usage: npm install @internal/core-lib
+@internal:registry=${INTERNAL_REGISTRY_URL?}
+
+// Internal registry authentication
+//${INTERNAL_REGISTRY_URL?/:_authToken=${INTERNAL_REGISTRY_TOKEN?}
+
+# =============================================================================
+# GLOBAL SETTINGS
+# =============================================================================
+
+# Always use HTTPS (no insecure HTTP registries in production)
+strict-ssl=true
+
+# Timeout for fetching packages (milliseconds)
+# Increase if behind slow network/proxy
+fetch-timeout=10000
+
+# Save exact versions in package.json (no ^ or ~)
+save-exact=false
+
+# Use only what's listed in package.json, fail if missing
+offline=false
+
+# Ignore engines declared in package.json 
+# (Bun may have different versions than Node.js)
+engine-strict=false
+
+# Authentication-related settings
+# Always use HTTPS for authentication
+auth-type=legacy
+
+# =============================================================================
+# ADVANCED SETTINGS (Optional)
+# =============================================================================
+
+# Uncomment to use a proxy for all registry requests
+# https-proxy=http://proxy.company.com:8080
+# http-proxy=http://proxy.company.com:8080
+
+# Uncomment for corporate firewall with custom CA certificate
+# ca=/path/to/ca-bundle.crt
+
+# Uncomment to use a specific package store directory
+# cache=/path/to/custom/cache
+
+# =============================================================================
+# ENVIRONMENT VARIABLE EXAMPLES
+# =============================================================================
+#
+# Create a .env file (not committed) with:
+#
+#   # GitHub
+#   export GITHUB_NPM_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#   export GITHUB_PACKAGES_URL="https://npm.pkg.github.com/duoplus"
+#
+#   # GitLab
+#   export GITLAB_NPM_TOKEN="glpat-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#   export GITLAB_REGISTRY_URL="https://gitlab.example.com/api/v4/packages/npm"
+#
+#   # Internal Registry
+#   export INTERNAL_REGISTRY_URL="https://registry.internal.example.com"
+#   export INTERNAL_REGISTRY_TOKEN="internal-token-xxxxxxxxxxxxxxxx"
+#
+# Then in terminal:
+#   source .env
+#   bun install
+#
+# Or set in CI/CD platform:
+# - GitHub Actions: Settings → Secrets and variables → Actions
+# - GitLab CI: Settings → CI/CD → Variables
+# - Other: Use platform-specific secret management
+
+# =============================================================================
+# GITHUB ACTIONS SETUP
+# =============================================================================
+# 
+# In .github/workflows/build.yml:
+#
+# jobs:
+#   install:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: oven-sh/setup-bun@v1
+#       
+#       - name: Setup npm auth
+#         run: |
+#           echo "@duoplus:registry=https://npm.pkg.github.com/duoplus" >> ~/.npmrc
+#           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+#
+#       - name: Install dependencies
+#         run: bun install
+
+# =============================================================================
+# GITLAB CI SETUP
+# =============================================================================
+#
+# In .gitlab-ci.yml:
+#
+# variables:
+#   GITLAB_REGISTRY_URL: "https://gitlab.example.com/api/v4/packages/npm"
+#
+# install:
+#   image: oven/bun
+#   before_script:
+#     - echo "@duoplus-dev:registry=${GITLAB_REGISTRY_URL}" >> ~/.npmrc
+#     - echo "//${GITLAB_REGISTRY_URL}:_authToken=${CI_JOB_TOKEN}" >> ~/.npmrc
+#   script:
+#     - bun install
+
+# =============================================================================
+# TROUBLESHOOTING
+# =============================================================================
+#
+# 401 Unauthorized:
+#   - Check token is set: echo $GITHUB_NPM_TOKEN
+#   - Verify token hasn't expired
+#   - Ensure token has correct scopes (read:packages for GitHub)
+#   - Try: bun install --verbose
+#
+# 403 Forbidden:
+#   - Check organization access permissions
+#   - Verify package exists in registry
+#   - Contact registry admin if needed
+#
+# 404 Not Found:
+#   - Check package name spelling (case-sensitive)
+#   - Verify package is published to correct scope
+#   - Try: bun pm list
+#
+# Network timeout:
+#   - Increase fetch-timeout value above
+#   - Check firewall/proxy configuration
+#   - Verify registry URL is correct
+#
+# For more help: https://docs.npmjs.com/configuring-npm/npmrc

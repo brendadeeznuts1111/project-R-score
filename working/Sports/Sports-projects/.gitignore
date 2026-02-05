@@ -1,0 +1,62 @@
+# Obsidian-specific files and directories
+.obsidian/
+.trash/
+.connection-test.md
+.smart-env/
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+.~*
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Log files
+*.log
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node modules (if any scripts use npm/bun)
+node_modules/
+.pnp
+.pnp.js
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Lock files (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
+# bun.lockb
+

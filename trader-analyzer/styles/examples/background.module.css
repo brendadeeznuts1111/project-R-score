@@ -1,0 +1,27 @@
+/**
+ * Background Module
+ * 
+ * Example of a separate CSS module file for composition.
+ * 
+ * ⚠️ WARNING: When composing from separate files, ensure they do NOT
+ * contain the same properties. Conflicting properties result in
+ * undefined behavior according to the CSS module specification.
+ */
+
+.background {
+	background-color: blue;
+}
+
+/* Base styles - safe to compose (no conflicts) */
+.base {
+	padding: 1rem;
+	border-radius: 8px;
+	font-weight: 600;
+}
+
+/* ⚠️ Example of what NOT to do - conflicting properties */
+.conflicting {
+	background-color: green;
+	color: white;
+	padding: 2rem;
+}

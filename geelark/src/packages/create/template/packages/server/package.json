@@ -1,0 +1,12 @@
+{
+  "name": "@dev-hq/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@dev-hq/core": "workspace:*"
+  }
+}
+
+
+

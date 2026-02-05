@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <title>⚡ High-Frequency Sports Trading Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel h2 {
+            margin-bottom: 15px;
+            color: #00ff88;
+            font-size: 1.3em;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .metric-value.positive {
+            color: #00ff88;
+        }
+
+        .metric-value.negative {
+            color: #ff4444;
+        }
+
+        .metric-value.neutral {
+            color: #00d4ff;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #00ff88;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+
+        .signal-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .signal-action {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .signal-action.BUY {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .signal-action.SELL {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .signal-action.HOLD {
+            background: #666;
+            color: #fff;
+        }
+
+        .position-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn.danger {
+            background: linear-gradient(45deg, #ff4444, #ff6666);
+            color: #fff;
+        }
+
+        .performance-chart {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.online {
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background: #ff4444;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        .speed-indicator {
+            font-size: 0.8em;
+            color: #00d4ff;
+            margin-top: 5px;
+        }
+    </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Origin Dashboard",
+        "description": "Real-time performance monitoring and analytics dashboard",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any"
+    }
+</script>
+</head>
+<body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">Skip to main content</a>
+    <div class="dashboard">
+        <div class="header">
+            <h1>⚡ High-Frequency Sports Trading</h1>
+            <p>13-Byte Config System • Nanosecond Trading • Real-Time Analytics</p>
+        </div>
+
+        <!-- Left Panel: Configuration & Controls -->
+        <div class="panel">
+            <h2>🎛️ Trading Controls</h2>
+            
+            <div class="control-group">
+                <label>Auto Trading</label>
+                <div class="toggle-switch" id="autoTrading" onclick="toggleFeature('autoTrading')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Risk Management</label>
+                <div class="toggle-switch" id="riskManagement" onclick="toggleFeature('riskManagement')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Market Making</label>
+                <div class="toggle-switch" id="marketMaking" onclick="toggleFeature('marketMaking')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Arbitrage Detection</label>
+                <div class="toggle-switch" id="arbitrage" onclick="toggleFeature('arbitrage')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Position Hedging</label>
+                <div class="toggle-switch" id="hedging" onclick="toggleFeature('hedging')"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Liquidity Mining</label>
+                <div class="toggle-switch" id="liquidityMining" onclick="toggleFeature('liquidityMining')"></div>
+            </div>
+
+            <h2 style="margin-top: 30px;">📊 Performance</h2>
+            <div class="metric">
+                <span class="metric-label">Config Update</span>
+                <span class="metric-value neutral" id="configUpdateTime">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Feature Check</span>
+                <span class="metric-value neutral" id="featureCheckTime">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Risk Check</span>
+                <span class="metric-value neutral" id="riskCheckTime">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Total Latency</span>
+                <span class="metric-value neutral" id="totalLatency">--</span>
+            </div>
+
+            <div class="speed-indicator">
+                ⚡ 600,000x faster than Redis
+            </div>
+        </div>
+
+        <!-- Center Panel: Market Data & Signals -->
+        <div class="panel">
+            <h2>📈 Live Trading Signals</h2>
+            <div id="signalsContainer">
+                <div class="loading">Loading signals...</div>
+            </div>
+
+            <h2 style="margin-top: 30px;">🏃 Market Data Feed</h2>
+            <div style="margin-bottom: 15px;">
+                <button class="btn" onclick="sendSampleMarketData()">Send Sample Data</button>
+                <button class="btn" onclick="startDataStream()">Start Live Feed</button>
+                <button class="btn danger" onclick="stopDataStream()">Stop Feed</button>
+            </div>
+            <div id="marketDataContainer">
+                <div class="loading">No market data received</div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Positions & P&L -->
+        <div class="panel">
+            <h2>💼 Active Positions</h2>
+            <div id="positionsContainer">
+                <div class="loading">Loading positions...</div>
+            </div>
+
+            <h2 style="margin-top: 30px;">💰 P&L Summary</h2>
+            <div class="metric">
+                <span class="metric-label">Total P&L</span>
+                <span class="metric-value" id="totalPnL">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Open Positions</span>
+                <span class="metric-value neutral" id="openPositions">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Total Events</span>
+                <span class="metric-value neutral" id="totalEvents">--</span>
+            </div>
+
+            <div class="performance-chart">
+                📊 Performance Chart (Coming Soon)
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="panel" style="grid-column: 1 / -1;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span class="status-indicator online" id="statusIndicator"></span>
+                    <span id="statusText">Connected</span>
+                </div>
+                <div>
+                    <span id="lastUpdate">Last update: --</span>
+                </div>
+                <div>
+                    <button class="btn" onclick="refreshData()">Refresh</button>
+                    <button class="btn" onclick="benchmarkPerformance()">Benchmark</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let dataStreamInterval = null;
+        let signals = [];
+
+        // Initialize dashboard
+        async function init() {
+            await loadConfiguration();
+            await loadPositions();
+            await loadPerformance();
+            startAutoRefresh();
+        }
+
+        // Load trading configuration
+        async function loadConfiguration() {
+            try {
+                const response = await fetch(`${API_BASE}/trading/config`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const config = data.data;
+                    
+                    // Update toggle switches
+                    document.getElementById('autoTrading').className = 
+                        config.features.autoTrading ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('riskManagement').className = 
+                        config.features.riskManagement ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('marketMaking').className = 
+                        config.features.marketMaking ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('arbitrage').className = 
+                        config.features.arbitrage ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('hedging').className = 
+                        config.features.hedging ? 'toggle-switch active' : 'toggle-switch';
+                    document.getElementById('liquidityMining').className = 
+                        config.features.liquidityMining ? 'toggle-switch active' : 'toggle-switch';
+                }
+            } catch (error) {
+                console.error('Failed to load configuration:', error);
+                updateStatus('Failed to load config', false);
+            }
+        }
+
+        // Toggle trading feature
+        async function toggleFeature(feature) {
+            const toggle = document.getElementById(feature);
+            const enabled = !toggle.classList.contains('active');
+            
+            try {
+                const response = await fetch(`${API_BASE}/trading/features/${feature}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    toggle.className = enabled ? 'toggle-switch active' : 'toggle-switch';
+                    console.log(`Feature ${feature} ${enabled ? 'enabled' : 'disabled'}`);
+                }
+            } catch (error) {
+                console.error('Failed to toggle feature:', error);
+            }
+        }
+
+        // Send sample market data
+        async function sendSampleMarketData() {
+            const sampleData = {
+                eventId: 'match_' + Date.now(),
+                sportType: 'soccer',
+                homeTeam: 'Team A',
+                awayTeam: 'Team B',
+                homeOdds: 2.1 + Math.random() * 0.4,
+                awayOdds: 3.2 + Math.random() * 0.6,
+                drawOdds: 3.0 + Math.random() * 0.5,
+                totalPoints: 2.5 + Math.random(),
+                overOdds: 1.8 + Math.random() * 0.4,
+                underOdds: 2.0 + Math.random() * 0.4,
+                timestamp: Date.now(),
+                volume: 1000000 + Math.random() * 9000000,
+                liquidity: 50000 + Math.random() * 950000
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/trading/market-data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sampleData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    addMarketDataDisplay(sampleData);
+                    if (data.data.signals.length > 0) {
+                        data.data.signals.forEach(signal => addSignalDisplay(signal));
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to send market data:', error);
+            }
+        }
+
+        // Add market data to display
+        function addMarketDataDisplay(data) {
+            const container = document.getElementById('marketDataContainer');
+            const dataDiv = document.createElement('div');
+            dataDiv.className = 'signal-item';
+            dataDiv.innerHTML = `
+                <div class="signal-header">
+                    <strong>${data.homeTeam} vs ${data.awayTeam}</strong>
+                    <span style="color: #00d4ff;">${new Date(data.timestamp).toLocaleTimeString()}</span>
+                </div>
+                <div>Home: ${data.homeOdds.toFixed(2)} | Away: ${data.awayOdds.toFixed(2)} | Draw: ${data.drawOdds?.toFixed(2)}</div>
+                <div style="margin-top: 5px; font-size: 0.9em; color: #666;">
+                    Volume: $${(data.volume / 1000000).toFixed(1)}M | Liquidity: $${(data.liquidity / 1000).toFixed(0)}K
+                </div>
+            `;
+            
+            // Keep only last 5 items
+            if (container.children.length > 5) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(dataDiv);
+        }
+
+        // Add signal to display
+        function addSignalDisplay(signal) {
+            const container = document.getElementById('signalsContainer');
+            
+            // Remove loading message if present
+            if (container.querySelector('.loading')) {
+                container.innerHTML = '';
+            }
+            
+            const signalDiv = document.createElement('div');
+            signalDiv.className = 'signal-item';
+            signalDiv.innerHTML = `
+                <div class="signal-header">
+                    <span class="signal-action ${signal.action}">${signal.action}</span>
+                    <span style="color: #00d4ff;">${new Date(signal.timestamp).toLocaleTimeString()}</span>
+                </div>
+                <div><strong>${signal.market}</strong> @ ${signal.odds.toFixed(2)}</div>
+                <div>Stake: ${signal.stake}% | EV: ${(signal.expectedValue * 100).toFixed(1)}%</div>
+                <div style="margin-top: 5px; font-size: 0.9em; color: #666;">
+                    ${signal.reasoning}
+                </div>
+                <button class="btn" style="margin-top: 10px; padding: 8px 16px; font-size: 0.9em;" 
+                        onclick="executeSignal('${signal.eventId}', '${signal.action}', '${signal.market}', ${signal.odds}, ${signal.stake})">
+                    Execute Trade
+                </button>
+            `;
+            
+            // Keep only last 5 signals
+            if (container.children.length > 5) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(signalDiv);
+        }
+
+        // Execute trading signal
+        async function executeSignal(eventId, action, market, odds, stake) {
+            const signal = {
+                eventId,
+                action,
+                market,
+                odds,
+                stake,
+                confidence: 0.8,
+                expectedValue: 0.05,
+                timestamp: Date.now(),
+                reasoning: 'Manual execution from dashboard'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/trading/execute`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(signal)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Trade executed successfully!');
+                    loadPositions(); // Refresh positions
+                } else {
+                    alert('❌ Trade execution failed: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Failed to execute signal:', error);
+                alert('❌ Failed to execute trade');
+            }
+        }
+
+        // Load positions
+        async function loadPositions() {
+            try {
+                const response = await fetch(`${API_BASE}/trading/positions`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPositions(data.data.positions);
+                }
+            } catch (error) {
+                console.error('Failed to load positions:', error);
+            }
+        }
+
+        // Display positions
+        function displayPositions(positions) {
+            const container = document.getElementById('positionsContainer');
+            
+            if (positions.length === 0) {
+                container.innerHTML = '<div class="loading">No open positions</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            positions.forEach(position => {
+                const posDiv = document.createElement('div');
+                posDiv.className = 'position-item';
+                posDiv.innerHTML = `
+                    <div><strong>${position.eventId}</strong> - ${position.market}</div>
+                    <div>@ ${position.odds.toFixed(2)} | Stake: ${position.stake}%</div>
+                    <div style="margin-top: 5px; font-size: 0.9em; color: #666;">
+                        ${new Date(position.timestamp).toLocaleTimeString()}
+                    </div>
+                `;
+                container.appendChild(posDiv);
+            });
+        }
+
+        // Load performance metrics
+        async function loadPerformance() {
+            try {
+                const response = await fetch(`${API_BASE}/trading/performance`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const perf = data.data.performance;
+                    const pnl = data.data.pnl;
+                    const stats = data.data.statistics;
+                    
+                    document.getElementById('configUpdateTime').textContent = perf.configUpdateTime + 'ns';
+                    document.getElementById('featureCheckTime').textContent = perf.featureCheckTime + 'ns';
+                    document.getElementById('riskCheckTime').textContent = perf.riskCheckTime + 'ns';
+                    document.getElementById('totalLatency').textContent = 
+                        (perf.configUpdateTime + perf.featureCheckTime + perf.riskCheckTime) + 'ns';
+                    
+                    const totalPnL = document.getElementById('totalPnL');
+                    totalPnL.textContent = (pnl.total * 100).toFixed(2) + '%';
+                    totalPnL.className = 'metric-value ' + (pnl.total >= 0 ? 'positive' : 'negative');
+                    
+                    document.getElementById('openPositions').textContent = stats.activePositions;
+                    document.getElementById('totalEvents').textContent = stats.totalEvents;
+                }
+            } catch (error) {
+                console.error('Failed to load performance:', error);
+            }
+        }
+
+        // Start data stream
+        function startDataStream() {
+            if (dataStreamInterval) return;
+            
+            dataStreamInterval = setInterval(() => {
+                sendSampleMarketData();
+            }, 2000);
+            
+            console.log('Started live data stream');
+        }
+
+        // Stop data stream
+        function stopDataStream() {
+            if (dataStreamInterval) {
+                clearInterval(dataStreamInterval);
+                dataStreamInterval = null;
+                console.log('Stopped live data stream');
+            }
+        }
+
+        // Benchmark performance
+        async function benchmarkPerformance() {
+            try {
+                const response = await fetch(`${API_BASE}/trading/benchmark`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`🚀 Benchmark Results:\n\n` +
+                          `Config Update: ${data.data.benchmark.configUpdateTime}\n` +
+                          `Feature Check: ${data.data.benchmark.featureCheckTime}\n` +
+                          `Risk Check: ${data.data.benchmark.riskCheckTime}\n` +
+                          `Total Latency: ${data.data.benchmark.totalLatency}\n\n` +
+                          `⚡ ${data.data.comparison.fasterThanRedis} faster than Redis!\n` +
+                          `⚡ ${data.data.comparison.fasterThanEtcd} faster than etcd!`);
+                }
+            } catch (error) {
+                console.error('Benchmark failed:', error);
+            }
+        }
+
+        // Update status
+        function updateStatus(text, online = true) {
+            document.getElementById('statusText').textContent = text;
+            document.getElementById('statusIndicator').className = 
+                'status-indicator ' + (online ? 'online' : 'offline');
+        }
+
+        // Refresh data
+        function refreshData() {
+            loadConfiguration();
+            loadPositions();
+            loadPerformance();
+            updateLastUpdate();
+        }
+
+        // Update last update time
+        function updateLastUpdate() {
+            document.getElementById('lastUpdate').textContent = 
+                'Last update: ' + new Date().toLocaleTimeString();
+        }
+
+        // Start auto refresh
+        function startAutoRefresh() {
+            setInterval(() => {
+                loadPerformance();
+                updateLastUpdate();
+            }, 5000);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

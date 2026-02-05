@@ -1,0 +1,226 @@
+/**
+ * Media Query Ranges Examples
+ * 
+ * Modern CSS supports intuitive range syntax for media queries using
+ * comparison operators (<, >, <=, >=) instead of verbose min-/max- prefixes.
+ * 
+ * Bun's CSS bundler automatically converts modern syntax to traditional
+ * min-/max- syntax for browser compatibility.
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ */
+
+/* ==========================================================================
+   Single Breakpoint (>=)
+   ========================================================================== */
+
+/* Modern syntax with comparison operators */
+@media (width >= 768px) {
+	.container {
+		max-width: 720px;
+	}
+	
+	.grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+/* Bun converts to traditional syntax:
+ * @media (min-width: 768px) {
+ *   .container {
+ *     max-width: 720px;
+ *   }
+ * }
+ */
+
+/* ==========================================================================
+   Inclusive Range (<= and >=)
+   ========================================================================== */
+
+/* Inclusive range using <= and >= */
+@media (768px <= width <= 1199px) {
+	.sidebar {
+		display: flex;
+	}
+	
+	.main-content {
+		width: 70%;
+	}
+}
+
+/* Bun converts to:
+ * @media (min-width: 768px) and (max-width: 1199px) {
+ *   .sidebar {
+ *     display: flex;
+ *   }
+ * }
+ */
+
+/* ==========================================================================
+   Exclusive Range (< and >)
+   ========================================================================== */
+
+/* Exclusive range using < and > */
+@media (width > 320px) and (width < 768px) {
+	.mobile-only {
+		display: block;
+	}
+	
+	.desktop-only {
+		display: none;
+	}
+}
+
+/* Bun converts to:
+ * @media (min-width: 321px) and (max-width: 767px) {
+ *   .mobile-only {
+ *     display: block;
+ *   }
+ * }
+ */
+
+/* ==========================================================================
+   Multiple Conditions
+   ========================================================================== */
+
+/* Multiple width conditions */
+@media (width >= 768px) and (width <= 1024px) {
+	.tablet-layout {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+/* Height-based ranges */
+@media (height >= 600px) {
+	.header {
+		padding: 40px;
+	}
+	
+	.footer {
+		position: sticky;
+		bottom: 0;
+	}
+}
+
+/* Combined width and height */
+@media (width >= 1024px) and (height >= 768px) {
+	.full-screen-layout {
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+	}
+}
+
+/* ==========================================================================
+   Orientation with Ranges
+   ========================================================================== */
+
+/* Landscape orientation with width range */
+@media (width >= 768px) and (orientation: landscape) {
+	.layout {
+		display: flex;
+		flex-direction: row;
+	}
+	
+	.sidebar {
+		width: 250px;
+	}
+}
+
+/* Portrait orientation with height range */
+@media (height >= 800px) and (orientation: portrait) {
+	.mobile-nav {
+		position: fixed;
+		bottom: 0;
+	}
+}
+
+/* ==========================================================================
+   Aspect Ratio with Ranges
+   ========================================================================== */
+
+/* Aspect ratio with width range */
+@media (width >= 1024px) and (aspect-ratio >= 16/9) {
+	.video-container {
+		width: 100%;
+		aspect-ratio: 16/9;
+	}
+}
+
+/* ==========================================================================
+   Common Breakpoint Patterns
+   ========================================================================== */
+
+/* Mobile: 320px - 767px */
+@media (width >= 320px) and (width < 768px) {
+	.mobile {
+		display: block;
+	}
+}
+
+/* Tablet: 768px - 1023px */
+@media (width >= 768px) and (width < 1024px) {
+	.tablet {
+		display: block;
+	}
+}
+
+/* Desktop: 1024px - 1439px */
+@media (width >= 1024px) and (width < 1440px) {
+	.desktop {
+		display: block;
+	}
+}
+
+/* Large Desktop: 1440px+ */
+@media (width >= 1440px) {
+	.large-desktop {
+		display: block;
+	}
+}
+
+/* ==========================================================================
+   Complex Examples
+   ========================================================================== */
+
+/* Responsive typography with ranges */
+@media (width >= 320px) and (width < 768px) {
+	:root {
+		--font-size-base: 14px;
+		--font-size-heading: 24px;
+	}
+}
+
+@media (768px <= width <= 1023px) {
+	:root {
+		--font-size-base: 16px;
+		--font-size-heading: 32px;
+	}
+}
+
+@media (width >= 1024px) {
+	:root {
+		--font-size-base: 18px;
+		--font-size-heading: 40px;
+	}
+}
+
+/* Responsive grid with ranges */
+@media (width < 640px) {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (640px <= width < 1024px) {
+	.grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (width >= 1024px) {
+	.grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "matrix-inspector-server": {
+      "command": "bun",
+      "args": ["./services/matrix/matrix-mcp-server.ts"],
+      "env": {
+        "MATRIX_DATA_PATH": "${PROJECT_ROOT:-.}",
+        "MATRIX_VERSION": "1.01.01",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}

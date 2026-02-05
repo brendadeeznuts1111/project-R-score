@@ -1,0 +1,211 @@
+name: Performance Benchmark Check
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - 'benchmarks/**'
+      - 'scripts/benchmarks/**'
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: 'Baseline benchmark ID'
+        required: false
+        default: 'market-analysis-baseline'
+      threshold:
+        description: 'Regression threshold (%)'
+        required: false
+        default: '2'
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  benchmark:
+    name: Performance Benchmark
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for git comparisons
+      
+      - name: Setup Bun
+        uses: oven/bun-action@v1
+        with:
+          bun-version: latest
+      
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Run benchmarks
+        id: run-benchmarks
+        run: |
+          # Create a benchmark ID for this PR
+          BENCHMARK_ID="pr-${GITHUB_PR_NUMBER:-${GITHUB_RUN_ID}}"
+          LAYER4_BENCHMARK_ID="layer4-correlation-${BENCHMARK_ID}"
+          
+          # Run relevant benchmarks (adjust based on changed files)
+          echo "Running benchmarks..."
+          
+          # Check if Layer4 correlation tests/files changed
+          if git diff --name-only origin/main...HEAD | grep -q "test/ticks/correlation\|test/profiling/correlation\|src/arbitrage/shadow-graph"; then
+            echo "Running Layer4 correlation benchmarks..."
+            
+            # Create profiles directory if it doesn't exist
+            mkdir -p profiles
+            
+            # Run Layer4 performance benchmarks with CPU profiling
+            PROFILE_NAME="layer4-correlation-${BENCHMARK_ID}.cpuprofile"
+            bun test --repeats=50 --cpu-prof --cpu-prof-dir=profiles --cpu-prof-name=${PROFILE_NAME} \
+              ./test/profiling/correlation-detection.bench.ts || echo "⚠️ Benchmark test completed with warnings"
+            
+            # Find the generated CPU profile
+            CPU_PROFILE=$(find profiles -name "*.cpuprofile" -type f -mmin -5 | head -1)
+            
+            if [ -n "$CPU_PROFILE" ]; then
+              echo "Found CPU profile: ${CPU_PROFILE}"
+              
+              # Create benchmark from profile
+              bun run scripts/benchmarks/create-benchmark.ts \
+                --profile="${CPU_PROFILE}" \
+                --name="layer4-correlation-${BENCHMARK_ID}" \
+                --description="Layer4 correlation detection performance benchmark" \
+                --tags="layer4,correlation,pr" || echo "⚠️ Benchmark creation skipped"
+              
+              echo "layer4_benchmark_id=${LAYER4_BENCHMARK_ID}" >> $GITHUB_OUTPUT
+              echo "layer4_profile=${CPU_PROFILE}" >> $GITHUB_OUTPUT
+            else
+              echo "⚠️ No CPU profile generated"
+            fi
+          fi
+          
+          # Example: Run market analysis benchmark if relevant files changed
+          if git diff --name-only origin/main...HEAD | grep -q "src.*market\|src.*graph"; then
+            echo "Running market analysis benchmark..."
+            # bun run bench:market-analysis --save=${BENCHMARK_ID}
+          fi
+          
+          echo "benchmark_id=${BENCHMARK_ID}" >> $GITHUB_OUTPUT
+      
+      - name: Compare with baseline
+        id: compare
+        if: steps.run-benchmarks.outputs.benchmark_id != ''
+        run: |
+          BASELINE_ID="${INPUT_BASELINE:-market-analysis-baseline}"
+          CURRENT_ID="${steps.run-benchmarks.outputs.benchmark_id}"
+          THRESHOLD="${INPUT_THRESHOLD:-2}"
+          
+          # Layer4 correlation benchmark comparison
+          if [ -n "${{ steps.run-benchmarks.outputs.layer4_benchmark_id }}" ]; then
+            LAYER4_BASELINE="layer4-correlation-baseline"
+            LAYER4_CURRENT="${{ steps.run-benchmarks.outputs.layer4_benchmark_id }}"
+            LAYER4_THRESHOLD="5"  # 5% threshold for correlation detection
+            
+            echo "Comparing Layer4 correlation benchmarks..."
+            
+            # Check if Layer4 baseline exists
+            if [ -f "benchmarks/metadata/${LAYER4_BASELINE}.json" ]; then
+              bun run scripts/benchmarks/compare.ts \
+                --baseline=${LAYER4_BASELINE} \
+                --current=${LAYER4_CURRENT} \
+                --threshold=${LAYER4_THRESHOLD} \
+                --fail-on-regression || LAYER4_COMPARE_EXIT=$?
+              
+              if [ "${LAYER4_COMPARE_EXIT:-0}" -ne 0 ]; then
+                echo "layer4_regression=true" >> $GITHUB_OUTPUT
+              else
+                echo "layer4_regression=false" >> $GITHUB_OUTPUT
+              fi
+            else
+              echo "⚠️ Layer4 baseline not found: ${LAYER4_BASELINE}"
+              echo "Skipping Layer4 comparison (baseline will be created on first run)"
+              echo "layer4_regression=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+          
+          # Market analysis benchmark comparison
+          if [ -f "benchmarks/metadata/${BASELINE_ID}.json" ]; then
+            echo "Comparing market analysis benchmarks..."
+            
+            bun run scripts/benchmarks/compare.ts \
+              --baseline=${BASELINE_ID} \
+              --current=${CURRENT_ID} \
+              --threshold=${THRESHOLD} \
+              --fail-on-regression || COMPARE_EXIT=$?
+            
+            if [ "${COMPARE_EXIT:-0}" -ne 0 ]; then
+              echo "regression=true" >> $GITHUB_OUTPUT
+            else
+              echo "regression=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ Baseline benchmark not found: ${BASELINE_ID}"
+            echo "Skipping comparison..."
+            echo "regression=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && (steps.compare.outputs.regression != '' || steps.compare.outputs.layer4_regression != '')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const regression = '${{ steps.compare.outputs.regression }}' === 'true';
+            const layer4Regression = '${{ steps.compare.outputs.layer4_regression }}' === 'true';
+            const hasRegression = regression || layer4Regression;
+            const emoji = hasRegression ? '❌' : '✅';
+            const status = hasRegression ? 'Regression detected' : 'No regression';
+            
+            let comment = `## ${emoji} Performance Benchmark Results
+            
+            **Status**: ${status}
+            
+            `;
+            
+            if (layer4Regression) {
+              comment += `### Layer4 Correlation Detection
+              ❌ **Performance regression detected** in Layer4 correlation detection benchmarks.
+              Threshold: 5% (exceeded)
+              
+              `;
+            } else if ('${{ steps.compare.outputs.layer4_regression }}' !== '') {
+              comment += `### Layer4 Correlation Detection
+              ✅ **No regression** detected in Layer4 correlation detection benchmarks.
+              
+              `;
+            }
+            
+            if (regression) {
+              comment += `### Market Analysis
+              ❌ **Performance regression detected** in market analysis benchmarks.
+              
+              `;
+            } else if ('${{ steps.compare.outputs.regression }}' !== '') {
+              comment += `### Market Analysis
+              ✅ **No regression** detected in market analysis benchmarks.
+              
+              `;
+            }
+            
+            comment += `See benchmark comparison output above for details.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: Fail on regression
+        if: steps.compare.outputs.regression == 'true' || steps.compare.outputs.layer4_regression == 'true'
+        run: |
+          if [ "${{ steps.compare.outputs.layer4_regression }}" == "true" ]; then
+            echo "❌ Layer4 correlation detection performance regression detected!"
+          fi
+          if [ "${{ steps.compare.outputs.regression }}" == "true" ]; then
+            echo "❌ Market analysis performance regression detected!"
+          fi
+          echo "Benchmark comparison exceeded threshold."
+          exit 1

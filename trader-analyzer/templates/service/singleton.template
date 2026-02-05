@@ -1,0 +1,154 @@
+/**
+ * @fileoverview {{{fileoverview}}}
+ * @module {{{modulePath}}}
+ * @description {{{description}}}
+{{{authorInfo}}}
+ * @created {{{createdDate}}}
+{{{teamInfo}}}
+{{{depsInfo}}}
+{{{exportsInfo}}}
+ * @version 1.3.4
+ *
+ * {{{metadata}}}
+ *
+ * @ref {{{ref}}}
+ */
+
+import { logger } from '../utils/logger.js';
+
+/**
+ * {{{pascalName}}} Service - Singleton Pattern
+ * {{{description}}}
+ *
+ * This service follows the singleton pattern to ensure only one instance
+ * exists throughout the application lifecycle.
+ */
+export class {{{pascalName}}}Service {
+	private static instance: {{{pascalName}}}Service | null = null;
+	private logger = logger;
+	private initialized = false;
+	private initializationPromise: Promise<void> | null = null;
+
+	// Private constructor to prevent direct instantiation
+	private constructor(loggerInstance?: typeof logger) {
+		this.logger = loggerInstance || logger;
+	}
+
+	/**
+	 * Get the singleton instance of {{{pascalName}}}Service
+	 */
+	public static getInstance(loggerInstance?: typeof logger): {{{pascalName}}}Service {
+		if (!{{{pascalName}}}Service.instance) {
+			{{{pascalName}}}Service.instance = new {{{pascalName}}}Service(loggerInstance);
+		}
+		return {{{pascalName}}}Service.instance;
+	}
+
+	/**
+	 * Initialize the service (async singleton initialization)
+	 */
+	async initialize(): Promise<void> {
+		if (this.initialized) {
+			return this.initializationPromise || Promise.resolve();
+		}
+
+		if (this.initializationPromise) {
+			return this.initializationPromise;
+		}
+
+		this.initializationPromise = this.performInitialization();
+
+		try {
+			await this.initializationPromise;
+			this.initialized = true;
+			this.logger.info('{{{pascalName}}}Service initialized successfully');
+		} catch (error) {
+			this.initializationPromise = null;
+			this.logger.error('Failed to initialize {{{pascalName}}}Service', error);
+			throw error;
+		}
+
+		return this.initializationPromise;
+	}
+
+	/**
+	 * Perform the actual initialization logic
+	 */
+	private async performInitialization(): Promise<void> {
+		// TODO: Implement service initialization logic
+		// Example: Connect to database, load configuration, etc.
+
+		// Simulate async initialization
+		await new Promise(resolve => setTimeout(resolve, 100));
+
+		this.logger.debug('{{{pascalName}}}Service initialization completed');
+	}
+
+	/**
+	 * Shutdown the service
+	 */
+	async shutdown(): Promise<void> {
+		try {
+			if (!this.initialized) {
+				return;
+			}
+
+			// TODO: Implement service shutdown logic
+			// Example: Close connections, cleanup resources, etc.
+
+			this.initialized = false;
+			this.initializationPromise = null;
+			this.logger.info('{{{pascalName}}}Service shutdown successfully');
+		} catch (error) {
+			this.logger.error('Failed to shutdown {{{pascalName}}}Service', error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Check if service is healthy
+	 */
+	isHealthy(): boolean {
+		return this.initialized;
+	}
+
+	/**
+	 * Reset the singleton instance (useful for testing)
+	 */
+	public static resetInstance(): void {
+		if ({{{pascalName}}}Service.instance) {
+			{{{pascalName}}}Service.instance.shutdown();
+			{{{pascalName}}}Service.instance = null;
+		}
+	}
+
+	/**
+	 * Get service status information
+	 */
+	getStatus(): {
+		initialized: boolean;
+		healthy: boolean;
+		initializing: boolean;
+	} {
+		return {
+			initialized: this.initialized,
+			healthy: this.isHealthy(),
+			initializing: !!this.initializationPromise && !this.initialized,
+		};
+	}
+}
+
+/**
+ * Convenience function to get the singleton instance
+ */
+export function get{{{pascalName}}}Service(): {{{pascalName}}}Service {
+	return {{{pascalName}}}Service.getInstance();
+}
+
+/**
+ * Convenience function to initialize the service
+ */
+export async function initialize{{{pascalName}}}Service(): Promise<void> {
+	const service = {{{pascalName}}}Service.getInstance();
+	await service.initialize();
+}

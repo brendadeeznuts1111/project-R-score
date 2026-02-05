@@ -1,0 +1,85 @@
+{
+  "version": "1.3.3",
+  "manifest_type": "component_registry",
+  "app": "@registry-dashboard",
+  "components": {
+    "test-status": {
+      "path": "src/components/test-status.ts",
+      "critical": true,
+      "test-coverage-required": 0.95,
+      "exports": [
+        "renderTestStatusCard"
+      ],
+      "description": "Test Status Component - Displays test status cards with run buttons for smoke, stability, benchmark, and regression tests",
+      "dependencies": [],
+      "used_by": [
+        "apps/@registry-dashboard/src/pages/team/sports-correlation.ts"
+      ],
+      "last-validated": "2025-12-08T22:08:23.941Z",
+      "test-file": "src/components/test-status.test.ts",
+      "checksum": "sha256:d7b93bb5ad4cb44c835814eac43282f320ce78145dea613822757bbd866d0f9d"
+    },
+    "team-filter": {
+      "path": "src/components/team-filter.ts",
+      "critical": true,
+      "test-coverage-required": 0.85,
+      "description": "Team Filter Component - Filters dashboard content by team",
+      "exports": [
+        "filterTeam",
+        "createRFC",
+        "initTeamFilter",
+        "TeamKey"
+      ],
+      "dependencies": [],
+      "used_by": [
+        "apps/@registry-dashboard/src/pages/dashboard.ts"
+      ],
+      "checksum": "sha256:5cbc6bec2b2ddccf11d777d244cb2b6210e33722818a235ed863641f78f98543",
+      "last-validated": "2025-12-08T22:08:23.941Z"
+    },
+    "market-filter": {
+      "path": "src/components/market-filter.ts",
+      "critical": true,
+      "test-coverage-required": 0.85,
+      "description": "Market Filter Component - Filters dashboard content by market type",
+      "exports": [
+        "renderMarketFilter",
+        "applyMarketFilter",
+        "updateConfidenceValue",
+        "clearMarketFilters"
+      ],
+      "dependencies": [
+        "@graph/types/market"
+      ],
+      "used_by": [
+        "apps/@registry-dashboard/src/pages/dashboard.ts"
+      ],
+      "checksum": "sha256:1436dc5b49cc9874c88840506cb633d320ab9b9f137778e2be23da247f44ec65",
+      "last-validated": "2025-12-08T22:08:23.941Z"
+    },
+    "geographic-filter": {
+      "path": "src/components/geographic-filter.ts",
+      "critical": false,
+      "test-coverage-required": 0.75,
+      "description": "Geographic Filter Component - Filters dashboard content by geographic region",
+      "exports": [
+        "renderGeographicFilter",
+        "renderMapVisualization",
+        "GEOGRAPHIC_FILTER_JS"
+      ],
+      "dependencies": [],
+      "used_by": [
+        "apps/@registry-dashboard/src/pages/dashboard.ts"
+      ],
+      "checksum": "sha256:00164cffa06fb3ab7623db10a66349eed700bf96a3caa448cc6771b3441da4ce",
+      "last-validated": "2025-12-08T22:08:23.941Z"
+    }
+  },
+  "metadata": {
+    "generated_at": "2024-12-20T00:00:00Z",
+    "generator": "code-integrity-audit@1.3.3",
+    "last_audit": "2025-12-08T22:08:23.934Z",
+    "last_validated": "2025-12-08T22:08:23.934Z",
+    "checksum": "sha256:cff90d47f702f383520f4e8c699fc6fa031202ad4d41c0ffd1368d4bb378318f"
+  }
+}

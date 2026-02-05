@@ -1,0 +1,280 @@
+{
+  "timestamp": "2025-12-07T02:45:00.000Z",
+  "component": "Multi-Layer Correlation Graph",
+  "componentVersion": "4.2.2.0.0.0.0",
+  "totalTypes": 4,
+  "passed": 4,
+  "failed": 0,
+  "warnings": 0,
+  "results": [
+    {
+      "type": "MultiLayerCorrelationGraphData",
+      "version": "4.2.2.2.0.0.0",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "fileCoverage": {
+        "total": 5,
+        "found": 5,
+        "missing": [],
+        "files": [
+          "src/types/dashboard-correlation-graph.ts",
+          "src/api/dashboard-correlation-graph.ts",
+          "docs/4.0.0.0.0.0.0-MCP-ALERTING.md",
+          "docs/MULTI-LAYER-CORRELATION-PERFORMANCE-VALIDATION.md",
+          "docs/4.2.2-RIPGREP-VERIFICATION.md"
+        ]
+      },
+      "propertyCoverage": {
+        "total": 5,
+        "verified": 5,
+        "missing": [],
+        "properties": [
+          {
+            "name": "graph_id",
+            "version": "4.2.2.2.0.0.0.1",
+            "status": "verified"
+          },
+          {
+            "name": "primary_context_id",
+            "version": "4.2.2.2.0.0.0.2",
+            "status": "verified"
+          },
+          {
+            "name": "nodes",
+            "version": "4.2.2.2.0.0.0.3",
+            "status": "verified"
+          },
+          {
+            "name": "edges",
+            "version": "4.2.2.2.0.0.0.4",
+            "status": "verified"
+          },
+          {
+            "name": "layers_metadata",
+            "version": "4.2.2.2.0.0.0.5",
+            "status": "verified"
+          }
+        ]
+      },
+      "crossReferenceCoverage": {
+        "total": 2,
+        "verified": 2,
+        "missing": [],
+        "references": [
+          {
+            "target": "CorrelationGraphNode",
+            "version": "4.2.2.2.0.0.0.6",
+            "status": "verified"
+          },
+          {
+            "target": "CorrelationGraphEdge",
+            "version": "4.2.2.2.0.0.0.7",
+            "status": "verified"
+          }
+        ]
+      }
+    },
+    {
+      "type": "CorrelationGraphNode",
+      "version": "4.2.2.2.0.0.0.6",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "fileCoverage": {
+        "total": 5,
+        "found": 5,
+        "missing": [],
+        "files": [
+          "src/types/dashboard-correlation-graph.ts",
+          "src/api/dashboard-correlation-graph.ts",
+          "docs/4.0.0.0.0.0.0-MCP-ALERTING.md",
+          "docs/MULTI-LAYER-CORRELATION-PERFORMANCE-VALIDATION.md",
+          "docs/4.2.2-RIPGREP-VERIFICATION.md"
+        ]
+      },
+      "propertyCoverage": {
+        "total": 6,
+        "verified": 6,
+        "missing": [],
+        "properties": [
+          {
+            "name": "node_id",
+            "version": "4.2.2.2.0.0.0.6.1",
+            "status": "verified"
+          },
+          {
+            "name": "label",
+            "version": "4.2.2.2.0.0.0.6.2",
+            "status": "verified"
+          },
+          {
+            "name": "layer",
+            "version": "4.2.2.2.0.0.0.6.3",
+            "status": "verified"
+          },
+          {
+            "name": "icon_hint",
+            "version": "4.2.2.2.0.0.0.6.4",
+            "status": "verified"
+          },
+          {
+            "name": "deeplink_url",
+            "version": "4.2.2.2.0.0.0.6.5",
+            "status": "verified"
+          },
+          {
+            "name": "summary_data",
+            "version": "4.2.2.2.0.0.0.6.6",
+            "status": "verified"
+          }
+        ]
+      },
+      "crossReferenceCoverage": {
+        "total": 0,
+        "verified": 0,
+        "missing": []
+      }
+    },
+    {
+      "type": "CorrelationGraphEdge",
+      "version": "4.2.2.2.0.0.0.7",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "fileCoverage": {
+        "total": 5,
+        "found": 5,
+        "missing": [],
+        "files": [
+          "src/types/dashboard-correlation-graph.ts",
+          "src/api/dashboard-correlation-graph.ts",
+          "docs/4.0.0.0.0.0.0-MCP-ALERTING.md",
+          "docs/MULTI-LAYER-CORRELATION-PERFORMANCE-VALIDATION.md",
+          "docs/4.2.2-RIPGREP-VERIFICATION.md"
+        ]
+      },
+      "propertyCoverage": {
+        "total": 7,
+        "verified": 7,
+        "missing": [],
+        "properties": [
+          {
+            "name": "source_node_id",
+            "version": "4.2.2.2.0.0.0.7.1",
+            "status": "verified"
+          },
+          {
+            "name": "target_node_id",
+            "version": "4.2.2.2.0.0.0.7.2",
+            "status": "verified"
+          },
+          {
+            "name": "correlation_strength",
+            "version": "4.2.2.2.0.0.0.7.3",
+            "status": "verified"
+          },
+          {
+            "name": "correlation_type",
+            "version": "4.2.2.2.0.0.0.7.4",
+            "status": "verified"
+          },
+          {
+            "name": "p_value",
+            "version": "4.2.2.2.0.0.0.7.5",
+            "status": "verified"
+          },
+          {
+            "name": "direction",
+            "version": "4.2.2.2.0.0.0.7.6",
+            "status": "verified"
+          },
+          {
+            "name": "description",
+            "version": "4.2.2.2.0.0.0.7.7",
+            "status": "verified"
+          }
+        ]
+      },
+      "crossReferenceCoverage": {
+        "total": 1,
+        "verified": 1,
+        "missing": [],
+        "references": [
+          {
+            "target": "6.7.1A.0.0.0.0",
+            "description": "Statistical methods reference",
+            "status": "verified"
+          }
+        ]
+      }
+    },
+    {
+      "type": "GraphLayerMetadata",
+      "version": "4.2.2.2.0.0.0.8",
+      "status": "pass",
+      "errors": [],
+      "warnings": [],
+      "fileCoverage": {
+        "total": 5,
+        "found": 5,
+        "missing": [],
+        "files": [
+          "src/types/dashboard-correlation-graph.ts",
+          "src/api/dashboard-correlation-graph.ts",
+          "docs/4.0.0.0.0.0.0-MCP-ALERTING.md",
+          "docs/MULTI-LAYER-CORRELATION-PERFORMANCE-VALIDATION.md",
+          "docs/4.2.2-RIPGREP-VERIFICATION.md"
+        ]
+      },
+      "propertyCoverage": {
+        "total": 4,
+        "verified": 4,
+        "missing": [],
+        "properties": [
+          {
+            "name": "id",
+            "version": "4.2.2.2.0.0.0.8.1",
+            "status": "verified"
+          },
+          {
+            "name": "name",
+            "version": "4.2.2.2.0.0.0.8.2",
+            "status": "verified"
+          },
+          {
+            "name": "color_hex",
+            "version": "4.2.2.2.0.0.0.8.3",
+            "status": "verified"
+          },
+          {
+            "name": "description",
+            "version": "4.2.2.2.0.0.0.8.4",
+            "status": "verified"
+          }
+        ]
+      },
+      "crossReferenceCoverage": {
+        "total": 0,
+        "verified": 0,
+        "missing": []
+      }
+    }
+  ],
+  "summary": {
+    "coverage": 100,
+    "criticalErrors": 0,
+    "recommendations": [
+      "All types verified with complete property-level versioning (1.x.x.x.x.x format)",
+      "All cross-references validated",
+      "File coverage complete across types, API, and documentation",
+      "Ready for production deployment"
+    ]
+  },
+  "verificationMethod": {
+    "tool": "ripgrep",
+    "pattern": "4\\.2\\.2\\.2\\.0\\.0\\.0",
+    "scope": "src/ and docs/",
+    "date": "2025-12-07"
+  }
+}

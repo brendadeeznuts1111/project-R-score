@@ -1,0 +1,145 @@
+/**
+ * Themes CSS
+ * Advanced color features demonstration
+ * 
+ * Features:
+ * - LAB colors (lab, lch, oklab, oklch)
+ * - HWB colors
+ * - color-mix()
+ * - Relative colors (lch(from ...))
+ * - color() function for display-p3
+ * - Space-separated RGB/HSL notation
+ * - Hex with alpha
+ */
+
+/* Vibrant theme using LAB colors */
+.vibrant {
+	color: lab(55% 78 35);
+	background: color(display-p3 1 0.1 0.3);
+	border: 2px solid rgb(102 126 234 / 0.5);
+}
+
+/* Theme primary with HWB colors */
+.theme-primary {
+	--base: hwb(180 0% 0%);
+	--light: hwb(180 20% 0%);
+	--dark: hwb(180 0% 30%);
+	
+	color: var(--base);
+	background: var(--light);
+	border-color: var(--dark);
+}
+
+/* Theme secondary with oklch */
+.theme-secondary {
+	--base: oklch(70% 0.2 250);
+	--light: oklch(80% 0.2 250);
+	--dark: oklch(60% 0.2 250);
+	
+	color: var(--base);
+	background: var(--light);
+	border-color: var(--dark);
+}
+
+/* Accent colors using relative colors */
+.accent-gradient {
+	--base-color: #00d4ff;
+	--lighter: lch(from var(--base-color) calc(l + 15%) c h);
+	--darker: lch(from var(--base-color) calc(l - 15%) c h);
+	
+	background: linear-gradient(
+		135deg,
+		var(--lighter) 0%,
+		var(--base-color) 50%,
+		var(--darker) 100%
+	);
+}
+
+/* Color-mix examples */
+.mixed-colors {
+	--primary: #667eea;
+	--secondary: #764ba2;
+	
+	/* Mix with white */
+	--light-primary: color-mix(in srgb, var(--primary) 70%, white);
+	--light-secondary: color-mix(in srgb, var(--secondary) 70%, white);
+	
+	/* Mix with black */
+	--dark-primary: color-mix(in srgb, var(--primary) 70%, black);
+	--dark-secondary: color-mix(in srgb, var(--secondary) 70%, black);
+	
+	/* Mix two colors */
+	--blended: color-mix(in srgb, var(--primary) 60%, var(--secondary));
+	
+	background: var(--blended);
+	border-color: var(--light-primary);
+	color: var(--dark-primary);
+}
+
+/* Modern color notation */
+.modern-colors {
+	/* Space-separated RGB with alpha */
+	background: rgb(102 126 234 / 0.8);
+	
+	/* Space-separated HSL */
+	color: hsl(250 50% 60% / 0.9);
+	
+	/* Hex with alpha */
+	border-color: #667eeacc;
+	box-shadow: 0 4px 20px #0000004d;
+}
+
+/* Perceptually uniform colors with oklch */
+.perceptual-colors {
+	--red: oklch(55% 0.22 25);
+	--green: oklch(70% 0.15 145);
+	--blue: oklch(60% 0.20 250);
+	--yellow: oklch(85% 0.15 95);
+	
+	&.red { color: var(--red); }
+	&.green { color: var(--green); }
+	&.blue { color: var(--blue); }
+	&.yellow { color: var(--yellow); }
+}
+
+/* Department colors with advanced features */
+.dept-colors {
+	--dept-api-base: #00d4ff;
+	--dept-api-light: lch(from var(--dept-api-base) calc(l + 20%) c h);
+	--dept-api-dark: lch(from var(--dept-api-base) calc(l - 20%) c h);
+	
+	--dept-arbitrage-base: #ff1744;
+	--dept-arbitrage-light: lch(from var(--dept-arbitrage-base) calc(l + 20%) c h);
+	--dept-arbitrage-dark: lch(from var(--dept-arbitrage-base) calc(l - 20%) c h);
+	
+	&.api {
+		color: var(--dept-api-base);
+		background: color-mix(in srgb, var(--dept-api-base) 10%, transparent);
+		
+		&:hover {
+			color: var(--dept-api-light);
+			background: color-mix(in srgb, var(--dept-api-base) 20%, transparent);
+		}
+	}
+	
+	&.arbitrage {
+		color: var(--dept-arbitrage-base);
+		background: color-mix(in srgb, var(--dept-arbitrage-base) 10%, transparent);
+		
+		&:hover {
+			color: var(--dept-arbitrage-light);
+			background: color-mix(in srgb, var(--dept-arbitrage-base) 20%, transparent);
+		}
+	}
+}
+
+/* Light-dark theme support */
+.theme-aware {
+	background-color: light-dark(#ffffff, #1a1f3a);
+	color: light-dark(#333333, #e0e0e0);
+	border-color: light-dark(#dddddd, #333355);
+	
+	&:hover {
+		background-color: light-dark(#f5f5f5, #252542);
+	}
+}

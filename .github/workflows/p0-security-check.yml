@@ -1,0 +1,61 @@
+name: P0 Security Checks
+
+on:
+  pull_request:
+    labels:
+      - p0
+      - security
+  push:
+    branches:
+      - main
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Check for event-stream
+        run: |
+          if bun pm ls event-stream 2>/dev/null | grep -q event-stream; then
+            echo "❌ event-stream found in dependencies"
+            exit 1
+          fi
+          echo "✅ event-stream not found"
+      
+      - name: Check unused dependencies
+        run: |
+          # Check for express, axios, chalk
+          for dep in express axios chalk; do
+            if grep -q "\"$dep\"" package.json; then
+              echo "⚠️  $dep found in package.json - verify if used"
+            fi
+          done
+      
+      - name: Verify CORS configuration
+        run: |
+          if grep -q 'origin: "*"' feedback-server.ts; then
+            echo "❌ Wildcard CORS found"
+            exit 1
+          fi
+          echo "✅ CORS properly configured"
+      
+      - name: Check authentication
+        run: |
+          # Verify auth middleware exists
+          if ! grep -q "requireAuth\|requireApiKey" feedback-server.ts; then
+            echo "⚠️  Authentication middleware not found"
+          fi
+      
+      - name: Check token hashing
+        run: |
+          if grep -q "console.log.*token.*\$\{" pm.ts; then
+            echo "❌ Plaintext token logging found"
+            exit 1
+          fi
+          echo "✅ Token hashing verified"

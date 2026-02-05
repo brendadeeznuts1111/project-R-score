@@ -1,0 +1,221 @@
+# Quantum Terminal Dashboard - Production Configuration
+# Version: 2.0.0-rc.1
+
+# Application settings
+app:
+  name: quantum-terminal-dashboard
+  version: 2.0.0-rc.1
+  environment: ${NODE_ENV:-development}
+
+# Server configuration
+server:
+  http:
+    port: ${HTTP_PORT:-3000}
+    host: 0.0.0.0
+  websocket:
+    port: ${WS_PORT:-3001}
+    path: /terminal
+    heartbeat: 30000
+
+# Terminal settings
+terminal:
+  enabled: ${TERMINAL_ENABLED:-true}
+  defaultCols: 80
+  defaultRows: 24
+  maxTerminals: 10
+  idleTimeout: 300000  # 5 minutes
+  scripts:
+    - ticker
+    - monitor
+    - network
+
+# Build configuration
+build:
+  profiles:
+    universal:
+      features:
+        - TERMINAL
+        - WEBGL
+        - REACT_FAST_REFRESH
+      target: browser
+      minify: true
+      splitting: true
+
+    terminal-only:
+      features:
+        - TERMINAL
+      target: node
+      minify: true
+      external:
+        - react
+        - react-dom
+
+    lightweight:
+      features: []
+      target: browser
+      minify: true
+
+    development:
+      features:
+        - TERMINAL
+        - WEBGL
+        - DEBUG
+      target: browser
+      minify: false
+      sourcemap: true
+
+  # Output directories
+  output:
+    dist: ./dist
+    cache: ./.build-cache
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  interval: 5000
+  historyLength: 60
+
+  # Alert thresholds
+  alerts:
+    cpu:
+      warning: 70
+      critical: 90
+    memory:
+      warning: 80
+      critical: 95
+    heap:
+      warning: 85
+      critical: 95
+    latency:
+      warning: 100
+      critical: 500
+    errorRate:
+      warning: 1
+      critical: 5
+
+  # Anomaly detection
+  anomalyDetection:
+    enabled: true
+    zScoreThreshold: 2.5
+    minSamples: 10
+
+# Data stream configuration
+data:
+  streams:
+    financial:
+      source: simulated
+      interval: 5000
+      symbols:
+        - AAPL
+        - GOOGL
+        - TSLA
+        - MSFT
+        - AMZN
+        - NVDA
+
+    system:
+      source: process
+      interval: 2000
+
+  # Tension engine settings
+  tension:
+    enabled: true
+    smoothing: 0.9
+    maxTension: 1.0
+
+# Deployment configuration
+deployment:
+  # Default target
+  target: ${DEPLOY_TARGET:-staging}
+
+  # Environments
+  environments:
+    development:
+      url: http://api.example.com
+      features:
+        - DEBUG
+
+    staging:
+      url: https://staging.quantum-dashboard.example.com
+      features:
+        - TERMINAL
+        - WEBGL
+
+    production:
+      url: https://quantum-dashboard.example.com
+      features:
+        - TERMINAL
+        - WEBGL
+      replicas: 3
+
+  # Canary release settings
+  canary:
+    enabled: true
+    initialPercentage: 10
+    incrementPercentage: 20
+    interval: 300000  # 5 minutes
+
+  # Health check
+  healthCheck:
+    path: /health
+    interval: 30000
+    timeout: 5000
+    retries: 3
+
+# Logging configuration
+logging:
+  level: ${LOG_LEVEL:-info}
+  format: json
+  outputs:
+    - stdout
+
+  # Log rotation
+  rotation:
+    enabled: false
+    maxSize: 10485760  # 10MB
+    maxFiles: 5
+
+# Feature flags
+features:
+  terminal:
+    enabled: true
+    pty: true
+    webSocket: true
+
+  visualization:
+    webgl: true
+    charts: true
+    sparklines: true
+
+  data:
+    streaming: true
+    tensionEngine: true
+
+  build:
+    cache: true
+    incremental: true
+
+# Security settings
+security:
+  # CORS configuration
+  cors:
+    enabled: true
+    origins:
+      - https://api.example.com:*
+      - https://*.quantum-dashboard.example.com
+    methods:
+      - GET
+      - POST
+    credentials: true
+
+  # Rate limiting
+  rateLimit:
+    enabled: true
+    windowMs: 60000
+    maxRequests: 100
+
+# Development settings
+development:
+  hotReload: true
+  verbose: true
+  mockData: true

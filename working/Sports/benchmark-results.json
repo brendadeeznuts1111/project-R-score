@@ -1,0 +1,151 @@
+{
+  "timestamp": "2025-12-30T01:13:23.618Z",
+  "bunVersion": "1.3.5",
+  "metrics": {
+    "colorMapping": [
+      {
+        "name": "Color Parsing (Bun.color)",
+        "duration": 2.015208,
+        "iterations": 10000,
+        "throughput": 4962266.922322658,
+        "details": {
+          "avgTimePerOp": "0.00020152079999999998ms"
+        }
+      },
+      {
+        "name": "Color Conversion (RGBA→HEX)",
+        "duration": 2.078959,
+        "iterations": 5000,
+        "throughput": 2405049.8350376324,
+        "details": {
+          "avgTimePerOp": "0.00041579179999999994ms"
+        }
+      },
+      {
+        "name": "ANSI Color Conversion",
+        "duration": 0.862459,
+        "iterations": 3000,
+        "throughput": 3478426.2208406427,
+        "details": {
+          "avgTimePerOp": "0.0002874863333333333ms"
+        }
+      }
+    ],
+    "fdComputation": [
+      {
+        "name": "FD Computation (Small (50 points))",
+        "duration": 0.801792,
+        "iterations": 200,
+        "throughput": 249441.25159642403,
+        "details": {
+          "dataSize": 50,
+          "avgTimePerOp": "0.00400896ms"
+        }
+      },
+      {
+        "name": "FD Computation (Medium (200 points))",
+        "duration": 0.683333,
+        "iterations": 100,
+        "throughput": 146341.5348007487,
+        "details": {
+          "dataSize": 200,
+          "avgTimePerOp": "0.0068333299999999994ms"
+        }
+      },
+      {
+        "name": "FD Computation (Large (1000 points))",
+        "duration": 5.506875,
+        "iterations": 100,
+        "throughput": 18159.11928271479,
+        "details": {
+          "dataSize": 1000,
+          "avgTimePerOp": "0.05506875ms"
+        }
+      }
+    ],
+    "streamProcessing": [
+      {
+        "name": "Single Packet Processing",
+        "duration": 41.369125,
+        "iterations": 100,
+        "throughput": 2417.261665553719,
+        "details": {
+          "packetSize": "405 bytes"
+        }
+      },
+      {
+        "name": "Batch Processing (10 packets)",
+        "duration": 8.022625,
+        "iterations": 20,
+        "throughput": 2492.949626836603,
+        "details": {
+          "totalBytes": 4040
+        }
+      },
+      {
+        "name": "Compression/Decompression",
+        "duration": 22.550625,
+        "iterations": 50,
+        "throughput": 2217.2334469665475,
+        "details": {
+          "dataSize": "4000 bytes"
+        }
+      }
+    ],
+    "visualization": [
+      {
+        "name": "Lattice Generation (50 nodes)",
+        "duration": 10.636833,
+        "iterations": 20,
+        "throughput": 1880.2589078910987,
+        "details": {
+          "resolution": "800x600",
+          "connections": 100
+        }
+      },
+      {
+        "name": "Lattice Generation (200 nodes)",
+        "duration": 6.13925,
+        "iterations": 10,
+        "throughput": 1628.863460520422,
+        "details": {
+          "resolution": "1200x800",
+          "connections": 400
+        }
+      },
+      {
+        "name": "Lattice Generation (500 nodes)",
+        "duration": 26.611833,
+        "iterations": 10,
+        "throughput": 375.77268728538917,
+        "details": {
+          "resolution": "1920x1080",
+          "connections": 1000
+        }
+      }
+    ],
+    "overall": {
+      "name": "Overall System Performance",
+      "duration": 132.609,
+      "iterations": 1,
+      "throughput": 11270697.223675877,
+      "details": {
+        "colorOps": 10845742.978200933,
+        "fdOps": 413941.9056798875,
+        "streamOps": 7127.44473935687,
+        "vizOps": 3884.89505569691
+      }
+    }
+  },
+  "system": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "memory": {
+      "rss": 84541440,
+      "heapTotal": 29281280,
+      "heapUsed": 238202,
+      "external": 582393,
+      "arrayBuffers": 542111
+    }
+  }
+}

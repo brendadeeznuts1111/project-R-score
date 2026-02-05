@@ -1,0 +1,386 @@
+#!/bin/bash
+# [OPR][HEADSCALE][CLOUDFLARE][TAILSCALE]{OPERATOR-CLI}
+# Unified operator commands for Headscale + Cloudflare + Tailscale
+# Usage: opr <command> [args...]
+
+set -euo pipefail
+
+# ===== Configuration =====
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INFRA_DIR="${SCRIPT_DIR}/../infrastructure"
+HEADSCALE_URL="${HEADSCALE_URL:-https://api.example.com}"
+TAILSCALE_API_IP="${TAILSCALE_API_IP:-100.64.0.10}"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# ===== Helper Functions =====
+log_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
+log_success() { echo -e "${GREEN}✅ $1${NC}"; }
+log_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+log_error() { echo -e "${RED}❌ $1${NC}"; }
+
+# ===== Commands =====
+COMMAND="${1:-help}"
+shift || true
+
+case "$COMMAND" in
+
+  # ===== Cloudflare Commands =====
+  cf:deploy)
+    log_info "Deploying to Cloudflare Workers..."
+    cd "$INFRA_DIR"
+    wrangler deploy --env "${1:-production}"
+    log_success "Deployed to Cloudflare Workers"
+    ;;
+
+  cf:dev)
+    log_info "Starting local Cloudflare Worker dev server..."
+    cd "$INFRA_DIR"
+    wrangler dev --env dev
+    ;;
+
+  cf:tail)
+    log_info "Tailing Cloudflare Worker logs..."
+    cd "$INFRA_DIR"
+    wrangler tail --env "${1:-production}" --format pretty
+    ;;
+
+  cf:secret)
+    SECRET_NAME="${1:-}"
+    if [[ -z "$SECRET_NAME" ]]; then
+      log_error "Usage: opr cf:secret <secret-name>"
+      exit 1
+    fi
+    log_info "Setting secret: $SECRET_NAME"
+    cd "$INFRA_DIR"
+    wrangler secret put "$SECRET_NAME" --env production
+    ;;
+
+  cf:access)
+    log_info "Setting up Cloudflare Access..."
+    echo "Configure at: https://dash.cloudflare.com/access"
+    ;;
+
+  # ===== Headscale Commands (Bun Native) =====
+  headscale:up)
+    log_info "Starting Headscale stack (Bun native)..."
+    cd "$INFRA_DIR"
+    bun run headscale-server.ts &
+    log_success "Headscale stack started"
+    ;;
+
+  headscale:down)
+    log_info "Stopping Headscale stack..."
+    pkill -f "bun.*headscale-server" || true
+    pkill -f "headscale serve" || true
+    log_success "Headscale stack stopped"
+    ;;
+
+  headscale:logs)
+    log_info "Headscale logs (via journalctl or process output)..."
+    tail -f "$INFRA_DIR/data/headscale/headscale.log" 2>/dev/null || \
+      log_warning "No log file found. Logs are in terminal output."
+    ;;
+
+  headscale:update)
+    log_info "Updating Headscale binary..."
+    if command -v brew &> /dev/null; then
+      brew upgrade headscale || brew install headscale
+    else
+      log_warning "Install headscale manually from https://github.com/juanfont/headscale/releases"
+    fi
+    log_success "Headscale updated"
+    ;;
+
+  headscale:cli)
+    headscale "$@"
+    ;;
+
+  # ===== Node Management =====
+  node:register)
+    USER="${1:-admin}"
+    EXPIRY="${2:-24h}"
+    log_info "Generating pre-auth key for user: $USER (expires: $EXPIRY)"
+    AUTHKEY=$(headscale preauthkeys create --user "$USER" --reusable --expiration "$EXPIRY" 2>/dev/null | tail -1)
+    echo ""
+    log_success "Registration command:"
+    echo -e "${CYAN}tailscale up --login-server=$HEADSCALE_URL --authkey=$AUTHKEY${NC}"
+    ;;
+
+  node:list)
+    headscale nodes list
+    ;;
+
+  node:delete)
+    NODE_ID="${1:-}"
+    if [[ -z "$NODE_ID" ]]; then
+      log_error "Usage: opr node:delete <node-id>"
+      exit 1
+    fi
+    headscale nodes delete -i "$NODE_ID"
+    ;;
+
+  # ===== User Management =====
+  user:create)
+    USER="${1:-}"
+    if [[ -z "$USER" ]]; then
+      log_error "Usage: opr user:create <username>"
+      exit 1
+    fi
+    headscale users create "$USER"
+    log_success "User $USER created"
+    ;;
+
+  user:list)
+    headscale users list
+    ;;
+
+  # ===== Health & Status =====
+  health:full)
+    log_info "Running full health check..."
+    echo ""
+
+    # Check Cloudflare Worker
+    echo -e "${CYAN}[1/4] Cloudflare Worker${NC}"
+    if curl -sf "$HEADSCALE_URL/health" > /dev/null 2>&1; then
+      curl -s "$HEADSCALE_URL/health" | jq . 2>/dev/null || echo "OK"
+      log_success "Cloudflare Worker responding"
+    else
+      log_error "Cloudflare Worker not responding"
+    fi
+    echo ""
+
+    # Check Headscale via Tailscale
+    echo -e "${CYAN}[2/4] Headscale Server${NC}"
+    if curl -sf "http://$TAILSCALE_API_IP:8080/health" > /dev/null 2>&1; then
+      curl -s "http://$TAILSCALE_API_IP:8080/health" | jq . 2>/dev/null || echo "OK"
+      log_success "Headscale responding"
+    else
+      log_warning "Headscale not responding (check Tailscale connection)"
+    fi
+    echo ""
+
+    # Check Tailscale connectivity
+    echo -e "${CYAN}[3/4] Tailscale Status${NC}"
+    if command -v tailscale &> /dev/null; then
+      tailscale status 2>/dev/null | head -10 || log_warning "Tailscale not connected"
+    else
+      log_warning "Tailscale CLI not installed"
+    fi
+    echo ""
+
+    # Check Bun processes
+    echo -e "${CYAN}[4/4] Bun Processes${NC}"
+    if pgrep -f "bun.*headscale-server" > /dev/null 2>&1; then
+      log_success "Bun Headscale server running"
+      ps aux | grep -E "bun.*headscale|headscale serve" | grep -v grep | head -5
+    else
+      log_warning "Bun Headscale server not running"
+    fi
+    echo ""
+
+    log_success "Health check complete"
+    ;;
+
+  derp:status)
+    log_info "DERP Server Status..."
+    curl -s "$HEADSCALE_URL/derp" | head -20 || log_warning "DERP endpoint not available"
+    ;;
+
+  ws:test)
+    log_info "Testing WebSocket connection..."
+    if command -v websocat &> /dev/null; then
+      timeout 5 websocat -1 "wss://${HEADSCALE_URL#https://}/derp" 2>&1 || true
+    else
+      log_warning "Install websocat for WebSocket testing: brew install websocat"
+    fi
+    ;;
+
+  status)
+    log_info "Quick status check..."
+    curl -sf "$HEADSCALE_URL/health" && log_success "API: Online" || log_error "API: Offline"
+    ;;
+
+  # ===== API Key Management =====
+  apikey:create)
+    log_info "Creating API key..."
+    headscale apikeys create
+    ;;
+
+  apikey:list)
+    headscale apikeys list
+    ;;
+
+  # ===== Network Preconnection =====
+  network:preconnect)
+    log_info "Preconnecting to infrastructure hosts..."
+    cd "$INFRA_DIR"
+    bun network-preconnect.ts --all --verbose
+    ;;
+
+  network:warmup)
+    log_info "Warming up network connections..."
+    PARALLEL="${1:-true}"
+    cd "$INFRA_DIR"
+    bun network-preconnect.ts --all --parallel="$PARALLEL" --verbose
+    ;;
+
+  network:status)
+    log_info "Checking network connectivity..."
+    cd "$INFRA_DIR"
+    bun network-preconnect.ts --all --verbose --stats
+    ;;
+
+  network:test)
+    HOST="${1:-localhost}"
+    PORT="${2:-8080}"
+    PROTOCOL="${3:-http}"
+    log_info "Testing connection to $PROTOCOL://$HOST:$PORT"
+    cd "$INFRA_DIR"
+    bun network-preconnect.ts --host "$HOST" --port "$PORT" --protocol "$PROTOCOL" --verbose
+    ;;
+
+  # ===== Monitoring (Bun Native) =====
+  monitoring:up)
+    log_info "Starting metrics server (Bun native)..."
+    METRICS_PORT="${HEADSCALE_METRICS:-9090}"
+    echo "Headscale metrics available at: http://localhost:${METRICS_PORT}/metrics"
+    echo "Use your preferred monitoring tool to scrape this endpoint."
+    ;;
+
+  monitoring:down)
+    log_info "Monitoring is integrated with headscale:down"
+    ;;
+
+  # ===== Version & Build Commands =====
+  version)
+    log_info "Version Info"
+    bun tools/quantum-semver-engine.ts --version
+    ;;
+
+  version:bump)
+    TYPE="${1:-patch}"
+    PREID="${2:-}"
+    log_info "Bumping version ($TYPE)..."
+    bun tools/quantum-semver-engine.ts --bump "$TYPE" "$PREID"
+    ;;
+
+  version:check)
+    V1="${1:-}"
+    V2="${2:-}"
+    if [[ -z "$V1" || -z "$V2" ]]; then
+      log_error "Usage: opr version:check <v1> <v2>"
+      exit 1
+    fi
+    bun tools/quantum-semver-engine.ts --check "$V1" "$V2"
+    ;;
+
+  build)
+    CHANNEL="${1:-canary}"
+    log_info "Building channel: $CHANNEL"
+    bun tools/quantum-semver-engine.ts --build "$CHANNEL"
+    ;;
+
+  build:component)
+    COMPONENT="${1:-}"
+    CHANNEL="${2:-canary}"
+    if [[ -z "$COMPONENT" ]]; then
+      log_error "Usage: opr build:component <id> [channel]"
+      exit 1
+    fi
+    bun tools/quantum-semver-engine.ts --build-component "$COMPONENT" "$CHANNEL"
+    ;;
+
+  build:all)
+    log_info "Building all channels..."
+    for ch in canary nightly alpha beta rc stable; do
+      bun tools/quantum-semver-engine.ts --build "$ch"
+    done
+    log_success "All channels built"
+    ;;
+
+  deploy)
+    CHANNEL="${1:-stable}"
+    log_info "Deploying $CHANNEL..."
+    bun tools/quantum-semver-engine.ts --deploy "$CHANNEL"
+    ;;
+
+  list:components)
+    bun tools/quantum-semver-engine.ts --list-components
+    ;;
+
+  list:channels)
+    bun tools/quantum-semver-engine.ts --list-channels
+    ;;
+
+  # ===== Help =====
+  help|--help|-h|*)
+    echo ""
+    echo -e "${CYAN}opr - Headscale + Cloudflare + Tailscale Operator CLI${NC}"
+    echo ""
+    echo "Usage: opr <command> [args...]"
+    echo ""
+    echo "Cloudflare Commands:"
+    echo "  cf:deploy [env]     Deploy to Cloudflare Workers (default: production)"
+    echo "  cf:dev              Start local dev server"
+    echo "  cf:tail [env]       Tail worker logs"
+    echo "  cf:secret <name>    Set a secret"
+    echo "  cf:access           Configure Cloudflare Access"
+    echo ""
+    echo "Headscale Commands:"
+    echo "  headscale:up        Start Headscale stack"
+    echo "  headscale:down      Stop Headscale stack"
+    echo "  headscale:logs      View logs"
+    echo "  headscale:update    Pull latest images and restart"
+    echo "  headscale:cli       Run headscale CLI command"
+    echo ""
+    echo "Node Commands:"
+    echo "  node:register [user] [expiry]  Generate pre-auth key"
+    echo "  node:list                      List all nodes"
+    echo "  node:delete <id>               Delete a node"
+    echo ""
+    echo "User Commands:"
+    echo "  user:create <name>  Create a user"
+    echo "  user:list           List all users"
+    echo ""
+    echo "Health Commands:"
+    echo "  health:full         Full health check (CF + Headscale + Tailscale)"
+    echo "  status              Quick status check"
+    echo "  derp:status         DERP server status"
+    echo "  ws:test             Test WebSocket connection"
+    echo ""
+    echo "API Key Commands:"
+    echo "  apikey:create       Create API key"
+    echo "  apikey:list         List API keys"
+    echo ""
+    echo "Monitoring Commands:"
+    echo "  monitoring:up       Start Prometheus + Grafana"
+    echo "  monitoring:down     Stop monitoring"
+    echo ""
+    echo "Network Preconnection Commands:"
+    echo "  network:preconnect              Preconnect to all infrastructure hosts"
+    echo "  network:warmup [parallel]       Warm up connections (default: parallel)"
+    echo "  network:status                  Check network connectivity status"
+    echo "  network:test [host] [port] [protocol]  Test single host connection"
+    echo ""
+    echo "Version & Build Commands:"
+    echo "  version             Show version info"
+    echo "  version:bump <type> Bump version (major|minor|patch|prerelease)"
+    echo "  version:check <v1> <v2>  Check compatibility"
+    echo "  build [channel]     Build all components for channel"
+    echo "  build:component <id> [ch]  Build single component"
+    echo "  build:all           Build all channels"
+    echo "  deploy [channel]    Deploy to Cloudflare (stable|rc|dev)"
+    echo "  list:components     List all components"
+    echo "  list:channels       List release channels"
+    echo ""
+    ;;
+
+esac
+

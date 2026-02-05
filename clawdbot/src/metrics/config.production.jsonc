@@ -1,0 +1,80 @@
+{
+  // Production configuration for Clawdbot skill metrics system
+  // Environment variables can be referenced with ${VAR_NAME} syntax
+
+  "collection": {
+    "enabled": true,
+    "maxRecentExecutions": 1000, // Keep more data in production
+    "thresholds": {
+      "warning": 5000, // Log warning if execution exceeds 5s
+      "critical": 15000, // Log error if execution exceeds 15s
+    },
+  },
+
+  // Archival settings for production
+  "archival": {
+    "enabled": true,
+    "maxAgeDays": 30, // Keep 30 days before archiving
+    "compressLevel": 9, // Max gzip compression
+    "storagePath": "/var/lib/clawdbot/metrics/archives",
+  },
+
+  // Terminal tracking settings
+  "terminal": {
+    "trackUsage": true,
+    "maxSessionTime": 7200000, // 2 hours max session (ms)
+    "recordSessions": false, // Disable session recording in prod
+  },
+
+  // Real-time WebSocket updates
+  "websocket": {
+    "enabled": true,
+    "updateInterval": 5000, // Send updates every 5 seconds
+    "maxConnections": 50, // Higher limit for production
+    "pingInterval": 30000, // Keep-alive for proxies
+  },
+
+  // S3 configuration for cloud archival
+  "s3": {
+    "bucket": "clawdbot-metrics-prod",
+    "prefix": "production/metrics/",
+    "requesterPays": false,
+    "retention": {
+      "enabled": true,
+      "days": 90,
+    },
+  },
+
+  // Performance monitoring
+  "performance": {
+    "enabled": true,
+    "trackBundleSizes": true,
+    "trackMemory": true,
+    "maxSamples": 10000, // Keep more performance samples
+    "alerts": {
+      "enabled": true,
+      "thresholds": {
+        "executionTime": 5000, // Alert if skill takes > 5s
+        "errorRate": 10, // Alert if error rate > 10%
+        "memoryUsage": 512, // Alert if > 512MB
+      },
+    },
+  },
+
+  // Integrity verification
+  "integrity": {
+    "enabled": true,
+    "verifyOnLoad": true,
+    "verifyOnSave": true,
+    "algorithm": "crc32", // Hardware-accelerated
+  },
+
+  // Security settings
+  "security": {
+    "rateLimit": {
+      "enabled": true,
+      "requests": 100, // Per minute
+      "ipWhitelist": ["127.0.0.1", "::1"],
+    },
+  },
+}

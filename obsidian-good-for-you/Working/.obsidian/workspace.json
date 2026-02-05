@@ -1,0 +1,329 @@
+{
+  "main": {
+    "id": "2359769f72096bb2",
+    "type": "split",
+    "children": [
+      {
+        "id": "c6518f685df1cac6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2a5d986ae9a3447e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Project Management Hub.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Project Management Hub"
+            }
+          },
+          {
+            "id": "1ffc37bb61f4617a",
+            "type": "leaf",
+            "state": {
+              "type": "smart-release-notes-view",
+              "state": {},
+              "icon": "file-text",
+              "title": "Release Notes"
+            }
+          },
+          {
+            "id": "9921d37d8b4a97b1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "03-REVIEWS/DAILY NOTES/2025-01-09.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2025-01-09"
+            }
+          },
+          {
+            "id": "b689893254fdebac",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "03-REVIEWS/DAILY NOTES/2025-01-09.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2025-01-09"
+            }
+          },
+          {
+            "id": "145b31281a9e7ad3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01-AREAS/KNOWLEDGE/Bun Runtime Utilities - Quick Reference.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Bun Runtime Utilities - Quick Reference"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5b7e0bd09e07a239",
+    "type": "split",
+    "children": [
+      {
+        "id": "e158a3dd3536ac31",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9ad9d41d53f3f605",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": true
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "77be3706007eef25",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "ba877bf3829d1e05",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "f72c59db280969b0",
+    "type": "split",
+    "children": [
+      {
+        "id": "acdee78f9e2a1b41",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "60284747671fde14",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Project Management Hub.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Project Management Hub"
+            }
+          },
+          {
+            "id": "25efa8a74ff20bd5",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Welcome.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Welcome"
+            }
+          },
+          {
+            "id": "21bf2b9e59dd0063",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "ec8fddec55886b67",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "3d4f75d5ad0934e8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Welcome.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Welcome"
+            }
+          },
+          {
+            "id": "0cea3f7c081418f7",
+            "type": "leaf",
+            "state": {
+              "type": "smart-connections-view",
+              "state": {},
+              "icon": "smart-connections",
+              "title": "Connections"
+            }
+          },
+          {
+            "id": "7186b0c0476e534a",
+            "type": "leaf",
+            "state": {
+              "type": "infranodus-graph-view",
+              "state": {},
+              "icon": "infranodus-icon",
+              "title": "03-REVIEWS/DAILY NOTES/2025-01-09.md"
+            }
+          },
+          {
+            "id": "569609d2e21bffb8",
+            "type": "leaf",
+            "state": {
+              "type": "footnotes",
+              "state": {
+                "file": "Project Management Hub.md"
+              },
+              "icon": "lucide-file-signature",
+              "title": "Footnotes"
+            }
+          },
+          {
+            "id": "e88eba579c983c7b",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {},
+              "icon": "spreadsheet",
+              "title": "Advanced Tables"
+            }
+          }
+        ],
+        "currentTab": 8
+      }
+    ],
+    "direction": "horizontal",
+    "width": 224.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "smart-connections:Smart Connections: Open connections view": false,
+      "smart-connections:Smart Lookup: Open lookup view": false,
+      "smart-connections:Smart Connections: Open random connection": false,
+      "infranodus-graph-view:InfraNodus Graph View": false,
+      "workspaces:Manage workspace layouts": false,
+      "publish:Publish changes...": false,
+      "markdown-importer:Open format converter": false
+    }
+  },
+  "active": "145b31281a9e7ad3",
+  "lastOpenFiles": [
+    "02-SYSTEM/Table Formulas - Interactive Demo.md",
+    "01-AREAS/KNOWLEDGE/Table Formulas - Complete Reference.md",
+    "03-REVIEWS/DAILY NOTES/2025-01-09.md",
+    "03-REVIEWS/Daily Notes.md",
+    "01-AREAS/KNOWLEDGE/Bun Runtime Utilities - Quick Reference.md",
+    "01-AREAS/KNOWLEDGE",
+    "01-AREAS/SKILLS/Bun JavaScript Runtime - Learning Track.md",
+    "02-SYSTEM/Folder Structure Validator.md",
+    "02-SYSTEM/System Guardrails.md",
+    "Welcome.md",
+    "00-MAP-OF-CONTENT.md",
+    "03-REVIEWS/Weekly Reviews.md",
+    "03-REVIEWS/Monthly Reviews.md",
+    "03-REVIEWS/DAILY NOTES",
+    "03-REVIEWS",
+    "02-SYSTEM/Templates/Skill Template.md",
+    "02-SYSTEM/Templates/Project with Advanced Tables.md",
+    "02-SYSTEM/Templates/Project Template.md",
+    "02-SYSTEM/Templates/Daily Note Template.md",
+    "02-SYSTEM/Bases/Skills Development.base",
+    "02-SYSTEM/Bases/Project Portfolio.base",
+    "02-SYSTEM/Bases/Daily Reviews.base",
+    "02-SYSTEM/Workflows.md",
+    "02-SYSTEM/Templates",
+    "02-SYSTEM/Tags & Properties Guide.md",
+    "02-SYSTEM/System Test.md",
+    "02-SYSTEM/Quick Setup Guide.md",
+    "02-SYSTEM/Obsidian Bases Integration.md",
+    "02-SYSTEM/Bases",
+    "02-SYSTEM/Advanced Tables Integration Guide.md",
+    "02-SYSTEM",
+    "01-AREAS/SKILLS/Obsidian Mastery - Learning Track.md",
+    "01-AREAS/PROJECTS/2025-01-09 - Learn Obsidian Advanced Features.md",
+    "01-AREAS/Skills.md",
+    "01-AREAS/SKILLS",
+    "01-AREAS/Projects.md"
+  ]
+}

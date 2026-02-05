@@ -1,0 +1,31 @@
+# Bun Configuration for Workspaces with Private Registry
+# Priority: Local bunfig.toml > $XDG_CONFIG_HOME/.bunfig.toml > $HOME/.bunfig.toml
+# CLI flags override all
+
+[install]
+exact = true
+# Isolated installs (default for workspaces)
+linker = "isolated"
+auto = "fallback"
+
+# Private registry configuration for @graph scoped packages
+[install.scopes."@graph"]
+registry = "https://npm.factory-wager.com"
+token = "$GRAPH_NPM_TOKEN"
+
+# Alternative: Use Bun.secrets for secure token storage
+# See: docs/BUN-REGISTRY-SECRETS.md
+# [install.scopes."@graph"]
+# registry = "https://npm.internal.yourcompany.com"
+# token = "$GRAPH_NPM_TOKEN"  # Loads from Bun.secrets or environment
+
+# Never use bun link in workspace
+# Use workspace:* protocol instead for inter-package dependencies
+# See: docs/BUN-WORKSPACES.md
+
+[publish]
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }

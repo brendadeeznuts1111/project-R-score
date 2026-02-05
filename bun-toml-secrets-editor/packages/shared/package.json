@@ -1,0 +1,41 @@
+{
+	"name": "@bun-toml/shared",
+	"version": "1.0.0",
+	"description": "Shared configuration and utilities for bun-toml-secrets-editor packages",
+	"license": "MIT",
+	"author": "bun-toml-secrets-editor",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bun-toml-secrets-editor/bun-toml-secrets-editor.git",
+		"directory": "packages/shared"
+	},
+	"engines": {
+		"bun": ">=1.3.7"
+	},
+	"main": "./build-config.ts",
+	"types": "./build-config.ts",
+	"exports": {
+		".": {
+			"import": "./build-config.ts",
+			"types": "./build-config.ts"
+		}
+	},
+	"files": [
+		"build-config.ts",
+		"README.md"
+	],
+	"scripts": {
+		"typecheck": "bunx tsc --noEmit"
+	},
+	"devDependencies": {
+		"bun-types": "latest",
+		"typescript": "^5.9.3"
+	},
+	"keywords": [
+		"bun",
+		"toml",
+		"shared",
+		"configuration",
+		"utilities"
+	]
+}

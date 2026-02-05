@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>bun.com</title>
+  <link>https://bun.com</link>
+  <description>A fast all-in-one JavaScript runtime and toolkit</description>
+  <language>en-us</language>
+  <atom:link href="http://bun.com/rss.xml" rel="self" type="application/rss+xml" />
+  <lastBuildDate>Thu, 29 Jan 2026 12:15:45 GMT</lastBuildDate>
+  <pubDate>Thu, 29 Jan 2026 12:15:45 GMT</pubDate>
+  <ttl>60</ttl>
+<item>
+    <title>Bun v1.3.8</title>
+    <link>https://bun.com/blog/bun-v1.3.8</link>
+    <guid>https://bun.com/blog/bun-v1.3.8</guid>
+    <description>Fixes 8 issues (addressing 6 👍). Bun.markdown is a builtin CommonMark-compliant Markdown parser written in Zig. Bun&#x27;s bundler gets bun build --metafile-md to write LLM-friendly module graph metadata. Fixes a regression in &#x27;npm install -g bun&#x27; on Windows.</description>
+    <pubDate>Thu, 29 Jan 2026 10:04:52 GMT</pubDate>
+  </item>
+<item>
+    <title>Bun v1.3.7</title>
+    <link>https://bun.com/blog/bun-v1.3.7</link>
+    <guid>https://bun.com/blog/bun-v1.3.7</guid>
+    <description>Fixes 91 issues (addressing 243 👍). 50% faster `Buffer.from(array)`, 35% faster async/await, 3x faster `array.flat()`, 90% faster `padStart`/`padEnd` via JSC upgrade. New: `Bun.JSON5`, `Bun.JSONL`, `Bun.wrapAnsi()` (33-88x faster than wrap-ansi npm), `--heap-prof-md`, `--cpu-prof-md`, `node:inspector` Profiler API, `replMode` for `Bun.Transpiler`. Fetch now preserves header casing. HTTP/2 fixes for AWS ALB/gRPC/Fauna.</description>
+    <pubDate>Tue, 27 Jan 2026 06:30:58 GMT</pubDate>
+  </item>
+</channel></rss>

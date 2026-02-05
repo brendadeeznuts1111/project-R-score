@@ -1,0 +1,25 @@
+{
+  "name": "bun-mcp-registry-hub---enhanced-production-dashboard-template-1.21.15",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run server.tsx",
+    "build": "bun build src/index.tsx --outdir dist --target browser --minify",
+    "preview": "bun run dist/index.html"
+  },
+  "dependencies": {
+    "recharts": "^3.6.0",
+    "react": "^19.2.3",
+    "@google/genai": "^1.34.0",
+    "react-dom": "^19.2.3",
+    "lucide-react": "^0.562.0",
+    "zod": "3.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.8.2",
+  }
+}

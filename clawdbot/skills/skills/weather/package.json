@@ -1,0 +1,30 @@
+{
+  "name": "@skill/weather",
+  "version": "1.0.0",
+  "description": "Weather forecast skill - get current weather and forecasts",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": {
+    "weather": "./dist/weather"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --compile --outfile dist/weather",
+    "start": "bun run src/index.ts",
+    "test": "bun test"
+  },
+  "keywords": [
+    "weather",
+    "forecast",
+    "cli",
+    "bun-skill"
+  ],
+  "author": "clawdbot",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}

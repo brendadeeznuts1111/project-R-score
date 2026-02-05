@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive dashboard and monitoring system with real-time performance metrics and analysis tools.">
+    <meta name="keywords" content="dashboard, monitoring, performance, metrics, analytics, real-time, visualization">
+    <meta property="og:title" content="Origin Dashboard - System Monitoring">
+    <meta property="og:description" content="Real-time performance monitoring and analytics dashboard">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/dashboard-preview.png">
+    <title>Bun Stream Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00ffff 0%, #4444ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        #status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+        
+        #status.connected {
+            background: #10b981;
+            color: white;
+        }
+        
+        #status.disconnected {
+            background: #ef4444;
+            color: white;
+        }
+        
+        #status.connecting {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .stream {
+            background: white;
+            border-radius: 12px;
+            margin: 15px 0;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
+        }
+        
+        .stream:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+        
+        .stream h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #00ffff;
+            font-size: 1.5em;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #00ffff 0%, #4444ff 100%);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-top: 10px;
+            border-left: 4px solid #00ffff;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .output-area {
+            margin-top: 10px;
+            min-height: 100px;
+        }
+        
+        .output-area pre {
+            margin-bottom: 5px;
+        }
+        
+        .timestamp {
+            color: #6b7280;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+        
+        .clear-btn {
+            background: #ef4444;
+            float: right;
+        }
+        
+        .clear-btn:hover {
+            background: #dc2626;
+        }
+        
+        input[type="text"] {
+            width: calc(100% - 120px);
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00ffff;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .stats-dashboard {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .stats-table {
+            width: 100%;
+        }
+        
+        .stats-header h3 {
+            color: #00ffff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #00ffff;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-label {
+            font-size: 1em;
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #007bff;
+            text-align: center;
+            padding: 5px;
+            border-radius: 6px;
+            background: rgba(0, 255, 255, 0.1);
+        }
+        
+        .stat-value.connected {
+            color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        
+        .stat-value.disconnected {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+    </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; img-src 'self' data: https:; connect-src 'self' https:;">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Origin Dashboard",
+        "description": "Real-time performance monitoring and analytics dashboard",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any"
+    }
+</script>
+</head>
+<body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">Skip to main content</a>
+    <div class="container">
+        <h1>🚀 Bun Stream Dashboard</h1>
+        <div id="status" class="connecting">Connecting...</div>
+        
+        <div class="stats-dashboard">
+            <div class="stats-table">
+                <div class="stats-header">
+                    <h3>📈 Connection Statistics</h3>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">📡 WebSocket Status</div>
+                        <div class="stat-value" id="ws-status">Initializing...</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">📊 Messages Sent</div>
+                        <div class="stat-value" id="msg-sent">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">📨 Messages Received</div>
+                        <div class="stat-value" id="msg-received">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">🔌 Server Port</div>
+                        <div class="stat-value" id="server-port">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">🎨 Theme Color</div>
+                        <div class="stat-value" id="theme-color">#667eea</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">🌈 Color Mode</div>
+                        <div class="stat-value" id="color-mode">RGB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stream">
+            <h3>🎨 Color Utilities</h3>
+            <div class="input-group">
+                <input type="text" id="color-input" placeholder="Enter color (red, #ff0000, hsl(0,100%,50%))..." onkeypress="if(event.key==='Enter') testColor()">
+                <button onclick="testColor()">Test Color</button>
+            </div>
+            <button class="clear-btn" onclick="clearOutput('color')">Clear</button>
+            <div class="output-area" id="color"></div>
+        </div>
+        
+        <div class="stream">
+            <h3>📥 stdin</h3>
+            <button onclick="readStdin()">Read Stdin</button>
+            <button class="clear-btn" onclick="clearOutput('stdin')">Clear</button>
+            <div class="output-area">
+                <pre id="stdin">No data read yet...</pre>
+            </div>
+        </div>
+        
+        <div class="stream">
+            <h3>📤 stdout</h3>
+            <div class="input-group">
+                <input type="text" id="stdout-input" placeholder="Enter message for stdout..." onkeypress="if(event.key==='Enter') writeStdout()">
+                <button onclick="writeStdout()">Send</button>
+            </div>
+            <button class="clear-btn" onclick="clearOutput('stdout')">Clear</button>
+            <div class="output-area" id="stdout"></div>
+        </div>
+        
+        <div class="stream">
+            <h3>⚠️ stderr</h3>
+            <div class="input-group">
+                <input type="text" id="stderr-input" placeholder="Enter message for stderr..." onkeypress="if(event.key==='Enter') writeStderr()">
+                <button onclick="writeStderr()">Send</button>
+            </div>
+            <button class="clear-btn" onclick="clearOutput('stderr')">Clear</button>
+            <div class="output-area" id="stderr"></div>
+        </div>
+    </div>
+
+    <script>
+        let ws;
+        let messagesSent = 0;
+        let messagesReceived = 0;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const host = window.location.host;
+            // Connect with a specific protocol for better compatibility
+            ws = new WebSocket(`${protocol}//${host}/ws`, ['bun-stream-dashboard']);
+            
+            ws.onopen = () => {
+                console.log('WebSocket connection established');
+                document.getElementById('status').textContent = '✅ Connected';
+                document.getElementById('status').className = 'connected';
+                document.getElementById('ws-status').textContent = 'Connected';
+                reconnectAttempts = 0;
+            };
+            
+            ws.onmessage = (event) => {
+                messagesReceived++;
+                document.getElementById('msg-received').textContent = messagesReceived;
+                
+                const data = JSON.parse(event.data);
+                console.log('Received:', data);
+                
+                if (data.type === 'welcome') {
+                    console.log(data.message);
+                    if (data.port) {
+                        document.getElementById('server-port').textContent = data.port;
+                    }
+                    
+                    // Initialize theme colors from server
+                    if (data.themeColors) {
+                        window.themeColors = data.themeColors;
+                        console.log('🎨 Theme colors loaded:', Object.keys(data.themeColors));
+                        
+                        // Update initial theme color display
+                        const primaryColor = data.themeColors.PRIMARY_CYAN;
+                        if (primaryColor) {
+                            document.getElementById('theme-color').textContent = primaryColor.hex;
+                            updateThemeColor(primaryColor.hex);
+                        }
+                    }
+                } else if (data.type === 'stdinData') {
+                    const timestamp = new Date().toLocaleTimeString();
+                    document.getElementById('stdin').textContent = `[${timestamp}] ${data.data || 'No stdin data available'}`;
+                } else if (data.type === 'stdoutWrite') {
+                    const stdout = document.getElementById('stdout');
+                    const timestamp = new Date().toLocaleTimeString();
+                    const pre = document.createElement('pre');
+                    pre.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${escapeHTML(data.data)}`;
+                    stdout.appendChild(pre);
+                    stdout.scrollTop = stdout.scrollHeight;
+                } else if (data.type === 'stderrWrite') {
+                    const stderr = document.getElementById('stderr');
+                    const timestamp = new Date().toLocaleTimeString();
+                    const pre = document.createElement('pre');
+                    pre.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${escapeHTML(data.data)}`;
+                    pre.style.borderLeftColor = '#ef4444';
+                    stderr.appendChild(pre);
+                    stderr.scrollTop = stderr.scrollHeight;
+                } else if (data.type === 'colorInfo') {
+                console.log('Received color info:', data.data);
+                displayColorInfo(data.data);
+                document.getElementById('color-mode').textContent = 'RGB/RGBA';
+            } else if (data.type === 'colorError') {
+                console.log('Color error:', data.message);
+                const color = document.getElementById('color');
+                const timestamp = new Date().toLocaleTimeString();
+                const pre = document.createElement('pre');
+                pre.innerHTML = `<span class="timestamp">[${timestamp}]</span> <span style="color: red;">Error: ${data.message}</span>`;
+                pre.style.borderLeftColor = '#ef4444';
+                color.appendChild(pre);
+                color.scrollTop = color.scrollHeight;
+            } else if (data.type === 'connectionInfo') {
+                    console.table(data.info);
+                    updateDashboardStats(data.info);
+                }
+            };
+            
+            ws.onclose = () => {
+                console.log('WebSocket connection closed');
+                document.getElementById('status').textContent = '❌ Disconnected';
+                document.getElementById('status').className = 'disconnected';
+                document.getElementById('ws-status').textContent = 'Disconnected';
+                
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    reconnectAttempts++;
+                    setTimeout(() => {
+                        console.log(`Reconnecting... (attempt ${reconnectAttempts})`);
+                        document.getElementById('status').textContent = `🔄 Reconnecting... (${reconnectAttempts}/${maxReconnectAttempts})`;
+                        document.getElementById('status').className = 'connecting';
+                        connectWebSocket();
+                    }, 2000);
+                }
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+        
+        function sendMessage(data) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(data));
+                messagesSent++;
+                document.getElementById('msg-sent').textContent = messagesSent;
+            } else {
+                alert('WebSocket is not connected!');
+            }
+        }
+        
+        function readStdin() {
+            sendMessage({ type: 'readStdin' });
+        }
+        
+        function writeStdout() {
+            const input = document.getElementById('stdout-input');
+            const message = input.value.trim();
+            if (message) {
+                sendMessage({ type: 'writeStdout', data: message });
+                input.value = '';
+            }
+        }
+        
+        function writeStderr() {
+            const input = document.getElementById('stderr-input');
+            const message = input.value.trim();
+            if (message) {
+                sendMessage({ type: 'writeStderr', data: message });
+                input.value = '';
+            }
+        }
+        
+        function testColor() {
+            const input = document.getElementById('color-input');
+            const colorInput = input.value.trim();
+            if (colorInput) {
+                sendMessage({ type: 'testColor', data: colorInput });
+                input.value = '';
+            }
+        }
+        
+        function updateThemeColor(color) {
+            // Update the theme color dynamically
+            document.documentElement.style.setProperty('--theme-color', color);
+            document.getElementById('theme-color').textContent = color;
+            
+            // Update gradient background
+            const colorObj = parseColor(color);
+            if (colorObj) {
+                const darkerColor = adjustBrightness(color, -30);
+                document.body.style.background = `linear-gradient(135deg, ${color} 0%, ${darkerColor} 100%)`;
+            }
+        }
+        
+        function parseColor(color) {
+            // Simple color parsing for basic formats
+            const ctx = document.createElement('canvas').getContext('2d');
+            ctx.fillStyle = color;
+            return ctx.fillStyle;
+        }
+        
+        function adjustBrightness(color, percent) {
+            // Simple brightness adjustment
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255))
+                .toString(16).slice(1);
+        }
+        
+        function displayColorInfo(colorInfo) {
+            const color = document.getElementById('color');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const pre = document.createElement('pre');
+            pre.innerHTML = `
+<span class="timestamp">[${timestamp}]</span> 
+<strong>Color:</strong> ${colorInfo.input}
+<div style="display: flex; align-items: center; margin: 5px 0;">
+  <div style="width: 50px; height: 20px; background: ${colorInfo.hex}; border: 1px solid #ccc; margin-right: 10px;"></div>
+  <span>${colorInfo.hex}</span>
+</div>
+<strong>RGB:</strong> ${colorInfo.rgb ? `(${colorInfo.rgb.r}, ${colorInfo.rgb.g}, ${colorInfo.rgb.b})` : 'N/A'}
+<strong>RGBA:</strong> ${colorInfo.rgba ? `(${colorInfo.rgba.r}, ${colorInfo.rgba.g}, ${colorInfo.rgba.b}, ${colorInfo.rgba.a})` : 'N/A'}
+<strong>HSL:</strong> ${colorInfo.hsl || 'N/A'}
+            `.trim();
+            
+            color.appendChild(pre);
+            color.scrollTop = color.scrollHeight;
+            
+            // Update theme if valid color
+            if (colorInfo.hex) {
+                updateThemeColor(colorInfo.hex);
+            }
+        }
+        
+        function clearOutput(stream) {
+            const element = document.getElementById(stream);
+            if (stream === 'stdin') {
+                element.textContent = 'Cleared...';
+            } else {
+                element.innerHTML = '';
+            }
+        }
+        
+        function updateDashboardStats(info) {
+            // Update statistics in real-time
+            if (info.messagesSent !== undefined) {
+                document.getElementById('msg-sent').textContent = info.messagesSent;
+            }
+            if (info.messagesReceived !== undefined) {
+                document.getElementById('msg-received').textContent = info.messagesReceived;
+            }
+            if (info.activeConnections !== undefined) {
+                const statusElement = document.getElementById('ws-status');
+                statusElement.textContent = info.activeConnections > 0 ? `Connected (${info.activeConnections})` : 'Disconnected';
+                statusElement.className = info.activeConnections > 0 ? 'stat-value connected' : 'stat-value disconnected';
+            }
+            
+            // Add visual feedback for updated stats
+            const statElements = [
+                document.getElementById('msg-sent'),
+                document.getElementById('msg-received'),
+                document.getElementById('ws-status')
+            ];
+            
+            statElements.forEach(element => {
+                if (element) {
+                    element.style.transition = 'all 0.3s ease';
+                    element.style.transform = 'scale(1.1)';
+                    element.style.boxShadow = '0 0 10px rgba(0, 255, 255, 0.5)';
+                    
+                    setTimeout(() => {
+                        element.style.transform = 'scale(1)';
+                        element.style.boxShadow = 'none';
+                    }, 300);
+                }
+            });
+        }
+        
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        
+        // Initialize WebSocket connection
+        connectWebSocket();
+        
+        // Request stats periodically
+        setInterval(() => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                sendMessage({ type: 'getStats' });
+            }
+        }, 5000); // Update every 5 seconds
+    </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+#!/usr/bin/env bun
+// 🎮 Enhanced CLI Dashboard Wrapper
+// Streamlined workflow with interactive features
+
+import { spawn } from 'child_process';
+import { createInterface } from 'readline';
+
+const dashboardScript = 'src/nexus/core/enhanced-dashboard.ts';
+
+async function showEnhancedHelp() {
+  console.log(`\n🏛️ ENHANCED CITADEL CLI WORKFLOW`);
+  console.log(`═══════════════════════════════════════════════════════`);
+  console.log(`\n🚀 QUICK START COMMANDS:`);
+  console.log(`  ./cli-dashboard              - Show dashboard status`);
+  console.log(`  ./cli-dashboard search       - Interactive search`);
+  console.log(`  ./cli-dashboard metrics      - Show detailed metrics`);
+  console.log(`  ./cli-dashboard advanced     - Comprehensive advanced metrics`);
+  console.log(`  ./cli-dashboard packages     - Package registry analysis`);
+  console.log(`  ./cli-dashboard typescript   - TypeScript analysis`);
+  console.log(`  ./cli-dashboard security     - Security analysis`);
+  console.log(`  ./cli-dashboard watch        - Start auto-refresh mode`);
+  console.log(`  ./cli-dashboard interactive  - Full interactive mode`);
+  console.log(`  ./cli-dashboard export       - Export data`);
+  console.log(`  ./cli-dashboard device <id>  - Check device status`);
+  console.log(`\n⚡ WORKFLOW FEATURES:`);
+  console.log(`  ✅ Git integration (auto-commit workflow)`);
+  console.log(`  ✅ Real-time search with filters`);
+  console.log(`  ✅ Interactive command mode`);
+  console.log(`  ✅ Auto-refresh monitoring`);
+  console.log(`  ✅ Data export capabilities`);
+  console.log(`  ✅ Device-specific tracking`);
+  console.log(`  ✅ Advanced metrics analysis`);
+  console.log(`  ✅ Package registry integration`);
+  console.log(`  ✅ TypeScript code analysis`);
+  console.log(`  ✅ Security vulnerability scanning`);
+  console.log(`\n🎯 EXAMPLES:`);
+  console.log(`  ./cli-dashboard search performance`);
+  console.log(`  ./cli-dashboard advanced`);
+  console.log(`  ./cli-dashboard packages`);
+  console.log(`  ./cli-dashboard typescript`);
+  console.log(`  ./cli-dashboard security`);
+  console.log(`  ./cli-dashboard device test_vm_01`);
+  console.log(`  ./cli-dashboard watch 10`);
+  console.log(`  ./cli-dashboard export csv`);
+}
+
+async function runDashboardCommand(args: string[]) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('bun', [dashboardScript, ...args], {
+      stdio: 'inherit',
+      cwd: process.cwd()
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve(code);
+      } else {
+        reject(new Error(`Command failed with code ${code}`));
+      }
+    });
+
+    child.on('error', (error: Error) => {
+      reject(error);
+    });
+  });
+}
+
+async function interactiveSearch() {
+  console.log(`\n🔍 INTERACTIVE SEARCH MODE`);
+  console.log(`Type your search query or 'exit' to quit\n`);
+
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: '🔍 search> '
+  });
+
+  rl.prompt();
+
+  rl.on('line', async (input) => {
+    const query = input.trim();
+    
+    if (query.toLowerCase() === 'exit' || query.toLowerCase() === 'quit') {
+      rl.close();
+      return;
+    }
+
+    if (query) {
+      console.log(`\n🔍 Searching for: "${query}"\n`);
+      try {
+        await runDashboardCommand(['--search', query]);
+      } catch (error) {
+        console.log(`❌ Search failed: ${(error as Error).message}`);
+      }
+      console.log(`\n─────────────────────────────────────────`);
+    }
+
+    rl.prompt();
+  });
+
+  rl.on('close', () => {
+    console.log('\n👋 Exiting search mode');
+    process.exit(0);
+  });
+}
+
+async function startWatchMode(interval: number = 5000) {
+  console.log(`⏰ Starting auto-refresh dashboard (every ${interval/1000}s)`);
+  console.log(`Press Ctrl+C to stop\n`);
+
+  const refreshInterval = setInterval(async () => {
+    console.clear();
+    console.log(`🔄 Auto-refreshing... (${new Date().toLocaleString()})\n`);
+    try {
+      await runDashboardCommand([]);
+    } catch (error) {
+      console.log(`❌ Refresh failed: ${(error as Error).message}`);
+    }
+  }, interval);
+
+  process.on('SIGINT', () => {
+    clearInterval(refreshInterval);
+    console.log('\n🛑 Auto-refresh stopped');
+    process.exit(0);
+  });
+}
+
+async function fullInteractiveMode() {
+  console.log(`\n🎮 FULL INTERACTIVE MODE`);
+  console.log(`Enhanced Citadel Dashboard CLI`);
+  console.log(`Type 'help' for commands or 'exit' to quit\n`);
+
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: '🏛️ citadel> '
+  });
+
+  const showHelp = () => {
+    console.log(`\n📋 AVAILABLE COMMANDS:`);
+    console.log(`  status         - Show dashboard status`);
+    console.log(`  metrics        - Show detailed metrics`);
+    console.log(`  advanced       - Comprehensive advanced metrics`);
+    console.log(`  packages       - Package registry analysis`);
+    console.log(`  typescript     - TypeScript code analysis`);
+    console.log(`  security       - Security vulnerability analysis`);
+    console.log(`  search         - Enter search mode`);
+    console.log(`  watch [sec]    - Start auto-refresh (default: 5s)`);
+    console.log(`  device <id>    - Check specific device`);
+    console.log(`  export [format] - Export data (json/csv)`);
+    console.log(`  git            - Quick git status check`);
+    console.log(`  help           - Show this help`);
+    console.log(`  exit/quit      - Exit interactive mode`);
+  };
+
+  const handleCommand = async (input: string) => {
+    const parts = input.trim().split(' ');
+    const command = parts[0].toLowerCase();
+    const args = parts.slice(1);
+
+    try {
+      switch (command) {
+        case 'help':
+          showHelp();
+          break;
+        case 'status':
+          await runDashboardCommand([]);
+          break;
+        case 'metrics':
+          await runDashboardCommand(['--metrics']);
+          break;
+        case 'advanced':
+          await runDashboardCommand(['--advanced-metrics']);
+          break;
+        case 'packages':
+          await runDashboardCommand(['--package-metrics']);
+          break;
+        case 'typescript':
+          await runDashboardCommand(['--typescript-metrics']);
+          break;
+        case 'security':
+          await runDashboardCommand(['--security-metrics']);
+          break;
+        case 'search':
+          await interactiveSearch();
+          break;
+        case 'watch':
+          const interval = args[0] ? parseInt(args[0]) * 1000 : 5000;
+          await startWatchMode(interval);
+          break;
+        case 'device':
+          if (args[0]) {
+            await runDashboardCommand(['--device', args[0]]);
+          } else {
+            console.log('❌ Please provide a device ID');
+          }
+          break;
+        case 'export':
+          const format = args[0] || 'json';
+          await runDashboardCommand(['--export', format]);
+          break;
+        case 'git':
+          console.log('\n📋 Git Status:');
+          const { spawn } = await import('child_process');
+          await new Promise((resolve, reject) => {
+            const git = spawn('git', ['status'], { stdio: 'inherit' });
+            git.on('close', (code) => code === 0 ? resolve(code) : reject(new Error(`Git failed with code ${code}`)));
+            git.on('error', reject);
+          });
+          break;
+        case 'exit':
+        case 'quit':
+          console.log('\n👋 Goodbye!');
+          process.exit(0);
+          break;
+        default:
+          if (command) {
+            console.log(`❌ Unknown command: ${command}`);
+            console.log(`Type 'help' for available commands`);
+          }
+      }
+    } catch (error) {
+      console.log(`❌ Command failed: ${(error as Error).message}`);
+    }
+
+    if (command !== 'search' && command !== 'watch') {
+      rl.prompt();
+    }
+  };
+
+  rl.on('line', handleCommand);
+  rl.on('close', () => {
+    console.log('\n👋 Goodbye!');
+    process.exit(0);
+  });
+
+  rl.prompt();
+}
+
+// Main execution
+async function main() {
+  const args = process.argv.slice(2);
+  const command = args[0];
+
+  switch (command) {
+    case 'help':
+    case '--help':
+    case '-h':
+      await showEnhancedHelp();
+      break;
+    case 'search':
+      if (args[1]) {
+        await runDashboardCommand(['--search', args.slice(1).join(' ')]);
+      } else {
+        await interactiveSearch();
+      }
+      break;
+    case 'metrics':
+    case '--metrics':
+      await runDashboardCommand(['--metrics']);
+      break;
+    case 'advanced':
+    case '--advanced-metrics':
+      await runDashboardCommand(['--advanced-metrics']);
+      break;
+    case 'packages':
+    case '--package-metrics':
+      await runDashboardCommand(['--package-metrics']);
+      break;
+    case 'typescript':
+    case '--typescript-metrics':
+      await runDashboardCommand(['--typescript-metrics']);
+      break;
+    case 'security':
+    case '--security-metrics':
+      await runDashboardCommand(['--security-metrics']);
+      break;
+    case 'watch':
+    case '--watch':
+      const interval = args[1] ? parseInt(args[1]) * 1000 : 5000;
+      await startWatchMode(interval);
+      break;
+    case 'device':
+    case '--device':
+      if (args[1]) {
+        await runDashboardCommand(['--device', args[1]]);
+      } else {
+        console.log('❌ Please provide a device ID');
+        console.log('Usage: ./cli-dashboard device <device_id>');
+      }
+      break;
+    case 'export':
+    case '--export':
+      const format = args[1] || 'json';
+      await runDashboardCommand(['--export', format]);
+      break;
+    case 'interactive':
+    case '--interactive':
+    case '-i':
+      await fullInteractiveMode();
+      break;
+    default:
+      if (command) {
+        console.log(`❌ Unknown command: ${command}`);
+        console.log(`Use './cli-dashboard help' for available commands`);
+      } else {
+        await runDashboardCommand([]);
+      }
+  }
+}
+
+main().catch(console.error);

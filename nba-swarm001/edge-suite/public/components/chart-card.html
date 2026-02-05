@@ -1,0 +1,230 @@
+<div class="card">
+  <h2>Weight Heat (Last 5 Min)</h2>
+  <div id="chart-container" style="position: relative; height: 80px;">
+    <canvas id="mini-chart" height="80"></canvas>
+    <div id="chart-empty" style="display: none; text-align: center; padding: 20px; color: var(--text-secondary); font-size: 0.85rem;">
+      No data available
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+  
+  let chartInstance = null;
+  let weightHistory = []; // Store weights with timestamps
+  let seenTimestamps = new Set(); // Track seen timestamps to avoid duplicates
+  const FIVE_MINUTES_MS = 5 * 60 * 1000;
+  const MAX_DATA_POINTS = 60; // One point per 5 seconds over 5 minutes
+  
+  // Wait for canvas to be available
+  function initChart() {
+    const ctx = document.getElementById('mini-chart');
+    const emptyEl = document.getElementById('chart-empty');
+    
+    if (!ctx) {
+      setTimeout(initChart, 100);
+      return;
+    }
+    
+    // Check if chart already exists
+    if (chartInstance) {
+      return;
+    }
+    
+    // Load Chart.js dynamically
+    if (typeof Chart === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+      script.onload = function() {
+        createChart();
+      };
+      document.head.appendChild(script);
+    } else {
+      createChart();
+    }
+    
+    function createChart() {
+      const initialData = Array(MAX_DATA_POINTS).fill(0);
+      
+      const cfg = {
+        type: 'line',
+        data: {
+          labels: Array(MAX_DATA_POINTS).fill(''),
+          datasets: [{
+            data: initialData,
+            borderColor: '#58a6ff',
+            backgroundColor: 'rgba(88, 166, 255, 0.1)',
+            tension: 0.4,
+            pointRadius: 0,
+            fill: true,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 0 // Disable animation for better performance
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                label: function(context) {
+                  return 'Weight: ' + context.parsed.y.toFixed(3);
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              display: false
+            },
+            y: {
+              display: false,
+              min: 0,
+              max: 1,
+              beginAtZero: true
+            }
+          }
+        }
+      };
+      
+      chartInstance = new Chart(ctx, cfg);
+      
+      // Update chart with filtered data
+      updateChart();
+      
+      // Use shared edge data instead of making separate API calls
+      // Listen for edge updates from suite.js
+      document.addEventListener('edgesUpdated', handleEdgeUpdate);
+      
+      // Clean up old data periodically
+      setInterval(cleanOldData, 30000); // Every 30 seconds
+    }
+    
+    function handleEdgeUpdate(event) {
+      if (!event.detail) return;
+      
+      const now = Date.now();
+      const weights = event.detail.weights || [];
+      const timestamps = event.detail.timestamps || [];
+      
+      // Add weights with timestamps (avoid duplicates)
+      weights.forEach((weight, index) => {
+        const timestamp = timestamps[index] || now;
+        const timestampKey = `${timestamp}-${weight}`;
+
+        // Only add if within last 5 minutes, valid weight, and not already seen
+        if (
+          weight > 0 &&
+          now - timestamp <= FIVE_MINUTES_MS &&
+          !seenTimestamps.has(timestampKey)
+        ) {
+          seenTimestamps.add(timestampKey);
+          weightHistory.push({
+            timestamp: timestamp,
+            weight: weight,
+          });
+        }
+      });
+
+      // Clean up old seen timestamps
+      const cutoffTime = now - FIVE_MINUTES_MS;
+      seenTimestamps.forEach((key) => {
+        const ts = parseInt(key.split("-")[0]);
+        if (ts < cutoffTime) {
+          seenTimestamps.delete(key);
+        }
+      });
+
+      // Sort by timestamp and keep only recent data
+      weightHistory.sort((a, b) => a.timestamp - b.timestamp);
+      weightHistory = weightHistory.filter(
+        (item) => now - item.timestamp <= FIVE_MINUTES_MS
+      );
+
+      // Keep only last MAX_DATA_POINTS * 2 items to avoid memory issues
+      weightHistory = weightHistory.slice(-MAX_DATA_POINTS * 2);
+
+      updateChart();
+    }
+    
+    function cleanOldData() {
+      const now = Date.now();
+      weightHistory = weightHistory.filter(
+        (item) => now - item.timestamp <= FIVE_MINUTES_MS
+      );
+      updateChart();
+    }
+
+    function updateChart() {
+      if (!chartInstance) return;
+
+      const emptyEl = document.getElementById("chart-empty");
+      const ctx = document.getElementById("mini-chart");
+
+      // Filter to last 5 minutes
+      const now = Date.now();
+      const recentWeights = weightHistory
+        .filter((item) => now - item.timestamp <= FIVE_MINUTES_MS)
+        .sort((a, b) => a.timestamp - b.timestamp);
+
+      if (recentWeights.length === 0) {
+        // Show empty state
+        if (emptyEl) emptyEl.style.display = "block";
+        if (ctx) ctx.style.display = "none";
+
+        // Fill with zeros
+        chartInstance.data.datasets[0].data = Array(MAX_DATA_POINTS).fill(0);
+        chartInstance.update("none");
+        return;
+      }
+
+      // Hide empty state
+      if (emptyEl) emptyEl.style.display = "none";
+      if (ctx) ctx.style.display = "block";
+
+      // Create time-bucketed data (one point per ~5 seconds)
+      const bucketSize = FIVE_MINUTES_MS / MAX_DATA_POINTS;
+      const buckets = Array(MAX_DATA_POINTS).fill(null);
+
+      recentWeights.forEach((item) => {
+        const bucketIndex = Math.floor((now - item.timestamp) / bucketSize);
+        if (bucketIndex >= 0 && bucketIndex < MAX_DATA_POINTS) {
+          const index = MAX_DATA_POINTS - 1 - bucketIndex; // Reverse order (oldest first)
+          if (buckets[index] === null || item.weight > buckets[index]) {
+            buckets[index] = item.weight; // Use max weight in bucket
+          }
+        }
+      });
+
+      // Fill nulls with 0 and update chart
+      const chartData = buckets.map((val) => (val === null ? 0 : val));
+      chartInstance.data.datasets[0].data = chartData;
+      chartInstance.update("none");
+    }
+  }
+
+  // Initialize after a short delay to ensure DOM is ready
+  setTimeout(initChart, 200);
+
+  // Also initialize when HTMX swaps content
+  if (typeof htmx !== "undefined") {
+    document.body.addEventListener("htmx:afterSwap", function (event) {
+      if (
+        event.detail?.target?.querySelector &&
+        event.detail.target.querySelector("#mini-chart")
+      ) {
+        setTimeout(initChart, 100);
+      }
+    });
+  }
+})();
+</script>
+

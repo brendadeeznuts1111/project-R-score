@@ -1,0 +1,67 @@
+# T3-Lattice Test Configuration
+# Following Bun's testing conventions
+
+# Test discovery patterns
+testMatch: [
+  "**/*.test.ts",
+  "**/*.spec.ts",
+  "**/__tests__/**/*.ts"
+]
+
+# Test environment
+testEnvironment: "node"
+
+# Setup files
+setupFiles: []
+
+# Global test timeout (ms)
+timeout: 10000
+
+# Coverage configuration
+coverage: {
+  enabled: true,
+  reporter: ["text", "html", "lcov"],
+  include: ["src/**/*.ts"],
+  exclude: ["**/node_modules/**", "**/*.test.ts", "**/*.spec.ts"]
+}
+
+# Test reporters
+reporter: ["verbose"]
+
+# Watch mode configuration
+watchMode: {
+  clearScreen: true,
+  mode: "hot"
+}
+
+# Environment variables for tests
+env: {
+  NODE_ENV: "test",
+  BUN_TEST: "true"
+}
+
+# Test file preprocessing
+preload: []
+
+# Root directory for test discovery
+root: "."
+
+# Extensions to treat as ES modules
+extensions: [".ts", ".js", ".mjs"]
+
+# Ignore patterns
+ignore: [
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/build/**",
+  "**/.git/**"
+]
+
+# Bail on first failure
+bail: false
+
+# Run tests in parallel
+parallel: true
+
+# Maximum number of workers
+maxWorkers: 4

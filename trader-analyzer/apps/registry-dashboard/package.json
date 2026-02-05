@@ -1,0 +1,17 @@
+{
+  "name": "@registry-dashboard",
+  "version": "1.0.0",
+  "description": "Team-aware private npm registry dashboard",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot run src/index.ts",
+    "start": "bun run src/index.ts",
+    "init-db": "bun run scripts/init-db.ts"
+  },
+  "dependencies": {
+    "elysia": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

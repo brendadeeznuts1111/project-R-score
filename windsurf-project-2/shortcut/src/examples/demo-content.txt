@@ -1,0 +1,24 @@
+
+Bun Loaders Showcase - Text Content
+===================================
+
+This is a plain text file loaded with Bun's text loader.
+It demonstrates how simple content can be imported directly.
+
+Key advantages of Bun's text loader:
+• No external dependencies needed
+• Fast native parsing
+• Works in both runtime and bundler
+• Supports any text content
+
+Unicode support: 🚀 🔥 🎯 ✨
+Special characters: !@#$%^&*()
+Multi-line content is fully preserved.
+
+This text can be used for:
+- Configuration files
+- Template content  
+- Documentation
+- README files
+- License files
+- Any plain text data

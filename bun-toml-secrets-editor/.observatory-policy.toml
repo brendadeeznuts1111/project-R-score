@@ -1,0 +1,32 @@
+# Observatory Security Policy for TOML Secrets
+# This file defines security rules and validation policies
+
+[secrets]
+# Allowed variable prefixes
+allowedPrefixes = ["DB_", "API_", "REDIS_", "JWT_", "ENCRYPTION_", "PUBLIC_", "PRIVATE_", "SECRET_", "TRUSTED_"]
+
+# Blocked patterns (will be flagged or removed)
+blockedPatterns = ["password", "token", "secret", "key"]
+
+# Require defaults for all secrets
+requireDefaults = false
+
+# Maximum secrets per file
+maxPerFile = 50
+
+[validation]
+# Scan URL patterns in secret values
+scanUrlPatterns = true
+
+# Risk level that causes validation to fail
+failOnRisk = "high"  # "low", "medium", "high", "critical"
+
+[optimization]
+# Remove empty objects during optimization
+removeEmptyObjects = true
+
+# Compress arrays by removing duplicates
+compressArrays = true
+
+# Sort keys alphabetically
+sortKeys = true

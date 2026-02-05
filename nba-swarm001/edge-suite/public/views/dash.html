@@ -1,0 +1,31 @@
+<!-- edge-suite/public/views/dash.html -->
+<div class="dock">
+  <section class="pane" id="left-pane">
+    <div class="handle"></div>
+    <div id="dash-board" class="grid">
+      <div hx-get="components/dash-card.html" hx-trigger="load" hx-swap="innerHTML"></div>
+      <div hx-get="components/chart-card.html" hx-trigger="load" hx-swap="innerHTML"></div>
+    </div>
+  </section>
+
+  <section class="pane" id="right-pane">
+    <div class="handle"></div>
+    <section id="edge-log" class="container">
+      <h2>Recent Edge Flashes</h2>
+      <table class="striped">
+        <thead>
+          <tr>
+            <th>Pair</th>
+            <th>Weight</th>
+            <th>Similarity</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="edge-tbody">
+          <tr class="skeleton-row"><td colspan="4"><div class="skeleton" style="height:18px"></div></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+</div>
+

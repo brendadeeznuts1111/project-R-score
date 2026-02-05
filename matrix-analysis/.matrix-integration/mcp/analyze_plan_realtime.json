@@ -1,0 +1,40 @@
+{
+  "uri": "bun://analyze/plan/realtime",
+  "data": {
+    "plan": "analyze_cli_missing_features",
+    "stages": {
+      "1.1": "Done",
+      "1.1.1": "Done",
+      "1.2": "Done",
+      "1.3": "Done",
+      "1.3.1": "Gap",
+      "1.4": "Done",
+      "1.4.1": "Gap",
+      "1.5": "Done",
+      "1.6": "Done",
+      "1.6.1": "Deferred",
+      "1.7": "Done",
+      "1.7.1": "Gap",
+      "2.1": "Done",
+      "2.2": "Done",
+      "3.1": "Pending",
+      "3.2": "Pending",
+      "3.3": "Pending",
+      "3.4": "Pending",
+      "3.5": "Pending",
+      "4.1": "Pending",
+      "4.2": "Pending",
+      "4.3": "Pending",
+      "5.1": "Pending",
+      "5.2": "Pending",
+      "5.3": "Pending",
+      "5.4": "Pending"
+    },
+    "lastUpdated": 1769855603328,
+    "checksum": 3234724427130183,
+    "doneCount": 10,
+    "pendingCount": 12,
+    "gapCount": 3
+  },
+  "timestamp": 1769855603328
+}

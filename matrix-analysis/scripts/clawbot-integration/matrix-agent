@@ -1,0 +1,3 @@
+#!/bin/bash
+# Matrix Agent CLI wrapper (successor to clawdbot)
+exec bun "$HOME/.matrix/matrix-agent.ts" "$@"

@@ -1,0 +1,117 @@
+summaries:
+  Unique: values.unique().length
+  Filled: values.filter(!value.isType("null")).length
+views:
+  - type: table
+    name: Table
+    groupBy:
+      property: file.folder
+      direction: ASC
+    order:
+      - file.name
+      - file.basename
+      - file.ctime
+      - file.folder
+      - file.fullname
+      - file.mtime
+      - file.size
+      - file.path
+      - updated
+      - type
+      - title
+      - team
+      - target-date
+      - tags
+      - version
+      - weather
+      - status
+      - system-type
+      - target_date
+      - file.tags
+      - file.ext
+      - file.backlinks
+      - file.embeds
+      - achievement-reference
+      - api_name
+      - api_type
+      - authentication
+      - api_version
+      - author
+      - base_url
+      - budget
+      - category
+      - completion_date
+      - created
+      - design_lead
+      - energy_level
+      - review-frequency
+      - review-date
+      - review_frequency
+      - research_type
+      - research_title
+      - research_domain
+      - related-files
+      - refresh-interval
+      - priority
+      - note_taker
+      - review-cycle
+      - tech_lead
+      - teamMember
+      - template_version
+      - timeline
+      - workshop-type
+      - validation_rules
+      - team_lead
+      - start-date
+      - start_date
+      - stakeholders
+      - section
+      - meeting_duration
+      - meeting_lead
+      - error-handling-type
+      - location
+      - lead_researcher
+      - last_updated
+      - integration-status
+      - implementation-status
+      - excalidraw-plugin
+      - focus_area
+      - console-type
+      - maintainer
+      - dashboard-type
+      - design_system_name
+      - development_lead
+      - mood
+      - modified
+      - meeting_type
+    sort:
+      - property: file.ctime
+        direction: ASC
+      - property: priority
+        direction: ASC
+      - property: file.path
+        direction: ASC
+      - property: target-date
+        direction: ASC
+      - property: file.basename
+        direction: DESC
+      - property: updated
+        direction: ASC
+      - property: file.size
+        direction: DESC
+    columnSize:
+      file.links: 1265
+      file.basename: 241
+      file.path: 188
+      note.related-files: 154
+  - type: cards
+    name: View
+    order:
+      - file.name
+      - file.folder
+      - tags
+      - file.tags
+      - api_name
+      - api_type
+      - api_version
+      - created

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identity Verification Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .risk-high { border-left: 4px solid #ef4444; }
+        .risk-medium { border-left: 4px solid #f59e0b; }
+        .risk-low { border-left: 4px solid #22c55e; }
+        .verification-high { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .verification-medium { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .verification-low { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .platform-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .platform-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-user-check text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Identity Verification Platform</h1>
+                        <p class="text-purple-100">BeenVerified, TruthFinder & identity analytics integration</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">Last Updated: <span id="lastUpdated" class="font-mono"></span></span>
+                    <button onclick="refreshData()" class="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Key Metrics -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">✅ Identity Verification Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Overall Confidence</p>
+                            <p class="text-3xl font-bold text-green-600">92.5%</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 3.2% improvement
+                            </p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-shield-alt text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Verified Identities</p>
+                            <p class="text-3xl font-bold text-blue-600">89.3%</p>
+                            <p class="text-xs text-blue-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 2.1% improvement
+                            </p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-user-check text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Identity Theft Risk</p>
+                            <p class="text-3xl font-bold text-orange-600">8.3%</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-down"></i> 1.4% reduction
+                            </p>
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-exclamation-triangle text-orange-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Reputation Score</p>
+                            <p class="text-3xl font-bold text-purple-600">87/100</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 4 points
+                            </p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-star text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Integration Status -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🔗 Verification Platform Status</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="platform-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="verification-high w-12 h-12 rounded-full flex items-center justify-center">
+                                <i class="fas fa-search text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">BeenVerified</h3>
+                                <p class="text-sm text-gray-600">Background checks</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Reports Generated</span>
+                            <span class="font-bold text-gray-900">1,247</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Success Rate</span>
+                            <span class="font-bold text-green-600">97.3%</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Avg Response Time</span>
+                            <span class="font-bold text-gray-900">2.3s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="platform-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="verification-high w-12 h-12 rounded-full flex items-center justify-center">
+                                <i class="fas fa-fingerprint text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">TruthFinder</h3>
+                                <p class="text-sm text-gray-600">Deep search</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Reports Generated</span>
+                            <span class="font-bold text-gray-900">892</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Success Rate</span>
+                            <span class="font-bold text-green-600">95.8%</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Avg Response Time</span>
+                            <span class="font-bold text-gray-900">3.1s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="platform-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="verification-medium w-12 h-12 rounded-full flex items-center justify-center">
+                                <i class="fas fa-id-card text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">InstantCheckmate</h3>
+                                <p class="text-sm text-gray-600">Instant checks</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Limited</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Reports Generated</span>
+                            <span class="font-bold text-gray-900">456</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Success Rate</span>
+                            <span class="font-bold text-yellow-600">89.2%</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Avg Response Time</span>
+                            <span class="font-bold text-gray-900">4.7s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verification Components -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 Verification Component Analysis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">📋 Document Verification</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">ID Documents</span>
+                            <span class="text-sm font-bold text-green-600">94.2%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 94.2%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Passport</span>
+                            <span class="text-sm font-bold text-blue-600">91.8%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 91.8%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Driver's License</span>
+                            <span class="text-sm font-bold text-purple-600">89.5%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: 89.5%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🧬 Biometric Verification</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Facial Recognition</span>
+                            <span class="text-sm font-bold text-green-600">96.7%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 96.7%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Fingerprint</span>
+                            <span class="text-sm font-bold text-blue-600">93.4%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 93.4%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Voice Recognition</span>
+                            <span class="text-sm font-bold text-orange-600">87.2%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-orange-600 h-2 rounded-full" style="width: 87.2%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🌐 Data Source Verification</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Public Records</span>
+                            <span class="text-sm font-bold text-green-600">92.1%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 92.1%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Social Media</span>
+                            <span class="text-sm font-bold text-purple-600">88.9%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: 88.9%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Commercial Data</span>
+                            <span class="text-sm font-bold text-blue-600">85.3%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 85.3%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Verification Success Trends -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">📈 Verification Success Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="verificationChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Risk Distribution -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🎯 Risk Distribution Analysis</h3>
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Verifications -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 Recent Identity Verifications</h2>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verification Level</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Platform</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="verificationsTable">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Conflicts & Issues -->
+        <section class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">⚠️ Data Conflicts</h3>
+                    <div class="space-y-3" id="dataConflicts">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🚨 High Risk Alerts</h3>
+                    <div class="space-y-3" id="riskAlerts">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compliance Status -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🛡️ Compliance & Regulatory Status</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-shield text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">KYC</h3>
+                    <p class="text-sm text-gray-600 mb-2">Know Your Customer</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">Compliant</span>
+                    <p class="text-xs text-gray-500 mt-2">98.7% coverage</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-balance-scale text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">AML</h3>
+                    <p class="text-sm text-gray-600 mb-2">Anti-Money Laundering</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">Compliant</span>
+                    <p class="text-xs text-gray-500 mt-2">96.3% screening</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-gavel text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">Sanctions</h3>
+                    <p class="text-sm text-gray-600 mb-2">Watchlist Screening</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">Compliant</span>
+                    <p class="text-xs text-gray-500 mt-2">Updated daily</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-yellow-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">GDPR</h3>
+                    <p class="text-sm text-gray-600 mb-2">Data Protection</p>
+                    <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">In Progress</span>
+                    <p class="text-xs text-gray-500 mt-2">87.4% compliant</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">Identity Verification Dashboard • Multi-platform identity analytics & risk assessment</p>
+            <p class="text-xs text-gray-500 mt-2">Data refreshes every 30 seconds • Last sync: <span id="lastSync"></span></p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data generation
+        const identityData = {
+            recentVerifications: [
+                { user: 'user_45', level: 'Enhanced', confidence: 94.2, riskScore: 12, platform: 'BeenVerified', status: 'verified' },
+                { user: 'user_89', level: 'Standard', confidence: 87.8, riskScore: 18, platform: 'TruthFinder', status: 'verified' },
+                { user: 'user_123', level: 'Basic', confidence: 76.3, riskScore: 25, platform: 'InstantCheckmate', status: 'pending' },
+                { user: 'user_67', level: 'Enhanced', confidence: 91.5, riskScore: 8, platform: 'BeenVerified', status: 'verified' },
+                { user: 'user_34', level: 'Standard', confidence: 83.7, riskScore: 15, platform: 'TruthFinder', status: 'verified' }
+            ],
+            dataConflicts: [
+                { user: 'user_89', field: 'Date of Birth', conflict: '1985-03-15 vs 1985-05-15', severity: 'medium' },
+                { user: 'user_156', field: 'Address', conflict: '123 Main St vs 123 Main Street', severity: 'low' },
+                { user: 'user_234', field: 'Phone Number', conflict: '555-0123 vs 555-0124', severity: 'medium' },
+                { user: 'user_78', field: 'SSN', conflict: 'Last 4 digits mismatch', severity: 'high' }
+            ],
+            riskAlerts: [
+                { user: 'user_89', type: 'Synthetic Identity Pattern', riskScore: 78, detected: '2 hours ago' },
+                { user: 'user_156', type: 'High Velocity Account Creation', riskScore: 65, detected: '4 hours ago' },
+                { user: 'user_234', type: 'Cross-Platform Inconsistency', riskScore: 52, detected: '6 hours ago' },
+                { user: 'user_78', type: 'Document Forgery Suspected', riskScore: 89, detected: '1 hour ago' }
+            ]
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLastUpdated();
+            populateVerificationsTable();
+            createVerificationChart();
+            createRiskChart();
+            populateDataConflicts();
+            populateRiskAlerts();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        });
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+            document.getElementById('lastSync').textContent = now.toLocaleString();
+        }
+
+        function populateVerificationsTable() {
+            const tbody = document.getElementById('verificationsTable');
+            tbody.innerHTML = '';
+            
+            identityData.recentVerifications.forEach(verification => {
+                const riskClass = verification.riskScore > 20 ? 'risk-high' : 
+                                 verification.riskScore > 15 ? 'risk-medium' : 'risk-low';
+                
+                const statusBadge = verification.status === 'verified' ? 
+                    '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Verified</span>' :
+                    '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>';
+                
+                const levelBadge = verification.level === 'Enhanced' ? 
+                    '<span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Enhanced</span>' :
+                    verification.level === 'Standard' ? 
+                    '<span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Standard</span>' :
+                    '<span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Basic</span>';
+                
+                const row = `
+                    <tr class="${riskClass}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${verification.user}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${levelBadge}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${verification.confidence}%</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full ${getRiskBadgeClass(verification.riskScore)}">${verification.riskScore}/100</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${verification.platform}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function getRiskBadgeClass(score) {
+            if (score > 20) return 'bg-red-100 text-red-800';
+            if (score > 15) return 'bg-yellow-100 text-yellow-800';
+            return 'bg-green-100 text-green-800';
+        }
+
+        function createVerificationChart() {
+            const ctx = document.getElementById('verificationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Verification Success %',
+                            data: [87.2, 88.5, 89.3, 90.1, 91.4, 92.5],
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Confidence Score',
+                            data: [84.1, 85.7, 87.2, 88.6, 90.3, 92.5],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Risk Reduction',
+                            data: [11.2, 10.5, 9.8, 9.1, 8.7, 8.3],
+                            borderColor: 'rgb(245, 158, 11)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 75,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function createRiskChart() {
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Risk (0-15)', 'Medium Risk (16-25)', 'High Risk (26-50)', 'Critical Risk (>50)'],
+                    datasets: [{
+                        data: [68, 22, 8, 2],
+                        backgroundColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(239, 68, 68)',
+                            'rgb(127, 29, 29)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function populateDataConflicts() {
+            const container = document.getElementById('dataConflicts');
+            container.innerHTML = '';
+            
+            identityData.dataConflicts.forEach((conflict, _index) => {
+                const severityClass = conflict.severity === 'high' ? 'bg-red-50 border-red-200' : 
+                                   conflict.severity === 'medium' ? 'bg-orange-50 border-orange-200' : 
+                                   'bg-yellow-50 border-yellow-200';
+                
+                const severityBadge = conflict.severity === 'high' ? 'bg-red-100 text-red-800' :
+                                     conflict.severity === 'medium' ? 'bg-orange-100 text-orange-800' :
+                                     'bg-yellow-100 text-yellow-800';
+                
+                const item = `
+                    <div class="p-4 rounded-lg border ${severityClass}">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${conflict.user}: ${conflict.field}</p>
+                                <p class="text-xs text-gray-500 mt-1">${conflict.conflict}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-2 py-1 text-xs rounded-full ${severityBadge}">${conflict.severity.toUpperCase()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += item;
+            });
+        }
+
+        function populateRiskAlerts() {
+            const container = document.getElementById('riskAlerts');
+            container.innerHTML = '';
+            
+            identityData.riskAlerts.forEach((alert, _index) => {
+                const severityClass = alert.riskScore > 70 ? 'bg-red-50 border-red-200' : 
+                                   alert.riskScore > 50 ? 'bg-orange-50 border-orange-200' : 
+                                   'bg-yellow-50 border-yellow-200';
+                
+                const severityBadge = alert.riskScore > 70 ? 'bg-red-100 text-red-800' :
+                                     alert.riskScore > 50 ? 'bg-orange-100 text-orange-800' :
+                                     'bg-yellow-100 text-yellow-800';
+                
+                const item = `
+                    <div class="p-4 rounded-lg border ${severityClass}">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${alert.user}: ${alert.type}</p>
+                                <p class="text-xs text-gray-500 mt-1">Detected ${alert.detected}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-2 py-1 text-xs rounded-full ${severityBadge}">${alert.riskScore}/100</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += item;
+            });
+        }
+
+        function refreshData() {
+            // Simulate data refresh
+            updateLastUpdated();
+            
+            // Add loading animation
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(card => {
+                card.classList.add('animate-pulse-slow');
+            });
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                cards.forEach(card => {
+                    card.classList.remove('animate-pulse-slow');
+                });
+                
+                // Show success notification
+                showNotification('Identity verification data refreshed successfully', 'success');
+            }, 1000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            } z-50`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

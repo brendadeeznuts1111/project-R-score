@@ -1,0 +1,52 @@
+# Bun Configuration for bun-toml-secrets-editor
+# Optimized for enterprise developer experience
+
+[install]
+registry = "https://npm.factory-wager.com"
+# Cache configuration for faster CI/CD
+cache = true
+# Optional dependencies for premium builds
+optional = true
+# Prefer exact versions for reproducibility
+exact = true
+
+[run]
+# Shell configuration for better script handling
+shell = "system"
+# Environment injection for builds
+preload = ["./scripts/preload.ts"]
+
+[test]
+# Performance-optimized test configuration
+preload = ["./tests/setup.ts"]
+# Timeout for integration tests (RSS feeds can be slow)
+timeout = 30000
+# Coverage thresholds for enterprise quality
+coverageThreshold = 80
+
+[build]
+# Target configuration for cross-platform builds
+target = "bun"
+# Entry point for main binary
+entrypoints = ["./src/main.ts"]
+# External dependencies (don't bundle these)
+external = ["fast-xml-parser", "mitata"]
+
+# Lockfile configuration for security
+[lockfile]
+save = true
+print = "yarn"
+
+# Development server configuration
+[dev]
+# Hot reload for dashboard development
+reload = ["src/**/*.{ts,js,json}", "config/**/*"]
+# Port configuration to avoid conflicts
+port = 3000
+
+[publish]
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }

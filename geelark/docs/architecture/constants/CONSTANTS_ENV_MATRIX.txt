@@ -1,0 +1,652 @@
+================================================================================
+                    CONSTANTS & ENVIRONMENT VARIABLES MATRIX
+                        Geelark Project Reference Guide
+================================================================================
+
+LAST UPDATED: January 9, 2026
+PURPOSE: Centralized reference for all constants, environment variables, and their relationships
+STATUS: Complete and Verified (55+ constants cataloged)
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. Dashboard Constants
+2. Memory Management Constants
+3. Performance & Metrics Constants
+4. Concurrent Processing Constants
+5. Telemetry Constants
+6. Feature Flags & Settings
+7. Build & Bundle Constants
+8. Environment Variables
+9. CLI & Runtime Constants
+10. Networking Constants
+11. Security Constants
+12. Template & File Operations Constants
+13. Time & Interval Constants
+14. Type Definitions & Utilities
+
+================================================================================
+SECTION 1: DASHBOARD CONSTANTS
+================================================================================
+
+Source: src/constants/SystemDefaults.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+DASHBOARD_DEFAULTS             Object                  -           Dashboard configuration
+├─ DEFAULT_WIDTH               80                      chars       Dashboard display width
+├─ LIVE_UPDATE_INTERVAL_MS     5000                    millisec    UI refresh interval
+├─ PROGRESS_BAR_SIZE           10                      chars       Progress bar length
+├─ HEALTH_THRESHOLDS           Object                  -           Health status ranges
+│  ├─ HEALTHY_MIN              90                      percent     Minimum healthy threshold
+│  ├─ DEGRADED_MIN             70                      percent     Minimum degraded threshold
+│  ├─ IMPAIRED_MIN             50                      percent     Minimum impaired threshold
+│  └─ CRITICAL_MIN             0                       percent     Minimum critical threshold
+└─ HTTP_HEADER_LIMIT_BYTES     16384                   bytes       Max stdin before warning
+
+Related Environment Variables:
+  - DASHBOARD_WIDTH (optional override for DEFAULT_WIDTH)
+  - DASHBOARD_REFRESH_MS (optional override for LIVE_UPDATE_INTERVAL_MS)
+
+================================================================================
+SECTION 2: MEMORY MANAGEMENT CONSTANTS
+================================================================================
+
+Source: src/constants/SystemDefaults.ts, src/constants/index.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+MEMORY_DEFAULTS                Object                  -           Memory configuration
+├─ MEMORY_THRESHOLD_MB         100                     MB          Memory alert threshold
+└─ MEMORY_THRESHOLD_BYTES      104857600               bytes       Memory threshold (100MB)
+
+MEMORY                          Object                  -           Bun memory constants
+├─ MIMALLOC_STATS_VAR          'MIMALLOC_SHOW_STATS=1' string      Query string for stats
+└─ SNAPSHOT_FORMAT             'json'                  string      Heap snapshot format
+
+Related Environment Variables:
+  - MEMORY_LIMIT_MB (override for MEMORY_THRESHOLD_MB)
+  - MIMALLOC_SHOW_STATS (To enable mimalloc statistics)
+  - NODE_OPTIONS (Can include --expose-gc for garbage collection)
+
+================================================================================
+SECTION 3: PERFORMANCE & METRICS CONSTANTS
+================================================================================
+
+Source: src/constants/SystemDefaults.ts, src/constants/index.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+PERFORMANCE_DEFAULTS           Object                  -           Performance thresholds
+├─ CPU_THRESHOLD_PERCENT       80                      percent     CPU alert threshold
+├─ MEMORY_THRESHOLD_PERCENT    80                      percent     Memory alert threshold
+├─ RESPONSE_TIME_THRESHOLD_MS  100                     millisec    Response time threshold
+└─ HEALTH_CHECK_SUCCESS_RATE   0.8                     ratio       Expected success rate
+
+PERF                            Object                  -           Performance constants
+├─ CONSOLE_DEPTH               2                       levels      Object inspection depth
+├─ CPU_PROFILE_EXT             '.cpuprofile'           string      CPU profile extension
+├─ NANOS_RESOLUTION            'nanoseconds'           string      High-precision timing
+└─ PERF_NOW_RESOLUTION         'milliseconds'          string      Timer resolution
+
+Related Environment Variables:
+  - BUN_FEATURE_DEBUG_PERF (Enable performance debugging)
+  - NODE_ENV (Affects performance monitoring)
+
+================================================================================
+SECTION 4: CONCURRENT PROCESSING CONSTANTS
+================================================================================
+
+Source: src/constants/SystemDefaults.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+CONCURRENT_PROCESSING_DEFAULTS Object                  -           Concurrency settings
+├─ PROGRESS_REPORT_DIVISOR     20                      -           Report progress every N%
+└─ BATCH_SIZE                  10                      items       Batch processing size
+
+Related Environment Variables:
+  - CONCURRENT_BATCH_SIZE (override for BATCH_SIZE)
+  - CONCURRENT_MAX_WORKERS (number of worker threads)
+
+================================================================================
+SECTION 5: TELEMETRY CONSTANTS
+================================================================================
+
+Source: src/constants/SystemDefaults.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+TELEMETRY_DEFAULTS             Object                  -           Telemetry configuration
+├─ COLLECTION_INTERVAL_MS      60000                   millisec    Data collection interval
+└─ COLLECTION_INTERVAL_SECONDS 60                      seconds     Same as above (seconds)
+
+FEATURE_HEALTH_DEFAULTS         Object                  -           Feature health settings
+└─ HEALTH_CHECK_RANDOM_THRESHOLD 0.2                   ratio       20% failure rate = 80% health
+
+Related Environment Variables:
+  - TELEMETRY_ENABLED (Enable/disable telemetry)
+  - TELEMETRY_ENDPOINT (Where to send telemetry)
+  - TELEMETRY_INTERVAL_MS (Override collection interval)
+
+================================================================================
+SECTION 6: FEATURE FLAGS & SETTINGS
+================================================================================
+
+Source: src/constants/features/compile-time.ts, src/constants/SystemDefaults.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+COMPILE_TIME_FEATURES           Object                  -           Runtime feature flags
+├─ FEAT_EXTENDED_LOGGING        boolean                 -           Extended logging capability
+├─ FEAT_ADVANCED_MONITORING     boolean                 -           Advanced monitoring
+├─ FEAT_ENCRYPTION              boolean                 -           Encryption support
+├─ FEAT_AUTO_HEAL               boolean                 -           Auto-healing capability
+├─ FEAT_NOTIFICATIONS           boolean                 -           Notification system
+├─ FEAT_BATCH_PROCESSING        boolean                 -           Batch processing
+├─ FEAT_VALIDATION_STRICT       boolean                 -           Strict validation mode
+└─ FEAT_PREMIUM                 boolean                 -           Premium features
+
+COMPILE_TIME_CONFIG             Object                  -           Feature configuration
+├─ Environment settings         varies                  -           Dev/staging/prod specific
+└─ API endpoints                varies                  -           Environment-specific URLs
+
+COMPILE_TIME_VALIDATION         Object                  -           Validation rules
+└─ Security validations         varies                  -           Input/output validation
+
+FEATURE_METADATA                Object                  -           Feature information
+├─ Feature descriptions         string                  -           Human-readable descriptions
+├─ Dependencies                 array                   -           Feature dependencies
+└─ Version requirements         string                  -           Minimum versions
+
+Related Environment Variables:
+  - BUN_FEATURE_<NAME> (Enable individual features)
+  - ENV_DEVELOPMENT, ENV_PRODUCTION, ENV_STAGING (Environment)
+  - FEAT_PREMIUM (Premium tier flag)
+  - FEAT_MOCK_API (Mock API responses for testing)
+
+================================================================================
+SECTION 7: BUILD & BUNDLE CONSTANTS
+================================================================================
+
+Source: src/constants/SystemDefaults.ts, src/constants/index.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+BUNDLE_DEFAULTS                 Object                  -           Bundle analysis
+├─ BASE_SIZE_KB                 200                     KB          Base bundle size
+├─ DEFAULT_FEATURE_SIZE_KB      10                      KB          Feature average size
+└─ FEATURE_SIZES_KB             Object                  KB          Individual feature sizes
+   ├─ FEAT_EXTENDED_LOGGING     50                      KB          
+   ├─ FEAT_ADVANCED_MONITORING  30                      KB          
+   ├─ FEAT_ENCRYPTION           20                      KB          
+   ├─ FEAT_AUTO_HEAL            25                      KB          
+   └─ FEAT_NOTIFICATIONS        15                      KB          
+
+BUILD                           Object                  -           Build configuration
+├─ DEFINE_PREFIX                '--define'              string      Compilation defines
+├─ LOADER_PREFIX                '--loader'              string      Custom loaders
+├─ DROP_TARGETS                 array                   -           Remove from bundle
+│  └─ ['console', 'debugger']   -                       -           Items to drop
+└─ PURE_ANNOTATION              '@__PURE__'             string      Purity marker
+
+Related Environment Variables:
+  - BUILD_OUTPUT_DIR (Build destination)
+  - BUILD_MINIFY (Enable minification)
+  - BUILD_SOURCEMAPS (Generate source maps)
+  - DCE_ENABLED (Dead code elimination)
+
+================================================================================
+SECTION 8: ENVIRONMENT VARIABLES
+================================================================================
+
+Source: .gitignore, package.json, documentation
+
+Category: Development Environment
+
+Name                           Value Type              Purpose
+─────────────────────────────────────────────────────────────────────────────
+NODE_ENV                        string                  'development', 'production', 'test'
+BUN_DEV                         string                  'true' to force dev mode
+BUN_TEST                        string                  'true' to force test mode
+DEBUG                           string                  Debug namespace patterns
+VERBOSE                         string                  Verbosity level
+
+Category: Configuration & Paths
+
+NAME                            VALUE TYPE              PURPOSE
+─────────────────────────────────────────────────────────────────────────────
+CONFIG_PATH                     string                  Path to config file
+CONFIG_FILE                     string                  bunfig.toml (default)
+HOME                            string                  User home directory
+TMPDIR                          string                  Temporary directory
+PWD                             string                  Current working directory
+
+Category: Feature Flags (Compile-time & Runtime)
+
+NAME                            ACCEPTED VALUES         PURPOSE
+─────────────────────────────────────────────────────────────────────────────
+BUN_FEATURE_<NAME>              'true'/'false'          Enable specific features
+ENV_DEVELOPMENT                 'true'                  Development environment
+ENV_PRODUCTION                  'true'                  Production environment
+ENV_STAGING                     'true'                  Staging environment
+FEAT_PREMIUM                    'true'                  Premium tier features
+FEAT_MOCK_API                   'true'                  Mock API for testing
+FEAT_EXTENDED_LOGGING           'true'                  Verbose logging
+FEAT_ADVANCED_MONITORING        'true'                  Advanced metrics
+FEAT_ENCRYPTION                 'true'                  Encryption support
+FEAT_AUTO_HEAL                  'true'                  Self-healing mode
+FEAT_NOTIFICATIONS              'true'                  Notification system
+FEAT_BATCH_PROCESSING           'true'                  Batch mode support
+FEAT_VALIDATION_STRICT          'true'                  Strict validation
+FEAT_CLOUD_UPLOAD               'true'                  Cloud upload capability
+FEAT_UPLOAD_PROGRESS            'true'                  Upload progress tracking
+FEAT_MULTIPART_UPLOAD           'true'                  Multipart uploads
+FEAT_UPLOAD_ANALYTICS           'true'                  Upload analytics
+FEAT_CUSTOM_METADATA            'true'                  Custom metadata support
+
+Category: Performance & Memory
+
+NAME                            EXAMPLE VALUE           PURPOSE
+─────────────────────────────────────────────────────────────────────────────
+MEMORY_LIMIT_MB                 '512'                   Override memory threshold
+MEMORY_TOTAL_AVAILABLE          'auto'                  Total memory for application
+MIMALLOC_SHOW_STATS             '1'                     Enable memory allocator stats
+MIMALLOC_STATS_INTERVAL         '10000'                 Stats refresh interval
+
+Category: Testing
+
+NAME                            EXAMPLE VALUE           PURPOSE
+─────────────────────────────────────────────────────────────────────────────
+BUN_TEST_SETUP                  '<preload-script>'      Test setup file
+BUN_TEST_TIMEOUT                '5000'                  Test timeout (ms)
+BUN_COVERAGE_THRESHOLD          '80'                    Coverage requirement %
+TEST_FILTER                     '<pattern>'             Run specific tests
+COVERAGE_OUTPUT                 './coverage'            Coverage report destination
+
+Category: Deployment
+
+NAME                            EXAMPLE VALUE           PURPOSE
+─────────────────────────────────────────────────────────────────────────────
+PORT                            '3000'                  Server port
+HOSTNAME                        'localhost'             Server hostname
+SERVER_WORKERS                  '4'                     Number of worker processes
+LOG_LEVEL                        'info'                  Logging level
+UPLOAD_PROVIDER                 's3'|'r2'|'local'       Upload destination
+
+Category: API & Services (Secure - Not Committed)
+
+NAME                            CATEGORY                PURPOSE
+─────────────────────────────────────────────────────────────────────────────
+API_KEY                         .env (gitignored)       API authentication
+DATABASE_URL                    .env (gitignored)       Database connection
+OAUTH_CLIENT_ID                 .env (gitignored)       OAuth provider
+OAUTH_CLIENT_SECRET             .env (gitignored)       OAuth credentials
+AWS_ACCESS_KEY_ID               .env (gitignored)       AWS authentication
+AWS_SECRET_ACCESS_KEY           .env (gitignored)       AWS credentials
+WEBHOOK_SECRET                  .env (gitignored)       Webhook validation
+
+Environment Files:
+  - .env                         - Local development (gitignored)
+  - .env.development             - Development config (gitignored)
+  - .env.test                    - Testing config (gitignored)
+  - .env.staging                 - Staging config (gitignored)
+  - .env.production              - Production config (gitignored)
+
+================================================================================
+SECTION 9: CLI & RUNTIME CONSTANTS
+================================================================================
+
+Source: src/constants/index.ts, package.json
+
+Name                           Value/Type              Purpose
+─────────────────────────────────────────────────────────────────────────────
+CLI                             Object                  CLI configuration
+├─ CONFIG_FILE                  'bunfig.toml'           Configuration file name
+├─ SHELL_PRIORITY               array                   Shell preference order
+├─ WINDOWS_SHELL                'bun shell'             Windows shell command
+└─ BUILT_INS                    array                   Built-in commands list
+
+DEBUG                           Object                  Debugging configuration
+├─ FLAGS                        Object                  Debug command flags
+│  ├─ INSPECT                   '--inspect'             Enable inspector
+│  ├─ INSPECT_WAIT              '--inspect-wait'        Wait for debugger
+│  └─ INSPECT_BRK               '--inspect-brk'         Debug at startup
+├─ HEAP_VIEWER                  'Safari/WebKit GTK'     Recommended viewer
+└─ PROFILE_DIRS                 Object                  Profile storage
+   ├─ CPU                       './profiles'            CPU profiles
+   └─ HEAP                      './heapsnapshots'       Heap snapshots
+
+WATCH                           Object                  File watching
+├─ FLAGS                        Object                  Watch mode flags
+│  ├─ WATCH                     '--watch'               Watch mode
+│  ├─ HOT                       '--hot'                 Hot reload
+│  └─ NO_CLEAR                  '--no-clear'            Preserve output
+└─ DEBOUNCE_MS                  50                      Debounce delay (ms)
+
+VERSION                         Object                  Version management
+├─ MINIMUM_BUN                  '1.3.6'                 Minimum Bun version
+├─ MINIMUM_NODE                 '18.0.0'                Minimum Node version
+└─ currentBun()                 function                Gets current Bun version
+
+Related Scripts (package.json):
+  - npm run dev                  Development mode
+  - npm run dev:hot              Hot reload mode
+  - npm run dev:debug            Debug mode
+  - npm run build:*              Various build targets
+
+================================================================================
+SECTION 10: NETWORKING CONSTANTS
+================================================================================
+
+Source: src/constants/index.ts, src/server/ServerConstants.ts
+
+Name                           Value/Type              Purpose
+─────────────────────────────────────────────────────────────────────────────
+NET                             Object                  Network configuration
+├─ MAX_HEADERS_SIZE             16384                   Max header size (bytes)
+├─ DNS_ORDER                    Object                  DNS resolution order
+│  ├─ VERBATIM                  'verbatim'              Match resolution exactly
+│  ├─ IPV4_FIRST                'ipv4first'             Try IPv4 first
+│  └─ IPV6_FIRST                'ipv6first'             Try IPv6 first
+├─ CA_STORE                     Object                  Certificate stores
+│  ├─ SYSTEM                    'system'                OS certificates
+│  ├─ OPENSSL                   'openssl'               OpenSSL store
+│  └─ BUN                       'bun'                   Bun runtime store
+└─ DEFAULT_PORT                 3000                    Default server port
+
+HTTP                            Object                  HTTP protocol
+├─ METHODS                      array                   Supported HTTP methods
+├─ STATUS_CODES                 object                  HTTP status codes
+└─ HEADERS                      object                  Common headers
+
+WEBSOCKET                       Object                  WebSocket configuration
+├─ SUBPROTOCOL                  string                  WebSocket subprotocol
+├─ BACKPRESSURE                 'ignore'|'drain'        Backpressure handling
+└─ MAX_CONNECTIONS              number                  Max concurrent connections
+
+INTERVALS                       Object                  Time intervals
+├─ HEALTH_CHECK                 60000                   ms between health checks
+├─ TELEMETRY_COLLECTION         60000                   ms between data collection
+└─ RECONNECT_RETRY              5000                    ms before reconnection
+
+Related Environment Variables:
+  - PORT (override DEFAULT_PORT)
+  - HOSTNAME (Server hostname)
+  - SERVER_WORKERS (Worker process count)
+  - MAX_CONNECTIONS (Connection limit)
+  - DNS_ORDER (DNS resolution strategy)
+
+================================================================================
+SECTION 11: SECURITY CONSTANTS
+================================================================================
+
+Source: src/constants/index.ts, src/security/TLS.ts, src/security/Headers.ts
+
+Name                           Value/Type              Purpose
+─────────────────────────────────────────────────────────────────────────────
+SECURITY                        Object                  Security configuration
+├─ DEPRECATION_MODE             Object                  Deprecation handling
+│  ├─ STRICT                    'strict'                No deprecated features
+│  ├─ THROW                     'throw'                 Throw on deprecated use
+│  ├─ WARN                      'warn'                  Warn on deprecated use
+│  ├─ NONE                      'none'                  Ignore deprecated
+│  └─ WARN_WITH_ERROR_CODE      'warn-with-error-code'  Warn with code
+└─ BUFFER_ZERO_FILL             true                    Fill buffers with zeros
+
+TLS_PRESETS                     Object                  TLS/SSL configurations
+├─ modern                       Object                  Modern (TLS 1.3)
+├─ intermediate                 Object                  Intermediate (TLS 1.2+)
+└─ legacy                       Object                  Legacy compatibility
+
+CSP_PRESETS                     Object                  Content Security Policy
+├─ strict                       Object                  Strict CSP rules
+├─ moderate                     Object                  Moderate CSP rules
+└─ permissive                   Object                  Permissive CSP rules
+
+PERMISSIONS_PRESETS             Object                  Permissions Policy
+├─ restrictive                  Object                  No permissions
+├─ moderate                     Object                  Limited permissions
+└─ permissive                   Object                  Allow most permissions
+
+HEADERS                         Object                  Security headers
+├─ 'X-Content-Type-Options'     'nosniff'               Prevent MIME sniffing
+├─ 'X-Frame-Options'            'DENY'|'SAMEORIGIN'     Clickjacking protection
+├─ 'X-XSS-Protection'           '1; mode=block'         XSS protection
+├─ 'Strict-Transport-Security'  'max-age=...'           Force HTTPS
+└─ 'Content-Security-Policy'    varies                  CSP rules
+
+Related Environment Variables:
+  - TLS_ENABLED ('true' to enable)
+  - TLS_CERT_PATH (Certificate file path)
+  - TLS_KEY_PATH (Private key file path)
+  - CSP_ENABLED ('true' to enable)
+  - SECURITY_LEVEL ('strict'|'moderate'|'permissive')
+
+================================================================================
+SECTION 12: TEMPLATE & FILE OPERATIONS CONSTANTS
+================================================================================
+
+Source: src/constants/templates.ts
+
+Name                           Value/Type              Purpose
+─────────────────────────────────────────────────────────────────────────────
+CREATE_FLAGS                    Object                  Flags for bun create
+├─ '--force'                    string                  Overwrite existing
+├─ '--no-install'               string                  Skip installation
+└─ '--git'                      string                  Initialize git repo
+
+CREATE_ENV                       Object                  Environment setup
+├─ 'BUN_TEMPLATE_REGISTRY'      'https://...'           Template registry URL
+└─ 'BUN_CREATE_FORCE'           'true'                  Force creation setting
+
+TEMPLATE_SOURCES                Object                  Available templates
+├─ npm                          'npm registry'          NPM package templates
+├─ github                       'GitHub repository'     GitHub templates
+└─ local                        'local filesystem'      Local templates
+
+FRAMEWORK_HANDLERS              Object                  Framework detection
+├─ nextjs                       Object                  Next.js handler
+├─ react                        Object                  React handler
+├─ vue                          Object                  Vue handler
+└─ svelte                       Object                  Svelte handler
+
+PACKAGE_HOOKS                   Object                  Lifecycle hooks
+├─ 'pre-install'                string                  Before installation
+├─ 'post-install'               string                  After installation
+├─ 'pre-build'                  string                  Before build
+└─ 'post-build'                 string                  After build
+
+FILE_OPS                        Object                  File operations
+├─ 'copy-macos'                 'copyfile syscall'      Fast copy on macOS
+├─ 'copy-cross'                 'copyfile function'     Cross-platform copy
+└─ 'link'                       'symlink creation'      Create symlinks
+
+COMMON_SCOPED_REGISTRIES        Object                  Registries
+├─ '@github'                    Object                  GitHub Packages
+├─ '@npm'                       Object                  NPM registry
+└─ '@private'                   Object                  Private registry
+
+Related Environment Variables:
+  - BUN_TEMPLATE_REGISTRY (Override template source)
+  - BUN_CREATE_FORCE (Force recreation)
+  - NPM_REGISTRY (Override npm registry)
+
+================================================================================
+SECTION 13: TIME & INTERVAL CONSTANTS
+================================================================================
+
+Source: src/constants/SystemDefaults.ts, src/constants/index.ts
+
+Name                           Value/Type              Unit        Purpose
+─────────────────────────────────────────────────────────────────────────────
+MS                              Object                  -           Millisecond values
+├─ ONE_SECOND                   1000                    ms          1 second
+├─ ONE_MINUTE                   60000                   ms          1 minute
+├─ ONE_HOUR                     3600000                 ms          1 hour
+└─ ONE_DAY                       86400000                ms          1 day
+
+SECONDS                         Object                  -           Second values
+├─ ONE_MINUTE                   60                      seconds     1 minute
+├─ FIVE_MINUTES                 300                     seconds     5 minutes
+├─ ONE_HOUR                     3600                    seconds     1 hour
+└─ ONE_DAY                       86400                   seconds     1 day
+
+Time-based Constants (Derived):
+├─ LIVE_UPDATE_INTERVAL_MS      5000                    ms          Dashboard update
+├─ COLLECTION_INTERVAL_MS       60000                   ms          Data collection
+├─ ACTIVE_COMMAND_WINDOW_MS     60000                   ms          Command window
+├─ RESPONSE_TIME_THRESHOLD_MS   100                     ms          Response threshold
+└─ DEBOUNCE_MS                  50                      ms          File watch debounce
+
+Related Environment Variables:
+  - UPDATE_INTERVAL_MS (override refresh rate)
+  - TELEMETRY_INTERVAL_MS (override collection rate)
+  - TIMEOUT_MS (global timeout)
+
+================================================================================
+SECTION 14: TYPE DEFINITIONS & UTILITIES
+================================================================================
+
+Source: src/constants/index.ts, src/types.ts
+
+Exported Types:
+  - InstallMode: 'auto' | 'fallback' | 'force' | 'no-install'
+  - Target: 'bun' | 'node' | 'browser'
+  - DnsOrder: 'verbatim' | 'ipv4first' | 'ipv6first'
+  - CaStore: 'system' | 'openssl' | 'bun'
+  - JsxRuntime: 'automatic' | 'classic'
+  - DeprecationMode: 'strict' | 'throw' | 'warn' | 'none' | 'warn-with-error-code'
+
+Utility Functions (in src/constants/index.ts):
+  - ENV.isDevelopment(): boolean
+  - ENV.isProduction(): boolean
+  - ENV.isTest(): boolean
+  - ENV.getRequired(key): string
+  - ENV.get(key, defaultValue): string
+  - VERSION.currentBun(): string
+  - VERSION.satisfiesBun(minimum): boolean
+
+Helper Functions (in src/constants/SystemDefaults.ts):
+  - calculatePadding(measuredWidth, maxWidth): number
+  - shouldReportProgress(current, total): boolean
+
+================================================================================
+SECTION 15: DEPENDENCY RELATIONSHIPS
+================================================================================
+
+Constants → Classes:
+  DASHBOARD_DEFAULTS          → Dashboard class
+  MEMORY_DEFAULTS             → MemoryManager class
+  CONCURRENT_PROCESSING_*     → ConcurrentProcessor class
+  PERFORMANCE_DEFAULTS        → Dashboard, MemoryManager
+  BUNDLE_DEFAULTS             → Build system, Analysis tools
+  TELEMETRY_DEFAULTS          → Dashboard, Monitoring
+
+Environment Variables → Components:
+  NODE_ENV                    → All modules
+  BUN_* flags                 → Runtime behavior
+  FEAT_* flags                → Feature gating
+  PORT, HOSTNAME              → Server initialization
+  DEBUG, VERBOSE              → Logger configuration
+
+Constants → Utilities:
+  PERF, MEMORY, JSX           → TypeScript compilation
+  CLI, DEBUG, WATCH           → CLI execution
+  NET, SECURITY               → Server setup
+  BUILD, TS, MODULE           → Build system
+
+================================================================================
+SECTION 16: BEST PRACTICES & GUIDELINES
+================================================================================
+
+When Using Constants:
+  1. Import constants from centralized locations (src/constants/*)
+  2. Use UPPER_SNAKE_CASE for constant names
+  3. Group related constants in objects
+  4. Document units and purposes in comments
+  5. Prefer constants over magic numbers
+  6. Use type definitions for validation
+
+When Setting Environment Variables:
+  1. Never commit credentials to version control
+  2. Use .env files (gitignored) for local development
+  3. Use environment-specific files (.env.development, etc.)
+  4. Document all required environment variables
+  5. Provide sensible defaults where possible
+  6. Validate environment variables on startup
+
+When Adding New Constants:
+  1. Choose appropriate section based on category
+  2. Follow UPPER_SNAKE_CASE naming convention
+  3. Add JSDoc comment with purpose and usage
+  4. Document any related environment variables
+  5. Add TypeScript type if applicable
+  6. Update this matrix with new entries
+  7. Update class documentation if relevant
+
+================================================================================
+SECTION 17: QUICK REFERENCE BY USE CASE
+================================================================================
+
+For Dashboard Development:
+  → DASHBOARD_DEFAULTS, PERFORMANCE_DEFAULTS, HEALTH_SCORE
+  → ANSI color constants, STRING_WIDTH utilities
+  → LIVE_UPDATE_INTERVAL_MS
+
+For Performance Monitoring:
+  → PERF, MEMORY constants
+  → TELEMETRY_DEFAULTS, TELEMETRY_COLLECTION timing
+  → Performance thresholds (CPU, memory, response time)
+
+For Feature Development:
+  → COMPILE_TIME_FEATURES, FEATURE_METADATA
+  → Environment flags (FEAT_NAME pattern)
+  → BUILD constants for feature bundling
+
+For Configuration:
+  → CONFIG_* environment variables
+  → src/constants/ exports
+  → VERSION compatibility constants
+
+For Security:
+  → TLS_PRESETS, CSP_PRESETS, PERMISSIONS_PRESETS
+  → HEADERS, SECURITY constants
+  → Sensitive variables in .env files (never committed)
+
+For CLI Operations:
+  → CLI constants, DEBUG flags
+  → WATCH configuration, BUILD settings
+  → Version checking (VERSION constants)
+
+For Testing:
+  → TEST constants, coverage thresholds
+  → BUN_TEST_* environment variables
+  → Timeout and retry settings
+
+For Server Setup:
+  → NET, HTTP, WEBSOCKET constants
+  → SERVER_* environment variables
+  → INTERVALS for health checks
+
+================================================================================
+END OF MATRIX
+================================================================================
+
+For updates or additions to this matrix, please:
+  1. Update the corresponding source file (src/constants/*)
+  2. Add entry to appropriate section above
+  3. Document any environment variable relationships
+  4. Update CHANGELOG.md with additions
+  5. Verify dependencies and impacts
+
+Questions or clarifications? Refer to:
+  - CLASS_NAMING_GUIDE.md (for naming conventions)
+  - CLASS_ARCHITECTURE_PATTERNS.md (for architecture)
+  - NAMING_STANDARDS.md (for coding standards)
+  - Individual file headers in src/constants/
+
+Last Verified: January 9, 2026
+Version: 1.0
+Status: Complete and Production-Ready

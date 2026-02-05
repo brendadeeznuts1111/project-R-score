@@ -1,0 +1,123 @@
+[run]
+# Surgical precision run configuration for enterprise development
+# Use Bun's shell for cross-platform consistency and performance
+shell = "bun"
+# Auto-alias node to bun for seamless script compatibility
+bun = true
+# Suppress command reporting for clean CI output
+silent = false
+
+[install]
+
+[install.cache]
+# Global cache directory with optimized backend configurations
+dir = "~/.bun/install/cache"
+
+# Advanced cache backend optimization for macOS performance
+# clonefile: Copy-on-write for instant operations (macOS optimized)
+# hardlink: Zero additional disk usage for shared packages
+# copyfile: Universal compatibility with safe operations
+backend = "clonefile"  # Use clonefile for macOS performance
+fallback = "hardlink"  # Fallback to hardlink for compatibility
+
+
+[test]
+# Root directory for test files
+root = "./__tests__"
+# Default timeout for tests (in milliseconds)
+timeout = 30000
+# Preload modules (same as top-level preload, but test-only)
+preload = ["./__tests__/setup.ts"]
+# Enable experimental features for tests
+smol = true
+# Enable comprehensive coverage reporting
+coverage = true
+# Coverage failure threshold (90%)
+coverageThreshold = { line = 0.85, function = 0.9, statement = 0.88 }
+# Skip test files in coverage (to avoid self-coverage)
+coverageSkipTestFiles = true
+# Exclude generated and external files from coverage
+coveragePathIgnorePatterns = [
+  "**/*.config.ts",
+  "**/*.config.js",
+  "dist/**",
+  "build/**",
+  "coverage/**",
+  "**/*.generated.*",
+  "**/*.spec.ts",
+  "**/*.test.ts",
+  "matrix-mcp-*",
+  "surgical-*.ts",
+  "poly-*.ts"
+]
+# Multiple coverage reporters for different needs
+coverageReporter = ["text", "lcov"]
+# Custom coverage output directory
+coverageDir = "coverage"
+# Run tests in random order to catch interdependencies
+randomize = true
+# Reproducible randomization for CI debugging
+seed = 2444615283
+# Re-run flaky tests multiple times
+rerunEach = 2
+# Auto-enable concurrency for performance-critical tests
+concurrentTestGlob = ["__tests__/matrix-mcp-tool.bench.ts"]
+# Show only failures to reduce output noise
+onlyFailures = false
+
+[test.reporter]
+# Enable compact dots reporter for fast feedback
+dots = true
+# Enable JUnit XML for CI integrations
+junit = "test-results.xml"
+
+[build]
+# Output directory for builds
+outdir = "./dist"
+# Source map generation
+sourcemap = "linked"
+
+[runtime]
+# Enable experimental features
+experimental = true
+
+[lint]
+# Enable linting
+enabled = false
+
+# Project-specific configuration
+[matrix-server]
+# Default MCP server configuration
+host = "localhost"
+port = 3001
+log-level = "info"
+timeout = 30000
+
+[matrix-testing]
+# Testing configuration for MCP tools
+parallel-jobs = 4
+coverage-threshold = 80
+performance-baseline = true
+
+# Environment-specific overrides
+[dev]
+test = { timeout = 60000, coverage = false }
+
+[prod]
+test = { coverage = true, reporter = "json" }
+
+# Build configurations for different targets
+[build.web]
+target = "browser"
+format = "iife"
+outdir = "./dist/web"
+
+[build.node]
+target = "node"
+format = "esm"
+outdir = "./dist/node"
+
+[build.bun]
+target = "bun"
+format = "esm"
+outdir = "./dist/bun"

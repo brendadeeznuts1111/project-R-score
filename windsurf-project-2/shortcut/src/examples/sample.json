@@ -1,0 +1,11 @@
+
+{
+  "name": "bun-loaders-demo",
+  "version": "1.0.0",
+  "description": "Complete Bun loaders showcase",
+  "features": ["js", "jsx", "ts", "tsx", "json", "toml", "yaml", "sqlite", "html", "css"],
+  "author": {
+    "name": "PTY Weaver",
+    "email": "pty@example.com"
+  }
+}

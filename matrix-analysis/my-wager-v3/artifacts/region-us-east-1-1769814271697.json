@@ -1,0 +1,13 @@
+{
+  "region": "us-east-1",
+  "status": "active",
+  "lastUpdate": 1769814271697,
+  "metrics": {
+    "parseTime": 0.2754269077788585,
+    "testCount": 41,
+    "passRate": 0.9952637957370064,
+    "coverage": 0.9745178636424487,
+    "duration": 1075.4750059373634
+  },
+  "sealId": "tier1380-1769814271697-t8xpt6ict8k"
+}

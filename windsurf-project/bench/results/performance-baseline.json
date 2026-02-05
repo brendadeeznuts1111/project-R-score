@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-01-12T22:50:42.711Z",
+  "avgThroughput": 1800,
+  "avgLatency": 600,
+  "compressionRatio": 78,
+  "errorRate": 0.02,
+  "costPerUpload": 0.000003
+}

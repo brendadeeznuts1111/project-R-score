@@ -1,0 +1,175 @@
+/**
+ * System UI Font Examples
+ * 
+ * The system-ui generic font family lets you use the device's native UI font,
+ * creating interfaces that feel more integrated with the operating system.
+ * 
+ * Bun's CSS bundler automatically expands system-ui to a comprehensive
+ * cross-platform font stack for browsers that don't support it.
+ * 
+ * Reference: https://bun.com/docs/bundler/css
+ */
+
+/* ==========================================================================
+   Basic Usage
+   ========================================================================== */
+
+.native-interface {
+	/* Use the system's default UI font */
+	/* Bun automatically expands to cross-platform font stack */
+	font-family: system-ui;
+}
+
+.fallback-aware {
+	/* System UI font with explicit fallbacks */
+	/* Bun expands system-ui and preserves fallbacks */
+	font-family: system-ui, sans-serif;
+}
+
+/* ==========================================================================
+   Expanded Output (What Bun Generates)
+   ========================================================================== */
+
+/* Input: font-family: system-ui; */
+/* Output: */
+.native-interface-expanded {
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		"Noto Sans",
+		Ubuntu,
+		Cantarell,
+		"Helvetica Neue";
+}
+
+/* Input: font-family: system-ui, sans-serif; */
+/* Output: */
+.fallback-aware-expanded {
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		"Noto Sans",
+		Ubuntu,
+		Cantarell,
+		"Helvetica Neue",
+		sans-serif;
+}
+
+/* ==========================================================================
+   Component Examples
+   ========================================================================== */
+
+/* Buttons with system UI font */
+.button {
+	font-family: system-ui, sans-serif;
+	font-weight: 600;
+}
+
+/* Headings with system UI font */
+h1, h2, h3, h4, h5, h6 {
+	font-family: system-ui, sans-serif;
+	font-weight: 700;
+}
+
+/* Body text with system UI font */
+body {
+	font-family: system-ui, sans-serif;
+}
+
+/* Code blocks - keep monospace */
+code, pre {
+	font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+}
+
+/* ==========================================================================
+   Platform-Specific Considerations
+   ========================================================================== */
+
+/* macOS/iOS */
+@supports (font-family: -apple-system) {
+	.native-interface {
+		/* Uses SF Pro on Apple devices */
+		font-family: system-ui, -apple-system, sans-serif;
+	}
+}
+
+/* Windows */
+@supports (font-family: "Segoe UI") {
+	.native-interface {
+		/* Uses Segoe UI on Windows */
+		font-family: system-ui, "Segoe UI", sans-serif;
+	}
+}
+
+/* Android */
+@supports (font-family: Roboto) {
+	.native-interface {
+		/* Uses Roboto on Android */
+		font-family: system-ui, Roboto, sans-serif;
+	}
+}
+
+/* ==========================================================================
+   Font Weight Variations
+   ========================================================================== */
+
+.system-ui-light {
+	font-family: system-ui, sans-serif;
+	font-weight: 300;
+}
+
+.system-ui-regular {
+	font-family: system-ui, sans-serif;
+	font-weight: 400;
+}
+
+.system-ui-medium {
+	font-family: system-ui, sans-serif;
+	font-weight: 500;
+}
+
+.system-ui-semibold {
+	font-family: system-ui, sans-serif;
+	font-weight: 600;
+}
+
+.system-ui-bold {
+	font-family: system-ui, sans-serif;
+	font-weight: 700;
+}
+
+/* ==========================================================================
+   Combined Examples
+   ========================================================================== */
+
+/* Card component with system UI */
+.card {
+	font-family: system-ui, sans-serif;
+	
+	.card-title {
+		font-weight: 700;
+		font-size: 1.25rem;
+	}
+	
+	.card-body {
+		font-weight: 400;
+		line-height: 1.6;
+	}
+}
+
+/* Form elements with system UI */
+input, textarea, select, button {
+	font-family: system-ui, sans-serif;
+}
+
+/* Navigation with system UI */
+nav {
+	font-family: system-ui, sans-serif;
+	font-weight: 500;
+}

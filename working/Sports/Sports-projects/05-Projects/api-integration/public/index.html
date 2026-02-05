@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Integration - Live Events</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== HEADER BAR ===== */
+    .header-bar {
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border-bottom: 1px solid #3b82f6;
+      padding: 8px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+    }
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 0.75rem;
+    }
+    .conn-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #666;
+    }
+    .conn-dot.ok { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .conn-dot.warn { background: #eab308; box-shadow: 0 0 6px #eab308; }
+    .conn-dot.err { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .conn-label { color: #888; }
+    .conn-value { color: #fff; font-weight: 600; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .network-metrics {
+      display: flex;
+      gap: 15px;
+      font-size: 0.75rem;
+    }
+    .metric {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+    }
+    .metric-value {
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'SF Mono', monospace;
+    }
+    .metric-value.good { color: #22c55e; }
+    .metric-value.warn { color: #eab308; }
+    .metric-value.bad { color: #ef4444; }
+    .metric-label { color: #666; font-size: 0.65rem; text-transform: uppercase; }
+    .uptime-badge {
+      background: #22c55e20;
+      color: #22c55e;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* ===== HEADER ACTIONS ===== */
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #1a1a2e;
+      color: #888;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .icon-btn:hover { background: #252540; color: #fff; border-color: #3b82f6; }
+    .icon-btn.active { background: #3b82f620; color: #3b82f6; border-color: #3b82f6; }
+    .icon-btn.notify-on { background: #22c55e20; color: #22c55e; border-color: #22c55e; }
+
+    /* ===== SHARE MODAL ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 420px;
+      width: 90%;
+      animation: modalIn 0.2s ease-out;
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-title { font-size: 1.1rem; font-weight: 600; color: #fff; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
+    .share-url {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .share-url input {
+      flex: 1;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+    .share-url button {
+      padding: 10px 16px;
+      white-space: nowrap;
+    }
+    .qr-container {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .qr-code {
+      width: 180px;
+      height: 180px;
+    }
+    .qr-label {
+      color: #333;
+      font-size: 0.75rem;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .share-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .share-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px;
+      background: #252540;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .share-btn:hover { background: #303050; border-color: #3b82f6; }
+    .share-btn-icon { font-size: 20px; }
+    .share-btn-label { font-size: 0.7rem; color: #888; }
+
+    /* ===== NOTIFICATION TOAST ===== */
+    .toast-container {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-left: 3px solid #3b82f6;
+      border-radius: 8px;
+      padding: 12px 16px;
+      min-width: 280px;
+      animation: toastIn 0.3s ease-out;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .toast.score { border-left-color: #22c55e; }
+    .toast.odds { border-left-color: #eab308; }
+    .toast.game { border-left-color: #8b5cf6; }
+    .toast.alert { border-left-color: #ef4444; }
+    @keyframes toastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast-icon { font-size: 18px; }
+    .toast-content { flex: 1; }
+    .toast-title { font-weight: 600; font-size: 0.85rem; color: #fff; }
+    .toast-message { font-size: 0.75rem; color: #888; margin-top: 2px; }
+    .toast-close {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      flex: 1;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #333;
+    }
+    h1 { font-size: 1.5rem; color: #fff; }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #666;
+    }
+    .status-dot.connected { background: #22c55e; }
+    .status-dot.connecting { background: #eab308; }
+    .status-dot.error { background: #ef4444; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 15px;
+    }
+    .stat-label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
+    .stat-value { font-size: 1.5rem; font-weight: bold; color: #fff; margin-top: 5px; }
+    .stat-value.live { color: #22c55e; }
+
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .panels { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .panel-header {
+      background: #252525;
+      padding: 12px 15px;
+      font-weight: 600;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+    }
+    .panel-body {
+      height: 400px;
+      overflow-y: auto;
+    }
+
+    .game-item, .odds-item, .event-item {
+      padding: 12px 15px;
+      border-bottom: 1px solid #252525;
+    }
+    .game-item:hover, .odds-item:hover { background: #222; }
+
+    .game-teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .team { font-weight: 500; }
+    .score {
+      font-size: 1.25rem;
+      font-weight: bold;
+      font-family: monospace;
+    }
+    .game-meta {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+      font-size: 0.75rem;
+      color: #888;
+    }
+    .badge {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge.live { background: #22c55e20; color: #22c55e; }
+    .badge.scheduled { background: #3b82f620; color: #3b82f6; }
+    .badge.final { background: #6b728020; color: #9ca3af; }
+
+    .odds-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .odds-game { font-weight: 500; }
+    .odds-values {
+      display: flex;
+      gap: 15px;
+      font-family: monospace;
+    }
+    .odds-home, .odds-away {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .odds-home { background: #3b82f620; color: #60a5fa; }
+    .odds-away { background: #f9731620; color: #fb923c; }
+
+    .event-item {
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    .event-item.game { border-left: 3px solid #22c55e; }
+    .event-item.odds { border-left: 3px solid #eab308; }
+    .event-time { color: #666; margin-right: 10px; }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      background: #333;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    button:hover { background: #444; }
+    button.primary { background: #3b82f6; border-color: #3b82f6; }
+    button.primary:hover { background: #2563eb; }
+    button.danger { background: #ef4444; border-color: #ef4444; }
+    button.active { background: #22c55e; border-color: #22c55e; }
+
+    .empty { color: #666; text-align: center; padding: 40px; }
+
+    .sound-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      font-size: 0.875rem;
+      color: #888;
+    }
+    .sound-toggle input { width: 18px; height: 18px; cursor: pointer; }
+
+    .flash { animation: flash 0.5s ease-out; }
+    @keyframes flash {
+      0% { background: #22c55e40; }
+      100% { background: transparent; }
+    }
+
+    /* ===== FOOTER BAR ===== */
+    .footer-bar {
+      background: linear-gradient(0deg, #1a1a2e 0%, #16162a 100%);
+      border-top: 1px solid #333;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.7rem;
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .bench-group {
+      display: flex;
+      gap: 15px;
+    }
+    .bench-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bench-label { color: #666; }
+    .bench-value {
+      color: #fff;
+      font-family: 'SF Mono', monospace;
+      font-weight: 600;
+    }
+    .bench-value.good { color: #22c55e; }
+    .bench-value.warn { color: #eab308; }
+    .bench-value.bad { color: #ef4444; }
+    .footer-divider {
+      width: 1px;
+      height: 20px;
+      background: #333;
+    }
+    .server-info {
+      display: flex;
+      gap: 15px;
+      color: #666;
+    }
+    .server-info span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .server-info .value { color: #888; }
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER BAR ===== -->
+  <div class="header-bar">
+    <div class="header-left">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span>Sports API</span>
+      </div>
+      <div class="connection-status">
+        <div class="conn-item">
+          <div class="conn-dot" id="wsConnDot"></div>
+          <span class="conn-label">WebSocket</span>
+          <span class="conn-value" id="wsConnStatus">--</span>
+        </div>
+        <div class="conn-item">
+          <div class="conn-dot" id="apiConnDot"></div>
+          <span class="conn-label">API</span>
+          <span class="conn-value" id="apiConnStatus">--</span>
+        </div>
+        <div class="conn-item">
+          <div class="conn-dot" id="dbConnDot"></div>
+          <span class="conn-label">DB</span>
+          <span class="conn-value" id="dbConnStatus">--</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-metrics">
+        <div class="metric">
+          <span class="metric-value good" id="latencyValue">--</span>
+          <span class="metric-label">Latency</span>
+        </div>
+        <div class="metric">
+          <span class="metric-value good" id="rpmValue">--</span>
+          <span class="metric-label">RPM</span>
+        </div>
+        <div class="metric">
+          <span class="metric-value good" id="msgSecValue">--</span>
+          <span class="metric-label">Msg/s</span>
+        </div>
+        <div class="metric">
+          <span class="metric-value" id="clientsValue">0</span>
+          <span class="metric-label">Clients</span>
+        </div>
+      </div>
+      <span class="uptime-badge" id="uptimeBadge">⏱ --</span>
+      <div class="header-actions">
+        <button class="icon-btn" id="notifyBtn" onclick="toggleNotifications()" title="Toggle Notifications">🔔</button>
+        <button class="icon-btn" onclick="openShareModal()" title="Share Dashboard">📤</button>
+        <button class="icon-btn" onclick="openQRModal()" title="QR Code">📱</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="shareModal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <span class="modal-title">📤 Share Dashboard</span>
+        <button class="modal-close" onclick="closeShareModal()">×</button>
+      </div>
+      <div class="share-url">
+        <input type="text" id="shareUrlInput" readonly>
+        <button class="primary" onclick="copyShareUrl()">Copy</button>
+      </div>
+      <div class="qr-container">
+        <canvas id="qrCanvas" class="qr-code"></canvas>
+        <div class="qr-label">Scan to open on mobile</div>
+      </div>
+      <div class="share-buttons">
+        <button class="share-btn" onclick="shareVia('slack')">
+          <span class="share-btn-icon">💬</span>
+          <span class="share-btn-label">Slack</span>
+        </button>
+        <button class="share-btn" onclick="shareVia('teams')">
+          <span class="share-btn-icon">👥</span>
+          <span class="share-btn-label">Teams</span>
+        </button>
+        <button class="share-btn" onclick="shareVia('telegram-chat')">
+          <span class="share-btn-icon">📨</span>
+          <span class="share-btn-label">TG Chat</span>
+        </button>
+        <button class="share-btn" onclick="shareVia('telegram-group')">
+          <span class="share-btn-icon">👥</span>
+          <span class="share-btn-label">TG Group</span>
+        </button>
+        <button class="share-btn" onclick="shareVia('telegram-channel')">
+          <span class="share-btn-icon">📢</span>
+          <span class="share-btn-label">TG Channel</span>
+        </button>
+        <button class="share-btn" onclick="shareVia('email')">
+          <span class="share-btn-icon">📧</span>
+          <span class="share-btn-label">Email</span>
+        </button>
+        <button class="share-btn" onclick="shareVia('twitter')">
+          <span class="share-btn-icon">🐦</span>
+          <span class="share-btn-label">Twitter</span>
+        </button>
+        <button class="share-btn" onclick="shareVia('native')">
+          <span class="share-btn-icon">📱</span>
+          <span class="share-btn-label">Share...</span>
+        </button>
+        <button class="share-btn" onclick="downloadQR()">
+          <span class="share-btn-icon">⬇️</span>
+          <span class="share-btn-label">Save QR</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>Live Events Dashboard</h1>
+      <div class="status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Disconnected</span>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Mode</div>
+        <div class="stat-value" id="mode">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Games</div>
+        <div class="stat-value" id="gameCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Live</div>
+        <div class="stat-value live" id="liveCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">WS Clients</div>
+        <div class="stat-value" id="wsClients">0</div>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-header">
+          <span>Games</span>
+          <span id="gamesCount">0</span>
+        </div>
+        <div class="panel-body" id="gamesList">
+          <div class="empty">No games yet</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span>Live Feed</span>
+          <span id="eventCount">0</span>
+        </div>
+        <div class="panel-body" id="eventFeed">
+          <div class="empty">Waiting for events...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="primary" onclick="connect()">Connect</button>
+      <button onclick="disconnect()">Disconnect</button>
+      <button onclick="clearFeed()">Clear Feed</button>
+      <button onclick="startDemo()">Start Demo</button>
+      <button class="danger" onclick="stopDemo()">Stop Demo</button>
+      <div class="sound-toggle">
+        <input type="checkbox" id="soundEnabled" checked onchange="toggleSound()">
+        <label for="soundEnabled">🔔 Sound</label>
+        <select id="soundType" onchange="testSound()">
+          <option value="score">Score</option>
+          <option value="odds">Odds</option>
+          <option value="game">New Game</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER BAR ===== -->
+  <div class="footer-bar">
+    <div class="footer-left">
+      <div class="bench-group">
+        <div class="bench-item">
+          <span class="bench-label">Avg Latency:</span>
+          <span class="bench-value good" id="avgLatency">--</span>
+        </div>
+        <div class="bench-item">
+          <span class="bench-label">P95:</span>
+          <span class="bench-value" id="p95Latency">--</span>
+        </div>
+        <div class="bench-item">
+          <span class="bench-label">P99:</span>
+          <span class="bench-value" id="p99Latency">--</span>
+        </div>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="bench-group">
+        <div class="bench-item">
+          <span class="bench-label">Total Req:</span>
+          <span class="bench-value" id="totalRequests">0</span>
+        </div>
+        <div class="bench-item">
+          <span class="bench-label">Errors:</span>
+          <span class="bench-value good" id="totalErrors">0</span>
+        </div>
+        <div class="bench-item">
+          <span class="bench-label">Success:</span>
+          <span class="bench-value good" id="successRate">--%</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-right">
+      <div class="server-info">
+        <span>Server: <span class="value" id="serverHost">localhost:3001</span></span>
+        <span>Mode: <span class="value" id="serverMode">--</span></span>
+        <span>DB: <span class="value" id="dbRecords">-- records</span></span>
+      </div>
+      <div class="footer-divider"></div>
+      <span style="color: #666;">
+        <span class="pulse">●</span> Bun v1.3.5
+      </span>
+    </div>
+  </div>
+
+  <script>
+    const WS_URL = `ws://${location.host}/ws/stream?subscribe=all`;
+    const API_URL = `http://${location.host}`;
+
+    let ws = null;
+    let games = new Map();
+    let odds = new Map();
+    let eventCount = 0;
+    let soundEnabled = true;
+    let audioContext = null;
+
+    // Network metrics tracking
+    const metrics = {
+      latencies: [],
+      requestCount: 0,
+      errorCount: 0,
+      messageCount: 0,
+      lastMessageTime: Date.now(),
+      messagesPerSecond: 0,
+      startTime: Date.now(),
+      wsConnected: false,
+      apiConnected: false,
+      dbConnected: false,
+    };
+
+    // Track messages per second
+    let msgCountLastSecond = 0;
+    setInterval(() => {
+      metrics.messagesPerSecond = msgCountLastSecond;
+      msgCountLastSecond = 0;
+      updateNetworkDisplay();
+    }, 1000);
+
+    // Update network metrics display
+    function updateNetworkDisplay() {
+      // Connection status
+      const wsConnDot = document.getElementById('wsConnDot');
+      const apiConnDot = document.getElementById('apiConnDot');
+      const dbConnDot = document.getElementById('dbConnDot');
+
+      wsConnDot.className = 'conn-dot ' + (metrics.wsConnected ? 'ok' : 'err');
+      apiConnDot.className = 'conn-dot ' + (metrics.apiConnected ? 'ok' : 'warn');
+      dbConnDot.className = 'conn-dot ' + (metrics.dbConnected ? 'ok' : 'warn');
+
+      document.getElementById('wsConnStatus').textContent = metrics.wsConnected ? 'OK' : 'OFF';
+      document.getElementById('apiConnStatus').textContent = metrics.apiConnected ? 'OK' : '--';
+      document.getElementById('dbConnStatus').textContent = metrics.dbConnected ? 'OK' : '--';
+
+      // Calculate latency stats
+      if (metrics.latencies.length > 0) {
+        const sorted = [...metrics.latencies].sort((a, b) => a - b);
+        const avg = sorted.reduce((a, b) => a + b, 0) / sorted.length;
+        const p95 = sorted[Math.floor(sorted.length * 0.95)] || avg;
+        const p99 = sorted[Math.floor(sorted.length * 0.99)] || avg;
+
+        const latencyEl = document.getElementById('latencyValue');
+        latencyEl.textContent = avg.toFixed(0) + 'ms';
+        latencyEl.className = 'metric-value ' + (avg < 50 ? 'good' : avg < 100 ? 'warn' : 'bad');
+
+        document.getElementById('avgLatency').textContent = avg.toFixed(1) + 'ms';
+        document.getElementById('p95Latency').textContent = p95.toFixed(1) + 'ms';
+        document.getElementById('p99Latency').textContent = p99.toFixed(1) + 'ms';
+      }
+
+      // RPM calculation
+      const elapsedMinutes = (Date.now() - metrics.startTime) / 60000;
+      const rpm = elapsedMinutes > 0 ? Math.round(metrics.requestCount / elapsedMinutes) : 0;
+      document.getElementById('rpmValue').textContent = rpm;
+
+      // Messages per second
+      const msgSecEl = document.getElementById('msgSecValue');
+      msgSecEl.textContent = metrics.messagesPerSecond;
+      msgSecEl.className = 'metric-value ' + (metrics.messagesPerSecond > 0 ? 'good' : '');
+
+      // Clients
+      document.getElementById('clientsValue').textContent = document.getElementById('wsClients')?.textContent || '0';
+
+      // Uptime
+      const uptime = Math.floor((Date.now() - metrics.startTime) / 1000);
+      const hours = Math.floor(uptime / 3600);
+      const mins = Math.floor((uptime % 3600) / 60);
+      const secs = uptime % 60;
+      document.getElementById('uptimeBadge').textContent =
+        hours > 0 ? `⏱ ${hours}h ${mins}m` : `⏱ ${mins}m ${secs}s`;
+
+      // Footer stats
+      document.getElementById('totalRequests').textContent = metrics.requestCount;
+      const errEl = document.getElementById('totalErrors');
+      errEl.textContent = metrics.errorCount;
+      errEl.className = 'bench-value ' + (metrics.errorCount === 0 ? 'good' : 'bad');
+
+      const successRate = metrics.requestCount > 0
+        ? ((metrics.requestCount - metrics.errorCount) / metrics.requestCount * 100).toFixed(1)
+        : 100;
+      const successEl = document.getElementById('successRate');
+      successEl.textContent = successRate + '%';
+      successEl.className = 'bench-value ' + (successRate >= 99 ? 'good' : successRate >= 95 ? 'warn' : 'bad');
+
+      // Server info
+      document.getElementById('serverHost').textContent = location.host;
+    }
+
+    // Measure latency for a fetch request
+    async function timedFetch(url, options = {}) {
+      const start = performance.now();
+      metrics.requestCount++;
+      try {
+        const res = await fetch(url, options);
+        const latency = performance.now() - start;
+        metrics.latencies.push(latency);
+        if (metrics.latencies.length > 100) metrics.latencies.shift();
+        metrics.apiConnected = true;
+        return res;
+      } catch (e) {
+        metrics.errorCount++;
+        metrics.apiConnected = false;
+        throw e;
+      }
+    }
+
+    // ===== NOTIFICATIONS =====
+    let notificationsEnabled = false;
+    let browserNotifyPermission = false;
+
+    async function toggleNotifications() {
+      const btn = document.getElementById('notifyBtn');
+
+      if (!notificationsEnabled) {
+        // Request permission
+        if ('Notification' in window) {
+          const perm = await Notification.requestPermission();
+          browserNotifyPermission = perm === 'granted';
+        }
+        notificationsEnabled = true;
+        btn.classList.add('notify-on');
+        btn.title = 'Notifications ON';
+        showToast('info', '🔔 Notifications Enabled', 'You will receive alerts for important events');
+      } else {
+        notificationsEnabled = false;
+        btn.classList.remove('notify-on');
+        btn.title = 'Notifications OFF';
+      }
+    }
+
+    function showToast(type, title, message, duration = 5000) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      const icons = { score: '⚽', odds: '📊', game: '🎮', alert: '⚠️', info: 'ℹ️' };
+
+      toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+      `;
+
+      container.appendChild(toast);
+
+      // Auto remove
+      setTimeout(() => toast.remove(), duration);
+
+      // Browser notification
+      if (browserNotifyPermission && notificationsEnabled && document.hidden) {
+        new Notification(title, { body: message, icon: '/favicon.ico' });
+      }
+    }
+
+    function notifyEvent(type, data) {
+      if (!notificationsEnabled) return;
+
+      switch (type) {
+        case 'score':
+          showToast('score', '🏀 Score Update', `${data.teams?.[0]} vs ${data.teams?.[1]}: ${data.score?.join('-')}`);
+          break;
+        case 'game':
+          showToast('game', '🎮 New Game', `${data.teams?.[0]} vs ${data.teams?.[1]}`);
+          break;
+        case 'odds':
+          showToast('odds', '📊 Odds Update', `Game ${data.gameId}: ${data.homeOdds}/${data.awayOdds}`);
+          break;
+        case 'alert':
+          showToast('alert', '⚠️ Alert', data.message);
+          break;
+      }
+    }
+
+    // ===== QR CODE GENERATION =====
+    function generateQR(text, canvas) {
+      const size = 180;
+      const ctx = canvas.getContext('2d');
+      canvas.width = size;
+      canvas.height = size;
+
+      // Simple QR-like pattern (use real QR library in production)
+      // Using Google Charts API for real QR
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, size, size);
+      };
+      img.onerror = () => {
+        // Fallback: draw placeholder
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, size, size);
+        ctx.fillStyle = '#000';
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('QR Code', size/2, size/2 - 10);
+        ctx.fillText(text.substring(0, 25), size/2, size/2 + 10);
+      };
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}`;
+    }
+
+    // ===== SHARE FUNCTIONS =====
+    function getShareUrl() {
+      const url = new URL(window.location.href);
+      // Add current state as params using URLPattern style
+      url.searchParams.set('mode', document.getElementById('mode')?.textContent || 'demo');
+      url.searchParams.set('t', Date.now());
+      return url.toString();
+    }
+
+    function openShareModal() {
+      const modal = document.getElementById('shareModal');
+      const input = document.getElementById('shareUrlInput');
+      const shareUrl = getShareUrl();
+
+      input.value = shareUrl;
+      generateQR(shareUrl, document.getElementById('qrCanvas'));
+      modal.classList.add('show');
+    }
+
+    function openQRModal() {
+      openShareModal(); // Same modal, focuses on QR
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('show');
+    }
+
+    function closeModal(event) {
+      if (event.target.classList.contains('modal-overlay')) {
+        event.target.classList.remove('show');
+      }
+    }
+
+    function copyShareUrl() {
+      const input = document.getElementById('shareUrlInput');
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast('info', '📋 Copied!', 'Dashboard URL copied to clipboard');
+      });
+    }
+
+    function shareVia(platform) {
+      const url = getShareUrl();
+      const title = 'Sports API Dashboard';
+      const text = `Check out this live sports dashboard: ${url}`;
+      const telegramText = `📊 ${title}\n\n${url}`;
+
+      switch (platform) {
+        case 'slack':
+          window.open(`https://slack.com/share?text=${encodeURIComponent(text)}`, '_blank');
+          break;
+        case 'teams':
+          window.open(`https://teams.microsoft.com/share?href=${encodeURIComponent(url)}&preview=true`, '_blank');
+          break;
+        case 'telegram-chat':
+          // Direct share - opens Telegram and lets user pick a chat
+          window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent('📊 Sports API Dashboard - Live events feed')}`, '_blank');
+          break;
+        case 'telegram-group':
+          // Share to group - same URL, user picks a group
+          window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent('👥 Team Dashboard - Join our live sports feed!')}`, '_blank');
+          break;
+        case 'telegram-channel':
+          // Share to channel - same URL, user picks a channel
+          window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent('📢 [LIVE] Sports API Dashboard\n\n📈 Real-time scores & odds')}`, '_blank');
+          break;
+        case 'email':
+          window.open(`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text)}`, '_blank');
+          break;
+        case 'twitter':
+          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+          break;
+        case 'native':
+          if (navigator.share) {
+            navigator.share({ title, text, url }).catch(() => {});
+          } else {
+            copyShareUrl();
+          }
+          break;
+      }
+      closeShareModal();
+    }
+
+    function downloadQR() {
+      const canvas = document.getElementById('qrCanvas');
+      const link = document.createElement('a');
+      link.download = 'sports-api-qr.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('info', '⬇️ Downloaded', 'QR code saved to downloads');
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+      }
+      if (e.key === 'n' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
+        toggleNotifications();
+      }
+      if (e.key === 's' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
+        openShareModal();
+      }
+    });
+
+    // Initialize audio context on first user interaction
+    function initAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioContext;
+    }
+
+    // Play a beep sound with Web Audio API
+    function playSound(type = 'score') {
+      if (!soundEnabled) return;
+
+      try {
+        const ctx = initAudio();
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        // Different sounds for different events
+        switch (type) {
+          case 'score':
+            // Rising two-tone beep for scores
+            oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+            oscillator.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+            oscillator.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + 0.2);
+            break;
+          case 'odds':
+            // Quick tick for odds
+            oscillator.frequency.setValueAtTime(600, ctx.currentTime);
+            oscillator.type = 'triangle';
+            gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+            oscillator.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + 0.08);
+            break;
+          case 'game':
+            // Chord for new game
+            const osc2 = ctx.createOscillator();
+            const osc3 = ctx.createOscillator();
+            osc2.connect(gainNode);
+            osc3.connect(gainNode);
+            oscillator.frequency.setValueAtTime(523, ctx.currentTime); // C5
+            osc2.frequency.setValueAtTime(659, ctx.currentTime); // E5
+            osc3.frequency.setValueAtTime(784, ctx.currentTime); // G5
+            oscillator.type = osc2.type = osc3.type = 'sine';
+            gainNode.gain.setValueAtTime(0.2, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+            oscillator.start(ctx.currentTime);
+            osc2.start(ctx.currentTime);
+            osc3.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + 0.4);
+            osc2.stop(ctx.currentTime + 0.4);
+            osc3.stop(ctx.currentTime + 0.4);
+            break;
+        }
+      } catch (e) {
+        console.warn('Sound failed:', e);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = document.getElementById('soundEnabled').checked;
+      if (soundEnabled) {
+        initAudio();
+        playSound('score');
+      }
+    }
+
+    function testSound() {
+      const type = document.getElementById('soundType').value;
+      initAudio();
+      playSound(type);
+    }
+
+    // Elements
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const gamesList = document.getElementById('gamesList');
+    const eventFeed = document.getElementById('eventFeed');
+
+    function setStatus(status) {
+      statusDot.className = 'status-dot ' + status;
+      statusText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    }
+
+    function connect() {
+      if (ws && ws.readyState === WebSocket.OPEN) return;
+
+      setStatus('connecting');
+      ws = new WebSocket(WS_URL);
+
+      ws.onopen = () => {
+        setStatus('connected');
+        metrics.wsConnected = true;
+        fetchHealth();
+        updateNetworkDisplay();
+      };
+
+      ws.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+        metrics.messageCount++;
+        msgCountLastSecond++;
+        handleMessage(msg);
+      };
+
+      ws.onclose = () => {
+        setStatus('disconnected');
+        metrics.wsConnected = false;
+        ws = null;
+        updateNetworkDisplay();
+      };
+
+      ws.onerror = () => {
+        setStatus('error');
+        metrics.wsConnected = false;
+        updateNetworkDisplay();
+      };
+    }
+
+    function disconnect() {
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+      setStatus('disconnected');
+    }
+
+    function handleMessage(msg) {
+      if (msg.type === 'connected') {
+        addEvent('system', `Connected: ${msg.id}`);
+        return;
+      }
+
+      if (msg.type === 'game') {
+        const oldGame = games.get(msg.data.id);
+        const isNewGame = !oldGame;
+        const isScoreUpdate = oldGame && msg.data.score && oldGame.score &&
+          (msg.data.score[0] !== oldGame.score[0] || msg.data.score[1] !== oldGame.score[1]);
+
+        games.set(msg.data.id, msg.data);
+        renderGames();
+        addEvent('game', formatGame(msg.data));
+
+        // Play sound and notify for new games or score updates
+        if (isNewGame) {
+          playSound('game');
+          flashGame(msg.data.id);
+          notifyEvent('game', msg.data);
+        } else if (isScoreUpdate) {
+          playSound('score');
+          flashGame(msg.data.id);
+          notifyEvent('score', msg.data);
+        }
+      }
+
+      if (msg.type === 'odds') {
+        odds.set(msg.data.gameId, msg.data);
+        addEvent('odds', formatOdds(msg.data));
+        playSound('odds');
+        // Only notify for significant odds changes (optional)
+        if (notificationsEnabled && Math.random() < 0.1) { // 10% of odds updates
+          notifyEvent('odds', msg.data);
+        }
+      }
+
+      updateStats();
+    }
+
+    function flashGame(gameId) {
+      setTimeout(() => {
+        const gameEl = document.querySelector(`[data-game-id="${gameId}"]`);
+        if (gameEl) {
+          gameEl.classList.add('flash');
+          setTimeout(() => gameEl.classList.remove('flash'), 500);
+        }
+      }, 10);
+    }
+
+    function formatGame(g) {
+      const score = g.score ? ` ${g.score[0]}-${g.score[1]}` : '';
+      return `${g.id}: ${g.teams[0]} vs ${g.teams[1]}${score} [${g.status}]`;
+    }
+
+    function formatOdds(o) {
+      const spread = o.spread ? ` (${o.spread > 0 ? '+' : ''}${o.spread})` : '';
+      return `${o.gameId}: ${o.homeOdds}/${o.awayOdds}${spread}`;
+    }
+
+    function addEvent(type, text) {
+      eventCount++;
+      document.getElementById('eventCount').textContent = eventCount;
+
+      const feed = document.getElementById('eventFeed');
+      if (feed.querySelector('.empty')) {
+        feed.innerHTML = '';
+      }
+
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = `event-item ${type}`;
+      div.innerHTML = `<span class="event-time">${time}</span>${text}`;
+
+      feed.insertBefore(div, feed.firstChild);
+
+      // Keep max 100 events
+      while (feed.children.length > 100) {
+        feed.removeChild(feed.lastChild);
+      }
+    }
+
+    function renderGames() {
+      const list = document.getElementById('gamesList');
+      document.getElementById('gamesCount').textContent = games.size;
+
+      if (games.size === 0) {
+        list.innerHTML = '<div class="empty">No games yet</div>';
+        return;
+      }
+
+      list.innerHTML = Array.from(games.values())
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .map(g => `
+          <div class="game-item" data-game-id="${g.id}">
+            <div class="game-teams">
+              <div>
+                <span class="team">${g.teams[0]}</span>
+                <span style="color:#666"> vs </span>
+                <span class="team">${g.teams[1]}</span>
+              </div>
+              <div class="score">${g.score ? g.score.join(' - ') : '--'}</div>
+            </div>
+            <div class="game-meta">
+              <span class="badge ${g.status}">${g.status}</span>
+              <span>${g.id}</span>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    function updateStats() {
+      const liveGames = Array.from(games.values()).filter(g => g.status === 'live');
+      document.getElementById('gameCount').textContent = games.size;
+      document.getElementById('liveCount').textContent = liveGames.length;
+    }
+
+    async function fetchHealth() {
+      try {
+        const res = await timedFetch(`${API_URL}/health`);
+        const data = await res.json();
+        document.getElementById('mode').textContent = data.mode || 'live';
+        document.getElementById('wsClients').textContent = data.websocket?.clients || 0;
+        document.getElementById('gameCount').textContent = data.stats?.games || 0;
+        document.getElementById('liveCount').textContent = data.stats?.liveGames || 0;
+
+        // Update footer
+        document.getElementById('serverMode').textContent = data.mode || 'live';
+        metrics.dbConnected = true;
+
+        // Fetch DB stats
+        try {
+          const statsRes = await timedFetch(`${API_URL}/api/stats`);
+          const stats = await statsRes.json();
+          const total = (stats.totalGames || 0) + (stats.totalOddsRecords || 0);
+          document.getElementById('dbRecords').textContent = total + ' records';
+        } catch {}
+
+        updateNetworkDisplay();
+      } catch (e) {
+        console.error('Failed to fetch health:', e);
+        metrics.dbConnected = false;
+        updateNetworkDisplay();
+      }
+    }
+
+    async function fetchGames() {
+      try {
+        const res = await timedFetch(`${API_URL}/api/games`);
+        const data = await res.json();
+        data.forEach(g => games.set(g.id, g));
+        renderGames();
+        updateStats();
+      } catch (e) {
+        console.error('Failed to fetch games:', e);
+      }
+    }
+
+    function clearFeed() {
+      eventCount = 0;
+      document.getElementById('eventCount').textContent = 0;
+      document.getElementById('eventFeed').innerHTML = '<div class="empty">Waiting for events...</div>';
+    }
+
+    async function startDemo() {
+      try {
+        await timedFetch(`${API_URL}/api/demo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'start', interval: 1500 })
+        });
+        fetchHealth();
+      } catch (e) {
+        console.error('Failed to start demo:', e);
+      }
+    }
+
+    async function stopDemo() {
+      try {
+        await timedFetch(`${API_URL}/api/demo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'stop' })
+        });
+        fetchHealth();
+      } catch (e) {
+        console.error('Failed to stop demo:', e);
+      }
+    }
+
+    // Auto-connect and fetch initial data
+    connect();
+    fetchGames();
+    fetchHealth();
+    updateNetworkDisplay();
+    setInterval(fetchHealth, 5000);
+  </script>
+</body>
+</html>

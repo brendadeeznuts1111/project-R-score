@@ -1,0 +1,81 @@
+---
+views:
+  - type: table
+    name: Skills Portfolio
+    filters:
+      - "file.folder == '01 - AREAS/SKILLS'"
+    properties:
+      - name
+      - skill-category
+      - current-level
+      - target-level
+      - hours-invested
+      - target-hours
+      - priority
+    formulas:
+      - name: Progress Percentage
+        formula: "(hours-invested / target-hours) * 100"
+      - name: Hours Remaining
+        formula: "target-hours - hours-invested"
+    sort:
+      - property: priority
+        direction: desc
+    summaries:
+      - type: count
+        label: Total Skills
+      - type: sum
+        property: hours-invested
+        label: Total Hours Invested
+      - type: average
+        property: Progress Percentage
+        label: Average Progress
+
+  - type: cards
+    name: High Priority Skills
+    filters:
+      - "priority == 'high'"
+    properties:
+      - name
+      - skill-category
+      - current-level
+      - target-level
+      - hours-invested
+    card:
+      title: "{{name}}"
+      subtitle: "{{skill-category}}"
+      body: "{{current-level}} → {{target-level}} | {{hours-invested}}h invested"
+
+  - type: table
+    name: Skills by Category
+    filters:
+      - "file.folder == '01 - AREAS/SKILLS'"
+    properties:
+      - name
+      - skill-category
+      - current-level
+      - target-level
+      - next-review
+    formulas:
+      - name: Days Until Review
+        formula: "date(next-review) - date(today)"
+      - name: Level Progress
+        formula: "current-level == 'beginner' ? 1 : current-level == 'intermediate' ? 2 : current-level == 'advanced' ? 3 : 0"
+    sort:
+      - property: skill-category
+        direction: asc
+      - property: priority
+        direction: desc
+
+  - type: list
+    name: Skills Needing Review
+    filters:
+      - "next-review < date(today) + dur(7 days)"
+    properties:
+      - name
+      - skill-category
+      - next-review
+      - current-level
+    sort:
+      - property: next-review
+        direction: asc
+---

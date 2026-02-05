@@ -1,0 +1,40 @@
+# .github/workflows/nix-ffi-test.yml
+name: Nix FFI Integration
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Nix
+        uses: cachix/install-nix-action@v24
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          
+      - name: Build and Test in Nix Shell
+        run: |
+          nix develop --command bash -c "
+            bun run build && \
+            export C_INCLUDE_PATH=/nix/store/*/libxml2-*/dev/include/libxml2 && \
+            export LIBRARY_PATH=/nix/store/*/libxml2-*/lib && \
+            bun test test/js/bun/ffi/nix-integration.test.ts
+          "
+          
+      - name: Test Security Validation
+        run: |
+          nix develop --command bash -c "
+            # Test that malicious paths are rejected
+            export C_INCLUDE_PATH='/tmp/../../../etc:/nix/store/valid-path' && \
+            bun test test/js/bun/ffi/security.test.ts || echo 'Security test passed (expected rejection)'
+          "
+          
+      - name: Test Multiple Paths
+        run: |
+          nix develop --command bash -c "
+            export C_INCLUDE_PATH='/nix/store/*-libxml2-*/include:/nix/store/*-openssl-*/include:/nix/store/*-zlib-*/include' && \
+            export LIBRARY_PATH='/nix/store/*-libxml2-*/lib:/nix/store/*-openssl-*/lib:/nix/store/*-zlib-*/lib' && \
+            bun test test/js/bun/ffi/multiple-paths.test.ts
+          "

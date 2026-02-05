@@ -1,0 +1,160 @@
+/**
+ * CSS Module Example
+ * 
+ * CSS modules automatically scope class names to prevent collisions.
+ * Bun transforms locally scoped class names into unique identifiers.
+ * 
+ * Usage:
+ * import styles from "./css-modules-example.module.css";
+ * <div className={styles.card}>Content</div>
+ */
+
+/* ==========================================================================
+   Basic Classes
+   ========================================================================== */
+
+.button {
+	color: white;
+	background: #667eea;
+	padding: 12px 24px;
+	border-radius: 8px;
+	border: none;
+	cursor: pointer;
+	font-weight: 600;
+	transition: background 0.2s;
+	
+	&:hover {
+		background: color-mix(in srgb, #667eea 80%, white);
+	}
+	
+	&:active {
+		transform: scale(0.98);
+	}
+}
+
+.card {
+	background: var(--color-bg-secondary);
+	border-radius: 12px;
+	padding: 25px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+	}
+}
+
+.title {
+	font-size: 1.5em;
+	font-weight: 700;
+	color: var(--color-brand-primary);
+	margin-block-end: 15px;
+}
+
+.content {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+}
+
+/* ==========================================================================
+   Variants
+   ========================================================================== */
+
+.buttonPrimary {
+	composes: button;
+	background: var(--color-brand-primary);
+}
+
+.buttonSecondary {
+	composes: button;
+	background: var(--color-brand-secondary);
+}
+
+.cardElevated {
+	composes: card;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   Composition Examples
+   ========================================================================== */
+
+/* Local composition - composes must come first */
+.buttonWithIcon {
+	composes: button;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* External composition (from another module) */
+/* ⚠️ WARNING: Ensure no conflicting properties between files */
+.buttonComposed {
+	composes: background from "./background.module.css";
+	color: var(--color-brand-primary);
+	/* Safe: background.module.css only defines background-color, not color */
+}
+
+/* Multiple compositions - all composes statements must come first */
+.buttonComplex {
+	composes: button;
+	composes: buttonWithIcon;
+	font-size: 1.1em;
+}
+
+/* ==========================================================================
+   Composition Rules Examples
+   ========================================================================== */
+
+/* ✅ CORRECT: composes comes before regular properties */
+.buttonCorrect {
+	composes: base;
+	color: red;
+	background: #667eea;
+	padding: 12px;
+}
+
+/* ❌ INCORRECT: composes after regular properties (will cause error) */
+/* .buttonIncorrect {
+	color: red;
+	composes: base; // Error: composes must come first
+	background: #667eea;
+} */
+
+/* ✅ CORRECT: Multiple composes statements, all before properties */
+.buttonMultiple {
+	composes: base;
+	composes: interactive;
+	composes: rounded from "./utils.module.css";
+	color: red;
+	background: #667eea;
+}
+
+/* ✅ CORRECT: Simple class selector */
+.simpleSelector {
+	composes: base;
+	color: red;
+}
+
+/* ❌ INCORRECT: Cannot use composes on ID selectors */
+/* #button {
+	composes: background; // Error: #button is not a class selector
+} */
+
+/* ❌ INCORRECT: Cannot use composes on multiple selectors (comma-separated) */
+/* .button,
+.button-secondary {
+	composes: background; // Error: not a simple selector
+} */
+
+/* ❌ INCORRECT: Cannot use composes on pseudo-classes */
+/* .button:hover {
+	composes: base; // Error: not a simple selector
+	color: red;
+} */
+
+/* ❌ INCORRECT: Cannot use composes on complex selectors */
+/* .button.active {
+	composes: base; // Error: not a simple selector
+	color: red;
+} */

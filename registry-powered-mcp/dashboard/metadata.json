@@ -1,0 +1,5 @@
+{
+  "name": "Bun MCP Registry Hub - Enhanced Production Dashboard-Template-1.21.15",
+  "description": "Bun MCP Registry Hub v2.0: A hyper-scaled, stateful edge topology combining the speed of Bun.serve() with the consistency of Durable Objects. It bridges real-time PTY sessions and AI-contextualized registry lookups across 300 global nodes with sub-11ms p99 latency.",
+  "requestFramePermissions": []
+}

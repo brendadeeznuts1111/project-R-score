@@ -1,0 +1,549 @@
+#!/usr/bin/env bun
+/**
+ * cb-test - Run integration tests against the Clawdbot gateway
+ * Usage: cb-test [suites...] [options]
+ *
+ * Suites: gateway, telegram, skills, tmux, config, scripts, logs
+ * Options: --json, --verbose, --watch, --fail-fast
+ */
+
+const GATEWAY_URL = "http://127.0.0.1:18789";
+const BOT_TOKEN = "7873135075:AAHmySXcKIJpQ0KQX0aAOufB-VPMsdMF73Y";
+const CONFIG_PATH = `${Bun.env.HOME}/.clawdbot/clawdbot.json`;
+const SKILLS_DIR = `${Bun.env.HOME}/clawd/skills`;
+const SCRIPTS_DIR = `${Bun.env.HOME}/clawd/scripts`;
+const LOG_DIR = "/tmp/clawdbot";
+
+interface TestResult {
+  suite: string;
+  name: string;
+  passed: boolean;
+  message: string;
+  duration: number;
+  details?: any;
+}
+
+interface SuiteResult {
+  name: string;
+  tests: TestResult[];
+  passed: number;
+  failed: number;
+  duration: number;
+}
+
+// Display helpers
+const green = (t: string) => `\x1b[32m${t}\x1b[0m`;
+const red = (t: string) => `\x1b[31m${t}\x1b[0m`;
+const yellow = (t: string) => `\x1b[33m${t}\x1b[0m`;
+const dim = (t: string) => `\x1b[2m${t}\x1b[0m`;
+
+async function runTest(
+  suite: string,
+  name: string,
+  fn: () => Promise<any>,
+  verbose: boolean
+): Promise<TestResult> {
+  const start = Date.now();
+  try {
+    const details = await fn();
+    const result: TestResult = {
+      suite,
+      name,
+      passed: true,
+      message: "OK",
+      duration: Date.now() - start,
+      details,
+    };
+    return result;
+  } catch (err: any) {
+    return {
+      suite,
+      name,
+      passed: false,
+      message: err.message || String(err),
+      duration: Date.now() - start,
+    };
+  }
+}
+
+// ============ Gateway Tests ============
+async function testGatewayHealth() {
+  const start = Date.now();
+  const res = await fetch(GATEWAY_URL);
+  const latency = Date.now() - start;
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return { status: res.status, latency };
+}
+
+async function testGatewayConnection() {
+  await Bun.connect({
+    hostname: "127.0.0.1",
+    port: 18789,
+    socket: {
+      data() {},
+      open(socket) { socket.end(); },
+      error() {},
+    },
+  });
+  return { connected: true };
+}
+
+async function testGatewayLatency() {
+  const times: number[] = [];
+  for (let i = 0; i < 3; i++) {
+    const start = Date.now();
+    await fetch(GATEWAY_URL);
+    times.push(Date.now() - start);
+  }
+  const avg = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+  if (avg > 1000) throw new Error(`High latency: ${avg}ms`);
+  return { avgLatency: avg, samples: times };
+}
+
+// ============ Telegram Tests ============
+async function testTelegramGetMe() {
+  const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`);
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.description || "API error");
+  return { username: data.result.username, id: data.result.id };
+}
+
+async function testTelegramGetUpdates() {
+  const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=1`);
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.description || "API error");
+  return { updateCount: data.result.length };
+}
+
+async function testTelegramWebhook() {
+  const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getWebhookInfo`);
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.description || "API error");
+  return { hasWebhook: !!data.result.url, pendingUpdates: data.result.pending_update_count };
+}
+
+// ============ Skills Tests ============
+async function testSkillsDirectory() {
+  const proc = Bun.spawn(["ls", SKILLS_DIR]);
+  const code = await proc.exited;
+  if (code !== 0) throw new Error("Skills directory not found");
+  const text = await new Response(proc.stdout).text();
+  const files = text.trim().split("\n").filter(f => f.endsWith(".md"));
+  return { count: files.length, files };
+}
+
+async function testSkillsFrontmatter() {
+  const proc = Bun.spawn(["ls", SKILLS_DIR]);
+  await proc.exited;
+  const text = await new Response(proc.stdout).text();
+  const issues: string[] = [];
+
+  for (const file of text.trim().split("\n")) {
+    if (!file.endsWith(".md")) continue;
+    const content = await Bun.file(`${SKILLS_DIR}/${file}`).text();
+    if (!content.startsWith("---")) {
+      issues.push(`${file}: Missing frontmatter`);
+    }
+  }
+
+  if (issues.length > 0) throw new Error(issues.join(", "));
+  return { validated: true };
+}
+
+async function testSkillsMetadata() {
+  const proc = Bun.spawn(["ls", SKILLS_DIR]);
+  await proc.exited;
+  const text = await new Response(proc.stdout).text();
+  const skills: Array<{ name: string; hasMetadata: boolean }> = [];
+
+  for (const file of text.trim().split("\n")) {
+    if (!file.endsWith(".md")) continue;
+    const content = await Bun.file(`${SKILLS_DIR}/${file}`).text();
+    const hasMetadata = content.includes("metadata:");
+    const nameMatch = content.match(/^name:\s*(.+)$/m);
+    skills.push({ name: nameMatch?.[1] || file, hasMetadata });
+  }
+
+  return { skills };
+}
+
+// ============ Tmux Tests ============
+async function testTmuxSession() {
+  const proc = Bun.spawn(["tmux", "has-session", "-t", "clawdbot"]);
+  const code = await proc.exited;
+  if (code !== 0) throw new Error("Session not found");
+  return { exists: true };
+}
+
+async function testTmuxWindows() {
+  const proc = Bun.spawn(["tmux", "list-windows", "-t", "clawdbot", "-F", "#{window_name}"]);
+  const code = await proc.exited;
+  if (code !== 0) throw new Error("Cannot list windows");
+  const text = await new Response(proc.stdout).text();
+  const windows = text.trim().split("\n").filter(l => l.length > 0);
+  if (windows.length < 1) throw new Error("No windows found");
+  return { count: windows.length, windows };
+}
+
+async function testTmuxGatewayPane() {
+  const proc = Bun.spawn(["tmux", "capture-pane", "-t", "clawdbot:gateway", "-p", "-S", "-5"]);
+  const code = await proc.exited;
+  if (code !== 0) throw new Error("Cannot capture gateway pane");
+  const text = await new Response(proc.stdout).text();
+  const hasGateway = text.includes("gateway") || text.includes("listening");
+  return { hasOutput: text.length > 0, looksHealthy: hasGateway };
+}
+
+// ============ Config Tests ============
+async function testConfigExists() {
+  const file = Bun.file(CONFIG_PATH);
+  if (!await file.exists()) throw new Error("Config file not found");
+  return { path: CONFIG_PATH };
+}
+
+async function testConfigValid() {
+  const file = Bun.file(CONFIG_PATH);
+  const config = await file.json();
+  return { valid: true, keys: Object.keys(config) };
+}
+
+async function testConfigRequired() {
+  const file = Bun.file(CONFIG_PATH);
+  const config = await file.json();
+  const issues: string[] = [];
+
+  if (!config.channels?.telegram?.botToken) issues.push("Missing telegram.botToken");
+  if (!config.agents?.defaults?.model?.primary) issues.push("Missing default model");
+  if (!config.gateway?.port) issues.push("Missing gateway.port");
+
+  if (issues.length > 0) throw new Error(issues.join(", "));
+  return {
+    model: config.agents?.defaults?.model?.primary,
+    port: config.gateway?.port,
+  };
+}
+
+// ============ Scripts Tests ============
+async function testScriptsExist() {
+  const required = ["cb-status", "cb-restart", "cb-config", "cb-logs", "cb-test"];
+  const missing: string[] = [];
+
+  for (const script of required) {
+    const file = Bun.file(`${SCRIPTS_DIR}/${script}`);
+    if (!await file.exists()) missing.push(script);
+  }
+
+  if (missing.length > 0) throw new Error(`Missing: ${missing.join(", ")}`);
+  return { count: required.length, scripts: required };
+}
+
+async function testScriptsExecutable() {
+  const proc = Bun.spawn(["ls", "-la", SCRIPTS_DIR]);
+  await proc.exited;
+  const text = await new Response(proc.stdout).text();
+
+  const notExecutable: string[] = [];
+  for (const line of text.split("\n")) {
+    if (!line.includes("cb-")) continue;
+    if (!line.startsWith("-rwx")) {
+      const name = line.split(" ").pop();
+      if (name) notExecutable.push(name);
+    }
+  }
+
+  if (notExecutable.length > 0) {
+    throw new Error(`Not executable: ${notExecutable.join(", ")}`);
+  }
+  return { allExecutable: true };
+}
+
+async function testScriptsSyntax() {
+  const proc = Bun.spawn(["ls", SCRIPTS_DIR]);
+  await proc.exited;
+  const text = await new Response(proc.stdout).text();
+  const errors: string[] = [];
+
+  for (const file of text.trim().split("\n")) {
+    if (!file.startsWith("cb-")) continue;
+
+    const checkProc = Bun.spawn(["bun", `${SCRIPTS_DIR}/${file}`, "--help"], {
+      stdout: "ignore",
+      stderr: "pipe",
+    });
+
+    const code = await checkProc.exited;
+    // --help should exit 0 or show usage (some scripts exit 0, some exit 1 for help)
+    // We just check it doesn't crash with a syntax error
+    const stderr = await new Response(checkProc.stderr).text();
+    if (stderr.includes("SyntaxError") || stderr.includes("TypeError")) {
+      errors.push(`${file}: ${stderr.slice(0, 50)}`);
+    }
+  }
+
+  if (errors.length > 0) throw new Error(errors.join("; "));
+  return { validated: true };
+}
+
+// ============ Logs Tests ============
+async function testLogsDirectory() {
+  const proc = Bun.spawn(["ls", LOG_DIR]);
+  const code = await proc.exited;
+  if (code !== 0) throw new Error("Log directory not found");
+  return { path: LOG_DIR };
+}
+
+async function testLogsTodayExists() {
+  const today = new Date().toISOString().split("T")[0];
+  const logFile = `${LOG_DIR}/clawdbot-${today}.log`;
+  const file = Bun.file(logFile);
+  const exists = await file.exists();
+  if (!exists) throw new Error("Today's log file not found");
+  const stat = await file.stat();
+  return { path: logFile, size: stat.size };
+}
+
+async function testLogsRecentActivity() {
+  const today = new Date().toISOString().split("T")[0];
+  const logFile = `${LOG_DIR}/clawdbot-${today}.log`;
+  const file = Bun.file(logFile);
+
+  if (!await file.exists()) throw new Error("No log file");
+
+  const stat = await file.stat();
+  const mtime = new Date(stat.mtime);
+  const age = Date.now() - mtime.getTime();
+
+  if (age > 5 * 60 * 1000) {
+    throw new Error(`Log stale: last modified ${Math.round(age / 1000)}s ago`);
+  }
+
+  return { lastModified: mtime.toISOString(), ageMs: age };
+}
+
+// ============ Test Runner ============
+const SUITES: Record<string, Array<{ name: string; fn: () => Promise<any> }>> = {
+  gateway: [
+    { name: "Health check", fn: testGatewayHealth },
+    { name: "TCP connection", fn: testGatewayConnection },
+    { name: "Latency check", fn: testGatewayLatency },
+  ],
+  telegram: [
+    { name: "getMe", fn: testTelegramGetMe },
+    { name: "getUpdates", fn: testTelegramGetUpdates },
+    { name: "Webhook info", fn: testTelegramWebhook },
+  ],
+  skills: [
+    { name: "Directory exists", fn: testSkillsDirectory },
+    { name: "Frontmatter valid", fn: testSkillsFrontmatter },
+    { name: "Metadata present", fn: testSkillsMetadata },
+  ],
+  tmux: [
+    { name: "Session exists", fn: testTmuxSession },
+    { name: "Windows check", fn: testTmuxWindows },
+    { name: "Gateway pane", fn: testTmuxGatewayPane },
+  ],
+  config: [
+    { name: "File exists", fn: testConfigExists },
+    { name: "Valid JSON", fn: testConfigValid },
+    { name: "Required fields", fn: testConfigRequired },
+  ],
+  scripts: [
+    { name: "Required exist", fn: testScriptsExist },
+    { name: "Executable", fn: testScriptsExecutable },
+    { name: "Syntax check", fn: testScriptsSyntax },
+  ],
+  logs: [
+    { name: "Directory exists", fn: testLogsDirectory },
+    { name: "Today's log", fn: testLogsTodayExists },
+    { name: "Recent activity", fn: testLogsRecentActivity },
+  ],
+};
+
+async function runSuite(
+  name: string,
+  tests: Array<{ name: string; fn: () => Promise<any> }>,
+  verbose: boolean,
+  failFast: boolean
+): Promise<SuiteResult> {
+  const results: TestResult[] = [];
+  const start = Date.now();
+
+  for (const test of tests) {
+    const result = await runTest(name, test.name, test.fn, verbose);
+    results.push(result);
+
+    if (!result.passed && failFast) break;
+  }
+
+  return {
+    name,
+    tests: results,
+    passed: results.filter(r => r.passed).length,
+    failed: results.filter(r => !r.passed).length,
+    duration: Date.now() - start,
+  };
+}
+
+function displaySuite(suite: SuiteResult, verbose: boolean) {
+  console.log(`\n  ${suite.name}`);
+  console.log("  " + "─".repeat(50));
+
+  for (const test of suite.tests) {
+    const icon = test.passed ? green("✓") : red("✗");
+    const time = dim(`${test.duration}ms`.padStart(6));
+    const msg = test.passed ? "" : red(` - ${test.message}`);
+    console.log(`    ${icon} ${test.name.padEnd(25)} ${time}${msg}`);
+
+    if (verbose && test.details && test.passed) {
+      const details = JSON.stringify(test.details);
+      if (details.length < 60) {
+        console.log(`      ${dim(details)}`);
+      }
+    }
+  }
+}
+
+function displaySummary(suites: SuiteResult[]) {
+  const totalTests = suites.reduce((sum, s) => sum + s.tests.length, 0);
+  const totalPassed = suites.reduce((sum, s) => sum + s.passed, 0);
+  const totalFailed = suites.reduce((sum, s) => sum + s.failed, 0);
+  const totalTime = suites.reduce((sum, s) => sum + s.duration, 0);
+
+  console.log("\n  " + "═".repeat(52));
+
+  const passedStr = totalFailed === 0 ? green(`${totalPassed} passed`) : `${totalPassed} passed`;
+  const failedStr = totalFailed > 0 ? red(`${totalFailed} failed`) : `${totalFailed} failed`;
+
+  console.log(`  Total: ${totalTests} tests | ${passedStr} | ${failedStr} | ${totalTime}ms`);
+
+  if (totalFailed > 0) {
+    console.log(`\n  ${yellow("Failed tests:")}`);
+    for (const suite of suites) {
+      for (const test of suite.tests) {
+        if (!test.passed) {
+          console.log(`    ${red("✗")} ${suite.name} > ${test.name}`);
+          console.log(`      ${dim(test.message)}`);
+        }
+      }
+    }
+  }
+
+  console.log();
+}
+
+function showHelp() {
+  console.log(`
+  ${green("cb-test")} - Clawdbot integration test suite
+
+  Usage: cb-test [suites...] [options]
+
+  Suites:
+    gateway     Test gateway health and connectivity
+    telegram    Test Telegram bot API
+    skills      Test skills directory and format
+    tmux        Test tmux session and windows
+    config      Test configuration file
+    scripts     Test cb-* scripts
+    logs        Test log files
+
+  Options:
+    --json        Output results as JSON
+    --verbose     Show test details
+    --watch       Run continuously (every 10s)
+    --fail-fast   Stop on first failure
+    --help        Show this help
+
+  Examples:
+    cb-test                    # Run all suites
+    cb-test gateway telegram   # Run specific suites
+    cb-test --verbose          # Show details
+    cb-test --json             # CI-friendly output
+`);
+}
+
+async function main() {
+  const args = Bun.argv.slice(2);
+
+  const jsonMode = args.includes("--json");
+  const verbose = args.includes("--verbose") || args.includes("-v");
+  const watchMode = args.includes("--watch");
+  const failFast = args.includes("--fail-fast");
+  const helpMode = args.includes("--help") || args.includes("-h");
+
+  if (helpMode) {
+    showHelp();
+    return;
+  }
+
+  // Get suites to run
+  const suiteArgs = args.filter(a => !a.startsWith("--") && SUITES[a]);
+  const suitesToRun = suiteArgs.length > 0 ? suiteArgs : Object.keys(SUITES);
+
+  const runTests = async () => {
+    const results: SuiteResult[] = [];
+
+    for (const suiteName of suitesToRun) {
+      const suite = SUITES[suiteName];
+      const result = await runSuite(suiteName, suite, verbose, failFast);
+      results.push(result);
+
+      if (failFast && result.failed > 0) break;
+    }
+
+    return results;
+  };
+
+  if (watchMode) {
+    console.log(dim("  Watch mode - running tests every 10s (Ctrl+C to stop)\n"));
+
+    while (true) {
+      console.clear();
+      console.log("\n┌────────────────────────────────────────────────────┐");
+      console.log("│            CLAWDBOT TEST SUITE                     │");
+      console.log("└────────────────────────────────────────────────────┘");
+
+      const results = await runTests();
+
+      for (const suite of results) {
+        displaySuite(suite, verbose);
+      }
+
+      displaySummary(results);
+      console.log(dim(`  Next run in 10s... (${new Date().toLocaleTimeString()})`));
+
+      await Bun.sleep(10000);
+    }
+  }
+
+  const results = await runTests();
+
+  if (jsonMode) {
+    const output = {
+      timestamp: new Date().toISOString(),
+      suites: results,
+      summary: {
+        total: results.reduce((sum, s) => sum + s.tests.length, 0),
+        passed: results.reduce((sum, s) => sum + s.passed, 0),
+        failed: results.reduce((sum, s) => sum + s.failed, 0),
+        duration: results.reduce((sum, s) => sum + s.duration, 0),
+      },
+    };
+    console.log(JSON.stringify(output, null, 2));
+    process.exit(output.summary.failed > 0 ? 1 : 0);
+  }
+
+  console.log("\n┌────────────────────────────────────────────────────┐");
+  console.log("│            CLAWDBOT TEST SUITE                     │");
+  console.log("└────────────────────────────────────────────────────┘");
+
+  for (const suite of results) {
+    displaySuite(suite, verbose);
+  }
+
+  displaySummary(results);
+
+  const totalFailed = results.reduce((sum, s) => sum + s.failed, 0);
+  process.exit(totalFailed > 0 ? 1 : 0);
+}
+
+main();

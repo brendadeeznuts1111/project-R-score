@@ -1,0 +1,169 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: t3-lattice-fractal
+  namespace: t3-lattice
+  labels:
+    app: t3-lattice-fractal
+    component: edge-finder
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: t3-lattice-fractal
+  template:
+    metadata:
+      labels:
+        app: t3-lattice-fractal
+        component: edge-finder
+    spec:
+      containers:
+      - name: fractal-analyzer
+        image: t3-lattice-fractal:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: LATTICE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: lattice-secrets
+              key: lattice-token
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: t3-lattice-fractal
+  namespace: t3-lattice
+  labels:
+    app: t3-lattice-fractal
+spec:
+  selector:
+    app: t3-lattice-fractal
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: t3-lattice-fractal
+  namespace: t3-lattice
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - fractal.yourdomain.com
+    secretName: t3-lattice-tls
+  rules:
+  - host: fractal.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: t3-lattice-fractal
+            port:
+              number: 8080
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lattice-config
+  namespace: t3-lattice
+data:
+  config.toml: |
+    [server]
+    port = 8080
+    host = "0.0.0.0"
+
+    [registry]
+    base_url = "https://api.lattice.registry"
+    scope = "production"
+
+    [security]
+    csrf_enabled = true
+    audit_enabled = true
+
+    [performance]
+    cache_ttl = 1000
+    computation_cache_size = 100
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lattice-secrets
+  namespace: t3-lattice
+type: Opaque
+data:
+  # Base64 encoded secrets
+  lattice-token: <base64-encoded-token>
+  postgres-password: <base64-encoded-password>
+  grafana-password: <base64-encoded-password>
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lattice-storage
+  namespace: t3-lattice
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: t3-lattice-pdb
+  namespace: t3-lattice
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: t3-lattice-fractal

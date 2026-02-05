@@ -1,0 +1,14 @@
+{
+  "migrated": true,
+  "migratedAt": "2026-01-31T13:15:00Z",
+  "from": "clawdbot",
+  "fromVersion": "2026.1.17-1",
+  "to": "matrix-agent",
+  "toVersion": "1.0.0",
+  "note": "Clawdbot has been renamed and migrated to Matrix Agent",
+  "compatibility": {
+    "clawbotCommand": "Redirects to matrix-agent",
+    "configFormat": "Updated to matrix-agent schema",
+    "dataLocation": "~/.matrix/ (was ~/.clawdbot/)"
+  }
+}

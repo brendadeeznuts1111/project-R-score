@@ -1,0 +1,23 @@
+name: Sync API docs
+on:
+  push:
+    paths: ['docs/*.md']
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install yaml glob
+      - run: bun scripts/md-to-oas.ts
+      - name: Validate OpenAPI spec
+        run: bun x @apidevtools/swagger-cli validate docs/plive-api.yaml
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          destination_dir: .

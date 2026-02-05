@@ -1,0 +1,13 @@
+{
+  "region": "ap-southeast-1",
+  "status": "active",
+  "lastUpdate": 1769814261696,
+  "metrics": {
+    "parseTime": 0.6640912576625342,
+    "testCount": 26,
+    "passRate": 0.9033986110129913,
+    "coverage": 0.9975872551916158,
+    "duration": 2769.874656021795
+  },
+  "sealId": "tier1380-1769814261696-599gtastft3"
+}

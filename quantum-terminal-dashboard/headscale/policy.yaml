@@ -1,0 +1,56 @@
+# headscale/policy.yaml - Tailscale ACLs with Cloudflare Integration
+
+# Allow all users to access all ports (default)
+acls:
+  - action: accept
+    src: ["*"]
+    dst: ["*:*"]
+
+# Cloudflare Zero Trust integration
+groups:
+  # Pull groups from Cloudflare Access
+  cf-admins: ["user:admin@example.com"]
+  cf-operators: ["user:ops@example.com"]
+  tag:icon-operator: ["cf-admins", "cf-operators"]
+
+# Tag-based access for operators
+tagOwners:
+  tag:icon-operator: ["cf-admins"]
+  tag:monitoring: ["cf-operators"]
+  tag:api: ["cf-admins"]
+
+# SSH access via Tailscale
+ssh:
+  - action: check
+    src: ["tag:icon-operator"]
+    dst: ["tag:icon-api"]
+    users: ["ubuntu"]
+
+# DERP server access
+derp:
+  server:
+    enabled: true
+    region_id: 999
+    region_code: "headscale"
+    region_name: "Cloudflare-Protected DERP"
+  allow:
+    - "*"
+
+# Monitoring access
+monitoring:
+  - action: accept
+    src: ["tag:monitoring"]
+    dst: ["tag:icon-api:9090"]  # Prometheus metrics
+
+# API access
+api:
+  - action: accept
+    src: ["tag:icon-operator"]
+    dst: ["tag:icon-api:8080"]  # Headscale API
+
+# Deny all other traffic
+deny:
+  - action: deny
+    src: ["*"]
+    dst: ["*:*"]
+

@@ -1,0 +1,62 @@
+{
+  "name": "@bun-toml/platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bun TOML Platform - Monorepo root",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter='*' build",
+    "build:cli": "bun run --filter=@bun-toml/cli build",
+    "build:rss": "bun run --filter=@bun-toml/rss build",
+    "test": "bun run --filter='*' test",
+    "test:core": "bun run --filter=@bun-toml/core test",
+    "typecheck": "bun run --filter='*' typecheck",
+    "clean": "rm -rf packages/*/dist packages/*/node_modules node_modules",
+    "security:audit": "bun scripts/security-audit-workspace.ts",
+    "smoke": "bun run --filter=@bun-toml/core smoke && bun run --filter=@bun-toml/rss smoke",
+    "dev:dashboard": "bun run --filter=@bun-toml/dashboard dev",
+    "changeset": "echo 'Use changeset CLI for versioning'",
+    "cli:v1.3.7": "bun packages/cli/src/bun-v1.3.7-cli.ts",
+    "pack:global": "bun scripts/prepare-global-package.ts",
+    "dashboard": "bun --hot dashboard.tsx",
+    "dashboard:profile": "bun --cpu-prof-md --hot dashboard.tsx",
+    "enterprise": "bun --hot enterprise-dashboard.tsx",
+    "enterprise:proxy": "HTTPS_PROXY=https://user:pass@corporate-proxy.company:8080 bun --hot enterprise-dashboard.tsx",
+    "enterprise:smol": "HTTPS_PROXY=https://user:pass@corporate-proxy.company:8080 bun --smol --hot enterprise-dashboard.tsx",
+    "spectrum": "bun --hot --cpu-prof-md --smol bunmark-dashboard.tsx",
+    "spectrum:proxy": "HTTPS_PROXY=https://proxy.company:8080 bun --hot --cpu-prof-md --smol bunmark-dashboard.tsx",
+    "v1.3.7": "bun --hot --cpu-prof-md v1.3.7-features.tsx",
+    "v1.3.7:proxy": "HTTPS_PROXY=https://proxy.company:8080 bun --hot --cpu-prof-md v1.3.7-features.tsx",
+    "cli": "bun bunmark-cli.ts",
+    "cli:start": "bun bunmark-cli.ts start",
+    "cli:list": "bun bunmark-cli.ts list",
+    "cli:status": "bun bunmark-cli.ts status",
+    "cli:test": "bun bunmark-cli.ts test",
+    "runtime": "bun --hot runtime-flags-dashboard.tsx",
+    "runtime:smol": "bun --smol --hot runtime-flags-dashboard.tsx",
+    "runtime:gc": "bun --expose-gc --hot runtime-flags-dashboard.tsx",
+    "runtime:inspect": "bun --inspect --hot runtime-flags-dashboard.tsx",
+    "runtime:profile": "bun --cpu-prof-md --hot runtime-flags-dashboard.tsx",
+    "runtime:all": "bun --smol --expose-gc --cpu-prof-md --hot runtime-flags-dashboard.tsx",
+    "security": "bun --hot security-matrix-dashboard.tsx",
+    "security:hardened": "bun --port 443 --max-http-header-size=32768 --dns-result-order=ipv4first --use-system-ca --hot security-matrix-dashboard.tsx",
+    "security:enterprise": "HTTPS_PROXY=https://proxy.company:8080 REDIS_URL=redis://localhost:6379 POSTGRES_URL=postgres://localhost:5432 bun --port 8443 --max-http-header-size=32768 --dns-result-order=ipv4first --use-system-ca --fetch-preconnect=https://api.github.com --fetch-preconnect=https://api.stripe.com --hot security-matrix-dashboard.tsx"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "dependencies": {
+    "commander": "14.0.2"
+  },
+  "author": "mike.hunt@factory.wager.com",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

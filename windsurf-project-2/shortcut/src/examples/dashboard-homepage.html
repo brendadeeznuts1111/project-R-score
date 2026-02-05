@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URLPattern Observatory Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(239 68 68); }
+            50% { border-color: rgb(252 165 165); }
+        }
+        .critical-border { animation: pulse-border 2s infinite; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .risk-gradient-critical { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+        .risk-gradient-high { background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); }
+        .risk-gradient-medium { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); }
+        .risk-gradient-low { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-shield-alt text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">URLPattern Observatory</h1>
+                        <p class="text-blue-100">Enterprise Security Dashboard v1.3.6+</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="bg-green-500 px-3 py-1 rounded-full text-sm font-semibold">
+                        <i class="fas fa-circle text-xs mr-2"></i>All Systems Operational
+                    </span>
+                    <button onclick="refreshDashboard()" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Critical Risks</p>
+                        <p class="text-3xl font-bold text-red-600">4</p>
+                    </div>
+                    <div class="bg-red-100 p-3 rounded-full">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">High Risks</p>
+                        <p class="text-3xl font-bold text-orange-600">4</p>
+                    </div>
+                    <div class="bg-orange-100 p-3 rounded-full">
+                        <i class="fas fa-shield-alt text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Medium Risks</p>
+                        <p class="text-3xl font-bold text-yellow-600">2</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <i class="fas fa-exclamation text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Patterns</p>
+                        <p class="text-3xl font-bold text-green-600">29</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Cards Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Routes Configuration Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="risk-gradient-critical text-white p-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-route mr-3"></i>
+                            Routes Configuration
+                        </h3>
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+                            config/routes.toml
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-gray-700">Risk Assessment</span>
+                            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">CRITICAL</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-red-600 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-red-500 pl-4 py-2 bg-red-50 rounded">
+                            <code class="text-sm font-mono text-red-800">http://localhost:3000/admin/*</code>
+                            <div class="text-xs text-red-600 mt-1">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                SSRF risk + Wildcard admin + Insecure protocol
+                            </div>
+                        </div>
+                        <div class="border-l-4 border-red-500 pl-4 py-2 bg-red-50 rounded">
+                            <code class="text-sm font-mono text-red-800">http://127.0.0.1:9229/json</code>
+                            <div class="text-xs text-red-600 mt-1">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                SSRF risk + Localhost access
+                            </div>
+                        </div>
+                        <div class="border-l-4 border-red-500 pl-4 py-2 bg-red-50 rounded">
+                            <code class="text-sm font-mono text-red-800">https://evil.com/../admin</code>
+                            <div class="text-xs text-red-600 mt-1">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Path traversal vulnerability
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">18 total patterns</span>
+                            <button class="text-blue-600 hover:text-blue-800 font-medium">
+                                View Details <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tenant Configuration Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="risk-gradient-high text-white p-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-building mr-3"></i>
+                            Tenant A Configuration
+                        </h3>
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+                            config/tenants/tenant-a.toml
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-gray-700">Risk Assessment</span>
+                            <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">HIGH</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-orange-600 h-2 rounded-full" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-red-500 pl-4 py-2 bg-red-50 rounded">
+                            <code class="text-sm font-mono text-red-800">http://localhost:4000/debug/tenant-a</code>
+                            <div class="text-xs text-red-600 mt-1">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                SSRF risk + Local debug endpoint
+                            </div>
+                        </div>
+                        <div class="border-l-4 border-orange-500 pl-4 py-2 bg-orange-50 rounded">
+                            <code class="text-sm font-mono text-orange-800">http://monitoring.tenant-a.local:9090/metrics</code>
+                            <div class="text-xs text-orange-600 mt-1">
+                                <i class="fas fa-shield-alt mr-1"></i>
+                                Internal network access
+                            </div>
+                        </div>
+                        <div class="border-l-4 border-orange-500 pl-4 py-2 bg-orange-50 rounded">
+                            <code class="text-sm font-mono text-orange-800">s3://tenant-a-backups/:date/*.zip</code>
+                            <div class="text-xs text-orange-600 mt-1">
+                                <i class="fas fa-database mr-1"></i>
+                                S3 protocol access
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">11 total patterns</span>
+                            <button class="text-blue-600 hover:text-blue-800 font-medium">
+                                View Details <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Configuration Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="risk-gradient-low text-white p-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-chart-bar mr-3"></i>
+                            Analysis Configuration
+                        </h3>
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+                            analysis-config.toml
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold text-gray-700">Risk Assessment</span>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">LOW</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 15%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-cog mr-2 text-gray-600"></i>
+                                Analysis Settings
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Max Log Size:</span>
+                                    <span class="font-medium">10MB</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Timeout:</span>
+                                    <span class="font-medium">30s</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Memory Track:</span>
+                                    <span class="font-medium text-green-600">✓</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">CPU Track:</span>
+                                    <span class="font-medium text-green-600">✓</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-search mr-2 text-blue-600"></i>
+                                Pattern Detection
+                            </h4>
+                            <div class="space-y-1 text-sm">
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                    <span>Error patterns: ERR!, ERROR:, npm ERR!</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                                    <span>Warning patterns: WARN, WARNING:, npm WARN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">Performance monitoring enabled</span>
+                            <button class="text-blue-600 hover:text-blue-800 font-medium">
+                                Configure <i class="fas fa-cog ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            Performance Metrics
+                        </h3>
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">
+                            Real-time
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600">1.01ms</div>
+                            <div class="text-sm text-gray-600">Avg Scan Time</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600">17,837</div>
+                            <div class="text-sm text-gray-600">Patterns/sec</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-memory text-purple-600 mr-3"></i>
+                                <span class="text-sm font-medium">Memory Usage</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                    <div class="bg-purple-600 h-2 rounded-full" style="width: 35%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600">35%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-microchip text-blue-600 mr-3"></i>
+                                <span class="text-sm font-medium">CPU Usage</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 22%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600">22%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-green-600 mr-3"></i>
+                                <span class="text-sm font-medium">Uptime</span>
+                            </div>
+                            <span class="text-sm text-gray-600">2h 34m 15s</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-green-600 font-medium">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Excellent Performance
+                            </span>
+                            <button class="text-blue-600 hover:text-blue-800 font-medium">
+                                View Details <i class="fas fa-chart-line ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Insights Section -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
+                Security Insights & Recommendations
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="border-l-4 border-red-500 pl-4">
+                    <h4 class="font-semibold text-red-700 mb-2">🚨 Immediate Action Required</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Remove localhost patterns from production configs</li>
+                        <li>• Fix path traversal vulnerabilities</li>
+                        <li>• Disable wildcard admin access</li>
+                    </ul>
+                </div>
+                <div class="border-l-4 border-orange-500 pl-4">
+                    <h4 class="font-semibold text-orange-700 mb-2">⚠️ High Priority</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Restrict internal network access</li>
+                        <li>• Implement proper authentication</li>
+                        <li>• Add HTTPS enforcement</li>
+                    </ul>
+                </div>
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h4 class="font-semibold text-blue-700 mb-2">💡 Best Practices</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Enable security headers</li>
+                        <li>• Implement rate limiting</li>
+                        <li>• Add audit logging</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-shield-alt text-2xl"></i>
+                    <div>
+                        <p class="font-semibold">URLPattern Observatory v1.3.6+</p>
+                        <p class="text-gray-400 text-sm">Powered by Bun - Enterprise Security Platform</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com/oven-sh/bun" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-github mr-2"></i>Bun
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-book mr-2"></i>Docs
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-life-ring mr-2"></i>Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function refreshDashboard() {
+            // Simulate refresh with animation
+            const button = event.target.closest('button');
+            const icon = button.querySelector('i');
+            icon.classList.add('fa-spin');
+            
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                showNotification('Dashboard refreshed successfully!', 'success');
+            }, 1000);
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} mr-2"></i>
+                    ${message}
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            console.log('Dashboard auto-refreshed');
+        }, 30000);
+    </script>
+</body>
+</html>

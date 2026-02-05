@@ -1,0 +1,91 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "roots": ["<rootDir>/__tests__"],
+  "testMatch": [
+    "**/__tests__/**/*.test.js",
+    "**/__tests__/**/*.test.ts"
+  ],
+  "collectCoverageFrom": [
+    "cash-app-adapter.js",
+    "modules/**/*.js",
+    "config/**/*.js",
+    "scripts/**/*.js",
+    "!**/node_modules/**",
+    "!**/dist/**"
+  ],
+  "coverageThreshold": {
+    "global": {
+      "branches": 90,
+      "functions": 95,
+      "lines": 95,
+      "statements": 95
+    },
+    "./cash-app-adapter.js": {
+      "branches": 85,
+      "functions": 90,
+      "lines": 90,
+      "statements": 90
+    },
+    "./modules/oauth-handler.js": {
+      "branches": 95,
+      "functions": 100,
+      "lines": 100,
+      "statements": 100
+    },
+    "./modules/plaid-verifier.js": {
+      "branches": 90,
+      "functions": 95,
+      "lines": 95,
+      "statements": 95
+    },
+    "./modules/validation-engine.js": {
+      "branches": 95,
+      "functions": 100,
+      "lines": 100,
+      "statements": 100
+    },
+    "./modules/tension-router.js": {
+      "branches": 95,
+      "functions": 100,
+      "lines": 100,
+      "statements": 100
+    }
+  },
+  "coverageReporters": [
+    "text",
+    "text-summary",
+    "html",
+    "lcov",
+    "json"
+  ],
+  "setupFilesAfterEnv": ["<rootDir>/__tests__/setup.js"],
+  "moduleNameMapping": {
+    "^@/(.*)$": "<rootDir>/$1",
+    "^@modules/(.*)$": "<rootDir>/modules/$1",
+    "^@config/(.*)$": "<rootDir>/config/$1",
+    "^@tests/(.*)$": "<rootDir>/__tests__/$1"
+  },
+  "transform": {
+    "^.+\\.(js|ts)$": "babel-jest"
+  },
+  "extensionsToTreatAsEsm": [".js", ".ts"],
+  "globals": {
+    "ts-jest": {
+      "useESM": true,
+      "tsconfig": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
+      }
+    }
+  },
+  "testTimeout": 10000,
+  "verbose": true,
+  "bail": false,
+  "maxWorkers": "50%",
+  "cache": true,
+  "cacheDirectory": "<rootDir>/.jest-cache"
+}

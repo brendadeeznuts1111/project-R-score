@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DuoPlus KYC Analytics Dashboard</title>
+  
+  <!-- DNS Prefetch (CDN domains) -->
+  <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  
+  <!-- Preconnect (TCP/TLS handshake) -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  
+  <!-- Preload Critical Resources -->
+  <link rel="preload" href="https://cdn.tailwindcss.com" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.tailwindcss.com"></noscript>
+  
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+  
+  <!-- Prefetch Non-Critical Resources -->
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" as="script">
+  
+  <!-- Critical CSS Inline -->
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      background: #0f172a; 
+      color: #f1f5f9; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; 
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    
+    .metric-card {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      border: 1px solid #475569;
+    }
+    
+    .metric-card:hover { transform: translateY(-2px); }
+    
+    .kyc-approved { color: #10b981; font-size: 2.5rem; font-weight: 900; }
+    .kyc-rejected { color: #ef4444; font-size: 2.5rem; font-weight: 900; }
+    .kyc-pending { color: #f59e0b; font-size: 2.5rem; font-weight: 900; }
+    .kyc-error { color: #8b5cf6; font-size: 2.5rem; font-weight: 900; }
+    .approval-rate { color: #06b6d4; font-size: 2.5rem; font-weight: 900; }
+    
+    .risk-low { background: #10b981; }
+    .risk-medium { background: #f59e0b; }
+    .risk-high { background: #ef4444; }
+    
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-healthy { background-color: #10b981; }
+    .status-warning { background-color: #f59e0b; }
+    .status-critical { background-color: #ef4444; }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #475569;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo i { color: #3b82f6; font-size: 2rem; }
+    .logo h1 { font-size: 2rem; font-weight: 700; margin: 0; }
+    
+    .live-badge {
+      background: #10b981;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    
+    .refresh-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .refresh-btn:hover { background: #2563eb; }
+    
+    .grid { display: grid; gap: 1.5rem; }
+    .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+    .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+    
+    @media (min-width: 768px) {
+      .grid-cols-1-md { grid-template-columns: repeat(1, 1fr); }
+      .grid-cols-2-md { grid-template-columns: repeat(2, 1fr); }
+      .grid-cols-3-md { grid-template-columns: repeat(3, 1fr); }
+      .grid-cols-4-md { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    @media (min-width: 1024px) {
+      .grid-cols-1-lg { grid-template-columns: repeat(1, 1fr); }
+      .grid-cols-2-lg { grid-template-columns: repeat(2, 1fr); }
+      .grid-cols-3-lg { grid-template-columns: repeat(3, 1fr); }
+      .grid-cols-4-lg { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    .chart-container {
+      background: #1e293b;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-top: 2rem;
+      border: 1px solid #475569;
+    }
+    
+    .progress-bar {
+      background: #475569;
+      border-radius: 9999px;
+      height: 8px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    
+    .risk-bar {
+      display: flex;
+      height: 24px;
+      border-radius: 0.375rem;
+      overflow: hidden;
+    }
+    
+    .alert-card {
+      background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+      border: 1px solid #ef4444;
+    }
+    
+    .warning-card {
+      background: linear-gradient(135deg, #92400e 0%, #d97706 100%);
+      border: 1px solid #f59e0b;
+    }
+    
+    .info-card {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      border: 1px solid #3b82f6;
+    }
+  </style>
+  
+  <!-- Data embedded directly -->
+  <script>
+    // Embedded KYC analytics data
+    window.DATA = {
+      "kyc": {
+        "totalSubmissions": 127,
+        "approvedCount": 98,
+        "rejectedCount": 25,
+        "pendingCount": 0,
+        "errorCount": 4,
+        "approvalRate": 77.2,
+        "averageProcessingTime": 2847,
+        "riskDistribution": { "low": 8, "medium": 12, "high": 5 },
+        "rejectionReasons": { "high_risk_device": 15, "biometric_failed": 6, "document_invalid": 4 },
+        "hourlyVolume": [
+          { "hour": "2026-01-26T18:00:00.000Z", "submissions": 8, "approvals": 6, "rejections": 2 },
+          { "hour": "2026-01-26T19:00:00.000Z", "submissions": 12, "approvals": 9, "rejections": 3 },
+          { "hour": "2026-01-26T20:00:00.000Z", "submissions": 15, "approvals": 12, "rejections": 3 },
+          { "hour": "2026-01-26T21:00:00.000Z", "submissions": 10, "approvals": 8, "rejections": 2 },
+          { "hour": "2026-01-26T22:00:00.000Z", "submissions": 18, "approvals": 14, "rejections": 4 }
+        ],
+        "deviceMetrics": { "genuineDevices": 102, "suspiciousDevices": 25, "averageRiskScore": 42.3 },
+        "biometricMetrics": { "averageScore": 87.2, "passRate": 91.5 },
+        "documentMetrics": { "averageScore": 89.8, "passRate": 93.7 }
+      },
+      "trends": [
+        { "timestamp": "2026-01-26T18:00:00.000Z", "value": 8, "metric": "hourly_submissions" },
+        { "timestamp": "2026-01-26T19:00:00.000Z", "value": 12, "metric": "hourly_submissions" },
+        { "timestamp": "2026-01-26T20:00:00.000Z", "value": 15, "metric": "hourly_submissions" },
+        { "timestamp": "2026-01-26T21:00:00.000Z", "value": 10, "metric": "hourly_submissions" },
+        { "timestamp": "2026-01-26T22:00:00.000Z", "value": 18, "metric": "hourly_submissions" }
+      ],
+      "alerts": { "critical": 1, "warning": 2, "info": 3 },
+      "performance": {
+        "health": 94.2,
+        "cpu": 0.28,
+        "memory": 0.45,
+        "disk": 0.34,
+        "network": 0.15
+      }
+    };
+    window.TIMESTAMP = "2026-01-27T04:06:00.000Z";
+    window.PERFORMANCE_START = performance.now();
+    window.OFFLINE_MODE = true;
+  </script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <i class="fas fa-shield-alt"></i>
+      <h1>DuoPlus KYC Analytics</h1>
+      <span class="live-badge">Live</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="color: #94a3b8; font-size: 0.875rem;">
+        Last Updated: <span id="lastUpdated">--:--:--</span>
+      </span>
+      <button class="refresh-btn" onclick="refreshDashboard()">
+        <i class="fas fa-sync-alt" style="margin-right: 0.5rem;"></i>Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- KYC Overview -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-chart-line" style="color: #10b981; margin-right: 0.5rem;"></i>
+        KYC Processing Overview
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-md grid-cols-4-lg">
+        <!-- Total Submissions -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">Total Submissions</p>
+              <p style="font-size: 2.5rem; font-weight: 900; color: #3b82f6;" id="totalSubmissions">--</p>
+            </div>
+            <i class="fas fa-users" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8;">
+            <span class="status-indicator status-healthy"></span>
+            Active Processing
+          </div>
+        </div>
+        
+        <!-- Approved -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">Approved</p>
+              <p class="kyc-approved" id="approvedCount">--</p>
+            </div>
+            <i class="fas fa-check-circle" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8;">
+            <span class="status-indicator status-healthy"></span>
+            Verified Users
+          </div>
+        </div>
+        
+        <!-- Rejected -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">Rejected</p>
+              <p class="kyc-rejected" id="rejectedCount">--</p>
+            </div>
+            <i class="fas fa-times-circle" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8;">
+            <span class="status-indicator status-warning"></span>
+            Risk Mitigated
+          </div>
+        </div>
+        
+        <!-- Approval Rate -->
+        <div class="metric-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-size: 0.875rem; opacity: 0.8; margin: 0 0 0.5rem 0;">Approval Rate</p>
+              <p class="approval-rate" id="approvalRate">--</p>
+            </div>
+            <i class="fas fa-percentage" style="font-size: 2.5rem; opacity: 0.3;"></i>
+          </div>
+          <div style="margin-top: 0.5rem;">
+            <div class="progress-bar">
+              <div class="progress-fill risk-low" id="approvalRateBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Risk Analysis -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-exclamation-triangle" style="color: #f59e0b; margin-right: 0.5rem;"></i>
+        Risk Distribution Analysis
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-3-lg">
+        <!-- Risk Distribution -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Risk Levels</h3>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.875rem;">Low Risk</span>
+              <span style="font-weight: 600; color: #10b981;" id="riskLow">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-low" id="riskLowBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">Medium Risk</span>
+              <span style="font-weight: 600; color: #f59e0b;" id="riskMedium">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-medium" id="riskMediumBar" style="width: 0%;"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.875rem;">High Risk</span>
+              <span style="font-weight: 600; color: #ef4444;" id="riskHigh">--</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill risk-high" id="riskHighBar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Device Metrics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Device Security</h3>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">Genuine Devices</span>
+                <span style="font-weight: 600; color: #10b981;" id="genuineDevices">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill risk-low" id="genuineDevicesBar" style="width: 0%;"></div>
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">Suspicious Devices</span>
+                <span style="font-weight: 600; color: #ef4444;" id="suspiciousDevices">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill risk-high" id="suspiciousDevicesBar" style="width: 0%;"></div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #475569;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="font-size: 0.875rem;">Avg Risk Score</span>
+                <span style="font-weight: 600; color: #f59e0b;" id="avgRiskScore">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Rejection Reasons -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">Top Rejection Reasons</h3>
+          <div id="rejectionReasons" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Verification Metrics -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-fingerprint" style="color: #8b5cf6; margin-right: 0.5rem;"></i>
+        Verification Performance
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-2-md grid-cols-2-lg">
+        <!-- Biometric Metrics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-fingerprint" style="margin-right: 0.5rem;"></i>Biometric Verification
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">Average Score</span>
+                <span style="font-weight: 600; color: #10b981;" id="bioAvgScore">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill risk-low" id="bioAvgScoreBar" style="width: 0%;"></div>
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">Pass Rate</span>
+                <span style="font-weight: 600; color: #06b6d4;" id="bioPassRate">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="background: #06b6d4;" id="bioPassRateBar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Document Metrics -->
+        <div class="metric-card">
+          <h3 style="font-size: 0.875rem; font-weight: 500; color: #94a3b8; margin-bottom: 1rem;">
+            <i class="fas fa-file-alt" style="margin-right: 0.5rem;"></i>Document Verification
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">Average Score</span>
+                <span style="font-weight: 600; color: #10b981;" id="docAvgScore">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill risk-low" id="docAvgScoreBar" style="width: 0%;"></div>
+              </div>
+            </div>
+            
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.875rem;">Pass Rate</span>
+                <span style="font-weight: 600; color: #06b6d4;" id="docPassRate">--</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="background: #06b6d4;" id="docPassRateBar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Alerts Section -->
+    <section style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-bell" style="color: #ef4444; margin-right: 0.5rem;"></i>
+        Active Alerts
+      </h2>
+      
+      <div class="grid grid-cols-1 grid-cols-3-md grid-cols-3-lg">
+        <!-- Critical Alerts -->
+        <div class="metric-card alert-card">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: #fca5a5;"></i>
+            <div>
+              <p style="font-size: 1.5rem; font-weight: 700;" id="criticalAlerts">--</p>
+              <p style="font-size: 0.875rem; opacity: 0.9;">Critical Alerts</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Warning Alerts -->
+        <div class="metric-card warning-card">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #fcd34d;"></i>
+            <div>
+              <p style="font-size: 1.5rem; font-weight: 700;" id="warningAlerts">--</p>
+              <p style="font-size: 0.875rem; opacity: 0.9;">Warning Alerts</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Info Alerts -->
+        <div class="metric-card info-card">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <i class="fas fa-info-circle" style="font-size: 2rem; color: #93c5fd;"></i>
+            <div>
+              <p style="font-size: 1.5rem; font-weight: 700;" id="infoAlerts">--</p>
+              <p style="font-size: 0.875rem; opacity: 0.9;">Info Alerts</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="chart-container">
+      <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+        <i class="fas fa-chart-area" style="color: #10b981; margin-right: 0.5rem;"></i>
+        KYC Processing Trends (Last 24 Hours)
+      </h3>
+      <canvas id="kycTrendsChart" style="max-height: 400px;"></canvas>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer style="margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #475569; display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: #94a3b8;">
+    <div>
+      <i class="fas fa-shield-alt" style="margin-right: 0.5rem;"></i>
+      DuoPlus KYC Analytics Dashboard | Enterprise Security
+    </div>
+    <div style="display: flex; gap: 1rem;">
+      <span><i class="fas fa-bolt" style="margin-right: 0.25rem;"></i>Load: <span id="loadTime">--</span>ms</span>
+      <span><i class="fas fa-clock" style="margin-right: 0.25rem;"></i>Real-time</span>
+      <span><i class="fas fa-database" style="margin-right: 0.25rem;"></i>KYC Logs</span>
+    </div>
+  </footer>
+
+  <!-- Main Application Script -->
+  <script>
+    let _kycTrendsChart = null;
+    
+    // Initialize KYC dashboard
+    function initializeDashboard() {
+      const data = window.DATA || {};
+      const loadTime = performance.now() - window.PERFORMANCE_START;
+      
+      updateKYCMetrics(data);
+      initializeChart(data);
+      updatePerformanceMetrics(loadTime);
+      
+      console.log(`🚀 KYC Dashboard loaded in ${loadTime.toFixed(0)}ms`);
+    }
+    
+    function updateKYCMetrics(data) {
+      const kyc = data.kyc || {};
+      
+      // Overview metrics
+      document.getElementById('totalSubmissions').textContent = kyc.totalSubmissions || 0;
+      document.getElementById('approvedCount').textContent = kyc.approvedCount || 0;
+      document.getElementById('rejectedCount').textContent = kyc.rejectedCount || 0;
+      document.getElementById('approvalRate').textContent = `${(kyc.approvalRate || 0).toFixed(1)}%`;
+      
+      // Approval rate bar
+      document.getElementById('approvalRateBar').style.width = `${kyc.approvalRate || 0}%`;
+      
+      // Risk distribution
+      const riskDist = kyc.riskDistribution || {};
+      const totalRisk = Object.values(riskDist).reduce((a, b) => a + b, 0);
+      
+      document.getElementById('riskLow').textContent = riskDist.low || 0;
+      document.getElementById('riskMedium').textContent = riskDist.medium || 0;
+      document.getElementById('riskHigh').textContent = riskDist.high || 0;
+      
+      if (totalRisk > 0) {
+        document.getElementById('riskLowBar').style.width = `${(riskDist.low / totalRisk) * 100}%`;
+        document.getElementById('riskMediumBar').style.width = `${(riskDist.medium / totalRisk) * 100}%`;
+        document.getElementById('riskHighBar').style.width = `${(riskDist.high / totalRisk) * 100}%`;
+      }
+      
+      // Device metrics
+      const deviceMetrics = kyc.deviceMetrics || {};
+      const totalDevices = deviceMetrics.genuineDevices + deviceMetrics.suspiciousDevices;
+      
+      document.getElementById('genuineDevices').textContent = deviceMetrics.genuineDevices || 0;
+      document.getElementById('suspiciousDevices').textContent = deviceMetrics.suspiciousDevices || 0;
+      document.getElementById('avgRiskScore').textContent = (deviceMetrics.averageRiskScore || 0).toFixed(1);
+      
+      if (totalDevices > 0) {
+        document.getElementById('genuineDevicesBar').style.width = `${(deviceMetrics.genuineDevices / totalDevices) * 100}%`;
+        document.getElementById('suspiciousDevicesBar').style.width = `${(deviceMetrics.suspiciousDevices / totalDevices) * 100}%`;
+      }
+      
+      // Rejection reasons
+      const reasons = kyc.rejectionReasons || {};
+      const reasonsContainer = document.getElementById('rejectionReasons');
+      reasonsContainer.innerHTML = '';
+      
+      Object.entries(reasons).slice(0, 5).forEach(([reason, count]) => {
+        const reasonDiv = document.createElement('div');
+        reasonDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #475569;';
+        reasonDiv.innerHTML = `
+          <span style="font-size: 0.875rem; text-transform: capitalize;">${reason.replace(/_/g, ' ')}</span>
+          <span style="font-weight: 600; color: #ef4444;">${count}</span>
+        `;
+        reasonsContainer.appendChild(reasonDiv);
+      });
+      
+      // Biometric metrics
+      const bioMetrics = kyc.biometricMetrics || {};
+      document.getElementById('bioAvgScore').textContent = (bioMetrics.averageScore || 0).toFixed(1);
+      document.getElementById('bioPassRate').textContent = `${(bioMetrics.passRate || 0).toFixed(1)}%`;
+      document.getElementById('bioAvgScoreBar').style.width = `${bioMetrics.averageScore || 0}%`;
+      document.getElementById('bioPassRateBar').style.width = `${bioMetrics.passRate || 0}%`;
+      
+      // Document metrics
+      const docMetrics = kyc.documentMetrics || {};
+      document.getElementById('docAvgScore').textContent = (docMetrics.averageScore || 0).toFixed(1);
+      document.getElementById('docPassRate').textContent = `${(docMetrics.passRate || 0).toFixed(1)}%`;
+      document.getElementById('docAvgScoreBar').style.width = `${docMetrics.averageScore || 0}%`;
+      document.getElementById('docPassRateBar').style.width = `${docMetrics.passRate || 0}%`;
+      
+      // Alerts
+      const alerts = data.alerts || {};
+      document.getElementById('criticalAlerts').textContent = alerts.critical || 0;
+      document.getElementById('warningAlerts').textContent = alerts.warning || 0;
+      document.getElementById('infoAlerts').textContent = alerts.info || 0;
+    }
+    
+    function initializeChart(data) {
+      const ctx = document.getElementById('kycTrendsChart');
+      if (!ctx) return;
+      
+      const hourlyVolume = data.kyc?.hourlyVolume || [];
+      const labels = hourlyVolume.map(h => new Date(h.hour).toLocaleTimeString());
+      const submissions = hourlyVolume.map(h => h.submissions);
+      const approvals = hourlyVolume.map(h => h.approvals);
+      const rejections = hourlyVolume.map(h => h.rejections);
+      
+      if (typeof Chart !== 'undefined') {
+        _kycTrendsChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Total Submissions',
+                data: submissions,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+              },
+              {
+                label: 'Approvals',
+                data: approvals,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true
+              },
+              {
+                label: 'Rejections',
+                data: rejections,
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.4,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: '#f1f5f9' } }
+            },
+            scales: {
+              x: { 
+                grid: { color: '#475569' }, 
+                ticks: { color: '#94a3b8' } 
+              },
+              y: { 
+                grid: { color: '#475569' }, 
+                ticks: { color: '#94a3b8' } 
+              }
+            }
+          }
+        });
+      }
+    }
+    
+    function updatePerformanceMetrics(loadTime) {
+      document.getElementById('loadTime').textContent = loadTime.toFixed(0);
+      document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+    }
+    
+    function _refreshDashboard() {
+      if (window.OFFLINE_MODE) {
+        showNotification('Offline mode - start server for live data', 'warning');
+        return;
+      }
+      
+      showNotification('Refreshing KYC data...', 'info');
+      // In live mode, this would fetch fresh data
+    }
+    
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      `;
+      
+      if (type === 'success') {
+        notification.style.background = '#10b981';
+      } else if (type === 'error') {
+        notification.style.background = '#ef4444';
+      } else if (type === 'warning') {
+        notification.style.background = '#f59e0b';
+      } else {
+        notification.style.background = '#3b82f6';
+      }
+      
+      notification.innerHTML = `<i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>${message}`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+    
+    // Initialize on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeDashboard);
+    } else {
+      initializeDashboard();
+    }
+    
+    // Log performance metrics
+    window.addEventListener('load', () => {
+      const loadTime = performance.now() - window.PERFORMANCE_START;
+      console.log(`🚀 DuoPlus KYC Dashboard Performance:`);
+      console.log(`  Load Time: ${loadTime.toFixed(0)}ms`);
+      console.log(`  Mode: Standalone (embedded data)`);
+    });
+  </script>
+</body>
+</html>

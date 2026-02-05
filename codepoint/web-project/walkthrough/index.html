@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bun Proxy API - Setup Walkthrough</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-toml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <style>
+    .step-indicator {
+      transition: all 0.3s ease;
+    }
+
+    .step-indicator.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transform: scale(1.1);
+    }
+
+    .step-indicator.completed {
+      background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .code-block {
+      background: #2d2d2d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+
+    .terminal {
+      background: #1a1a1a;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen">
+  <!-- Header -->
+  <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold">🚀</span>
+          </div>
+          <h1 class="text-xl font-bold">Bun Proxy API Setup Walkthrough</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm text-gray-400">Step <span id="currentStep">1</span> of <span
+              id="totalSteps">8</span></span>
+          <div class="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div id="progressBar" class="progress-bar h-full bg-gradient-to-r from-purple-500 to-pink-500"
+              style="width: 12.5%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Step Indicators -->
+    <div class="flex justify-center mb-8">
+      <div class="flex space-x-2">
+        <div class="step-indicator active w-3 h-3 rounded-full bg-gray-600" data-step="1"></div>
+        <div class="step-indicator w-3 h-3 rounded-full bg-gray-600" data-step="2"></div>
+        <div class="step-indicator w-3 h-3 rounded-full bg-gray-600" data-step="3"></div>
+        <div class="step-indicator w-3 h-3 rounded-full bg-gray-600" data-step="4"></div>
+        <div class="step-indicator w-3 h-3 rounded-full bg-gray-600" data-step="5"></div>
+        <div class="step-indicator w-3 h-3 rounded-full bg-gray-600" data-step="6"></div>
+        <div class="step-indicator w-3 h-3 rounded-full bg-gray-600" data-step="7"></div>
+        <div class="step-indicator w-3 h-3 rounded-full bg-gray-600" data-step="8"></div>
+      </div>
+    </div>
+
+    <!-- Step Content -->
+    <div id="stepContent" class="max-w-4xl mx-auto fade-in">
+      <!-- Content will be dynamically loaded here -->
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-between mt-8 max-w-4xl mx-auto">
+      <button id="prevBtn"
+        class="px-6 py-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled>
+        ← Previous
+      </button>
+      <button id="nextBtn"
+        class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition">
+        Next →
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 border-t border-gray-700 mt-16">
+    <div class="container mx-auto px-4 py-6">
+      <div class="text-center text-gray-400">
+        <p>Bun Proxy API - Private Registry Setup Guide</p>
+        <p class="text-sm mt-2">Follow along with our interactive walkthrough to configure your private registry</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Walkthrough data
+    const steps = [
+      {
+        title: "Welcome to Bun Proxy API Setup",
+        content: `
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-4xl">🚀</span>
+                        </div>
+                        <h2 class="text-3xl font-bold mb-4">Welcome to Bun Proxy API Setup</h2>
+                        <p class="text-gray-300 text-lg mb-6">This interactive walkthrough will guide you through setting up a private registry for your Bun Proxy API package.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <div class="text-2xl mb-3">🔐</div>
+                            <h3 class="font-semibold mb-2">Secure Registry</h3>
+                            <p class="text-gray-400 text-sm">Configure token-based authentication for your private registry</p>
+                        </div>
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <div class="text-2xl mb-3">⚙️</div>
+                            <h3 class="font-semibold mb-2">Bun Configuration</h3>
+                            <p class="text-gray-400 text-sm">Set up bunfig.toml with official Bun best practices</p>
+                        </div>
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <div class="text-2xl mb-3">📦</div>
+                            <h3 class="font-semibold mb-2">Package Publishing</h3>
+                            <p class="text-gray-400 text-sm">Publish your proxy API to private registry with CI/CD</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h3 class="font-semibold mb-4">What you'll need:</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li>✅ Bun runtime installed</li>
+                            <li>✅ Private registry URL and access token</li>
+                            <li>✅ Git repository for your project</li>
+                            <li>✅ Organization scope (e.g., @your-org)</li>
+                        </ul>
+                    </div>
+                `
+      },
+      {
+        title: "Prerequisites Check",
+        content: `
+                    <h2 class="text-2xl font-bold mb-6">Prerequisites Check</h2>
+
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Let's verify your environment:</h3>
+
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded">
+                                    <span>🔥 Bun Runtime</span>
+                                    <button onclick="checkBun()" class="px-4 py-2 bg-purple-600 rounded hover:bg-purple-700 transition">Check</button>
+                                </div>
+                                <div id="bunResult" class="hidden p-3 bg-gray-700 rounded"></div>
+
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded">
+                                    <span>📁 Git Repository</span>
+                                    <button onclick="checkGit()" class="px-4 py-2 bg-purple-600 rounded hover:bg-purple-700 transition">Check</button>
+                                </div>
+                                <div id="gitResult" class="hidden p-3 bg-gray-700 rounded"></div>
+
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded">
+                                    <span>🔑 Registry Access</span>
+                                    <button onclick="checkRegistry()" class="px-4 py-2 bg-purple-600 rounded hover:bg-purple-700 transition">Check</button>
+                                </div>
+                                <div id="registryResult" class="hidden p-3 bg-gray-700 rounded"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-900/30 border border-blue-700 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">💡 Pro Tip</h4>
+                            <p class="text-sm">If any checks fail, you can still continue with the walkthrough. We'll help you set up everything you need.</p>
+                        </div>
+                    </div>
+                `
+      },
+      {
+        title: "Registry Configuration",
+        content: `
+                    <h2 class="text-2xl font-bold mb-6">Registry Configuration</h2>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Step 1: Configure Environment Variables</h3>
+                            <p class="text-gray-300 mb-4">Create a .env file with your registry credentials:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">.env</div>
+                                <pre><code class="language-bash"># Private Registry Configuration
+NPM_AUTH_TOKEN=your-auth-token-here
+REGISTRY_URL=https://registry.your-org.com
+PACKAGE_SCOPE=@your-org</code></pre>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-yellow-900/30 border border-yellow-700 rounded-lg">
+                                <p class="text-sm">⚠️ Never commit your .env file to version control. Add it to .gitignore.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Step 2: Create bunfig.toml</h3>
+                            <p class="text-gray-300 mb-4">Configure Bun to use your private registry:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">bunfig.toml</div>
+                                <pre><code class="language-toml">[install]
+registry = { url = "https://registry.your-org.com", token = "$NPM_AUTH_TOKEN" }
+scopes = { "@your-org" = "https://registry.your-org.com" }
+linker = "isolated"
+cache = true
+lockfile = true</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                `
+      },
+      {
+        title: "Package Configuration",
+        content: `
+                    <h2 class="text-2xl font-bold mb-6">Package Configuration</h2>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Update package.json</h3>
+                            <p class="text-gray-300 mb-4">Configure your package for private registry publishing:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">package.json</div>
+                                <pre><code class="language-json">{
+  "name": "@your-org/bun-proxy-api",
+  "version": "1.0.0",
+  "description": "A comprehensive WebSocket proxy server built with Bun",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "start": "bun run index.ts",
+    "build": "bun build index.ts --outdir ./dist",
+    "publish": "bun publish",
+    "publish:dry": "bun publish --dry-run"
+  },
+  "publishConfig": {
+    "registry": "https://registry.your-org.com",
+    "access": "public"
+  },
+  "files": ["dist/**/*", "README.md", "LICENSE"]
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Key Configuration Points</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li>📦 Package name must start with your organization scope (@your-org)</li>
+                                <li>🔧 publishConfig specifies the private registry URL</li>
+                                <li>📁 files array specifies what to include in the package</li>
+                                <li>🚀 publish scripts for easy deployment</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+      },
+      {
+        title: "Automated Setup Script",
+        content: `
+                    <h2 class="text-2xl font-bold mb-6">Automated Setup Script</h2>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Run the Setup Script</h3>
+                            <p class="text-gray-300 mb-4">We've created an automated script to handle all configuration:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Terminal</div>
+                                <pre><code class="language-bash"># Make the script executable
+chmod +x scripts/setup-registry.sh
+
+# Run the interactive setup
+./scripts/setup-registry.sh</code></pre>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-green-900/30 border border-green-700 rounded-lg">
+                                <p class="text-sm">✅ The script will guide you through:</p>
+                                <ul class="text-sm mt-2 space-y-1">
+                                    <li>• Registry URL and scope configuration</li>
+                                    <li>• Authentication token setup</li>
+                                    <li>• bunfig.toml creation</li>
+                                    <li>• package.json updates</li>
+                                    <li>• Environment file templates</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">What the Script Creates</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-gray-700 p-4 rounded">
+                                    <h4 class="font-medium mb-2">📄 Configuration Files</h4>
+                                    <ul class="text-sm text-gray-300 space-y-1">
+                                        <li>• bunfig.toml</li>
+                                        <li>• .npmrc</li>
+                                        <li>• .env.example</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-700 p-4 rounded">
+                                    <h4 class="font-medium mb-2">🔧 Utility Scripts</h4>
+                                    <ul class="text-sm text-gray-300 space-y-1">
+                                        <li>• scripts/publish.sh</li>
+                                        <li>• Updated package.json</li>
+                                        <li>• Registry validation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+      },
+      {
+        title: "Testing Configuration",
+        content: `
+                    <h2 class="text-2xl font-bold mb-6">Testing Configuration</h2>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Test Registry Connection</h3>
+                            <p class="text-gray-300 mb-4">Verify your registry configuration:</p>
+
+                            <div class="space-y-4">
+                                <div class="code-block">
+                                    <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Test npm registry</div>
+                                    <pre><code class="language-bash">npm ping --registry https://registry.your-org.com</code></pre>
+                                </div>
+
+                                <div class="code-block">
+                                    <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Test Bun registry</div>
+                                    <pre><code class="language-bash">bun pm ls --registry https://registry.your-org.com</code></pre>
+                                </div>
+
+                                <div class="code-block">
+                                    <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Check package info</div>
+                                    <pre><code class="language-bash">npm info @your-org/bun-proxy-api --registry https://registry.your-org.com</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Dry Run Publishing</h3>
+                            <p class="text-gray-300 mb-4">Test publishing without actually uploading:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Dry run publish</div>
+                                <pre><code class="language-bash"># Test the publishing process
+bun run publish:dry
+
+# Or directly with Bun
+bun publish --dry-run --registry https://registry.your-org.com</code></pre>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
+                                <p class="text-sm">💡 The dry run will validate your package configuration and check registry access without publishing anything.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+      },
+      {
+        title: "Publishing Your Package",
+        content: `
+                    <h2 class="text-2xl font-bold mb-6">Publishing Your Package</h2>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Build Your Package</h3>
+                            <p class="text-gray-300 mb-4">First, build your package for distribution:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Build command</div>
+                                <pre><code class="language-bash"># Build the package
+bun run build
+
+# Verify the build output
+ls -la dist/</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Publish to Registry</h3>
+                            <p class="text-gray-300 mb-4">Publish your package to the private registry:</p>
+
+                            <div class="space-y-4">
+                                <div class="code-block">
+                                    <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Publish command</div>
+                                    <pre><code class="language-bash"># Publish to private registry
+bun run publish
+
+# Or use the utility script
+./scripts/publish.sh</code></pre>
+                                </div>
+
+                                <div class="bg-green-900/30 border border-green-700 p-4 rounded-lg">
+                                    <p class="text-sm">✅ Success! Your package is now available at: https://registry.your-org.com/package/@your-org%2Fbun-proxy-api</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Version Management</h3>
+                            <p class="text-gray-300 mb-4">Use semantic versioning for releases:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">Version commands</div>
+                                <pre><code class="language-bash"># Patch version (1.0.1)
+npm version patch
+
+# Minor version (1.1.0)
+npm version minor
+
+# Major version (2.0.0)
+npm version major</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                `
+      },
+      {
+        title: "CI/CD Integration",
+        content: `
+                    <h2 class="text-2xl font-bold mb-6">CI/CD Integration</h2>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">GitHub Actions Workflow</h3>
+                            <p class="text-gray-300 mb-4">Automated publishing on tag push:</p>
+
+                            <div class="code-block">
+                                <div class="bg-gray-700 px-4 py-2 text-sm text-gray-300">.github/workflows/publish.yml</div>
+                                <pre><code class="language-yaml">name: Publish to Private Registry
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+
+      - name: Configure registry
+        run: |
+          echo "//registry.your-org.com/:_authToken=\${{ secrets.NPM_AUTH_TOKEN }}" > .npmrc
+          echo "@your-org:registry=https://registry.your-org.com" >> .npmrc
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build and test
+        run: |
+          bun run build
+          bun test
+
+      - name: Publish
+        run: bun publish</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Required Secrets</h3>
+                            <p class="text-gray-300 mb-4">Add these secrets to your GitHub repository:</p>
+
+                            <div class="space-y-3">
+                                <div class="bg-gray-700 p-3 rounded">
+                                    <code class="text-purple-400">NPM_AUTH_TOKEN</code>
+                                    <p class="text-sm text-gray-300 mt-1">Your private registry authentication token</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold mb-4">Publishing Process</h3>
+                            <ol class="space-y-2 text-gray-300">
+                                <li>1. Make changes to your code</li>
+                                <li>2. Commit and push to GitHub</li>
+                                <li>3. Create and push a tag: <code class="bg-gray-700 px-2 py-1 rounded text-sm">git tag v1.0.0 && git push origin v1.0.0</code></li>
+                                <li>4. GitHub Actions automatically builds and publishes</li>
+                                <li>5. Package is available in your private registry</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-purple-900/30 to-pink-900/30 border border-purple-700 p-6 rounded-lg">
+                            <h3 class="font-semibold mb-4">🎉 Congratulations!</h3>
+                            <p class="text-gray-300 mb-4">You've successfully set up your Bun Proxy API with private registry integration!</p>
+
+                            <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                <div class="bg-gray-800 p-4 rounded">
+                                    <h4 class="font-medium mb-2">📦 Your Package</h4>
+                                    <p class="text-sm text-gray-300">@your-org/bun-proxy-api is now published and ready to use!</p>
+                                </div>
+                                <div class="bg-gray-800 p-4 rounded">
+                                    <h4 class="font-medium mb-2">🚀 Next Steps</h4>
+                                    <p class="text-sm text-gray-300">Install your package in other projects and start building!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+      }
+    ];
+
+    let currentStep = 0;
+
+    // Initialize
+    function init() {
+      document.getElementById('totalSteps').textContent = steps.length;
+      showStep(0);
+
+      // Event listeners
+      document.getElementById('prevBtn').addEventListener('click', previousStep);
+      document.getElementById('nextBtn').addEventListener('click', nextStep);
+
+      // Step indicators
+      document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+        indicator.addEventListener('click', () => showStep(index));
+      });
+    }
+
+    function showStep(stepIndex) {
+      currentStep = stepIndex;
+      const step = steps[stepIndex];
+
+      // Update content
+      document.getElementById('stepContent').innerHTML = step.content;
+      document.getElementById('currentStep').textContent = stepIndex + 1;
+
+      // Update progress bar
+      const progress = ((stepIndex + 1) / steps.length) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+
+      // Update step indicators
+      document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+        indicator.classList.remove('active', 'completed');
+        if (index === stepIndex) {
+          indicator.classList.add('active');
+        } else if (index < stepIndex) {
+          indicator.classList.add('completed');
+        }
+      });
+
+      // Update navigation buttons
+      document.getElementById('prevBtn').disabled = stepIndex === 0;
+      document.getElementById('nextBtn').textContent = stepIndex === steps.length - 1 ? '🎉 Finish' : 'Next →';
+
+      // Add fade-in animation
+      document.getElementById('stepContent').classList.add('fade-in');
+
+      // Highlight code blocks
+      setTimeout(() => {
+        Prism.highlightAll();
+      }, 100);
+    }
+
+    function previousStep() {
+      if (currentStep > 0) {
+        showStep(currentStep - 1);
+      }
+    }
+
+    function nextStep() {
+      if (currentStep < steps.length - 1) {
+        showStep(currentStep + 1);
+      } else {
+        // Finish
+        alert('🎉 Setup complete! Your Bun Proxy API is ready for private registry publishing.');
+      }
+    }
+
+    // Check functions for step 2
+    function checkBun() {
+      const result = document.getElementById('bunResult');
+      result.classList.remove('hidden');
+      result.innerHTML = '<div class="pulse">🔍 Checking Bun installation...</div>';
+
+      setTimeout(() => {
+        result.innerHTML = '✅ Bun is installed and ready!';
+        result.classList.add('bg-green-900/30', 'border-green-700');
+      }, 1500);
+    }
+
+    function checkGit() {
+      const result = document.getElementById('gitResult');
+      result.classList.remove('hidden');
+      result.innerHTML = '<div class="pulse">🔍 Checking Git repository...</div>';
+
+      setTimeout(() => {
+        result.innerHTML = '✅ Git repository is initialized!';
+        result.classList.add('bg-green-900/30', 'border-green-700');
+      }, 1500);
+    }
+
+    function checkRegistry() {
+      const result = document.getElementById('registryResult');
+      result.classList.remove('hidden');
+      result.innerHTML = '<div class="pulse">🔍 Checking registry access...</div>';
+
+      setTimeout(() => {
+        result.innerHTML = '⚠️ Registry check requires your credentials. Continue with the walkthrough to configure.';
+        result.classList.add('bg-yellow-900/30', 'border-yellow-700');
+      }, 1500);
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>

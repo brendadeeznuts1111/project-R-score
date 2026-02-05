@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Fraud Prevention Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen text-white">
+    <!-- Header -->
+    <header class="glass-effect border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                            Executive Fraud Prevention Dashboard
+                        </h1>
+                        <p class="text-sm text-gray-400">Real-time fraud detection and prevention metrics</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-400">
+                        Last Updated: <span id="lastUpdated" class="text-white font-medium"></span>
+                    </div>
+                    <button onclick="refreshData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-sm text-green-400 font-medium">+12%</span>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1">94.2%</div>
+                <div class="text-sm text-gray-400">Overall Effectiveness</div>
+            </div>
+
+            <div class="glass-effect rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-sm text-blue-400 font-medium">$2.4M</span>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1">Monthly</div>
+                <div class="text-sm text-gray-400">Fraud Loss Prevention</div>
+            </div>
+
+            <div class="glass-effect rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-sm text-purple-400 font-medium">< 200ms</span>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1">180ms</div>
+                <div class="text-sm text-gray-400">Average Response Time</div>
+            </div>
+
+            <div class="glass-effect rounded-xl p-6 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-sm text-red-400 font-medium">-60%</span>
+                </div>
+                <div class="text-3xl font-bold text-white mb-1">1.9%</div>
+                <div class="text-sm text-gray-400">False Positive Rate</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Risk Indicators Chart -->
+            <div class="glass-effect rounded-xl p-6 border border-white/10">
+                <h2 class="text-xl font-semibold text-white mb-4">Top Risk Indicators</h2>
+                <canvas id="riskIndicatorsChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Model Performance Chart -->
+            <div class="glass-effect rounded-xl p-6 border border-white/10">
+                <h2 class="text-xl font-semibold text-white mb-4">Model Performance</h2>
+                <canvas id="modelPerformanceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Warm-up Success Rates -->
+        <div class="glass-effect rounded-xl p-6 border border-white/10 mb-8">
+            <h2 class="text-xl font-semibold text-white mb-4">Warm-up Success Rates</h2>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-2">
+                        <svg class="w-24 h-24 transform -rotate-90">
+                            <circle cx="48" cy="48" r="36" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"></circle>
+                            <circle cx="48" cy="48" r="36" stroke="url(#gradient1)" stroke-width="8" fill="none" 
+                                    stroke-dasharray="226" stroke-dashoffset="18" stroke-linecap="round"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-white">92%</span>
+                        </div>
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </div>
+                    <div class="text-sm text-gray-400">Cold → Warming</div>
+                </div>
+
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-2">
+                        <svg class="w-24 h-24 transform -rotate-90">
+                            <circle cx="48" cy="48" r="36" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"></circle>
+                            <circle cx="48" cy="48" r="36" stroke="url(#gradient2)" stroke-width="8" fill="none" 
+                                    stroke-dasharray="226" stroke-dashoffset="27" stroke-linecap="round"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-white">88%</span>
+                        </div>
+                        <defs>
+                            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </div>
+                    <div class="text-sm text-gray-400">Warming → Warm</div>
+                </div>
+
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-2">
+                        <svg class="w-24 h-24 transform -rotate-90">
+                            <circle cx="48" cy="48" r="36" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"></circle>
+                            <circle cx="48" cy="48" r="36" stroke="url(#gradient3)" stroke-width="8" fill="none" 
+                                    stroke-dasharray="226" stroke-dashoffset="34" stroke-linecap="round"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-white">85%</span>
+                        </div>
+                        <defs>
+                            <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </div>
+                    <div class="text-sm text-gray-400">Warm → Hot</div>
+                </div>
+
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-2">
+                        <svg class="w-24 h-24 transform -rotate-90">
+                            <circle cx="48" cy="48" r="36" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"></circle>
+                            <circle cx="48" cy="48" r="36" stroke="url(#gradient4)" stroke-width="8" fill="none" 
+                                    stroke-dasharray="226" stroke-dashoffset="14" stroke-linecap="round"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-white">94%</span>
+                        </div>
+                        <defs>
+                            <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </div>
+                    <div class="text-sm text-gray-400">Hot Maintenance</div>
+                </div>
+
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-2">
+                        <svg class="w-24 h-24 transform -rotate-90">
+                            <circle cx="48" cy="48" r="36" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"></circle>
+                            <circle cx="48" cy="48" r="36" stroke="url(#gradient5)" stroke-width="8" fill="none" 
+                                    stroke-dasharray="226" stroke-dashoffset="23" stroke-linecap="round"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-white">89.7%</span>
+                        </div>
+                        <defs>
+                            <linearGradient id="gradient5" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </div>
+                    <div class="text-sm text-gray-400 font-medium">Overall Success</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div class="glass-effect rounded-xl p-6 border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-white">Recent Fraud Alerts</h2>
+                <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm font-medium animate-pulse-slow">
+                    3 Active
+                </span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <div>
+                            <div class="text-white font-medium">Sanctioned Individual Detected</div>
+                            <div class="text-sm text-gray-400">User: user_456 | Risk: CRITICAL</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400">2 min ago</div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                        <div>
+                            <div class="text-white font-medium">Suspicious Login Pattern</div>
+                            <div class="text-sm text-gray-400">User: user_789 | Risk: HIGH</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400">5 min ago</div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <div>
+                            <div class="text-white font-medium">Emulator Usage Detected</div>
+                            <div class="text-sm text-gray-400">Device: fp_abc123 | Risk: MEDIUM</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400">8 min ago</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Initialize dashboard
+        let riskIndicatorsChart, modelPerformanceChart;
+
+        function initializeCharts() {
+            // Risk Indicators Chart
+            const riskCtx = document.getElementById('riskIndicatorsChart').getContext('2d');
+            riskIndicatorsChart = new Chart(riskCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Device Clustering', 'Synthetic Identities', 'VPN/Proxy Usage', 'Behavioral Anomalies', 'Geographic Impossibilities'],
+                    datasets: [{
+                        data: [32, 28, 22, 15, 8],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(139, 92, 246, 1)',
+                            'rgba(16, 185, 129, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Model Performance Chart
+            const modelCtx = document.getElementById('modelPerformanceChart').getContext('2d');
+            modelPerformanceChart = new Chart(modelCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Graph Neural Network', 'Time Series Anomaly', 'Behavioral Biometrics', 'Device Fingerprinting', 'Network Analysis'],
+                    datasets: [{
+                        label: 'Accuracy (%)',
+                        data: [98.2, 96.7, 95.4, 94.8, 93.2],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+        }
+
+        function refreshData() {
+            // Simulate data refresh
+            console.log('Refreshing dashboard data...');
+            
+            // Update last updated time
+            updateLastUpdated();
+            
+            // Simulate new data with slight variations
+            if (riskIndicatorsChart) {
+                const newData = riskIndicatorsChart.data.datasets[0].data.map(val => 
+                    Math.max(5, val + (Math.random() - 0.5) * 2)
+                );
+                riskIndicatorsChart.data.datasets[0].data = newData;
+                riskIndicatorsChart.update();
+            }
+            
+            if (modelPerformanceChart) {
+                const newData = modelPerformanceChart.data.datasets[0].data.map(val => 
+                    Math.min(100, Math.max(85, val + (Math.random() - 0.5)))
+                );
+                modelPerformanceChart.data.datasets[0].data = newData;
+                modelPerformanceChart.update();
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            updateLastUpdated();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Apps Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .risk-high { border-left: 4px solid #ef4444; }
+        .risk-medium { border-left: 4px solid #f59e0b; }
+        .risk-low { border-left: 4px solid #22c55e; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-credit-card text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Payment Apps Analytics</h1>
+                        <p class="text-blue-100">Real-time payment platform monitoring & fraud detection</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">Last Updated: <span id="lastUpdated" class="font-mono"></span></span>
+                    <button onclick="refreshData()" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Key Metrics -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Platform Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Overall Health</p>
+                            <p class="text-3xl font-bold text-blue-600">91.0%</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 2.3% from last month
+                            </p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-heartbeat text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Monthly Volume</p>
+                            <p class="text-3xl font-bold text-green-600">$2.4M</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 12% growth
+                            </p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Cross-App Transactions</p>
+                            <p class="text-3xl font-bold text-purple-600">1,247</p>
+                            <p class="text-xs text-purple-600 mt-1">
+                                <i class="fas fa-arrow-up"></i> 8% increase
+                            </p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-exchange-alt text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Fraud Rate</p>
+                            <p class="text-3xl font-bold text-red-600">0.8%</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-down"></i> 0.3% improvement
+                            </p>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <i class="fas fa-shield-alt text-red-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- App-Specific Metrics -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">💳 Payment App Performance</h2>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">App</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Users</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verified</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Level</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Volume</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="appMetricsTable">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Transaction Volume Chart -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">📈 Transaction Volume Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Risk Distribution Chart -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🎯 Risk Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cross-App Flow Analysis -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">💸 Cross-App Money Flow Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Flow Patterns -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🔄 Most Common Paths</h3>
+                    <div class="space-y-3" id="flowPatterns">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Suspicious Patterns -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">🚨 Suspicious Patterns</h3>
+                    <div class="space-y-3" id="suspiciousPatterns">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Risk Indicators -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">⚠️ Risk Indicators by App</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="riskIndicators">
+                <!-- Populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Real-time Alerts -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">🚨 Real-time Fraud Alerts</h2>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="space-y-3" id="fraudAlerts">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">Payment Apps Analytics Dashboard • Real-time Monitoring & Fraud Detection</p>
+            <p class="text-xs text-gray-500 mt-2">Data refreshes every 30 seconds • Last sync: <span id="lastSync"></span></p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data generation
+        const paymentAppsData = {
+            apps: [
+                { name: 'PayPal', users: 142, verified: 95, risk: 'Low', volume: 1200000, status: 'active', suspicious: 3.2, chargebacks: 0.4 },
+                { name: 'Cash App', users: 89, verified: 88, risk: 'Medium', volume: 450000, status: 'active', suspicious: 8.7, disputes: 1.2 },
+                { name: 'Venmo', users: 104, verified: 92, risk: 'Low', volume: 380000, status: 'active', suspicious: 4.1, unauthorized: 0.6 },
+                { name: 'Zelle', users: 67, verified: 84, risk: 'Medium', volume: 210000, status: 'active', suspicious: 6.3, fraud: 2.1 },
+                { name: 'Apple Pay', users: 123, verified: 96, risk: 'Low', volume: 160000, status: 'active', suspicious: 1.8, disputes: 0.2 },
+                { name: 'Google Pay', users: 78, verified: 91, risk: 'Low', volume: 95000, status: 'active', suspicious: 2.4, unauthorized: 0.3 }
+            ],
+            flowPatterns: [
+                { path: 'Bank → PayPal → Cash App', percentage: 28, volume: 672000 },
+                { path: 'Direct Deposit → Venmo → Bank', percentage: 22, volume: 528000 },
+                { path: 'PayPal → Zelle → Recipient', percentage: 18, volume: 432000 },
+                { path: 'Cash App → Crypto Wallet', percentage: 12, volume: 288000 },
+                { path: 'Apple Pay → Google Pay → Bank', percentage: 8, volume: 192000 }
+            ],
+            suspiciousPatterns: [
+                { pattern: 'Circular Routing (PayPal → Cash App → PayPal)', instances: 7, severity: 'high' },
+                { pattern: 'Layering (Multiple small transfers)', instances: 23, severity: 'medium' },
+                { pattern: 'Rapid Platform Switching', instances: 15, severity: 'medium' },
+                { pattern: 'Structuring (Just under reporting limits)', instances: 9, severity: 'high' },
+                { pattern: 'Geographic Arbitrage', instances: 4, severity: 'low' }
+            ],
+            fraudAlerts: [
+                { app: 'Cash App', type: 'High-value rapid transfers', severity: 'high', time: '2 minutes ago', user: 'user_8923' },
+                { app: 'PayPal', type: 'Chargeback pattern detected', severity: 'medium', time: '5 minutes ago', user: 'user_4567' },
+                { app: 'Zelle', type: 'Multiple enrollment attempts', severity: 'high', time: '8 minutes ago', user: 'user_1234' },
+                { app: 'Venmo', type: 'Unusual transaction descriptions', severity: 'low', time: '12 minutes ago', user: 'user_7890' }
+            ]
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLastUpdated();
+            populateAppMetricsTable();
+            createVolumeChart();
+            createRiskChart();
+            populateFlowPatterns();
+            populateSuspiciousPatterns();
+            populateRiskIndicators();
+            populateFraudAlerts();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        });
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+            document.getElementById('lastSync').textContent = now.toLocaleString();
+        }
+
+        function populateAppMetricsTable() {
+            const tbody = document.getElementById('appMetricsTable');
+            tbody.innerHTML = '';
+            
+            paymentAppsData.apps.forEach(app => {
+                const riskClass = app.risk.toLowerCase() === 'high' ? 'risk-high' : 
+                                 app.risk.toLowerCase() === 'medium' ? 'risk-medium' : 'risk-low';
+                
+                const statusBadge = app.status === 'active' ? 
+                    '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Active</span>' :
+                    '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Inactive</span>';
+                
+                const row = `
+                    <tr class="${riskClass}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fab fa-${getAppIcon(app.name)} text-blue-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${app.name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${app.users.toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${app.verified}%</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full ${getRiskBadgeClass(app.risk)}">${app.risk}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${(app.volume / 1000).toFixed(0)}K</td>
+                        <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function getAppIcon(appName) {
+            const icons = {
+                'PayPal': 'cc-paypal',
+                'Cash App': 'money-bill-wave',
+                'Venmo': 'cc-stripe',
+                'Zelle': 'university',
+                'Apple Pay': 'cc-apple-pay',
+                'Google Pay': 'google-pay'
+            };
+            return icons[appName] || 'credit-card';
+        }
+
+        function getRiskBadgeClass(risk) {
+            switch(risk.toLowerCase()) {
+                case 'high': return 'bg-red-100 text-red-800';
+                case 'medium': return 'bg-yellow-100 text-yellow-800';
+                case 'low': return 'bg-green-100 text-green-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function createVolumeChart() {
+            const ctx = document.getElementById('volumeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'PayPal',
+                            data: [1100000, 1150000, 1180000, 1200000, 1190000, 1200000],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Cash App',
+                            data: [400000, 420000, 430000, 440000, 445000, 450000],
+                            borderColor: 'rgb(16, 185, 129)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Venmo',
+                            data: [350000, 360000, 365000, 370000, 375000, 380000],
+                            borderColor: 'rgb(139, 92, 246)',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (value) => `$${(value / 1000000).toFixed(1)}M`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createRiskChart() {
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function populateFlowPatterns() {
+            const container = document.getElementById('flowPatterns');
+            container.innerHTML = '';
+            
+            paymentAppsData.flowPatterns.forEach((pattern, index) => {
+                const item = `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-lg font-bold text-gray-400">${index + 1}</span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${pattern.path}</p>
+                                <p class="text-xs text-gray-500">$${(pattern.volume / 1000).toFixed(0)}K monthly</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-bold text-blue-600">${pattern.percentage}%</p>
+                            <p class="text-xs text-gray-500">of flows</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += item;
+            });
+        }
+
+        function populateSuspiciousPatterns() {
+            const container = document.getElementById('suspiciousPatterns');
+            container.innerHTML = '';
+            
+            paymentAppsData.suspiciousPatterns.forEach((pattern, index) => {
+                const severityClass = pattern.severity === 'high' ? 'text-red-600' : 
+                                   pattern.severity === 'medium' ? 'text-yellow-600' : 'text-green-600';
+                
+                const item = `
+                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border-l-4 border-red-400">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-lg font-bold text-red-400">${index + 1}</span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${pattern.pattern}</p>
+                                <p class="text-xs text-gray-500">${pattern.instances} instances detected</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-bold ${severityClass}">${pattern.severity.toUpperCase()}</p>
+                            <p class="text-xs text-gray-500">severity</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += item;
+            });
+        }
+
+        function populateRiskIndicators() {
+            const container = document.getElementById('riskIndicators');
+            container.innerHTML = '';
+            
+            paymentAppsData.apps.forEach(app => {
+                const suspiciousText = app.suspicious ? `${app.suspicious}% suspicious` : '';
+                const otherText = app.chargebacks ? `${app.chargebacks}% chargebacks` :
+                                 app.disputes ? `${app.disputes}% disputes` :
+                                 app.fraud ? `${app.fraud}% fraud` :
+                                 app.unauthorized ? `${app.unauthorized}% unauthorized` : '';
+                
+                const card = `
+                    <div class="bg-white rounded-xl shadow-md p-6 ${getRiskCardClass(app.risk)}">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">${app.name}</h3>
+                            <span class="px-2 py-1 text-xs rounded-full ${getRiskBadgeClass(app.risk)}">${app.risk}</span>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">${suspiciousText}</p>
+                            <p class="text-sm text-gray-600">${otherText}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function getRiskCardClass(risk) {
+            switch(risk.toLowerCase()) {
+                case 'high': return 'risk-high';
+                case 'medium': return 'risk-medium';
+                case 'low': return 'risk-low';
+                default: return '';
+            }
+        }
+
+        function populateFraudAlerts() {
+            const container = document.getElementById('fraudAlerts');
+            container.innerHTML = '';
+            
+            paymentAppsData.fraudAlerts.forEach(alert => {
+                const severityClass = alert.severity === 'high' ? 'bg-red-50 border-red-200' : 
+                                   alert.severity === 'medium' ? 'bg-yellow-50 border-yellow-200' : 
+                                   'bg-green-50 border-green-200';
+                
+                const severityBadge = alert.severity === 'high' ? 'bg-red-100 text-red-800' :
+                                     alert.severity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                     'bg-green-100 text-green-800';
+                
+                const item = `
+                    <div class="flex items-center justify-between p-4 rounded-lg border ${severityClass}">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-${alert.severity === 'high' ? 'red' : alert.severity === 'medium' ? 'yellow' : 'green'}-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${alert.app}: ${alert.type}</p>
+                                <p class="text-xs text-gray-500">User: ${alert.user} • ${alert.time}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 text-xs rounded-full ${severityBadge}">${alert.severity.toUpperCase()}</span>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm">Investigate</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += item;
+            });
+        }
+
+        function refreshData() {
+            // Simulate data refresh
+            updateLastUpdated();
+            
+            // Add loading animation
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(card => {
+                card.classList.add('animate-pulse-slow');
+            });
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                cards.forEach(card => {
+                    card.classList.remove('animate-pulse-slow');
+                });
+                
+                // Show success notification
+                showNotification('Data refreshed successfully', 'success');
+            }, 1000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            } z-50`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

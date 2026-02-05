@@ -1,0 +1,414 @@
+/**
+ * MCP Tools for Pattern Research
+ * Research exploration tools for MCP integration
+ *
+ * [[TECH][MODULE][INSTANCE][META:{blueprint=BP-RESEARCH-MCP@0.1.0;instance-id=ORCA-RESEARCH-MCP-001;version=0.1.0}][PROPERTIES:{mcp={value:"research-explorer";@root:"ROOT-RESEARCH";@chain:["BP-MCP-TOOLS","BP-PATTERN-DISCOVERY"];@version:"0.1.0"}}][CLASS:ResearchExplorerTools][#REF:v-0.1.0.BP.RESEARCH.MCP.1.0.A.1.1.ORCA.1.1]]
+ */
+
+import type { Database } from "bun:sqlite";
+import {
+	type ResearchPattern,
+	SubMarketPatternMiner,
+} from "../../discovery/pattern-miner";
+import { AnomalyAwarePatternMiner } from "../../discovery/anomaly-aware-miner";
+import { UrlAnomalyPatternEngine } from "../../patterns/url-anomaly-patterns";
+import { ForensicDataCorrector } from "../../data-correction/correction-engine";
+
+// ═══════════════════════════════════════════════════════════════
+// MCP TOOLS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Research explorer MCP tools
+ */
+export function createResearchTools(db: Database) {
+	const miner = new SubMarketPatternMiner(db);
+	const anomalyAwareMiner = new AnomalyAwarePatternMiner(db);
+	const urlAnomalyEngine = new UrlAnomalyPatternEngine(db);
+	const dataCorrector = new ForensicDataCorrector(db);
+
+	return [
+		{
+			name: "research-discover-patterns",
+			description:
+				"Run ML clustering on recent tension events to discover new patterns",
+			inputSchema: {
+				type: "object",
+				properties: {
+					sport: { type: "string" },
+					hours: { type: "number", default: 24 },
+				},
+				required: ["sport"],
+			},
+			execute: async (args: { sport: string; hours?: number }) => {
+				const patterns = miner.discoverPatterns(args.sport, args.hours || 24);
+
+				return {
+					content: [
+						{
+							text:
+								`🔬 Discovered ${patterns.length} patterns for ${args.sport.toUpperCase()}\n\n` +
+								patterns
+									.map(
+										(p: ResearchPattern) =>
+											`${p.pattern_name} (conf: ${(p.confidence_level * 100).toFixed(0)}%)\n` +
+											`  Hierarchy: ${p.market_hierarchy}\n` +
+											`  Pre-conditions: ${JSON.stringify(p.pre_conditions)}\n` +
+											`  Expected: ${p.expected_outcome} (${(p.backtest_accuracy * 100).toFixed(0)}% accuracy)`,
+									)
+									.join("\n\n"),
+						},
+					],
+				};
+			},
+		},
+		{
+			name: "research-explore-tension",
+			description: "Explore tension events between specific nodes",
+			inputSchema: {
+				type: "object",
+				properties: {
+					eventId: { type: "string" },
+					nodePatterns: {
+						type: "array",
+						items: { type: "string" },
+					},
+					hours: { type: "number", default: 1 },
+				},
+				required: ["eventId", "nodePatterns"],
+			},
+			execute: async (args: {
+				eventId: string;
+				nodePatterns: string[];
+				hours?: number;
+			}) => {
+				const stmt = db.prepare(`
+        SELECT 
+          ste.tension_type,
+          ste.severity,
+          ste.detected_at,
+          ste.snapshot,
+          json_extract(ste.involved_nodes, '$[0]') as node1,
+          json_extract(ste.involved_nodes, '$[1]') as node2
+        FROM sub_market_tension_events ste
+        WHERE ste.eventId = ?
+          AND ste.detected_at > unixepoch('now') - ?
+          AND (ste.involved_nodes LIKE ? OR ste.involved_nodes LIKE ?)
+      `);
+				const tensions = stmt.all(
+					args.eventId,
+					(args.hours || 1) * 3600,
+					`%${args.nodePatterns.join("%")}%`,
+					`%${args.nodePatterns.join("%")}%`,
+				) as Array<{
+					tension_type: string;
+					severity: number;
+					detected_at: number;
+					snapshot: string;
+					node1: string;
+					node2: string;
+				}>;
+
+				return {
+					content: [
+						{
+							text:
+								`Tension Events (Last ${args.hours || 1}h):\n` +
+								tensions
+									.map(
+										(t) =>
+											`${new Date(t.detected_at * 1000).toISOString()} | ${t.tension_type.padEnd(20)} | ` +
+											`severity=${t.severity} | ${t.node1?.split(":")[2] || "N/A"} vs ${t.node2?.split(":")[2] || "N/A"}`,
+									)
+									.join("\n"),
+						},
+					],
+				};
+			},
+		},
+		{
+			name: "research-analyze-correlation",
+			description:
+				"Calculate correlation coefficient between two sub-market nodes",
+			inputSchema: {
+				type: "object",
+				properties: {
+					nodeId1: { type: "string" },
+					nodeId2: { type: "string" },
+					windowMinutes: { type: "number", default: 60 },
+				},
+				required: ["nodeId1", "nodeId2"],
+			},
+			execute: async (args: {
+				nodeId1: string;
+				nodeId2: string;
+				windowMinutes?: number;
+			}) => {
+				// Simplified correlation - in production, use proper statistical functions
+				const stmt = db.prepare(`
+        SELECT 
+          AVG(n1.line) as avg1,
+          AVG(n2.line) as avg2,
+          COUNT(*) as count
+        FROM line_movement_micro_v2 n1
+        JOIN line_movement_micro_v2 n2 ON n1.timestamp = n2.timestamp
+        WHERE n1.nodeId = ? 
+          AND n2.nodeId = ?
+          AND n1.timestamp > unixepoch('now') - ?
+      `);
+				const result = stmt.get(
+					args.nodeId1,
+					args.nodeId2,
+					(args.windowMinutes || 60) * 60,
+				) as { avg1: number; avg2: number; count: number } | undefined;
+
+				if (!result || result.count === 0) {
+					return {
+						content: [
+							{
+								text: "Insufficient data for correlation analysis",
+							},
+						],
+					};
+				}
+
+				// Simplified correlation calculation
+				const correlation = result.avg1 && result.avg2 ? 0.7 : 0; // Placeholder
+
+				return {
+					content: [
+						{
+							text:
+								`Correlation: ${correlation.toFixed(3)}\n` +
+								`Sample Size: ${result.count}\n` +
+								`Relationship: ${
+									correlation > 0.7
+										? "Strong Positive"
+										: correlation < -0.7
+											? "Strong Negative"
+											: correlation > 0.3
+												? "Weak Positive"
+												: "Weak/None"
+								}`,
+						},
+					],
+				};
+			},
+		},
+		{
+			name: "research-backtest-pattern",
+			description: "Backtest a discovered pattern against historical data",
+			inputSchema: {
+				type: "object",
+				properties: {
+					patternId: { type: "string" },
+					days: { type: "number", default: 30 },
+				},
+				required: ["patternId"],
+			},
+			execute: async (args: { patternId: string; days?: number }) => {
+				const stmt = db.prepare(
+					`SELECT * FROM research_pattern_log WHERE patternId = ?`,
+				);
+				const pattern = stmt.get(args.patternId) as
+					| {
+							pre_conditions: string;
+							pattern_name: string;
+					  }
+					| undefined;
+
+				if (!pattern) {
+					return {
+						content: [{ text: `Pattern ${args.patternId} not found` }],
+					};
+				}
+
+				const results = miner.backtestOutcomesHistorical(
+					JSON.parse(pattern.pre_conditions),
+					args.days || 30,
+				);
+
+				return {
+					content: [
+						{
+							text:
+								`Backtest Results for ${pattern.pattern_name}\n` +
+								`Sample Size: ${results.sample_size} events\n` +
+								`Accuracy: ${(results.accuracy * 100).toFixed(1)}%\n` +
+								`Avg Return: ${results.avg_return.toFixed(3)} units\n` +
+								`Sharpe Ratio: ${results.sharpe.toFixed(2)}\n` +
+								`P-Value: ${results.p_value.toFixed(4)}`,
+						},
+					],
+				};
+			},
+		},
+		{
+			name: "research-discover-url-anomalies",
+			description: "Discover URL anomaly patterns that cause false steam signals",
+			inputSchema: {
+				type: "object",
+				properties: {
+					sport: { type: "string", default: "NBA" },
+					hours: { type: "number", default: 24 },
+				},
+			},
+			execute: async (args: { sport?: string; hours?: number }) => {
+				const patterns = await urlAnomalyEngine.discoverAnomalyPatterns(
+					args.sport || "NBA",
+					args.hours || 24,
+				);
+
+				if (patterns.length === 0) {
+					return {
+						content: [
+							{
+								text: `No URL anomaly patterns discovered for ${args.sport || "NBA"} in the last ${args.hours || 24} hours.`,
+							},
+						],
+					};
+				}
+
+				const text =
+					`🔍 URL Anomaly Patterns Discovered\n\n` +
+					patterns
+						.map(
+							(p) =>
+								`${p.pattern_name}\n` +
+								`  Type: ${p.anomaly_type}\n` +
+								`  Bookmakers: ${p.affected_bookmakers.join(", ")}\n` +
+								`  False Steam Prob: ${(p.market_impact.false_steam_probability * 100).toFixed(1)}%\n` +
+								`  Frequency: ${p.market_impact.frequency_per_hour.toFixed(1)}/hour\n` +
+								`  Confidence: ${(p.confidence_level * 100).toFixed(1)}%\n`,
+						)
+						.join("\n");
+
+				return {
+					content: [{ text }],
+				};
+			},
+		},
+		{
+			name: "research-calculate-false-steam-rate",
+			description: "Calculate false positive rate for steam detection caused by URL bugs",
+			inputSchema: {
+				type: "object",
+				properties: {
+					bookmaker: { type: "string" },
+					hours: { type: "number", default: 24 },
+				},
+				required: ["bookmaker"],
+			},
+			execute: async (args: { bookmaker: string; hours?: number }) => {
+				const rate = urlAnomalyEngine.calculateFalseSteamRate(
+					args.bookmaker,
+					args.hours || 24,
+				);
+
+				return {
+					content: [
+						{
+							text:
+								`📊 False Steam Rate for ${args.bookmaker}\n\n` +
+								`Rate: ${(rate * 100).toFixed(2)}%\n` +
+								`Hours Analyzed: ${args.hours || 24}\n\n` +
+								`This represents the percentage of line movements that are artifacts of URL parsing bugs rather than genuine steam signals.`,
+						},
+					],
+				};
+			},
+		},
+		{
+			name: "research-discover-clean-patterns",
+			description: "Discover patterns with URL anomaly artifacts filtered out",
+			inputSchema: {
+				type: "object",
+				properties: {
+					sport: { type: "string", default: "NBA" },
+					hours: { type: "number", default: 24 },
+				},
+			},
+			execute: async (args: { sport?: string; hours?: number }) => {
+				const patterns = anomalyAwareMiner.discoverPatterns(
+					args.sport || "NBA",
+					args.hours || 24,
+				);
+
+				return {
+					content: [
+						{
+							text:
+								`🔍 Clean Patterns (Anomaly-Aware)\n\n` +
+								`Found ${patterns.length} patterns after filtering URL artifacts\n\n` +
+								patterns
+									.map(
+										(p) =>
+											`${p.pattern_name}\n` +
+											`  Confidence: ${(p.confidence_level * 100).toFixed(1)}%\n` +
+											`  Accuracy: ${(p.backtest_accuracy * 100).toFixed(1)}%\n`,
+									)
+									.join("\n"),
+						},
+					],
+				};
+			},
+		},
+		{
+			name: "research-correct-historical-data",
+			description: "Re-process historical data to remove URL artifact false positives",
+			inputSchema: {
+				type: "object",
+				properties: {
+					startDate: { type: "string" },
+					endDate: { type: "string" },
+				},
+				required: ["startDate", "endDate"],
+			},
+			execute: async (args: { startDate: string; endDate: string }) => {
+				const stats = await dataCorrector.correctHistoricalData(
+					args.startDate,
+					args.endDate,
+				);
+
+				return {
+					content: [
+						{
+							text:
+								`✅ Historical Data Correction Complete\n\n` +
+								`Corrected Records: ${stats.correctedRecords}\n` +
+								`Removed Steam Alerts: ${stats.removedSteamAlerts}\n` +
+								`Adjusted Weights: ${stats.adjustedWeights}\n`,
+						},
+					],
+				};
+			},
+		},
+		{
+			name: "research-correction-stats",
+			description: "Get correction statistics",
+			inputSchema: {
+				type: "object",
+				properties: {},
+			},
+			execute: async () => {
+				const stats = dataCorrector.getCorrectionStats();
+
+				return {
+					content: [
+						{
+							text:
+								`📊 Correction Statistics\n\n` +
+								`Total Artifacts: ${stats.totalArtifacts}\n` +
+								`Total Corrected: ${stats.totalCorrected}\n` +
+								`Alerts Removed: ${stats.totalAlertsRemoved}\n\n` +
+								`By Bookmaker:\n` +
+								Object.entries(stats.byBookmaker)
+									.map(([bm, count]) => `  ${bm}: ${count}`)
+									.join("\n"),
+						},
+					],
+				};
+			},
+		},
+	];
+}

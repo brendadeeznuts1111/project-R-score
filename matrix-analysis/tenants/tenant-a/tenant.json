@@ -1,0 +1,20 @@
+{
+  "id": "tenant-a",
+  "name": "Tenant tenant-a",
+  "config": {
+    "theme": "dark",
+    "timezone": "UTC",
+    "features": [
+      "analytics",
+      "reporting",
+      "api-access"
+    ]
+  },
+  "data": {
+    "users": 818,
+    "projects": 75,
+    "storage": 795670
+  },
+  "createdAt": "2026-02-01T03:54:12.533Z",
+  "updatedAt": "2026-02-01T03:54:12.533Z"
+}

@@ -1,0 +1,376 @@
+#!/usr/bin/env bun
+/**
+ * cb-topics - Telegram topic management with skill routing
+ * Usage: cb-topics [list|config|skills|set] [options]
+ */
+
+const CONFIG_FILE = `${Bun.env.HOME}/.clawdbot/clawdbot.json`;
+const SKILLS_DIR = `${Bun.env.HOME}/clawd/skills`;
+const BOT_TOKEN = "7873135075:AAHmySXcKIJpQ0KQX0aAOufB-VPMsdMF73Y";
+const GROUP_ID = "-1003663527473";
+
+// Display helpers
+const green = (t: string) => `\x1b[32m${t}\x1b[0m`;
+const red = (t: string) => `\x1b[31m${t}\x1b[0m`;
+const yellow = (t: string) => `\x1b[33m${t}\x1b[0m`;
+const cyan = (t: string) => `\x1b[36m${t}\x1b[0m`;
+const dim = (t: string) => `\x1b[2m${t}\x1b[0m`;
+const bold = (t: string) => `\x1b[1m${t}\x1b[0m`;
+
+interface TopicConfig {
+  systemPrompt: string;
+  requireMention: boolean;
+  skills?: string[];
+}
+
+interface Config {
+  channels: {
+    telegram: {
+      groups: {
+        [key: string]: {
+          topics?: {
+            [key: string]: TopicConfig;
+          };
+        };
+      };
+    };
+  };
+}
+
+interface SkillInfo {
+  name: string;
+  description: string;
+  emoji?: string;
+}
+
+async function loadConfig(): Promise<Config> {
+  const file = Bun.file(CONFIG_FILE);
+  return await file.json();
+}
+
+async function saveConfig(config: Config) {
+  await Bun.write(CONFIG_FILE, JSON.stringify(config, null, 2));
+}
+
+async function loadSkills(): Promise<SkillInfo[]> {
+  const skills: SkillInfo[] = [];
+  const proc = Bun.spawn(["ls", SKILLS_DIR], { stdout: "pipe" });
+  const output = await new Response(proc.stdout).text();
+
+  for (const file of output.trim().split("\n")) {
+    if (!file.endsWith(".md")) continue;
+
+    const content = await Bun.file(`${SKILLS_DIR}/${file}`).text();
+    const frontmatter = content.match(/^---\n([\s\S]*?)\n---/);
+
+    if (frontmatter) {
+      const nameMatch = frontmatter[1].match(/name:\s*(.+)/);
+      const descMatch = frontmatter[1].match(/description:\s*(.+)/);
+      const metaMatch = frontmatter[1].match(/metadata:\s*(.+)/);
+
+      let emoji = "📄";
+      if (metaMatch) {
+        try {
+          const meta = JSON.parse(metaMatch[1]);
+          emoji = meta.clawdbot?.emoji || emoji;
+        } catch {}
+      }
+
+      skills.push({
+        name: nameMatch?.[1] || file.replace(".md", ""),
+        description: descMatch?.[1] || "No description",
+        emoji
+      });
+    }
+  }
+
+  return skills;
+}
+
+async function fetchTopicsFromTelegram(): Promise<Map<number, string>> {
+  const topics = new Map<number, string>();
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=100`);
+    const data = await res.json();
+
+    if (data.ok) {
+      for (const update of data.result) {
+        const msg = update.message;
+        if (msg?.forum_topic_created) {
+          topics.set(msg.message_thread_id, msg.forum_topic_created.name);
+        }
+      }
+    }
+  } catch {}
+
+  // Add known topics
+  if (!topics.has(1)) topics.set(1, "General");
+  if (!topics.has(2)) topics.set(2, "Code");
+  if (!topics.has(5)) topics.set(5, "Research");
+  if (!topics.has(7)) topics.set(7, "Tasks");
+
+  return topics;
+}
+
+async function listTopics(jsonMode: boolean) {
+  const config = await loadConfig();
+  const telegramTopics = await fetchTopicsFromTelegram();
+  const skills = await loadSkills();
+  const skillMap = new Map(skills.map(s => [s.name, s]));
+
+  const groupConfig = config.channels.telegram.groups[GROUP_ID];
+  const topics = groupConfig?.topics || {};
+
+  if (jsonMode) {
+    const result = Object.entries(topics).map(([id, cfg]) => ({
+      id: parseInt(id),
+      name: telegramTopics.get(parseInt(id)) || `Topic ${id}`,
+      ...cfg
+    }));
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  console.log("\n┌─────────────────────────────────────────────────────────────────┐");
+  console.log("│                    TELEGRAM TOPICS                              │");
+  console.log("└─────────────────────────────────────────────────────────────────┘\n");
+
+  if (Object.keys(topics).length === 0) {
+    console.log("  No topics configured.\n");
+    return;
+  }
+
+  for (const [id, cfg] of Object.entries(topics)) {
+    const topicName = telegramTopics.get(parseInt(id)) || `Topic ${id}`;
+    const mention = cfg.requireMention ? dim("@mention") : green("auto-reply");
+
+    console.log(`  ${cyan(bold(`Topic ${id}`))} - ${topicName} ${mention}`);
+    console.log(`  ${dim("─".repeat(55))}`);
+
+    // Skills
+    if (cfg.skills && cfg.skills.length > 0) {
+      const skillDisplay = cfg.skills.map(s => {
+        const info = skillMap.get(s);
+        return info ? `${info.emoji} ${s}` : `📄 ${s}`;
+      }).join("  ");
+      console.log(`  Skills: ${skillDisplay}`);
+    } else {
+      console.log(`  Skills: ${dim("none")}`);
+    }
+
+    // System prompt preview
+    const promptPreview = cfg.systemPrompt.slice(0, 70);
+    console.log(`  Prompt: ${dim(promptPreview)}${cfg.systemPrompt.length > 70 ? "..." : ""}`);
+    console.log();
+  }
+}
+
+async function showSkills() {
+  const skills = await loadSkills();
+
+  console.log("\n┌─────────────────────────────────────────────────────────────────┐");
+  console.log("│                    AVAILABLE SKILLS                             │");
+  console.log("└─────────────────────────────────────────────────────────────────┘\n");
+
+  for (const skill of skills) {
+    console.log(`  ${skill.emoji} ${bold(skill.name)}`);
+    console.log(`     ${dim(skill.description)}`);
+  }
+  console.log();
+}
+
+async function showConfig(topicId?: string) {
+  const config = await loadConfig();
+  const groupConfig = config.channels.telegram.groups[GROUP_ID];
+
+  if (topicId) {
+    const topic = groupConfig?.topics?.[topicId];
+    if (!topic) {
+      console.log(`\n  ${red("✗")} Topic ${topicId} not found\n`);
+      return;
+    }
+    console.log("\n" + JSON.stringify(topic, null, 2) + "\n");
+  } else {
+    console.log("\n" + JSON.stringify(groupConfig?.topics || {}, null, 2) + "\n");
+  }
+}
+
+async function setTopicSkills(topicId: string, skillNames: string[]) {
+  const config = await loadConfig();
+  const groupConfig = config.channels.telegram.groups[GROUP_ID];
+
+  if (!groupConfig?.topics?.[topicId]) {
+    console.log(`\n  ${red("✗")} Topic ${topicId} not found\n`);
+    return;
+  }
+
+  // Validate skills exist
+  const availableSkills = await loadSkills();
+  const skillSet = new Set(availableSkills.map(s => s.name));
+
+  const invalid = skillNames.filter(s => !skillSet.has(s));
+  if (invalid.length > 0) {
+    console.log(`\n  ${yellow("!")} Unknown skills: ${invalid.join(", ")}`);
+  }
+
+  const valid = skillNames.filter(s => skillSet.has(s));
+  groupConfig.topics[topicId].skills = valid;
+
+  await saveConfig(config);
+  console.log(`\n  ${green("✓")} Topic ${topicId} skills set to: ${valid.join(", ")}\n`);
+}
+
+async function setTopicPrompt(topicId: string, prompt: string) {
+  const config = await loadConfig();
+  const groupConfig = config.channels.telegram.groups[GROUP_ID];
+
+  if (!groupConfig?.topics?.[topicId]) {
+    console.log(`\n  ${red("✗")} Topic ${topicId} not found\n`);
+    return;
+  }
+
+  groupConfig.topics[topicId].systemPrompt = prompt;
+  await saveConfig(config);
+  console.log(`\n  ${green("✓")} Topic ${topicId} prompt updated\n`);
+}
+
+async function addTopic(topicId: string) {
+  const config = await loadConfig();
+
+  if (!config.channels.telegram.groups[GROUP_ID]) {
+    config.channels.telegram.groups[GROUP_ID] = {
+      enabled: true,
+      requireMention: true,
+      topics: {}
+    } as any;
+  }
+
+  if (!config.channels.telegram.groups[GROUP_ID].topics) {
+    config.channels.telegram.groups[GROUP_ID].topics = {};
+  }
+
+  if (config.channels.telegram.groups[GROUP_ID].topics![topicId]) {
+    console.log(`\n  ${yellow("!")} Topic ${topicId} already exists\n`);
+    return;
+  }
+
+  config.channels.telegram.groups[GROUP_ID].topics![topicId] = {
+    systemPrompt: "New topic - configure with cb-topics set-prompt",
+    requireMention: true,
+    skills: []
+  };
+
+  await saveConfig(config);
+  console.log(`\n  ${green("✓")} Topic ${topicId} added\n`);
+}
+
+async function watchTopics() {
+  console.log("Watching for topic messages... (Ctrl+C to stop)\n");
+
+  const config = await loadConfig();
+  const groupConfig = config.channels.telegram.groups[GROUP_ID];
+  const topics = groupConfig?.topics || {};
+
+  let seen = new Set<string>();
+
+  while (true) {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=20`);
+    const data = await res.json();
+
+    for (const update of data.result || []) {
+      const msg = update.message;
+      if (!msg?.message_thread_id) continue;
+
+      const key = `${update.update_id}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      const topicId = String(msg.message_thread_id);
+      const topicCfg = topics[topicId];
+      const skills = topicCfg?.skills?.join(", ") || "none";
+
+      const time = new Date().toLocaleTimeString();
+      const text = msg.text?.slice(0, 50) || "(no text)";
+
+      console.log(`[${time}] ${cyan(`Topic ${topicId}`)} [${dim(skills)}]`);
+      console.log(`         ${msg.from?.first_name}: ${text}`);
+    }
+
+    await Bun.sleep(2000);
+  }
+}
+
+function showHelp() {
+  console.log(`
+  ${green("cb-topics")} - Telegram topic management
+
+  Usage:
+    cb-topics                     List all topics with skills
+    cb-topics list [--json]       List topics (optional JSON output)
+    cb-topics skills              Show available skills
+    cb-topics config [topic_id]   Show topic configuration
+    cb-topics watch               Watch topic messages live
+
+  Topic Management:
+    cb-topics add <topic_id>                    Add a new topic
+    cb-topics set-skills <topic_id> <skills>   Set topic skills (comma-separated)
+    cb-topics set-prompt <topic_id> <prompt>   Set topic system prompt
+
+  Examples:
+    cb-topics set-skills 2 system-control,quick-tools
+    cb-topics set-prompt 5 "Research topic - fetch data and analyze"
+    cb-topics add 10
+`);
+}
+
+async function main() {
+  const args = Bun.argv.slice(2);
+  const command = args[0];
+
+  if (!command || command === "list") {
+    await listTopics(args.includes("--json"));
+    return;
+  }
+
+  if (command === "skills") {
+    await showSkills();
+    return;
+  }
+
+  if (command === "config") {
+    await showConfig(args[1]);
+    return;
+  }
+
+  if (command === "watch" || command === "--watch") {
+    await watchTopics();
+    return;
+  }
+
+  if (command === "add" && args[1]) {
+    await addTopic(args[1]);
+    return;
+  }
+
+  if (command === "set-skills" && args[1] && args[2]) {
+    const skills = args[2].split(",").map(s => s.trim());
+    await setTopicSkills(args[1], skills);
+    return;
+  }
+
+  if (command === "set-prompt" && args[1] && args[2]) {
+    const prompt = args.slice(2).join(" ");
+    await setTopicPrompt(args[1], prompt);
+    return;
+  }
+
+  if (command === "--help" || command === "-h") {
+    showHelp();
+    return;
+  }
+
+  showHelp();
+}
+
+main();

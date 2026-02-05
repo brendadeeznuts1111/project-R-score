@@ -1,0 +1,134 @@
+/**
+ * Dashboard CSS Module
+ * Uses CSS modules for scoped styling
+ * 
+ * Bun automatically handles:
+ * - Class name hashing
+ * - Composition (composes property)
+ * - Import into TSX/JSX
+ */
+
+/* Base styles */
+.card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* CSS Nesting example */
+.card {
+  .title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: var(--accent-cyan);
+    
+    @media (width >= 768px) {
+      font-size: 1.8em;
+    }
+  }
+  
+  .content {
+    padding: 1rem;
+    color: var(--text-primary);
+  }
+}
+
+/* Status badge with nesting */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  
+  &.online {
+    background: color-mix(in srgb, var(--accent-green) 100%, transparent);
+    color: white;
+  }
+  
+  &.offline {
+    background: color-mix(in srgb, var(--accent-red) 100%, transparent);
+    color: white;
+  }
+  
+  &.warning {
+    background: color-mix(in srgb, var(--accent-yellow) 100%, transparent);
+    color: white;
+  }
+}
+
+/* Department colors using relative colors */
+.dept-api {
+  --base-color: #00d4ff;
+  color: var(--base-color);
+  
+  /* Lighter variant using relative colors */
+  --light: lch(from var(--base-color) calc(l + 15%) c h);
+  border-color: var(--light);
+}
+
+.dept-arbitrage {
+  --base-color: #ff1744;
+  color: var(--base-color);
+  
+  /* Darker variant */
+  --dark: lch(from var(--base-color) calc(l - 15%) c h);
+  background-color: var(--dark);
+}
+
+/* Logical properties for RTL support */
+.info-row {
+  margin-inline-start: 1rem;
+  padding-block: 12px;
+  border-inline-start: 3px solid var(--accent-cyan);
+}
+
+/* Light-dark theme support */
+.themed-component {
+  background-color: light-dark(#ffffff, #1a1f3a);
+  color: light-dark(#333333, #e0e0e0);
+  border-color: light-dark(#dddddd, #333355);
+}
+
+/* Math functions */
+.dynamic-sizing {
+  width: clamp(200px, 50%, 800px);
+  padding: round(14.8px, 5px);
+  font-size: calc(16px * pow(1.25, 2));
+}
+
+/* System UI font */
+.native-interface {
+  font-family: system-ui, sans-serif;
+}
+
+/* Double position gradients */
+.progress-bar {
+  background: linear-gradient(
+    to right,
+    var(--accent-green) 0% 25%,
+    var(--accent-yellow) 25% 50%,
+    var(--accent-blue) 50% 75%,
+    var(--accent-purple) 75% 100%
+  );
+}
+
+/* Composition example */
+.button {
+  composes: card;
+  background: var(--accent-purple);
+  color: white;
+  border: none;
+  cursor: pointer;
+  
+  &:hover {
+    background: color-mix(in srgb, var(--accent-purple) 80%, black 20%);
+  }
+}

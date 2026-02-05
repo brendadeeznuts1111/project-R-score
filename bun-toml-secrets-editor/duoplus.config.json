@@ -1,0 +1,171 @@
+{
+	"manifest": {
+		"version": "1.0.0",
+		"created": "2026-01-28T10:05:13.304Z",
+		"updated": "2026-01-28T10:05:13.304Z",
+		"environment": "development",
+		"description": "Duoplus Cloud Phone API Configuration"
+	},
+	"api": {
+		"baseUrl": "https://api.duoplus.com",
+		"timeout": 30000,
+		"retries": 3,
+		"version": "v1",
+		"rateLimit": {
+			"requests": 100,
+			"window": 60000
+		}
+	},
+	"device": {
+		"defaultDeviceId": "DUOPLUS-OPPO-FIND-X7",
+		"connectionTimeout": 10000,
+		"commandTimeout": 30000,
+		"maxRetries": 3,
+		"autoReconnect": true,
+		"healthCheck": {
+			"enabled": true,
+			"interval": 30000,
+			"timeout": 5000
+		}
+	},
+	"automation": {
+		"enabled": true,
+		"healthCheckInterval": 300000,
+		"cleanupInterval": 3600000,
+		"monitoringInterval": 60000,
+		"securityScanInterval": 1800000,
+		"maxConcurrentTasks": 5,
+		"taskTimeout": 300000,
+		"retryAttempts": 3
+	},
+	"monitoring": {
+		"enabled": true,
+		"metricsRetention": 86400000,
+		"alertThresholds": {
+			"cpu": 80,
+			"memory": 85,
+			"battery": 20,
+			"temperature": 50,
+			"network": 50
+		},
+		"notifications": {
+			"email": false,
+			"webhook": false,
+			"console": true,
+			"slack": false,
+			"teams": false
+		},
+		"dashboard": {
+			"refreshInterval": 5000,
+			"historyPoints": 100,
+			"chartType": "line"
+		}
+	},
+	"batch": {
+		"maxConcurrentOperations": 3,
+		"defaultTimeout": 60000,
+		"errorHandling": "continue",
+		"retryAttempts": 2,
+		"logLevel": "info",
+		"progressReporting": true,
+		"saveResults": true
+	},
+	"security": {
+		"enable2FA": false,
+		"sessionTimeout": 3600000,
+		"maxLoginAttempts": 3,
+		"encryptionEnabled": true,
+		"auditLogging": true,
+		"apiKeyRotation": 2592000000,
+		"allowedIPs": [],
+		"rateLimiting": true
+	},
+	"integrations": {
+		"slack": {
+			"enabled": false,
+			"webhookUrl": "",
+			"channel": "#duoplus-alerts",
+			"username": "Duoplus Bot",
+			"iconEmoji": ":robot_face:",
+			"notifyOn": ["error", "warning", "success"]
+		},
+		"teams": {
+			"enabled": false,
+			"webhookUrl": "",
+			"channel": "Duoplus Alerts",
+			"title": "Duoplus Notification",
+			"themeColor": "0078D4",
+			"notifyOn": ["error", "warning"]
+		},
+		"email": {
+			"enabled": false,
+			"smtp": {
+				"host": "smtp.gmail.com",
+				"port": 587,
+				"secure": false,
+				"auth": {
+					"user": "",
+					"pass": ""
+				}
+			},
+			"from": "duoplus@example.com",
+			"recipients": [],
+			"template": "default",
+			"notifyOn": ["error", "critical"]
+		},
+		"webhook": {
+			"enabled": false,
+			"url": "",
+			"method": "POST",
+			"headers": {
+				"Content-Type": "application/json",
+				"Authorization": ""
+			},
+			"timeout": 10000,
+			"retryAttempts": 3,
+			"notifyOn": ["all"]
+		}
+	},
+	"logging": {
+		"level": "info",
+		"format": "json",
+		"outputs": ["console", "file"],
+		"file": {
+			"path": "./logs/duoplus.log",
+			"maxSize": "10MB",
+			"maxFiles": 5,
+			"rotate": true
+		},
+		"console": {
+			"colorize": true,
+			"timestamp": true,
+			"level": true
+		}
+	},
+	"performance": {
+		"caching": {
+			"enabled": true,
+			"ttl": 300000,
+			"maxSize": 1000,
+			"strategy": "lru"
+		},
+		"pooling": {
+			"maxConnections": 10,
+			"minConnections": 2,
+			"acquireTimeout": 10000,
+			"idleTimeout": 30000
+		},
+		"compression": {
+			"enabled": true,
+			"algorithm": "gzip",
+			"level": 6
+		}
+	},
+	"development": {
+		"debug": false,
+		"mockData": true,
+		"verboseLogging": false,
+		"hotReload": false,
+		"testMode": false
+	}
+}

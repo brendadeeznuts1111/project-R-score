@@ -1,0 +1,60 @@
+{
+  "name": "nba-swarm",
+  "version": "1.0.0",
+  "description": "NBA Swarm detection system for detecting coordinated betting patterns",
+  "type": "module",
+  "scripts": {
+    "swarm:radar": "bun run packages/swarm-radar/cli.ts --league NBA --threshold 0.7 --port 3333",
+    "swarm:hedge": "bun run packages/swarm-radar/hedger.ts --book-id VEC-BUY-007",
+    "swarm:replay": "bun run packages/swarm-radar/replay.ts",
+    "swarm:vr-export": "bun run packages/swarm-radar/replay.ts --export gltf",
+    "edges:build": "bun run scripts/build-graph.ts",
+    "edges:validate": "bun run scripts/fp-validate.ts",
+    "edges:sim": "bun run scripts/bench.ts --games 50 --sim high",
+    "test": "bun test",
+    "test:unit": "bun test tests/unit",
+    "test:integration": "bun test tests/integration",
+    "test:e2e": "bun test tests/e2e",
+    "bench": "bun run scripts/bench.ts",
+    "dev": "bun run edge-suite/server.ts",
+    "dashboard": "bun run edge-suite/server.ts",
+    "suite": "bun run edge-suite/server.ts",
+    "suite:build": "bun run edge-suite/build.ts",
+    "suite-polish": "cp edge-suite/public/css/suite-polish.css edge-suite/public/css/suite.css && bun run suite",
+    "grid:index": "bun run scripts/grid-index.ts --generate",
+    "grid:search": "bun run scripts/grid-index.ts --search",
+    "grid:export": "bun run scripts/grid-index.ts --export",
+    "grid:populate": "bun run scripts/populate-grid-cache.ts",
+    "grid:setup": "bun run scripts/grid-setup.ts",
+    "grid:server": "bun run src/ws-grid.ts",
+    "grep:edges": "rg --type md 'cosine_sim > 0[.]3'",
+    "index:edges": "rg --files-with-matches --no-messages 'cross-game' > .edges.index",
+    "governance": "bun run scripts/governance.ts",
+    "governance:check": "bun run scripts/governance.ts --check",
+    "governance:check:naming": "bun run scripts/governance.ts --check --type naming",
+    "governance:check:docs": "bun run scripts/governance.ts --check --type docs",
+    "governance:check:bloat": "bun run scripts/governance.ts --check --type bloat",
+    "governance:check:integrity": "bun run scripts/governance.ts --check --type integrity",
+    "governance:integrity:generate": "bun run scripts/governance/integrity-cli.ts --generate",
+    "governance:fix": "bun run scripts/governance.ts --fix"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "keywords": [
+    "nba",
+    "betting",
+    "swarm",
+    "detection",
+    "graph",
+    "cosine-similarity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

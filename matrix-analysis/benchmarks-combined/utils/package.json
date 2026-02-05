@@ -1,0 +1,16 @@
+{
+  "name": "bench",
+  "type": "module",
+  "description": "Performance benchmarks aligned with Bun's official benchmark structure",
+  "dependencies": {
+    "mitata": "^1.0.34"
+  },
+  "scripts": {
+    "crc32": "bun crc32-bench-mitata.ts",
+    "spawn": "bun spawn-bench-mitata.ts",
+    "archive": "bun archive-bench-mitata.ts",
+    "response": "bun ../../examples/bun-1.3.6-bench-mitata.ts",
+    "all": "bun crc32-bench-mitata.ts && bun spawn-bench-mitata.ts && bun archive-bench-mitata.ts && bun ../../examples/bun-1.3.6-bench-mitata.ts",
+    "all:json": "BENCHMARK_RUNNER=1 bun crc32-bench-mitata.ts && BENCHMARK_RUNNER=1 bun spawn-bench-mitata.ts && BENCHMARK_RUNNER=1 bun archive-bench-mitata.ts && BENCHMARK_RUNNER=1 bun ../../examples/bun-1.3.6-bench-mitata.ts"
+  }
+}

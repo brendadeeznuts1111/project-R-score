@@ -1,0 +1,58 @@
+name: Topic Discussion
+description: Start a discussion about a specific topic or area
+title: "[TOPIC]: "
+labels: ["discussion", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # [ISSUE.TOPIC_DISCUSSION.RG] Topic Discussion Template
+        
+        Use this template to start discussions about features, architecture, or improvements.
+
+  - type: dropdown
+    id: topic-category
+    attributes:
+      label: Topic Category
+      description: Which area does this topic relate to?
+      options:
+        - API / Routes
+        - Arbitrage Scanner
+        - ORCA Normalizer
+        - Crypto Matcher
+        - WebSocket Streaming
+        - Registry System
+        - MCP Tools
+        - Dashboard / UI
+        - Performance / Caching
+        - Security
+        - Documentation
+        - Developer Experience
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: topic-description
+    attributes:
+      label: Topic Description
+      description: What would you like to discuss?
+      placeholder: Describe the topic, question, or idea you'd like to explore
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any relevant background information
+      placeholder: Provide context, examples, or related issues
+
+  - type: checkboxes
+    id: related
+    attributes:
+      label: Related Items
+      options:
+        - label: This relates to an existing issue
+        - label: This relates to an open PR
+        - label: This is a follow-up to a previous discussion

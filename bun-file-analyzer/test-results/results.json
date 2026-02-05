@@ -1,0 +1,250 @@
+{
+  "timestamp": "2026-01-20T23:14:12.254Z",
+  "suite": {
+    "name": "Bun Performance Suite",
+    "benchmarks": [
+      {
+        "name": "String Concatenation",
+        "duration": 12.122625000000001,
+        "operations": 10000,
+        "opsPerSecond": 824904,
+        "memory": {
+          "before": 209959,
+          "after": 1103248,
+          "peak": 1103248
+        },
+        "success": true
+      },
+      {
+        "name": "Template Literals",
+        "duration": 9.138708999999999,
+        "operations": 10000,
+        "opsPerSecond": 1094246,
+        "memory": {
+          "before": 1103248,
+          "after": 1103248,
+          "peak": 1103248
+        },
+        "success": true
+      },
+      {
+        "name": "Array Push",
+        "duration": 3.716000000000001,
+        "operations": 1000,
+        "opsPerSecond": 269107,
+        "memory": {
+          "before": 1103248,
+          "after": 1153192,
+          "peak": 1153192
+        },
+        "success": true
+      },
+      {
+        "name": "Array Map",
+        "duration": 6.075167,
+        "operations": 1000,
+        "opsPerSecond": 164605,
+        "memory": {
+          "before": 1153192,
+          "after": 1192581,
+          "peak": 1192581
+        },
+        "success": true
+      },
+      {
+        "name": "Array Filter",
+        "duration": 7.857875,
+        "operations": 1000,
+        "opsPerSecond": 127261,
+        "memory": {
+          "before": 1192581,
+          "after": 1192581,
+          "peak": 1192581
+        },
+        "success": true
+      },
+      {
+        "name": "Object Creation",
+        "duration": 1.121333000000007,
+        "operations": 1000,
+        "opsPerSecond": 891796,
+        "memory": {
+          "before": 1192581,
+          "after": 1192581,
+          "peak": 1192581
+        },
+        "success": true
+      },
+      {
+        "name": "Property Access",
+        "duration": 0.979582999999991,
+        "operations": 1000,
+        "opsPerSecond": 1020843,
+        "memory": {
+          "before": 1192581,
+          "after": 1192581,
+          "peak": 1192581
+        },
+        "success": true
+      },
+      {
+        "name": "JSON Parse",
+        "duration": 5.643333999999996,
+        "operations": 10000,
+        "opsPerSecond": 1772002,
+        "memory": {
+          "before": 1192581,
+          "after": 1192581,
+          "peak": 1192581
+        },
+        "success": true
+      },
+      {
+        "name": "JSON Stringify",
+        "duration": 5.701875000000001,
+        "operations": 10000,
+        "opsPerSecond": 1753809,
+        "memory": {
+          "before": 1192581,
+          "after": 1192581,
+          "peak": 1192581
+        },
+        "success": true
+      },
+      {
+        "name": "Bun.hash()",
+        "duration": 50.672250000000005,
+        "operations": 100000,
+        "opsPerSecond": 1973467,
+        "memory": {
+          "before": 1192581,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "Bun.password()",
+        "duration": 1.3880840000000205,
+        "operations": 1000,
+        "opsPerSecond": 720417,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "Bun.color()",
+        "duration": 9.653415999999993,
+        "operations": 10000,
+        "opsPerSecond": 1035903,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "File Read Sync",
+        "duration": 8.003415999999987,
+        "operations": 100,
+        "opsPerSecond": 12495,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "RegExp Test",
+        "duration": 7.9048329999999964,
+        "operations": 10000,
+        "opsPerSecond": 1265049,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "Math Operations",
+        "duration": 0.8112910000000113,
+        "operations": 1000,
+        "opsPerSecond": 1232603,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "Date Creation",
+        "duration": 6.571124999999995,
+        "operations": 10000,
+        "opsPerSecond": 1521809,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "Function Calls",
+        "duration": 0.9824579999999798,
+        "operations": 1000,
+        "opsPerSecond": 1017855,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "Promise.resolve()",
+        "duration": 1.73191700000001,
+        "operations": 1000,
+        "opsPerSecond": 577395,
+        "memory": {
+          "before": 1243142,
+          "after": 1243142,
+          "peak": 1243142
+        },
+        "success": true
+      },
+      {
+        "name": "setTimeout(0)",
+        "duration": 124.18466699999999,
+        "operations": 100,
+        "opsPerSecond": 805,
+        "memory": {
+          "before": 1243142,
+          "after": 1260423,
+          "peak": 1260423
+        },
+        "success": true
+      }
+    ],
+    "totalTime": 264.259958,
+    "summary": {
+      "totalBenchmarks": 19,
+      "successful": 19,
+      "failed": 0,
+      "averageOpsPerSecond": 909283,
+      "totalMemoryUsed": 1050464
+    }
+  },
+  "system": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "nodeVersion": "v24.3.0",
+    "bunVersion": "1.3.6"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "t3-lattice",
+  "version": "3.4.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "bin": {
+    "persona-finder": "src/bin/persona-finder.ts"
+  },
+  "scripts": {
+    "dev": "bun --watch src/orchestrator.ts",
+    "start": "bun src/orchestrator.ts",
+    "analyze": "bun src/orchestrator.ts",
+    "serve": "bun src/server.ts",
+    "cli": "bun src/bin/persona-finder.ts",
+    "test": "bun test",
+    "bench": "bun run tests/benchmark.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "description": "T3-Lattice Hidden Edge Detection System for Sports Markets",
+  "keywords": [
+    "fractal",
+    "hurst",
+    "edge-detection",
+    "sports-analytics",
+    "quantum-audit",
+    "bun"
+  ]
+}

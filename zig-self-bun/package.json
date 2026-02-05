@@ -1,0 +1,72 @@
+{
+  "name": "@mycompany/bun-config-system",
+  "version": "1.3.5",
+  "description": "Enterprise-grade Bun configuration system with 13-byte immutable core",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./config": "./src/config/manager.ts",
+    "./logging": "./src/logging/logger.ts",
+    "./metrics": "./src/metrics/metrics.ts",
+    "./auth": "./src/auth/jwt.ts",
+    "./compression": "./src/http/compression.ts",
+    "./rate-limit": "./src/rate-limiting/rate-limiter.ts",
+    "./errors": "./src/errors/error-classes.ts",
+    "./proxy": "./src/proxy/middleware.ts",
+    "./terminal": "./src/terminal/pty.zig",
+    "./immutable": "./src/immutable/config.zig",
+    "./env": "./src/env/readonly.ts",
+    "./websocket": "./src/websocket/subprotocol.ts",
+    "./cli": "./lib/cli/enhanced-cli.ts",
+    "./registry": "./registry/api.ts"
+  },
+  "bin": {
+    "bun-config": "./bin/compiled/bun-config",
+    "bun-config-cli": "./bin/compiled/bun-config-cli"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --target bun --outdir lib/core && bun build lib/cli/config.ts --compile --outfile bin/compiled/bun-config && bun build lib/cli/enhanced-cli.ts --compile --outfile bin/compiled/bun-config-cli",
+    "build:zig": "zig build",
+    "build:all": "npm run build && npm run build:zig",
+    "test": "bun test tests/",
+    "test:watch": "bun test --watch tests/",
+    "bench": "bun run cli benchmark",
+    "lint": "bun x eslint src/ --ext .ts",
+    "format": "bun x prettier --write src/",
+    "bootstrap": "bun run src/bootstrap.ts",
+    "registry": "bun run registry/api.ts",
+    "registry:term": "bun run registry/terminal/term.ts",
+    "registry:publish": "bun run scripts/self-publish.ts",
+    "dashboard": "open http://localhost:4873/_dashboard",
+    "metrics": "curl -s http://localhost:4873/_dashboard/api/metrics",
+    "status": "bun run cli status",
+    "cli": "bun run lib/cli/enhanced-cli.ts",
+    "validate": "bun run cli validate",
+    "recover": "./src/scripts/recover-config.sh",
+    "clean": "rm -rf lib/ bin/compiled/ dist/",
+    "dev": "bun --watch registry/api.ts",
+    "docs": "bun run scripts/generate-docs.ts"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.29.0",
+    "@babel/traverse": "^7.29.0",
+    "@babel/generator": "^7.29.0",
+    "@babel/types": "^7.29.0"
+  },
+  "keywords": [
+    "bun",
+    "self-hosting",
+    "config",
+    "immutable",
+    "zig"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.3.8"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}
