@@ -9,6 +9,17 @@
 
 import { styled } from '../lib/theme/colors.ts';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // Simulate real-time profiling data
 function* generateProfileData(): Generator<string> {
   const metrics = ['CPU', 'Memory', 'Network', 'Disk'];

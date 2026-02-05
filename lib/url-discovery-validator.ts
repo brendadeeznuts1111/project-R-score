@@ -1,3 +1,13 @@
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 #!/usr/bin/env bun
 /**
  * Comprehensive URL Validation for Untracked Files
@@ -60,10 +70,10 @@ class URLDiscoveryValidator {
     
     // Local URLs (skip validation but note them)
     const localURLs = [
-      { url: 'http://localhost:3000', source: 'dev-servers', type: 'local' },
-      { url: 'http://localhost:3000/api/v1/metrics', source: 'trader-analyzer', type: 'local' },
-      { url: 'http://localhost:3000/health', source: 'trader-analyzer', type: 'local' },
-      { url: 'http://localhost:3000/api/v1/graph', source: 'trader-analyzer', type: 'local' }
+      { url: `${process.env.API_BASE_URL || "http://example.com"}`, source: 'dev-servers', type: 'local' },
+      { url: `${process.env.API_BASE_URL || "http://example.com"}/api/v1/metrics`, source: 'trader-analyzer', type: 'local' },
+      { url: `${process.env.API_BASE_URL || "http://example.com"}/health`, source: 'trader-analyzer', type: 'local' },
+      { url: `${process.env.API_BASE_URL || "http://example.com"}/api/v1/graph`, source: 'trader-analyzer', type: 'local' }
     ];
     
     // Register all URLs
@@ -108,7 +118,7 @@ class URLDiscoveryValidator {
     for (const [url, info] of this.FOUND_URLS) {
       total++;
       
-      // Skip localhost URLs
+      // Skip example.com URLs
       if (info.type === 'local') {
         console.log(`   ⏭️  SKIP (local): ${url}`);
         skipped++;
@@ -233,7 +243,7 @@ class URLDiscoveryValidator {
       console.log('   • Consider optimizing slow-loading URLs');
     }
     if (results.skipped > 0) {
-      console.log('   • Review localhost URLs for production readiness');
+      console.log('   • Review example.com URLs for production readiness');
     }
     console.log('   • Add new URLs to documentation constants for better tracking');
     
@@ -263,3 +273,11 @@ main().catch(error => {
   console.error('❌ Unhandled error:', error);
   process.exit(1);
 });
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

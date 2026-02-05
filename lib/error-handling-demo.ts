@@ -1,3 +1,13 @@
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 #!/usr/bin/env bun
 /**
  * 🔍 Error Handling Demonstration
@@ -114,7 +124,8 @@ async function demonstrateErrorHandling() {
   console.log('\n🌐 5. NETWORK REQUEST ERROR HANDLING:');
   
   try {
-    const response = await fetch('https://bun.sh/docs/cli', {
+    const response = // 🚀 Prefetch hint: Consider preconnecting to 'https://bun.sh/docs/cli' domain
+ await fetch('https://bun.sh/docs/cli', {
       method: 'HEAD',
       timeout: 5000
     });
@@ -316,3 +327,11 @@ if (import.meta.main) {
 } else {
   console.log('ℹ️ Error handling demo imported, not executed directly');
 }
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

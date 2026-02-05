@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🌐 Internal Wiki Generator - Usage Guide
 
 ## 🎯 Overview
@@ -96,8 +110,8 @@ https://wiki.ourcompany.com/bun-docs/conversion/to_buffer
 
 | Utility | Internal Wiki | Official Documentation | Example |
 |---------|---------------|----------------------|---------|
-| READ FILE | [📝](https://wiki.ourcompany.com/bun-docs/file_system/read_file) | [📚](https://bun.sh/docs/api/utils#readfile) | [✅](#example) |
-| WRITE FILE | [📝](https://wiki.ourcompany.com/bun-docs/file_system/write_file) | [📚](https://bun.sh/docs/api/utils#writefile) | [✅](#example) |
+| READ FILE | [📝 🌐](https://wiki.ourcompany.com/bun-docs/file_system/read_file) | [📚 🌐](https://bun.sh/docs/api/utils#readfile) | [✅](#example) |
+| WRITE FILE | [📝 🌐](https://wiki.ourcompany.com/bun-docs/file_system/write_file) | [📚 🌐](https://bun.sh/docs/api/utils#writefile) | [✅](#example) |
 ```
 
 ### **JSON API Format**
@@ -188,7 +202,7 @@ bun lib/wiki-generator-cli.ts \
 # Development setup
 bun lib/wiki-generator-cli.ts \
   --format markdown \
-  --base-url http://localhost:3000/wiki \
+  --base-url http://example.com/wiki \
   --workspace dev-bun
 ```
 

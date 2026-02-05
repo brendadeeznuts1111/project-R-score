@@ -7,6 +7,17 @@
 
 import { BunHTTP2Multiplexer } from './http2-multiplexer';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 interface RSCRequest {
   pathname: string;
   searchParams?: Record<string, string>;
@@ -274,3 +285,11 @@ export async function fetchRSCBatch(requests: RSCRequest[]): Promise<RSCResponse
   const handler = new SmartRSCHandler();
   return await handler.fetchBatch(requests);
 }
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

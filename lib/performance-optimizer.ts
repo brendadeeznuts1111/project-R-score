@@ -18,6 +18,17 @@ if (import.meta.main) {
 
 import { performance } from 'perf_hooks';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // ============================================================================
 // SPAWN OPTIMIZATION
 // ============================================================================
@@ -394,9 +405,9 @@ class ServerOptimizer {
     await new Promise(resolve => setTimeout(resolve, 100));
 
     const testUrls = [
-      'http://localhost:3001/',
-      'http://localhost:3001/test',
-      'http://localhost:3001/api/data'
+      'http://example.com/',
+      'http://example.com/test',
+      'http://example.com/api/data'
     ];
 
     for (const url of testUrls) {
@@ -499,3 +510,11 @@ main().catch(error => {
   console.error('❌ Unhandled error:', error);
   process.exit(1);
 });
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

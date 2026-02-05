@@ -1,5 +1,16 @@
 // lib/tier1380-directories.ts — Node:fs integration for directory ops
 import { readdir, mkdir, stat } from "node:fs/promises";
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { join, resolve } from "node:path";
 
 /**

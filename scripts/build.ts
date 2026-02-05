@@ -57,7 +57,7 @@ async function build() {
     feeds: {
       rss: RSS_URLS.BUN_BLOG,
       updates: RSS_URLS.BUN_UPDATES,
-      our_feed: 'http://localhost:3000/feed/rss',
+      our_feed: 'http://example.com/feed/rss',
     },
   };
   
@@ -137,7 +137,7 @@ bun install
 bun run dev
 
 # Access endpoints
-curl http://localhost:3000/api/typedarray/urls
+curl http://example.com/api/typedarray/urls
 \`\`\`
 
 ## Fetch Examples (Bun Native Pattern)
@@ -148,12 +148,12 @@ console.log(response.status); // => 200
 const text = await response.text();
 
 // Example 2: Fetch JSON data
-const urlResponse = await fetch("http://localhost:3000/api/typedarray/urls");
+const urlResponse = await fetch("http://example.com/api/typedarray/urls");
 const data = await urlResponse.json();
 console.log(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"
 
 // Example 3: Fetch RSS feed
-const rssResponse = await fetch("http://localhost:3000/feed/rss");
+const rssResponse = await fetch("http://example.com/feed/rss");
 const rssXml = await rssResponse.text();
 \`\`\`
 
@@ -185,7 +185,7 @@ bun run build
   console.log('\n✨ Build complete!');
   console.log('\n🚀 Start the server:');
   console.log('   bun run dev');
-  console.log('\n🌐 Then visit: http://localhost:3000');
+  console.log('\n🌐 Then visit: http://example.com');
 }
 
 // Run the build

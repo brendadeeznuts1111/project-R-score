@@ -5,6 +5,8 @@
     "dev": "bun run --watch server/server-enhanced.ts",
     "start": "bun run server/server-enhanced.ts",
     "start:content-type": "bun run server/content-type-server.ts",
+    "mcp:bun": "bun run lib/bun-mcp-server.ts",
+    "mcp:security": "bun run lib/security/mcp-server.ts --http --port=3000",
     "build": "bun run scripts/build.ts",
     "test": "bun test",
     "test:unit": "bun test",
@@ -26,6 +28,16 @@
     "docs:validate": "bun -e \"import('./lib/docs-scraper.ts').then(m=>m.generateValidationReport().then(console.log))\"",
     "report:generate": "bun run lib/report-generator.ts",
     "markdown:ansi": "bun run lib/enhanced-markdown.ts README.md ansi",
+    "url:validate": "bun run scripts/url-validator.ts check",
+    "url:check": "bun run scripts/url-validator-focused.ts quick",
+    "url:report": "bun run scripts/url-validator.ts check && cat url-validation-report.json",
+    "url:optimize": "bun run scripts/optimize-examples-prefetch.ts optimize",
+    "url:localhost-to-example": "bun run scripts/localhost-to-example.ts convert",
+    "lint": "eslint . --ext .ts,.js --fix",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
+    "standards:check": "bun run url:check && bun run lint && bun run type-check",
+    "ci:validate": "bun run standards:check && bun run test:all",
     "markdown:styled": "bun run lib/enhanced-markdown.ts docs/styling-demo.md ansi",
     "markdown:html": "bun run lib/enhanced-markdown.ts README.md html",
     "markdown:links": "bun run lib/enhanced-markdown.ts docs/api.md links",
@@ -43,6 +55,12 @@
     "@modelcontextprotocol/sdk": "^1.26.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.8"
+    "@types/bun": "^1.3.8",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
+    "eslint": "^9.39.2",
+    "eslint-plugin-import": "^2.32.0",
+    "jiti": "^2.6.1",
+    "typescript-eslint": "^8.54.0"
   }
 }

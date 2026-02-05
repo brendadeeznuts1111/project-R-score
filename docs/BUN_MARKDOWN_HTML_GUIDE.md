@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 📝 Bun.markdown.html() Comprehensive Guide
 
 Complete reference for using `Bun.markdown.html()` to convert Markdown to HTML with customizable options.
@@ -20,11 +34,11 @@ const html = Bun.markdown.html("some markdown", {
 
 ## 🔍 Official Definition
 
-From the [Bun documentation](https://bun.com/docs/runtime/markdown):
+From the [Bun documentation 🌐](https://bun.com/docs/runtime/markdown):
 
 > `Bun.markdown.html()` renders Markdown to an HTML string. It supports CommonMark specification and GitHub Flavored Markdown (GFM) extensions.
 
-> **Unstable API** — This API is under active development and may change in future versions of Bun. ([bun.com/docs](https://bun.com/docs/runtime/markdown))
+> **Unstable API** — This API is under active development and may change in future versions of Bun. ([bun.com/docs 🌐](https://bun.com/docs/runtime/markdown))
 
 **Key characteristics:**
 - **CommonMark compliant**: Follows the CommonMark specification
@@ -92,7 +106,7 @@ From the [Bun documentation](https://bun.com/docs/runtime/markdown):
 
 ## 📋 Complete Options Reference
 
-Per the [official options table](https://bun.com/docs/runtime/markdown#options), **all options default to `false`**. Enable them explicitly for GFM-style behavior.
+Per the [official options table 🌐](https://bun.com/docs/runtime/markdown#options), **all options default to `false`**. Enable them explicitly for GFM-style behavior.
 
 | Option | Default | Description |
 |--------|---------|-------------|
@@ -714,9 +728,9 @@ const markdownSummary = Bun.markdown.html(summary, {
 
 ## 📖 References
 
-- [Bun Documentation: Bun.markdown](https://bun.com/docs/runtime/markdown) — official options table and API
-- [CommonMark Specification](https://commonmark.org/)
-- [GitHub Flavored Markdown Spec](https://github.github.com/gfm/)
+- [Bun Documentation: Bun.markdown 🌐](https://bun.com/docs/runtime/markdown) — official options table and API
+- [CommonMark Specification 🌐](https://commonmark.org/)
+- [GitHub Flavored Markdown Spec 🌐](https://github.github.com/gfm/)
 - [BUN_MARKDOWN_COMPLETE_GUIDE.md](./BUN_MARKDOWN_COMPLETE_GUIDE.md) - Complete implementation guide
 
 ---

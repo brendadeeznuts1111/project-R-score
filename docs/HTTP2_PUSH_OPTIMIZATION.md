@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # HTTP/2 Push Optimization Plan
 
 **Target**: P_ratio 1.000 → 1.050 (+0.05)
@@ -142,6 +156,6 @@ if (pointer.startsWith('https://')) {
 
 ## References
 
-- [HTTP/2 Specification (RFC 7540)](https://tools.ietf.org/html/rfc7540)
-- [HTTP/2 Server Push Best Practices](https://web.dev/http2-server-push/)
-- [Bun HTTP/2 Documentation](https://bun.sh/docs/api/http)
+- [HTTP/2 Specification (RFC 7540) 🌐](https://tools.ietf.org/html/rfc7540)
+- [HTTP/2 Server Push Best Practices 🌐](https://web.dev/http2-server-push/)
+- [Bun HTTP/2 Documentation 🌐](https://bun.sh/docs/api/http)

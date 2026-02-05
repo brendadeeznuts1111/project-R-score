@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🧪 Modular A/B Testing Implementation Guide
 
 ## **Using Bun's CookieMap with Modular ABTestingManager Class**
@@ -308,7 +322,7 @@ const server = serve({
   }
 });
 
-console.log("🧪 A/B Testing Server running on http://localhost:3005");
+console.log("🧪 A/B Testing Server running on http://example.com");
 ```
 
 ---
@@ -318,17 +332,17 @@ console.log("🧪 A/B Testing Server running on http://localhost:3005");
 ### **1. Manual Testing**
 ```bash
 # Test first visit (should assign variant)
-curl -v http://localhost:3005/
+curl -v http://example.com/
 # Look for: Set-Cookie: url_test=direct
 
 # Test second visit (should use existing variant)
-curl -v -H "Cookie: url_test=direct" http://localhost:3005/
+curl -v -H "Cookie: url_test=direct" http://example.com/
 # Should not set new cookie
 
 # Force assignment
 curl -X POST -H "Content-Type: application/json" \
   -d '{"testId": "url_structure", "variant": "fragments"}' \
-  http://localhost:3005/force-assign
+  http://example.com/force-assign
 ```
 
 ### **2. Debug Mode**
@@ -363,11 +377,11 @@ class ABTestingManager {
 ```bash
 # Simulate 100 users
 for i in {1..100}; do
-  curl -s http://localhost:3005/ > /dev/null &
+  curl -s http://example.com/ > /dev/null &
 done
 
 # Check distribution
-curl http://localhost:3005/metrics
+curl http://example.com/metrics
 ```
 
 ---

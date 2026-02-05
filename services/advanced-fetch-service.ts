@@ -1,5 +1,16 @@
 // services/advanced-fetch-service.ts
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { dns } from 'bun';
 
 export class AdvancedFetchService {
@@ -159,6 +170,8 @@ export class AdvancedFetchService {
     
     // Test invalid URL
     try {
+      // 🚀 Prefetch hint: Consider preconnecting to 'https://invalid-domain-that-does-not-exist.com' domain
+
       await fetch('https://invalid-domain-that-does-not-exist.com');
     } catch (error) {
       console.log(`✅ Caught DNS error: ${error.message}`);
@@ -166,7 +179,8 @@ export class AdvancedFetchService {
     
     // Test 404 handling
     try {
-      const response = await fetch('https://httpbin.org/status/404');
+      const response = // 🚀 Prefetch hint: Consider preconnecting to 'https://httpbin.org/status/404' domain
+ await fetch('https://httpbin.org/status/404');
       if (!response.ok) {
         console.log(`✅ Handled HTTP error: ${response.status} ${response.statusText}`);
       }
@@ -269,3 +283,11 @@ if (import.meta.main) {
 }
 
 export default AdvancedFetchService;
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

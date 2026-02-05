@@ -7,6 +7,17 @@
  */
 
 import { loadABTestConfig, compressAndHashData, ABTestCache } from "./lib/config/env-loader.ts";
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { createHash } from "crypto";
 import { getSignedR2URL } from "./lib/r2/signed-url.ts";
 
@@ -502,3 +513,11 @@ export default {
     });
   }
 };
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

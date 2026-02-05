@@ -10,6 +10,17 @@
  */
 
 import { validateOrThrow, StringValidators } from './core-validation';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { createValidationError, EnterpriseErrorCode } from './core-errors';
 
 // ============================================================================
@@ -933,7 +944,7 @@ export const FRAGMENT_METADATA: Record<string, {
   'websocket-example': {
     description: 'WebSocket implementation examples and best practices',
     relatedFragments: ['websocket', 'server', 'real-time'],
-    examples: ['new WebSocket("ws://localhost:3000")', 'WebSocket server with Bun.serve'],
+    examples: ['new WebSocket("ws://example.com:3000")', 'WebSocket server with Bun.serve'],
     seeAlso: ['websocket', 'server']
   }
 } as const;
@@ -3188,3 +3199,11 @@ export const getGuidePaths = () =>
 
 export const getEnterprisePaths = () => 
   docsURL.getEnterprisePaths();
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

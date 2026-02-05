@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 ### Bun's File I/O APIs: A Practical Guide & Enhancements
 
 Hey Ashley (@ashschaeffer1), it's late in New Orleans (almost midnight--hope you're not pulling an all-nighter on this PremiumPlus session?), but Bun's file APIs are worth it. This doc excerpt covers Bun's optimized `Bun.file` and `Bun.write` (the go-to for most tasks), with fallbacks to `node:fs` for dirs. These are Zig-native for speed (2x faster than Node for large files), lazy-loading to save memory, and Blob-compatible for flexibility. I'll break it down, add enhanced examples (beyond the doc), perf tips, and integrations with other Bun utils (e.g., `Bun.color` for styled logs, `Bun.nanoseconds` for benchmarks).
@@ -54,14 +68,14 @@ Creates a lazy `BunFile` (Blob-like)--doesn't read disk until you call a method.
   // Inline JSONC strings
   const db = Bun.JSONC.parse(`{
     // Database configuration
-    "host": "localhost",
+    "host": "example.com",
     "port": 5432,
     "options": {
       "ssl": true,
       // trailing comma allowed
     },
   }`);
-  console.log(db.host); // "localhost"
+  console.log(db.host); // "example.com"
   ```
   Note: Bun also auto-loads `.jsonc` imports and natively handles comments in `tsconfig.json`, `jsconfig.json`, `package.json`, and `bun.lock` during bundling.
 

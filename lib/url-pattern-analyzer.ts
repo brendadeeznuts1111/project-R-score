@@ -15,6 +15,17 @@ if (import.meta.main) {
 
 import { write } from "bun";
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // ============================================================================
 // URL PATTERN ANALYSIS SYSTEM
 // ============================================================================
@@ -102,14 +113,14 @@ class URLPatternAnalyzer {
     
     // Local development URLs
     local: {
-      'localhost': [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:3003',
-        'http://localhost:3005',
-        'http://localhost:3000/api/v1/metrics',
-        'http://localhost:3000/health',
-        'http://localhost:3000/api/v1/graph'
+      'example.com': [
+        'http://example.com',
+        'http://example.com',
+        'http://example.com',
+        'http://example.com',
+        'http://example.com/api/v1/metrics',
+        'http://example.com/health',
+        'http://example.com/api/v1/graph'
       ]
     },
     

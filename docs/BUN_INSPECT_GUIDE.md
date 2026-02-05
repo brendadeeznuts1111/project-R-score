@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # Bun.inspect() - Complete Visual Guide
 
 **Reference:** https://bun.sh/docs/runtime/utils#bun-inspect-table-tabulardata%2C-properties%2C-options
@@ -111,7 +125,7 @@ const project = {
   name: "my-bun-app",
   config: {
     port: 3000,
-    db: { host: "localhost", port: 5432 }
+    db: { host: "example.com", port: 5432 }
   }
 };
 
@@ -144,7 +158,7 @@ console.log(Bun.inspect(project, { depth: 1 }));
 │ config      │ {                                                          │
 │             │   port: 3000,                                              │
 │             │   db: {                                                    │
-│             │     host: "localhost",                                     │
+│             │     host: "example.com",                                     │
 │             │     port: 5432                                             │
 │             │   }                                                        │
 │             │ }                                                          │

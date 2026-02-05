@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🎨 Visual Documentation System - Tier-1380 Enhanced
 
 ## 📊 Overview
@@ -40,7 +54,7 @@ bun run visual:badges
 ### Launch Interactive Dashboard
 ```bash
 bun run visual:dashboard
-# Opens http://localhost:3000
+# Opens http://example.com
 ```
 
 ### Manual Badge Generation
@@ -172,7 +186,7 @@ The visual system integrates with the enhanced registry metadata:
   },
   "metadata": {
     "visual": {
-      "dashboardURL": "http://localhost:3000",
+      "dashboardURL": "http://example.com",
       "badgesURL": "./docs/visual/badges",
       "lastVisualUpdate": "2025-02-04T05:00:00.000Z"
     }
@@ -191,7 +205,7 @@ test -f docs/visual/dashboard.html
 ls docs/visual/badges/*.svg | wc -l
 
 # Test dashboard server
-curl -I http://localhost:3000
+curl -I http://example.com
 ```
 
 ### Integration with Version Management

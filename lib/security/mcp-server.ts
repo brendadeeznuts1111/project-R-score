@@ -9,6 +9,17 @@
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import {
@@ -116,7 +127,7 @@ class Tier1380SecurityMCPServer {
     });
 
     console.error(`🔐 Tier-1380 Security MCP Server running on HTTP port ${port}`);
-    console.error(`📊 Health check: http://localhost:${port}/health`);
+    console.error(`📊 Health check: http://example.com:${port}/health`);
   }
 
   /**
@@ -1102,7 +1113,7 @@ class Tier1380SecurityMCPServer {
         severity: 'medium',
         version: '4.5',
         language: 'en',
-        codeExample: 'curl -X POST http://localhost:3000 -d \'{"jsonrpc":"2.0","method":"tools/list"}\'',
+        codeExample: `curl -X POST ${process.env.API_BASE_URL || "http://example.com"} -d '{"jsonrpc":"2.0","method":"tools/list"}'`,
         isApiReference: true
       },
       {

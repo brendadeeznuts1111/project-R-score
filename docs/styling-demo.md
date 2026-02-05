@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🎨 Advanced Markdown Styling Demo
 
 This document demonstrates **custom styling** for different content types using Bun.markdown.
@@ -15,14 +29,14 @@ console.log("Data:", data);
 ```bash
 # Shell commands
 bun run dev
-curl http://localhost:3000/api/typedarray/urls
+curl http://example.com/api/typedarray/urls
 ```
 
 ### Inline Elements
 - **Bold text** in red color
 - *Italic text* with underline
 - `inline code` in cyan
-- [Links](https://bun.sh/docs) with blue text and cyan URLs
+- [Links 🌐](https://bun.sh/docs) with blue text and cyan URLs
 
 ### Lists
 1. First item with custom bullet
@@ -31,7 +45,7 @@ curl http://localhost:3000/api/typedarray/urls
 
 - Unordered item with purple bullet
 - Another item with `inline code`
-- Item with [link](https://example.com)
+- Item with [link 🌐](https://example.com)
 
 ### Blockquotes
 > This is a blockquote with custom styling
@@ -39,7 +53,7 @@ curl http://localhost:3000/api/typedarray/urls
 > And has a nice prefix indicator
 
 ### Combined Elements
-Here's a paragraph with **bold**, *italic*, `code`, and a [link](https://bun.sh/docs).
+Here's a paragraph with **bold**, *italic*, `code`, and a [link 🌐](https://bun.sh/docs).
 
 ### Advanced Features
 - **Status**: ✅ Working

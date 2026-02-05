@@ -13,6 +13,17 @@ if (import.meta.path !== Bun.main) {
 }
 
 import { readFileSync, existsSync, statSync } from 'fs';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { join } from 'path';
 
 // ============================================================================

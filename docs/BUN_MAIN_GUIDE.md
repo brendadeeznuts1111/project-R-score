@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🎯 Bun.main Comprehensive Guide
 
 Complete reference for using `Bun.main` in Bun runtime applications.
@@ -15,7 +29,7 @@ console.log(Bun.main);
 
 ## 🔍 Official Definition
 
-From the [Bun documentation](https://bun.sh/docs/runtime/utils#bun-main):
+From the [Bun documentation 🌐](https://bun.sh/docs/runtime/utils#bun-main):
 
 > `Bun.main` contains the absolute path to the main entrypoint script that was executed. This is always defined when running a file directly with `bun <file>`.
 
@@ -394,10 +408,10 @@ bun overseer-cli.ts
 
 ## 🔗 Related Resources
 
-- [Official Bun Docs: Bun.main](https://bun.sh/docs/runtime/utils#bun-main)
-- [Bun Runtime Utilities](https://bun.sh/docs/runtime)
-- [Import Meta in Bun](https://bun.sh/docs/import)
-- Node.js: [require.main](https://nodejs.org/api/modules.html#requiremain)
+- [Official Bun Docs: Bun.main 🌐](https://bun.sh/docs/runtime/utils#bun-main)
+- [Bun Runtime Utilities 🌐](https://bun.sh/docs/runtime)
+- [Import Meta in Bun 🌐](https://bun.sh/docs/import)
+- Node.js: [require.main 🌐](https://nodejs.org/api/modules.html#requiremain)
 
 ---
 

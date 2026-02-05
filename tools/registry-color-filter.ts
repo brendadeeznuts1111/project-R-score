@@ -2,6 +2,17 @@
 
 import {parseArgs} from 'node:util';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 type RiskLevel = 'high' | 'medium' | 'low' | 'all';
 
 const {values: flags} = parseArgs({

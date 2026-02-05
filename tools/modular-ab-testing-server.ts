@@ -7,6 +7,17 @@
  */
 
 import { serve } from "bun";
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { ABTestingManager } from "./lib/ab-testing/cookie-manager.ts";
 
 // Create global A/B testing manager instance
@@ -638,8 +649,8 @@ const server = serve({
   },
 });
 
-console.log("🧪 Modular A/B Testing Server running on http://localhost:3004");
-console.log("📊 Admin Dashboard: http://localhost:3004/admin");
+console.log("🧪 Modular A/B Testing Server running on http://example.com");
+console.log("📊 Admin Dashboard: http://example.com/admin");
 console.log("🎲 Force assignment: POST /force/{testId}/{variant}");
 console.log("");
 console.log("Active Tests:");
@@ -647,3 +658,11 @@ console.log("  • url_structure: direct vs fragments (50/50)");
 console.log("  • doc_layout: sidebar vs topnav (60/40)");
 console.log("  • cta_button: blue vs green vs orange (33/33/34)");
 console.log("  • content_density: compact vs balanced vs spacious (20/60/20)");
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

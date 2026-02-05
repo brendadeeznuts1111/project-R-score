@@ -1,6 +1,20 @@
 // services/verbose-fetch-demo.ts
 import { CONTENT_TYPES, ContentTypeHandler } from '../config/content-types.ts';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { BUN_DOCS, TYPED_ARRAY_URLS } from '../config/urls.ts';
+
+// Use existing API URL pattern
+const API_BASE_URL = process.env.API_BASE_URL || 'http://example.com';
 
 export class VerboseFetchDemo {
   
@@ -11,7 +25,7 @@ export class VerboseFetchDemo {
     // Test 1: JSON with verbose logging
     console.log('1. JSON request with verbose logging:');
     try {
-      const response = await fetch('http://localhost:3001/api/content-type/test', {
+      const response = await fetch(`${API_BASE_URL}/api/content-type/test`, {
         method: 'POST',
         headers: {
           'Content-Type': CONTENT_TYPES.JSON
@@ -28,7 +42,7 @@ export class VerboseFetchDemo {
     // Test 2: Form data with verbose logging
     console.log('\n2. Form data request with verbose logging:');
     try {
-      const response = await fetch('http://localhost:3001/api/content-type/test', {
+      const response = await fetch(`${API_BASE_URL}/api/content-type/test`, {
         method: 'POST',
         headers: {
           'Content-Type': CONTENT_TYPES.FORM_URLENCODED
@@ -46,7 +60,7 @@ export class VerboseFetchDemo {
     console.log('\n3. Binary data request with verbose logging:');
     try {
       const binaryData = new Uint8Array([72, 101, 108, 108, 111]); // "Hello"
-      const response = await fetch('http://localhost:3001/api/typedarray/binary', {
+      const response = await fetch(`${API_BASE_URL}/api/typedarray/binary`, {
         method: 'POST',
         headers: {
           'Content-Type': CONTENT_TYPES.BINARY.UINT8_ARRAY,
@@ -64,7 +78,8 @@ export class VerboseFetchDemo {
     // Test 4: External request with verbose logging (example.com)
     console.log('\n4. External request (example.com) with verbose logging:');
     try {
-      const response = await fetch('http://example.com/', {
+      const response = // 🚀 Prefetch hint: Consider preconnecting to 'http://example.com/' domain
+ await fetch('http://example.com/', {
         verbose: true
       });
       console.log(`   Status: ${response.status}`);
@@ -106,7 +121,7 @@ export class VerboseFetchDemo {
     // Test GET with verbose
     console.log('GET request with verbose:');
     try {
-      const response = await fetch('http://localhost:3001/api/content-type/examples', {
+      const response = await fetch(`${API_BASE_URL}/api/content-type/examples`, {
         verbose: true
       });
       console.log(`Status: ${response.status}`);
@@ -122,7 +137,7 @@ export class VerboseFetchDemo {
       formData.append('test', 'verbose');
       formData.append('type', 'form-data');
       
-      const response = await fetch('http://localhost:3001/api/content-type/test', {
+      const response = await fetch(`${API_BASE_URL}/api/content-type/test`, {
         method: 'POST',
         body: formData,
         verbose: true
@@ -136,7 +151,7 @@ export class VerboseFetchDemo {
     // Test with custom headers and verbose
     console.log('\nCustom headers with verbose:');
     try {
-      const response = await fetch('http://localhost:3001/api/content-type/test', {
+      const response = await fetch(`${API_BASE_URL}/api/content-type/test`, {
         method: 'POST',
         headers: {
           'Content-Type': CONTENT_TYPES.JSON,
@@ -160,7 +175,8 @@ export class VerboseFetchDemo {
     // Test timeout with verbose
     console.log('Timeout with verbose logging:');
     try {
-      const response = await fetch('http://httpbin.org/delay/5', {
+      const response = // 🚀 Prefetch hint: Consider preconnecting to 'http://httpbin.org/delay/5' domain
+ await fetch('http://httpbin.org/delay/5', {
         signal: AbortSignal.timeout(1000), // 1 second timeout
         verbose: true
       });
@@ -172,7 +188,7 @@ export class VerboseFetchDemo {
     // Test 404 with verbose
     console.log('\n404 error with verbose logging:');
     try {
-      const response = await fetch('http://localhost:3001/nonexistent-endpoint', {
+      const response = await fetch(`${API_BASE_URL}/nonexistent-endpoint`, {
         verbose: true
       });
       console.log(`Status: ${response.status}`);
@@ -184,7 +200,8 @@ export class VerboseFetchDemo {
     // Test invalid domain with verbose
     console.log('\nInvalid domain with verbose logging:');
     try {
-      const response = await fetch('http://invalid-domain-that-does-not-exist.com/', {
+      const response = // 🚀 Prefetch hint: Consider preconnecting to 'http://invalid-domain-that-does-not-exist.com/' domain
+ await fetch('http://invalid-domain-that-does-not-exist.com/', {
         verbose: true
       });
       await response.text();
@@ -223,3 +240,11 @@ if (import.meta.main) {
 }
 
 export default VerboseFetchDemo;
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

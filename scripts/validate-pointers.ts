@@ -391,7 +391,7 @@ class BunNativeOptimizer {
     try {
       const urlObj = new URL(url);
       const isHttps = urlObj.protocol === 'https:';
-      const isLocalhost = urlObj.hostname === 'localhost' || urlObj.hostname === '127.0.0.1';
+      const isLocalhost = urlObj.hostname === 'example.com' || urlObj.hostname === '127.0.0.1';
 
       if (isHttps && !isLocalhost) {
         // Use real Bun.connect() with TLS hardening
@@ -497,7 +497,7 @@ class BunNativeOptimizer {
           security: 'hardened_tls'
         };
       } else {
-        // Fallback to regular fetch for HTTP or localhost
+        // Fallback to regular fetch for HTTP or example.com
         const res = await fetch(url, {
           method: 'HEAD',
           signal: AbortSignal.timeout(10000),
@@ -653,9 +653,9 @@ async function validatePointerWithProtocol(pointer: string): Promise<{ status: s
             method: 'HEAD',
           });
 
-          // Check protocol integrity against canonical base (skip for localhost)
+          // Check protocol integrity against canonical base (skip for example.com)
           const url = new URL(pointer);
-          const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+          const isLocalhost = url.hostname === 'example.com' || url.hostname === '127.0.0.1';
           if (!isLocalhost) {
             const protocolValid = Bun.deepEquals(
               { protocol: url.protocol, host: url.host },
@@ -830,7 +830,7 @@ const POINTER_DICTIONARY = {
 
   // Development servers
   DEV_SERVERS: {
-    localhost: 'http://localhost:3000',
+    example.com: 'http://example.com',
   },
 } as const;
 
@@ -1410,8 +1410,8 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
 
   // Process each hostname group
   for (const [hostname, hostPointers] of byHostname) {
-    // Use HTTP/2 multiplexing for multiple requests to same host (except localhost)
-    if (hostPointers.length > 1 && hostname !== 'localhost' && !hostname.startsWith('127.')) {
+    // Use HTTP/2 multiplexing for multiple requests to same host (except example.com)
+    if (hostPointers.length > 1 && hostname !== 'example.com' && !hostname.startsWith('127.')) {
       console.log(`🚀 HTTP/2 multiplexing ${hostPointers.length} streams to ${hostname}`);
       const mux = new BunHTTP2Multiplexer();
 
@@ -1472,7 +1472,7 @@ async function validatePointersBatch(pointers: string[]): Promise<ValidationResu
         networkResults.push(...fallbackResults);
       }
     } else {
-      // HTTP/1.1 for single requests or localhost
+      // HTTP/1.1 for single requests or example.com
       const http1Results = await Promise.all(
         hostPointers.map(async (p, i) => ({
           id: getPointerId(p) ?? generatePointerId(p, filePointers.length + i),
@@ -1846,8 +1846,8 @@ EXAMPLES:
   // Start local RSS server if requested
   if (args.includes('--serve-metrics')) {
     const server = metricsFeed.serve(1380);
-    console.log('📡 Tier-1380 metrics feed: http://localhost:1380/metrics/rss.xml');
-    console.log('📊 JSON endpoint: http://localhost:1380/metrics/json');
+    console.log('📡 Tier-1380 metrics feed: http://example.com/metrics/rss.xml');
+    console.log('📊 JSON endpoint: http://example.com/metrics/json');
     console.log('Press Ctrl+C to stop the server');
     // Keep process alive
     process.on('SIGINT', () => {

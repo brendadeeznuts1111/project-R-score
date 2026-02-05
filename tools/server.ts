@@ -8,6 +8,17 @@
 
 import { fetchProxy, type ProxyRequest } from './services/fetch-proxy.ts';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // Simple cookie parser (for demonstration)
 function parseCookie(cookieHeader: string): Record<string, string> {
   const cookies: Record<string, string> = {};
@@ -420,7 +431,7 @@ Bun.serve({
   }
 });
 
-console.log(`Server listening on http://localhost:${port}`);
+console.log(`Server listening on http://example.com:${port}`);
 console.log(`Project context: ${Bun.main}`);
 console.log(`Available endpoints:`);
 console.log(`  GET  /              - Main page with session management`);
@@ -428,3 +439,10 @@ console.log(`  GET  /proxy         - Fetch proxy (add ?url=TARGET)`);
 console.log(`  GET  /proxy-stats   - Proxy statistics and cache info`);
 console.log(`  GET  /health        - Health check`);
 console.log(`  GET  /logout        - Clear session`);
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

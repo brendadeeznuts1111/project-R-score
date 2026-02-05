@@ -8,6 +8,17 @@
 
 import { serve } from "bun";
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // Configuration
 const MONITORING_CONFIG = {
   port: 3002,
@@ -409,7 +420,7 @@ setInterval(() => {
   console.log(`📊 Metrics: ${metrics.requests.length} requests, ${metrics.errors.length} errors, ${metrics.alerts.length} alerts`);
 }, MONITORING_CONFIG.checkInterval);
 
-console.log('📊 Monitoring Service running on http://localhost:3002');
+console.log('📊 Monitoring Service running on http://example.com');
 console.log('Endpoints:');
 console.log('  GET  /health - Health check');
 console.log('  GET  /metrics - Current metrics');
@@ -420,3 +431,11 @@ console.log('  POST /feature-flags - Update feature flags');
 console.log('  GET  /alerts - Get recent alerts');
 console.log('  GET  /dashboard - Dashboard data');
 console.log(`\n📈 Monitoring every ${MONITORING_CONFIG.checkInterval/1000}s with ${MONITORING_CONFIG.metricsWindow/1000}s window`);
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

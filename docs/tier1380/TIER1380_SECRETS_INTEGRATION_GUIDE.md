@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🔐 FactoryWager Tier-1380 Secrets Integration Guide
 
 ## **Bun Secrets API Integration for Secure Credential Management**
@@ -176,7 +190,7 @@ bun tier1380-secrets-manager.ts migrate
 # Set environment variables first
 export R2_ACCESS_KEY_ID="your-access-key"
 export R2_SECRET_ACCESS_KEY="your-secret-key"
-export DATABASE_URL="postgresql://user:pass@localhost/db"
+export DATABASE_URL="postgresql://user:pass@example.com/db"
 ```
 
 ### **4. Health Monitoring**

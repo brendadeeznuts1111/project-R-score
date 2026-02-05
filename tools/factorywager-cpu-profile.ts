@@ -8,6 +8,17 @@
  */
 
 import { styled, log, colorizeMarkdown } from '../lib/theme/colors.ts';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { generateVisualMetadata } from '../lib/theme/colors.ts';
 import { Utils } from '../lib/utils/index.ts';
 

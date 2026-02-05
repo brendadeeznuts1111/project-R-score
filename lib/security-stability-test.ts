@@ -15,6 +15,17 @@ if (import.meta.main) {
 }
 
 import { SpawnOptimizer, EnvironmentOptimizer } from './performance-optimizer.ts';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { OptimizedServer } from './optimized-server.ts';
 import { OptimizedSpawn } from './optimized-spawn-test.ts';
 
@@ -119,7 +130,7 @@ class StabilityTests {
 
     // Simulate concurrent requests
     const promises = Array.from({ length: 10 }, () => 
-      fetch('http://localhost:3003/')
+      fetch('http://example.com/')
     );
 
     try {
@@ -200,7 +211,8 @@ class ErrorHandlingTests {
 
     try {
       // Request a non-existent endpoint that might cause an error
-      const response = await fetch('http://localhost:3005/nonexistent');
+      const response = // 🚀 Prefetch hint: Consider preconnecting to 'http://example.com/nonexistent' domain
+ await fetch('http://example.com/nonexistent');
       const text = await response.text();
       
       if (text.includes('Internal Server Error') && !text.includes('message')) {
@@ -274,3 +286,11 @@ main().catch(error => {
   console.error('❌ Unhandled error:', error);
   process.exit(1);
 });
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

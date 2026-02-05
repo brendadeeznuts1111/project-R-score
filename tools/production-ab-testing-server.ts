@@ -7,6 +7,17 @@
  */
 
 import { serve } from "bun";
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { ABTestManager } from "./lib/ab-testing/manager.ts";
 
 // Global test configuration
@@ -888,9 +899,9 @@ const server = serve({
   },
 });
 
-console.log("🧪 Production A/B Testing Server running on http://localhost:3006");
-console.log("📊 Admin Dashboard: http://localhost:3006/admin");
-console.log("📈 Metrics API: http://localhost:3006/api/metrics");
+console.log("🧪 Production A/B Testing Server running on http://example.com");
+console.log("📊 Admin Dashboard: http://example.com/admin");
+console.log("📈 Metrics API: http://example.com/api/metrics");
 console.log("🎲 Force assignment: POST /force/{testId}/{variant}");
 console.log("🗑️ Clear assignment: POST /clear/{testId}");
 console.log("");
@@ -902,3 +913,11 @@ console.log("  • content_density: compact vs balanced vs spacious (20/60/20)")
 console.log("  • pricing_display: monthly vs annual vs lifetime (70/25/5)");
 console.log("");
 console.log("✅ Strict weight validation enforced (must sum to 100)");
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🔍 How to Verify Connection to https://bun.com/docs/mcp
 
 ## 🎯 The Question
@@ -112,7 +126,7 @@ Scroll to the section that shows the SearchBun tool structure. You'll see:
 bun run lib/security/mcp-server.ts --http --port=3000
 
 # Test the search tool (matches Bun's API)
-curl -X POST http://localhost:3000 \
+curl -X POST http://example.com \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -126,7 +140,7 @@ curl -X POST http://localhost:3000 \
 
 #### **Test Search Functionality**
 ```bash
-curl -X POST http://localhost:3000 \
+curl -X POST http://example.com \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",

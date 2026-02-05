@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🚀 Advanced Bun.markdown Features Demo
 
 This demonstrates **all available overrides** from the official Bun documentation.
@@ -70,11 +84,11 @@ This paragraph contains **bold text**, *italic text*, ~~strikethrough~~, and `in
 
 ### Links and Images
 
-External link: [Bun Documentation](https://bun.sh/docs "Official Bun docs")
+External link: [Bun Documentation 🌐](https://bun.sh/docs "Official Bun docs")
 
 Internal link: [API Documentation](./api.md)
 
-Image example: ![Bun Logo](https://bun.sh/logo.png "Bun JavaScript Runtime")
+Image example: ![Bun Logo 🌐](https://bun.sh/logo.png "Bun JavaScript Runtime")
 
 ### Lists (Ordered and Unordered)
 
@@ -84,7 +98,7 @@ Image example: ![Bun Logo](https://bun.sh/logo.png "Bun JavaScript Runtime")
 
 - Unordered item with emoji 🎨
 - Another item with *italic*
-- Item with [link](https://example.com)
+- Item with [link 🌐](https://example.com)
 
 ### Horizontal Rule
 
@@ -93,7 +107,7 @@ Image example: ![Bun Logo](https://bun.sh/logo.png "Bun JavaScript Runtime")
 ### Combined Elements
 
 > **Complex Example**: This blockquote contains:
-> - A [link](https://bun.sh)
+> - A [link 🌐](https://bun.sh)
 > - `inline code`
 > - And **bold emphasis**
 
@@ -106,7 +120,7 @@ Image example: ![Bun Logo](https://bun.sh/logo.png "Bun JavaScript Runtime")
 *This is emphasis* (italic) vs **this is strong** (bold).
 
 ### Mixed Formatting
-***Bold and italic*** text with `code` and [links](https://example.com).
+***Bold and italic*** text with `code` and [links 🌐](https://example.com).
 
 ### Performance Metrics
 

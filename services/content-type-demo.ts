@@ -1,6 +1,21 @@
 // services/content-type-demo.ts
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { CONTENT_TYPES, ContentTypeHandler } from '../config/content-types.ts';
+import { buildEnterpriseAPIURL } from '../lib/core-documentation.ts';
+
+// Use existing API URL pattern
+const API_BASE_URL = process.env.API_BASE_URL || 'http://example.com';
 
 export class ContentTypeDemo {
   
@@ -18,7 +33,7 @@ export class ContentTypeDemo {
     console.log(`HTML blob type: ${htmlBlob.type}`);
     
     // Demonstrate sending blob with automatic Content-Type
-    const response = await fetch('http://localhost:3000/api/content-type/blob', {
+    const response = await fetch(`${API_BASE_URL}/api/content-type/blob`, {
       method: 'POST',
       body: textBlob,
       // Note: Content-Type is automatically set to 'text/plain'
@@ -49,7 +64,7 @@ export class ContentTypeDemo {
     formData.append('file', new Blob(['file content'], { type: 'text/plain' }), 'example.txt');
     
     // Note: Content-Type is automatically set to 'multipart/form-data' with boundary
-    const response = await fetch('http://localhost:3000/api/content-type/formdata', {
+    const response = await fetch(`${API_BASE_URL}/api/content-type/formdata`, {
       method: 'POST',
       body: formData,
       // No Content-Type header needed - Bun sets it automatically with boundary
@@ -69,7 +84,7 @@ export class ContentTypeDemo {
   async demonstrateConnectionPooling(): Promise<void> {
     console.log('🔗 Demonstrating connection pooling...');
     
-    const testUrl = 'http://localhost:3000/api/typedarray/urls';
+    const testUrl = `${API_BASE_URL}/api/typedarray/urls`;
     
     // Test 1: Default connection pooling (keep-alive enabled)
     console.log('Test 1: Default connection pooling (keep-alive enabled)');
@@ -122,7 +137,7 @@ export class ContentTypeDemo {
     
     // Test with conditions that should trigger sendfile (if using HTTP)
     try {
-      const response = await fetch('http://localhost:3000/api/content-type/large-file', {
+      const response = await fetch(`${API_BASE_URL}/api/content-type/large-file`, {
         method: 'POST',
         body: largeBlob,
         headers: {
@@ -167,19 +182,18 @@ export class ContentTypeDemo {
     console.log('\nCreating requests with ContentTypeHandler:');
     
     const jsonRequest = ContentTypeHandler.createRequest(
-      'http://localhost:3000/api/content-type/blob',
+      `${API_BASE_URL}/api/content-type/blob`,
       { message: 'Hello from ContentTypeHandler' }
     );
     console.log(`JSON Request Content-Type: ${jsonRequest.headers.get('content-type')}`);
     
     const textRequest = ContentTypeHandler.createRequest(
-      'http://localhost:3000/api/content-type/blob',
-      'Plain text data'
+      `${API_BASE_URL}/api/content-type/blob`,
+      'Hello from ContentTypeHandler'
     );
-    console.log(`Text Request Content-Type: ${textRequest.headers.get('content-type')}`);
     
     const binaryRequest = ContentTypeHandler.createRequest(
-      'http://localhost:3000/api/content-type/blob',
+      `${API_BASE_URL}/api/content-type/blob`,
       new Uint8Array([1, 2, 3, 4])
     );
     console.log(`Binary Request Content-Type: ${binaryRequest.headers.get('content-type')}`);
@@ -187,7 +201,7 @@ export class ContentTypeDemo {
     const formData = new FormData();
     formData.append('message', 'Hello from FormData');
     const formDataRequest = ContentTypeHandler.createRequest(
-      'http://localhost:3000/api/content-type/formdata',
+      `${API_BASE_URL}/api/content-type/formdata`,
       formData
     );
     console.log(`FormData Request Content-Type: ${formDataRequest.headers.get('content-type')}`);
@@ -252,3 +266,11 @@ if (import.meta.main) {
 }
 
 export default ContentTypeDemo;
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

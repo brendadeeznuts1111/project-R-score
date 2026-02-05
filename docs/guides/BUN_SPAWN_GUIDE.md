@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🚀 Bun.spawn: Complete Guide to Spawning Child Processes
 
 Comprehensive reference for using `Bun.spawn()` and `Bun.spawnSync()` in Bun runtime applications (v1.3.8+).
@@ -664,7 +678,7 @@ console.log(`System CPU: ${usage.cpuTime.system} µs`);
 
 - [Bun Docs: Child Processes](/runtime/child-process)
 - [Bun.main Guide](./BUN_MAIN_GUIDE.md) - For entrypoint-based resolution
-- Node.js: [`child_process.spawn()`](https://nodejs.org/api/child_process.html)
+- Node.js: [`child_process.spawn()` 🌐](https://nodejs.org/api/child_process.html)
 
 ---
 

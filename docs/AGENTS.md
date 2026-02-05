@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # AGENTS.md - AI Coding Agent Guide
 
 > This file contains essential information for AI coding agents working on this project.
@@ -412,7 +426,7 @@ The following environment variables are used by Kimi Shell integration:
 
 ## Resources
 
-- [Bun Documentation](https://bun.sh/docs)
+- [Bun Documentation 🌐](https://bun.sh/docs)
 - [BUN_MAIN_GUIDE.md](./docs/BUN_MAIN_GUIDE.md) - Comprehensive Bun.main patterns
 - [BUN_SPAWN_GUIDE.md](./BUN_SPAWN_GUIDE.md) - Complete Bun.spawn reference
 - [BUN_WHICH_GUIDE.md](./BUN_WHICH_GUIDE.md) - Advanced binary resolution

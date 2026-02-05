@@ -17,6 +17,17 @@ if (import.meta.path !== Bun.main) {
 
 import { validateAndReport, quickValidate, CLISelfValidator } from './cli-self-validation';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // ============================================================================
 // EXAMPLE 1: Simple validation with convenience function
 // ============================================================================

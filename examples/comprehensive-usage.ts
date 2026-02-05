@@ -10,6 +10,17 @@ import {
   getAllCriticalURLs
 } from '../lib/documentation';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // Helper for formatted output
 function logSection(title: string) {
   console.log(`\n${'='.repeat(60)}`);

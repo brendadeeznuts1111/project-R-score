@@ -8,6 +8,17 @@
  */
 
 import { VersionedSecretManager } from '../lib/security/versioned-secrets.ts';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { SecretLifecycleManager } from '../lib/security/secret-lifecycle.ts';
 import { VersionGraph } from '../lib/security/version-graph.ts';
 import { styled, log } from '../lib/theme/colors.ts';

@@ -8,6 +8,17 @@
 
 import { RSCMultiplexer, parseCapturedRSCRequest, fetchRSCBatch } from '../lib/rsc-multiplexer';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // Your captured Next.js RSC request data
 const CAPTURED_RSC_STATE = "%5B%22%22%2C%7B%22children%22%3A%5B%22%255Fsites%22%2C%7B%22children%22%3A%5B%5B%22subdomain%22%2C%22bun-1dd33a4e%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%22%255Fdocs%22%2C%7B%22children%22%3A%5B%5B%22subdomain%22%2C%22bun-1dd33a4e%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%5B%22pathname%22%2C%22%255Fdocs%255Fapi%255Futils%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%5B%22pathname%22%2C%22%255Fdocs%255Fapi%255Futils%255Fbun-peek%22%2C%22d%22%5D%5D%5D%5D%5D%5D%5D%5D%2Cnull%5D%5D%2Cnull%5D";
 

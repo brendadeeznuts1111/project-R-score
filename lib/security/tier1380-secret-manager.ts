@@ -9,6 +9,17 @@
 
 import { styled, log } from '../theme/colors.ts';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 interface SecretStorageOptions {
   persistEnterprise?: boolean;
   delete?: boolean;

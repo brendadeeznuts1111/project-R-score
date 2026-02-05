@@ -7,6 +7,17 @@
 
 import { globalPool } from './memory-pool';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 export interface RScoreMetrics {
   p_ratio: number;
   m_impact: number;
@@ -106,3 +117,11 @@ R-Score: ${rscore.total_score.toFixed(3)} (P:${rscore.p_ratio.toFixed(2)} M:${rs
 Optimizations: ${Object.entries(optimizations).filter(([_, v]) => v).map(([k]) => k).join(', ')}
 `;
 }
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

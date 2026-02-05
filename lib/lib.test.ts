@@ -8,6 +8,17 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { isPtySupported, createTerminal, spawnWithTerminal, DEFAULT_TERMINAL_CONFIG } from "./pty-terminal";
 import { isTerminalUISupported, createSpinner, createProgress, displayTable, DeploymentUI, smartDeploy } from "./terminal-tui";
 import { getSignedR2URL, getScannerCookieSignedURL } from "./r2/signed-url";

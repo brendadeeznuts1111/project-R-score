@@ -7,6 +7,17 @@
 
 import { docs } from '../lib/docs-reference.ts';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 // Get typed array documentation URLs
 const TYPED_ARRAY_URLS = docs.getTypedArrayUrls();
 

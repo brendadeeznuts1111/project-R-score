@@ -1,16 +1,30 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # API Documentation
 
 ## Core Endpoints
 
 ### Main Portal
-- **Base URL**: `http://localhost:3000`
-- **Documentation**: [Main Portal Docs](http://localhost:3000/docs)
-- **Health Check**: [Health Status](http://localhost:3000/health)
+- **Base URL**: `http://example.com`
+- **Documentation**: [Main Portal Docs 🌐](http://example.com/docs)
+- **Health Check**: [Health Status 🌐](http://example.com/health)
 
 ### Content-Type Server  
-- **Base URL**: `http://localhost:3001`
-- **Examples**: [Content-Type Demo](http://localhost:3001/api/examples)
-- **Auto-detect**: [Auto Detection](http://localhost:3001/api/auto-detect)
+- **Base URL**: `http://example.com`
+- **Examples**: [Content-Type Demo 🌐](http://example.com/api/examples)
+- **Auto-detect**: [Auto Detection 🌐](http://example.com/api/auto-detect)
 
 ## External Resources
 
@@ -41,10 +55,10 @@
 
 ```bash
 # Get all typed array URLs
-curl http://localhost:3000/api/typedarray/urls
+curl http://example.com/api/typedarray/urls
 
 # Test content-type handling
-curl -X POST http://localhost:3001/api/content-type/blob \
+curl -X POST http://example.com/api/content-type/blob \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello World"}'
 

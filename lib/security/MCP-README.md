@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🔐 Tier-1380 Security MCP Server
 
 A comprehensive Model Context Protocol (MCP) server that exposes enterprise-grade security capabilities to LLM applications. Built with Bun for maximum performance and cross-platform compatibility.
@@ -188,10 +202,10 @@ bun run mcp-server.ts --test
 ### Health Checks
 ```bash
 # Check server health
-curl -X POST http://localhost:3000/health
+curl -X POST http://example.com/health
 
 # Check secret storage
-curl -X POST -d '{"tool":"list_secrets"}' http://localhost:3000/tools
+curl -X POST -d '{"tool":"list_secrets"}' http://example.com/tools
 ```
 
 ### Metrics
@@ -254,8 +268,8 @@ MIT License - see LICENSE file for details.
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/brendadeeznuts1111/project-R-score/issues)
-- **Documentation**: [MCP Protocol](https://modelcontextprotocol.io)
+- **Issues**: [GitHub Issues 🌐](https://github.com/brendadeeznuts1111/project-R-score/issues)
+- **Documentation**: [MCP Protocol 🌐](https://modelcontextprotocol.io)
 - **Security**: For security issues, email security@tier1380.com
 
 ## 🔄 Version History

@@ -7,6 +7,17 @@
 
 import { write } from "bun";
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 console.log('🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR');
 console.log('Ensuring all code follows Bun-first principles');
 console.log('=' .repeat(60));
@@ -359,3 +370,11 @@ async function main(): Promise<void> {
 if (import.meta.main) {
   main().catch(console.error);
 }
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

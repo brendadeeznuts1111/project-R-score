@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🛡️ Bun.escapeHTML() Comprehensive Guide
 
 Complete reference for using `Bun.escapeHTML()` to prevent XSS attacks and safely render user content in HTML.
@@ -21,7 +35,7 @@ const safeInput = Bun.escapeHTML("<script>alert('XSS')</script>");
 
 ## 🔍 Official Definition
 
-From the [Bun documentation](https://bun.sh/docs/api/utils#bun-escapehtml):
+From the [Bun documentation 🌐](https://bun.sh/docs/api/utils#bun-escapehtml):
 
 > `Bun.escapeHTML()` escapes HTML entities in a string, converting `<`, `>`, `&`, `"`, and `'` to their corresponding HTML entity codes.
 
@@ -495,9 +509,9 @@ export function generateErrorPage(error: Error) {
 
 ## 📖 References
 
-- [Bun Documentation: Bun.escapeHTML](https://bun.sh/docs/api/utils#bun-escapehtml)
-- [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
-- [MDN: HTML Entity Reference](https://developer.mozilla.org/en-US/docs/Glossary/Entity)
+- [Bun Documentation: Bun.escapeHTML 🌐](https://bun.sh/docs/api/utils#bun-escapehtml)
+- [OWASP XSS Prevention Cheat Sheet 🌐](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
+- [MDN: HTML Entity Reference 🌐](https://developer.mozilla.org/en-US/docs/Glossary/Entity)
 
 ---
 

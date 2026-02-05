@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🎯 Enhanced Security Prompts Showcase
 
 ## 📋 Comparison: Bun Empty Array vs Tier-1380 Security Prompts
@@ -355,7 +369,7 @@ Generate comprehensive security checklists for deployments with environment-spec
 ### **Scenario 1: Quarterly Security Review**
 ```bash
 # Generate comprehensive security audit
-curl -X POST http://localhost:3000 \
+curl -X POST http://example.com \
   -d '{
     "jsonrpc": "2.0",
     "method": "prompts/get",
@@ -370,7 +384,7 @@ curl -X POST http://localhost:3000 \
   }'
 
 # Create rotation plan for identified risks
-curl -X POST http://localhost:3000 \
+curl -X POST http://example.com \
   -d '{
     "jsonrpc": "2.0",
     "method": "prompts/get",
@@ -388,7 +402,7 @@ curl -X POST http://localhost:3000 \
 ### **Scenario 2: Production Deployment**
 ```bash
 # Generate deployment security checklist
-curl -X POST http://localhost:3000 \
+curl -X POST http://example.com \
   -d '{
     "jsonrpc": "2.0",
     "method": "prompts/get",

@@ -1,3 +1,17 @@
+<!-- Prefetch Optimizations -->
+  <link rel="preconnect" href="https://bun.sh">
+  <link rel="dns-prefetch" href="https://bun.sh">
+  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
+  <link rel="preconnect" href="https://example.com">
+  <link rel="dns-prefetch" href="https://example.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://github.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="preconnect" href="https://developer.mozilla.org">
+  <link rel="dns-prefetch" href="https://developer.mozilla.org">
+<!-- End Prefetch Optimizations -->
+
 # 🔍 Bun.which: Advanced Usage Guide (Bun v1.3.8+)
 
 Complete reference for `Bun.which` – Bun's powerful binary resolution utility with advanced path and environment options.
@@ -672,8 +686,8 @@ console.log(resolved); // fakeBin
   - `BUN_SPAWN_GUIDE.md` - Spawn integration patterns
 
 - **External:**
-  - [Node.js which package](https://www.npmjs.com/package/which)
-  - [POSIX which man page](https://linux.die.net/man/1/which)
+  - [Node.js which package 🌐](https://www.npmjs.com/package/which)
+  - [POSIX which man page 🌐](https://linux.die.net/man/1/which)
 
 ---
 

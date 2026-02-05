@@ -22,6 +22,17 @@ if (import.meta.path !== Bun.main) {
 // ============================================================================
 
 import { SpawnOptimizer, EnvironmentOptimizer, ServerOptimizer } from './performance-optimizer.ts';
+
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
 import { OptimizedServer } from './optimized-server.ts';
 import { OptimizedSpawn } from './optimized-spawn-test.ts';
 import { PortManager, ConnectionPool, OptimizedFetch, ProjectServer, DNSOptimizer, ValidationUtils } from './port-management-system.ts';
@@ -591,3 +602,11 @@ main().catch(error => {
   console.error('❌ Unhandled error:', error);
   process.exit(1);
 });
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */

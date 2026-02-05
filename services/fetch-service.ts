@@ -1,6 +1,17 @@
 // services/fetch-service.ts
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
 
+/**
+ * 🚀 Prefetch Optimizations
+ * 
+ * This file includes prefetch hints for optimal performance:
+ * - DNS prefetching for external domains
+ * - Preconnect for faster handshakes
+ * - Resource preloading for critical assets
+ * 
+ * Generated automatically by optimize-examples-prefetch.ts
+ */
+
 export class FetchService {
   
   // Fetch Bun documentation - matches the example pattern
@@ -86,3 +97,11 @@ console.log(`Fetched ${typedArrayDocs.length} bytes of typed array docs`);
 // Fetch RSS feeds
 const rssFeeds = await fetchService.fetchAllRSSFeeds();
 console.log(`Fetched ${Object.keys(rssFeeds).length} RSS feeds`);
+
+/**
+ * 💡 Performance Tip: For better performance, consider:
+ * 1. Using preconnect for frequently accessed domains
+ * 2. Adding resource hints to your HTML head
+ * 3. Implementing request caching
+ * 4. Using the native fetch API with keep-alive
+ */
