@@ -1,0 +1,1919 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔐 Fire22 Security - Department Overview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .header {
+        background: rgba(10, 14, 39, 0.9);
+        border-bottom: 2px solid rgba(239, 68, 68, 0.3);
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: clamp(28px, 5vw, 42px);
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        color: #9ca3af;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ef4444;
+        display: block;
+      }
+
+      .header-stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 30px;
+        padding: 15px 0;
+      }
+
+      .breadcrumb a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb a:hover {
+        color: #ef4444;
+      }
+
+      .breadcrumb-separator {
+        margin: 0 10px;
+        color: #6b7280;
+      }
+
+      .breadcrumb-current {
+        color: #ef4444;
+        font-weight: 600;
+      }
+
+      .department-overview {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(239, 68, 68, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-overview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+      }
+
+      .overview-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .overview-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: rgba(239, 68, 68, 0.2);
+        border: 3px solid rgba(239, 68, 68, 0.4);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+      }
+
+      .overview-title h2 {
+        font-size: 28px;
+        color: #ef4444;
+        margin-bottom: 8px;
+      }
+
+      .overview-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .team-member {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        border: 2px solid rgba(239, 68, 68, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-member::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .team-member:hover::before {
+        left: 100%;
+      }
+
+      .team-member:hover {
+        background: rgba(0, 0, 0, 0.4);
+        border-color: rgba(239, 68, 68, 0.4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+      }
+
+      .member-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: #fff;
+        background: var(--member-bg, linear-gradient(135deg, #ef4444, #dc2626));
+        border: 2px solid rgba(239, 68, 68, 0.4);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      }
+
+      .member-info {
+        flex: 1;
+      }
+
+      .member-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin-bottom: 4px;
+      }
+
+      .member-role {
+        font-size: 12px;
+        color: #ef4444;
+        margin-bottom: 2px;
+      }
+
+      .member-stats {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .member-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .action-button {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .action-button:hover {
+        background: #ef4444;
+        color: #0a0e27;
+        transform: translateY(-1px);
+      }
+
+      /* Modal System */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+        display: flex;
+        opacity: 1;
+        align-items: center;
+        justify-content: center;
+        animation: modalFadeIn 0.3s ease;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        border: 2px solid rgba(239, 68, 68, 0.4);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #ef4444;
+        font-size: 16px;
+        transition: all 0.2s ease;
+      }
+
+      .modal-close:hover {
+        background: rgba(239, 68, 68, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Live Implementation Links */
+      .implementation-links {
+        margin-top: 40px;
+        padding: 30px;
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(239, 68, 68, 0.2);
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .implementation-links::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+        animation: linkGradient 3s ease-in-out infinite;
+      }
+
+      @keyframes linkGradient {
+        0%,
+        100% {
+          transform: translateX(-100%);
+        }
+        50% {
+          transform: translateX(100%);
+        }
+      }
+
+      .links-header {
+        font-size: 24px;
+        color: #ef4444;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .link-card {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(239, 68, 68, 0.2);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .link-card:hover {
+        transform: translateY(-3px) scale(1.02);
+        background: rgba(0, 0, 0, 0.5);
+        border-color: #ef4444;
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+      }
+
+      .link-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #ef4444;
+        margin-bottom: 8px;
+      }
+
+      .link-description {
+        font-size: 13px;
+        color: #9ca3af;
+        flex: 1;
+      }
+
+      .link-arrow {
+        font-size: 20px;
+        color: #ef4444;
+        align-self: flex-end;
+        margin-top: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .link-card:hover .link-arrow {
+        transform: translateX(5px);
+      }
+
+      /* Department-Specific Color Variables */
+      :root {
+        --dept-primary: #ef4444;
+        --dept-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+        --dept-bg: rgba(239, 68, 68, 0.2);
+        --dept-border: rgba(239, 68, 68, 0.4);
+        --dept-shadow: rgba(239, 68, 68, 0.3);
+        --dept-hover: rgba(239, 68, 68, 0.1);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header-stats {
+          gap: 20px;
+        }
+
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .team-member {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .modal-content {
+          width: 95%;
+          padding: 20px;
+        }
+
+        .links-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🔐 Security</h1>
+      <div class="header-subtitle">Information security and data protection</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">12</span>
+          <div class="header-stat-label">Team Members</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">0</span>
+          <div class="header-stat-label">Security Breaches</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">99.99%</span>
+          <div class="header-stat-label">System Uptime</div>
+        </div>
+      </div>
+
+      <!-- Live Implementation Links Section -->
+      <div class="implementation-links">
+        <h3 class="links-header">🔗 Security Implementation Links</h3>
+        <div class="links-grid">
+          <a href="../dashboard.html" class="link-card" target="_blank">
+            <div class="link-title">🛡️ Security Dashboard</div>
+            <div class="link-description">Real-time security monitoring</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../security/permissions/" class="link-card" target="_blank">
+            <div class="link-title">🔑 Permissions Manager</div>
+            <div class="link-description">Role-based access control</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../security/sessions/" class="link-card" target="_blank">
+            <div class="link-title">🔐 Session Control</div>
+            <div class="link-description">Session management system</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../security/data-integrity/" class="link-card" target="_blank">
+            <div class="link-title">📊 Data Integrity</div>
+            <div class="link-description">Data validation and protection</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../security/vulnerability-scanner/" class="link-card" target="_blank">
+            <div class="link-title">🔍 Vulnerability Scanner</div>
+            <div class="link-description">Automated security scanning</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../security/incident-response/" class="link-card" target="_blank">
+            <div class="link-title">🚨 Incident Response</div>
+            <div class="link-description">Security incident management</div>
+            <div class="link-arrow">→</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../dashboard.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="./">🏢 Departments</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Security</span>
+      </nav>
+
+      <!-- Welcome Section -->
+      <div class="department-overview" style="margin-bottom: 30px">
+        <div class="overview-header">
+          <div class="overview-icon">🛡️</div>
+          <div class="overview-title">
+            <h2>Welcome to Security Department</h2>
+            <div class="overview-subtitle">Protecting systems, data, and operations</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 12px">
+          <h3 style="color: var(--dept-primary); margin-bottom: 15px; font-size: 20px">🎯 Department Mission</h3>
+          <p style="color: #e0e6ed; line-height: 1.8; margin-bottom: 20px">
+            The Security Department safeguards our platform through comprehensive security measures, including
+            permissions management, session control, data integrity, vulnerability assessment, and incident response
+            protocols.
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+              gap: 20px;
+              margin-top: 25px;
+            "
+          >
+            <div
+              style="
+                padding: 15px;
+                background: rgba(239, 68, 68, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">👔 Team Lead</h4>
+              <div style="color: #e0e6ed; font-weight: bold">Sarah Mitchell</div>
+              <div style="color: #9ca3af; font-size: 14px">Chief Security Officer</div>
+              <div style="color: #9ca3af; font-size: 12px; margin-top: 5px">12+ years experience</div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(239, 68, 68, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">📊 Key Metrics</h4>
+
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                <span style="color: #9ca3af">Security Score:</span>
+                <span style="color: #10b981; font-weight: bold">A+</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                <span style="color: #9ca3af">Threats Blocked:</span>
+                <span style="color: #10b981; font-weight: bold">15,847</span>
+              </div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(239, 68, 68, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">🏆 Team Rankings</h4>
+              <div style="font-size: 14px">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                  <span style="color: #fbbf24">🥇 S. Mitchell</span>
+                  <span style="color: #9ca3af">247 alerts</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                  <span style="color: #d1d5db">🥈 D. Chen</span>
+                  <span style="color: #9ca3af">198 alerts</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="color: var(--dept-primary); margin: 25px 0 15px; font-size: 20px">💼 Core Responsibilities</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Access Control
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Session Management
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Data Protection
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Threat Detection
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Incident Response
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Compliance
+            </div>
+          </div>
+
+          <h3 style="color: var(--dept-primary); margin: 25px 0 15px; font-size: 20px">🚀 Recent Contributions</h3>
+          <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px">
+            <ul style="list-style: none; padding: 0; margin: 0">
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Maintained zero security breaches for 18 consecutive months</span>
+              </li>
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">
+                  Implemented multi-factor authentication reducing unauthorized access by 99.8%
+                </span>
+              </li>
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">
+                  Deployed advanced threat detection system blocking 15,847 malicious attempts
+                </span>
+              </li>
+              <li style="padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Achieved SOC 2 Type II compliance with 100% audit success rate</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Fire22 Security Scanner Package Demonstration -->
+          <h3 style="color: var(--dept-primary); margin: 35px 0 20px; font-size: 22px">
+            🛡️ Fire22 Security Scanner Package
+          </h3>
+          <div
+            style="
+              background: rgba(0, 0, 0, 0.4);
+              padding: 25px;
+              border-radius: 12px;
+              border: 1px solid rgba(239, 68, 68, 0.3);
+            "
+          >
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                margin-bottom: 25px;
+              "
+            >
+              <div
+                style="
+                  background: rgba(239, 68, 68, 0.1);
+                  padding: 20px;
+                  border-radius: 10px;
+                  border-left: 4px solid #ef4444;
+                "
+              >
+                <h4 style="color: #ef4444; margin-bottom: 12px; font-size: 16px">📦 Package Implementation</h4>
+                <div style="color: #e0e6ed; font-size: 14px; margin-bottom: 8px">
+                  <strong>Location:</strong>
+                  packages/@fire22/security-scanner
+                </div>
+                <div style="color: #e0e6ed; font-size: 14px; margin-bottom: 8px">
+                  <strong>Runtime:</strong>
+                  Bun Native APIs
+                </div>
+                <div style="color: #e0e6ed; font-size: 14px; margin-bottom: 8px">
+                  <strong>Performance:</strong>
+                  2.38ms scan time
+                </div>
+                <div style="color: #e0e6ed; font-size: 14px">
+                  <strong>Features:</strong>
+                  CVE Detection, Secret Scanning
+                </div>
+              </div>
+
+              <div
+                style="
+                  background: rgba(239, 68, 68, 0.1);
+                  padding: 20px;
+                  border-radius: 10px;
+                  border-left: 4px solid #ef4444;
+                "
+              >
+                <h4 style="color: #ef4444; margin-bottom: 12px; font-size: 16px">🔍 Vulnerability Database</h4>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 6px">
+                  •
+                  <strong>CVE-2019-10744:</strong>
+                  Lodash Prototype Pollution
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 6px">
+                  •
+                  <strong>CVE-2022-24999:</strong>
+                  Express.js Open Redirect
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 6px">
+                  •
+                  <strong>CVE-2022-23529:</strong>
+                  JWT Algorithm Confusion
+                </div>
+                <div style="color: #10b981; font-size: 12px; margin-top: 10px; font-weight: bold">
+                  ✅ Current Score: 100/100 (Risk: LOW)
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 10px; margin-bottom: 20px">
+              <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 16px">🔐 Security Scan Results</h4>
+              <div style="font-family: 'Monaco', 'Menlo', monospace; font-size: 12px; line-height: 1.4">
+                <div style="color: #10b981">🔍 Starting Fire22 security scan...</div>
+                <div style="color: #9ca3af">📦 Scanning dependencies...</div>
+                <div style="color: #9ca3af">🔐 Scanning for exposed secrets...</div>
+                <div style="color: #9ca3af">🛡️ Scanning system security...</div>
+                <div style="color: #10b981">✅ Security scan completed in 2.38ms</div>
+                <div style="color: #ef4444; font-weight: bold">📊 Security Score: 100/100 (Risk Level: LOW)</div>
+                <div style="color: #06b6d4">🔍 Found 0 potential security issues</div>
+              </div>
+            </div>
+
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 10px">
+              <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 16px">💡 Security Recommendations</h4>
+              <div style="display: grid; gap: 8px">
+                <div style="color: #e0e6ed; font-size: 13px">
+                  🔐 Use Bun.secrets for credential storage instead of environment variables
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px">
+                  🛡️ Enable Bun's built-in security scanner in bunfig.toml
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px">📦 Regularly update dependencies to latest versions</div>
+                <div style="color: #e0e6ed; font-size: 13px">
+                  🔍 Implement automated security scanning in CI/CD pipeline
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bun Native Security Features -->
+          <h3 style="color: var(--dept-primary); margin: 35px 0 20px; font-size: 22px">
+            ⚡ Bun Native Security Features
+          </h3>
+          <div
+            style="
+              background: rgba(0, 0, 0, 0.4);
+              padding: 25px;
+              border-radius: 12px;
+              border: 1px solid rgba(239, 68, 68, 0.3);
+            "
+          >
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px">
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: 10px">
+                <h4 style="color: #ef4444; margin-bottom: 12px; display: flex; align-items: center; gap: 8px">
+                  <span>🔐</span>
+                  Bun.secrets Integration
+                </h4>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 8px">
+                  <strong>macOS:</strong>
+                  Keychain Services
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 8px">
+                  <strong>Linux:</strong>
+                  libsecret (GNOME Keyring)
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 8px">
+                  <strong>Windows:</strong>
+                  Credential Manager
+                </div>
+                <div style="color: #10b981; font-size: 12px; font-weight: bold">✅ OS-Native Secure Storage</div>
+              </div>
+
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: 10px">
+                <h4 style="color: #ef4444; margin-bottom: 12px; display: flex; align-items: center; gap: 8px">
+                  <span>📊</span>
+                  Performance Metrics
+                </h4>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 8px">
+                  •
+                  <strong>Scan Speed:</strong>
+                  2.38ms nanosecond timing
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 8px">
+                  •
+                  <strong>Memory Usage:</strong>
+                  < 256MB optimized
+                </div>
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 8px">
+                  •
+                  <strong>Security Score:</strong>
+                  100/100
+                </div>
+                <div style="color: #10b981; font-size: 12px; font-weight: bold">⚡ Ultra-Fast Native Performance</div>
+              </div>
+
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: 10px">
+                <h4 style="color: #ef4444; margin-bottom: 12px; display: flex; align-items: center; gap: 8px">
+                  <span>🛡️</span>
+                  bunfig.toml Security
+                </h4>
+                <div
+                  style="
+                    color: #e0e6ed;
+                    font-size: 12px;
+                    font-family: monospace;
+                    background: rgba(0, 0, 0, 0.3);
+                    padding: 8px;
+                    border-radius: 4px;
+                    margin-bottom: 8px;
+                  "
+                >
+                  [install.security]
+                  <br />
+                  scanner = "@fire22/security-scanner"
+                  <br />
+                  audit = true
+                  <br />
+                  auditLevel = "high"
+                </div>
+                <div style="color: #10b981; font-size: 12px; font-weight: bold">
+                  🔒 Enterprise Security Configuration
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Benchmark & Test Results -->
+          <h3 style="color: var(--dept-primary); margin: 35px 0 20px; font-size: 22px">
+            📊 Performance Benchmark Results
+          </h3>
+          <div
+            style="
+              background: rgba(0, 0, 0, 0.4);
+              padding: 25px;
+              border-radius: 12px;
+              border: 1px solid rgba(239, 68, 68, 0.3);
+            "
+          >
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin-bottom: 25px;
+              "
+            >
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: 10px">
+                <h4 style="color: #ef4444; margin-bottom: 15px; display: flex; align-items: center; gap: 8px">
+                  <span>⚡</span>
+                  Dependency Scanning
+                </h4>
+                <div style="display: grid; gap: 8px">
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Iterations:</span>
+                    <span style="color: #e0e6ed; font-weight: bold">500</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Average Time:</span>
+                    <span style="color: #10b981; font-weight: bold">0.0701ms</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Throughput:</span>
+                    <span style="color: #10b981; font-weight: bold">14,260 ops/sec</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: 10px">
+                <h4 style="color: #ef4444; margin-bottom: 15px; display: flex; align-items: center; gap: 8px">
+                  <span>🔍</span>
+                  Secret Scanning
+                </h4>
+                <div style="display: grid; gap: 8px">
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Iterations:</span>
+                    <span style="color: #e0e6ed; font-weight: bold">300</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Average Time:</span>
+                    <span style="color: #10b981; font-weight: bold">0.2121ms</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Throughput:</span>
+                    <span style="color: #10b981; font-weight: bold">4,716 ops/sec</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 20px; border-radius: 10px">
+                <h4 style="color: #ef4444; margin-bottom: 15px; display: flex; align-items: center; gap: 8px">
+                  <span>🛡️</span>
+                  Full Security Scan
+                </h4>
+                <div style="display: grid; gap: 8px">
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Iterations:</span>
+                    <span style="color: #e0e6ed; font-weight: bold">100</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Average Time:</span>
+                    <span style="color: #10b981; font-weight: bold">0.7220ms</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Throughput:</span>
+                    <span style="color: #10b981; font-weight: bold">1,385 ops/sec</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 10px; margin-bottom: 20px">
+              <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 16px">🏅 Performance Grades</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px">
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 18px">✅</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold">Scan Speed: A+</div>
+                    <div style="color: #9ca3af; font-size: 12px">Sub-5ms performance</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 18px">✅</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold">Throughput: A+</div>
+                    <div style="color: #9ca3af; font-size: 12px">24,868 ops/sec combined</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 18px">✅</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold">Memory: A+</div>
+                    <div style="color: #9ca3af; font-size: 12px">0.40MB total usage</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 18px">✅</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold">Bun Integration: A+</div>
+                    <div style="color: #9ca3af; font-size: 12px">Native API utilization</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Coverage & Results -->
+          <h3 style="color: var(--dept-primary); margin: 35px 0 20px; font-size: 22px">🧪 Test Suite Results</h3>
+          <div
+            style="
+              background: rgba(0, 0, 0, 0.4);
+              padding: 25px;
+              border-radius: 12px;
+              border: 1px solid rgba(239, 68, 68, 0.3);
+            "
+          >
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+                margin-bottom: 25px;
+              "
+            >
+              <div
+                style="
+                  background: rgba(10, 185, 129, 0.1);
+                  padding: 20px;
+                  border-radius: 10px;
+                  border-left: 4px solid #10b981;
+                "
+              >
+                <h4 style="color: #10b981; margin-bottom: 15px; display: flex; align-items: center; gap: 8px">
+                  <span>📊</span>
+                  Test Coverage
+                </h4>
+                <div style="display: grid; gap: 8px">
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Statements:</span>
+                    <span style="color: #10b981; font-weight: bold">95%</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Branches:</span>
+                    <span style="color: #10b981; font-weight: bold">90%</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Functions:</span>
+                    <span style="color: #10b981; font-weight: bold">95%</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Lines:</span>
+                    <span style="color: #10b981; font-weight: bold">95%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style="
+                  background: rgba(239, 68, 68, 0.1);
+                  padding: 20px;
+                  border-radius: 10px;
+                  border-left: 4px solid #ef4444;
+                "
+              >
+                <h4 style="color: #ef4444; margin-bottom: 15px; display: flex; align-items: center; gap: 8px">
+                  <span>🎯</span>
+                  Test Results
+                </h4>
+                <div style="display: grid; gap: 8px">
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Total Tests:</span>
+                    <span style="color: #e0e6ed; font-weight: bold">19</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Passed:</span>
+                    <span style="color: #10b981; font-weight: bold">18</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Failed:</span>
+                    <span style="color: #ef4444; font-weight: bold">1</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span style="color: #9ca3af">Runtime:</span>
+                    <span style="color: #06b6d4; font-weight: bold">56ms</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 10px">
+              <h4 style="color: #ef4444; margin-bottom: 15px; font-size: 16px">🔬 Vulnerability Detection Tests</h4>
+              <div style="display: grid; gap: 10px">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px;
+                    background: rgba(10, 185, 129, 0.1);
+                    border-radius: 6px;
+                  "
+                >
+                  <span style="color: #10b981; font-size: 16px">✅</span>
+                  <div style="color: #e0e6ed; font-size: 14px">
+                    <strong>CVE-2019-10744</strong>
+                    - Lodash Prototype Pollution Detection
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px;
+                    background: rgba(10, 185, 129, 0.1);
+                    border-radius: 6px;
+                  "
+                >
+                  <span style="color: #10b981; font-size: 16px">✅</span>
+                  <div style="color: #e0e6ed; font-size: 14px">
+                    <strong>CVE-2022-24999</strong>
+                    - Express.js Open Redirect Detection
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px;
+                    background: rgba(10, 185, 129, 0.1);
+                    border-radius: 6px;
+                  "
+                >
+                  <span style="color: #10b981; font-size: 16px">✅</span>
+                  <div style="color: #e0e6ed; font-size: 14px">
+                    <strong>CVE-2022-23529</strong>
+                    - JWT Algorithm Confusion Detection
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px;
+                    background: rgba(10, 185, 129, 0.1);
+                    border-radius: 6px;
+                  "
+                >
+                  <span style="color: #10b981; font-size: 16px">✅</span>
+                  <div style="color: #e0e6ed; font-size: 14px">
+                    <strong>AWS Keys</strong>
+                    - Access Key & Secret Detection
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px;
+                    background: rgba(10, 185, 129, 0.1);
+                    border-radius: 6px;
+                  "
+                >
+                  <span style="color: #10b981; font-size: 16px">✅</span>
+                  <div style="color: #e0e6ed; font-size: 14px">
+                    <strong>GitHub Tokens</strong>
+                    - Personal Access Token Detection
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 8px;
+                    background: rgba(10, 185, 129, 0.1);
+                    border-radius: 6px;
+                  "
+                >
+                  <span style="color: #10b981; font-size: 16px">✅</span>
+                  <div style="color: #e0e6ed; font-size: 14px">
+                    <strong>Performance Tests</strong>
+                    - Sub-100ms full scan validation
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="color: var(--dept-primary); margin: 25px 0 15px; font-size: 20px">📋 Current Security Tasks</h3>
+          <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 12px">
+            <div style="display: grid; gap: 15px">
+              <div
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 15px;
+                  border-radius: 8px;
+                  border-left: 3px solid #ef4444;
+                "
+              >
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px">
+                  <div style="flex: 1">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px">
+                      <span style="font-size: 16px; font-weight: bold; color: #e0e6ed">
+                        Zero Trust Architecture Implementation
+                      </span>
+                      <span title="Priority: critical">🔴</span>
+                      <span
+                        style="
+                          background: #ef444422;
+                          color: #ef4444;
+                          padding: 2px 8px;
+                          border-radius: 4px;
+                          font-size: 11px;
+                          text-transform: uppercase;
+                          font-weight: bold;
+                        "
+                      >
+                        in progress
+                      </span>
+                    </div>
+                    <div style="color: #9ca3af; font-size: 13px">
+                      Assigned to:
+                      <span style="color: var(--dept-primary)">Sarah Mitchell</span>
+                    </div>
+                  </div>
+                  <div style="text-align: right">
+                    <div style="font-size: 18px; font-weight: bold; color: var(--dept-primary)">75%</div>
+                    <div style="font-size: 11px; color: #9ca3af">Progress</div>
+                  </div>
+                </div>
+                <div style="margin-top: 10px">
+                  <div style="background: rgba(255, 255, 255, 0.1); border-radius: 4px; height: 6px; overflow: hidden">
+                    <div
+                      style="
+                        background: linear-gradient(90deg, #ef4444, #ef444488);
+                        height: 100%;
+                        width: 75%;
+                        transition: width 0.3s ease;
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 15px;
+                  border-radius: 8px;
+                  border-left: 3px solid #10b981;
+                "
+              >
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px">
+                  <div style="flex: 1">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px">
+                      <span style="font-size: 16px; font-weight: bold; color: #e0e6ed">
+                        Advanced Threat Detection System
+                      </span>
+                      <span title="Priority: high">🟠</span>
+                      <span
+                        style="
+                          background: #10b98122;
+                          color: #10b981;
+                          padding: 2px 8px;
+                          border-radius: 4px;
+                          font-size: 11px;
+                          text-transform: uppercase;
+                          font-weight: bold;
+                        "
+                      >
+                        active
+                      </span>
+                    </div>
+                    <div style="color: #9ca3af; font-size: 13px">
+                      Assigned to:
+                      <span style="color: var(--dept-primary)">David Chen</span>
+                    </div>
+                  </div>
+                  <div style="text-align: right">
+                    <div style="font-size: 18px; font-weight: bold; color: var(--dept-primary)">90%</div>
+                    <div style="font-size: 11px; color: #9ca3af">Progress</div>
+                  </div>
+                </div>
+                <div style="margin-top: 10px">
+                  <div style="background: rgba(255, 255, 255, 0.1); border-radius: 4px; height: 6px; overflow: hidden">
+                    <div
+                      style="
+                        background: linear-gradient(90deg, #10b981, #10b98188);
+                        height: 100%;
+                        width: 90%;
+                        transition: width 0.3s ease;
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="
+                  background: rgba(0, 0, 0, 0.3);
+                  padding: 15px;
+                  border-radius: 8px;
+                  border-left: 3px solid #3b82f6;
+                "
+              >
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px">
+                  <div style="flex: 1">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px">
+                      <span style="font-size: 16px; font-weight: bold; color: #e0e6ed">GDPR Compliance Audit</span>
+                      <span title="Priority: high">🟠</span>
+                      <span
+                        style="
+                          background: #3b82f622;
+                          color: #3b82f6;
+                          padding: 2px 8px;
+                          border-radius: 4px;
+                          font-size: 11px;
+                          text-transform: uppercase;
+                          font-weight: bold;
+                        "
+                      >
+                        in progress
+                      </span>
+                    </div>
+                    <div style="color: #9ca3af; font-size: 13px">
+                      Assigned to:
+                      <span style="color: var(--dept-primary)">Elena Rodriguez</span>
+                    </div>
+                  </div>
+                  <div style="text-align: right">
+                    <div style="font-size: 18px; font-weight: bold; color: var(--dept-primary)">85%</div>
+                    <div style="font-size: 11px; color: #9ca3af">Progress</div>
+                  </div>
+                </div>
+                <div style="margin-top: 10px">
+                  <div style="background: rgba(255, 255, 255, 0.1); border-radius: 4px; height: 6px; overflow: hidden">
+                    <div
+                      style="
+                        background: linear-gradient(90deg, #3b82f6, #3b82f688);
+                        height: 100%;
+                        width: 85%;
+                        transition: width 0.3s ease;
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1)">
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                  gap: 15px;
+                  text-align: center;
+                "
+              >
+                <div>
+                  <div style="font-size: 24px; font-weight: bold; color: var(--dept-primary)">2</div>
+                  <div style="font-size: 12px; color: #9ca3af">In Progress</div>
+                </div>
+                <div>
+                  <div style="font-size: 24px; font-weight: bold; color: #10b981">1</div>
+                  <div style="font-size: 12px; color: #9ca3af">Active</div>
+                </div>
+                <div>
+                  <div style="font-size: 24px; font-weight: bold; color: #fbbf24">0</div>
+                  <div style="font-size: 12px; color: #9ca3af">Blocked</div>
+                </div>
+                <div>
+                  <div style="font-size: 24px; font-weight: bold; color: var(--dept-primary)">83%</div>
+                  <div style="font-size: 12px; color: #9ca3af">Avg Progress</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="department-overview">
+        <div class="overview-header">
+          <div class="overview-icon">🔐</div>
+          <div class="overview-title">
+            <h2>Security Department</h2>
+            <div class="overview-subtitle">Information security, access control, and threat protection specialists</div>
+          </div>
+        </div>
+
+        <div class="team-grid">
+          <div class="team-member" id="sarah-mitchell" onclick="openMemberProfile('sarah-mitchell')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">SM</div>
+            <div class="member-info">
+              <div class="member-name">Sarah Mitchell</div>
+              <div class="member-role">Chief Security Officer</div>
+              <div class="member-stats">🛡️ 247 security alerts resolved • 100% incident response</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="david-chen" onclick="openMemberProfile('david-chen')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">DC</div>
+            <div class="member-info">
+              <div class="member-name">David Chen</div>
+              <div class="member-role">Vulnerability Assessment Lead</div>
+              <div class="member-stats">🔍 198 vulnerabilities patched • 99.9% accuracy</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="elena-rodriguez" onclick="openMemberProfile('elena-rodriguez')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">ER</div>
+            <div class="member-info">
+              <div class="member-name">Elena Rodriguez</div>
+              <div class="member-role">Compliance & Privacy Officer</div>
+              <div class="member-stats">📋 95% compliance score • 12 audits passed</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="marcus-johnson" onclick="openMemberProfile('marcus-johnson')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">MJ</div>
+            <div class="member-info">
+              <div class="member-name">Marcus Johnson</div>
+              <div class="member-role">Permissions & Access Control Specialist</div>
+              <div class="member-stats">🔑 2,847 access requests • 100% policy compliance</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="sofia-andersson" onclick="openMemberProfile('sofia-andersson')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">SA</div>
+            <div class="member-info">
+              <div class="member-name">Sofia Andersson</div>
+              <div class="member-role">Session Management Engineer</div>
+              <div class="member-stats">🔐 15,643 sessions secured • 0.01% failure rate</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="raj-patel" onclick="openMemberProfile('raj-patel')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">RP</div>
+            <div class="member-info">
+              <div class="member-name">Raj Patel</div>
+              <div class="member-role">Data Integrity Specialist</div>
+              <div class="member-stats">📊 98.7% data validation • 0 integrity breaches</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="nina-kowalski" onclick="openMemberProfile('nina-kowalski')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">NK</div>
+            <div class="member-info">
+              <div class="member-name">Nina Kowalski</div>
+              <div class="member-role">Incident Response Coordinator</div>
+              <div class="member-stats">🚨 23 incidents resolved • 4.2min avg response time</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="alex-kim" onclick="openMemberProfile('alex-kim')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">AK</div>
+            <div class="member-info">
+              <div class="member-name">Alex Kim</div>
+              <div class="member-role">Cryptography Engineer</div>
+              <div class="member-stats">🔒 128 encryption implementations • AES-256 standard</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="isabella-santos" onclick="openMemberProfile('isabella-santos')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">IS</div>
+            <div class="member-info">
+              <div class="member-name">Isabella Santos</div>
+              <div class="member-role">Network Security Analyst</div>
+              <div class="member-stats">🌐 99.99% network uptime • 847 threats blocked</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="tomasz-nowak" onclick="openMemberProfile('tomasz-nowak')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">TN</div>
+            <div class="member-info">
+              <div class="member-name">Tomasz Nowak</div>
+              <div class="member-role">Security Automation Engineer</div>
+              <div class="member-stats">🤖 89% automated response • 1,247 rules deployed</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="amara-okafor" onclick="openMemberProfile('amara-okafor')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">AO</div>
+            <div class="member-info">
+              <div class="member-name">Amara Okafor</div>
+              <div class="member-role">Forensics Investigator</div>
+              <div class="member-stats">🔍 156 investigations • 94% case resolution rate</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+          <div class="team-member" id="lucas-weber" onclick="openMemberProfile('lucas-weber')">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ef4444, #dc2626)">LW</div>
+            <div class="member-info">
+              <div class="member-name">Lucas Weber</div>
+              <div class="member-role">Security Training Specialist</div>
+              <div class="member-stats">🎓 2,847 employees trained • 98% completion rate</div>
+            </div>
+            <div class="member-actions">
+              <button class="action-button">View Profile</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Template -->
+    <div id="memberModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-close" onclick="closeModal()">&times;</div>
+        <div class="modal-header">
+          <div class="member-avatar" id="modalAvatar"></div>
+          <div>
+            <h3 id="modalName"></h3>
+            <div id="modalRole" style="color: var(--dept-primary)"></div>
+          </div>
+        </div>
+        <div id="modalDetails"></div>
+      </div>
+    </div>
+
+    <script>
+      // Department Configuration
+      const departmentConfig = {
+        name: 'Security',
+        code: 'SEC',
+        primaryColor: '#ef4444',
+        members: [
+          {
+            id: 'sarah-mitchell',
+            name: 'Sarah Mitchell',
+            role: 'Chief Security Officer',
+            avatar: 'SM',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              alerts: 247,
+              incidents: '100%',
+              uptime: '99.99%',
+            },
+            responsibilities: [
+              'Security strategy and governance',
+              'Risk assessment and management',
+              'Security policy development',
+              'Executive security reporting',
+            ],
+            specializations: ['Zero Trust Architecture', 'Threat Intelligence', 'Security Operations'],
+          },
+          {
+            id: 'david-chen',
+            name: 'David Chen',
+            role: 'Vulnerability Assessment Lead',
+            avatar: 'DC',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              vulnerabilities: 198,
+              accuracy: '99.9%',
+              criticalFindings: 23,
+            },
+            responsibilities: [
+              'Vulnerability scanning and assessment',
+              'Penetration testing coordination',
+              'Security weakness identification',
+              'Remediation planning',
+            ],
+            specializations: ['OWASP Testing', 'Network Security', 'Application Security'],
+          },
+          {
+            id: 'elena-rodriguez',
+            name: 'Elena Rodriguez',
+            role: 'Compliance & Privacy Officer',
+            avatar: 'ER',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              compliance: '95%',
+              audits: 12,
+              policies: 47,
+            },
+            responsibilities: [
+              'GDPR compliance management',
+              'Privacy impact assessments',
+              'Audit coordination and reporting',
+              'Regulatory compliance monitoring',
+            ],
+            specializations: ['GDPR', 'SOC 2', 'ISO 27001'],
+          },
+          {
+            id: 'marcus-johnson',
+            name: 'Marcus Johnson',
+            role: 'Permissions & Access Control Specialist',
+            avatar: 'MJ',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              accessRequests: 2847,
+              compliance: '100%',
+              violations: 0,
+            },
+            responsibilities: [
+              'Role-based access control (RBAC)',
+              'Permission matrix management',
+              'Access review and certification',
+              'Privilege escalation monitoring',
+            ],
+            specializations: ['Identity Management', 'OAuth 2.0', 'JWT Authentication'],
+          },
+          {
+            id: 'sofia-andersson',
+            name: 'Sofia Andersson',
+            role: 'Session Management Engineer',
+            avatar: 'SA',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              sessions: 15643,
+              failureRate: '0.01%',
+              avgDuration: '4.2h',
+            },
+            responsibilities: [
+              'Session lifecycle management',
+              'Timeout and expiration policies',
+              'Multi-device session handling',
+              'Session security monitoring',
+            ],
+            specializations: ['Redis Sessions', 'JWT Tokens', 'Session Clustering'],
+          },
+          {
+            id: 'raj-patel',
+            name: 'Raj Patel',
+            role: 'Data Integrity Specialist',
+            avatar: 'RP',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              validation: '98.7%',
+              breaches: 0,
+              checksums: 24847,
+            },
+            responsibilities: [
+              'Data validation and verification',
+              'Checksum and hash verification',
+              'Database integrity monitoring',
+              'Backup validation and testing',
+            ],
+            specializations: ['Data Validation', 'Hash Functions', 'Database Security'],
+          },
+          {
+            id: 'nina-kowalski',
+            name: 'Nina Kowalski',
+            role: 'Incident Response Coordinator',
+            avatar: 'NK',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              incidents: 23,
+              avgResponse: '4.2min',
+              resolution: '100%',
+            },
+            responsibilities: [
+              'Security incident classification',
+              'Response team coordination',
+              'Post-incident analysis',
+              'Incident documentation',
+            ],
+            specializations: ['NIST Framework', 'Digital Forensics', 'Crisis Management'],
+          },
+          {
+            id: 'alex-kim',
+            name: 'Alex Kim',
+            role: 'Cryptography Engineer',
+            avatar: 'AK',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              implementations: 128,
+              standard: 'AES-256',
+              keyRotations: 847,
+            },
+            responsibilities: [
+              'Encryption implementation',
+              'Key management and rotation',
+              'Cryptographic protocol design',
+              'Certificate lifecycle management',
+            ],
+            specializations: ['PKI', 'TLS/SSL', 'Symmetric Encryption'],
+          },
+          {
+            id: 'isabella-santos',
+            name: 'Isabella Santos',
+            role: 'Network Security Analyst',
+            avatar: 'IS',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              uptime: '99.99%',
+              threatsBlocked: 847,
+              firewallRules: 1247,
+            },
+            responsibilities: [
+              'Network traffic monitoring',
+              'Firewall rule management',
+              'Intrusion detection and prevention',
+              'Network security architecture',
+            ],
+            specializations: ['IDS/IPS', 'Network Forensics', 'VPN Security'],
+          },
+          {
+            id: 'tomasz-nowak',
+            name: 'Tomasz Nowak',
+            role: 'Security Automation Engineer',
+            avatar: 'TN',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              automation: '89%',
+              rules: 1247,
+              falsePositives: '2.3%',
+            },
+            responsibilities: [
+              'Security orchestration and automation',
+              'SOAR platform management',
+              'Automated response workflows',
+              'Security tool integration',
+            ],
+            specializations: ['SOAR', 'Python Automation', 'API Security'],
+          },
+          {
+            id: 'amara-okafor',
+            name: 'Amara Okafor',
+            role: 'Forensics Investigator',
+            avatar: 'AO',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              investigations: 156,
+              resolution: '94%',
+              evidence: 847,
+            },
+            responsibilities: [
+              'Digital forensics investigations',
+              'Evidence collection and preservation',
+              'Malware analysis and reverse engineering',
+              'Expert witness testimony',
+            ],
+            specializations: ['Digital Forensics', 'Malware Analysis', 'Chain of Custody'],
+          },
+          {
+            id: 'lucas-weber',
+            name: 'Lucas Weber',
+            role: 'Security Training Specialist',
+            avatar: 'LW',
+            avatarBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            metrics: {
+              trained: 2847,
+              completion: '98%',
+              phishing: '12% click rate',
+            },
+            responsibilities: [
+              'Security awareness training',
+              'Phishing simulation campaigns',
+              'Security policy communication',
+              'Training effectiveness measurement',
+            ],
+            specializations: ['Security Awareness', 'Training Development', 'Behavioral Security'],
+          },
+        ],
+      };
+
+      // Team member data structure
+      const teamMembers = departmentConfig.members;
+
+      // Modal System
+      function openMemberProfile(memberId) {
+        try {
+          const member = teamMembers.find(m => m.id === memberId);
+          if (!member) {
+            throw new Error(`Team member not found: ${memberId}`);
+          }
+
+          // Populate modal
+          document.getElementById('modalAvatar').style.background = member.avatarBg;
+          document.getElementById('modalAvatar').textContent = member.avatar;
+          document.getElementById('modalName').textContent = member.name;
+          document.getElementById('modalRole').textContent = member.role;
+          document.getElementById('modalDetails').innerHTML = generateMemberDetails(member);
+
+          // Show modal
+          const modal = document.getElementById('memberModal');
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+
+          console.log(`✅ Opened profile for ${member.name}`);
+        } catch (error) {
+          console.error('Failed to open member profile:', error);
+        }
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('memberModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+
+      function generateMemberDetails(member) {
+        // Get first 3 metric keys for display
+        const metricKeys = Object.keys(member.metrics);
+        const displayMetrics = metricKeys.slice(0, 3);
+
+        return `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">📊 Performance Metrics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        ${displayMetrics
+                          .map(
+                            key => `
+                            <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                                <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.metrics[key]}</div>
+                                <div style="font-size: 11px; color: #9ca3af;">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                            </div>
+                        `
+                          )
+                          .join('')}
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">🎯 Responsibilities</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${member.responsibilities.map(resp => `<li style="margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--dept-primary);">• ${resp}</li>`).join('')}
+                    </ul>
+                </div>
+                ${
+                  member.specializations
+                    ? `
+                <div>
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">🔧 Specializations</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${member.specializations
+                          .map(
+                            spec => `
+                            <span style="padding: 4px 12px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 16px; font-size: 12px; color: var(--dept-primary);">${spec}</span>
+                        `
+                          )
+                          .join('')}
+                    </div>
+                </div>`
+                    : ''
+                }
+            `;
+      }
+
+      // Event Listeners
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log(`🔐 ${departmentConfig.name} Department page loaded`);
+        console.log(`👥 ${teamMembers.length} team members initialized`);
+
+        // ESC key to close modal
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') {
+            closeModal();
+          }
+        });
+      });
+
+      // Click outside modal to close
+      document.getElementById('memberModal').addEventListener('click', e => {
+        if (e.target.id === 'memberModal') {
+          closeModal();
+        }
+      });
+    </script>
+
+    <!-- Dynamic Task Loading -->
+    <script src="../js/department-tasks.js"></script>
+  </body>
+</html>

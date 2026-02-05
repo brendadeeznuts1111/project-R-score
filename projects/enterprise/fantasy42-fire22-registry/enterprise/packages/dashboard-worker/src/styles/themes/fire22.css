@@ -1,0 +1,357 @@
+/**
+ * Fire22 Brand Theme
+ * Custom branding and theme overrides
+ */
+
+/* Fire22 Brand Colors */
+.theme-fire22 {
+  --brand-primary: #fdbb2d;
+  --brand-secondary: #b21f1f;
+  --brand-tertiary: #ff6b35;
+  --brand-dark: #1a0707;
+
+  /* Gradient Variations */
+  --gradient-flame: linear-gradient(135deg, #fdbb2d 0%, #ff6b35 50%, #b21f1f 100%);
+  --gradient-ember: linear-gradient(135deg, #b21f1f 0%, #fdbb2d 100%);
+  --gradient-heat: radial-gradient(circle, #fdbb2d 0%, #ff6b35 35%, #b21f1f 70%);
+  --gradient-glow: radial-gradient(circle, rgba(253, 187, 45, 0.4) 0%, transparent 70%);
+
+  /* Shadow Colors */
+  --shadow-fire: 0 0 30px rgba(253, 187, 45, 0.4);
+  --shadow-ember: 0 0 20px rgba(178, 31, 31, 0.3);
+  --shadow-heat: 0 10px 40px rgba(255, 107, 53, 0.3);
+}
+
+/* Fire22 Logo Styles */
+.fire22-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-family: var(--font-sans);
+  font-weight: var(--font-extrabold);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.fire22-logo__icon {
+  font-size: var(--font-size-4xl);
+  animation: flame-animation 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(253, 187, 45, 0.6));
+}
+
+.fire22-logo__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.fire22-logo__name {
+  font-size: var(--font-size-3xl);
+  background: var(--gradient-flame);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.fire22-logo__tagline {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-normal);
+  font-style: italic;
+  letter-spacing: 0.05em;
+  margin-top: var(--space-xs);
+}
+
+.fire22-logo:hover {
+  transform: scale(1.05);
+}
+
+.fire22-logo:hover .fire22-logo__icon {
+  animation-duration: 0.5s;
+  filter: drop-shadow(0 0 20px rgba(253, 187, 45, 0.8));
+}
+
+/* Fire22 Button Styles */
+.btn-fire22 {
+  background: var(--gradient-flame);
+  color: white;
+  border: none;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-semibold);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-fire22::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left var(--transition-slow);
+}
+
+.btn-fire22:hover::before {
+  left: 100%;
+}
+
+.btn-fire22:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-fire);
+}
+
+.btn-fire22:active {
+  transform: translateY(0);
+}
+
+/* Fire22 Badge */
+.badge-fire22 {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--gradient-flame);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: var(--shadow-ember);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Fire22 Alert */
+.alert-fire22 {
+  background: linear-gradient(135deg, rgba(253, 187, 45, 0.1), rgba(178, 31, 31, 0.1));
+  border: 1px solid rgba(253, 187, 45, 0.3);
+  border-left: 4px solid var(--brand-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.alert-fire22::before {
+  content: '🔥';
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  font-size: var(--font-size-2xl);
+  opacity: 0.2;
+  animation: flame-animation 2s ease-in-out infinite;
+}
+
+/* Fire22 Card Special */
+.card-fire22 {
+  background: linear-gradient(135deg, rgba(253, 187, 45, 0.05), rgba(178, 31, 31, 0.05));
+  border: 1px solid rgba(253, 187, 45, 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-heat);
+}
+
+.card-fire22::after {
+  content: '';
+  position: absolute;
+  bottom: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: var(--gradient-glow);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+  pointer-events: none;
+}
+
+.card-fire22:hover::after {
+  opacity: 1;
+}
+
+/* Fire22 Animations */
+@keyframes flame-animation {
+  0%,
+  100% {
+    transform: scale(1) rotate(-3deg);
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(3deg);
+    filter: brightness(1.1) hue-rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.05) rotate(-2deg);
+    filter: brightness(1.2) hue-rotate(10deg);
+  }
+  75% {
+    transform: scale(1.15) rotate(2deg);
+    filter: brightness(1.1) hue-rotate(-5deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(253, 187, 45, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 30px rgba(253, 187, 45, 0.6),
+      0 0 40px rgba(178, 31, 31, 0.4);
+  }
+}
+
+@keyframes fire-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Fire22 Loading Spinner */
+.spinner-fire22 {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  animation: spin 2s linear infinite;
+}
+
+.spinner-fire22::before,
+.spinner-fire22::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+
+.spinner-fire22::before {
+  border-top-color: var(--brand-primary);
+  animation: spin 1s linear infinite;
+}
+
+.spinner-fire22::after {
+  border-bottom-color: var(--brand-secondary);
+  animation: spin-reverse 1.5s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Fire22 Progress Bar */
+.progress-fire22 {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fire22__bar {
+  height: 100%;
+  background: var(--gradient-flame);
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: width var(--transition-slow) ease-out;
+}
+
+.progress-fire22__bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: fire-wave 2s linear infinite;
+}
+
+/* Fire22 Tooltip */
+.tooltip-fire22 {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-fire22::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: var(--gradient-flame);
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  box-shadow: var(--shadow-fire);
+}
+
+.tooltip-fire22:hover::after {
+  opacity: 1;
+}
+
+/* Fire22 Terminal Theme */
+.terminal-fire22 {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0707 100%);
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  font-family: var(--font-mono);
+  color: var(--brand-primary);
+  box-shadow: inset 0 0 20px rgba(253, 187, 45, 0.1);
+}
+
+.terminal-fire22__header {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.terminal-fire22__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gradient-flame);
+}
+
+.terminal-fire22__content {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.terminal-fire22__prompt {
+  color: var(--brand-secondary);
+  margin-right: var(--space-sm);
+}

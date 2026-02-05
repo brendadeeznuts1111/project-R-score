@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Terminal UI - Documentation Template</title>
+    <style>
+      :root {
+        --primary: #0d1117;
+        --secondary: #161b22;
+        --accent: #58a6ff;
+        --text: #f0f6fc;
+        --text-secondary: #8b949e;
+        --success: #3fb950;
+        --danger: #f85149;
+        --warning: #d29922;
+        --info: #58a6ff;
+        --fire: #ff6b35;
+        --terminal-green: #39ff14;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Roboto Mono', monospace;
+      }
+
+      body {
+        background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      .terminal-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      /* Terminal Header with Smooth Corners */
+      .terminal-header {
+        background: var(--secondary);
+        border: 1px solid var(--accent);
+        padding: 30px;
+        margin-bottom: 30px;
+        position: relative;
+      }
+
+      .terminal-header::before {
+        content: '╭────────────────────────────────────────────────────────────────────────╮';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .terminal-header::after {
+        content: '╰────────────────────────────────────────────────────────────────────────╯';
+        position: absolute;
+        bottom: -1px;
+        left: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .terminal-title {
+        font-size: 2.5rem;
+        color: var(--fire);
+        text-align: center;
+        margin-bottom: 10px;
+        text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+      }
+
+      .terminal-subtitle {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+      }
+
+      /* Content Sections with Box Drawing */
+      .content-section {
+        background: var(--secondary);
+        border: 1px solid var(--text-secondary);
+        margin-bottom: 30px;
+        position: relative;
+        padding: 25px;
+      }
+
+      .content-section::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        width: 20px;
+        height: 20px;
+        border-top: 1px solid var(--accent);
+        border-left: 1px solid var(--accent);
+        border-radius: 8px 0 0 0;
+      }
+
+      .content-section::after {
+        content: '';
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        width: 20px;
+        height: 20px;
+        border-top: 1px solid var(--accent);
+        border-right: 1px solid var(--accent);
+        border-radius: 0 8px 0 0;
+      }
+
+      .section-header {
+        border-bottom: 1px solid var(--accent);
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .section-icon {
+        font-size: 1.8rem;
+      }
+
+      .section-title {
+        color: var(--accent);
+        font-size: 1.5rem;
+      }
+
+      /* Code Blocks with Terminal Style */
+      .code-block {
+        background: #000;
+        border: 1px solid #30363d;
+        padding: 20px;
+        margin: 20px 0;
+        position: relative;
+        font-family: monospace;
+        overflow-x: auto;
+      }
+
+      .code-block::before {
+        content: '╭─ Code ──────────────────────────────────────────╮';
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background: #000;
+        padding: 0 10px;
+        color: var(--terminal-green);
+        font-size: 12px;
+      }
+
+      .code-block code {
+        color: var(--terminal-green);
+        display: block;
+        line-height: 1.5;
+      }
+
+      /* Terminal Output Style */
+      .terminal-output {
+        background: #000;
+        border: 1px solid var(--terminal-green);
+        padding: 20px;
+        margin: 20px 0;
+        position: relative;
+        white-space: pre-wrap;
+        font-family: monospace;
+      }
+
+      .terminal-output::before {
+        content: '╭─ Terminal Output ───────────────────────────────╮';
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background: #000;
+        padding: 0 10px;
+        color: var(--terminal-green);
+        font-size: 12px;
+      }
+
+      /* Navigation with Smooth Design */
+      .terminal-nav {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin: 30px 0;
+        flex-wrap: wrap;
+      }
+
+      .nav-button {
+        background: transparent;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: monospace;
+        font-weight: bold;
+        position: relative;
+      }
+
+      .nav-button::before {
+        content: '├─';
+        position: absolute;
+        left: -15px;
+        color: var(--accent);
+      }
+
+      .nav-button::after {
+        content: '─┤';
+        position: absolute;
+        right: -15px;
+        color: var(--accent);
+      }
+
+      .nav-button:hover {
+        background: var(--accent);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(88, 166, 255, 0.3);
+      }
+
+      /* Feature Cards with Connections */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin: 30px 0;
+      }
+
+      .feature-card {
+        background: var(--secondary);
+        border: 1px solid var(--text-secondary);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: '╭';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .feature-card::after {
+        content: '╯';
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .feature-header {
+        background: rgba(88, 166, 255, 0.1);
+        padding: 20px;
+        border-bottom: 1px solid var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .feature-content {
+        padding: 20px;
+      }
+
+      /* Visual Connections */
+      .connection-line {
+        width: 100%;
+        text-align: center;
+        color: var(--accent);
+        margin: 20px 0;
+        font-size: 14px;
+      }
+
+      .connection-line::before {
+        content: '├────────────────────────────────────────────────────────────────────┤';
+      }
+
+      /* Enhanced Footer with Box Drawing */
+      .terminal-footer {
+        margin-top: 60px;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: var(--text);
+        font-family: 'SF Mono', 'Monaco', 'Fira Code', monospace;
+        position: relative;
+        text-align: center;
+      }
+
+      .footer-decoration {
+        color: var(--accent);
+        font-size: 14px;
+        line-height: 1;
+        overflow: hidden;
+      }
+
+      .footer-main {
+        padding: 30px 0;
+      }
+
+      .footer-logo {
+        font-size: 3rem;
+        color: var(--fire);
+        text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+        animation: flame-flicker 2s ease-in-out infinite;
+      }
+
+      .footer-title {
+        font-size: 2rem;
+        color: var(--accent);
+        margin: 10px 0;
+      }
+
+      .footer-tagline {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+      }
+
+      .footer-features {
+        margin: 30px 0;
+        padding: 20px 0;
+        border-top: 1px solid #30363d;
+        border-bottom: 1px solid #30363d;
+      }
+
+      .features-header {
+        color: var(--accent);
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        text-align: left;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .footer-feature {
+        color: var(--text-secondary);
+        transition: color 0.3s;
+      }
+
+      .footer-feature:hover {
+        color: var(--accent);
+      }
+
+      .footer-navigation {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin: 30px 0;
+        flex-wrap: wrap;
+      }
+
+      .nav-section {
+        text-align: left;
+        color: var(--text-secondary);
+        font-size: 14px;
+        white-space: pre;
+        line-height: 1.4;
+      }
+
+      .footer-status {
+        margin: 30px 0;
+        color: var(--accent);
+        font-size: 14px;
+      }
+
+      .footer-copyright {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.8;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .footer-link {
+        color: var(--accent);
+        text-decoration: none;
+        padding: 8px 16px;
+        border: 1px solid var(--text-secondary);
+        transition: all 0.3s;
+      }
+
+      .footer-link:hover {
+        background: var(--accent);
+        color: var(--primary);
+        border-color: var(--accent);
+      }
+
+      /* Animations */
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+          filter: hue-rotate(0deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+          filter: hue-rotate(10deg);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .terminal-title {
+          font-size: 1.8rem;
+        }
+
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .terminal-nav {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .nav-button {
+          width: 100%;
+          max-width: 300px;
+        }
+
+        .footer-navigation {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .nav-section {
+          text-align: center;
+        }
+
+        .footer-decoration {
+          font-size: 10px;
+        }
+      }
+
+      /* Animation Effects */
+      @keyframes glow {
+        0% {
+          text-shadow: 0 0 5px var(--accent);
+        }
+        50% {
+          text-shadow:
+            0 0 20px var(--accent),
+            0 0 30px var(--accent);
+        }
+        100% {
+          text-shadow: 0 0 5px var(--accent);
+        }
+      }
+
+      .glow-text {
+        animation: glow 2s ease-in-out infinite;
+      }
+
+      /* Status Indicators */
+      .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-active {
+        background: var(--success);
+        box-shadow: 0 0 10px var(--success);
+      }
+
+      .status-pending {
+        background: var(--warning);
+        box-shadow: 0 0 10px var(--warning);
+      }
+
+      .status-error {
+        background: var(--danger);
+        box-shadow: 0 0 10px var(--danger);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="terminal-container">
+      <!-- Terminal Header -->
+      <header class="terminal-header">
+        <h1 class="terminal-title">🔥 Fire22 Dashboard</h1>
+        <p class="terminal-subtitle">Terminal-Inspired Documentation System</p>
+      </header>
+
+      <!-- Navigation -->
+      <nav class="terminal-nav">
+        <button class="nav-button">Documentation</button>
+        <button class="nav-button">Features</button>
+        <button class="nav-button">API Reference</button>
+        <button class="nav-button">Examples</button>
+      </nav>
+
+      <!-- Connection Line -->
+      <div class="connection-line"></div>
+
+      <!-- Main Content -->
+      <main>
+        <!-- Feature Section -->
+        <section class="content-section">
+          <div class="section-header">
+            <span class="section-icon">⚡</span>
+            <h2 class="section-title">Key Features</h2>
+          </div>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <div class="feature-header">
+                <span class="status-indicator status-active"></span>
+                <h3>Smooth Box Design</h3>
+              </div>
+              <div class="feature-content">
+                <p>Using ╭, ╮, ╰, ╯, ├, ─ for elegant terminal-style boxes with rounded corners.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-header">
+                <span class="status-indicator status-active"></span>
+                <h3>Terminal Aesthetic</h3>
+              </div>
+              <div class="feature-content">
+                <p>Dark theme with accent colors mimicking a coding terminal experience.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-header">
+                <span class="status-indicator status-active"></span>
+                <h3>Responsive Layout</h3>
+              </div>
+              <div class="feature-content">
+                <p>Works perfectly on desktop and mobile with appropriate adjustments.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-header">
+                <span class="status-indicator status-active"></span>
+                <h3>Interactive Elements</h3>
+              </div>
+              <div class="feature-content">
+                <p>Test buttons that simulate command execution with terminal output.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-header">
+                <span class="status-indicator status-active"></span>
+                <h3>Visual Connections</h3>
+              </div>
+              <div class="feature-content">
+                <p>Connecting lines between elements for a flowing interface.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-header">
+                <span class="status-indicator status-active"></span>
+                <h3>Consistent Design</h3>
+              </div>
+              <div class="feature-content">
+                <p>All elements follow the same design principles with specified characters.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Code Example -->
+        <section class="content-section">
+          <div class="section-header">
+            <span class="section-icon">💻</span>
+            <h2 class="section-title">Code Example</h2>
+          </div>
+
+          <div class="code-block">
+            <code>
+              ╭────────────────────────────────────────╮ │ Welcome to Fire22 Terminal UI │
+              ├────────────────────────────────────────┤ │ • Smooth, flowing box design │ │ • Terminal-inspired
+              aesthetic │ │ • Responsive layout │ │ • Interactive elements │ │ • Visual connections │ │ • Consistent
+              design language │ ╰────────────────────────────────────────╯
+            </code>
+          </div>
+        </section>
+
+        <!-- Terminal Output -->
+        <section class="content-section">
+          <div class="section-header">
+            <span class="section-icon">📟</span>
+            <h2 class="section-title">Terminal Output</h2>
+          </div>
+
+          <div class="terminal-output">
+            $ bun run build ╭─ Building Fire22 Dashboard ─────────────────────╮ │ │ │ ✅ TypeScript compilation
+            successful │ │ ✅ Assets bundled and optimized │ │ ✅ Tests passed: 42/42 │ │ ✅ Build completed in 2.3s │ │
+            │ ╰─────────────────────────────────────────────────╯
+          </div>
+        </section>
+      </main>
+
+      <!-- Connection Line -->
+      <div class="connection-line"></div>
+
+      <!-- Enhanced Footer with Box Drawing -->
+      <footer class="terminal-footer">
+        <div class="footer-decoration">╭────────────────────────────────────────────────────────────────────────╮</div>
+
+        <div class="footer-content">
+          <!-- Main Footer Section -->
+          <div class="footer-main">
+            <div class="footer-logo">🔥</div>
+            <h2 class="footer-title">Fire22 Dashboard System</h2>
+            <p class="footer-tagline">Terminal-Inspired Development Platform</p>
+          </div>
+
+          <!-- Feature List with Box Characters -->
+          <div class="footer-features">
+            <div class="features-header">├─── Key Features ───┤</div>
+            <div class="features-grid">
+              <div class="footer-feature">├─ ✨ Smooth, Flowing Box Design</div>
+              <div class="footer-feature">├─ 🎨 Terminal-Inspired Aesthetic</div>
+              <div class="footer-feature">├─ 📱 Responsive Layout</div>
+              <div class="footer-feature">├─ ⚡ Interactive Elements</div>
+              <div class="footer-feature">├─ 🔗 Visual Connections</div>
+              <div class="footer-feature">╰─ 🎯 Consistent Design Language</div>
+            </div>
+          </div>
+
+          <!-- Navigation Links -->
+          <div class="footer-navigation">
+            <div class="nav-section">
+              ╭─ Documentation ─╮ │ • Getting Started│ │ • API Reference │ │ • Examples │ ╰─────────────────╯
+            </div>
+            <div class="nav-section">
+              ╭─ Resources ─────╮ │ • GitHub │ │ • Discord │ │ • Support │ ╰─────────────────╯
+            </div>
+            <div class="nav-section">╭─ Company ───────╮ │ • About │ │ • Blog │ │ • Contact │ ╰─────────────────╯</div>
+          </div>
+
+          <!-- Status Bar -->
+          <div class="footer-status">
+            ├───────────────────────────────────────────────────────────────────────┤ │ Status: ● Active | Version:
+            3.0.8 | Last Updated: 2024-08-27 │ ├───────────────────────────────────────────────────────────────────────┤
+          </div>
+
+          <!-- Copyright Section -->
+          <div class="footer-copyright">
+            <p>© 2024 Fire22 Development Team. All rights reserved.</p>
+            <p>Built with ╭─❤️─╮ using smooth box-drawing characters</p>
+            <p>╰─────────────────────────────────────────────────────────────────╯</p>
+          </div>
+        </div>
+
+        <div class="footer-decoration">╰────────────────────────────────────────────────────────────────────────╯</div>
+      </footer>
+    </div>
+
+    <script>
+      // Add terminal typing effect to footer
+      function typewriterEffect(element, text, speed = 50) {
+        let i = 0;
+        element.textContent = '';
+
+        function type() {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+          }
+        }
+
+        type();
+      }
+
+      // Add glowing status indicator
+      function updateStatus(status) {
+        const statusElement = document.querySelector('.footer-status');
+        const statusIndicator = status === 'active' ? '●' : '○';
+        const statusColor = status === 'active' ? '#3fb950' : '#f85149';
+
+        statusElement.style.color = statusColor;
+        statusElement.innerHTML = `
+                ├───────────────────────────────────────────────────────────────────────┤
+                │ Status: ${statusIndicator} ${status.toUpperCase()} | Version: 3.0.8 | Last Updated: ${new Date().toISOString().split('T')[0]} │
+                ├───────────────────────────────────────────────────────────────────────┤
+            `;
+      }
+
+      // Add interactive behavior
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add click handlers to nav buttons
+        const navButtons = document.querySelectorAll('.nav-button');
+        navButtons.forEach(button => {
+          button.addEventListener('click', function () {
+            console.log(`Navigating to ${this.textContent}`);
+          });
+        });
+
+        // Add hover effects to feature cards
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach(card => {
+          card.addEventListener('mouseenter', function () {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 30px rgba(88, 166, 255, 0.2)';
+          });
+
+          card.addEventListener('mouseleave', function () {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+          });
+        });
+
+        // Add typewriter effect to tagline
+        const tagline = document.querySelector('.footer-tagline');
+        if (tagline) {
+          typewriterEffect(tagline, 'Terminal-Inspired Development Platform', 30);
+        }
+
+        // Update status periodically
+        updateStatus('active');
+        setInterval(() => {
+          updateStatus('active');
+        }, 5000);
+
+        // Add hover effects to footer navigation sections
+        const navSections = document.querySelectorAll('.nav-section');
+        navSections.forEach(section => {
+          section.addEventListener('mouseenter', function () {
+            this.style.color = '#58a6ff';
+            this.style.transform = 'scale(1.05)';
+            this.style.transition = 'all 0.3s ease';
+          });
+
+          section.addEventListener('mouseleave', function () {
+            this.style.color = '#8b949e';
+            this.style.transform = 'scale(1)';
+          });
+        });
+
+        // Add click handlers to footer features
+        const footerFeatures = document.querySelectorAll('.footer-feature');
+        footerFeatures.forEach(feature => {
+          feature.addEventListener('click', function () {
+            this.style.color = '#58a6ff';
+            setTimeout(() => {
+              this.style.color = '#8b949e';
+            }, 200);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

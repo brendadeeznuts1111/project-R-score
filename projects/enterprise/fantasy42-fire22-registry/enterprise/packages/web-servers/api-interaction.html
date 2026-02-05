@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Interaction Demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+      h2 {
+        color: #333;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input[type='text'],
+      input[type='password'] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .section {
+        margin-top: 20px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+      }
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>API Interaction Demo</h2>
+
+      <div class="section">
+        <h3>1. Initial Authentication</h3>
+        <label for="customerID">Customer ID:</label>
+        <input type="text" id="customerID" value="testuser" />
+        <label for="password">Password:</label>
+        <input type="password" id="password" value="testpass" />
+        <button id="authenticateBtn">Authenticate</button>
+        <p class="error" id="authError"></p>
+        <pre id="authResponse"></pre>
+        <p>
+          <strong>Stored JWT:</strong>
+          <span id="storedJwt">None</span>
+        </p>
+      </div>
+
+      <div class="section">
+        <h3>2. Make Subsequent API Call (e.g., Get Account Info)</h3>
+        <label for="agentID">Agent ID:</label>
+        <input type="text" id="agentID" value="12345" />
+        <button id="getAccountInfoBtn">Get Account Info</button>
+        <p class="error" id="accountInfoError"></p>
+        <pre id="accountInfoResponse"></pre>
+      </div>
+    </div>
+
+    <script>
+      const authEndpoint = 'https://fantasy402.com/cloud/api/System/authenticateCustomer';
+      const accountInfoEndpoint = 'https://fantasy402.com/cloud/api/Manager/getAccountInfoOwner';
+      let currentJwt = null;
+
+      document.getElementById('authenticateBtn').addEventListener('click', async () => {
+        const customerID = document.getElementById('customerID').value;
+        const password = document.getElementById('password').value;
+        const authError = document.getElementById('authError');
+        const authResponse = document.getElementById('authResponse');
+        const storedJwtSpan = document.getElementById('storedJwt');
+
+        authError.textContent = '';
+        authResponse.textContent = 'Authenticating...';
+        storedJwtSpan.textContent = 'None';
+        currentJwt = null;
+
+        try {
+          const params = new URLSearchParams();
+          params.append('customerID', customerID);
+          params.append('password', password);
+
+          const response = await fetch(authEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params.toString(),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            currentJwt = data.jwt; // Assuming the JWT is in a 'jwt' field
+            storedJwtSpan.textContent = currentJwt ? currentJwt.substring(0, 30) + '...' : 'None';
+            authResponse.textContent = JSON.stringify(data, null, 2);
+          } else {
+            authError.textContent = `Authentication failed: ${data.message || response.statusText}`;
+            authResponse.textContent = JSON.stringify(data, null, 2);
+          }
+        } catch (error) {
+          authError.textContent = `Error during authentication: ${error.message}`;
+          authResponse.textContent = '';
+        }
+      });
+
+      document.getElementById('getAccountInfoBtn').addEventListener('click', async () => {
+        const agentID = document.getElementById('agentID').value;
+        const accountInfoError = document.getElementById('accountInfoError');
+        const accountInfoResponse = document.getElementById('accountInfoResponse');
+
+        accountInfoError.textContent = '';
+        accountInfoResponse.textContent = 'Fetching account info...';
+
+        if (!currentJwt) {
+          accountInfoError.textContent = 'Error: No JWT available. Please authenticate first.';
+          accountInfoResponse.textContent = '';
+          return;
+        }
+
+        try {
+          const params = new URLSearchParams();
+          params.append('agentID', agentID);
+          params.append('operation', 'get'); // Example operation, adjust as needed
+
+          const response = await fetch(accountInfoEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization: `Bearer ${currentJwt}`,
+            },
+            body: params.toString(),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            accountInfoResponse.textContent = JSON.stringify(data, null, 2);
+          } else {
+            if (response.status === 401) {
+              accountInfoError.textContent = `Unauthorized: JWT expired or invalid. Please re-authenticate.`;
+            } else {
+              accountInfoError.textContent = `Failed to fetch account info: ${data.message || response.statusText}`;
+            }
+            accountInfoResponse.textContent = JSON.stringify(data, null, 2);
+          }
+        } catch (error) {
+          accountInfoError.textContent = `Error fetching account info: ${error.message}`;
+          accountInfoResponse.textContent = '';
+        }
+      });
+    </script>
+  </body>
+</html>

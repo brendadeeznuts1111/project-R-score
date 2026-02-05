@@ -1,0 +1,52 @@
+name = "fire22-dashboard-worker"
+main = "src/index-simple.ts"
+compatibility_date = "2025-01-27"
+
+[vars]
+ENVIRONMENT = "production"
+FIRE22_BRAND = "enabled"
+DEFAULT_TEMPLATE = "standard"
+
+# Crystal Clear Architecture Integration
+CRYSTAL_CLEAR_API_URL = "https://api.crystal-clear-architecture.com"
+CRYSTAL_CLEAR_API_KEY = "production_api_key_here"
+FANTASY402_BASE_URL = "https://api.fantasy402.com/v2"
+FANTASY402_API_KEY = "production_fantasy402_key"
+
+# Database Configuration
+DATABASE_URL = "postgresql://prod:secure@prod-db:5432/fire22_prod"
+REDIS_URL = "redis://prod-redis:6379"
+
+# Security Configuration
+JWT_SECRET = "production_jwt_secret_32_chars_minimum"
+API_RATE_LIMIT = "1000"
+ENCRYPTION_ENABLED = "true"
+
+# VIP Management
+VIP_COMMISSION_RATE_DEFAULT = "0.05"
+VIP_AUTO_APPROVAL_LIMIT = "5000"
+
+[env.production]
+routes = [
+  { pattern = "dashboard.sportsfire.co/*", zone_name = "sportsfire.co" }
+]
+
+# Alternative: Use existing sportsfire.co domain with different subdomain
+[env.staging]
+routes = [
+  { pattern = "dashboard.*.sportsfire.co/*", zone_name = "sportsfire.co" }
+]
+
+# Test deployment on a specific subdomain
+[env.test]
+routes = [
+  { pattern = "test-dashboard.sportsfire.co/*", zone_name = "sportsfire.co" }
+]
+
+[[env.production.kv_namespaces]]
+binding = "PERSONAL_SITES"
+id = "c7f537c9e6c048d6990c9b8bc706b8e5"
+
+[[env.production.kv_namespaces]]
+binding = "EMPLOYEE_DATA"
+id = "00db6a8364314777acb35ced092292d1"

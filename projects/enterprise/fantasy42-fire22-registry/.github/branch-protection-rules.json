@@ -1,0 +1,184 @@
+{
+  "branch_protection_rules": [
+    {
+      "pattern": "main",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": [
+          "ci/circleci: build",
+          "ci/circleci: test",
+          "security/codeql",
+          "dependency-review"
+        ]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 2,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "dismissal_restrictions": {
+          "users": ["nolarose1968-pixel"],
+          "teams": ["enterprise-team", "security-team"]
+        }
+      },
+      "restrictions": {
+        "users": ["nolarose1968-pixel"],
+        "teams": ["enterprise-team"],
+        "apps": []
+      },
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": true,
+      "required_linear_history": true,
+      "lock_branch": false,
+      "allow_fork_syncing": true
+    },
+    {
+      "pattern": "develop",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": ["ci/circleci: build", "ci/circleci: test"]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": false
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_linear_history": true,
+      "lock_branch": false,
+      "allow_fork_syncing": true
+    },
+    {
+      "pattern": "enterprise",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": [
+          "ci/circleci: enterprise-build",
+          "security/codeql-enterprise",
+          "compliance-check"
+        ]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 3,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "dismissal_restrictions": {
+          "users": ["nolarose1968-pixel"],
+          "teams": ["enterprise-team", "security-team", "compliance-team"]
+        }
+      },
+      "restrictions": {
+        "users": ["nolarose1968-pixel"],
+        "teams": ["enterprise-team"],
+        "apps": []
+      },
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": true,
+      "required_linear_history": true,
+      "lock_branch": false,
+      "allow_fork_syncing": true
+    },
+    {
+      "pattern": "staging",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": ["ci/circleci: staging-build", "e2e-tests"]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": false
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_linear_history": true,
+      "lock_branch": false,
+      "allow_fork_syncing": true
+    },
+    {
+      "pattern": "feature/*",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": ["ci/circleci: build", "unit-tests", "lint-check"]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_linear_history": true,
+      "lock_branch": false,
+      "allow_fork_syncing": true
+    },
+    {
+      "pattern": "hotfix/*",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": ["ci/circleci: build", "ci/circleci: test", "security/codeql", "critical-tests"]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 2,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "dismissal_restrictions": {
+          "users": ["nolarose1968-pixel"],
+          "teams": ["security-team", "devops-team"]
+        }
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_linear_history": true,
+      "lock_branch": false,
+      "allow_fork_syncing": true
+    },
+    {
+      "pattern": "release/*",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": [
+          "ci/circleci: build",
+          "ci/circleci: test",
+          "security/codeql",
+          "dependency-review",
+          "compliance-check",
+          "e2e-tests"
+        ]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 2,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "dismissal_restrictions": {
+          "users": ["nolarose1968-pixel"],
+          "teams": ["enterprise-team", "security-team"]
+        }
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_linear_history": true,
+      "lock_branch": false,
+      "allow_fork_syncing": true
+    }
+  ]
+}

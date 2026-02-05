@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found | Crystal Clear Architecture</title>
+    <meta
+      name="description"
+      content="The page you're looking for doesn't exist. Explore Crystal Clear Architecture - Enterprise Domain-Driven Design reference implementation with comprehensive documentation and examples."
+    />
+    <meta
+      name="keywords"
+      content="404 error, page not found, crystal clear architecture, domain-driven design, enterprise architecture, documentation"
+    />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://brendadeeznuts1111.github.io/crystal-clear-architecture/404.html" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://brendadeeznuts1111.github.io/crystal-clear-architecture/404.html" />
+    <meta property="og:title" content="404 - Page Not Found | Crystal Clear Architecture" />
+    <meta
+      property="og:description"
+      content="The page you're looking for doesn't exist. Explore Crystal Clear Architecture - Enterprise Domain-Driven Design reference implementation."
+    />
+    <meta
+      property="og:image"
+      content="https://brendadeeznuts1111.github.io/crystal-clear-architecture/assets/crystal-clear-architecture-og-image.png"
+    />
+    <meta property="og:site_name" content="Crystal Clear Architecture" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="404 - Page Not Found | Crystal Clear Architecture" />
+    <meta
+      name="twitter:description"
+      content="The page you're looking for doesn't exist. Explore Crystal Clear Architecture - Enterprise Domain-Driven Design reference implementation."
+    />
+    <meta
+      name="twitter:image"
+      content="https://brendadeeznuts1111.github.io/crystal-clear-architecture/assets/crystal-clear-architecture-twitter-card.png"
+    />
+
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="noindex, follow" />
+    <meta name="author" content="Crystal Clear Engineering Team" />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        line-height: 1.6;
+        color: #1f2937;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .error-code {
+        font-size: 8rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .error-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+
+      .error-message {
+        font-size: 1.1rem;
+        color: #6b7280;
+        margin-bottom: 2rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .suggestions {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        text-align: left;
+      }
+
+      .suggestions h3 {
+        color: #1f2937;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+
+      .suggestion-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .suggestion-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .suggestion-list li:last-child {
+        border-bottom: none;
+      }
+
+      .suggestion-list a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .suggestion-list a:hover {
+        color: #5a67d8;
+        text-decoration: underline;
+      }
+
+      .actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #5a67d8;
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border: 2px solid #667eea;
+      }
+
+      .btn-secondary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .search-section {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .search-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .search-btn:hover {
+        background: #5a67d8;
+      }
+
+      .help-text {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          margin: 1rem;
+          padding: 1.5rem;
+        }
+
+        .error-code {
+          font-size: 5rem;
+        }
+
+        .error-title {
+          font-size: 1.5rem;
+        }
+
+        .actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="error-code">404</div>
+      <h1 class="error-title">Page Not Found</h1>
+      <p class="error-message">
+        Oops! The page you're looking for seems to have wandered off into the digital void. Don't worry, let's get you
+        back on track with Crystal Clear Architecture.
+      </p>
+
+      <div class="search-section">
+        <h3>🔍 Search Our Documentation</h3>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search for topics, features, or guides..."
+          id="searchInput"
+        />
+        <button class="search-btn" onclick="performSearch()">Search Documentation</button>
+        <p class="help-text">
+          Try searching for: "domain-driven design", "performance monitoring", "API endpoints", or "architecture
+          patterns"
+        </p>
+      </div>
+
+      <div class="suggestions">
+        <h3>🧭 Popular Pages You Might Be Looking For:</h3>
+        <ul class="suggestion-list">
+          <li>
+            <a href="/crystal-clear-architecture/docs/index.html">📖 Main Documentation</a>
+          </li>
+          <li>
+            <a href="/crystal-clear-architecture/docs/communication.html">📱 Communication Layers</a>
+          </li>
+          <li>
+            <a href="/crystal-clear-architecture/docs/domains.html">🏛️ Domain Architecture</a>
+          </li>
+          <li>
+            <a href="/crystal-clear-architecture/docs/performance.html">⚡ Performance Guide</a>
+          </li>
+          <li>
+            <a href="/crystal-clear-architecture/analytics/index.html">📊 Analytics Dashboard</a>
+          </li>
+          <li>
+            <a href="/crystal-clear-architecture/">🏠 Homepage</a>
+          </li>
+          <li>
+            <a href="https://github.com/brendadeeznuts1111/crystal-clear-architecture" target="_blank">
+              💻 GitHub Repository
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="actions">
+        <a href="/crystal-clear-architecture/docs/index.html" class="btn btn-primary">📚 View Documentation</a>
+        <a href="/crystal-clear-architecture/" class="btn btn-secondary">🏠 Go Home</a>
+        <a
+          href="https://github.com/brendadeeznuts1111/crystal-clear-architecture"
+          target="_blank"
+          class="btn btn-secondary"
+        >
+          ⭐ View on GitHub
+        </a>
+      </div>
+
+      <div class="help-text">
+        <p>
+          If you believe this page should exist, please
+          <a
+            href="https://github.com/brendadeeznuts1111/crystal-clear-architecture/issues"
+            target="_blank"
+            style="color: #667eea"
+          >
+            report an issue on GitHub
+          </a>
+          .
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Simple search functionality
+      function performSearch() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (query) {
+          // Redirect to GitHub search for the repository
+          const searchUrl = `https://github.com/brendadeeznuts1111/crystal-clear-architecture/search?q=${encodeURIComponent(query)}&type=code`;
+          window.open(searchUrl, '_blank');
+        } else {
+          // Default search for common topics
+          const searchUrl =
+            'https://github.com/brendadeeznuts1111/crystal-clear-architecture/search?q=domain+driven+design&type=code';
+          window.open(searchUrl, '_blank');
+        }
+      }
+
+      // Allow Enter key to trigger search
+      document.getElementById('searchInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          performSearch();
+        }
+      });
+
+      // Track 404 errors for analytics (if available)
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'page_not_found', {
+          page_location: window.location.href,
+          page_referrer: document.referrer,
+        });
+      }
+    </script>
+  </body>
+</html>

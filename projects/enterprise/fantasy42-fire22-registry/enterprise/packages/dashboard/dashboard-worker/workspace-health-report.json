@@ -1,0 +1,138 @@
+{
+  "timestamp": "2025-08-27T10:24:42.624Z",
+  "workspaces": 6,
+  "health": [
+    {
+      "name": "@fire22-pattern-system",
+      "status": "warning",
+      "checks": {
+        "packageJson": true,
+        "nodeModules": true,
+        "sourceFiles": true,
+        "buildOutput": true,
+        "tests": true,
+        "dependencies": true,
+        "size": 30720,
+        "lastModified": "2025-08-27T08:26:21.216Z"
+      },
+      "metrics": {
+        "files": 1,
+        "size": " 30M",
+        "loc": 0,
+        "coverage": null
+      },
+      "issues": ["Workspace is large ( 30M)"]
+    },
+    {
+      "name": "@fire22-api-client",
+      "status": "healthy",
+      "checks": {
+        "packageJson": true,
+        "nodeModules": true,
+        "sourceFiles": true,
+        "buildOutput": true,
+        "tests": true,
+        "dependencies": true,
+        "size": 96,
+        "lastModified": "2025-08-27T08:27:54.441Z"
+      },
+      "metrics": {
+        "files": 5,
+        "size": " 96K",
+        "loc": 0,
+        "coverage": null
+      },
+      "issues": []
+    },
+    {
+      "name": "@fire22-core-dashboard",
+      "status": "healthy",
+      "checks": {
+        "packageJson": true,
+        "nodeModules": true,
+        "sourceFiles": true,
+        "buildOutput": true,
+        "tests": true,
+        "dependencies": true,
+        "size": 464,
+        "lastModified": "2025-08-27T08:26:21.124Z"
+      },
+      "metrics": {
+        "files": 7,
+        "size": "464K",
+        "loc": 0,
+        "coverage": null
+      },
+      "issues": []
+    },
+    {
+      "name": "@fire22-sports-betting",
+      "status": "healthy",
+      "checks": {
+        "packageJson": true,
+        "nodeModules": true,
+        "sourceFiles": true,
+        "buildOutput": true,
+        "tests": true,
+        "dependencies": true,
+        "size": 132,
+        "lastModified": "2025-08-27T08:26:21.229Z"
+      },
+      "metrics": {
+        "files": 4,
+        "size": "132K",
+        "loc": 0,
+        "coverage": null
+      },
+      "issues": []
+    },
+    {
+      "name": "@fire22-telegram-integration",
+      "status": "healthy",
+      "checks": {
+        "packageJson": true,
+        "nodeModules": true,
+        "sourceFiles": true,
+        "buildOutput": true,
+        "tests": true,
+        "dependencies": true,
+        "size": 172,
+        "lastModified": "2025-08-27T08:26:21.236Z"
+      },
+      "metrics": {
+        "files": 4,
+        "size": "172K",
+        "loc": 0,
+        "coverage": null
+      },
+      "issues": []
+    },
+    {
+      "name": "@fire22-build-system",
+      "status": "warning",
+      "checks": {
+        "packageJson": true,
+        "nodeModules": true,
+        "sourceFiles": true,
+        "buildOutput": true,
+        "tests": true,
+        "dependencies": true,
+        "size": 30720,
+        "lastModified": "2025-08-27T08:26:21.115Z"
+      },
+      "metrics": {
+        "files": 3,
+        "size": " 30M",
+        "loc": 0,
+        "coverage": null
+      },
+      "issues": ["Workspace is large ( 30M)"]
+    }
+  ],
+  "summary": {
+    "healthy": 4,
+    "warning": 2,
+    "error": 0,
+    "notFound": 0
+  }
+}

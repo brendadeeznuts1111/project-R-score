@@ -1,0 +1,51 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`package data snapshot 1`] = `
+{
+  "author": "Fantasy42 Development Team",
+  "description": "A fantastic package called fantasy42-core",
+  "license": "MIT",
+  "name": "fantasy42-core",
+  "version": "1.0.0",
+}
+`;
+
+exports[`package data with different version 1`] = `
+{
+  "author": "Fantasy42 Development Team",
+  "description": "A fantastic package called fantasy42-core",
+  "license": "MIT",
+  "name": "fantasy42-core",
+  "version": "2.0.0",
+}
+`;
+
+exports[`registry configuration snapshot 1`] = `
+{
+  "performance": {
+    "cache": true,
+    "compression": true,
+    "parallel": 4,
+  },
+  "registry": "https://registry.npmjs.org/",
+  "scopes": {
+    "@fantasy42": "https://packages.fantasy42.net/",
+  },
+  "security": {
+    "audit": true,
+    "enabled": true,
+    "vulnerabilities": "block",
+  },
+}
+`;
+
+exports[`error handling snapshot 1`] = `
+{
+  "message": "Package not found",
+  "name": "PackageError",
+  "stack": [
+    "PackageError: Package not found",
+    "    at <anonymous> (/Users/nolarose/ff/testing/unit/snapshot-demo.spec.ts:53:21)",
+  ],
+}
+`;

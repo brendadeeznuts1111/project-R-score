@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🚀 Fire22 Dashboard Hub - [pk:fire22-dashboard-worker@4.0.0-staging]</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 30px 0;
+      }
+
+      .logo {
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+
+      .title {
+        font-size: 32px;
+        color: #40e0d0;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .subtitle {
+        color: #9ca3af;
+        font-size: 16px;
+      }
+
+      .version-tag {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #40e0d0;
+        margin-top: 10px;
+        display: inline-block;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .dashboard-card {
+        background: rgba(20, 25, 50, 0.8);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .dashboard-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #40e0d0, #1e90ff, #8b5cf6);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .dashboard-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(64, 224, 208, 0.6);
+        box-shadow: 0 15px 40px rgba(64, 224, 208, 0.2);
+      }
+
+      .dashboard-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .card-icon {
+        font-size: 36px;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .card-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #40e0d0;
+        margin-bottom: 10px;
+      }
+
+      .card-description {
+        color: #9ca3af;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+
+      .card-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .feature-tag {
+        background: rgba(139, 92, 246, 0.2);
+        color: #8b5cf6;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+      }
+
+      .feature-tag.performance {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+        border-color: rgba(34, 197, 94, 0.3);
+      }
+
+      .feature-tag.staging {
+        background: rgba(249, 115, 22, 0.2);
+        color: #f97316;
+        border-color: rgba(249, 115, 22, 0.3);
+      }
+
+      .feature-tag.version {
+        background: rgba(168, 85, 247, 0.2);
+        color: #a855f7;
+        border-color: rgba(168, 85, 247, 0.3);
+      }
+
+      .quick-actions {
+        margin-top: 40px;
+        text-align: center;
+      }
+
+      .quick-actions h3 {
+        color: #40e0d0;
+        margin-bottom: 20px;
+        font-size: 18px;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .action-btn {
+        background: linear-gradient(135deg, #40e0d0, #1e90ff);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(64, 224, 208, 0.4);
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 20px 0;
+        border-top: 1px solid rgba(64, 224, 208, 0.2);
+        color: #6b7280;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">🚀</div>
+        <div class="title">Fire22 Dashboard Hub</div>
+        <div class="subtitle">Complete dashboard ecosystem with native Bun.semver integration</div>
+        <div class="version-tag">[pk:fire22-dashboard-worker@4.0.0-staging]</div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Unified Dashboard -->
+        <a href="/unified-dashboard" class="dashboard-card">
+          <span class="card-icon">🎯</span>
+          <div class="card-title">Unified Dashboard</div>
+          <div class="card-description">
+            Complete management interface with native Bun.semver version management, real-time performance monitoring,
+            and interactive staging controls.
+          </div>
+          <div class="card-features">
+            <span class="feature-tag version">Bun.semver</span>
+            <span class="feature-tag performance">Real-time</span>
+            <span class="feature-tag">Multi-tab</span>
+            <span class="feature-tag performance">bunx CLI</span>
+          </div>
+        </a>
+
+        <!-- Staging Review Dashboard -->
+        <a href="/staging-review" class="dashboard-card">
+          <span class="card-icon">🎬</span>
+          <div class="card-title">Staging Review</div>
+          <div class="card-description">
+            Interactive staging approval system with one-click approval, comprehensive build metrics, and real-time test
+            validation.
+          </div>
+          <div class="card-features">
+            <span class="feature-tag staging">Approval System</span>
+            <span class="feature-tag performance">Build Metrics</span>
+            <span class="feature-tag">Keyboard Shortcuts</span>
+          </div>
+        </a>
+
+        <!-- Water Dashboard Enhanced -->
+        <a href="/water-dashboard-enhanced.html" class="dashboard-card">
+          <span class="card-icon">💧</span>
+          <div class="card-title">Water Dashboard Enhanced</div>
+          <div class="card-description">
+            Enhanced logging system with HMR support, real-time performance profiling, and comprehensive version
+            tracking with package metadata.
+          </div>
+          <div class="card-features">
+            <span class="feature-tag performance">HMR</span>
+            <span class="feature-tag">Enhanced Logs</span>
+            <span class="feature-tag version">Package Metadata</span>
+          </div>
+        </a>
+
+        <!-- Main Fire22 Dashboard -->
+        <a href="/dashboard" class="dashboard-card">
+          <span class="card-icon">🔥</span>
+          <div class="card-title">Fire22 Manager</div>
+          <div class="card-description">
+            Production Fire22 manager dashboard with agent configurations, permissions management, and live casino
+            integration.
+          </div>
+          <div class="card-features">
+            <span class="feature-tag">Agent Management</span>
+            <span class="feature-tag">Live Casino</span>
+            <span class="feature-tag">Production Ready</span>
+          </div>
+        </a>
+
+        <!-- Terminal Dashboard -->
+        <a href="/terminal-dashboard.html" class="dashboard-card">
+          <span class="card-icon">💻</span>
+          <div class="card-title">Terminal Dashboard</div>
+          <div class="card-description">
+            Command-line interface dashboard with terminal emulation, system monitoring, and development tools
+            integration.
+          </div>
+          <div class="card-features">
+            <span class="feature-tag">CLI Interface</span>
+            <span class="feature-tag performance">System Monitor</span>
+            <span class="feature-tag">Dev Tools</span>
+          </div>
+        </a>
+
+        <!-- Performance Dashboard -->
+        <a href="/performance-dashboard.html" class="dashboard-card">
+          <span class="card-icon">📊</span>
+          <div class="card-title">Performance Monitor</div>
+          <div class="card-description">
+            Advanced performance monitoring with real-time metrics, benchmarking tools, and system resource tracking.
+          </div>
+          <div class="card-features">
+            <span class="feature-tag performance">Live Metrics</span>
+            <span class="feature-tag">Benchmarking</span>
+            <span class="feature-tag performance">Resource Monitor</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="quick-actions">
+        <h3>⚡ Quick Actions</h3>
+        <div class="action-buttons">
+          <button class="action-btn" onclick="testVersionManager()">🏷️ Test Version Manager</button>
+          <button class="action-btn" onclick="runBenchmarks()">📊 Run Benchmarks</button>
+          <button class="action-btn" onclick="openUnified()">🚀 Open Unified</button>
+          <button class="action-btn" onclick="openStaging()">🎬 Open Staging</button>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>&copy; 2024 Fire22 Development Team • Enhanced with Bun v1.2+ features</p>
+        <p>Native Bun.semver integration • Zero dependencies • Production ready</p>
+      </div>
+    </div>
+
+    <script>
+      function testVersionManager() {
+        window.open('/unified-dashboard#version', '_blank');
+      }
+
+      function runBenchmarks() {
+        window.open('/unified-dashboard#performance', '_blank');
+      }
+
+      function openUnified() {
+        window.location.href = '/unified-dashboard';
+      }
+
+      function openStaging() {
+        window.location.href = '/staging-review';
+      }
+
+      // Initialize dashboard hub
+      console.log('🚀 Fire22 Dashboard Hub initialized');
+      console.log('📦 [pk:fire22-dashboard-worker@4.0.0-staging]');
+      console.log('🏷️ Native Bun.semver integration active');
+    </script>
+  </body>
+</html>

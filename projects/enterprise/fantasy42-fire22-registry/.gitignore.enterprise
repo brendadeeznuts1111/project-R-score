@@ -1,0 +1,108 @@
+# Enterprise Private Repository .gitignore
+# ==========================================
+
+# Enterprise sensitive data
+enterprise/secrets/
+enterprise/benchmarking/sensitive/
+enterprise/security/private/
+enterprise/compliance/audit-logs/
+enterprise/performance/private-metrics/
+
+# Cloud credentials and keys
+enterprise/secrets/cloud-credentials/
+enterprise/secrets/api-keys/
+enterprise/secrets/tokens/
+enterprise/secrets/certificates/
+
+# Database files and sensitive data
+enterprise/**/*.db
+enterprise/**/*.sqlite
+enterprise/**/*.sqlite3
+enterprise/**/backups/
+enterprise/**/database/dumps/
+
+# Performance monitoring data
+enterprise/monitoring/logs/
+enterprise/performance/metrics/
+enterprise/analytics/sensitive/
+
+# Security scanning results
+enterprise/security/scans/
+enterprise/security/reports/
+enterprise/compliance/private-audits/
+
+# CI/CD secrets and tokens
+enterprise/infrastructure/ci-cd/tokens/
+enterprise/workflows/secrets/
+
+# Private enterprise documentation
+enterprise/docs-private/sensitive/
+enterprise/docs-private/internal/
+
+# Environment files with secrets
+enterprise/**/*.production.env
+enterprise/**/*.staging.env
+enterprise/secrets/*.env
+
+# Logs and temporary files
+enterprise/**/*.log
+enterprise/**/tmp/
+enterprise/**/.tmp/
+enterprise/**/logs/
+
+# Build artifacts and cache
+enterprise/**/dist/
+enterprise/**/build/
+enterprise/**/.cache/
+enterprise/**/node_modules/
+enterprise/**/.bun/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js and Bun
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.bun/
+bun.lock
+
+# Coverage and test results
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+# Local development files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Enterprise-specific ignores
+enterprise/**/*.key
+enterprise/**/*.pem
+enterprise/**/*.crt
+enterprise/**/private-keys/
+enterprise/**/certificates/
+enterprise/**/secrets/

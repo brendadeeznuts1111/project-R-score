@@ -1,0 +1,295 @@
+/* Fire22 Advanced Theme System v1.00.10-ALPHA */
+/* Semantic Theming Layers with Formal Override System */
+
+/* ================================================================================================
+   THEME FOUNDATION - Base semantic naming system
+   ================================================================================================ */
+
+:root {
+  /* Theme Identity Tokens */
+  --fire22-theme-name: 'light';
+  --fire22-theme-version: '1.00.10-ALPHA';
+
+  /* Semantic Color Foundations - Light Mode Defaults */
+  --fire22-color-highlight-success-base: oklch(60% 0.1 120);
+  --fire22-color-highlight-warning-base: oklch(80% 0.15 80);
+  --fire22-color-highlight-error-base: oklch(60% 0.22 25);
+  --fire22-color-highlight-info-base: oklch(70% 0.15 260);
+  --fire22-color-highlight-default-base: oklch(70% 0.15 240);
+  --fire22-color-highlight-draft-base: oklch(60% 0.08 280);
+  --fire22-color-highlight-archived-base: oklch(50% 0.05 200);
+
+  /* Brand Integration Tokens */
+  --fire22-color-brand-primary: oklch(70% 0.25 30);
+  --fire22-color-brand-secondary: oklch(65% 0.2 45);
+  --fire22-color-accent-user: var(--fire22-color-brand-primary); /* User customizable */
+
+  /* Contextual Semantic Mappings */
+  --fire22-color-success: var(--fire22-color-highlight-success-base);
+  --fire22-color-warning: var(--fire22-color-highlight-warning-base);
+  --fire22-color-error: var(--fire22-color-highlight-error-base);
+  --fire22-color-info: var(--fire22-color-highlight-info-base);
+  --fire22-color-neutral: var(--fire22-color-highlight-default-base);
+  --fire22-color-subtle: var(--fire22-color-highlight-draft-base);
+  --fire22-color-muted: var(--fire22-color-highlight-archived-base);
+}
+
+/* ================================================================================================
+   THEME LAYER 1: DARK MODE - Semantic overrides for dark backgrounds
+   ================================================================================================ */
+
+:root[data-theme='dark'],
+[data-fire22-theme='dark'],
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --fire22-theme-name: 'dark';
+
+    /* Enhanced Contrast for Dark Backgrounds */
+    --fire22-color-highlight-success-base: oklch(65% 0.12 120);
+    --fire22-color-highlight-warning-base: oklch(85% 0.18 80);
+    --fire22-color-highlight-error-base: oklch(65% 0.24 25);
+    --fire22-color-highlight-info-base: oklch(75% 0.18 260);
+    --fire22-color-highlight-default-base: oklch(75% 0.18 240);
+    --fire22-color-highlight-draft-base: oklch(65% 0.12 280);
+    --fire22-color-highlight-archived-base: oklch(55% 0.08 200);
+
+    /* Dark mode brand adjustments */
+    --fire22-color-brand-primary: oklch(75% 0.28 30);
+    --fire22-color-brand-secondary: oklch(70% 0.22 45);
+  }
+}
+
+/* ================================================================================================
+   THEME LAYER 2: HIGH CONTRAST - Enhanced visibility for accessibility
+   ================================================================================================ */
+
+:root[data-theme='high-contrast'],
+[data-fire22-theme='high-contrast'],
+@media (prefers-contrast: high) {
+  :root:not([data-theme]) {
+    --fire22-theme-name: 'high-contrast';
+
+    /* Maximum Contrast Values */
+    --fire22-color-highlight-success-base: oklch(65% 0.15 120);
+    --fire22-color-highlight-warning-base: oklch(90% 0.2 80);
+    --fire22-color-highlight-error-base: oklch(65% 0.28 25);
+    --fire22-color-highlight-info-base: oklch(75% 0.2 260);
+    --fire22-color-highlight-default-base: oklch(75% 0.2 240);
+    --fire22-color-highlight-draft-base: oklch(65% 0.15 280);
+    --fire22-color-highlight-archived-base: oklch(60% 0.12 200);
+  }
+}
+
+/* ================================================================================================
+   THEME LAYER 3: HIGH CONTRAST DARK - Maximum accessibility in dark mode
+   ================================================================================================ */
+
+:root[data-theme='high-contrast-dark'],
+[data-fire22-theme='high-contrast-dark'] {
+  --fire22-theme-name: 'high-contrast-dark';
+
+  /* Ultra High Contrast for Dark High Contrast Mode */
+  --fire22-color-highlight-success-base: oklch(70% 0.18 120);
+  --fire22-color-highlight-warning-base: oklch(95% 0.25 80);
+  --fire22-color-highlight-error-base: oklch(70% 0.3 25);
+  --fire22-color-highlight-info-base: oklch(80% 0.22 260);
+  --fire22-color-highlight-default-base: oklch(80% 0.22 240);
+  --fire22-color-highlight-draft-base: oklch(70% 0.18 280);
+  --fire22-color-highlight-archived-base: oklch(65% 0.15 200);
+}
+
+/* ================================================================================================
+   THEME LAYER 4: USER CUSTOMIZATION - Personalization hooks
+   ================================================================================================ */
+
+/* User-defined custom theme variables (override via JS or local storage) */
+:root[data-fire22-user-theme='custom'] {
+  --fire22-theme-name: 'user-custom';
+
+  /* These can be set programmatically */
+  --fire22-color-highlight-success-custom: var(--fire22-color-highlight-success-base);
+  --fire22-color-highlight-warning-custom: var(--fire22-color-highlight-warning-base);
+  --fire22-color-highlight-error-custom: var(--fire22-color-highlight-error-base);
+  --fire22-color-highlight-info-custom: var(--fire22-color-highlight-info-base);
+  --fire22-color-highlight-default-custom: var(--fire22-color-highlight-default-base);
+  --fire22-color-accent-user-custom: var(--fire22-color-brand-primary);
+
+  /* Apply custom colors when defined */
+  --fire22-color-success: var(--fire22-color-highlight-success-custom);
+  --fire22-color-warning: var(--fire22-color-highlight-warning-custom);
+  --fire22-color-error: var(--fire22-color-highlight-error-custom);
+  --fire22-color-info: var(--fire22-color-highlight-info-custom);
+  --fire22-color-neutral: var(--fire22-color-highlight-default-custom);
+  --fire22-color-accent-user: var(--fire22-color-accent-user-custom);
+}
+
+/* ================================================================================================
+   SEMANTIC HIGHLIGHT RING SYSTEM - Uses semantic color tokens
+   ================================================================================================ */
+
+/* Ring thickness and glow variations */
+:root {
+  --fire22-ring-thin: 0 0 0 1px;
+  --fire22-ring-medium: 0 0 0 2px;
+  --fire22-ring-thick: 0 0 0 3px;
+  --fire22-ring-glow: 0 0 0 2px, 0 0 8px 0;
+  --fire22-ring-ultra-glow: 0 0 0 3px, 0 0 12px 0, 0 0 20px 0;
+}
+
+/* Apply semantic colors to highlight system */
+.fire22-highlight {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-neutral);
+  transition:
+    box-shadow var(--fire22-transition-medium),
+    transform var(--fire22-transition-medium);
+}
+
+.fire22-highlight:hover {
+  box-shadow: var(--fire22-ring-glow) var(--fire22-color-neutral);
+}
+
+/* Status-specific semantic mappings */
+.fire22-highlight.success {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-success);
+}
+
+.fire22-highlight.success:hover {
+  box-shadow: var(--fire22-ring-glow) var(--fire22-color-success);
+}
+
+.fire22-highlight.warning {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-warning);
+}
+
+.fire22-highlight.warning:hover {
+  box-shadow: var(--fire22-ring-glow) var(--fire22-color-warning);
+}
+
+.fire22-highlight.error {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-error);
+}
+
+.fire22-highlight.error:hover {
+  box-shadow: var(--fire22-ring-glow) var(--fire22-color-error);
+}
+
+.fire22-highlight.info {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-info);
+}
+
+.fire22-highlight.info:hover {
+  box-shadow: var(--fire22-ring-glow) var(--fire22-color-info);
+}
+
+.fire22-highlight.draft {
+  box-shadow: var(--fire22-ring-thin) var(--fire22-color-subtle);
+  opacity: 0.8;
+}
+
+.fire22-highlight.draft:hover {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-subtle);
+  opacity: 1;
+}
+
+.fire22-highlight.archived {
+  box-shadow: var(--fire22-ring-thin) var(--fire22-color-muted);
+  opacity: 0.6;
+  filter: grayscale(0.3);
+}
+
+.fire22-highlight.archived:hover {
+  opacity: 0.8;
+  filter: grayscale(0.1);
+}
+
+/* ================================================================================================
+   ACCENT COLOR INTEGRATION - Brand-aware highlights
+   ================================================================================================ */
+
+.fire22-highlight.brand {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-brand-primary);
+}
+
+.fire22-highlight.brand:hover {
+  box-shadow: var(--fire22-ring-glow) var(--fire22-color-brand-primary);
+}
+
+.fire22-highlight.accent {
+  box-shadow: var(--fire22-ring-medium) var(--fire22-color-accent-user);
+}
+
+.fire22-highlight.accent:hover {
+  box-shadow: var(--fire22-ring-glow) var(--fire22-color-accent-user);
+}
+
+/* ================================================================================================
+   THEME DEBUGGING & DEVELOPMENT
+   ================================================================================================ */
+
+/* Debug mode shows active theme information */
+[data-fire22-debug='true']::before {
+  content: 'Theme: ' var(--fire22-theme-name) ' v' var(--fire22-theme-version);
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.9);
+  color: var(--fire22-color-brand-primary);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: 'SF Mono', monospace;
+  font-weight: bold;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Theme validation warnings */
+:root:not([data-theme]):not([data-fire22-theme]) {
+  --fire22-theme-status: 'auto-detected';
+}
+
+/* WCAG Compliance Checker */
+@supports (color: oklch(50% 0.1 120)) {
+  .fire22-highlight[data-wcag-check='true']::after {
+    content: '✓ OKLCH + WCAG AA';
+    position: absolute;
+    top: -25px;
+    right: 0;
+    font-size: 9px;
+    background: var(--fire22-color-success);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    pointer-events: none;
+  }
+}
+
+/* ================================================================================================
+   PERFORMANCE OPTIMIZATIONS
+   ================================================================================================ */
+
+/* Reduce animations for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .fire22-highlight,
+  .fire22-highlight *,
+  .fire22-highlight::before,
+  .fire22-highlight::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .fire22-highlight:hover {
+    transform: none !important;
+  }
+}
+
+/* GPU acceleration for animations */
+.fire22-highlight.active,
+.fire22-highlight.pulsing {
+  will-change: transform, box-shadow;
+}
+
+/* Stop GPU acceleration when not needed */
+.fire22-highlight:not(.active):not(.pulsing) {
+  will-change: auto;
+}

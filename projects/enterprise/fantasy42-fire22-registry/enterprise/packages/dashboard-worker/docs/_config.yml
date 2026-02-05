@@ -1,0 +1,48 @@
+# GitHub Pages Configuration
+title: 'Crystal Clear Architecture'
+description: 'Enterprise-grade dashboard system for Fire22 sports betting platform with domain-driven architecture'
+url: 'https://fire22.github.io/dashboard-worker'
+baseurl: '/dashboard-worker'
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+plugins:
+  - jekyll-feed
+
+# Collections
+collections:
+  architecture:
+    output: true
+    permalink: /:collection/:name/
+
+# Exclude from processing
+exclude:
+  - .bundle/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - .bundle
+  - .sass-cache
+  - .jekyll-cache
+  - gemfiles
+  - docs/_config.yml
+
+# Include files
+include:
+  - _pages
+
+# Repository information
+repository: fire22/dashboard-worker
+github_username: fire22
+
+# SEO and social
+author: Fire22 Engineering Team
+social:
+  name: Fire22
+  links:
+    - https://github.com/fire22/dashboard-worker

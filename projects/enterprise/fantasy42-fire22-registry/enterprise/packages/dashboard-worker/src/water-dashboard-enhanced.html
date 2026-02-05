@@ -1,0 +1,4631 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌊 Fire22 Water Dashboard - Water Water Dashboard v4.0.0-staging v4.0.0-staging</title>
+    <!-- Theme Toggle CSS -->
+    <link rel="stylesheet" href="styles/themes/dark.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: rgba(10, 14, 39, 0.95);
+        border-bottom: 2px solid rgba(64, 224, 208, 0.3);
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #40e0d0, #1e90ff);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .logo-title {
+        font-size: 24px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #40e0d0, #1e90ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .logo-subtitle {
+        font-size: 12px;
+        color: #64b5f6;
+        opacity: 0.8;
+      }
+
+      .version-tag {
+        font-family: monospace;
+        background: rgba(64, 224, 208, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        color: #40e0d0;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      /* Version Section */
+      .version-section {
+        background: rgba(20, 25, 50, 0.5);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        backdrop-filter: blur(5px);
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .section-title {
+        font-size: 20px;
+        color: #40e0d0;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .semver-badge {
+        background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(255, 142, 83, 0.3);
+      }
+
+      .version-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+      }
+
+      .version-category {
+        background: rgba(10, 14, 39, 0.5);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(64, 224, 208, 0.15);
+      }
+
+      .version-category h4 {
+        color: #ff8e53;
+        font-size: 14px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(255, 142, 83, 0.2);
+        padding-bottom: 8px;
+      }
+
+      .version-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .version-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        border-left: 3px solid #40e0d0;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .version-item:hover {
+        background: rgba(64, 224, 208, 0.05);
+        transform: translateX(5px);
+      }
+
+      /* Health Status Indicators */
+      .health-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-left: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .health-indicator.green {
+        background: linear-gradient(135deg, #4ade80, #10b981);
+        animation: pulse-green 2s infinite;
+      }
+
+      .health-indicator.red {
+        background: linear-gradient(135deg, #f87171, #dc2626);
+        animation: pulse-red 2s infinite;
+      }
+
+      .health-indicator.yellow {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        animation: pulse-yellow 2s infinite;
+      }
+
+      @keyframes pulse-green {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
+        }
+      }
+
+      @keyframes pulse-red {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(248, 113, 113, 0.6);
+        }
+      }
+
+      @keyframes pulse-yellow {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+        }
+      }
+
+      /* Health Details Expandable Panel */
+      .health-details {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(10, 14, 39, 0.95);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 5px;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+        animation: slideDown 0.3s ease;
+      }
+
+      .health-details.show {
+        display: block;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Enhanced Dashboard Controls Animations */
+      @keyframes feedbackPulse {
+        0% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(10px) scale(0.8);
+        }
+        20% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(-5px) scale(1.1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-30px) scale(0.9);
+        }
+      }
+
+      @keyframes ripple {
+        0% {
+          transform: scale(0);
+          opacity: 0.6;
+        }
+        100% {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+
+      .health-details h4 {
+        color: #40e0d0;
+        font-size: 12px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .endpoints-list {
+        margin-bottom: 15px;
+      }
+
+      .endpoint-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 8px;
+        background: rgba(20, 25, 50, 0.5);
+        border-radius: 4px;
+        margin-bottom: 4px;
+        font-size: 11px;
+        font-family: monospace;
+      }
+
+      .endpoint-url {
+        color: #40e0d0;
+      }
+
+      .endpoint-status {
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: bold;
+      }
+
+      .endpoint-status.ok {
+        background: rgba(74, 222, 128, 0.2);
+        color: #4ade80;
+      }
+
+      .endpoint-status.error {
+        background: rgba(248, 113, 113, 0.2);
+        color: #f87171;
+      }
+
+      .endpoint-status.timeout {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+      }
+
+      .health-json {
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 4px;
+        padding: 10px;
+        font-family: monospace;
+        font-size: 10px;
+        color: #e0e6ed;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .json-key {
+        color: #40e0d0;
+      }
+
+      .json-string {
+        color: #4ade80;
+      }
+
+      .json-number {
+        color: #fbbf24;
+      }
+
+      .json-boolean {
+        color: #f87171;
+      }
+
+      .health-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .health-btn {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        color: #40e0d0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .health-btn:hover {
+        background: rgba(64, 224, 208, 0.2);
+        transform: translateY(-1px);
+      }
+
+      .version-label {
+        font-size: 11px;
+        color: #94a3b8;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-width: 180px;
+      }
+
+      .version-value {
+        font-size: 14px;
+        color: #40e0d0;
+        font-weight: bold;
+        font-family: monospace;
+        padding: 4px 8px;
+        background: rgba(64, 224, 208, 0.1);
+        border-radius: 4px;
+        min-width: 80px;
+        text-align: center;
+      }
+
+      .env-source {
+        font-size: 10px;
+        color: #64748b;
+        background: rgba(100, 116, 139, 0.1);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-style: italic;
+      }
+
+      /* Bun Runtime Badge */
+      .bun-badge {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        padding: 8px 16px;
+        border-radius: 20px;
+        animation: glow 2s ease-in-out infinite;
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+      }
+
+      .bun-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .bun-indicator {
+        width: 10px;
+        height: 10px;
+        background: #4ade80;
+        border-radius: 50%;
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Online/Offline Status */
+      .connection-status {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      .connection-status.online {
+        background: linear-gradient(135deg, rgba(74, 222, 128, 0.9), rgba(16, 185, 129, 0.9));
+        color: white;
+        border: 2px solid rgba(74, 222, 128, 0.3);
+      }
+
+      .connection-status.offline {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9));
+        color: white;
+        border: 2px solid rgba(239, 68, 68, 0.3);
+        animation: pulse-offline 2s infinite;
+      }
+
+      .connection-status.syncing {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(217, 119, 6, 0.9));
+        color: white;
+        border: 2px solid rgba(245, 158, 11, 0.3);
+        animation: pulse-sync 1s infinite;
+      }
+
+      @keyframes pulse-offline {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+      }
+
+      @keyframes pulse-sync {
+        0%,
+        100% {
+          transform: scale(1) rotate(0deg);
+        }
+        50% {
+          transform: scale(1.02) rotate(2deg);
+        }
+      }
+
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: blink 1s infinite;
+      }
+
+      .status-indicator.steady {
+        animation: none;
+      }
+
+      /* Toggle Controls Panel */
+      .toggle-panel {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1000;
+        background: rgba(10, 14, 39, 0.95);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        min-width: 250px;
+        transition: all 0.3s ease;
+      }
+
+      .toggle-panel.collapsed {
+        transform: translateY(-50%) translateX(-85%);
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .panel-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #40e0d0;
+      }
+
+      .panel-collapse {
+        background: none;
+        border: none;
+        color: #40e0d0;
+        cursor: pointer;
+        font-size: 16px;
+        transition: transform 0.3s ease;
+      }
+
+      .panel-collapse.collapsed {
+        transform: rotate(180deg);
+      }
+
+      /* Toggle Switch */
+      .toggle-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 8px;
+        background: rgba(20, 25, 50, 0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(64, 224, 208, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .toggle-item:hover {
+        background: rgba(64, 224, 208, 0.05);
+        border-color: rgba(64, 224, 208, 0.3);
+      }
+
+      .toggle-label {
+        font-size: 12px;
+        color: #e0e6ed;
+        flex: 1;
+      }
+
+      .toggle-switch {
+        width: 44px;
+        height: 24px;
+        background: rgba(100, 116, 139, 0.3);
+        border-radius: 12px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(100, 116, 139, 0.3);
+      }
+
+      .toggle-switch.active {
+        background: linear-gradient(135deg, #4ade80, #10b981);
+        border-color: #4ade80;
+      }
+
+      .toggle-switch::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .toggle-switch.active::before {
+        transform: translateX(20px);
+      }
+
+      /* Main Container */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        flex: 1;
+      }
+
+      /* Bun Metrics Section */
+      .bun-metrics {
+        background: rgba(20, 25, 50, 0.5);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        backdrop-filter: blur(5px);
+      }
+
+      .bun-metrics-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(64, 224, 208, 0.1);
+      }
+
+      .bun-metrics-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #ff8e53;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .hot-reload-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: rgba(74, 222, 128, 0.1);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+        border-radius: 6px;
+        font-size: 12px;
+        color: #4ade80;
+      }
+
+      .hot-reload-indicator.active::before {
+        content: '🔥';
+        animation: flame 0.5s infinite alternate;
+      }
+
+      @keyframes flame {
+        0% {
+          transform: scale(1) rotate(-5deg);
+        }
+        100% {
+          transform: scale(1.1) rotate(5deg);
+        }
+      }
+
+      .bun-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15oners;
+      }
+
+      .bun-stat-card {
+        background: rgba(10, 14, 39, 0.5);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 142, 83, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .bun-stat-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 142, 83, 0.4);
+        box-shadow: 0 4px 12px rgba(255, 142, 83, 0.1);
+      }
+
+      .bun-stat-label {
+        font-size: 11px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+      }
+
+      .bun-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ff8e53;
+        margin-bottom: 3px;
+      }
+
+      .bun-stat-subtitle {
+        font-size: 10px;
+        color: #64748b;
+      }
+
+      /* Metrics Grid */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .metric-card {
+        background: rgba(20, 25, 50, 0.5);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #40e0d0, #1e90ff);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .metric-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(64, 224, 208, 0.2);
+        border-color: rgba(64, 224, 208, 0.4);
+      }
+
+      .metric-label {
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+      }
+
+      .metric-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #40e0d0;
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+      }
+
+      .metric-subtitle {
+        font-size: 11px;
+        color: #64748b;
+      }
+
+      .metric-trend {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #4ade80;
+        font-size: 14px;
+      }
+
+      .metric-trend.down {
+        color: #f87171;
+      }
+
+      /* Performance Profiler Section */
+      .profiler-section {
+        background: rgba(20, 25, 50, 0.5);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        backdrop-filter: blur(5px);
+      }
+
+      .profiler-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .profiler-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #40e0d0;
+      }
+
+      .profiler-controls {
+        display: flex;
+        gap: 10px;
+      }
+
+      .profiler-btn {
+        padding: 8px 16px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 6px;
+        color: #40e0d0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 12px;
+      }
+
+      .profiler-btn:hover {
+        background: rgba(64, 224, 208, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .profiler-btn.active {
+        background: rgba(64, 224, 208, 0.3);
+        border-color: #40e0d0;
+      }
+
+      .performance-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .perf-bar {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .perf-label {
+        min-width: 150px;
+        font-size: 12px;
+        color: #94a3b8;
+      }
+
+      .perf-progress {
+        flex: 1;
+        height: 20px;
+        background: rgba(10, 14, 39, 0.5);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .perf-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #40e0d0, #1e90ff);
+        border-radius: 10px;
+        transition: width 1s ease;
+        position: relative;
+      }
+
+      .perf-value {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 11px;
+        color: #0a0e27;
+        font-weight: bold;
+      }
+
+      /* Command Interface */
+      .command-interface {
+        background: rgba(10, 14, 39, 0.8);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .terminal-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(64, 224, 208, 0.1);
+      }
+
+      .terminal-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .terminal-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .terminal-dot.red {
+        background: #f87171;
+      }
+      .terminal-dot.yellow {
+        background: #fbbf24;
+      }
+      .terminal-dot.green {
+        background: #4ade80;
+      }
+
+      .terminal-title {
+        font-size: 12px;
+        color: #64748b;
+        margin-left: auto;
+      }
+
+      .command-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .command-prompt {
+        color: #4ade80;
+        font-weight: bold;
+      }
+
+      .command-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #e0e6ed;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .command-input::placeholder {
+        color: #64748b;
+      }
+
+      .command-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .suggestion-chip {
+        padding: 6px 12px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 16px;
+        font-size: 11px;
+        color: #40e0d0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .suggestion-chip:hover {
+        background: rgba(64, 224, 208, 0.2);
+        transform: translateY(-2px);
+      }
+
+      /* Live Data Stream */
+      .data-stream {
+        background: rgba(10, 14, 39, 0.8);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        height: 400px;
+        overflow-y: auto;
+        font-family: 'SF Mono', 'Monaco', monospace;
+        font-size: 11px;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .stream-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(64, 224, 208, 0.2);
+        position: sticky;
+        top: 0;
+        background: rgba(10, 14, 39, 0.95);
+        backdrop-filter: blur(5px);
+        z-index: 10;
+      }
+
+      .stream-title {
+        font-size: 14px;
+        color: #40e0d0;
+        font-weight: bold;
+      }
+
+      .stream-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      /* Search Container */
+      .search-container {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .search-input {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 6px;
+        color: #40e0d0;
+        font-size: 11px;
+        padding: 6px 10px;
+        font-family: monospace;
+        width: 140px;
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #40e0d0;
+        background: rgba(64, 224, 208, 0.15);
+        width: 180px;
+      }
+
+      .search-btn {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        color: #40e0d0;
+        padding: 6px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .search-btn:hover {
+        background: rgba(64, 224, 208, 0.2);
+        transform: translateY(-1px);
+      }
+
+      /* Sort Controls */
+      .sort-controls {
+        display: flex;
+        align-items: center;
+      }
+
+      .sort-selector {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 4px;
+        color: #40e0d0;
+        font-size: 10px;
+        padding: 4px 8px;
+        font-family: monospace;
+      }
+
+      /* Category Filters */
+      .category-filters {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .category-btn {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        color: #40e0d0;
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 9px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .category-btn:hover {
+        background: rgba(64, 224, 208, 0.2);
+        transform: translateY(-1px);
+      }
+
+      .category-btn.active {
+        background: rgba(64, 224, 208, 0.3);
+        border-color: #40e0d0;
+        font-weight: bold;
+      }
+
+      /* Log Statistics */
+      .log-stats {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        padding: 8px 15px;
+        background: rgba(20, 25, 50, 0.5);
+        border-bottom: 1px solid rgba(64, 224, 208, 0.1);
+        font-size: 11px;
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .stat-label {
+        color: #94a3b8;
+        font-weight: normal;
+      }
+
+      .stat-value {
+        color: #40e0d0;
+        font-weight: bold;
+        font-family: monospace;
+      }
+
+      .stat-value.error {
+        color: #f87171;
+      }
+
+      .stat-value.warning {
+        color: #fbbf24;
+      }
+
+      /* Log Group Headers */
+      .log-group {
+        margin: 10px 0;
+      }
+
+      .log-group-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: rgba(64, 224, 208, 0.1);
+        border-radius: 6px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .log-group-header:hover {
+        background: rgba(64, 224, 208, 0.15);
+      }
+
+      .group-toggle {
+        color: #40e0d0;
+        font-size: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .group-toggle.collapsed {
+        transform: rotate(-90deg);
+      }
+
+      .group-title {
+        color: #40e0d0;
+        font-weight: bold;
+        font-size: 12px;
+      }
+
+      .group-count {
+        color: #94a3b8;
+        font-size: 10px;
+        margin-left: auto;
+      }
+
+      .log-group-content {
+        margin-left: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .log-group-content.collapsed {
+        display: none;
+      }
+
+      /* Enhanced Stream Entries */
+      .stream-entry {
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .stream-entry.highlighted {
+        background: rgba(251, 191, 36, 0.1);
+        border-left-color: #fbbf24;
+        transform: translateX(5px);
+      }
+
+      .stream-entry.hidden {
+        display: none;
+      }
+
+      .entry-actions {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        display: none;
+        gap: 5px;
+      }
+
+      .stream-entry:hover .entry-actions {
+        display: flex;
+      }
+
+      .entry-action {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        color: #40e0d0;
+        padding: 2px 4px;
+        border-radius: 2px;
+        font-size: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .entry-action:hover {
+        background: rgba(64, 224, 208, 0.2);
+      }
+
+      .timezone-selector {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 4px;
+        color: #40e0d0;
+        font-size: 10px;
+        padding: 4px 8px;
+        font-family: monospace;
+      }
+
+      .error-counter {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-family: monospace;
+      }
+
+      .log-controls {
+        display: flex;
+        gap: 5px;
+      }
+
+      .log-btn {
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        color: #40e0d0;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 9px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .log-btn:hover {
+        background: rgba(64, 224, 208, 0.2);
+        transform: translateY(-1px);
+      }
+
+      .log-btn.active {
+        background: rgba(64, 224, 208, 0.3);
+        border-color: #40e0d0;
+      }
+
+      .stream-entry {
+        padding: 8px;
+        margin-bottom: 5px;
+        background: rgba(20, 25, 50, 0.3);
+        border-left: 3px solid transparent;
+        border-radius: 4px;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .stream-entry.info {
+        border-left-color: #3b82f6;
+      }
+      .stream-entry.success {
+        border-left-color: #4ade80;
+      }
+      .stream-entry.warning {
+        border-left-color: #fbbf24;
+      }
+      .stream-entry.error {
+        border-left-color: #f87171;
+      }
+
+      /* **BRIGHT LOG COLORS** - Bun.color inspired */
+      .stream-timestamp {
+        color: #64748b;
+        font-family: monospace;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .stream-level {
+        font-family: monospace;
+        font-size: 11px;
+        font-weight: bold;
+        margin: 0 6px;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+
+      .stream-level.info {
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+      }
+      .stream-level.success {
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+      }
+      .stream-level.warning {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+      }
+      .stream-level.error {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+      }
+      .stream-level.critical {
+        color: #dc2626;
+        background: rgba(220, 38, 38, 0.15);
+      }
+      .stream-level.debug {
+        color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.1);
+      }
+
+      .stream-module {
+        font-family: monospace;
+        font-size: 11px;
+        font-weight: bold;
+        margin: 0 6px;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+
+      .stream-module.dashboard {
+        color: #ff8e53;
+        background: rgba(255, 142, 83, 0.1);
+      }
+      .stream-module.database {
+        color: #40e0d0;
+        background: rgba(64, 224, 208, 0.1);
+      }
+      .stream-module.api {
+        color: #1e90ff;
+        background: rgba(30, 144, 255, 0.1);
+      }
+      .stream-module.websocket {
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.1);
+      }
+      .stream-module.security {
+        color: #dc2626;
+        background: rgba(220, 38, 38, 0.1);
+      }
+      .stream-module.auth {
+        color: #f97316;
+        background: rgba(249, 115, 22, 0.1);
+      }
+      .stream-module.semver {
+        color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.1);
+      }
+      .stream-module.pattern_match {
+        color: #06b6d4;
+        background: rgba(6, 182, 212, 0.1);
+      }
+      .stream-module.hmr {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+      }
+
+      .stream-version {
+        color: #4ade80;
+        font-family: monospace;
+        font-size: 11px;
+        font-weight: bold;
+        margin: 0 6px;
+        background: rgba(74, 222, 128, 0.1);
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+
+      .stream-error-code {
+        color: #fbbf24;
+        font-family: monospace;
+        font-size: 10px;
+        font-weight: bold;
+        margin: 0 6px;
+        background: rgba(251, 191, 36, 0.15);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(251, 191, 36, 0.3);
+      }
+
+      .stream-severity {
+        font-family: monospace;
+        font-size: 10px;
+        font-weight: bold;
+        margin: 0 4px;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+
+      .stream-severity.critical {
+        color: #dc2626;
+        background: rgba(220, 38, 38, 0.15);
+      }
+      .stream-severity.error {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+      }
+      .stream-severity.warning {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+      }
+      .stream-severity.info {
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .stream-message {
+        color: #e0e6ed;
+        margin-left: 8px;
+        line-height: 1.4;
+      }
+
+      .version-highlight {
+        background: rgba(64, 224, 208, 0.15);
+        color: #40e0d0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 10px;
+        font-weight: bold;
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        margin: 0 2px;
+      }
+
+      .error-link {
+        color: #06b6d4;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 10px;
+      }
+
+      .error-link:hover {
+        color: #0891b2;
+        background: rgba(6, 182, 212, 0.1);
+        padding: 1px 3px;
+        border-radius: 2px;
+      }
+
+      /* Package Manager Stats */
+      .package-stats {
+        background: rgba(20, 25, 50, 0.5);
+        border: 1px solid rgba(255, 142, 83, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .package-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .package-title {
+        font-size: 16px;
+        color: #ff8e53;
+        font-weight: bold;
+      }
+
+      .package-speed {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        background: rgba(74, 222, 128, 0.1);
+        border-radius: 12px;
+        font-size: 11px;
+        color: #4ade80;
+      }
+
+      .package-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+      }
+
+      /* Registry & Scope Information */
+      .registry-info {
+        margin: 15px 0;
+        padding: 15px;
+        background: rgba(20, 25, 50, 0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .registry-section {
+        margin-bottom: 20px;
+      }
+
+      .registry-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .registry-title {
+        color: #40e0d0;
+        font-size: 12px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: bold;
+      }
+
+      /* Scope Tags */
+      .scope-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .scope-tag {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-family: monospace;
+        font-weight: bold;
+        color: white;
+        border: 1px solid transparent;
+      }
+
+      .scope-tag.fire22 {
+        background: linear-gradient(135deg, #fdbb2d, #b21f1f);
+        border-color: rgba(253, 187, 45, 0.3);
+      }
+
+      .scope-tag.water {
+        background: linear-gradient(135deg, #40e0d0, #1e90ff);
+        border-color: rgba(64, 224, 208, 0.3);
+      }
+
+      .scope-tag.patterns {
+        background: linear-gradient(135deg, #9333ea, #7c3aed);
+        border-color: rgba(147, 51, 234, 0.3);
+      }
+
+      .scope-tag.security {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        border-color: rgba(220, 38, 38, 0.3);
+      }
+
+      .scope-tag.telegram {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        border-color: rgba(14, 165, 233, 0.3);
+      }
+
+      /* Registry List */
+      .registry-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .registry-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: rgba(10, 14, 39, 0.6);
+        border-radius: 6px;
+        border-left: 3px solid transparent;
+        font-size: 11px;
+      }
+
+      .registry-item.primary {
+        border-left-color: #4ade80;
+      }
+
+      .registry-item.private {
+        border-left-color: #fbbf24;
+      }
+
+      .registry-item.backup {
+        border-left-color: #94a3b8;
+      }
+
+      .registry-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .registry-name {
+        color: #40e0d0;
+        font-family: monospace;
+        font-weight: bold;
+      }
+
+      .registry-status {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .registry-item.primary .registry-status {
+        color: #4ade80;
+      }
+
+      .registry-item.private .registry-status {
+        color: #fbbf24;
+      }
+
+      .registry-item.backup .registry-status {
+        color: #94a3b8;
+      }
+
+      .registry-metrics {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .registry-metrics .metric {
+        color: #94a3b8;
+        font-size: 9px;
+        font-family: monospace;
+      }
+
+      .package-item {
+        text-align: center;
+      }
+
+      .package-number {
+        font-size: 28px;
+        font-weight: bold;
+        color: #ff8e53;
+      }
+
+      .package-label {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 5px;
+      }
+
+      /* Footer */
+      .footer {
+        background: rgba(10, 14, 39, 0.95);
+        border-top: 1px solid rgba(64, 224, 208, 0.2);
+        padding: 20px;
+        text-align: center;
+        color: #64748b;
+        font-size: 12px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 10px;
+      }
+
+      .footer-link {
+        color: #40e0d0;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-link:hover {
+        color: #1e90ff;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .metrics-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .bun-stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .package-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .header-content {
+          flex-direction: column;
+          gap: 15px;
+        }
+      }
+
+      /* Offline Mode Overlay */
+      .offline-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(10, 14, 39, 0.95);
+        z-index: 999;
+        backdrop-filter: blur(10px);
+      }
+
+      .offline-overlay.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .offline-message {
+        text-align: center;
+        color: #e0e6ed;
+        max-width: 500px;
+        padding: 40px;
+      }
+
+      .offline-icon {
+        font-size: 4rem;
+        color: #f87171;
+        margin-bottom: 20px;
+      }
+
+      .offline-title {
+        font-size: 2rem;
+        color: #f87171;
+        margin-bottom: 15px;
+      }
+
+      .offline-subtitle {
+        font-size: 1.1rem;
+        color: #94a3b8;
+        margin-bottom: 20px;
+      }
+
+      .offline-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 25px;
+      }
+
+      .offline-btn {
+        padding: 12px 24px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 8px;
+        color: #40e0d0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .offline-btn:hover {
+        background: rgba(64, 224, 208, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .offline-btn.primary {
+        background: linear-gradient(135deg, #40e0d0, #1e90ff);
+        color: white;
+      }
+
+      .offline-btn.primary:hover {
+        background: linear-gradient(135deg, #1e90ff, #40e0d0);
+      }
+
+      /* Data Queue Status */
+      .data-queue {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: rgba(10, 14, 39, 0.95);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 15px 20px;
+        backdrop-filter: blur(10px);
+        display: none;
+        min-width: 280px;
+      }
+
+      .data-queue.show {
+        display: block;
+        animation: slideInUp 0.3s ease;
+      }
+
+      @keyframes slideInUp {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .queue-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .queue-title {
+        font-size: 12px;
+        color: #40e0d0;
+        font-weight: bold;
+      }
+
+      .queue-count {
+        font-size: 11px;
+        color: #94a3b8;
+      }
+
+      .queue-items {
+        max-height: 150px;
+        overflow-y: auto;
+      }
+
+      .queue-item {
+        padding: 8px;
+        background: rgba(20, 25, 50, 0.5);
+        border-radius: 4px;
+        margin-bottom: 5px;
+        font-size: 11px;
+        color: #e0e6ed;
+        border-left: 3px solid #40e0d0;
+      }
+
+      .queue-item.error {
+        border-left-color: #f87171;
+      }
+
+      .queue-item.sync {
+        border-left-color: #fbbf24;
+        animation: pulse-sync 1s infinite;
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(10, 14, 39, 0.5);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(64, 224, 208, 0.3);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(64, 224, 208, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Online/Offline Status Indicator -->
+    <div id="connectionStatus" class="connection-status online">
+      <div class="status-indicator steady"></div>
+      <span id="statusText">Online</span>
+      <span id="statusDetail">• All systems operational</span>
+    </div>
+
+    <!-- Toggle Controls Panel -->
+    <div id="togglePanel" class="toggle-panel">
+      <div class="panel-header">
+        <div class="panel-title">⚙️ Dashboard Controls</div>
+        <button class="panel-collapse" onclick="togglePanel()">◀</button>
+      </div>
+      <div class="panel-content">
+        <div class="toggle-item">
+          <div class="toggle-label">Real-time Updates</div>
+          <div class="toggle-switch active" onclick="toggleFeature('realtime')" data-feature="realtime"></div>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-label">Auto-sync</div>
+          <div class="toggle-switch active" onclick="toggleFeature('autosync')" data-feature="autosync"></div>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-label">Performance Monitor</div>
+          <div class="toggle-switch active" onclick="toggleFeature('performance')" data-feature="performance"></div>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-label">Debug Logging</div>
+          <div class="toggle-switch" onclick="toggleFeature('debug')" data-feature="debug"></div>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-label">Offline Mode</div>
+          <div class="toggle-switch" onclick="toggleFeature('offline')" data-feature="offline"></div>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-label">Sound Alerts</div>
+          <div class="toggle-switch" onclick="toggleFeature('sound')" data-feature="sound"></div>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-label">Dark Theme</div>
+          <div class="toggle-switch active" onclick="toggleFeature('theme')" data-feature="theme"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Offline Mode Overlay -->
+    <div id="offlineOverlay" class="offline-overlay">
+      <div class="offline-message">
+        <div class="offline-icon">📡</div>
+        <div class="offline-title">You're Offline</div>
+        <div class="offline-subtitle">
+          Don't worry! The dashboard is still functional with cached data.
+          <br />
+          New data will sync automatically when you're back online.
+        </div>
+        <div class="offline-actions">
+          <button class="offline-btn primary" onclick="tryReconnect()">🔄 Try to Reconnect</button>
+          <button class="offline-btn" onclick="hideOfflineOverlay()">Continue Offline</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Queue Status -->
+    <div id="dataQueue" class="data-queue">
+      <div class="queue-header">
+        <div class="queue-title">📋 Pending Sync</div>
+        <div class="queue-count" id="queueCount">0 items</div>
+      </div>
+      <div class="queue-items" id="queueItems">
+        <!-- Queue items will be added here dynamically -->
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">💧</div>
+          <div class="logo-text">
+            <div class="logo-title">Water Dashboard</div>
+            <div class="logo-subtitle">
+              <strong>v4.0.0-staging</strong>
+              • Bun Enhanced Edition with HMR + Security •
+              <span class="version-tag">[pk:@water/dashboard@4.0.0-staging]</span>
+            </div>
+          </div>
+        </div>
+        <div class="bun-badge">
+          <div class="bun-status">
+            <div class="bun-indicator"></div>
+            <span style="font-size: 14px; font-weight: bold">Bun Runtime Active</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Version & Constants Overview -->
+      <div class="version-section">
+        <div class="section-header">
+          <div class="section-title">
+            📋
+            <strong>VERSION CONSTANTS & ENVIRONMENT</strong>
+          </div>
+          <div class="semver-badge">Bun.semver</div>
+        </div>
+        <div class="version-grid">
+          <div class="version-category">
+            <h4><strong>CORE VERSIONS</strong></h4>
+            <div class="version-list">
+              <div class="version-item">
+                <span class="version-label"><strong>WATER_DASHBOARD_VERSION</strong></span>
+                <span class="version-value">4.0.0</span>
+                <span class="version-tag">[pk:@water/dashboard@4.0.0-staging]</span>
+                <div class="health-indicator green" onclick="toggleHealthDetails('water-dashboard')"></div>
+                <div class="health-details" id="health-water-dashboard">
+                  <h4>🌊 Water Dashboard Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/health</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/status</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/dashboard</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-water-dashboard">Loading health data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('water-dashboard')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('water-dashboard')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>BUN_RUNTIME_VERSION</strong></span>
+                <span class="version-value">1.2.21</span>
+                <span class="version-tag">[pk:bun@^1.2.21]</span>
+                <div class="health-indicator green" onclick="toggleHealthDetails('bun-runtime')"></div>
+                <div class="health-details" id="health-bun-runtime">
+                  <h4>🚀 Bun Runtime Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">Bun.version</span>
+                      <span class="endpoint-status ok">ACTIVE</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">TypeScript</span>
+                      <span class="endpoint-status ok">NATIVE</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">SQLite</span>
+                      <span class="endpoint-status ok">READY</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-bun-runtime">Loading runtime data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('bun-runtime')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('bun-runtime')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>API_VERSION</strong></span>
+                <span class="version-value">v2</span>
+                <span class="version-tag">[pk:@fire22/api@v2]</span>
+                <div class="health-indicator red" onclick="toggleHealthDetails('fire22-api')"></div>
+                <div class="health-details" id="health-fire22-api">
+                  <h4>🔥 Fire22 API Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/v2/health</span>
+                      <span class="endpoint-status error">503 ERROR</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/v2/customers</span>
+                      <span class="endpoint-status timeout">TIMEOUT</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/v2/auth</span>
+                      <span class="endpoint-status error">401 AUTH</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-fire22-api">Loading API health data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('fire22-api')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('fire22-api')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>SCHEMA_VERSION</strong></span>
+                <span class="version-value">1.0.0</span>
+                <span class="version-tag">[pk:@water/schema@1.0.0]</span>
+                <div class="health-indicator yellow" onclick="toggleHealthDetails('water-schema')"></div>
+                <div class="health-details" id="health-water-schema">
+                  <h4>📋 Schema Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/schema</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/validate</span>
+                      <span class="endpoint-status timeout">SLOW</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">Database</span>
+                      <span class="endpoint-status ok">READY</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-water-schema">Loading schema data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('water-schema')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('water-schema')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="version-category">
+            <h4><strong>PACKAGE VERSIONS</strong></h4>
+            <div class="version-list">
+              <div class="version-item">
+                <span class="version-label"><strong>FIRE22_CORE</strong></span>
+                <span class="version-value">1.5.0</span>
+                <span class="version-tag">[pk:@fire22/core@1.5.0]</span>
+                <div class="health-indicator green" onclick="toggleHealthDetails('fire22-core')"></div>
+                <div class="health-details" id="health-fire22-core">
+                  <h4>🔥 Fire22 Core Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/core/status</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/core/version</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">Core Modules</span>
+                      <span class="endpoint-status ok">LOADED</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-fire22-core">Loading core data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('fire22-core')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('fire22-core')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>PATTERN_WEAVER</strong></span>
+                <span class="version-value">2.1.0</span>
+                <span class="version-tag">[pk:@patterns/weaver@2.1.0]</span>
+                <div class="health-indicator yellow" onclick="toggleHealthDetails('pattern-weaver')"></div>
+                <div class="health-details" id="health-pattern-weaver">
+                  <h4>🧩 Pattern Weaver Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/patterns</span>
+                      <span class="endpoint-status timeout">SLOW</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/weave</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">Pattern Cache</span>
+                      <span class="endpoint-status ok">READY</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-pattern-weaver">Loading pattern data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('pattern-weaver')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('pattern-weaver')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>SECURITY_SCANNER</strong></span>
+                <span class="version-value">1.3.2</span>
+                <span class="version-tag">[pk:@security/scanner@1.3.2]</span>
+                <div class="health-indicator green" onclick="toggleHealthDetails('security-scanner')"></div>
+                <div class="health-details" id="health-security-scanner">
+                  <h4>🛡️ Security Scanner Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/security/scan</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/security/threats</span>
+                      <span class="endpoint-status ok">200 OK</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">Scanner Engine</span>
+                      <span class="endpoint-status ok">ACTIVE</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-security-scanner">Loading security data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('security-scanner')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('security-scanner')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>TELEGRAM_BOT</strong></span>
+                <span class="version-value">3.0.0-beta.1</span>
+                <span class="version-tag">[pk:@telegram/bot@3.0.0-beta.1]</span>
+                <div class="health-indicator red" onclick="toggleHealthDetails('telegram-bot')"></div>
+                <div class="health-details" id="health-telegram-bot">
+                  <h4>🤖 Telegram Bot Health</h4>
+                  <div class="endpoints-list">
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/telegram/webhook</span>
+                      <span class="endpoint-status error">404 ERROR</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">/api/telegram/status</span>
+                      <span class="endpoint-status error">503 DOWN</span>
+                    </div>
+                    <div class="endpoint-item">
+                      <span class="endpoint-url">Bot Connection</span>
+                      <span class="endpoint-status error">OFFLINE</span>
+                    </div>
+                  </div>
+                  <div class="health-json" id="health-json-telegram-bot">Loading bot data...</div>
+                  <div class="health-actions">
+                    <button class="health-btn" onclick="refreshHealth('telegram-bot')">🔄 Refresh</button>
+                    <button class="health-btn" onclick="testEndpoints('telegram-bot')">🧪 Test All</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="version-category">
+            <h4><strong>ENVIRONMENT VARIABLES</strong></h4>
+            <div class="version-list">
+              <div class="version-item">
+                <span class="version-label"><strong>BUN_ENV</strong></span>
+                <span class="version-value">production</span>
+                <span class="env-source">process.env</span>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>VERSION_STRATEGY</strong></span>
+                <span class="version-value">stable</span>
+                <span class="env-source">default</span>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS</strong></span>
+                <span class="version-value">30</span>
+                <span class="env-source">performance</span>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>ENABLE_HOT_RELOAD</strong></span>
+                <span class="version-value">true</span>
+                <span class="env-source">development</span>
+              </div>
+              <div class="version-item">
+                <span class="version-label"><strong>HMR_STATE_PRESERVATION</strong></span>
+                <span class="version-value">enabled</span>
+                <span class="env-source">import.meta.hot</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bun Runtime Metrics -->
+      <div class="bun-metrics">
+        <div class="bun-metrics-header">
+          <div class="bun-metrics-title">🔥 Bun Runtime Metrics</div>
+          <div class="hot-reload-indicator active">Hot Reload Active</div>
+        </div>
+        <div class="bun-stats-grid">
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">Memory Usage</div>
+            <div class="bun-stat-value">128MB</div>
+            <div class="bun-stat-subtitle">Runtime Efficiency</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">Startup Time</div>
+            <div class="bun-stat-value">12ms</div>
+            <div class="bun-stat-subtitle">10x faster than Node.js</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">TypeScript</div>
+            <div class="bun-stat-value">Native</div>
+            <div class="bun-stat-subtitle">No transpilation needed</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">WebSocket Conns</div>
+            <div class="bun-stat-value" id="wsConnections">1,247</div>
+            <div class="bun-stat-subtitle">Active connections</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">HTTP/3 Support</div>
+            <div class="bun-stat-value">Enabled</div>
+            <div class="bun-stat-subtitle">QUIC Protocol</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">SQLite Queries</div>
+            <div class="bun-stat-value" id="sqliteOps">89.2K</div>
+            <div class="bun-stat-subtitle">ops/sec</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">HMR Updates</div>
+            <div class="bun-stat-value" id="hmrUpdates">0</div>
+            <div class="bun-stat-subtitle">Hot reloads applied</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">Update Speed</div>
+            <div class="bun-stat-value">&lt;50ms</div>
+            <div class="bun-stat-subtitle">State preservation</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">Security Alerts</div>
+            <div class="bun-stat-value" id="securityAlerts">0</div>
+            <div class="bun-stat-subtitle">Active monitoring</div>
+          </div>
+          <div class="bun-stat-card">
+            <div class="bun-stat-label">Connections</div>
+            <div class="bun-stat-value" id="activeConnections">1</div>
+            <div class="bun-stat-subtitle">Monitored sessions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Package Manager Stats -->
+      <div class="package-stats">
+        <div class="package-header">
+          <div class="package-title">📦 Bun Package Manager</div>
+          <div class="package-speed">⚡ Install Speed: 1.2s</div>
+        </div>
+
+        <!-- Scope & Registry Information -->
+        <div class="registry-info">
+          <div class="registry-section">
+            <h4 class="registry-title">🔍 Package Scopes</h4>
+            <div class="scope-tags">
+              <span class="scope-tag fire22">@fire22/*</span>
+              <span class="scope-tag water">@water/*</span>
+              <span class="scope-tag patterns">@patterns/*</span>
+              <span class="scope-tag security">@security/*</span>
+              <span class="scope-tag telegram">@telegram/*</span>
+            </div>
+          </div>
+
+          <div class="registry-section">
+            <h4 class="registry-title">🌐 Registry Configuration</h4>
+            <div class="registry-list">
+              <div class="registry-item primary">
+                <div class="registry-details">
+                  <span class="registry-name">registry.npmjs.org</span>
+                  <span class="registry-status">PRIMARY</span>
+                </div>
+                <div class="registry-metrics">
+                  <span class="metric">847 packages</span>
+                  <span class="metric">~45ms avg</span>
+                </div>
+              </div>
+              <div class="registry-item private">
+                <div class="registry-details">
+                  <span class="registry-name">registry.fire22.dev</span>
+                  <span class="registry-status">PRIVATE</span>
+                </div>
+                <div class="registry-metrics">
+                  <span class="metric">23 packages</span>
+                  <span class="metric">~12ms avg</span>
+                </div>
+              </div>
+              <div class="registry-item backup">
+                <div class="registry-details">
+                  <span class="registry-name">cloudflare.registry</span>
+                  <span class="registry-status">FALLBACK</span>
+                </div>
+                <div class="registry-metrics">
+                  <span class="metric">0 packages</span>
+                  <span class="metric">standby</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="package-grid">
+          <div class="package-item">
+            <div class="package-number">870</div>
+            <div class="package-label">Total Dependencies</div>
+          </div>
+          <div class="package-item">
+            <div class="package-number">18.4MB</div>
+            <div class="package-label">node_modules size</div>
+          </div>
+          <div class="package-item">
+            <div class="package-number">23</div>
+            <div class="package-label">Private Modules</div>
+          </div>
+          <div class="package-item">
+            <div class="package-number">5</div>
+            <div class="package-label">Active Scopes</div>
+          </div>
+          <div class="package-item">
+            <div class="package-number">3</div>
+            <div class="package-label">Registries</div>
+          </div>
+          <div class="package-item">
+            <div class="package-number">0</div>
+            <div class="package-label">Security Vulnerabilities</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Profiler -->
+      <div class="profiler-section">
+        <div class="profiler-header">
+          <div class="profiler-title">⚡ Performance Profiler</div>
+          <div class="profiler-controls">
+            <button class="profiler-btn active">Real-time</button>
+            <button class="profiler-btn">History</button>
+            <button class="profiler-btn">Export</button>
+          </div>
+        </div>
+        <div class="performance-bars">
+          <div class="perf-bar">
+            <div class="perf-label">API Response Time</div>
+            <div class="perf-progress">
+              <div class="perf-fill" style="width: 85%">
+                <span class="perf-value">42ms</span>
+              </div>
+            </div>
+          </div>
+          <div class="perf-bar">
+            <div class="perf-label">Database Queries</div>
+            <div class="perf-progress">
+              <div class="perf-fill" style="width: 92%">
+                <span class="perf-value">8ms</span>
+              </div>
+            </div>
+          </div>
+          <div class="perf-bar">
+            <div class="perf-label">Cache Hit Rate</div>
+            <div class="perf-progress">
+              <div class="perf-fill" style="width: 78%">
+                <span class="perf-value">78%</span>
+              </div>
+            </div>
+          </div>
+          <div class="perf-bar">
+            <div class="perf-label">Memory Efficiency</div>
+            <div class="perf-progress">
+              <div class="perf-fill" style="width: 94%">
+                <span class="perf-value">94%</span>
+              </div>
+            </div>
+          </div>
+          <div class="perf-bar">
+            <div class="perf-label">CPU Utilization</div>
+            <div class="perf-progress">
+              <div class="perf-fill" style="width: 32%">
+                <span class="perf-value">32%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Metrics Grid -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Active Logs</div>
+          <div class="metric-value" id="activeLogs">1,245,789</div>
+          <div class="metric-subtitle">Processing in real-time</div>
+          <div class="metric-trend">↑ 12%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Archived Logs</div>
+          <div class="metric-value">45M+</div>
+          <div class="metric-subtitle">Stored in R2</div>
+          <div class="metric-trend">↑ 8%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Cache Hits</div>
+          <div class="metric-value" id="cacheHits">12,456</div>
+          <div class="metric-subtitle">KV Store operations</div>
+          <div class="metric-trend">↑ 15%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Response Time</div>
+          <div class="metric-value">42ms</div>
+          <div class="metric-subtitle">Bun enhanced</div>
+          <div class="metric-trend">↓ 65%</div>
+        </div>
+      </div>
+
+      <!-- Command Interface -->
+      <div class="command-interface">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+          </div>
+          <div class="terminal-title">Bun Shell Interface</div>
+        </div>
+        <div class="command-input-wrapper">
+          <span class="command-prompt">water@bun:~$</span>
+          <input type="text" class="command-input" placeholder="Type a command..." id="commandInput" />
+        </div>
+        <div class="command-suggestions">
+          <div class="suggestion-chip" onclick="runCommand('bun run dev')">bun run dev</div>
+          <div class="suggestion-chip" onclick="runCommand('bun test')">bun test</div>
+          <div class="suggestion-chip" onclick="runCommand('bun install')">bun install</div>
+          <div class="suggestion-chip" onclick="runCommand('status')">status</div>
+          <div class="suggestion-chip" onclick="runCommand('metrics')">metrics</div>
+          <div class="suggestion-chip" onclick="runCommand('profile')">profile</div>
+          <div class="suggestion-chip" onclick="runCommand('cache:clear')">cache:clear</div>
+          <div class="suggestion-chip" onclick="runCommand('hmr')">hmr</div>
+          <div class="suggestion-chip" onclick="runCommand('hmr status')">hmr status</div>
+          <div class="suggestion-chip" onclick="runCommand('bun run src/hmr-dev-server.ts')">HMR server</div>
+        </div>
+      </div>
+
+      <!-- Live Data Stream -->
+      <div class="data-stream" id="dataStream">
+        <div class="stream-header">
+          <div class="stream-title">🌈 Enhanced Logging Stream</div>
+          <div class="stream-controls">
+            <!-- Search Input -->
+            <div class="search-container">
+              <input type="text" id="logSearch" placeholder="🔍 Quick search..." class="search-input" />
+              <button class="search-btn" onclick="searchLogs()">Search</button>
+              <button class="search-btn" onclick="clearSearch()">×</button>
+            </div>
+
+            <!-- Sort Controls -->
+            <div class="sort-controls">
+              <select class="sort-selector" id="sortSelect" onchange="sortLogs()">
+                <option value="time-desc">⏰ Newest First</option>
+                <option value="time-asc">⏰ Oldest First</option>
+                <option value="level-desc">📊 By Severity</option>
+                <option value="module-asc">📂 By Module</option>
+              </select>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="category-filters">
+              <button class="category-btn active" data-category="all">All</button>
+              <button class="category-btn" data-category="system">System</button>
+              <button class="category-btn" data-category="network">Network</button>
+              <button class="category-btn" data-category="database">Database</button>
+              <button class="category-btn" data-category="security">Security</button>
+              <button class="category-btn" data-category="api">API</button>
+            </div>
+
+            <select class="timezone-selector" id="timezoneSelect">
+              <option value="UTC">UTC</option>
+              <option value="America/New_York" selected>EST</option>
+              <option value="America/Los_Angeles">PST</option>
+              <option value="Europe/London">GMT</option>
+              <option value="Asia/Tokyo">JST</option>
+            </select>
+            <div class="error-counter" id="errorCounter">Errors: 0</div>
+            <div class="log-controls">
+              <button class="log-btn active" data-level="all">All</button>
+              <button class="log-btn" data-level="error">Errors</button>
+              <button class="log-btn" data-level="warning">Warnings</button>
+              <button class="log-btn" onclick="toggleGrouping()">📁 Group</button>
+              <button class="log-btn" onclick="exportLogs()">💾 Export</button>
+              <button class="log-btn" onclick="clearLogs()">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log Statistics -->
+        <div class="log-stats" id="logStats">
+          <div class="stat-item">
+            <span class="stat-label">Total:</span>
+            <span class="stat-value" id="totalLogs">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Errors:</span>
+            <span class="stat-value error" id="errorLogs">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Warnings:</span>
+            <span class="stat-value warning" id="warningLogs">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Filtered:</span>
+            <span class="stat-value" id="filteredLogs">0</span>
+          </div>
+        </div>
+
+        <div class="stream-content" id="streamContent">
+          <div class="stream-entry info">
+            <span class="stream-timestamp">[2025-08-27 18:50:15]</span>
+            <span class="stream-level info">[INFO]</span>
+            <span class="stream-module dashboard">[DASHBOARD]</span>
+            <span class="stream-version">[v2.0.0]</span>
+            <span class="stream-message">
+              System initialized with
+              <span class="version-highlight">[pk:bun@1.2.21]</span>
+            </span>
+          </div>
+
+          <div class="stream-entry success">
+            <span class="stream-timestamp">[2025-08-27 18:50:16]</span>
+            <span class="stream-level success">[SUCCESS]</span>
+            <span class="stream-module database">[DATABASE]</span>
+            <span class="stream-version">[v1.0.0]</span>
+            <span class="stream-message">
+              Connected to Cloudflare D1
+              <span class="version-highlight">[pk:@cloudflare/d1@^1.0.0]</span>
+            </span>
+          </div>
+
+          <div class="stream-entry error">
+            <span class="stream-timestamp">[2025-08-27 18:50:17]</span>
+            <span class="stream-level error">[ERROR]</span>
+            <span class="stream-module api">[API]</span>
+            <span class="stream-version">[v2.0.0]</span>
+            <span class="stream-error-code">[E3001]</span>
+            <span class="stream-severity warning">[WARNING]</span>
+            <span class="stream-message">
+              Unauthorized API request -
+              <a href="../../../crystal-clear-architecture/docs/api/auth.md" class="error-link">docs</a>
+            </span>
+          </div>
+
+          <div class="stream-entry warning">
+            <span class="stream-timestamp">[2025-08-27 18:50:18]</span>
+            <span class="stream-level warning">[WARNING]</span>
+            <span class="stream-module security">[SECURITY]</span>
+            <span class="stream-version">[v1.3.2]</span>
+            <span class="stream-error-code">[E6001]</span>
+            <span class="stream-severity critical">[CRITICAL]</span>
+            <span class="stream-message">Security policy violation detected</span>
+          </div>
+
+          <div class="stream-entry success">
+            <span class="stream-timestamp">[2025-08-27 18:50:19]</span>
+            <span class="stream-level success">[SUCCESS]</span>
+            <span class="stream-module websocket">[WEBSOCKET]</span>
+            <span class="stream-version">[v2.0.0]</span>
+            <span class="stream-message">
+              Server listening on port 3000
+              <span class="version-highlight">[pk:@bun/websocket@native]</span>
+            </span>
+          </div>
+
+          <div class="stream-entry info">
+            <span class="stream-timestamp">[2025-08-27 18:50:20]</span>
+            <span class="stream-level debug">[DEBUG]</span>
+            <span class="stream-module semver">[SEMVER]</span>
+            <span class="stream-version">[v2.0.0]</span>
+            <span class="stream-message">
+              Version comparison:
+              <span class="version-highlight">semver.order("2.0.0", "1.0.0") = 1</span>
+            </span>
+          </div>
+
+          <div class="stream-entry info">
+            <span class="stream-timestamp">[2025-08-27 18:50:21]</span>
+            <span class="stream-level info">[INFO]</span>
+            <span class="stream-module pattern_match">[PATTERN_MATCH]</span>
+            <span class="stream-version">[v2.1.0]</span>
+            <span class="stream-message">
+              Pattern matched:
+              <span class="version-highlight">/\[pk:([^@]+)@([^\]]+)\]/g</span>
+            </span>
+          </div>
+
+          <div class="stream-entry success">
+            <span class="stream-timestamp">[2025-08-27 18:50:22]</span>
+            <span class="stream-level success">[SUCCESS]</span>
+            <span class="stream-module hmr">[HMR]</span>
+            <span class="stream-version">[v4.0.0]</span>
+            <span class="stream-message">
+              🔥 Hot Module Replacement initialized
+              <span class="version-highlight">[pk:@water/dashboard@4.0.0-hmr]</span>
+            </span>
+          </div>
+
+          <div class="stream-entry info">
+            <span class="stream-timestamp">[2025-08-27 18:50:23]</span>
+            <span class="stream-level info">[INFO]</span>
+            <span class="stream-module hmr">[HMR]</span>
+            <span class="stream-version">[v4.0.0]</span>
+            <span class="stream-message">State preservation enabled - Alpine.js context maintained</span>
+          </div>
+
+          <div class="stream-entry error">
+            <span class="stream-timestamp">[2025-08-27 18:50:22]</span>
+            <span class="stream-level error">[ERROR]</span>
+            <span class="stream-module database">[DATABASE]</span>
+            <span class="stream-version">[v1.0.0]</span>
+            <span class="stream-error-code">[E2002]</span>
+            <span class="stream-severity error">[ERROR]</span>
+            <span class="stream-message">
+              Query timeout after 30s -
+              <a href="../docs/database/optimization.md" class="error-link">optimize</a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <!-- ==================== FIRE22 DASHBOARD WORKER FOOTER v4.0.0-staging ==================== -->
+    <!-- Generated with [pk:fire22-dashboard-worker@4.0.0-staging] -->
+    <footer
+      style="
+        margin-top: 60px;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+        color: #e2e8f0;
+        font-family: 'SF Mono', 'Monaco', 'Fira Code', monospace;
+        position: relative;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+        border-radius: 15px;
+      "
+    >
+      <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+        ╭────────────────────────────────────────────────────────────────────────╮
+      </div>
+
+      <div style="padding: 30px 0">
+        <!-- Fire22 Dashboard Worker Branding -->
+        <div style="padding: 30px 0">
+          <div
+            style="
+              font-size: 3rem;
+              color: #fdbb2d;
+              text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+              animation: flame-flicker 2s ease-in-out infinite;
+            "
+          >
+            🔥
+          </div>
+          <h2 style="font-size: 2rem; color: #fdbb2d; margin: 10px 0; font-weight: 700; letter-spacing: 2px">
+            Fire22 Dashboard Worker
+          </h2>
+          <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; font-style: italic">
+            Enhanced with Bun v1.01.04-alpha features and native Bun.semver version management
+          </p>
+          <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 10px">
+            Version:
+            <span style="color: #fdbb2d; font-weight: bold">4.0.0-staging</span>
+            | Status:
+            <span style="color: #10b981; font-weight: bold">production-ready</span>
+          </div>
+        </div>
+
+        <!-- Enhanced Features Section -->
+        <div
+          style="
+            margin: 30px 0;
+            padding: 20px 0;
+            border-top: 1px solid rgba(253, 187, 45, 0.3);
+            border-bottom: 1px solid rgba(253, 187, 45, 0.3);
+          "
+        >
+          <div style="color: #fdbb2d; margin-bottom: 20px; font-size: 1.2rem">├─── Fire22 Dashboard Features ───┤</div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+              gap: 15px;
+              text-align: left;
+              max-width: 1200px;
+              margin: 0 auto;
+            "
+          >
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🎯 Standalone Executables with Runtime Flags
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🌐 Custom User Agent Management
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🎨 ANSI Color Support with Bun.stripANSI()
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ ⚡ Runtime Information & Diagnostics
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 📦 Side Effects Optimization
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ╰─ 🚀 Native Bun.semver & CLI Tooling
+            </div>
+          </div>
+        </div>
+
+        <!-- Development Status -->
+        <div style="margin: 30px 0; color: #fdbb2d; font-size: 14px">
+          ├───────────────────────────────────────────────────────────────────────┤
+          <br />
+          │ Package: fire22-dashboard-worker | v4.0.0-staging | Status: ● Active │
+          <br />
+          │ Runtime: Bun >=1.2.0 | Node: >=18.0 | Build Time: 47.2s | Tests: 54.8s│
+          <br />
+          ├───────────────────────────────────────────────────────────────────────┤
+        </div>
+
+        <!-- Copyright & Legal -->
+        <div style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; line-height: 1.8">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p style="font-family: monospace; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6)">
+            Generated with
+            <span style="color: #fdbb2d">[pk:fire22-dashboard-worker@4.0.0-staging]</span>
+          </p>
+          <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.8rem">
+            Enhanced with Bun's latest features for professional deployment and development experience.
+          </p>
+          <p>╰─────────────────────────────────────────────────────────────────╯</p>
+        </div>
+      </div>
+
+      <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+        ╰────────────────────────────────────────────────────────────────────────╯
+      </div>
+    </footer>
+
+    <!-- Flame Animation Keyframes -->
+    <style>
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+          text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+          text-shadow: 0 0 30px rgba(253, 187, 45, 0.8);
+        }
+      }
+    </style>
+
+    <!-- Fire22 Dashboard Worker Footer v4.0.0-staging - End -->
+
+    <script>
+      // **ENHANCED WATER DASHBOARD** - Online/Offline & Toggle Controls Implementation
+
+      // =============================================
+      // OFFLINE/ONLINE FUNCTIONALITY
+      // =============================================
+
+      class OfflineManager {
+          constructor() {
+              this.isOnline = navigator.onLine;
+              this.connectionStatus = document.getElementById('connectionStatus');
+              this.statusText = document.getElementById('statusText');
+              this.statusDetail = document.getElementById('statusDetail');
+              this.offlineOverlay = document.getElementById('offlineOverlay');
+              this.dataQueue = document.getElementById('dataQueue');
+              this.queueCount = document.getElementById('queueCount');
+              this.queueItems = document.getElementById('queueItems');
+
+              this.syncQueue = [];
+              this.retryAttempts = 0;
+              this.maxRetries = 3;
+
+              this.init();
+          }
+
+          init() {
+              // Listen for online/offline events
+              window.addEventListener('online', () => this.handleOnline());
+              window.addEventListener('offline', () => this.handleOffline());
+
+              // Initial status check
+              this.updateConnectionStatus();
+
+              // Periodic connection check
+              this.startConnectionCheck();
+
+              // Load persisted queue
+              this.loadSyncQueue();
+          }
+
+          handleOnline() {
+              console.log('🌐 Connection restored');
+              this.isOnline = true;
+              this.retryAttempts = 0;
+              this.updateConnectionStatus();
+              this.processSyncQueue();
+
+              // Play reconnection sound if enabled
+              if (dashboardSettings.sound) {
+                  this.playSound('online');
+              }
+
+              // Add success log
+              addLogEntry('success', 'NETWORK', '2.0.0', '🌐 Connection restored - Processing sync queue');
+          }
+
+          handleOffline() {
+              console.log('📡 Connection lost');
+              this.isOnline = false;
+              this.updateConnectionStatus();
+
+              // Show offline overlay if not in offline mode
+              if (!dashboardSettings.offline) {
+                  this.showOfflineOverlay();
+              }
+
+              // Play offline sound if enabled
+              if (dashboardSettings.sound) {
+                  this.playSound('offline');
+              }
+
+              // Add warning log
+              addLogEntry('warning', 'NETWORK', '2.0.0', '📡 Connection lost - Switching to offline mode');
+          }
+
+          updateConnectionStatus() {
+              const status = this.connectionStatus;
+              const text = this.statusText;
+              const detail = this.statusDetail;
+
+              if (this.isOnline) {
+                  status.className = 'connection-status online';
+                  text.textContent = 'Online';
+                  detail.textContent = '• All systems operational';
+              } else {
+                  status.className = 'connection-status offline';
+                  text.textContent = 'Offline';
+                  detail.textContent = '• Working with cached data';
+              }
+
+              // Update queue visibility
+              this.updateQueueVisibility();
+          }
+
+          showOfflineOverlay() {
+              this.offlineOverlay.classList.add('show');
+          }
+
+          hideOfflineOverlay() {
+              this.offlineOverlay.classList.remove('show');
+          }
+
+          async tryReconnect() {
+              this.connectionStatus.className = 'connection-status syncing';
+              this.statusText.textContent = 'Reconnecting...';
+              this.statusDetail.textContent = '• Attempting to restore connection';
+
+              try {
+                  // Try to fetch from a reliable endpoint
+                  const response = await fetch('/api/health', {
+                      method: 'GET',
+                      cache: 'no-cache',
+                      headers: {
+                          'Cache-Control': 'no-cache'
+                      }
+                  });
+
+                  if (response.ok) {
+                      this.handleOnline();
+                      this.hideOfflineOverlay();
+                  } else {
+                      throw new Error('Server not responding');
+                  }
+              } catch (error) {
+                  this.retryAttempts++;
+                  if (this.retryAttempts < this.maxRetries) {
+                      setTimeout(() => this.tryReconnect(), 2000);
+                      addLogEntry('warning', 'NETWORK', '2.0.0', `Reconnection attempt ${this.retryAttempts}/${this.maxRetries} failed`);
+                  } else {
+                      addLogEntry('error', 'NETWORK', '2.0.0', 'Max reconnection attempts reached - staying offline');
+                      this.updateConnectionStatus();
+                  }
+              }
+          }
+
+          startConnectionCheck() {
+              setInterval(() => {
+                  if (this.isOnline) {
+                      this.pingServer();
+                  }
+              }, 30000); // Check every 30 seconds
+          }
+
+          async pingServer() {
+              try {
+                  const response = await fetch('/api/ping', {
+                      method: 'GET',
+                      cache: 'no-cache'
+                  });
+
+                  if (!response.ok) {
+                      throw new Error('Server ping failed');
+                  }
+              } catch (error) {
+                  this.handleOffline();
+              }
+          }
+
+          // Data Queue Management
+          addToSyncQueue(action, data) {
+              const queueItem = {
+                  id: Date.now() + Math.random(),
+                  timestamp: Date.now(),
+                  action: action,
+                  data: data,
+                  retries: 0
+              };
+
+              this.syncQueue.push(queueItem);
+              this.persistSyncQueue();
+              this.updateQueueDisplay();
+
+              addLogEntry('info', 'QUEUE', '2.0.0', `Added ${action} to sync queue - ${this.syncQueue.length} items pending`);
+          }
+
+          async processSyncQueue() {
+              if (this.syncQueue.length === 0) return;
+
+              this.connectionStatus.className = 'connection-status syncing';
+              this.statusText.textContent = 'Syncing';
+              this.statusDetail.textContent = `• Processing ${this.syncQueue.length} items`;
+
+              const itemsToProcess = [...this.syncQueue];
+              this.syncQueue = [];
+
+              for (const item of itemsToProcess) {
+                  try {
+                      await this.syncItem(item);
+                      addLogEntry('success', 'SYNC', '2.0.0', `✅ Synced: ${item.action}`);\n\n                        // Remove from queue display\n                        this.removeQueueItem(item.id);
+                  } catch (error) {
+                      item.retries++;
+                      if (item.retries < 3) {
+                          this.syncQueue.push(item);
+                          addLogEntry('warning', 'SYNC', '2.0.0', `⚠️ Retry ${item.retries}/3: ${item.action}`);
+                      } else {
+                          addLogEntry('error', 'SYNC', '2.0.0', `❌ Failed to sync: ${item.action}`);
+                      }
+                  }
+              }
+
+              this.persistSyncQueue();
+              this.updateQueueDisplay();
+              this.updateConnectionStatus();
+          }
+
+          async syncItem(item) {
+              // Simulate API sync
+              const response = await fetch(`/api/${item.action}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(item.data)
+              });
+
+              if (!response.ok) {
+                  throw new Error(`Sync failed: ${response.status}`);
+              }
+
+              return response.json();
+          }
+
+          updateQueueDisplay() {
+              const count = this.queueCount;
+              const items = this.queueItems;
+
+              count.textContent = `${this.syncQueue.length} items`;
+
+              // Clear existing items
+              items.innerHTML = '';
+
+              // Add queue items
+              this.syncQueue.slice(-5).forEach(item => { // Show last 5 items
+                  const div = document.createElement('div');
+                  div.className = 'queue-item';
+                  div.innerHTML = `
+                      <strong>${item.action}</strong>
+                      <br>
+                      <small>${new Date(item.timestamp).toLocaleTimeString()}</small>
+                  `;
+                  items.appendChild(div);
+              });
+
+              this.updateQueueVisibility();
+          }
+
+          updateQueueVisibility() {
+              if (this.syncQueue.length > 0 || !this.isOnline) {
+                  this.dataQueue.classList.add('show');
+              } else {
+                  this.dataQueue.classList.remove('show');
+              }
+          }
+
+          removeQueueItem(id) {
+              const item = document.querySelector(`[data-queue-id="${id}"]`);
+              if (item) {
+                  item.remove();
+              }
+          }
+
+          persistSyncQueue() {
+              try {
+                  localStorage.setItem('water_dashboard_sync_queue', JSON.stringify(this.syncQueue));
+              } catch (error) {
+                  console.warn('Failed to persist sync queue:', error);
+              }
+          }
+
+          loadSyncQueue() {
+              try {
+                  const stored = localStorage.getItem('water_dashboard_sync_queue');
+                  if (stored) {
+                      this.syncQueue = JSON.parse(stored);
+                      this.updateQueueDisplay();
+                  }
+              } catch (error) {
+                  console.warn('Failed to load sync queue:', error);
+                  this.syncQueue = [];
+              }
+          }
+
+          playSound(type) {
+              // HTML5 Audio API for notification sounds
+              const context = new (window.AudioContext || window.webkitAudioContext)();
+              const oscillator = context.createOscillator();
+              const gainNode = context.createGain();
+
+              oscillator.connect(gainNode);
+              gainNode.connect(context.destination);
+
+              if (type === 'online') {
+                  oscillator.frequency.setValueAtTime(800, context.currentTime);
+                  oscillator.frequency.setValueAtTime(1000, context.currentTime + 0.1);
+              } else if (type === 'offline') {
+                  oscillator.frequency.setValueAtTime(400, context.currentTime);
+                  oscillator.frequency.setValueAtTime(300, context.currentTime + 0.1);
+              }
+
+              gainNode.gain.setValueAtTime(0.1, context.currentTime);
+              gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.3);
+
+              oscillator.start(context.currentTime);
+              oscillator.stop(context.currentTime + 0.3);
+          }
+      }
+
+      // =============================================
+      // TOGGLE CONTROLS FUNCTIONALITY
+      // =============================================
+
+      class DashboardSettings {
+          constructor() {
+              this.settings = {
+                  realtime: true,
+                  autosync: true,
+                  performance: true,
+                  debug: false,
+                  offline: false,
+                  sound: false,
+                  theme: true
+              };
+
+              this.load();
+              this.applySettings();
+          }
+
+          toggle(feature) {
+              this.settings[feature] = !this.settings[feature];
+              this.save();
+              this.applySettings();
+              this.updateToggleUI(feature);
+
+              // Enhanced feedback with specific messages
+              const messages = {
+                  realtime: this.settings.realtime ? '🔄 Real-time updates activated' : '⏸️ Real-time updates paused',
+                  autosync: this.settings.autosync ? '🔗 Auto-sync enabled' : '🚫 Auto-sync disabled',
+                  performance: this.settings.performance ? '📊 Performance monitoring active' : '📊 Performance monitoring disabled',
+                  debug: this.settings.debug ? '🔍 Debug logging enabled - verbose mode active' : '🔍 Debug logging disabled',
+                  offline: this.settings.offline ? '📡 Offline mode activated - working with cached data' : '🌐 Online mode - live data connection',
+                  sound: this.settings.sound ? '🔊 Sound alerts enabled' : '🔇 Sound alerts muted',
+                  theme: this.settings.theme ? '🌙 Dark theme active' : '☀️ Light theme active'
+              };
+
+              addLogEntry('info', 'SETTINGS', '4.0.0', messages[feature]);
+
+              // Play sound feedback if enabled
+              if (this.settings.sound) {
+                  this.playToggleSound(feature, this.settings[feature]);
+              }
+
+              // Show visual feedback
+              this.showToggleFeedback(feature, this.settings[feature]);
+          }
+
+          applySettings() {
+              // Apply real-time updates
+              if (this.settings.realtime) {
+                  this.enableRealtime();
+              } else {
+                  this.disableRealtime();
+              }
+
+              // Apply debug logging
+              if (this.settings.debug) {
+                  console.log('🔍 Debug mode enabled');
+                  window.debugMode = true;
+              } else {
+                  window.debugMode = false;
+              }
+
+              // Apply theme
+              if (!this.settings.theme) {
+                  document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+              } else {
+                  document.body.style.filter = 'none';
+              }
+          }
+
+          enableRealtime() {
+              // Start all real-time intervals
+              window.realtimeEnabled = true;
+          }
+
+          disableRealtime() {
+              // Stop real-time updates
+              window.realtimeEnabled = false;
+          }
+
+          updateToggleUI(feature) {
+              const toggle = document.querySelector(`[data-feature="${feature}"]`);
+              if (toggle) {
+                  if (this.settings[feature]) {
+                      toggle.classList.add('active');
+                  } else {
+                      toggle.classList.remove('active');
+                  }
+              }
+          }
+
+          save() {
+              try {
+                  localStorage.setItem('water_dashboard_settings', JSON.stringify(this.settings));
+              } catch (error) {
+                  console.warn('Failed to save settings:', error);
+              }
+          }
+
+          load() {
+              try {
+                  const stored = localStorage.getItem('water_dashboard_settings');
+                  if (stored) {
+                      this.settings = { ...this.settings, ...JSON.parse(stored) };
+                  }
+              } catch (error) {
+                  console.warn('Failed to load settings:', error);
+              }
+          }
+
+          get realtime() { return this.settings.realtime; }
+          get autosync() { return this.settings.autosync; }
+          get performance() { return this.settings.performance; }
+          get debug() { return this.settings.debug; }
+          get offline() { return this.settings.offline; }
+          get sound() { return this.settings.sound; }
+          get theme() { return this.settings.theme; }
+
+          // Enhanced sound feedback system
+          playToggleSound(feature, enabled) {
+              try {
+                  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                  const oscillator = audioContext.createOscillator();
+                  const gainNode = audioContext.createGain();
+
+                  oscillator.connect(gainNode);
+                  gainNode.connect(audioContext.destination);
+
+                  // Different tones for different features
+                  const frequencies = {
+                      realtime: enabled ? 880 : 440,
+                      autosync: enabled ? 660 : 330,
+                      performance: enabled ? 770 : 385,
+                      debug: enabled ? 550 : 275,
+                      offline: enabled ? 220 : 110,
+                      sound: 440, // Self-referential sound
+                      theme: enabled ? 800 : 400
+                  };
+
+                  oscillator.frequency.setValueAtTime(frequencies[feature] || 440, audioContext.currentTime);
+                  oscillator.type = 'sine';
+
+                  gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                  gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+                  gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+
+                  oscillator.start(audioContext.currentTime);
+                  oscillator.stop(audioContext.currentTime + 0.2);
+
+              } catch (error) {
+                  console.log('🔇 Audio not available:', error.message);
+              }
+          }
+
+          // Visual feedback system
+          showToggleFeedback(feature, enabled) {
+              const toggle = document.querySelector(`[data-feature="${feature}"]`);
+              if (!toggle) return;
+
+              // Create floating feedback indicator
+              const feedback = document.createElement('div');
+              feedback.style.cssText = `
+                  position: absolute;
+                  top: -30px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  background: ${enabled ? '#10b981' : '#ef4444'};
+                  color: white;
+                  padding: 4px 8px;
+                  border-radius: 12px;
+                  font-size: 11px;
+                  font-weight: bold;
+                  z-index: 1000;
+                  pointer-events: none;
+                  animation: feedbackPulse 1.5s ease-out forwards;
+              `;
+              feedback.textContent = enabled ? 'ON' : 'OFF';
+
+              toggle.style.position = 'relative';
+              toggle.appendChild(feedback);
+
+              // Remove after animation
+              setTimeout(() => {
+                  if (feedback.parentNode) {
+                      feedback.parentNode.removeChild(feedback);
+                  }
+              }, 1500);
+
+              // Add ripple effect to the toggle
+              this.createRippleEffect(toggle, enabled);
+          }
+
+          // Ripple effect for toggles
+          createRippleEffect(element, enabled) {
+              const ripple = document.createElement('div');
+              ripple.style.cssText = `
+                  position: absolute;
+                  border-radius: 50%;
+                  background: ${enabled ? '#10b981' : '#ef4444'};
+                  transform: scale(0);
+                  animation: ripple 0.6s linear;
+                  pointer-events: none;
+                  opacity: 0.6;
+                  top: 50%;
+                  left: 50%;
+                  width: 20px;
+                  height: 20px;
+                  margin-top: -10px;
+                  margin-left: -10px;
+              `;
+
+              element.style.position = 'relative';
+              element.appendChild(ripple);
+
+              setTimeout(() => {
+                  if (ripple.parentNode) {
+                      ripple.parentNode.removeChild(ripple);
+                  }
+              }, 600);
+          }
+      }
+
+      // =============================================
+      // GLOBAL FUNCTIONS
+      // =============================================
+
+      // Initialize managers
+      const offlineManager = new OfflineManager();
+      const dashboardSettings = new DashboardSettings();
+
+      // Panel toggle functions
+      function togglePanel() {
+          console.log('🎛️ togglePanel called');
+
+          try {
+              const panel = document.getElementById('togglePanel');
+              if (!panel) {
+                  console.error('❌ Toggle panel not found');
+                  return;
+              }
+
+              const button = panel.querySelector('.panel-collapse');
+              if (!button) {
+                  console.error('❌ Panel collapse button not found');
+                  return;
+              }
+
+              panel.classList.toggle('collapsed');
+              button.classList.toggle('collapsed');
+
+              console.log('✅ Panel toggle completed');
+
+          } catch (error) {
+              console.error('❌ Error in togglePanel:', error);
+              alert('Panel toggle error: ' + error.message);
+          }
+      }
+
+      function toggleFeature(feature) {
+          console.log('🔧 toggleFeature called with:', feature);
+
+          try {
+              if (!dashboardSettings) {
+                  console.error('❌ dashboardSettings not initialized');
+                  return;
+              }
+
+              dashboardSettings.toggle(feature);
+
+              // Special handling for certain features
+              if (feature === 'offline') {
+                  if (dashboardSettings.offline) {
+                      // Simulate going offline
+                      offlineManager.handleOffline();
+                  } else {
+                      // Re-enable online detection
+                      offlineManager.handleOnline();
+                      offlineManager.hideOfflineOverlay();
+                  }
+              }
+
+              console.log('✅ toggleFeature completed successfully');
+
+          } catch (error) {
+              console.error('❌ Error in toggleFeature:', error);
+              alert('Dashboard control error: ' + error.message);
+          }
+      }
+
+      function tryReconnect() {
+          offlineManager.tryReconnect();
+      }
+
+      function hideOfflineOverlay() {
+          offlineManager.hideOfflineOverlay();
+      }
+
+      // Mock data operations that queue when offline
+      function mockDataOperation(action, data) {
+          if (!offlineManager.isOnline) {
+              // Queue for sync when back online
+              offlineManager.addToSyncQueue(action, data);
+              return Promise.resolve({ queued: true });
+          } else {
+              // Process immediately
+              return fetch(`/api/${action}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(data)
+              });
+          }
+      }
+
+      // =============================================
+      // ENHANCED LOGGING SYSTEM (Updated with Search & Organization)
+      // =============================================
+
+      class LogManager {
+          constructor() {
+              this.logs = [];
+              this.filteredLogs = [];
+              this.searchQuery = '';
+              this.currentSort = 'time-desc';
+              this.currentCategory = 'all';
+              this.groupingEnabled = false;
+              this.stats = {
+                  total: 0,
+                  error: 0,
+                  warning: 0,
+                  info: 0,
+                  success: 0,
+                  debug: 0
+              };
+
+              this.init();
+          }
+
+          init() {
+              // Set up search functionality
+              const searchInput = document.getElementById('logSearch');
+              if (searchInput) {
+                  searchInput.addEventListener('input', (e) => {
+                      this.searchQuery = e.target.value.toLowerCase();
+                      this.filterLogs();
+                  });
+
+                  searchInput.addEventListener('keypress', (e) => {
+                      if (e.key === 'Enter') {
+                          this.searchLogs();
+                      }
+                  });
+              }
+
+              // Set up category filters
+              document.querySelectorAll('.category-btn').forEach(btn => {
+                  btn.addEventListener('click', (e) => {
+                      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                      e.target.classList.add('active');
+                      this.currentCategory = e.target.dataset.category;
+                      this.filterLogs();
+                  });
+              });
+
+              this.updateStats();
+          }
+
+          addLog(level, module, version, message, errorCode = null, severity = null) {
+              const log = {
+                  id: Date.now() + Math.random(),
+                  timestamp: new Date(),
+                  level,
+                  module: module.toLowerCase(),
+                  version,
+                  message,
+                  errorCode,
+                  severity,
+                  category: this.getCategory(module),
+                  searchText: `${level} ${module} ${message}`.toLowerCase()
+              };
+
+              this.logs.push(log);
+              this.stats.total++;
+              this.stats[level] = (this.stats[level] || 0) + 1;
+
+              // Keep only last 500 logs for performance
+              if (this.logs.length > 500) {
+                  const removed = this.logs.shift();
+                  this.stats[removed.level]--;
+                  this.stats.total--;
+              }
+
+              this.filterLogs();
+              this.updateStats();
+              this.updateDisplay();
+          }
+
+          getCategory(module) {
+              const categoryMap = {
+                  'dashboard': 'system',
+                  'database': 'database',
+                  'api': 'api',
+                  'websocket': 'network',
+                  'security': 'security',
+                  'auth': 'security',
+                  'network': 'network',
+                  'hmr': 'system',
+                  'semver': 'system',
+                  'pattern_match': 'system',
+                  'queue': 'system',
+                  'sync': 'network'
+              };
+              return categoryMap[module] || 'system';
+          }
+
+          filterLogs() {
+              this.filteredLogs = this.logs.filter(log => {
+                  // Category filter
+                  if (this.currentCategory !== 'all' && log.category !== this.currentCategory) {
+                      return false;
+                  }
+
+                  // Search filter
+                  if (this.searchQuery && !log.searchText.includes(this.searchQuery)) {
+                      return false;
+                  }
+
+                  return true;
+              });
+
+              this.sortLogs();
+          }
+
+          sortLogs() {
+              switch (this.currentSort) {
+                  case 'time-desc':
+                      this.filteredLogs.sort((a, b) => b.timestamp - a.timestamp);
+                      break;
+                  case 'time-asc':
+                      this.filteredLogs.sort((a, b) => a.timestamp - b.timestamp);
+                      break;
+                  case 'level-desc':
+                      const levelOrder = { error: 4, warning: 3, info: 2, success: 1, debug: 0 };
+                      this.filteredLogs.sort((a, b) => (levelOrder[b.level] || 0) - (levelOrder[a.level] || 0));
+                      break;
+                  case 'module-asc':
+                      this.filteredLogs.sort((a, b) => a.module.localeCompare(b.module));
+                      break;
+              }
+          }
+
+          updateDisplay() {
+              const streamContent = document.getElementById('streamContent');
+              if (!streamContent) return;
+
+              if (this.groupingEnabled) {
+                  this.displayGrouped(streamContent);
+              } else {
+                  this.displayFlat(streamContent);
+              }
+
+              // Auto-scroll to bottom
+              const dataStream = document.getElementById('dataStream');
+              if (dataStream) {
+                  dataStream.scrollTop = dataStream.scrollHeight;
+              }
+          }
+
+          displayFlat(container) {
+              container.innerHTML = '';
+
+              this.filteredLogs.slice(-50).forEach(log => {
+                  const entry = this.createLogEntry(log);
+                  container.appendChild(entry);
+              });
+          }
+
+          displayGrouped(container) {
+              container.innerHTML = '';
+
+              const groups = {};
+              this.filteredLogs.forEach(log => {
+                  const groupKey = this.currentSort.includes('module') ? log.module :
+                                 this.currentSort.includes('level') ? log.level :
+                                 log.category;
+
+                  if (!groups[groupKey]) {
+                      groups[groupKey] = [];
+                  }
+                  groups[groupKey].push(log);
+              });
+
+              Object.keys(groups).sort().forEach(groupKey => {
+                  const groupDiv = document.createElement('div');
+                  groupDiv.className = 'log-group';
+
+                  const header = document.createElement('div');
+                  header.className = 'log-group-header';
+                  header.innerHTML = `
+                      <span class="group-toggle">▼</span>
+                      <span class="group-title">${groupKey.toUpperCase()}</span>
+                      <span class="group-count">${groups[groupKey].length} logs</span>
+                  `;
+
+                  const content = document.createElement('div');
+                  content.className = 'log-group-content';
+
+                  groups[groupKey].forEach(log => {
+                      const entry = this.createLogEntry(log);
+                      content.appendChild(entry);
+                  });
+
+                  header.addEventListener('click', () => {
+                      const toggle = header.querySelector('.group-toggle');
+                      toggle.classList.toggle('collapsed');
+                      content.classList.toggle('collapsed');
+                  });
+
+                  groupDiv.appendChild(header);
+                  groupDiv.appendChild(content);
+                  container.appendChild(groupDiv);
+              });
+          }
+
+          createLogEntry(log) {
+              const entry = document.createElement('div');
+              entry.className = `stream-entry ${log.level}`;
+              entry.dataset.logId = log.id;
+
+              const timestamp = this.formatTimestamp(log.timestamp);
+              let html = `
+                  <span class="stream-timestamp">[${timestamp}]</span>
+                  <span class="stream-level ${log.level}">[${log.level.toUpperCase()}]</span>
+                  <span class="stream-module ${log.module}">[${log.module.toUpperCase()}]</span>
+                  <span class="stream-version">[v${log.version}]</span>
+              `;
+
+              if (log.errorCode) {
+                  html += `<span class="stream-error-code">[${log.errorCode}]</span>`;
+                  if (log.severity) {
+                      html += `<span class="stream-severity ${log.severity.toLowerCase()}">[${log.severity}]</span>`;
+                  }
+              }
+
+              html += `<span class="stream-message">${log.message}</span>`;
+
+              // Add hover actions
+              html += `
+                  <div class="entry-actions">
+                      <button class="entry-action" onclick="logManager.highlightLog('${log.id}')">📍</button>
+                      <button class="entry-action" onclick="logManager.copyLog('${log.id}')">📋</button>
+                      <button class="entry-action" onclick="logManager.filterBySimilar('${log.id}')">🔍</button>
+                  </div>
+              `;
+
+              entry.innerHTML = html;
+              return entry;
+          }
+
+          formatTimestamp(date) {
+              const formatter = new Intl.DateTimeFormat('en-CA', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  timeZone: currentTimezone,
+                  hour12: false
+              });
+
+              const formatted = formatter.format(date);
+              return formatted.replace(/(\d{4})-(\d{2})-(\d{2}), (\d{2}:\d{2}:\d{2})/, '$1-$2-$3 $4');
+          }
+
+          updateStats() {
+              document.getElementById('totalLogs').textContent = this.stats.total;
+              document.getElementById('errorLogs').textContent = this.stats.error || 0;
+              document.getElementById('warningLogs').textContent = this.stats.warning || 0;
+              document.getElementById('filteredLogs').textContent = this.filteredLogs.length;
+          }
+
+          highlightLog(id) {
+              // Remove previous highlights
+              document.querySelectorAll('.stream-entry.highlighted').forEach(entry => {
+                  entry.classList.remove('highlighted');
+              });
+
+              // Highlight selected log
+              const entry = document.querySelector(`[data-log-id="${id}"]`);
+              if (entry) {
+                  entry.classList.add('highlighted');
+                  entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+          }
+
+          copyLog(id) {
+              const log = this.logs.find(l => l.id == id);
+              if (log) {
+                  const text = `[${this.formatTimestamp(log.timestamp)}] [${log.level.toUpperCase()}] [${log.module.toUpperCase()}] ${log.message}`;
+                  navigator.clipboard.writeText(text).then(() => {
+                      this.showToast('Log copied to clipboard!');
+                  });
+              }
+          }
+
+          filterBySimilar(id) {
+              const log = this.logs.find(l => l.id == id);
+              if (log) {
+                  document.getElementById('logSearch').value = log.module;
+                  this.searchQuery = log.module;
+                  this.filterLogs();
+                  this.updateDisplay();
+              }
+          }
+
+          showToast(message) {
+              // Simple toast notification
+              const toast = document.createElement('div');
+              toast.style.cssText = `
+                  position: fixed;
+                  bottom: 20px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  background: rgba(74, 222, 128, 0.9);
+                  color: white;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  z-index: 10000;
+                  font-size: 12px;
+              `;
+              toast.textContent = message;
+              document.body.appendChild(toast);
+
+              setTimeout(() => {
+                  document.body.removeChild(toast);
+              }, 2000);
+          }
+
+          exportLogs() {
+              const data = this.filteredLogs.map(log => ({
+                  timestamp: log.timestamp.toISOString(),
+                  level: log.level,
+                  module: log.module,
+                  version: log.version,
+                  message: log.message.replace(/<[^>]*>/g, ''), // Strip HTML
+                  errorCode: log.errorCode,
+                  severity: log.severity
+              }));
+
+              const json = JSON.stringify(data, null, 2);
+              const blob = new Blob([json], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `water-dashboard-logs-${Date.now()}.json`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+
+              this.showToast('Logs exported successfully!');
+          }
+
+          clearLogs() {
+              this.logs = [];
+              this.filteredLogs = [];
+              this.stats = { total: 0, error: 0, warning: 0, info: 0, success: 0, debug: 0 };
+              this.updateStats();
+              this.updateDisplay();
+          }
+      }
+
+      // Initialize the log manager
+      const logManager = new LogManager();
+
+      // Global functions for UI interactions
+      function searchLogs() {
+          const query = document.getElementById('logSearch').value;
+          logManager.searchQuery = query.toLowerCase();
+          logManager.filterLogs();
+          logManager.updateDisplay();
+      }
+
+      function clearSearch() {
+          document.getElementById('logSearch').value = '';
+          logManager.searchQuery = '';
+          logManager.filterLogs();
+          logManager.updateDisplay();
+      }
+
+      function sortLogs() {
+          logManager.currentSort = document.getElementById('sortSelect').value;
+          logManager.sortLogs();
+          logManager.updateDisplay();
+      }
+
+      function toggleGrouping() {
+          logManager.groupingEnabled = !logManager.groupingEnabled;
+          const btn = document.querySelector('[onclick="toggleGrouping()"]');
+          if (btn) {
+              btn.textContent = logManager.groupingEnabled ? '📂 Ungroup' : '📁 Group';
+          }
+          logManager.updateDisplay();
+      }
+
+      function exportLogs() {
+          logManager.exportLogs();
+      }
+
+      function clearLogs() {
+          logManager.clearLogs();
+      }
+
+      // Updated addLogEntry function to use new log manager
+      function addLogEntry(level, module, version, message, errorCode = null, severity = null) {
+          logManager.addLog(level, module, version, message, errorCode, severity);
+
+          // Track errors in old system for compatibility
+          if (errorCode) {
+              errorCounts[errorCode] = (errorCounts[errorCode] || 0) + 1;
+              errorCounts.total++;
+              updateErrorCounter();
+          }
+      }
+
+      // =============================================
+      // HEALTH STATUS SYSTEM
+      // =============================================
+
+      class HealthMonitor {
+          constructor() {
+              this.healthData = {};
+              this.expandedPanels = new Set();
+              this.refreshIntervals = {};
+              this.init();
+          }
+
+          init() {
+              // Load initial health data for all services
+              this.loadAllHealthData();
+
+              // Set up auto-refresh for critical services
+              this.startAutoRefresh();
+
+              // Close panels when clicking outside
+              document.addEventListener('click', (e) => {
+                  if (!e.target.closest('.version-item')) {
+                      this.closeAllPanels();
+                  }
+              });
+          }
+
+          async loadAllHealthData() {
+              const services = [
+                  'water-dashboard', 'bun-runtime', 'fire22-api', 'water-schema',
+                  'fire22-core', 'pattern-weaver', 'security-scanner', 'telegram-bot'
+              ];
+
+              for (const service of services) {
+                  await this.loadHealthData(service);
+              }
+          }
+
+          async loadHealthData(serviceName) {
+              try {
+                  const mockData = this.generateMockHealthData(serviceName);
+                  this.healthData[serviceName] = mockData;
+                  this.updateHealthJSON(serviceName, mockData);
+
+                  // Simulate API call delay
+                  setTimeout(() => {
+                      this.updateHealthJSON(serviceName, mockData);
+                  }, 1000 + Math.random() * 2000);
+
+              } catch (error) {
+                  console.error(`Failed to load health data for ${serviceName}:`, error);
+                  this.healthData[serviceName] = { error: error.message, status: 'error' };
+                  this.updateHealthJSON(serviceName, this.healthData[serviceName]);
+              }
+          }
+
+          generateMockHealthData(serviceName) {
+              const baseData = {
+                  service: serviceName,
+                  timestamp: new Date().toISOString(),
+                  uptime: Math.floor(Math.random() * 86400000), // Random uptime in ms
+                  version: this.getServiceVersion(serviceName),
+                  environment: 'development'
+              };
+
+              switch (serviceName) {
+                  case 'water-dashboard':
+                      return {
+                          ...baseData,
+                          status: 'healthy',
+                          endpoints: {
+                              '/api/health': { status: 200, responseTime: 45 },
+                              '/api/status': { status: 200, responseTime: 32 },
+                              '/dashboard': { status: 200, responseTime: 120 }
+                          },
+                          metrics: {
+                              activeUsers: 12,
+                              requestsPerMinute: 156,
+                              memoryUsage: '45.2MB',
+                              cpuUsage: '12.4%'
+                          }
+                      };
+
+                  case 'bun-runtime':
+                      return {
+                          ...baseData,
+                          status: 'healthy',
+                          runtime: {
+                              version: '1.2.21',
+                              platform: navigator.platform,
+                              arch: 'x64',
+                              features: ['TypeScript', 'SQLite', 'WebSocket']
+                          },
+                          performance: {
+                              startupTime: '23ms',
+                              memoryHeap: '128MB',
+                              gcCount: 45
+                          }
+                      };
+
+                  case 'fire22-api':
+                      return {
+                          ...baseData,
+                          status: 'error',
+                          endpoints: {
+                              '/api/v2/health': { status: 503, responseTime: null, error: 'Service Unavailable' },
+                              '/api/v2/customers': { status: 408, responseTime: null, error: 'Request Timeout' },
+                              '/api/v2/auth': { status: 401, responseTime: 89, error: 'Unauthorized' }
+                          },
+                          lastError: {
+                              timestamp: new Date().toISOString(),
+                              message: 'Connection refused to fire22.ag',
+                              code: 'ECONNREFUSED'
+                          }
+                      };
+
+                  case 'telegram-bot':
+                      return {
+                          ...baseData,
+                          status: 'error',
+                          bot: {
+                              connected: false,
+                              lastSeen: '2025-08-28T10:30:00Z',
+                              webhookStatus: 'not_set',
+                              pendingUpdates: 0
+                          },
+                          endpoints: {
+                              '/api/telegram/webhook': { status: 404, error: 'Endpoint not found' },
+                              '/api/telegram/status': { status: 503, error: 'Bot service down' }
+                          }
+                      };
+
+                  default:
+                      // Generate data for other services
+                      const isHealthy = Math.random() > 0.3; // 70% chance of being healthy
+                      return {
+                          ...baseData,
+                          status: isHealthy ? 'healthy' : (Math.random() > 0.5 ? 'warning' : 'error'),
+                          endpoints: this.generateRandomEndpoints(serviceName, isHealthy),
+                          metrics: {
+                              responseTime: Math.floor(Math.random() * 200) + 50,
+                              availability: isHealthy ? '99.9%' : '87.2%',
+                              errorRate: isHealthy ? '0.1%' : '4.7%'
+                          }
+                      };
+              }
+          }
+
+          generateRandomEndpoints(serviceName, isHealthy) {
+              const endpoints = {
+                  [`/api/${serviceName}/status`]: isHealthy ?
+                      { status: 200, responseTime: Math.floor(Math.random() * 100) + 20 } :
+                      { status: 503, error: 'Service Unavailable' },
+                  [`/api/${serviceName}/health`]: isHealthy ?
+                      { status: 200, responseTime: Math.floor(Math.random() * 50) + 10 } :
+                      { status: 500, error: 'Internal Server Error' }
+              };
+              return endpoints;
+          }
+
+          getServiceVersion(serviceName) {
+              const versions = {
+                  'water-dashboard': '4.0.0',
+                  'bun-runtime': '1.2.21',
+                  'fire22-api': 'v2',
+                  'water-schema': '1.0.0',
+                  'fire22-core': '1.5.0',
+                  'pattern-weaver': '2.1.0',
+                  'security-scanner': '1.3.2',
+                  'telegram-bot': '3.0.0-beta.1'
+              };
+              return versions[serviceName] || '1.0.0';
+          }
+
+          updateHealthJSON(serviceName, data) {
+              const jsonElement = document.getElementById(`health-json-${serviceName}`);
+              if (jsonElement) {
+                  jsonElement.innerHTML = this.formatJSON(data);
+              }
+          }
+
+          formatJSON(obj, indent = 0) {
+              const spaces = '  '.repeat(indent);
+              let html = '';
+
+              if (typeof obj === 'object' && obj !== null) {
+                  html += '{\n';
+                  const entries = Object.entries(obj);
+                  entries.forEach(([key, value], index) => {
+                      html += `${spaces}  <span class="json-key">"${key}"</span>: `;
+                      if (typeof value === 'object' && value !== null) {
+                          html += this.formatJSON(value, indent + 1);
+                      } else if (typeof value === 'string') {
+                          html += `<span class="json-string">"${value}"</span>`;
+                      } else if (typeof value === 'number') {
+                          html += `<span class="json-number">${value}</span>`;
+                      } else if (typeof value === 'boolean') {
+                          html += `<span class="json-boolean">${value}</span>`;
+                      } else {
+                          html += `<span class="json-string">${JSON.stringify(value)}</span>`;
+                      }
+                      if (index < entries.length - 1) html += ',';
+                      html += '\n';
+                  });
+                  html += `${spaces}}`;
+              } else {
+                  html += JSON.stringify(obj);
+              }
+
+              return html;
+          }
+
+          startAutoRefresh() {
+              const criticalServices = ['water-dashboard', 'fire22-api', 'telegram-bot'];
+
+              criticalServices.forEach(service => {
+                  this.refreshIntervals[service] = setInterval(() => {
+                      if (this.expandedPanels.has(service)) {
+                          this.loadHealthData(service);
+                      }
+                  }, 30000); // Refresh every 30 seconds for expanded critical services
+              });
+          }
+
+          togglePanel(serviceName) {
+              const panel = document.getElementById(`health-${serviceName}`);
+              if (!panel) return;
+
+              if (this.expandedPanels.has(serviceName)) {
+                  // Close panel
+                  panel.classList.remove('show');
+                  this.expandedPanels.delete(serviceName);
+              } else {
+                  // Close other panels first
+                  this.closeAllPanels();
+
+                  // Open this panel
+                  panel.classList.add('show');
+                  this.expandedPanels.add(serviceName);
+
+                  // Load fresh data when opened
+                  this.loadHealthData(serviceName);
+
+                  // Log the expansion
+                  logManager.addLog('info', 'HEALTH', '2.0.0', `Health panel expanded: ${serviceName}`);
+              }
+          }
+
+          closeAllPanels() {
+              this.expandedPanels.forEach(serviceName => {
+                  const panel = document.getElementById(`health-${serviceName}`);
+                  if (panel) {
+                      panel.classList.remove('show');
+                  }
+              });
+              this.expandedPanels.clear();
+          }
+
+          async refreshHealth(serviceName) {
+              logManager.addLog('info', 'HEALTH', '2.0.0', `Refreshing health data: ${serviceName}`);
+
+              // Show loading state
+              const jsonElement = document.getElementById(`health-json-${serviceName}`);
+              if (jsonElement) {
+                  jsonElement.innerHTML = '<span style="color: #fbbf24;">🔄 Refreshing...</span>';
+              }
+
+              await this.loadHealthData(serviceName);
+
+              // Update health indicator based on status
+              this.updateHealthIndicator(serviceName);
+          }
+
+          async testEndpoints(serviceName) {
+              logManager.addLog('info', 'HEALTH', '2.0.0', `Testing all endpoints: ${serviceName}`);
+
+              const data = this.healthData[serviceName];
+              if (data && data.endpoints) {
+                  // Simulate endpoint testing
+                  Object.keys(data.endpoints).forEach((endpoint, index) => {
+                      setTimeout(() => {
+                          logManager.addLog('info', 'ENDPOINT', '2.0.0', `Testing ${endpoint} - ${data.endpoints[endpoint].status || 'OK'}`);
+                      }, index * 500);
+                  });
+              }
+
+              // Refresh after testing
+              setTimeout(() => {
+                  this.refreshHealth(serviceName);
+              }, 2000);
+          }
+
+          updateHealthIndicator(serviceName) {
+              const indicator = document.querySelector(`[onclick="toggleHealthDetails('${serviceName}')"]`);
+              if (!indicator) return;
+
+              const data = this.healthData[serviceName];
+              if (!data) return;
+
+              // Remove existing classes
+              indicator.classList.remove('green', 'red', 'yellow');
+
+              // Add appropriate class based on status
+              if (data.status === 'healthy') {
+                  indicator.classList.add('green');
+              } else if (data.status === 'error') {
+                  indicator.classList.add('red');
+              } else {
+                  indicator.classList.add('yellow');
+              }
+          }
+      }
+
+      // Initialize health monitor
+      const healthMonitor = new HealthMonitor();
+
+      // Global functions for health system
+      function toggleHealthDetails(serviceName) {
+          healthMonitor.togglePanel(serviceName);
+      }
+
+      function refreshHealth(serviceName) {
+          healthMonitor.refreshHealth(serviceName);
+      }
+
+      function testEndpoints(serviceName) {
+          healthMonitor.testEndpoints(serviceName);
+      }
+
+      // Error tracking system (legacy compatibility)
+      let errorCounts = {
+          total: 0,
+          E1001: 0, E1002: 0, E1003: 0,
+          E2001: 0, E2002: 0,
+          E3001: 0, E3002: 0,
+          E4001: 0, E4002: 0,
+          E5001: 0,
+          E6001: 0
+      };
+
+      // Current timezone
+      let currentTimezone = 'America/New_York';
+
+      // Log filter state
+      let logFilter = 'all';
+
+      // Error code definitions (client-side)
+      const ERROR_CODES = {
+          E1001: { name: "SYSTEM_INIT_FAILED", severity: "CRITICAL", category: "SYSTEM" },
+          E1002: { name: "MEMORY_LIMIT_EXCEEDED", severity: "ERROR", category: "SYSTEM" },
+          E2001: { name: "DB_CONNECTION_FAILED", severity: "CRITICAL", category: "DATABASE" },
+          E2002: { name: "DB_QUERY_TIMEOUT", severity: "ERROR", category: "DATABASE" },
+          E3001: { name: "API_UNAUTHORIZED", severity: "WARNING", category: "API" },
+          E3002: { name: "API_RATE_LIMIT", severity: "WARNING", category: "API" },
+          E4001: { name: "NETWORK_TIMEOUT", severity: "ERROR", category: "NETWORK" },
+          E6001: { name: "SECURITY_VIOLATION", severity: "CRITICAL", category: "SECURITY" }
+      };
+
+      // Format timestamp with timezone
+      function formatTimestamp() {
+          const now = new Date();
+          const formatter = new Intl.DateTimeFormat('en-CA', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              timeZone: currentTimezone,
+              hour12: false
+          });
+
+          const formatted = formatter.format(now);
+          return formatted.replace(/(\d{4})-(\d{2})-(\d{2}), (\d{2}:\d{2}:\d{2})/, '$1-$2-$3 $4');
+      }
+
+      // Add new log entry
+      function addLogEntry(level, module, version, message, errorCode = null, severity = null) {
+          const streamContent = document.getElementById('streamContent');
+          const entry = document.createElement('div');
+          entry.className = `stream-entry ${level}`;
+
+          const timestamp = formatTimestamp();
+          let html = `
+              <span class="stream-timestamp">[${timestamp}]</span>
+              <span class="stream-level ${level}">[${level.toUpperCase()}]</span>
+              <span class="stream-module ${module.toLowerCase()}">[${module}]</span>
+              <span class="stream-version">[v${version}]</span>
+          `;
+
+          if (errorCode) {
+              html += `<span class="stream-error-code">[${errorCode}]</span>`;
+              if (severity) {
+                  html += `<span class="stream-severity ${severity.toLowerCase()}">[${severity}]</span>`;
+              }
+
+              // Track error
+              errorCounts[errorCode] = (errorCounts[errorCode] || 0) + 1;
+              errorCounts.total++;
+              updateErrorCounter();
+          }
+
+          html += `<span class="stream-message">${message}</span>`;
+          entry.innerHTML = html;
+
+          streamContent.appendChild(entry);
+
+          // Auto-scroll to bottom
+          const dataStream = document.getElementById('dataStream');
+          dataStream.scrollTop = dataStream.scrollHeight;
+
+          // Keep only last 50 entries
+          while (streamContent.children.length > 50) {
+              streamContent.removeChild(streamContent.firstChild);
+          }
+
+          // Apply current filter
+          applyLogFilter();
+      }
+
+      // Update error counter
+      function updateErrorCounter() {
+          const counter = document.getElementById('errorCounter');
+          counter.textContent = `Errors: ${errorCounts.total}`;
+      }
+
+      // Handle timezone change
+      document.getElementById('timezoneSelect').addEventListener('change', (e) => {
+          currentTimezone = e.target.value;
+          addLogEntry('info', 'TIMEZONE', '2.0.0', `Timezone changed to ${currentTimezone}`);
+      });
+
+      // Log filtering
+      function applyLogFilter() {
+          const entries = document.querySelectorAll('.stream-entry');
+          entries.forEach(entry => {
+              if (logFilter === 'all') {
+                  entry.style.display = 'block';
+              } else if (logFilter === 'error') {
+                  entry.style.display = entry.classList.contains('error') ? 'block' : 'none';
+              } else if (logFilter === 'warning') {
+                  entry.style.display = entry.classList.contains('warning') ? 'block' : 'none';
+              }
+          });
+      }
+
+      // Log filter controls
+      document.querySelectorAll('.log-btn[data-level]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+              // Remove active class from all buttons
+              document.querySelectorAll('.log-btn').forEach(b => b.classList.remove('active'));
+
+              // Add active class to clicked button
+              e.target.classList.add('active');
+
+              // Update filter
+              logFilter = e.target.dataset.level;
+              applyLogFilter();
+          });
+      });
+
+      // Clear logs
+      function clearLogs() {
+          document.getElementById('streamContent').innerHTML = '';
+          errorCounts = { total: 0 };
+          updateErrorCounter();
+      }
+
+      // Simulated log events with error codes
+      const simulatedEvents = [
+          { level: 'info', module: 'DASHBOARD', version: '4.0.0', message: 'Hot reload triggered for <span class="version-highlight">[pk:@water/dashboard@4.0.0-hmr]</span>' },
+          { level: 'success', module: 'DATABASE', version: '1.0.0', message: 'Cache warmed successfully <span class="version-highlight">[pk:@cloudflare/kv@^2.0.0]</span>' },
+          { level: 'error', module: 'API', version: '2.0.0', message: 'Rate limit exceeded - <a href="../../../crystal-clear-architecture/docs/api/rate-limits.md" class="error-link">docs</a>', errorCode: 'E3002', severity: 'WARNING' },
+          { level: 'warning', module: 'SECURITY', version: '1.3.2', message: 'Multiple failed login attempts detected', errorCode: 'E6001', severity: 'CRITICAL' },
+          { level: 'error', module: 'DATABASE', version: '1.0.0', message: 'Connection pool exhausted - <a href="../docs/database/connection.md" class="error-link">troubleshoot</a>', errorCode: 'E2001', severity: 'CRITICAL' },
+          { level: 'debug', module: 'PATTERN_MATCH', version: '2.1.0', message: 'Regex compiled: <span class="version-highlight">/\\[pk:([^@]+)@([^\\]]+)\\]/g</span>' },
+          { level: 'info', module: 'WEBSOCKET', version: '2.0.0', message: 'New connection established <span class="version-highlight">[pk:@bun/websocket@native]</span>' },
+          { level: 'error', module: 'NETWORK', version: '1.0.0', message: 'DNS resolution timeout for fire22.ag', errorCode: 'E4002', severity: 'ERROR' },
+          { level: 'success', module: 'HMR', version: '4.0.0', message: '🔥 State preserved across hot reload - Dashboard context maintained' },
+          { level: 'info', module: 'HMR', version: '4.0.0', message: 'WebSocket connection established for hot updates <span class="version-highlight">[pk:@bun/hmr@native]</span>' },
+          { level: 'debug', module: 'HMR', version: '4.0.0', message: 'import.meta.hot.data state: <span class="version-highlight">{dashboardState: {...}, preservedAt: Date.now()}</span>' }
+      ];
+
+      let eventIndex = 0;
+
+      function triggerRandomEvent() {
+          const event = simulatedEvents[eventIndex % simulatedEvents.length];
+          addLogEntry(event.level, event.module, event.version, event.message, event.errorCode, event.severity);
+
+          // Update HMR counter when HMR events occur
+          if (event.module === 'HMR' && event.level === 'success') {
+              const hmrUpdates = document.getElementById('hmrUpdates');
+              if (hmrUpdates) {
+                  const currentCount = parseInt(hmrUpdates.textContent) || 0;
+                  hmrUpdates.textContent = (currentCount + 1).toString();
+              }
+          }
+
+          eventIndex++;
+      }
+
+      // Real-time data updates
+      function updateMetrics() {
+          // Update active logs
+          const activeLogs = document.getElementById('activeLogs');
+          const currentLogs = parseInt(activeLogs.textContent.replace(/,/g, ''));
+          activeLogs.textContent = (currentLogs + Math.floor(Math.random() * 100)).toLocaleString();
+
+          // Update cache hits
+          const cacheHits = document.getElementById('cacheHits');
+          const currentHits = parseInt(cacheHits.textContent.replace(/,/g, ''));
+          cacheHits.textContent = (currentHits + Math.floor(Math.random() * 10)).toLocaleString();
+
+          // Update WebSocket connections
+          const wsConns = document.getElementById('wsConnections');
+          const currentConns = parseInt(wsConns.textContent.replace(/,/g, ''));
+          const delta = Math.floor(Math.random() * 20) - 10;
+          wsConns.textContent = Math.max(1000, currentConns + delta).toLocaleString();
+
+          // Update SQLite ops
+          const sqliteOps = document.getElementById('sqliteOps');
+          const baseOps = 89.2;
+          const variation = (Math.random() * 10 - 5);
+          sqliteOps.textContent = (baseOps + variation).toFixed(1) + 'K';
+      }
+
+      // Update performance bars
+      function updatePerformanceBars() {
+          const bars = document.querySelectorAll('.perf-fill');
+          bars.forEach(bar => {
+              const currentWidth = parseInt(bar.style.width);
+              const variation = Math.floor(Math.random() * 10) - 5;
+              const newWidth = Math.max(10, Math.min(100, currentWidth + variation));
+              bar.style.width = newWidth + '%';
+
+              const valueSpan = bar.querySelector('.perf-value');
+              if (valueSpan) {
+                  if (valueSpan.textContent.includes('ms')) {
+                      valueSpan.textContent = Math.max(5, Math.floor(100 - newWidth)) + 'ms';
+                  } else if (valueSpan.textContent.includes('%')) {
+                      valueSpan.textContent = newWidth + '%';
+                  }
+              }
+          });
+      }
+
+      // Add stream entry
+      function addStreamEntry(type, message) {
+          const stream = document.getElementById('dataStream');
+          const entry = document.createElement('div');
+          entry.className = `stream-entry ${type}`;
+
+          const now = new Date();
+          const timestamp = now.toISOString().replace('T', ' ').split('.')[0];
+
+          entry.innerHTML = `
+              <span class="stream-timestamp">${timestamp}</span>
+              <span class="stream-message">${message}</span>
+          `;
+
+          stream.appendChild(entry);
+          stream.scrollTop = stream.scrollHeight;
+
+          // Keep only last 20 entries
+          while (stream.children.length > 20) {
+              stream.removeChild(stream.firstChild);
+          }
+      }
+
+      // Command handler
+      function runCommand(cmd) {
+          const input = document.getElementById('commandInput');
+          input.value = cmd;
+
+          // Simulate command execution
+          setTimeout(() => {
+              handleCommand(cmd);
+              input.value = '';
+          }, 100);
+      }
+
+      function handleCommand(cmd) {
+          const responses = {
+              'bun run dev': 'Starting development server with hot reload...',
+              'bun test': 'Running test suite with Bun test runner... All 247 tests passed!',
+              'bun install': 'Installing dependencies... 247 packages installed in 1.2s',
+              'status': 'System operational • Bun v1.2.21 • Memory: 128MB • CPU: 32% • HMR: Active',
+              'metrics': 'Fetching real-time metrics from Cloudflare Analytics...',
+              'profile': 'Starting performance profiler... Collecting samples',
+              'cache:clear': 'Clearing KV cache... 12,456 entries removed',
+              'hot-reload': 'Hot reload active • Watching 89 files for changes',
+              'hmr': '🔥 HMR Status: Active • Updates: 0 • State Preservation: Enabled • WebSocket: Connected',
+              'hmr status': '🔥 HMR Details: Dashboard v4.0.0-staging • Update Speed: <50ms • Last Reload: Never • State: Preserved',
+              'bun run src/hmr-dev-server.ts': '🔥 Starting HMR development server at http://localhost:3000...',
+              'staging': '🎬 Starting staging server with BUN_ENV=staging...',
+              'staging:health': '🏥 Staging Health: System operational • Security: 0 alerts • Connections: 1 active',
+              'staging:dashboard': '🎭 Opening staging dashboard at http://localhost:3001/dashboard',
+              'security': '🔐 Security Status: 0 alerts • 1 connection monitored • All systems secure',
+              'security status': '🔐 Security Details: E6001: 0 violations • E3002: 0 rate limits • E2001: 0 connection issues'
+          };
+
+          const response = responses[cmd] || `Executing: ${cmd}`;
+          addStreamEntry('success', response);
+      }
+
+      // Command input handler
+      document.getElementById('commandInput').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+              const cmd = e.target.value.trim();
+              if (cmd) {
+                  handleCommand(cmd);
+                  e.target.value = '';
+              }
+          }
+      });
+
+      // Simulated real-time events
+      const events = [
+          { type: 'info', message: 'New WebSocket connection established' },
+          { type: 'success', message: 'Cache warmed successfully [pk:@cloudflare/kv@^2.0.0]' },
+          { type: 'info', message: 'Database query optimized by Bun SQLite driver' },
+          { type: 'success', message: '🔥 Hot reload triggered - files updated with state preservation' },
+          { type: 'warning', message: 'High memory usage detected - optimizing' },
+          { type: 'success', message: 'Memory optimized - 20MB freed' },
+          { type: 'info', message: 'TypeScript compiled natively without transpilation' },
+          { type: 'success', message: 'API endpoint cached in KV store' },
+          { type: 'info', message: 'Bun.serve() handling incoming requests' },
+          { type: 'success', message: 'R2 upload completed - 1.2MB archived' },
+          { type: 'success', message: '🔥 HMR: Dashboard state preserved across update' },
+          { type: 'info', message: '🔥 HMR WebSocket connection established' },
+          { type: 'success', message: '🔥 Hot Module Replacement: <50ms update applied' },
+          { type: 'info', message: '🔐 Security scan completed - 0 threats detected' },
+          { type: 'success', message: '🔐 Connection monitor active - 1 session tracked' },
+          { type: 'warning', message: '⚠️ Rate limit threshold reached - throttling enabled' },
+          { type: 'info', message: '📊 Security metrics updated - all systems operational' },
+          { type: 'success', message: '🎬 Staging environment synchronized with production' }
+      ];
+
+      function randomEvent() {
+          const event = events[Math.floor(Math.random() * events.length)];
+          addStreamEntry(event.type, event.message);
+
+          // Update security metrics based on event type
+          if (event.message.includes('Security') || event.message.includes('🔐')) {
+              updateSecurityMetrics();
+          }
+      }
+
+      // Update security metrics
+      function updateSecurityMetrics() {
+          const securityAlerts = document.getElementById('securityAlerts');
+          const activeConnections = document.getElementById('activeConnections');
+
+          // Simulate security monitoring
+          const alertCount = Math.floor(Math.random() * 3); // 0-2 alerts
+          const connectionCount = Math.floor(Math.random() * 5) + 1; // 1-5 connections
+
+          if (securityAlerts) {
+              securityAlerts.textContent = alertCount;
+              securityAlerts.parentElement.style.background =
+                  alertCount === 0 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(245, 158, 11, 0.1)';
+          }
+
+          if (activeConnections) {
+              activeConnections.textContent = connectionCount;
+          }
+      }
+
+      // Start real-time updates
+      setInterval(updateMetrics, 2000);
+      setInterval(updatePerformanceBars, 3000);
+      setInterval(randomEvent, 5000);
+      setInterval(triggerRandomEvent, 4000);
+
+      // Initial load animation
+      document.addEventListener('DOMContentLoaded', () => {
+          addStreamEntry('success', 'Water Dashboard initialized with Bun Enhanced Edition');
+          addStreamEntry('info', 'All systems operational - monitoring active');
+      });
+    </script>
+
+    <!-- Theme Toggle Script -->
+    <script src="js/theme-toggle.js"></script>
+  </body>
+</html>

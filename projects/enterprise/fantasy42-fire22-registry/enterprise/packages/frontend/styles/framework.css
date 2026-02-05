@@ -1,0 +1,174 @@
+/**
+ * Framework CSS - Crystal Clear Architecture Framework
+ * This file provides the core styling framework for the analytics dashboard
+ */
+
+/* Import terminal framework as base */
+@import url('../../terminal-framework.css');
+
+/* Import analytics-specific styles */
+@import url('../../analytics/analytics.css');
+
+/* ============================================================================
+   CRYSTAL CLEAR ARCHITECTURE BRANDING
+   ========================================================================== */
+
+:root {
+  /* Crystal Clear Brand Colors */
+  --crystal-primary: #2563eb;
+  --crystal-secondary: #1e40af;
+  --crystal-accent: #60a5fa;
+  --crystal-success: #10b981;
+  --crystal-warning: #f59e0b;
+  --crystal-error: #ef4444;
+  --crystal-info: #06b6d4;
+
+  /* Architecture Theme Colors */
+  --architecture-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --architecture-card: rgba(255, 255, 255, 0.05);
+  --architecture-border: rgba(255, 255, 255, 0.1);
+  --architecture-text: #f1f5f9;
+  --architecture-text-secondary: #94a3b8;
+  --architecture-hover: rgba(255, 255, 255, 0.1);
+
+  /* Performance Metrics Colors */
+  --metric-excellent: #10b981;
+  --metric-good: #84cc16;
+  --metric-warning: #f59e0b;
+  --metric-critical: #ef4444;
+
+  /* Dashboard Layout */
+  --dashboard-radius: 12px;
+  --dashboard-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --dashboard-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================================
+   CRYSTAL CLEAR FRAMEWORK UTILITIES
+   ========================================================================== */
+
+.framework-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.framework-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.framework-flex {
+  display: flex;
+  gap: 1rem;
+}
+
+.framework-hidden {
+  display: none !important;
+}
+
+.framework-visible {
+  display: block !important;
+}
+
+/* Crystal Clear Card Styles */
+.crystal-card {
+  background: var(--architecture-card);
+  border: 1px solid var(--architecture-border);
+  border-radius: var(--dashboard-radius);
+  box-shadow: var(--dashboard-shadow);
+  padding: 1.5rem;
+  transition: var(--dashboard-transition);
+}
+
+.crystal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Status Indicators */
+.status-healthy {
+  color: var(--metric-excellent);
+}
+
+.status-warning {
+  color: var(--metric-warning);
+}
+
+.status-critical {
+  color: var(--metric-critical);
+}
+
+.status-good {
+  color: var(--metric-good);
+}
+
+/* KPI Status Dots */
+.kpi-status::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.kpi-status.excellent::before {
+  background: var(--metric-excellent);
+}
+
+.kpi-status.good::before {
+  background: var(--metric-good);
+}
+
+.kpi-status.warning::before {
+  background: var(--metric-warning);
+}
+
+.kpi-status.critical::before {
+  background: var(--metric-critical);
+}
+
+/* Crystal Clear Buttons */
+.crystal-btn {
+  background: var(--crystal-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--dashboard-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--dashboard-transition);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.crystal-btn:hover {
+  background: var(--crystal-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--dashboard-shadow);
+}
+
+.crystal-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--architecture-border);
+  color: var(--architecture-text);
+}
+
+.crystal-btn-secondary:hover {
+  background: var(--architecture-hover);
+  border-color: var(--crystal-accent);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+  .framework-container {
+    padding: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .framework-container {
+    padding: 0 0.25rem;
+  }
+}

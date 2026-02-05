@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Domain Dashboard - {{totalRevenue}}</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+      .dashboard {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: #2c3e50;
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 30px;
+      }
+      .stat-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        text-align: center;
+        border-left: 4px solid #007acc;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      .stat-value {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #007acc;
+        margin: 10px 0;
+      }
+      .stat-label {
+        font-size: 1.1em;
+        color: #666;
+        margin-bottom: 15px;
+      }
+      .stat-meta {
+        font-size: 0.9em;
+        color: #888;
+      }
+      .timezone-info {
+        background: #e8f4fd;
+        padding: 20px;
+        margin: 0 30px 30px;
+        border-radius: 8px;
+        border-left: 4px solid #007acc;
+      }
+      .footer {
+        background: #f8f9fa;
+        padding: 20px 30px;
+        text-align: center;
+        color: #666;
+        font-size: 0.9em;
+      }
+      .refresh-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #28a745;
+        margin-left: 10px;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="header">
+        <h1>🚀 Domain Dashboard</h1>
+        <p>Real-time Business Intelligence & Compliance Monitoring</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value">${{totalRevenue}}</div>
+          <div class="stat-meta">Monthly Total</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Collections</div>
+          <div class="stat-value">{{totalCollections}}</div>
+          <div class="stat-meta">Successful Transactions</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Compliance Rate</div>
+          <div class="stat-value">{{complianceRate}}</div>
+          <div class="stat-meta">Regulatory Compliance</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Active Features</div>
+          <div class="stat-value">{{featureCount}}</div>
+          <div class="stat-meta">Domain Features</div>
+        </div>
+      </div>
+
+      <div class="timezone-info">
+        <h3>🕐 Timezone Information</h3>
+        <p>
+          <strong>Timezone:</strong>
+          {{timezone}}
+        </p>
+        <p>
+          <strong>Current Time:</strong>
+          {{currentTime}}
+        </p>
+        <p>
+          <strong>Offset:</strong>
+          {{timezoneOffset}}
+        </p>
+        <p><em>Last updated: {{lastUpdated}}</em></p>
+      </div>
+
+      <div class="footer">
+        <p>
+          🔄 Auto-refresh every {{refreshInterval}}ms
+          <span class="refresh-indicator"></span>
+        </p>
+        <p>Powered by Bun Runtime | Domain-Driven Architecture</p>
+      </div>
+    </div>
+
+    <script>
+      // Auto-refresh functionality
+      const refreshInterval = {{refreshInterval}};
+
+      function updateTimestamp() {
+          const now = new Date();
+          document.querySelector('.stat-meta:last-child').textContent =
+              'Last updated: ' + now.toLocaleString();
+      }
+
+      setInterval(updateTimestamp, refreshInterval);
+      setInterval(() => location.reload(), refreshInterval);
+    </script>
+  </body>
+</html>

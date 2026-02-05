@@ -1,0 +1,87 @@
+# Cloudflare Pages Configuration for Fire22 Enterprise System
+# Integrates with GitHub Pages deployment and adds dependency analysis
+
+name = "fire22-enterprise-system"
+compatibility_date = "2024-01-01"
+
+[build]
+# Use the docs directory as the build output
+command = "echo 'Build complete - using docs directory'"
+cwd = "docs"
+
+[build.environment]
+NODE_VERSION = "18"
+BUN_VERSION = "1.2.21"
+
+# Build configuration for dependency analysis
+[build.upload]
+dir = "docs"
+include = [
+  "*.html",
+  "*.md",
+  "*.css",
+  "*.js",
+  "_headers",
+  "_redirects"
+]
+exclude = [
+  "node_modules/**",
+  ".git/**",
+  "*.log"
+]
+
+# Environment variables for runtime
+[vars]
+FIRE22_ENV = "production"
+DEPENDENCY_ANALYSIS_ENABLED = "true"
+BUN_RUNTIME = "true"
+
+# Custom domains (if configured)
+# [[custom_domains]]
+# domain = "docs.fire22.dev"
+
+# Headers for security and caching
+[[headers]]
+source = "/dependency-analysis.html"
+[headers.headers]
+X-Robots-Tag = "noindex, nofollow"
+Cache-Control = "public, max-age=300"
+X-Content-Type-Options = "nosniff"
+
+[[headers]]
+source = "/dependency-analysis-report.md"
+[headers.headers]
+X-Robots-Tag = "noindex"
+Content-Type = "text/markdown"
+Cache-Control = "public, max-age=3600"
+
+[[headers]]
+source = "/security-analysis-report.md"
+[headers.headers]
+X-Robots-Tag = "noindex"
+Content-Type = "text/markdown"
+Cache-Control = "public, max-age=3600"
+
+# CORS headers for any API endpoints
+[[headers]]
+source = "/api/*"
+[headers.headers]
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+Access-Control-Allow-Headers = "Content-Type, Authorization"
+
+# Redirects for better UX
+[[redirects]]
+source = "/deps"
+destination = "/dependency-analysis.html"
+status = 302
+
+[[redirects]]
+source = "/analysis"
+destination = "/dependency-analysis.html"
+status = 302
+
+[[redirects]]
+source = "/dependencies"
+destination = "/dependency-analysis.html"
+status = 302

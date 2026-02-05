@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎯 Interactive Hub - Crystal Clear Architecture</title>
+    <meta
+      name="description"
+      content="Complete interactive hub for Crystal Clear Architecture with live tools, documentation, code examples, and real-time demonstrations"
+    />
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>"
+    />
+
+    <style>
+      :root {
+        --primary: #2563eb;
+        --secondary: #1e40af;
+        --accent: #06b6d4;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-light: #f9fafb;
+        --bg-white: #ffffff;
+        --bg-dark: #1f2937;
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+        --glow: 0 0 20px rgba(37, 99, 235, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background: linear-gradient(135deg, var(--bg-light) 0%, #e2e8f0 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        padding: 40px 0;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: var(--border-radius);
+        margin-bottom: 30px;
+        box-shadow: var(--glow);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+        animation: shimmer 4s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .header h1 {
+        font-size: 3.5em;
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+        z-index: 2;
+      }
+
+      .header p {
+        font-size: 1.3em;
+        opacity: 0.9;
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      /* Navigation Bar */
+      .nav-bar {
+        background: var(--bg-white);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid #e5e7eb;
+      }
+
+      .nav-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        background: var(--bg-light);
+        border-radius: var(--border-radius);
+        border: 2px solid #e5e7eb;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        color: var(--text-primary);
+      }
+
+      .nav-item:hover {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: var(--glow);
+      }
+
+      .nav-icon {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+
+      .nav-title {
+        font-size: 1em;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+
+      .nav-description {
+        font-size: 0.8em;
+        text-align: center;
+        opacity: 0.8;
+      }
+
+      /* Status Dashboard */
+      .status-dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .status-card {
+        background: var(--bg-white);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid #e5e7eb;
+        text-align: center;
+      }
+
+      .status-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+
+      .status-title {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+      }
+
+      .status-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .status-description {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+      }
+
+      /* Featured Tools */
+      .featured-section {
+        background: var(--bg-white);
+        border-radius: var(--border-radius);
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+      }
+
+      .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+      }
+
+      .featured-card {
+        background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-white) 100%);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        border: 2px solid #e5e7eb;
+        transition: var(--transition);
+        cursor: pointer;
+      }
+
+      .featured-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-5px);
+        box-shadow: var(--glow);
+      }
+
+      .featured-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .featured-icon {
+        font-size: 2.5em;
+      }
+
+      .featured-content h3 {
+        font-size: 1.4em;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+      }
+
+      .featured-content p {
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+      }
+
+      .featured-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+      }
+
+      .feature-tag {
+        background: var(--primary);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: 600;
+      }
+
+      .featured-button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 100%;
+      }
+
+      .featured-button:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+      }
+
+      /* Quick Actions */
+      .quick-actions {
+        background: var(--bg-white);
+        border-radius: var(--border-radius);
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+      }
+
+      .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .action-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px;
+        background: var(--bg-light);
+        border-radius: var(--border-radius);
+        border: 1px solid #e5e7eb;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        color: var(--text-primary);
+      }
+
+      .action-item:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+      }
+
+      .action-icon {
+        font-size: 1.5em;
+      }
+
+      .action-content h4 {
+        font-size: 1em;
+        margin-bottom: 2px;
+      }
+
+      .action-content p {
+        font-size: 0.8em;
+        opacity: 0.8;
+      }
+
+      /* Recent Activity */
+      .activity-section {
+        background: var(--bg-white);
+        border-radius: var(--border-radius);
+        padding: 30px;
+        box-shadow: var(--shadow);
+      }
+
+      .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: var(--bg-light);
+        border-radius: var(--border-radius);
+        border-left: 4px solid var(--primary);
+      }
+
+      .activity-icon {
+        font-size: 1.5em;
+      }
+
+      .activity-content h4 {
+        font-size: 1em;
+        margin-bottom: 3px;
+        color: var(--text-primary);
+      }
+
+      .activity-content p {
+        font-size: 0.8em;
+        color: var(--text-secondary);
+      }
+
+      .activity-time {
+        font-size: 0.8em;
+        color: var(--text-secondary);
+        margin-left: auto;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2.5em;
+        }
+
+        .nav-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .status-dashboard {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .featured-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .actions-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .nav-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .status-dashboard {
+          grid-template-columns: 1fr;
+        }
+
+        .actions-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>🎯 Interactive Hub</h1>
+        <p>
+          Your complete command center for Crystal Clear Architecture - Live tools, documentation, and real-time
+          demonstrations
+        </p>
+      </div>
+
+      <!-- Navigation Bar -->
+      <div class="nav-bar">
+        <div class="nav-grid">
+          <a href="interactive-docs-navigator.html" class="nav-item">
+            <span class="nav-icon">🔍</span>
+            <div class="nav-title">Docs Search</div>
+            <div class="nav-description">Advanced search & navigation</div>
+          </a>
+          <a href="performance-monitoring.html" class="nav-item">
+            <span class="nav-icon">🚀</span>
+            <div class="nav-title">Performance</div>
+            <div class="nav-description">Monitoring & benchmarking</div>
+          </a>
+          <a href="interactive-api-hub.html" class="nav-item">
+            <span class="nav-icon">🔗</span>
+            <div class="nav-title">API Testing</div>
+            <div class="nav-description">Interactive API testing</div>
+          </a>
+          <a href="live-code-editor.html" class="nav-item">
+            <span class="nav-icon">💻</span>
+            <div class="nav-title">Code Editor</div>
+            <div class="nav-description">Live code execution</div>
+          </a>
+          <a href="advanced-performance-benchmarks.html" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <div class="nav-title">Benchmarks</div>
+            <div class="nav-description">Performance testing</div>
+          </a>
+          <a href="../analytics/index.html" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <div class="nav-title">Analytics</div>
+            <div class="nav-description">Live dashboard</div>
+          </a>
+          <a href="index.html" class="nav-item">
+            <span class="nav-icon">📚</span>
+            <div class="nav-title">Documentation</div>
+            <div class="nav-description">Complete docs</div>
+          </a>
+          <a href="https://github.com/brendadeeznuts1111/crystal-clear-architecture" target="_blank" class="nav-item">
+            <span class="nav-icon">📦</span>
+            <div class="nav-title">GitHub</div>
+            <div class="nav-description">Source code</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Status Dashboard -->
+      <div class="status-dashboard">
+        <div class="status-card">
+          <div class="status-icon">🎯</div>
+          <div class="status-title">System Status</div>
+          <div class="status-value" id="system-status">Online</div>
+          <div class="status-description">All systems operational</div>
+        </div>
+        <div class="status-card">
+          <div class="status-icon">🔧</div>
+          <div class="status-title">Active Tools</div>
+          <div class="status-value" id="active-tools">8</div>
+          <div class="status-description">Interactive tools available</div>
+        </div>
+        <div class="status-card">
+          <div class="status-icon">📊</div>
+          <div class="status-title">Performance</div>
+          <div class="status-value" id="performance-score">98%</div>
+          <div class="status-description">System performance rating</div>
+        </div>
+        <div class="status-card">
+          <div class="status-icon">👥</div>
+          <div class="status-title">Active Sessions</div>
+          <div class="status-value" id="active-sessions">1</div>
+          <div class="status-description">Current active users</div>
+        </div>
+      </div>
+
+      <!-- Featured Tools -->
+      <div class="featured-section">
+        <h2 style="text-align: center; margin-bottom: 30px; color: var(--text-primary)">
+          ⭐ Featured Interactive Tools
+        </h2>
+
+        <div class="featured-grid">
+          <div class="featured-card" onclick="navigateTo('interactive-docs-navigator.html')">
+            <div class="featured-header">
+              <span class="featured-icon">🔍</span>
+              <div class="featured-content">
+                <h3>Interactive Documentation Navigator</h3>
+                <p>Advanced search and navigation system with intelligent filtering and real-time results</p>
+              </div>
+            </div>
+            <div class="featured-features">
+              <span class="feature-tag">Search</span>
+              <span class="feature-tag">Filtering</span>
+              <span class="feature-tag">Real-time</span>
+              <span class="feature-tag">Advanced</span>
+            </div>
+            <button class="featured-button">Launch Navigator</button>
+          </div>
+
+          <div class="featured-card" onclick="navigateTo('performance-monitoring.html')">
+            <div class="featured-header">
+              <span class="featured-icon">🚀</span>
+              <div class="featured-content">
+                <h3>Performance Monitoring Suite</h3>
+                <p>Enterprise-grade performance monitoring with real-time analytics and load testing</p>
+              </div>
+            </div>
+            <div class="featured-features">
+              <span class="feature-tag">Real-time</span>
+              <span class="feature-tag">Load Testing</span>
+              <span class="feature-tag">Analytics</span>
+              <span class="feature-tag">Enterprise</span>
+            </div>
+            <button class="featured-button">Monitor Performance</button>
+          </div>
+
+          <div class="featured-card" onclick="navigateTo('interactive-api-hub.html')">
+            <div class="featured-header">
+              <span class="featured-icon">🔗</span>
+              <div class="featured-content">
+                <h3>Interactive API Testing Hub</h3>
+                <p>Complete API testing interface with live request/response visualization and history</p>
+              </div>
+            </div>
+            <div class="featured-features">
+              <span class="feature-tag">API Testing</span>
+              <span class="feature-tag">Live Demo</span>
+              <span class="feature-tag">History</span>
+              <span class="feature-tag">Interactive</span>
+            </div>
+            <button class="featured-button">Test APIs</button>
+          </div>
+
+          <div class="featured-card" onclick="navigateTo('live-code-editor.html')">
+            <div class="featured-header">
+              <span class="featured-icon">💻</span>
+              <div class="featured-content">
+                <h3>Live Code Editor</h3>
+                <p>Interactive code editor with TypeScript support, real-time execution, and performance monitoring</p>
+              </div>
+            </div>
+            <div class="featured-features">
+              <span class="feature-tag">TypeScript</span>
+              <span class="feature-tag">Execution</span>
+              <span class="feature-tag">Real-time</span>
+              <span class="feature-tag">Performance</span>
+            </div>
+            <button class="featured-button">Start Coding</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-primary)">⚡ Quick Actions</h2>
+
+        <div class="actions-grid">
+          <a href="advanced-performance-benchmarks.html" class="action-item">
+            <span class="action-icon">⚡</span>
+            <div class="action-content">
+              <h4>Run Benchmarks</h4>
+              <p>Execute performance tests</p>
+            </div>
+          </a>
+          <a href="../analytics/performance-dashboard.html" class="action-item">
+            <span class="action-icon">📊</span>
+            <div class="action-content">
+              <h4>View Analytics</h4>
+              <p>Live analytics dashboard</p>
+            </div>
+          </a>
+          <a href="https://dashboard-worker.brendawill2233.workers.dev/api/health" target="_blank" class="action-item">
+            <span class="action-icon">🩺</span>
+            <div class="action-content">
+              <h4>Health Check</h4>
+              <p>API health monitoring</p>
+            </div>
+          </a>
+          <a href="dependency-analysis.html" class="action-item">
+            <span class="action-icon">🔍</span>
+            <div class="action-content">
+              <h4>Dependencies</h4>
+              <p>Analyze dependencies</p>
+            </div>
+          </a>
+          <a href="https://dashboard-worker.brendawill2233.workers.dev/dashboard" target="_blank" class="action-item">
+            <span class="action-icon">🎮</span>
+            <div class="action-content">
+              <h4>Live Dashboard</h4>
+              <p>Production dashboard</p>
+            </div>
+          </a>
+          <a href="communication.html" class="action-item">
+            <span class="action-icon">💬</span>
+            <div class="action-content">
+              <h4>Communication</h4>
+              <p>Domain communication</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="activity-section">
+        <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-primary)">📈 Recent Activity</h2>
+
+        <div class="activity-list">
+          <div class="activity-item">
+            <span class="activity-icon">🚀</span>
+            <div class="activity-content">
+              <h4>Performance Monitoring Suite Deployed</h4>
+              <p>Enterprise-grade monitoring tools now live</p>
+            </div>
+            <span class="activity-time">Just now</span>
+          </div>
+          <div class="activity-item">
+            <span class="activity-icon">🔗</span>
+            <div class="activity-content">
+              <h4>Interactive API Hub Launched</h4>
+              <p>Complete API testing interface available</p>
+            </div>
+            <span class="activity-time">2 min ago</span>
+          </div>
+          <div class="activity-item">
+            <span class="activity-icon">💻</span>
+            <div class="activity-content">
+              <h4>Live Code Editor Activated</h4>
+              <p>TypeScript execution environment ready</p>
+            </div>
+            <span class="activity-time">5 min ago</span>
+          </div>
+          <div class="activity-item">
+            <span class="activity-icon">📊</span>
+            <div class="activity-content">
+              <h4>Analytics Dashboard Updated</h4>
+              <p>Performance monitoring integration complete</p>
+            </div>
+            <span class="activity-time">10 min ago</span>
+          </div>
+          <div class="activity-item">
+            <span class="activity-icon">🔍</span>
+            <div class="activity-content">
+              <h4>Documentation Navigator Enhanced</h4>
+              <p>Advanced search and filtering capabilities</p>
+            </div>
+            <span class="activity-time">15 min ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Interactive Hub Controller
+      class InteractiveHub {
+        constructor() {
+          this.initializeStatusUpdates();
+          this.setupNavigation();
+          this.updateActivityFeed();
+        }
+
+        initializeStatusUpdates() {
+          // Update system status
+          this.updateSystemStatus();
+
+          // Update performance score
+          setInterval(() => {
+            this.updatePerformanceScore();
+          }, 5000);
+
+          // Update active sessions (simulated)
+          setInterval(() => {
+            this.updateActiveSessions();
+          }, 10000);
+        }
+
+        updateSystemStatus() {
+          const statusElement = document.getElementById('system-status');
+          const status = 'Online'; // In real implementation, check actual system status
+          statusElement.textContent = status;
+          statusElement.style.color = status === 'Online' ? 'var(--success)' : 'var(--error)';
+        }
+
+        updatePerformanceScore() {
+          const scoreElement = document.getElementById('performance-score');
+          const scores = ['97%', '98%', '99%', '98%'];
+          const randomScore = scores[Math.floor(Math.random() * scores.length)];
+          scoreElement.textContent = randomScore;
+        }
+
+        updateActiveSessions() {
+          const sessionsElement = document.getElementById('active-sessions');
+          const current = parseInt(sessionsElement.textContent);
+          const newCount = Math.max(1, current + (Math.random() > 0.7 ? 1 : 0));
+          sessionsElement.textContent = newCount;
+        }
+
+        setupNavigation() {
+          // Add click tracking for navigation items
+          document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', e => {
+              const link = item.getAttribute('href');
+              const title = item.querySelector('.nav-title').textContent;
+
+              // Track navigation
+              console.log(`Navigation: ${title} -> ${link}`);
+
+              // Add to activity feed
+              this.addToActivityFeed(`Navigated to ${title}`, 'navigation');
+            });
+          });
+        }
+
+        updateActivityFeed() {
+          // Update timestamps in activity feed
+          setInterval(() => {
+            document.querySelectorAll('.activity-time').forEach(timeElement => {
+              const timeText = timeElement.textContent;
+              if (timeText.includes('min ago')) {
+                const minutes = parseInt(timeText);
+                timeElement.textContent = `${minutes + 1} min ago`;
+              }
+            });
+          }, 60000); // Update every minute
+        }
+
+        addToActivityFeed(message, type) {
+          const activityList = document.querySelector('.activity-list');
+          const activityItem = document.createElement('div');
+          activityItem.className = 'activity-item';
+
+          const icon = type === 'navigation' ? '🧭' : '⚡';
+          activityItem.innerHTML = `
+                    <span class="activity-icon">${icon}</span>
+                    <div class="activity-content">
+                        <h4>${message}</h4>
+                        <p>Interactive hub activity</p>
+                    </div>
+                    <span class="activity-time">Just now</span>
+                `;
+
+          // Insert at the top
+          activityList.insertBefore(activityItem, activityList.firstChild);
+
+          // Keep only last 5 items
+          while (activityList.children.length > 5) {
+            activityList.removeChild(activityList.lastChild);
+          }
+        }
+      }
+
+      // Navigation function
+      function navigateTo(url) {
+        if (url.startsWith('http')) {
+          window.open(url, '_blank');
+        } else {
+          window.location.href = url;
+        }
+      }
+
+      // Initialize the Interactive Hub
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🎯 Initializing Interactive Hub...');
+        new InteractiveHub();
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', e => {
+          // Ctrl+H to return to hub
+          if (e.ctrlKey && e.key === 'h') {
+            e.preventDefault();
+            console.log('Returning to Interactive Hub');
+          }
+
+          // Ctrl+D to open documentation
+          if (e.ctrlKey && e.key === 'd') {
+            e.preventDefault();
+            navigateTo('interactive-docs-navigator.html');
+          }
+
+          // Ctrl+P to open performance tools
+          if (e.ctrlKey && e.key === 'p') {
+            e.preventDefault();
+            navigateTo('performance-monitoring.html');
+          }
+        });
+
+        console.log('✅ Interactive Hub loaded successfully!');
+        console.log('💡 Keyboard shortcuts:');
+        console.log('   Ctrl+H: Return to hub');
+        console.log('   Ctrl+D: Documentation search');
+        console.log('   Ctrl+P: Performance tools');
+      });
+    </script>
+  </body>
+</html>

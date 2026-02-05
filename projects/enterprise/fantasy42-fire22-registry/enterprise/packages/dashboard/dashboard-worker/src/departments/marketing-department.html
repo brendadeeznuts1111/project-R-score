@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢 Fire22 Marketing - Department Overview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .header {
+        background: rgba(10, 14, 39, 0.9);
+        border-bottom: 2px solid rgba(64, 224, 208, 0.3);
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: clamp(28px, 5vw, 42px);
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        color: #9ca3af;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ef4444;
+        display: block;
+      }
+
+      .header-stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 30px;
+        padding: 15px 0;
+      }
+
+      .breadcrumb a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb a:hover {
+        color: #ef4444;
+      }
+
+      .breadcrumb-separator {
+        margin: 0 10px;
+        color: #6b7280;
+      }
+
+      .breadcrumb-current {
+        color: #ef4444;
+        font-weight: 600;
+      }
+
+      .department-overview {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-overview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #ef4444, #dc2626;
+      }
+
+      .overview-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .overview-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: rgba(239, 68, 68, 0.2);
+        border: 3px solid rgba(239, 68, 68, 0.4);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+      }
+
+      .overview-title h2 {
+        font-size: 28px;
+        color: #ef4444;
+        margin-bottom: 8px;
+      }
+
+      .overview-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .team-member {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-member::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .team-member:hover::before {
+        left: 100%;
+      }
+
+      .team-member:hover {
+        background: rgba(0, 0, 0, 0.4);
+        border-color: rgba(239, 68, 68, 0.4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+      }
+
+      .member-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: #fff;
+        background: var(--member-bg, #ef4444, #dc2626);
+        border: 2px solid rgba(239, 68, 68, 0.4);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      }
+
+      .member-info {
+        flex: 1;
+      }
+
+      .member-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin-bottom: 4px;
+      }
+
+      .member-role {
+        font-size: 12px;
+        color: #ef4444;
+        margin-bottom: 2px;
+      }
+
+      .member-stats {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .member-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .action-button {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .action-button:hover {
+        background: #ef4444;
+        color: #0a0e27;
+        transform: translateY(-1px);
+      }
+
+      /* Modal System */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+        display: flex;
+        opacity: 1;
+        align-items: center;
+        justify-content: center;
+        animation: modalFadeIn 0.3s ease;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        border: 2px solid rgba(239, 68, 68, 0.4);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #ef4444;
+        font-size: 16px;
+        transition: all 0.2s ease;
+      }
+
+      .modal-close:hover {
+        background: rgba(239, 68, 68, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Error Banner System */
+      .error-banner {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9));
+        border: 2px solid rgba(239, 68, 68, 0.5);
+        border-radius: 12px;
+        padding: 15px 20px;
+        color: white;
+        font-size: 14px;
+        z-index: 1001;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .error-banner.visible {
+        transform: translateX(0);
+      }
+
+      .error-banner-close {
+        float: right;
+        margin-left: 15px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header-stats {
+          gap: 20px;
+        }
+
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .team-member {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .modal-content {
+          width: 95%;
+          padding: 20px;
+        }
+      }
+
+      /* Department-Specific Color Variables */
+      :root {
+        --dept-primary: #ef4444;
+        --dept-gradient: #ef4444, #dc2626;
+        --dept-bg: rgba(239, 68, 68, 0.2);
+        --dept-border: rgba(239, 68, 68, 0.4);
+        --dept-shadow: rgba(239, 68, 68, 0.3);
+        --dept-hover: rgba(239, 68, 68, 0.1);
+      }
+
+      /* Live Implementation Links */
+      .implementation-links {
+        margin-top: 40px;
+        padding: 30px;
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .implementation-links::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dept-primary), var(--dept-gradient));
+        animation: linkGradient 3s ease-in-out infinite;
+      }
+
+      @keyframes linkGradient {
+        0%,
+        100% {
+          transform: translateX(-100%);
+        }
+        50% {
+          transform: translateX(100%);
+        }
+      }
+
+      .links-header {
+        font-size: 24px;
+        color: var(--dept-primary);
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .link-card {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--dept-border);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .link-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--dept-hover), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .link-card:hover::before {
+        left: 100%;
+      }
+
+      .link-card:hover {
+        transform: translateY(-3px) scale(1.02);
+        background: rgba(0, 0, 0, 0.5);
+        border-color: var(--dept-primary);
+        box-shadow: 0 10px 30px var(--dept-shadow);
+      }
+
+      .link-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--dept-primary);
+        margin-bottom: 8px;
+      }
+
+      .link-description {
+        font-size: 13px;
+        color: #9ca3af;
+        flex: 1;
+      }
+
+      .link-arrow {
+        font-size: 20px;
+        color: var(--dept-primary);
+        align-self: flex-end;
+        margin-top: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .link-card:hover .link-arrow {
+        transform: translateX(5px);
+      }
+
+      @media (max-width: 768px) {
+        .links-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>📈 Marketing</h1>
+      <div class="header-subtitle">Marketing campaigns and customer acquisition</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">14</span>
+          <div class="header-stat-label">Team Members</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">28</span>
+          <div class="header-stat-label">Active Projects</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">92%</span>
+          <div class="header-stat-label">Success Rate</div>
+        </div>
+      </div>
+
+      <!-- Live Implementation Links Section -->
+      <div class="implementation-links">
+        <h3 class="links-header">🔗 Live Implementation Links</h3>
+        <div class="links-grid">
+          <a href="../campaigns/" class="link-card" target="_blank">
+            <div class="link-title">📢 Campaign Manager</div>
+            <div class="link-description">Marketing campaign control</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../analytics/marketing.html" class="link-card" target="_blank">
+            <div class="link-title">📊 Analytics Dashboard</div>
+            <div class="link-description">Marketing performance metrics</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../leads/" class="link-card" target="_blank">
+            <div class="link-title">🎯 Lead Tracker</div>
+            <div class="link-description">Lead generation and tracking</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../social/" class="link-card" target="_blank">
+            <div class="link-title">📱 Social Media Hub</div>
+            <div class="link-description">Social media management</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../email/" class="link-card" target="_blank">
+            <div class="link-title">✉️ Email Marketing</div>
+            <div class="link-description">Email campaign platform</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../brand/" class="link-card" target="_blank">
+            <div class="link-title">🎨 Brand Assets</div>
+            <div class="link-description">Brand resource library</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="/blog/marketing" class="link-card" target="_blank">
+            <div class="link-title">📝 Marketing Blog</div>
+            <div class="link-description">Latest marketing insights and updates</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="/blog/rss.xml" class="link-card" target="_blank">
+            <div class="link-title">📡 RSS Feed</div>
+            <div class="link-description">Subscribe to all Fire22 updates</div>
+            <div class="link-arrow">→</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../dashboard.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="./">🏢 Departments</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Marketing</span>
+      </nav>
+
+      <!-- Welcome Section -->
+      <div class="department-overview" style="margin-bottom: 30px">
+        <div class="overview-header">
+          <div class="overview-icon">👋</div>
+          <div class="overview-title">
+            <h2>Welcome to Marketing Department</h2>
+            <div class="overview-subtitle">Excellence in service, innovation in approach</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 12px">
+          <h3 style="color: var(--dept-primary); margin-bottom: 15px; font-size: 20px">🎯 Department Mission</h3>
+          <p style="color: #e0e6ed; line-height: 1.8; margin-bottom: 20px">
+            The Marketing Department drives brand growth and customer engagement through innovative campaigns,
+            data-driven strategies, and compelling storytelling that resonates with our target audiences.
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+              gap: 20px;
+              margin-top: 25px;
+            "
+          >
+            <div
+              style="
+                padding: 15px;
+                background: rgba(239, 68, 68, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">👔 Team Lead</h4>
+              <div style="color: #e0e6ed; font-weight: bold">Sarah Johnson</div>
+              <div style="color: #9ca3af; font-size: 14px">Chief Marketing Officer</div>
+              <div style="color: #9ca3af; font-size: 12px; margin-top: 5px">14+ years experience</div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(239, 68, 68, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">📊 Key Metrics</h4>
+
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                <span style="color: #9ca3af">Lead Gen:</span>
+                <span style="color: #10b981; font-weight: bold">+127%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                <span style="color: #9ca3af">R O I:</span>
+                <span style="color: #10b981; font-weight: bold">4.2x</span>
+              </div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(239, 68, 68, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">🏆 Team Rankings</h4>
+              <div style="font-size: 14px">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                  <span style="color: #fbbf24">🥇 S. Johnson</span>
+                  <span style="color: #9ca3af">62 impl.</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                  <span style="color: #d1d5db">🥈 A. Brown</span>
+                  <span style="color: #9ca3af">47 impl.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="color: var(--dept-primary); margin: 25px 0 15px; font-size: 20px">💼 Core Responsibilities</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Brand Strategy
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Digital Marketing
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Content Creation
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Campaign Management
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Market Research
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+              "
+            >
+              <span style="color: var(--dept-primary)">•</span>
+              Social Media
+            </div>
+          </div>
+
+          <h3 style="color: var(--dept-primary); margin: 25px 0 15px; font-size: 20px">🚀 Recent Contributions</h3>
+          <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px">
+            <ul style="list-style: none; padding: 0; margin: 0">
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Increased lead generation by 127% through targeted campaigns</span>
+              </li>
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Achieved 4.2x marketing ROI through data-driven optimization</span>
+              </li>
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Grew social media following by 300% across all platforms</span>
+              </li>
+              <li style="padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">
+                  Launched successful rebranding campaign increasing brand value by 45%
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Current Tasks Section (Dynamic) -->
+          <div class="current-tasks-section" style="margin-top: 40px">
+            <div
+              id="department-tasks-container"
+              style="padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 12px"
+            >
+              <div style="text-align: center; padding: 40px; color: #6b7280">
+                <div
+                  style="
+                    display: inline-block;
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid #e5e7eb;
+                    border-top-color: var(--dept-primary);
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                  "
+                ></div>
+                <p style="margin-top: 16px; color: var(--dept-primary)">Loading tasks...</p>
+              </div>
+            </div>
+          </div>
+
+          <style>
+            @keyframes spin {
+              to {
+                transform: rotate(360deg);
+              }
+            }
+          </style>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

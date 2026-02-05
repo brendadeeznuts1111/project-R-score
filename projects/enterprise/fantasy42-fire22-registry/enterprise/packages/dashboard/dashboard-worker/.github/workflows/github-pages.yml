@@ -1,0 +1,252 @@
+name: 🚀 GitHub Pages & Wiki Mirror Deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'wiki/**'
+      - 'src/departments/**'
+      - 'scripts/build-pages.ts'
+      - '.github/workflows/github-pages.yml'
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deployment target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - github-pages
+          - cloudflare-pages
+          - wiki-mirror
+  schedule:
+    # Run daily at 2 AM UTC for wiki sync
+    - cron: '0 2 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+env:
+  BUN_VERSION: '1.2.21'
+
+jobs:
+  # 🏗️ Build GitHub Pages
+  build-pages:
+    name: 🏗️ Build GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🏗️ Build GitHub Pages
+        run: |
+          echo "🚀 Building GitHub Pages with Bun..."
+          bun run build:pages --env production --minify
+
+      - name: 📊 Generate department pages
+        run: |
+          echo "📊 Generating department documentation pages..."
+          bun run scripts/generate-department-pages.ts
+
+      - name: 📝 Generate wiki mirror
+        run: |
+          echo "📝 Mirroring wiki content..."
+          bun run scripts/mirror-wiki.ts
+
+      - name: 🎨 Build assets
+        run: |
+          echo "🎨 Building CSS and static assets..."
+          bun run build:assets
+
+      - name: 📦 Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist/pages
+
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-build
+          path: |
+            dist/pages/
+            dist/wiki/
+            reports/build-report.json
+
+  # 🚀 Deploy to GitHub Pages
+  deploy-github-pages:
+    name: 🚀 Deploy to GitHub Pages
+    if: github.event_name == 'push' || github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'github-pages'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-pages
+    steps:
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: ✅ Verify deployment
+        run: |
+          echo "✅ GitHub Pages deployed successfully!"
+          echo "🔗 URL: ${{ steps.deployment.outputs.page_url }}"
+
+  # ☁️ Deploy to Cloudflare Pages
+  deploy-cloudflare:
+    name: ☁️ Deploy to Cloudflare Pages
+    if: github.event_name == 'push' || github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'cloudflare-pages'
+    runs-on: ubuntu-latest
+    needs: build-pages
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pages-build
+          path: dist/
+
+      - name: ☁️ Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: fire22-dashboard
+          directory: dist/pages
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          wranglerVersion: '3'
+
+      - name: ✅ Verify Cloudflare deployment
+        run: |
+          echo "✅ Cloudflare Pages deployed successfully!"
+          echo "🔗 URL: https://fire22-dashboard.pages.dev"
+          echo "🔗 Custom Domain: https://dashboard.fire22.ag"
+
+  # 📚 Sync Wiki Mirror
+  sync-wiki:
+    name: 📚 Sync Wiki Mirror
+    if: github.event_name == 'schedule' || github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'wiki-mirror'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📥 Checkout wiki
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 📚 Sync wiki content
+        run: |
+          echo "📚 Syncing wiki content..."
+          bun run scripts/sync-wiki.ts --source wiki-repo --target wiki
+
+      - name: 📝 Generate wiki pages
+        run: |
+          echo "📝 Generating wiki static pages..."
+          bun run scripts/build-wiki-pages.ts
+
+      - name: 🔄 Commit wiki changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add wiki/
+          if git diff --staged --quiet; then
+            echo "No wiki changes to commit"
+          else
+            git commit -m "chore: sync wiki mirror [skip ci]"
+            git push
+          fi
+
+  # 🔍 Validate All Deployments
+  validate-deployments:
+    name: 🔍 Validate All Deployments
+    runs-on: ubuntu-latest
+    needs: [deploy-github-pages, deploy-cloudflare, sync-wiki]
+    if: always()
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔍 Validate GitHub Pages
+        run: |
+          echo "🔍 Validating GitHub Pages deployment..."
+          bun run scripts/validate-deployment.ts --target github-pages
+
+      - name: 🔍 Validate Cloudflare Pages
+        run: |
+          echo "🔍 Validating Cloudflare Pages deployment..."
+          bun run scripts/validate-deployment.ts --target cloudflare-pages
+
+      - name: 🔍 Validate Wiki Mirror
+        run: |
+          echo "🔍 Validating Wiki Mirror..."
+          bun run scripts/validate-deployment.ts --target wiki-mirror
+
+      - name: 📊 Generate deployment report
+        run: |
+          echo "📊 Generating deployment report..."
+          bun run scripts/generate-deployment-report.ts
+
+      - name: 📦 Upload validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-validation
+          path: reports/deployment-validation.json
+
+      - name: 📨 Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ All deployments validated successfully!"
+          else
+            echo "⚠️ Some deployments may have issues. Check the validation report."
+          fi

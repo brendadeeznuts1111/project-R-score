@@ -1,0 +1,284 @@
+name: 🏛️ Playbook Compliance & Security Audit
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run weekly compliance audit
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+jobs:
+  security-audit:
+    name: 🔒 Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 🔍 Run Bun Security Audit
+        run: |
+          echo "🔍 Running Bun dependency audit..."
+          bun audit --audit-level moderate
+        continue-on-error: true
+
+      - name: 🛡️ Setup Snyk
+        uses: snyk/actions/setup@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      - name: 🔍 Run Snyk Security Scan
+        run: |
+          echo "🔍 Running Snyk security scan..."
+          snyk test --json --sarif-file=snyk-results.sarif || true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      - name: 📤 Upload Snyk Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk-results.sarif
+        continue-on-error: true
+
+  playbook-compliance:
+    name: 🏛️ Playbook Compliance Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🏛️ Run Playbook Compliance Audit
+        run: bun run scripts/playbook-auditor.ts --all-repos --output json
+
+      - name: 📊 Generate Compliance Report
+        run: bun run scripts/playbook-auditor.ts --all-repos --output markdown
+
+      - name: 📤 Upload Compliance Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playbook-compliance-report
+          path: playbook-compliance-report-*.*
+          retention-days: 30
+
+  type-check:
+    name: 🔷 TypeScript Type Checking
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🔍 Check TypeScript Compilation
+        run: |
+          echo "🔍 Checking TypeScript compilation..."
+          if [ -f "tsconfig.json" ]; then
+            bunx tsc --noEmit
+          else
+            echo "⚠️ No tsconfig.json found - creating basic configuration"
+            echo '{"compilerOptions":{"target":"ES2022","module":"ESNext","lib":["ES2022"],"moduleResolution":"bundler","allowSyntheticDefaultImports":true,"esModuleInterop":true,"strict":true,"skipLibCheck":true},"include":["**/*.ts","**/*.tsx"],"exclude":["node_modules","dist","build"]}' > tsconfig.json
+            bunx tsc --noEmit
+          fi
+
+  lint-format:
+    name: 🎨 Lint & Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🎨 Run Prettier Check
+        run: bunx prettier --check .
+        continue-on-error: true
+
+      - name: 🔍 Run ESLint
+        run: bunx eslint . --ext .ts,.tsx,.js,.jsx
+        continue-on-error: true
+
+      - name: 🎯 Run Stylelint
+        run: bun run stylelint
+        continue-on-error: true
+
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🧪 Run Tests
+        run: bun test
+        continue-on-error: true
+
+      - name: 📊 Generate Test Coverage
+        run: bun test --coverage
+        continue-on-error: true
+
+      - name: 📤 Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            coverage/
+            test-results.xml
+          retention-days: 30
+
+  edge-deployment:
+    name: ☁️ Edge Deployment Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: ☁️ Check Cloudflare Workers Config
+        run: |
+          echo "☁️ Checking Cloudflare Workers configuration..."
+          if [ -f "wrangler.toml" ]; then
+            echo "✅ wrangler.toml found"
+            cat wrangler.toml | head -20
+          else
+            echo "⚠️ No wrangler.toml found - creating basic configuration"
+            cat > wrangler.toml << EOF
+            name = "fantasy42-fire22"
+            compatibility_date = "2024-09-23"
+            compatibility_flags = ["nodejs_compat"]
+
+            [build]
+            command = "bun run build"
+            cwd = "."
+            output_dir = "dist"
+
+            [[pages_build_config]]
+            build_command = "bun run build"
+            destination_dir = "dist"
+            EOF
+          fi
+
+      - name: 🔍 Validate Wrangler Configuration
+        run: |
+          echo "🔍 Validating wrangler configuration..."
+          bunx wrangler --version || echo "Wrangler not available in CI"
+
+  comprehensive-audit:
+    name: 🔍 Comprehensive Edge Case Testing
+    runs-on: ubuntu-latest
+    needs: [security-audit, playbook-compliance, type-check]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🧪 Run Comprehensive Edge Case Tests
+        run: bun run scripts/comprehensive-edge-case-tester.ts --full-suite
+        continue-on-error: true
+
+      - name: 📤 Upload Edge Case Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: edge-case-test-results
+          path: comprehensive-edge-case-report-*.*
+          retention-days: 30
+
+  notification:
+    name: 📢 Compliance Notification
+    runs-on: ubuntu-latest
+    needs: [security-audit, playbook-compliance, comprehensive-audit]
+    if: always()
+    steps:
+      - name: 📊 Generate Compliance Summary
+        run: |
+          echo "## 🏛️ Playbook Compliance Summary" > compliance-summary.md
+          echo "" >> compliance-summary.md
+          echo "**Workflow:** ${{ github.workflow }}" >> compliance-summary.md
+          echo "**Run:** ${{ github.run_number }}" >> compliance-summary.md
+          echo "**Status:** ${{ needs.security-audit.result }} / ${{ needs.playbook-compliance.result }} / ${{ needs.comprehensive-audit.result }}" >> compliance-summary.md
+          echo "" >> compliance-summary.md
+
+          if [ "${{ needs.security-audit.result }}" = "failure" ] || [ "${{ needs.playbook-compliance.result }}" = "failure" ]; then
+            echo "🚨 **CRITICAL:** Compliance violations detected!" >> compliance-summary.md
+            echo "" >> compliance-summary.md
+            echo "### Required Actions:" >> compliance-summary.md
+            echo "- 🔒 Review security audit failures" >> compliance-summary.md
+            echo "- 🏛️ Address playbook compliance violations" >> compliance-summary.md
+            echo "- 📋 Check detailed reports in artifacts" >> compliance-summary.md
+          else
+            echo "✅ **SUCCESS:** All compliance checks passed!" >> compliance-summary.md
+          fi
+
+      - name: 💬 Create Compliance Issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('compliance-summary.md', 'utf8');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🏛️ Playbook Compliance Violations - ${new Date().toISOString().split('T')[0]}`,
+              body: summary,
+              labels: ['compliance', 'security', 'critical']
+            });
+
+      - name: 📤 Upload Compliance Summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-summary
+          path: compliance-summary.md
+          retention-days: 7

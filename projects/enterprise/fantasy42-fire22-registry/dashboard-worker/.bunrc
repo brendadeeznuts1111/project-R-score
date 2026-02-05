@@ -1,0 +1,40 @@
+#!/usr/bin/env bun
+/**
+ * Bun Runtime Configuration
+ * 
+ * This file is automatically loaded by Bun when starting any process.
+ * It initializes the session and sets up registry authentication.
+ */
+
+import { secrets } from "bun";
+
+const SERVICE_NAME = "fire22-dashboard-worker";
+const TOKEN_NAME = "registry-token";
+
+// Only run for main processes, not for every import
+if (process.argv[1]?.includes("bun") || process.argv[1]?.includes("node_modules")) {
+  // Skip for package manager operations
+  process.exit();
+}
+
+// Silently check and set token if available
+(async () => {
+  try {
+    const token = await secrets.get({
+      service: SERVICE_NAME,
+      name: TOKEN_NAME,
+    });
+    
+    if (token) {
+      // Set in environment for current session
+      process.env.FIRE22_REGISTRY_TOKEN = token;
+      
+      // Only show message for main dev commands
+      if (process.argv.includes("dev") || process.argv.includes("start")) {
+        console.log("🔐 Registry authentication loaded");
+      }
+    }
+  } catch {
+    // Silently continue without token
+  }
+})();

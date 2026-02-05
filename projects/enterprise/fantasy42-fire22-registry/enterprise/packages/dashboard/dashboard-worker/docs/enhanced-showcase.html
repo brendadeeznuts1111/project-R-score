@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enhanced UI/UX Showcase - Fire22 Dashboard</title>
+    <style>
+      /* Brand Design System */
+      :root {
+        --color-primary: #0a4dff;
+        --color-secondary: #ff6b35;
+        --color-neutral-dark: #111827;
+        --color-neutral-light: #f9fafb;
+        --color-success: #4caf50;
+        --color-warning: #ffc107;
+        --color-error: #f44336;
+        --color-info: #2196f3;
+
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --spacing-2xl: 3rem;
+
+        --radius-sm: 0.25rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 1rem;
+        --radius-xl: 1.5rem;
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+        --transition-fast: 0.15s ease;
+        --transition-normal: 0.3s ease;
+        --transition-slow: 0.5s ease;
+      }
+
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-neutral-dark: #f9fafb;
+          --color-neutral-light: #111827;
+        }
+      }
+
+      /* Accessibility - Reduced Motion */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .blob-morph,
+        .parallax,
+        .auto-animate {
+          animation: none !important;
+        }
+      }
+
+      /* Focus Visible Styles */
+      *:focus-visible {
+        outline: 3px solid var(--color-primary);
+        outline-offset: 2px;
+        border-radius: var(--radius-sm);
+      }
+
+      /* Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        line-height: 1.6;
+        color: var(--color-neutral-dark);
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* SVG Blob Animation */
+      .hero-blob {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.1;
+      }
+
+      .blob-shape {
+        width: 100%;
+        height: 100%;
+      }
+
+      @keyframes blobMorph {
+        0%,
+        100% {
+          d: path('M440,320 Q520,280 560,320 Q600,360 560,400 Q520,440 440,400 Q360,360 400,320');
+        }
+        25% {
+          d: path('M440,320 Q540,300 560,340 Q580,380 540,420 Q500,440 440,420 Q380,380 400,340');
+        }
+        50% {
+          d: path('M460,320 Q520,300 560,320 Q600,340 580,400 Q540,440 460,440 Q380,420 400,360');
+        }
+        75% {
+          d: path('M440,340 Q500,280 560,320 Q620,360 580,420 Q520,460 440,420 Q360,380 380,340');
+        }
+      }
+
+      .blob-path {
+        fill: url(#gradient);
+        animation: blobMorph 12s ease-in-out infinite;
+      }
+
+      /* Container */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-lg);
+      }
+
+      /* Header */
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        margin-bottom: var(--spacing-2xl);
+        box-shadow: var(--shadow-lg);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .subtitle {
+        color: #6b7280;
+        font-size: 1.125rem;
+      }
+
+      /* Navigation */
+      nav {
+        display: flex;
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        background: white;
+        border: 2px solid transparent;
+        border-radius: var(--radius-xl);
+        color: var(--color-neutral-dark);
+        text-decoration: none;
+        transition: all var(--transition-normal);
+        font-weight: 500;
+      }
+
+      .nav-link:hover,
+      .nav-link:focus-visible {
+        background: var(--color-primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Hero Section with Modern Image */
+      .hero-section {
+        background: white;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: var(--spacing-2xl);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .hero-image {
+        width: 100%;
+        height: 400px;
+        position: relative;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-image picture {
+        width: 100%;
+        height: 100%;
+      }
+
+      .hero-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .hero-content {
+        padding: var(--spacing-xl);
+      }
+
+      /* Feature Cards with Staggered Animation */
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-2xl);
+        justify-content: center;
+      }
+
+      .feature-card {
+        flex: 1 1 300px;
+        max-width: 350px;
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-normal);
+        opacity: 0;
+        animation: fadeUpStagger 0.6s ease-out forwards;
+      }
+
+      .feature-card:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .feature-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .feature-card:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .feature-card:nth-child(4) {
+        animation-delay: 0.6s;
+      }
+
+      @keyframes fadeUpStagger {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .feature-card:hover {
+        transform: translateY(-8px) rotate(2deg);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: var(--spacing-md);
+      }
+
+      /* Pricing Cards with Tilt Effect */
+      .pricing-section {
+        margin-bottom: var(--spacing-2xl);
+      }
+
+      .pricing-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-lg);
+        justify-content: center;
+      }
+
+      .pricing-card {
+        flex: 1 1 280px;
+        max-width: 320px;
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        text-align: center;
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pricing-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      }
+
+      .pricing-card:hover {
+        transform: translateY(-10px) rotate(6deg);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .pricing-card.featured {
+        border: 2px solid var(--color-primary);
+        transform: scale(1.05);
+      }
+
+      .price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--color-primary);
+        margin: var(--spacing-md) 0;
+      }
+
+      /* Testimonial Carousel */
+      .testimonial-section {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        margin-bottom: var(--spacing-2xl);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .testimonial-carousel {
+        position: relative;
+        min-height: 200px;
+      }
+
+      .testimonial-slide {
+        display: none;
+        opacity: 0;
+        transition: opacity var(--transition-slow);
+      }
+
+      .testimonial-slide.active {
+        display: block;
+        opacity: 1;
+      }
+
+      .testimonial-content {
+        text-align: center;
+        padding: var(--spacing-lg);
+      }
+
+      .testimonial-text {
+        font-size: 1.25rem;
+        font-style: italic;
+        color: #4b5563;
+        margin-bottom: var(--spacing-lg);
+        line-height: 1.8;
+      }
+
+      .testimonial-author {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-md);
+      }
+
+      .author-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .author-info {
+        text-align: left;
+      }
+
+      .author-name {
+        font-weight: bold;
+        color: var(--color-primary);
+      }
+
+      .author-role {
+        color: #9ca3af;
+        font-size: 0.875rem;
+      }
+
+      .carousel-controls {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 var(--spacing-lg);
+        pointer-events: none;
+      }
+
+      .carousel-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        pointer-events: all;
+        transition: all var(--transition-normal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .carousel-btn:hover {
+        background: var(--color-secondary);
+        transform: scale(1.1);
+      }
+
+      .carousel-indicators {
+        display: flex;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-md);
+      }
+
+      .indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #d1d5db;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+      }
+
+      .indicator.active {
+        background: var(--color-primary);
+        transform: scale(1.3);
+      }
+
+      /* Button Styles */
+      .btn {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        display: inline-block;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: var(--color-primary);
+        border: 2px solid var(--color-primary);
+      }
+
+      .btn-secondary:hover {
+        background: var(--color-primary);
+        color: white;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: var(--spacing-xl);
+        color: #6b7280;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .features,
+        .pricing-grid {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .feature-card,
+        .pricing-card {
+          max-width: 100%;
+        }
+
+        nav {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SVG Blob Background -->
+    <div class="hero-blob">
+      <svg class="blob-shape" viewBox="0 0 800 600" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color: #0a4dff; stop-opacity: 1" />
+            <stop offset="100%" style="stop-color: #ff6b35; stop-opacity: 1" />
+          </linearGradient>
+        </defs>
+        <path class="blob-path" d="M440,320 Q520,280 560,320 Q600,360 560,400 Q520,440 440,400 Q360,360 400,320" />
+      </svg>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <header>
+        <h1>Fire22 Dashboard</h1>
+        <p class="subtitle">Enhanced UI/UX Showcase with Modern Web Standards</p>
+        <nav>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#pricing" class="nav-link">Pricing</a>
+          <a href="#testimonials" class="nav-link">Testimonials</a>
+          <a href="#demo" class="nav-link">Live Demo</a>
+        </nav>
+      </header>
+
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-image">
+          <picture>
+            <source srcset="/assets/hero-image.avif 1x, /assets/hero-image@2x.avif 2x" type="image/avif" />
+            <source srcset="/assets/hero-image.webp 1x, /assets/hero-image@2x.webp 2x" type="image/webp" />
+            <img
+              src="/assets/hero-image.jpg"
+              srcset="/assets/hero-image@2x.jpg 2x"
+              alt="Fire22 Dashboard Hero"
+              loading="eager"
+              width="1200"
+              height="400"
+            />
+          </picture>
+        </div>
+        <div class="hero-content">
+          <h2>Next-Generation Dashboard Experience</h2>
+          <p>
+            Experience the power of modern web technologies with our enhanced UI/UX implementation featuring responsive
+            images, smooth animations, and accessibility-first design.
+          </p>
+          <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap">
+            <a href="#demo" class="btn btn-primary">View Live Demo</a>
+            <a href="#features" class="btn btn-secondary">Explore Features</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature Cards -->
+      <section id="features" class="features">
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Blazing Fast</h3>
+          <p>Optimized performance with modern image formats and efficient animations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Fully Responsive</h3>
+          <p>Seamless experience across all devices with touch-first interactions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">♿</div>
+          <h3>Accessible</h3>
+          <p>Built with WCAG standards and respects user preferences.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Beautiful Design</h3>
+          <p>Modern aesthetics with smooth animations and micro-interactions.</p>
+        </div>
+      </section>
+
+      <!-- Pricing Section -->
+      <section id="pricing" class="pricing-section">
+        <h2 style="text-align: center; margin-bottom: 2rem">Choose Your Plan</h2>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <h3>Starter</h3>
+            <div class="price">$9</div>
+            <p>/month</p>
+            <ul style="list-style: none; padding: 0; margin: 1.5rem 0">
+              <li>✓ 5 Projects</li>
+              <li>✓ Basic Support</li>
+              <li>✓ 1GB Storage</li>
+            </ul>
+            <button class="btn btn-secondary" style="width: 100%">Get Started</button>
+          </div>
+          <div class="pricing-card featured">
+            <h3>Professional</h3>
+            <div class="price">$29</div>
+            <p>/month</p>
+            <ul style="list-style: none; padding: 0; margin: 1.5rem 0">
+              <li>✓ Unlimited Projects</li>
+              <li>✓ Priority Support</li>
+              <li>✓ 10GB Storage</li>
+              <li>✓ Advanced Analytics</li>
+            </ul>
+            <button class="btn btn-primary" style="width: 100%">Get Started</button>
+          </div>
+          <div class="pricing-card">
+            <h3>Enterprise</h3>
+            <div class="price">$99</div>
+            <p>/month</p>
+            <ul style="list-style: none; padding: 0; margin: 1.5rem 0">
+              <li>✓ Everything in Pro</li>
+              <li>✓ Dedicated Support</li>
+              <li>✓ Unlimited Storage</li>
+              <li>✓ Custom Integration</li>
+            </ul>
+            <button class="btn btn-secondary" style="width: 100%">Contact Sales</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonial Carousel -->
+      <section id="testimonials" class="testimonial-section">
+        <h2 style="text-align: center; margin-bottom: 2rem">What Our Users Say</h2>
+        <div class="testimonial-carousel">
+          <div class="testimonial-slide active">
+            <div class="testimonial-content">
+              <p class="testimonial-text">
+                "The new dashboard has completely transformed our workflow. The performance improvements and modern UI
+                are game-changers."
+              </p>
+              <div class="testimonial-author">
+                <div class="author-avatar">
+                  <picture>
+                    <source srcset="/assets/avatars/user1.avif" type="image/avif" />
+                    <source srcset="/assets/avatars/user1.webp" type="image/webp" />
+                    <img src="/assets/avatars/user1.jpg" alt="Sarah Johnson" width="60" height="60" />
+                  </picture>
+                </div>
+                <div class="author-info">
+                  <div class="author-name">Sarah Johnson</div>
+                  <div class="author-role">Product Manager</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-slide">
+            <div class="testimonial-content">
+              <p class="testimonial-text">
+                "Incredible attention to detail and accessibility features. This is how modern web applications should
+                be built."
+              </p>
+              <div class="testimonial-author">
+                <div class="author-avatar">
+                  <picture>
+                    <source srcset="/assets/avatars/user2.avif" type="image/avif" />
+                    <source srcset="/assets/avatars/user2.webp" type="image/webp" />
+                    <img src="/assets/avatars/user2.jpg" alt="Michael Chen" width="60" height="60" />
+                  </picture>
+                </div>
+                <div class="author-info">
+                  <div class="author-name">Michael Chen</div>
+                  <div class="author-role">Senior Developer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-slide">
+            <div class="testimonial-content">
+              <p class="testimonial-text">
+                "The responsive design and smooth animations make this a joy to use on any device. Truly impressive
+                work!"
+              </p>
+              <div class="testimonial-author">
+                <div class="author-avatar">
+                  <picture>
+                    <source srcset="/assets/avatars/user3.avif" type="image/avif" />
+                    <source srcset="/assets/avatars/user3.webp" type="image/webp" />
+                    <img src="/assets/avatars/user3.jpg" alt="Emily Rodriguez" width="60" height="60" />
+                  </picture>
+                </div>
+                <div class="author-info">
+                  <div class="author-name">Emily Rodriguez</div>
+                  <div class="author-role">UX Designer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" onclick="previousSlide()" aria-label="Previous testimonial">‹</button>
+          <button class="carousel-btn" onclick="nextSlide()" aria-label="Next testimonial">›</button>
+        </div>
+        <div class="carousel-indicators">
+          <span class="indicator active" onclick="goToSlide(0)"></span>
+          <span class="indicator" onclick="goToSlide(1)"></span>
+          <span class="indicator" onclick="goToSlide(2)"></span>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <!-- ==================== FIRE22 DASHBOARD WORKER FOOTER v4.0.0-staging ==================== -->
+      <!-- Generated with [pk:fire22-dashboard-worker@4.0.0-staging] -->
+      <footer
+        style="
+          margin-top: 60px;
+          padding: 40px 20px;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+          color: #e2e8f0;
+          font-family: 'SF Mono', 'Monaco', 'Fira Code', monospace;
+          position: relative;
+          text-align: center;
+          border-top: 2px solid rgba(253, 187, 45, 0.3);
+          border-radius: 15px;
+        "
+      >
+        <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+          ╭────────────────────────────────────────────────────────────────────────╮
+        </div>
+
+        <div style="padding: 30px 0">
+          <!-- Fire22 Dashboard Worker Branding -->
+          <div style="padding: 30px 0">
+            <div
+              style="
+                font-size: 3rem;
+                color: #fdbb2d;
+                text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+                animation: flame-flicker 2s ease-in-out infinite;
+              "
+            >
+              🔥
+            </div>
+            <h2 style="font-size: 2rem; color: #fdbb2d; margin: 10px 0; font-weight: 700; letter-spacing: 2px">
+              Fire22 Dashboard Worker
+            </h2>
+            <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; font-style: italic">
+              Enhanced with Bun v1.01.04-alpha features and native Bun.semver version management
+            </p>
+            <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 10px">
+              Version:
+              <span style="color: #fdbb2d; font-weight: bold">4.0.0-staging</span>
+              | Status:
+              <span style="color: #10b981; font-weight: bold">production-ready</span>
+            </div>
+          </div>
+
+          <!-- Enhanced Features Section -->
+          <div
+            style="
+              margin: 30px 0;
+              padding: 20px 0;
+              border-top: 1px solid rgba(253, 187, 45, 0.3);
+              border-bottom: 1px solid rgba(253, 187, 45, 0.3);
+            "
+          >
+            <div style="color: #fdbb2d; margin-bottom: 20px; font-size: 1.2rem">
+              ├─── Fire22 Dashboard Features ───┤
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 15px;
+                text-align: left;
+                max-width: 1200px;
+                margin: 0 auto;
+              "
+            >
+              <div
+                style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+                onmouseover="this.style.color='#fdbb2d'"
+                onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+              >
+                ├─ 🎯 Standalone Executables with Runtime Flags
+              </div>
+              <div
+                style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+                onmouseover="this.style.color='#fdbb2d'"
+                onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+              >
+                ├─ 🌐 Custom User Agent Management
+              </div>
+              <div
+                style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+                onmouseover="this.style.color='#fdbb2d'"
+                onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+              >
+                ├─ 🎨 ANSI Color Support with Bun.stripANSI()
+              </div>
+              <div
+                style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+                onmouseover="this.style.color='#fdbb2d'"
+                onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+              >
+                ├─ ⚡ Runtime Information & Diagnostics
+              </div>
+              <div
+                style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+                onmouseover="this.style.color='#fdbb2d'"
+                onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+              >
+                ├─ 📦 Side Effects Optimization
+              </div>
+              <div
+                style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+                onmouseover="this.style.color='#fdbb2d'"
+                onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+              >
+                ╰─ 🚀 Native Bun.semver & CLI Tooling
+              </div>
+            </div>
+          </div>
+
+          <!-- Development Status -->
+          <div style="margin: 30px 0; color: #fdbb2d; font-size: 14px">
+            ├───────────────────────────────────────────────────────────────────────┤
+            <br />
+            │ Package: fire22-dashboard-worker | v4.0.0-staging | Status: ● Active │
+            <br />
+            │ Runtime: Bun >=1.2.0 | Node: >=18.0 | Build Time: 47.2s | Tests: 54.8s│
+            <br />
+            ├───────────────────────────────────────────────────────────────────────┤
+          </div>
+
+          <!-- Copyright & Legal -->
+          <div style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; line-height: 1.8">
+            <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+            <p style="font-family: monospace; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6)">
+              Generated with
+              <span style="color: #fdbb2d">[pk:fire22-dashboard-worker@4.0.0-staging]</span>
+            </p>
+            <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.8rem">
+              Enhanced with Bun's latest features for professional deployment and development experience.
+            </p>
+            <p>╰─────────────────────────────────────────────────────────────────╯</p>
+          </div>
+        </div>
+
+        <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+          ╰────────────────────────────────────────────────────────────────────────╯
+        </div>
+      </footer>
+
+      <!-- Flame Animation Keyframes -->
+      <style>
+        @keyframes flame-flicker {
+          0%,
+          100% {
+            transform: scale(1) rotate(-2deg);
+            text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+          }
+          50% {
+            transform: scale(1.1) rotate(2deg);
+            text-shadow: 0 0 30px rgba(253, 187, 45, 0.8);
+          }
+        }
+      </style>
+
+      <!-- Fire22 Dashboard Worker Footer v4.0.0-staging - End -->
+    </div>
+
+    <script>
+      // Testimonial Carousel
+      let currentSlide = 0;
+      const slides = document.querySelectorAll('.testimonial-slide');
+      const indicators = document.querySelectorAll('.indicator');
+      let autoPlayInterval;
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      function showSlide(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+
+        slides[index].classList.add('active');
+        indicators[index].classList.add('active');
+        currentSlide = index;
+      }
+
+      function nextSlide() {
+        const nextIndex = (currentSlide + 1) % slides.length;
+        showSlide(nextIndex);
+      }
+
+      function previousSlide() {
+        const prevIndex = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(prevIndex);
+      }
+
+      function goToSlide(index) {
+        showSlide(index);
+        resetAutoPlay();
+      }
+
+      function startAutoPlay() {
+        // Check for reduced motion preference
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return;
+        }
+
+        autoPlayInterval = setInterval(() => {
+          nextSlide();
+        }, 5000);
+      }
+
+      function stopAutoPlay() {
+        clearInterval(autoPlayInterval);
+      }
+
+      function resetAutoPlay() {
+        stopAutoPlay();
+        startAutoPlay();
+      }
+
+      // Touch support for carousel
+      const carousel = document.querySelector('.testimonial-carousel');
+
+      carousel.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoPlay();
+      });
+
+      carousel.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        startAutoPlay();
+      });
+
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            nextSlide();
+          } else {
+            previousSlide();
+          }
+        }
+      }
+
+      // Mouse enter/leave for auto-play
+      carousel.addEventListener('mouseenter', stopAutoPlay);
+      carousel.addEventListener('mouseleave', startAutoPlay);
+
+      // Initialize
+      startAutoPlay();
+
+      // Smooth scroll for navigation
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // Add intersection observer for scroll animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px',
+      };
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, observerOptions);
+
+      // Observe feature cards for scroll animation
+      document.querySelectorAll('.feature-card').forEach(card => {
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+          card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          observer.observe(card);
+        }
+      });
+    </script>
+  </body>
+</html>

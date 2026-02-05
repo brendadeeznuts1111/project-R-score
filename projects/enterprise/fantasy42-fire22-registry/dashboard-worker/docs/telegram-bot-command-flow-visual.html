@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🤖🗺️ Fire22 Telegram Bot Command Flow & Data Travel</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .flow-section {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      .command-flow {
+        display: grid;
+        grid-template-columns: 1fr 50px 1fr 50px 1fr;
+        align-items: center;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      .bot-command {
+        background: rgba(26, 42, 108, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #1a2a6c;
+        text-align: center;
+        position: relative;
+      }
+
+      .bot-command::before {
+        content: '🤖';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        font-size: 1.5rem;
+        background: rgba(26, 42, 108, 1);
+        border-radius: 50%;
+        padding: 5px;
+      }
+
+      .data-process {
+        background: rgba(253, 187, 45, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #fdbb2d;
+        text-align: center;
+        position: relative;
+      }
+
+      .data-process::before {
+        content: '⚙️';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        font-size: 1.5rem;
+        background: rgba(253, 187, 45, 1);
+        border-radius: 50%;
+        padding: 5px;
+      }
+
+      .system-response {
+        background: rgba(178, 31, 31, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #b21f1f;
+        text-align: center;
+        position: relative;
+      }
+
+      .system-response::before {
+        content: '🔥';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        font-size: 1.5rem;
+        background: rgba(178, 31, 31, 1);
+        border-radius: 50%;
+        padding: 5px;
+      }
+
+      .flow-arrow {
+        font-size: 2rem;
+        color: #fdbb2d;
+        text-align: center;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .telegram-button {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid rgba(253, 187, 45, 0.3);
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .telegram-button:hover {
+        background: rgba(253, 187, 45, 0.2);
+        border-color: #fdbb2d;
+        transform: translateY(-3px);
+      }
+
+      .telegram-button .emoji {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .data-flow-diagram {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        position: relative;
+      }
+
+      .flow-step {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+
+      .step-number {
+        background: #fdbb2d;
+        color: #000;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+      }
+
+      .language-selector {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin: 15px 0;
+      }
+
+      .lang-button {
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(253, 187, 45, 0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .lang-button:hover {
+        background: rgba(253, 187, 45, 0.2);
+        border-color: #fdbb2d;
+      }
+
+      .notification-demo {
+        background: rgba(26, 42, 108, 0.3);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border-left: 4px solid #1a2a6c;
+      }
+
+      .keyboard-demo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0;
+      }
+
+      .inline-button {
+        background: rgba(253, 187, 45, 0.8);
+        color: #000;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .inline-button:hover {
+        background: #fdbb2d;
+        transform: scale(1.05);
+      }
+
+      .data-path {
+        position: relative;
+        margin: 20px 0;
+      }
+
+      .path-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #1a2a6c, #fdbb2d, #b21f1f);
+        z-index: 1;
+      }
+
+      .path-nodes {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      }
+
+      .path-node {
+        background: rgba(255, 255, 255, 0.9);
+        color: #000;
+        padding: 10px;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 3px solid #fdbb2d;
+      }
+
+      .interactive-demo {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .demo-controls {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+        flex-wrap: wrap;
+      }
+
+      .demo-button {
+        background: #1a2a6c;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .demo-button:hover {
+        background: #2a3a7c;
+        transform: translateY(-2px);
+      }
+
+      .demo-output {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-family: monospace;
+        min-height: 100px;
+      }
+
+      @media (max-width: 768px) {
+        .command-flow {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .flow-arrow {
+          transform: rotate(90deg);
+        }
+
+        .button-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🤖🗺️ Fire22 Telegram Bot Command Flow</h1>
+        <p class="subtitle">Interactive Visual Mapping of Bot Commands, Buttons & Data Travel</p>
+        <p class="subtitle">Complete multilingual workflow visualization</p>
+      </header>
+
+      <div class="flow-section">
+        <h2>🚀 Bot Command Overview</h2>
+        <p>Interactive map of all Telegram bot commands and their data flow through the Fire22 system:</p>
+
+        <div class="button-grid">
+          <div class="telegram-button" onclick="showCommandFlow('start')">
+            <span class="emoji">🎉</span>
+            <strong>/start</strong>
+            <div>User Registration & Welcome</div>
+          </div>
+
+          <div class="telegram-button" onclick="showCommandFlow('link')">
+            <span class="emoji">🔗</span>
+            <strong>/link</strong>
+            <div>Account Linking</div>
+          </div>
+
+          <div class="telegram-button" onclick="showCommandFlow('dashboard')">
+            <span class="emoji">📊</span>
+            <strong>/dashboard</strong>
+            <div>Quick Dashboard Access</div>
+          </div>
+
+          <div class="telegram-button" onclick="showCommandFlow('language')">
+            <span class="emoji">🌐</span>
+            <strong>/language</strong>
+            <div>Language Selection</div>
+          </div>
+
+          <div class="telegram-button" onclick="showCommandFlow('stats')">
+            <span class="emoji">📈</span>
+            <strong>/stats</strong>
+            <div>System Statistics</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-section" id="command-flow-display">
+        <h2 id="flow-title">👆 Click a command above to see its data flow</h2>
+        <div id="flow-content">
+          <p>
+            Select any command button above to visualize how data travels through the Fire22 system, from Telegram user
+            interaction to database updates and response generation.
+          </p>
+        </div>
+      </div>
+
+      <div class="flow-section">
+        <h2>🔄 Real-time Notification Flows</h2>
+        <p>How different types of notifications travel through the system:</p>
+
+        <div class="data-flow-diagram">
+          <h3>💰 Transaction Notification Flow</h3>
+          <div class="flow-step">
+            <div class="step-number">1</div>
+            <div>
+              <strong>Transaction Event</strong>
+              <br />
+              Fire22 system detects new transaction
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">2</div>
+            <div>
+              <strong>User Language Detection</strong>
+              <br />
+              System retrieves user's preferred language
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">3</div>
+            <div>
+              <strong>Message Generation</strong>
+              <br />
+              MultilingualTelegramBot.generateTransactionNotification()
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">4</div>
+            <div>
+              <strong>Telegram Delivery</strong>
+              <br />
+              Bot sends formatted message with interactive buttons
+            </div>
+          </div>
+
+          <div class="notification-demo">
+            🚨 New Transaction Alert
+            <br />
+            💰 Amount: $500.00
+            <br />
+            📊 Type: Deposit
+            <br />
+            ⏰ Time: 8/27/2025, 10:15:32 PM
+            <br />
+            <br />
+            <div class="keyboard-demo">
+              <button class="inline-button">View Dashboard</button>
+              <button class="inline-button">Dismiss</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-flow-diagram">
+          <h3>🎯 P2P Match Notification Flow</h3>
+          <div class="flow-step">
+            <div class="step-number">1</div>
+            <div>
+              <strong>P2P Queue Event</strong>
+              <br />
+              System finds potential transaction matches
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">2</div>
+            <div>
+              <strong>Match Scoring</strong>
+              <br />
+              Algorithm calculates match quality scores
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">3</div>
+            <div>
+              <strong>Multilingual Generation</strong>
+              <br />
+              generateP2PMatchNotification() with user language
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="step-number">4</div>
+            <div>
+              <strong>Interactive Delivery</strong>
+              <br />
+              Send to user + P2P group with action buttons
+            </div>
+          </div>
+
+          <div class="notification-demo">
+            🎯 P2P Match Found
+            <br />
+            📋 Queue ID: QUEUE_12345
+            <br />
+            🔍 3 potential matches
+            <br />
+            <br />
+            1. $1000 via Bank Transfer (Score: 95%)
+            <br />
+            2. $1000 via PayPal (Score: 88%)
+            <br />
+            <br />
+            <div class="keyboard-demo">
+              <button class="inline-button">✅ Process Best Match</button>
+              <button class="inline-button">📋 View All</button>
+              <button class="inline-button">⏳ Wait for Better</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-section">
+        <h2>🌐 Language System Integration</h2>
+        <p>How the multilingual system works across all bot interactions:</p>
+
+        <div class="data-path">
+          <div class="path-line"></div>
+          <div class="path-nodes">
+            <div class="path-node">👤</div>
+            <div class="path-node">🔍</div>
+            <div class="path-node">🌐</div>
+            <div class="path-node">💬</div>
+            <div class="path-node">📱</div>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+          "
+        >
+          <div>User Interaction</div>
+          <div>Language Detection</div>
+          <div>Translation Lookup</div>
+          <div>Message Generation</div>
+          <div>Telegram Delivery</div>
+        </div>
+
+        <div class="interactive-demo">
+          <h3>🧪 Interactive Language Demo</h3>
+          <p>Try different languages to see how messages change:</p>
+
+          <div class="language-selector">
+            <div class="lang-button" onclick="changeLanguage('en')">🇺🇸 English</div>
+            <div class="lang-button" onclick="changeLanguage('es')">🇪🇸 Español</div>
+            <div class="lang-button" onclick="changeLanguage('pt')">🇵🇹 Português</div>
+            <div class="lang-button" onclick="changeLanguage('fr')">🇫🇷 Français</div>
+          </div>
+
+          <div class="demo-controls">
+            <button class="demo-button" onclick="showDemo('welcome')">Welcome Message</button>
+            <button class="demo-button" onclick="showDemo('transaction')">Transaction Alert</button>
+            <button class="demo-button" onclick="showDemo('p2p')">P2P Match</button>
+            <button class="demo-button" onclick="showDemo('support')">Support Ticket</button>
+          </div>
+
+          <div class="demo-output" id="language-demo-output">
+            Select a language and demo type above to see multilingual messages in action.
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-section">
+        <h2>🎛️ Callback Query Processing</h2>
+        <p>How interactive button presses are handled:</p>
+
+        <div class="command-flow">
+          <div class="bot-command">
+            <strong>Button Press</strong>
+            <br />
+            User clicks inline button
+            <br />
+            <code>callback_data</code>
+          </div>
+          <div class="flow-arrow">➡️</div>
+          <div class="data-process">
+            <strong>Query Processing</strong>
+            <br />
+            Parse callback data
+            <br />
+            Determine action
+          </div>
+          <div class="flow-arrow">➡️</div>
+          <div class="system-response">
+            <strong>Action Execution</strong>
+            <br />
+            Execute business logic
+            <br />
+            Generate response
+          </div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; margin: 15px 0">
+          <h4>📝 Callback Data Examples:</h4>
+          <ul style="margin-left: 20px; margin-top: 10px">
+            <li>
+              <code>set_lang_es</code>
+              → Switch user language to Spanish
+            </li>
+            <li>
+              <code>approve_deposit_67890</code>
+              → Approve deposit operation #67890
+            </li>
+            <li>
+              <code>process_match_QUEUE123_MATCH001</code>
+              → Process P2P match
+            </li>
+            <li>
+              <code>escalate_ticket_12345</code>
+              → Escalate support ticket #12345
+            </li>
+            <li>
+              <code>dismiss_alert</code>
+              → Dismiss notification
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flow-section">
+        <h2>📊 System Architecture Overview</h2>
+        <p>Complete data flow through the Fire22 Telegram integration:</p>
+
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0"
+        >
+          <div style="background: rgba(26, 42, 108, 0.8); padding: 20px; border-radius: 10px; text-align: center">
+            <h4 style="color: #fdbb2d">🤖 Telegram Bot Layer</h4>
+            <p>Fire22TelegramIntegration</p>
+            <p>Command handling, callbacks</p>
+          </div>
+
+          <div
+            style="
+              background: rgba(253, 187, 45, 0.8);
+              color: #000;
+              padding: 20px;
+              border-radius: 10px;
+              text-align: center;
+            "
+          >
+            <h4>🌐 Language System</h4>
+            <p>MultilingualTelegramBot</p>
+            <p>Translation & localization</p>
+          </div>
+
+          <div style="background: rgba(178, 31, 31, 0.8); padding: 20px; border-radius: 10px; text-align: center">
+            <h4 style="color: #fdbb2d">🔥 Fire22 Core</h4>
+            <p>Business logic & database</p>
+            <p>P2P, cashier, support systems</p>
+          </div>
+
+          <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; text-align: center">
+            <h4 style="color: #fdbb2d">📱 Telegram API</h4>
+            <p>Message delivery</p>
+            <p>User interaction interface</p>
+          </div>
+        </div>
+      </div>
+
+      <footer
+        style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(0, 0, 0, 0.3); border-radius: 15px"
+      >
+        <h3 style="color: #fdbb2d; margin-bottom: 15px">🤖🗺️ Fire22 Telegram Bot Flow Visualization</h3>
+        <p style="opacity: 0.8">Complete visual mapping of commands, data flow, and multilingual interactions</p>
+        <p style="opacity: 0.6; margin-top: 15px">&copy; 2024 Fire22 Development Team</p>
+      </footer>
+    </div>
+
+    <script>
+      let currentLanguage = 'en';
+
+      // Language translations for demo
+      const translations = {
+        welcome: {
+          en: '🎉 Welcome to Fire22 Dashboard!\n\n👤 User: John Doe\n🆔 ID: 123456789\n🌐 Language: English',
+          es: '🎉 ¡Bienvenido al Dashboard de Fire22!\n\n👤 Usuario: Juan Pérez\n🆔 ID: 123456789\n🌐 Idioma: Español',
+          pt: '🎉 Bem-vindo ao Dashboard Fire22!\n\n👤 Usuário: João Silva\n🆔 ID: 123456789\n🌐 Idioma: Português',
+          fr: '🎉 Bienvenue sur le tableau de bord Fire22!\n\n👤 Utilisateur: Jean Martin\n🆔 ID: 123456789\n🌐 Langue: Français',
+        },
+        transaction: {
+          en: '🚨 New Transaction Alert\n\n💰 Amount: $500.00\n📊 Type: Deposit\n⏰ Time: 8/27/2025, 10:15:32 PM\n🆔 Reference: TXN_001',
+          es: '🚨 Alerta de Nueva Transacción\n\n💰 Cantidad: $500.00\n📊 Tipo: Depósito\n⏰ Tiempo: 27/8/2025 22:15:32\n🆔 Referencia: TXN_001',
+          pt: '🚨 Alerta de Nova Transação\n\n💰 Quantia: $500.00\n📊 Tipo: Depósito\n⏰ Hora: 27/08/2025 22:15:32\n🆔 Referência: TXN_001',
+          fr: '🚨 Alerte de Nouvelle Transaction\n\n💰 Montant: $500.00\n📊 Type: Dépôt\n⏰ Heure: 27/08/2025 22:15:32\n🆔 Référence: TXN_001',
+        },
+        p2p: {
+          en: '🎯 P2P Match Found\n\n📋 Queue ID: QUEUE_12345\n🔍 3 potential matches\n\n1. $1000 via Bank Transfer (Score: 95%)\n2. $1000 via PayPal (Score: 88%)',
+          es: '🎯 Emparejamiento P2P Encontrado\n\n📋 ID de Cola: QUEUE_12345\n🔍 3 emparejamientos potenciales\n\n1. $1000 via Transferencia Bancaria (Puntuación: 95%)\n2. $1000 via PayPal (Puntuación: 88%)',
+          pt: '🎯 Correspondência P2P Encontrada\n\n📋 ID da Fila: QUEUE_12345\n🔍 3 correspondências potenciais\n\n1. $1000 via Transferência Bancária (Pontuação: 95%)\n2. $1000 via PayPal (Pontuação: 88%)',
+          fr: '🎯 Correspondance P2P Trouvée\n\n📋 ID File: QUEUE_12345\n🔍 3 correspondances potentielles\n\n1. $1000 via Virement Bancaire (Score: 95%)\n2. $1000 via PayPal (Score: 88%)',
+        },
+        support: {
+          en: '🎫 Support Ticket Created\n\n📋 ID: 12345\n📝 Subject: Transaction Issue\n⚠️ Priority: High\n🏆 Service Level: Premium',
+          es: '🎫 Ticket de Soporte Creado\n\n📋 ID: 12345\n📝 Asunto: Problema de Transacción\n⚠️ Prioridad: Alta\n🏆 Nivel de Servicio: Premium',
+          pt: '🎫 Ticket de Suporte Criado\n\n📋 ID: 12345\n📝 Assunto: Problema de Transação\n⚠️ Prioridade: Alta\n🏆 Nível de Serviço: Premium',
+          fr: '🎫 Ticket de Support Créé\n\n📋 ID: 12345\n📝 Sujet: Problème de Transaction\n⚠️ Priorité: Élevée\n🏆 Niveau de Service: Premium',
+        },
+      };
+
+      // Command flow configurations
+      const commandFlows = {
+        start: {
+          title: '🎉 /start Command Flow',
+          steps: [
+            {
+              title: 'User Command',
+              description: 'User sends /start to bot',
+              code: '/start',
+              type: 'command',
+            },
+            {
+              title: 'Language Detection',
+              description: 'getUserLanguage() detects language from Telegram settings',
+              code: 'MultilingualTelegramBot.getUserLanguage(telegramUser)',
+              type: 'process',
+            },
+            {
+              title: 'Database Check',
+              description: 'Check if user exists in Fire22 database',
+              code: 'await getUserFromDatabase(telegramId)',
+              type: 'database',
+            },
+            {
+              title: 'Welcome Generation',
+              description: 'Generate multilingual welcome message',
+              code: 'generateWelcomeMessage(telegramUser)',
+              type: 'process',
+            },
+            {
+              title: 'Response Delivery',
+              description: 'Send welcome message with interactive buttons',
+              code: 'bot.sendMessage(chatId, message, {reply_markup: keyboard})',
+              type: 'response',
+            },
+          ],
+        },
+        link: {
+          title: '🔗 /link Command Flow',
+          steps: [
+            {
+              title: 'Link Command',
+              description: 'User sends /link with email',
+              code: '/link user@example.com',
+              type: 'command',
+            },
+            {
+              title: 'Email Validation',
+              description: 'Validate email format and existence',
+              code: 'validateEmail(emailAddress)',
+              type: 'process',
+            },
+            {
+              title: 'Database Update',
+              description: 'Link Telegram ID to existing account',
+              code: 'await linkUserAccount(telegramId, email)',
+              type: 'database',
+            },
+            {
+              title: 'Success Message',
+              description: 'Generate account linking confirmation',
+              code: 'generateAccountLinkMessage(telegramUser, email)',
+              type: 'process',
+            },
+            {
+              title: 'Confirmation Delivery',
+              description: 'Send success message to user',
+              code: 'L-1501: Account Linked Successfully',
+              type: 'response',
+            },
+          ],
+        },
+        language: {
+          title: '🌐 /language Command Flow',
+          steps: [
+            {
+              title: 'Language Command',
+              description: 'User requests language selection',
+              code: '/language',
+              type: 'command',
+            },
+            {
+              title: 'Keyboard Generation',
+              description: 'Generate language selection keyboard',
+              code: 'generateLanguageSelectionKeyboard()',
+              type: 'process',
+            },
+            {
+              title: 'Language Options',
+              description: 'Display 4 language options with flags',
+              code: '🇺🇸 🇪🇸 🇵🇹 🇫🇷',
+              type: 'response',
+            },
+            {
+              title: 'User Selection',
+              description: 'User clicks language button',
+              code: "callback_data: 'set_lang_es'",
+              type: 'callback',
+            },
+            {
+              title: 'Language Update',
+              description: 'Update user language preference',
+              code: 'setUserLanguage(userId, newLanguage)',
+              type: 'database',
+            },
+            {
+              title: 'Confirmation',
+              description: 'Send language change confirmation',
+              code: 'L-1520: Language Changed',
+              type: 'response',
+            },
+          ],
+        },
+        dashboard: {
+          title: '📊 /dashboard Command Flow',
+          steps: [
+            {
+              title: 'Dashboard Command',
+              description: 'User requests dashboard access',
+              code: '/dashboard',
+              type: 'command',
+            },
+            {
+              title: 'Language Lookup',
+              description: "Get user's current language",
+              code: 'getUserLanguage(telegramUser)',
+              type: 'process',
+            },
+            {
+              title: 'Button Generation',
+              description: 'Create dashboard access button with translation',
+              code: "getText('L-1504', userLanguage)",
+              type: 'process',
+            },
+            {
+              title: 'Quick Access',
+              description: 'Send direct dashboard link',
+              code: 'https://dashboard.fire22.com',
+              type: 'response',
+            },
+          ],
+        },
+        stats: {
+          title: '📈 /stats Command Flow',
+          steps: [
+            {
+              title: 'Stats Command',
+              description: 'User requests system statistics',
+              code: '/stats',
+              type: 'command',
+            },
+            {
+              title: 'System Query',
+              description: 'Get language system statistics',
+              code: 'getLanguageSystemStats()',
+              type: 'process',
+            },
+            {
+              title: 'Data Formatting',
+              description: "Format statistics with user's language",
+              code: 'Total Codes: 81, Telegram Codes: 21',
+              type: 'process',
+            },
+            {
+              title: 'Stats Display',
+              description: 'Send formatted statistics message',
+              code: '📊 Fire22 Language System Stats',
+              type: 'response',
+            },
+          ],
+        },
+      };
+
+      function showCommandFlow(command) {
+        const flow = commandFlows[command];
+        const flowDisplay = document.getElementById('command-flow-display');
+        const flowTitle = document.getElementById('flow-title');
+        const flowContent = document.getElementById('flow-content');
+
+        flowTitle.textContent = flow.title;
+
+        let html = '<div class="data-flow-diagram">';
+
+        flow.steps.forEach((step, index) => {
+          const stepClass = getStepClass(step.type);
+          html += `
+                    <div class="flow-step">
+                        <div class="step-number">${index + 1}</div>
+                        <div>
+                            <strong>${step.title}</strong><br>
+                            ${step.description}<br>
+                            <code style="color: #fdbb2d; font-size: 0.9rem;">${step.code}</code>
+                        </div>
+                    </div>
+                `;
+        });
+
+        html += '</div>';
+
+        // Add sample output based on command type
+        if (command === 'start') {
+          html += `
+                    <div class="notification-demo">
+                        🎉 Welcome to Fire22 Dashboard!<br><br>
+                        👤 John Doe<br>
+                        🆔 ID: 123456789<br>
+                        🌐 Language: English<br><br>
+                        <div class="keyboard-demo">
+                            <button class="inline-button">🚀 View Dashboard</button>
+                            <button class="inline-button">🌐 Language</button>
+                        </div>
+                    </div>
+                `;
+        } else if (command === 'language') {
+          html += `
+                    <div class="notification-demo">
+                        🌐 Select your preferred language:<br><br>
+                        <div class="language-selector">
+                            <div class="lang-button">🇺🇸 English</div>
+                            <div class="lang-button">🇪🇸 Español</div>
+                            <div class="lang-button">🇵🇹 Português</div>
+                            <div class="lang-button">🇫🇷 Français</div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        flowContent.innerHTML = html;
+
+        // Smooth scroll to the flow display
+        flowDisplay.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function getStepClass(type) {
+        const classes = {
+          command: 'bot-command',
+          process: 'data-process',
+          database: 'system-response',
+          response: 'bot-command',
+          callback: 'data-process',
+        };
+        return classes[type] || 'data-process';
+      }
+
+      function changeLanguage(lang) {
+        currentLanguage = lang;
+
+        // Update language button appearance
+        document.querySelectorAll('.lang-button').forEach(btn => {
+          btn.style.background = 'rgba(255, 255, 255, 0.1)';
+          btn.style.borderColor = 'rgba(253, 187, 45, 0.3)';
+        });
+
+        event.target.style.background = 'rgba(253, 187, 45, 0.2)';
+        event.target.style.borderColor = '#fdbb2d';
+
+        // Update demo output if something is currently displayed
+        const output = document.getElementById('language-demo-output');
+        if (output.dataset.currentDemo) {
+          showDemo(output.dataset.currentDemo);
+        }
+      }
+
+      function showDemo(demoType) {
+        const output = document.getElementById('language-demo-output');
+        output.dataset.currentDemo = demoType;
+
+        if (translations[demoType] && translations[demoType][currentLanguage]) {
+          output.innerHTML = `
+                    <div style="background: rgba(26, 42, 108, 0.3); padding: 15px; border-radius: 8px; border-left: 4px solid #1a2a6c;">
+                        <strong>🌐 Current Language: ${getLanguageName(currentLanguage)}</strong><br><br>
+                        <pre style="white-space: pre-wrap; font-family: inherit;">${translations[demoType][currentLanguage]}</pre>
+                        <br>
+                        <div class="keyboard-demo">
+                            <button class="inline-button">View Dashboard</button>
+                            <button class="inline-button">Dismiss</button>
+                        </div>
+                    </div>
+                `;
+        }
+      }
+
+      function getLanguageName(lang) {
+        const names = {
+          en: '🇺🇸 English',
+          es: '🇪🇸 Español',
+          pt: '🇵🇹 Português',
+          fr: '🇫🇷 Français',
+        };
+        return names[lang] || lang;
+      }
+
+      // Add smooth animations on page load
+      document.addEventListener('DOMContentLoaded', function () {
+        const sections = document.querySelectorAll('.flow-section');
+        sections.forEach((section, index) => {
+          section.style.opacity = '0';
+          section.style.transform = 'translateY(20px)';
+          section.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+
+          setTimeout(() => {
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+          }, 100);
+        });
+      });
+    </script>
+  </body>
+</html>

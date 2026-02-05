@@ -1,0 +1,50 @@
+name = "crystal-clear-docs"
+main = "src/docs-worker.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables
+[vars]
+CACHE_TTL = 3600  # 1 hour cache
+GITHUB_REPO = "nolarose1968-pixel/crystal-clear-architecture"
+GITHUB_BRANCH = "main"
+
+# Optional: GitHub token for private repos or higher rate limits
+# GITHUB_TOKEN = "your_github_token_here"
+
+# Routes configuration
+[[routes]]
+pattern = "crystal-clear-docs.nolarose1968.workers.dev"
+zone_name = "nolarose1968.workers.dev"
+
+# Custom domains (optional)
+# [[routes]]
+# pattern = "docs.crystalclear.dev"
+# zone_name = "crystalclear.dev"
+
+# Build configuration
+[build]
+command = "bun run build"
+
+# Development settings
+[dev]
+port = 8787
+local_protocol = "http"
+
+# Analytics and monitoring
+[[analytics_engine_datasets]]
+binding = "docs_requests"
+dataset = "docs_requests_dataset"
+
+# Rate limiting (optional)
+# [rate_limiting]
+# burst = 10
+# period = 60
+
+# CORS configuration
+[cors]
+origins = ["*"]
+methods = ["GET", "HEAD", "OPTIONS"]
+headers = ["*"]
+allow_credentials = false
+max_age = 86400

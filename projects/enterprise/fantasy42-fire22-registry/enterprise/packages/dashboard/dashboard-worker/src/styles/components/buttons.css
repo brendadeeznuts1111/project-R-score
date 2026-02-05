@@ -1,0 +1,332 @@
+/**
+ * Button Component Styles
+ * All button variants and states
+ */
+
+/* Base Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-semibold);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Button Sizes */
+.btn--xs {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-md);
+}
+
+.btn--sm {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.btn--lg {
+  padding: var(--space-lg) var(--space-2xl);
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-xl);
+}
+
+.btn--xl {
+  padding: var(--space-xl) var(--space-3xl);
+  font-size: var(--font-size-xl);
+  border-radius: var(--radius-xl);
+}
+
+/* Button Variants */
+.btn--primary {
+  background: var(--fire22-gradient);
+  color: white;
+  border: 1px solid transparent;
+}
+
+.btn--primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left var(--transition-base);
+}
+
+.btn--primary:hover::before {
+  left: 100%;
+}
+
+.btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(253, 187, 45, 0.4);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn--secondary {
+  background: var(--bg-gradient-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: var(--bg-gradient-hover);
+  border-color: var(--border-secondary);
+  transform: translateY(-2px);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--fire22-primary);
+  border: 2px solid var(--fire22-primary);
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: rgba(253, 187, 45, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(253, 187, 45, 0.2);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid transparent;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-primary);
+}
+
+/* Status Buttons */
+.btn--success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn--success:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+
+.btn--warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.btn--warning:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+}
+
+.btn--danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn--danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+}
+
+.btn--info {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.btn--info:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+/* Button States */
+.btn--loading {
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn--loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid white;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Button Group */
+.btn-group {
+  display: inline-flex;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-group .btn {
+  border-radius: 0;
+  margin: 0;
+}
+
+.btn-group .btn:not(:last-child) {
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.btn-group .btn:first-child {
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.btn-group .btn:last-child {
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+/* Icon Buttons */
+.btn--icon {
+  padding: var(--space-md);
+  aspect-ratio: 1;
+}
+
+.btn--icon.btn--sm {
+  padding: var(--space-sm);
+}
+
+.btn--icon.btn--lg {
+  padding: var(--space-lg);
+}
+
+/* Floating Action Button */
+.fab {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--fire22-gradient);
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: var(--z-fixed);
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 30px rgba(253, 187, 45, 0.4);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab__icon {
+  font-size: var(--font-size-2xl);
+}
+
+/* Button with Badge */
+.btn--badge {
+  position: relative;
+}
+
+.btn__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--space-xs);
+  background: var(--color-error);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Button Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ripple Effect */
+.btn--ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn--ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.6s,
+    height 0.6s;
+}
+
+.btn--ripple:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Full Width Button */
+.btn--full {
+  width: 100%;
+}
+
+/* Responsive Buttons */
+@media (max-width: 640px) {
+  .btn {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  .fab {
+    width: 48px;
+    height: 48px;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+  }
+
+  .fab__icon {
+    font-size: var(--font-size-xl);
+  }
+}

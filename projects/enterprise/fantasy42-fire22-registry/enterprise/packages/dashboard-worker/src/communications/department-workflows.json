@@ -1,0 +1,491 @@
+{
+  "departmentWorkflows": {
+    "communications": {
+      "name": "Communications Department",
+      "head": "Sarah Martinez",
+      "email": "sarah.martinez@communications.fire22",
+      "status": "active",
+      "workflows": {
+        "weeklyReporting": {
+          "frequency": "weekly",
+          "deadline": "Friday 5PM",
+          "tasks": [
+            "Consolidate all department weekly reports",
+            "Generate company-wide communication summary",
+            "Distribute consolidated report by Monday 3PM",
+            "Track engagement metrics and feedback"
+          ]
+        },
+        "announcementApproval": {
+          "trigger": "as-needed",
+          "sla": "24-hours",
+          "tasks": [
+            "Review announcement requests for brand consistency",
+            "Coordinate legal review if required",
+            "Obtain executive approval for major announcements",
+            "Distribute via appropriate channels"
+          ]
+        },
+        "emergencyCommunications": {
+          "trigger": "critical-incidents",
+          "sla": "15-minutes",
+          "tasks": [
+            "Assess communication impact and requirements",
+            "Draft emergency communications with executive approval",
+            "Multi-channel distribution coordination",
+            "Ongoing status updates until resolution"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Coordinate all inter-department communications",
+        "Review and approve department communications",
+        "Manage company-wide announcements",
+        "Maintain communication standards and templates",
+        "Generate communication metrics reports"
+      ]
+    },
+    "technology": {
+      "name": "Technology Department",
+      "head": "Mike Hunt",
+      "email": "mike.hunt@technology.fire22",
+      "status": "active",
+      "workflows": {
+        "weeklyTechUpdates": {
+          "frequency": "weekly",
+          "deadline": "Friday 3PM",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Compile system status and performance metrics",
+            "Document project progress and milestones",
+            "Report any system issues or maintenance windows",
+            "Highlight technology roadmap updates"
+          ]
+        },
+        "systemOutageNotifications": {
+          "trigger": "immediate",
+          "sla": "5-minutes",
+          "tasks": [
+            "Immediate notification to Communications team",
+            "Provide impact assessment and estimated resolution time",
+            "Regular status updates during incident",
+            "Post-incident summary and preventive measures"
+          ]
+        },
+        "securityIncidentCoordination": {
+          "trigger": "security-events",
+          "sla": "15-minutes",
+          "tasks": [
+            "Coordinate with Security department on incident response",
+            "Provide technical infrastructure support for investigations",
+            "Implement security recommendations and hardening",
+            "Support Communications team with technical incident details"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Weekly technical updates to Communications team",
+        "Technology roadmap communications",
+        "System outage notifications and updates",
+        "Developer documentation and guides"
+      ]
+    },
+    "security": {
+      "name": "Security Department",
+      "head": "TBD",
+      "email": "head@security.fire22",
+      "status": "pending",
+      "workflows": {
+        "monthlySecurityBriefings": {
+          "frequency": "monthly",
+          "deadline": "Last Friday of month",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Prepare comprehensive security posture assessment",
+            "Document threat landscape and industry trends",
+            "Provide security recommendations for all departments",
+            "Report compliance status and audit results"
+          ]
+        },
+        "incidentCommunications": {
+          "trigger": "security-incidents",
+          "sla": "immediate",
+          "tasks": [
+            "Classify incident severity and impact assessment",
+            "Coordinate incident response communications",
+            "Prepare stakeholder notifications and updates",
+            "Manage regulatory notification requirements"
+          ]
+        },
+        "policyUpdates": {
+          "trigger": "policy-changes",
+          "sla": "48-hours",
+          "tasks": [
+            "Draft security policy updates and changes",
+            "Coordinate with Legal for compliance review",
+            "Work with Communications for policy distribution",
+            "Provide training materials and implementation guidance"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Monthly security briefings to all departments via Communications",
+        "Security incident communications coordination",
+        "Security policy updates and announcements",
+        "Emergency security communications protocols"
+      ]
+    },
+    "finance": {
+      "name": "Finance Department",
+      "head": "TBD",
+      "email": "head@finance.fire22",
+      "status": "pending",
+      "workflows": {
+        "monthlyFinancialUpdates": {
+          "frequency": "monthly",
+          "deadline": "5th business day of month",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Compile monthly financial performance summary",
+            "Provide budget vs actual variance analysis",
+            "Highlight significant financial developments",
+            "Include departmental budget status updates"
+          ]
+        },
+        "budgetCommunications": {
+          "trigger": "quarterly",
+          "sla": "5-days",
+          "tasks": [
+            "Prepare budget updates and announcements",
+            "Coordinate budget change communications",
+            "Provide budget training and guidelines",
+            "Support departmental budget planning communications"
+          ]
+        },
+        "expensePolicy": {
+          "trigger": "policy-updates",
+          "sla": "72-hours",
+          "tasks": [
+            "Draft expense policy changes and updates",
+            "Coordinate with HR and Legal for policy review",
+            "Work with Communications for policy distribution",
+            "Provide expense reporting training and support"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Monthly financial updates to Communications team",
+        "Budget communications and announcements",
+        "Financial policy changes via Communications",
+        "Expense report guidelines and updates"
+      ]
+    },
+    "marketing": {
+      "name": "Marketing Department",
+      "head": "TBD",
+      "email": "head@marketing.fire22",
+      "status": "pending",
+      "workflows": {
+        "weeklyCampaignUpdates": {
+          "frequency": "weekly",
+          "deadline": "Thursday 4PM",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Report campaign performance and metrics",
+            "Coordinate brand messaging with Communications",
+            "Submit customer communication materials for review",
+            "Request approval for external marketing communications"
+          ]
+        },
+        "brandConsistency": {
+          "trigger": "continuous",
+          "sla": "24-hours",
+          "tasks": [
+            "Submit all marketing materials for brand review",
+            "Coordinate with Design team on creative assets",
+            "Ensure consistent messaging across all channels",
+            "Support Communications with brand guideline adherence"
+          ]
+        },
+        "campaignApprovals": {
+          "trigger": "campaign-launch",
+          "sla": "48-hours",
+          "tasks": [
+            "Submit campaign materials for Communications approval",
+            "Coordinate legal review for campaign compliance",
+            "Obtain executive approval for major campaigns",
+            "Schedule campaign communications and announcements"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Weekly marketing campaign updates to Communications team",
+        "Brand messaging coordination with Communications",
+        "Customer communication materials for review",
+        "Social media content approval through Communications"
+      ]
+    },
+    "operations": {
+      "name": "Operations Department",
+      "head": "TBD",
+      "email": "head@operations.fire22",
+      "status": "pending",
+      "workflows": {
+        "weeklyOperationalReports": {
+          "frequency": "weekly",
+          "deadline": "Friday 2PM",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Compile operational efficiency metrics",
+            "Report process improvements and changes",
+            "Document operational incidents and resolutions",
+            "Provide departmental performance updates"
+          ]
+        },
+        "processChangeAnnouncements": {
+          "trigger": "process-updates",
+          "sla": "48-hours",
+          "tasks": [
+            "Draft process change communications",
+            "Coordinate training and implementation timelines",
+            "Work with Communications for change management",
+            "Provide operational impact assessments"
+          ]
+        },
+        "incidentCommunications": {
+          "trigger": "operational-incidents",
+          "sla": "30-minutes",
+          "tasks": [
+            "Immediate incident notification to Communications",
+            "Provide operational impact assessment",
+            "Coordinate recovery communications",
+            "Submit post-incident analysis and improvements"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Weekly operational status reports to Communications",
+        "Process change announcements via Communications",
+        "Operational incident communications",
+        "Department efficiency metrics reporting"
+      ]
+    },
+    "legal": {
+      "name": "Legal Department",
+      "head": "TBD",
+      "email": "head@legal.fire22",
+      "status": "pending",
+      "workflows": {
+        "policyUpdates": {
+          "frequency": "as-needed",
+          "sla": "72-hours",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Draft legal policy updates and changes",
+            "Provide compliance requirement communications",
+            "Review all external communications for legal risks",
+            "Coordinate regulatory change notifications"
+          ]
+        },
+        "complianceNotifications": {
+          "trigger": "regulatory-changes",
+          "sla": "24-hours",
+          "tasks": [
+            "Monitor regulatory changes affecting Fire22",
+            "Draft compliance requirement updates",
+            "Coordinate with relevant departments on compliance",
+            "Support Communications with regulatory messaging"
+          ]
+        },
+        "legalRiskAssessments": {
+          "trigger": "major-communications",
+          "sla": "48-hours",
+          "tasks": [
+            "Review major announcements for legal risks",
+            "Provide legal guidance on public communications",
+            "Support crisis communications with legal counsel",
+            "Ensure regulatory compliance in all messaging"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Legal policy updates via Communications team",
+        "Compliance requirement communications",
+        "Legal risk assessments for public communications",
+        "Regulatory change notifications"
+      ]
+    },
+    "design": {
+      "name": "Design Department",
+      "head": "Isabella Martinez",
+      "email": "isabella.martinez@design.fire22",
+      "status": "active",
+      "workflows": {
+        "weeklyDesignUpdates": {
+          "frequency": "weekly",
+          "deadline": "Thursday 3PM",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Report design project progress and milestones",
+            "Coordinate design system updates and changes",
+            "Submit new creative assets for approval",
+            "Provide brand consistency assessments"
+          ]
+        },
+        "brandAssetApproval": {
+          "trigger": "asset-creation",
+          "sla": "24-hours",
+          "tasks": [
+            "Submit all brand assets for Communications review",
+            "Ensure brand guideline compliance",
+            "Coordinate asset usage across departments",
+            "Maintain brand consistency standards"
+          ]
+        },
+        "crossDepartmentDesignSupport": {
+          "trigger": "design-requests",
+          "sla": "48-hours",
+          "tasks": [
+            "Provide design consultation to all departments",
+            "Support Communications with design needs",
+            "Coordinate design reviews for major projects",
+            "Maintain design system documentation"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Weekly design updates to Communications team",
+        "Cross-department design consultation and support",
+        "Design system documentation and guidelines",
+        "Creative asset approval and brand consistency"
+      ]
+    },
+    "water-system": {
+      "name": "Water System Operations Department",
+      "head": "Aqua Manager",
+      "email": "aqua.manager@water-system.fire22",
+      "status": "active",
+      "workflows": {
+        "dailyWaterMonitoring": {
+          "frequency": "daily",
+          "deadline": "9AM daily",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Monitor water system metrics (flow rate, temperature, pressure)",
+            "Document system performance and any anomalies",
+            "Report system status and operational health",
+            "Highlight any maintenance needs or system alerts"
+          ]
+        },
+        "weeklyWaterSystemReport": {
+          "frequency": "weekly",
+          "deadline": "Friday 2PM",
+          "recipient": "sarah.martinez@communications.fire22",
+          "tasks": [
+            "Compile comprehensive weekly water system performance",
+            "Document any system incidents or maintenance activities",
+            "Provide water quality and safety compliance updates",
+            "Include infrastructure health and capacity planning"
+          ]
+        },
+        "emergencyWaterSystemAlerts": {
+          "trigger": "system-alerts",
+          "sla": "immediate",
+          "tasks": [
+            "Immediate notification to Communications team for critical alerts",
+            "Provide system impact assessment and safety implications",
+            "Coordinate emergency response communications",
+            "Regular status updates until system stabilization"
+          ]
+        },
+        "waterSystemMaintenance": {
+          "trigger": "scheduled-maintenance",
+          "sla": "24-hours-notice",
+          "tasks": [
+            "Notify Communications team of planned maintenance windows",
+            "Provide maintenance scope and expected duration",
+            "Coordinate maintenance announcements to affected users",
+            "Post-maintenance status updates and system verification"
+          ]
+        }
+      },
+      "communicationTasks": [
+        "Daily water system status updates to Communications team",
+        "Weekly comprehensive water system performance reports",
+        "Emergency water system incident communications",
+        "Water system maintenance and upgrade announcements",
+        "Water quality and safety compliance communications"
+      ]
+    }
+  },
+  "workflowIntegration": {
+    "slackChannels": {
+      "primary": "#communications",
+      "departments": {
+        "technology": "#technology",
+        "security": "#security",
+        "finance": "#finance",
+        "marketing": "#marketing",
+        "operations": "#operations",
+        "legal": "#compliance",
+        "design": "#design",
+        "water-system": "#water-system"
+      },
+      "escalation": "#emergencies"
+    },
+    "emailDistribution": {
+      "allDepartmentHeads": "heads@fire22.com",
+      "communications": "communications@fire22.com",
+      "emergency": "emergency@fire22.com",
+      "announcements": "announcements@fire22.com"
+    },
+    "automationTriggers": {
+      "weeklyReports": "Friday 6PM - Consolidation reminder",
+      "monthlyReports": "Last Friday - Monthly report generation",
+      "emergencyAlerts": "Immediate - Crisis communication activation",
+      "policyUpdates": "As needed - Policy change workflow"
+    }
+  },
+  "escalationMatrix": {
+    "p0Critical": {
+      "responseTime": "5-minutes",
+      "contacts": [
+        "sarah.martinez@communications.fire22",
+        "william.harris@exec.fire22",
+        "relevant-department-head"
+      ]
+    },
+    "p1High": {
+      "responseTime": "15-minutes",
+      "contacts": ["alex.chen@communications.fire22", "sarah.martinez@communications.fire22"]
+    },
+    "p2Medium": {
+      "responseTime": "2-hours",
+      "contacts": ["maria.rodriguez@communications.fire22"]
+    },
+    "p3Low": {
+      "responseTime": "24-hours",
+      "contacts": ["communications@fire22.com"]
+    }
+  },
+  "performanceMetrics": {
+    "communicationEffectiveness": {
+      "targetEngagement": "85%",
+      "currentEngagement": "87%",
+      "responseTime": "< 4 hours",
+      "currentResponseTime": "3.2 hours"
+    },
+    "departmentParticipation": {
+      "weeklyReportSubmission": "95%",
+      "currentSubmissionRate": "92%",
+      "templateUsage": "90%",
+      "currentTemplateUsage": "89%"
+    },
+    "escalationPerformance": {
+      "p0ResponseTime": "< 5 minutes",
+      "p1ResponseTime": "< 15 minutes",
+      "p2ResponseTime": "< 2 hours",
+      "averageResolutionTime": "2.1 hours"
+    }
+  }
+}

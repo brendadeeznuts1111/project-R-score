@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📊 Fire22 Performance Monitor</title>
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1a1a1a;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: #e2e8f0;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .dashboard {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .metric-card {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--success));
+      }
+
+      .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .metric-title {
+        font-size: 14px;
+        color: #94a3b8;
+      }
+
+      .metric-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .metric-value {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .metric-chart {
+        height: 60px;
+        position: relative;
+        margin-top: 15px;
+      }
+
+      .chart-canvas {
+        width: 100%;
+        height: 100%;
+      }
+
+      .charts-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .chart-container {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 16px;
+        padding: 25px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+      }
+
+      .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .performance-table {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 16px;
+        padding: 25px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+      }
+
+      th {
+        font-weight: 600;
+        color: #94a3b8;
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .status-healthy {
+        background: rgba(34, 197, 94, 0.2);
+        color: var(--success);
+      }
+      .status-warning {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+      }
+      .status-critical {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+      }
+
+      .refresh-btn {
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .refresh-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      .live-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="header">
+        <div>
+          <h1>📊 Performance Monitor</h1>
+          <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span>Live monitoring</span>
+          </div>
+        </div>
+        <button class="refresh-btn" onclick="refreshMetrics()">Refresh</button>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">DNS Response Time</span>
+            <div class="metric-icon">⚡</div>
+          </div>
+          <div class="metric-value" id="dnsTime">1.2ms</div>
+          <canvas class="chart-canvas" id="dnsChart"></canvas>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">API Response Time</span>
+            <div class="metric-icon">📡</div>
+          </div>
+          <div class="metric-value" id="apiTime">45ms</div>
+          <canvas class="chart-canvas" id="apiChart"></canvas>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Cache Hit Rate</span>
+            <div class="metric-icon">💾</div>
+          </div>
+          <div class="metric-value" id="cacheRate">98.5%</div>
+          <canvas class="chart-canvas" id="cacheChart"></canvas>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Memory Usage</span>
+            <div class="metric-icon">🧮</div>
+          </div>
+          <div class="metric-value" id="memoryUsage">156MB</div>
+          <canvas class="chart-canvas" id="memoryChart"></canvas>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Active Connections</span>
+            <div class="metric-icon">🔗</div>
+          </div>
+          <div class="metric-value" id="connections">12/20</div>
+          <canvas class="chart-canvas" id="connectionsChart"></canvas>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Error Rate</span>
+            <div class="metric-icon">⚠️</div>
+          </div>
+          <div class="metric-value" id="errorRate">0.1%</div>
+          <canvas class="chart-canvas" id="errorChart"></canvas>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-container">
+          <h2 class="chart-title">Request Volume (Last Hour)</h2>
+          <canvas id="requestVolumeChart" height="200"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <h2 class="chart-title">Response Time Distribution</h2>
+          <canvas id="responseDistChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="performance-table">
+        <h2 class="chart-title">Service Health Status</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Status</th>
+              <th>Response Time</th>
+              <th>Uptime</th>
+              <th>Last Check</th>
+            </tr>
+          </thead>
+          <tbody id="serviceTable">
+            <tr>
+              <td>Fire22 API</td>
+              <td><span class="status-badge status-healthy">Healthy</span></td>
+              <td>12ms</td>
+              <td>99.99%</td>
+              <td>2 seconds ago</td>
+            </tr>
+            <tr>
+              <td>Database (D1)</td>
+              <td><span class="status-badge status-healthy">Healthy</span></td>
+              <td>8ms</td>
+              <td>99.95%</td>
+              <td>5 seconds ago</td>
+            </tr>
+            <tr>
+              <td>Cache (R2)</td>
+              <td><span class="status-badge status-healthy">Healthy</span></td>
+              <td>2ms</td>
+              <td>100%</td>
+              <td>1 second ago</td>
+            </tr>
+            <tr>
+              <td>Telegram Bot</td>
+              <td><span class="status-badge status-healthy">Healthy</span></td>
+              <td>45ms</td>
+              <td>99.8%</td>
+              <td>3 seconds ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      // Store historical data
+      let historicalData = {
+        dns: [],
+        api: [],
+        cache: [],
+        memory: [],
+        connections: [],
+        errors: [],
+      };
+
+      // Initialize mini charts
+      function initMiniChart(canvasId, data, color) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        const width = (canvas.width = canvas.offsetWidth);
+        const height = (canvas.height = 60);
+
+        // Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw line chart
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        const points = data.slice(-20); // Last 20 points
+        const step = width / (points.length - 1);
+        const max = Math.max(...points, 1);
+
+        points.forEach((value, index) => {
+          const x = index * step;
+          const y = height - (value / max) * height;
+
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+
+        ctx.stroke();
+
+        // Fill gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, color + '40');
+        gradient.addColorStop(1, color + '00');
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+
+      // Fetch and update metrics
+      async function fetchMetrics() {
+        try {
+          const response = await fetch('/api/bottlenecks/metrics');
+          const data = await response.json();
+
+          if (data.success) {
+            const metrics = data.metrics;
+
+            // Update values
+            document.getElementById('dnsTime').textContent = metrics.dns.averageResponseTime + 'ms';
+            document.getElementById('apiTime').textContent = metrics.api.averageResponseTime + 'ms';
+            document.getElementById('cacheRate').textContent =
+              ((metrics.dns.cacheHits / (metrics.dns.cacheHits + metrics.dns.cacheMisses)) * 100).toFixed(1) + '%';
+            document.getElementById('memoryUsage').textContent = metrics.memory.used + 'MB';
+            document.getElementById('connections').textContent =
+              metrics.database.connected + '/' + metrics.database.total;
+            document.getElementById('errorRate').textContent = metrics.api.errorRate + '%';
+
+            // Update historical data
+            historicalData.dns.push(metrics.dns.averageResponseTime);
+            historicalData.api.push(metrics.api.averageResponseTime);
+            historicalData.cache.push(
+              (metrics.dns.cacheHits / (metrics.dns.cacheHits + metrics.dns.cacheMisses)) * 100
+            );
+            historicalData.memory.push(metrics.memory.used);
+            historicalData.connections.push(metrics.database.connected);
+            historicalData.errors.push(metrics.api.errorRate);
+
+            // Keep only last 100 points
+            Object.keys(historicalData).forEach(key => {
+              if (historicalData[key].length > 100) {
+                historicalData[key].shift();
+              }
+            });
+
+            // Update mini charts
+            initMiniChart('dnsChart', historicalData.dns, '#3b82f6');
+            initMiniChart('apiChart', historicalData.api, '#60a5fa');
+            initMiniChart('cacheChart', historicalData.cache, '#22c55e');
+            initMiniChart('memoryChart', historicalData.memory, '#f59e0b');
+            initMiniChart('connectionsChart', historicalData.connections, '#8b5cf6');
+            initMiniChart('errorChart', historicalData.errors, '#ef4444');
+          }
+        } catch (error) {
+          console.error('Failed to fetch metrics:', error);
+        }
+      }
+
+      // Update service health table
+      async function updateServiceHealth() {
+        try {
+          const response = await fetch('/api/bottlenecks/health');
+          const data = await response.json();
+
+          if (data.success) {
+            const services = [
+              { name: 'Fire22 API', status: data.status, time: '12ms', uptime: '99.99%' },
+              { name: 'Database (D1)', status: data.performance.databaseHealth, time: '8ms', uptime: '99.95%' },
+              {
+                name: 'Cache (DNS)',
+                status: data.performance.dnsCache > 0 ? 'healthy' : 'warning',
+                time: '2ms',
+                uptime: '100%',
+              },
+              { name: 'Telegram Bot', status: 'healthy', time: '45ms', uptime: '99.8%' },
+            ];
+
+            const tbody = document.getElementById('serviceTable');
+            tbody.innerHTML = services
+              .map(service => {
+                const statusClass =
+                  service.status === 'healthy'
+                    ? 'status-healthy'
+                    : service.status === 'warning'
+                      ? 'status-warning'
+                      : 'status-critical';
+                const statusText = service.status.charAt(0).toUpperCase() + service.status.slice(1);
+
+                return `
+                            <tr>
+                                <td>${service.name}</td>
+                                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                                <td>${service.time}</td>
+                                <td>${service.uptime}</td>
+                                <td>Just now</td>
+                            </tr>
+                        `;
+              })
+              .join('');
+          }
+        } catch (error) {
+          console.error('Failed to update service health:', error);
+        }
+      }
+
+      function refreshMetrics() {
+        fetchMetrics();
+        updateServiceHealth();
+      }
+
+      // Initialize and start monitoring
+      document.addEventListener('DOMContentLoaded', () => {
+        // Generate initial data
+        for (let i = 0; i < 20; i++) {
+          historicalData.dns.push(1 + Math.random() * 2);
+          historicalData.api.push(40 + Math.random() * 20);
+          historicalData.cache.push(95 + Math.random() * 5);
+          historicalData.memory.push(150 + Math.random() * 50);
+          historicalData.connections.push(10 + Math.random() * 10);
+          historicalData.errors.push(Math.random() * 0.5);
+        }
+
+        // Initial load
+        refreshMetrics();
+
+        // Auto-refresh every 5 seconds
+        setInterval(refreshMetrics, 5000);
+      });
+    </script>
+  </body>
+</html>

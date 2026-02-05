@@ -1,0 +1,460 @@
+{
+  "communicationsWorkflows": {
+    "departmentReporting": {
+      "name": "Department Communication Reporting",
+      "frequency": "weekly",
+      "participants": ["all-departments", "communications-team"],
+      "workflow": [
+        {
+          "step": 1,
+          "action": "Department heads submit weekly updates",
+          "deadline": "Friday 5PM",
+          "template": "department-weekly-update",
+          "recipients": ["sarah.martinez@communications.fire22"]
+        },
+        {
+          "step": 2,
+          "action": "Communications team reviews and consolidates",
+          "deadline": "Monday 12PM",
+          "owner": "alex.chen@communications.fire22",
+          "deliverable": "consolidated-weekly-report"
+        },
+        {
+          "step": 3,
+          "action": "Distribute consolidated report to all teams",
+          "deadline": "Monday 3PM",
+          "owner": "maria.rodriguez@communications.fire22",
+          "channels": ["email", "slack", "dashboard"]
+        }
+      ]
+    },
+    "announcementApproval": {
+      "name": "Company Announcement Approval Process",
+      "frequency": "as-needed",
+      "workflow": [
+        {
+          "step": 1,
+          "action": "Department submits announcement request",
+          "form": "announcement-request-form",
+          "recipients": ["communications@fire22.com"]
+        },
+        {
+          "step": 2,
+          "action": "Communications team reviews content",
+          "owner": "sarah.martinez@communications.fire22",
+          "criteria": ["brand-alignment", "tone-consistency", "legal-compliance"],
+          "sla": "24-hours"
+        },
+        {
+          "step": 3,
+          "action": "Legal review (if required)",
+          "triggers": ["policy-changes", "financial-announcements", "regulatory-matters"],
+          "owner": "robert.taylor@compliance.fire22",
+          "sla": "48-hours"
+        },
+        {
+          "step": 4,
+          "action": "Executive approval (if required)",
+          "triggers": ["major-announcements", "organizational-changes", "crisis-communications"],
+          "approvers": ["william.harris@exec.fire22", "patricia.clark@exec.fire22"],
+          "sla": "24-hours"
+        },
+        {
+          "step": 5,
+          "action": "Communications distribution",
+          "owner": "maria.rodriguez@communications.fire22",
+          "channels": ["all@fire22.com", "#announcements", "company-dashboard"]
+        }
+      ]
+    },
+    "emergencyCommunications": {
+      "name": "Emergency Communications Protocol",
+      "triggers": ["security-incidents", "system-outages", "regulatory-issues"],
+      "escalation": "immediate",
+      "workflow": [
+        {
+          "step": 1,
+          "action": "Emergency notification received",
+          "sources": ["department-heads", "monitoring-systems", "external-reports"],
+          "recipients": ["sarah.martinez@communications.fire22", "william.harris@exec.fire22"]
+        },
+        {
+          "step": 2,
+          "action": "Assess communication requirements",
+          "owner": "sarah.martinez@communications.fire22",
+          "factors": ["impact-level", "audience-scope", "regulatory-requirements"],
+          "sla": "15-minutes"
+        },
+        {
+          "step": 3,
+          "action": "Draft emergency communications",
+          "templates": ["security-incident", "system-outage", "regulatory-response"],
+          "approval": "executive-level",
+          "sla": "30-minutes"
+        },
+        {
+          "step": 4,
+          "action": "Distribute emergency communications",
+          "channels": [
+            "emergency@fire22.com",
+            "#emergencies",
+            "sms-alerts",
+            "external-notifications"
+          ],
+          "owner": "communications-team"
+        },
+        {
+          "step": 5,
+          "action": "Coordinate ongoing updates",
+          "frequency": "per-communication-plan",
+          "owner": "alex.chen@communications.fire22"
+        }
+      ]
+    }
+  },
+  "communicationTemplates": {
+    "department-weekly-update": {
+      "name": "Department Weekly Update Template",
+      "sections": [
+        {
+          "title": "Key Accomplishments",
+          "required": true,
+          "format": "bullet-points",
+          "maxItems": 5
+        },
+        {
+          "title": "Challenges & Blockers",
+          "required": true,
+          "format": "bullet-points",
+          "escalation": true
+        },
+        {
+          "title": "Upcoming Priorities",
+          "required": true,
+          "format": "bullet-points",
+          "timeframe": "next-week"
+        },
+        {
+          "title": "Resource Needs",
+          "required": false,
+          "format": "structured",
+          "categories": ["personnel", "budget", "tools", "support"]
+        },
+        {
+          "title": "Cross-Department Dependencies",
+          "required": true,
+          "format": "structured",
+          "fields": ["department", "dependency", "timeline", "impact"]
+        }
+      ],
+      "recipients": ["communications@fire22.com"],
+      "deadline": "Friday 5PM weekly"
+    },
+    "announcement-request-form": {
+      "name": "Announcement Request Form",
+      "fields": [
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "maxLength": 100
+        },
+        {
+          "name": "content",
+          "type": "textarea",
+          "required": true,
+          "maxLength": 2000
+        },
+        {
+          "name": "audience",
+          "type": "multiselect",
+          "options": [
+            "all-employees",
+            "department-specific",
+            "leadership-only",
+            "external-stakeholders"
+          ],
+          "required": true
+        },
+        {
+          "name": "priority",
+          "type": "select",
+          "options": ["low", "normal", "high", "urgent"],
+          "required": true
+        },
+        {
+          "name": "timing",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "name": "approvalRequired",
+          "type": "multiselect",
+          "options": ["legal-review", "executive-approval", "hr-review", "security-review"]
+        },
+        {
+          "name": "channels",
+          "type": "multiselect",
+          "options": ["email", "slack", "dashboard", "intranet", "external-website"],
+          "required": true
+        }
+      ],
+      "water-system-daily-report": {
+        "name": "Water System Daily Report Template",
+        "sections": [
+          {
+            "title": "System Status Overview",
+            "required": true,
+            "format": "status-summary",
+            "fields": ["operational-status", "system-health", "alert-level"]
+          },
+          {
+            "title": "Key Metrics",
+            "required": true,
+            "format": "metrics-table",
+            "fields": ["flow-rate", "temperature", "pressure", "water-quality"]
+          },
+          {
+            "title": "Incidents & Alerts",
+            "required": false,
+            "format": "incident-log",
+            "escalation": true
+          },
+          {
+            "title": "Maintenance Activities",
+            "required": false,
+            "format": "maintenance-log",
+            "fields": ["scheduled-maintenance", "emergency-repairs", "upgrades"]
+          },
+          {
+            "title": "Safety & Compliance",
+            "required": true,
+            "format": "compliance-checklist",
+            "fields": ["water-quality-standards", "safety-protocols", "regulatory-compliance"]
+          }
+        ],
+        "recipients": ["communications@fire22.com", "operations@fire22.com"],
+        "deadline": "9AM daily"
+      },
+      "water-system-weekly-report": {
+        "name": "Water System Weekly Report Template",
+        "sections": [
+          {
+            "title": "Weekly Performance Summary",
+            "required": true,
+            "format": "performance-summary",
+            "fields": ["uptime", "efficiency", "capacity-utilization", "cost-analysis"]
+          },
+          {
+            "title": "Incident Analysis",
+            "required": true,
+            "format": "incident-analysis",
+            "fields": [
+              "incident-count",
+              "resolution-time",
+              "root-cause-analysis",
+              "preventive-measures"
+            ]
+          },
+          {
+            "title": "Maintenance Summary",
+            "required": true,
+            "format": "maintenance-summary",
+            "fields": [
+              "completed-maintenance",
+              "scheduled-maintenance",
+              "maintenance-costs",
+              "equipment-health"
+            ]
+          },
+          {
+            "title": "Infrastructure Updates",
+            "required": false,
+            "format": "infrastructure-updates",
+            "fields": ["upgrades", "expansions", "retirements", "capacity-planning"]
+          },
+          {
+            "title": "Compliance & Safety",
+            "required": true,
+            "format": "compliance-report",
+            "fields": [
+              "regulatory-compliance",
+              "safety-audits",
+              "training-completion",
+              "incident-prevention"
+            ]
+          }
+        ],
+        "recipients": [
+          "communications@fire22.com",
+          "operations@fire22.com",
+          "compliance@fire22.com"
+        ],
+        "deadline": "Friday 2PM weekly"
+      },
+      "water-system-emergency-alert": {
+        "name": "Water System Emergency Alert Template",
+        "sections": [
+          {
+            "title": "Emergency Summary",
+            "required": true,
+            "format": "emergency-summary",
+            "fields": ["incident-type", "severity-level", "affected-systems", "immediate-impact"]
+          },
+          {
+            "title": "Safety Instructions",
+            "required": true,
+            "format": "safety-instructions",
+            "fields": [
+              "evacuation-requirements",
+              "safety-zones",
+              "protective-measures",
+              "emergency-contacts"
+            ]
+          },
+          {
+            "title": "Response Actions",
+            "required": true,
+            "format": "response-actions",
+            "fields": [
+              "immediate-actions",
+              "response-team",
+              "estimated-resolution",
+              "status-updates"
+            ]
+          },
+          {
+            "title": "Communication Plan",
+            "required": true,
+            "format": "communication-plan",
+            "fields": [
+              "notification-channels",
+              "update-frequency",
+              "stakeholder-communications",
+              "external-notifications"
+            ]
+          }
+        ],
+        "recipients": [
+          "emergency@fire22.com",
+          "communications@fire22.com",
+          "operations@fire22.com"
+        ],
+        "deadline": "Immediate upon incident detection"
+      }
+    }
+  },
+  "communicationMetrics": {
+    "departmentEngagement": {
+      "reportSubmissionRate": {
+        "target": "100%",
+        "measurement": "weekly-report-submissions / total-departments",
+        "alert": "below-90%"
+      },
+      "responseTime": {
+        "target": "24-hours",
+        "measurement": "average-time-to-respond-to-communications",
+        "alert": "above-48-hours"
+      },
+      "feedbackScore": {
+        "target": "4.5/5",
+        "measurement": "quarterly-communication-satisfaction-survey",
+        "alert": "below-4.0"
+      }
+    },
+    "communicationEffectiveness": {
+      "announcementReach": {
+        "target": "95%",
+        "measurement": "employees-who-acknowledged / total-employees",
+        "channels": ["email", "slack", "dashboard"]
+      },
+      "emergencyResponseTime": {
+        "target": "15-minutes",
+        "measurement": "time-from-incident-to-first-communication",
+        "alert": "above-30-minutes"
+      },
+      "approvalProcessTime": {
+        "target": "24-hours",
+        "measurement": "average-time-from-request-to-approval",
+        "alert": "above-48-hours"
+      },
+      "waterSystemCommunications": {
+        "dailyReportSubmission": {
+          "target": "100%",
+          "measurement": "daily-water-system-reports-submitted / total-days",
+          "alert": "below-95%"
+        },
+        "emergencyResponseTime": {
+          "target": "5-minutes",
+          "measurement": "time-from-water-incident-to-first-communication",
+          "alert": "above-10-minutes"
+        },
+        "maintenanceNotification": {
+          "target": "24-hours-notice",
+          "measurement": "scheduled-maintenance-notifications / total-maintenance-events",
+          "alert": "below-90%"
+        },
+        "complianceReporting": {
+          "target": "100%",
+          "measurement": "water-safety-compliance-reports / required-reports",
+          "alert": "below-100%"
+        }
+      }
+    }
+  },
+  "integrations": {
+    "slackIntegration": {
+      "channels": {
+        "#communications": "Primary communications team channel",
+        "#announcements": "Company-wide announcements",
+        "#department-updates": "Weekly department update summaries",
+        "#emergency-comms": "Emergency communications coordination",
+        "#water-system": "Water system operations and monitoring",
+        "#water-alerts": "Water system emergency alerts and notifications"
+      },
+      "botCommands": [
+        "/comms-submit-update [department]",
+        "/comms-request-announcement",
+        "/comms-emergency-alert [level]",
+        "/comms-metrics-report",
+        "/water-system-status [system]",
+        "/water-system-alert [level] [description]",
+        "/water-system-maintenance [type] [duration]",
+        "/water-system-report [type] [date]"
+      ]
+    },
+    "emailIntegration": {
+      "groups": {
+        "communications@fire22.com": "Main communications team inbox",
+        "announcements@fire22.com": "Company announcements distribution",
+        "emergency-comms@fire22.com": "Emergency communications",
+        "water-system@fire22.com": "Water system operations communications",
+        "water-alerts@fire22.com": "Water system emergency alerts"
+      },
+      "templates": "Integrated with department email templates system",
+      "automation": "Auto-routing based on content type and priority"
+    },
+    "dashboardIntegration": {
+      "endpoints": [
+        "/api/communications/submit-update",
+        "/api/communications/request-announcement",
+        "/api/communications/metrics",
+        "/api/communications/workflow-status",
+        "/api/communications/water-system/status",
+        "/api/communications/water-system/alerts",
+        "/api/communications/water-system/maintenance",
+        "/api/communications/water-system/reports"
+      ],
+      "widgets": [
+        "communication-metrics-dashboard",
+        "pending-approvals-queue",
+        "department-update-status",
+        "announcement-calendar",
+        "water-system-status-dashboard",
+        "water-system-alerts-queue",
+        "water-system-maintenance-schedule",
+        "water-system-compliance-reports"
+      ]
+    }
+  }
+}

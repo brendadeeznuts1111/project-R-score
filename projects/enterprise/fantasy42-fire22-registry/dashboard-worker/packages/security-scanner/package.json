@@ -1,0 +1,81 @@
+{
+  "name": "@fire22/security-scanner",
+  "version": "1.0.0",
+  "description": "Production-ready Bun security scanner for Fire22 workspace with threat feed integration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./scanner": {
+      "import": "./dist/scanner.js",
+      "types": "./dist/scanner.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=node --outdir=dist --format=esm",
+    "build:types": "tsc --emitDeclarationOnly --declaration",
+    "build:all": "bun run build && bun run build:types",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "test:scanner": "bun test --grep scanner",
+    "test:watch": "bun test --watch",
+    "prepublishOnly": "bun run build:all && bun run test",
+    "demo": "bun run src/demo.ts",
+    "link:local": "bun link"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "bun-types": "1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [
+    "bun",
+    "security",
+    "scanner",
+    "fire22",
+    "vulnerability",
+    "malware",
+    "threat-intelligence",
+    "supply-chain"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://fire22-security-registry.nolarose1968-806.workers.dev/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/security-scanner"
+  },
+  "engines": {
+    "bun": ">=1.2.21",
+    "node": ">=18.0.0"
+  },
+  "trustedDependencies": [
+    "zod"
+  ],
+  "bunfig": {
+    "install": {
+      "security": {
+        "scanner": "@fire22/security-scanner"
+      }
+    }
+  }
+}

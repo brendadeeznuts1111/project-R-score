@@ -1,0 +1,3479 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Packages & Integrations - Fire22 Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      h3 {
+        font-size: 1.4rem;
+        margin: 15px 0;
+        color: #b21f1f;
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: 'Fira Code', monospace;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .code-keyword {
+        color: #569cd6;
+      }
+
+      .code-function {
+        color: #dcdcaa;
+      }
+
+      .code-parameter {
+        color: #9cdcfe;
+      }
+
+      .code-string {
+        color: #ce9178;
+      }
+
+      .code-comment {
+        color: #6a9955;
+      }
+
+      .api-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .api-table th,
+      .api-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .api-table th {
+        background: rgba(0, 0, 0, 0.3);
+        font-weight: 600;
+        color: #fdbb2d;
+      }
+
+      .api-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .example {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .example-item {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .benefits {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .benefit-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .benefit-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #fdbb2d;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 20px;
+        opacity: 0.7;
+        font-size: 0.9rem;
+      }
+
+      .callout {
+        background: rgba(253, 187, 45, 0.1);
+        border-left: 4px solid #fdbb2d;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .warning {
+        background: rgba(178, 31, 31, 0.1);
+        border-left: 4px solid #b21f1f;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: rgba(76, 175, 80, 0.1);
+        border-left: 4px solid #4caf50;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .api-integration {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .api-details {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+
+      .api-details strong {
+        color: #fdbb2d;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .status-active {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
+      }
+
+      .status-beta {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+      }
+
+      .status-development {
+        background: rgba(33, 150, 243, 0.2);
+        color: #2196f3;
+      }
+
+      /* Enhanced Branding Styles */
+      .brand-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 0;
+        border-bottom: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        font-size: 3rem;
+        animation: flame-flicker 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+        }
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .company-name {
+        font-size: 2.5rem;
+        margin: 0;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .company-tagline {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        letter-spacing: 1px;
+      }
+
+      .brand-nav {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.1);
+        border-color: rgba(253, 187, 45, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .nav-link.active {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.15);
+        border-color: #fdbb2d;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .page-header h2 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Enhanced Footer Branding */
+      .footer {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 50px;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .footer-brand {
+        margin-bottom: 20px;
+      }
+
+      .footer-logo {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .footer-company {
+        font-size: 1.5rem;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      .footer-tagline {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-link:hover {
+        color: #fdbb2d;
+      }
+
+      .footer-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+      }
+
+      .footer-copyright {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Branding */
+      @media (max-width: 768px) {
+        .brand-header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .brand-nav {
+          justify-content: center;
+        }
+
+        .nav-link {
+          font-size: 0.9rem;
+          padding: 8px 12px;
+        }
+
+        .company-name {
+          font-size: 2rem;
+        }
+
+        .logo-icon {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* Enhanced animations and interactions */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        .example {
+          flex-direction: column;
+        }
+      }
+
+      /* 🆕 NEW: Version System Styles */
+      .versioning-overview {
+        margin-top: 20px;
+      }
+
+      .versioning-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .stat-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .stat-number {
+        display: block;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .feature-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .feature-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-3px);
+      }
+
+      .feature-item h3 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+      }
+
+      .feature-item p {
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .version-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .version-button {
+        background: linear-gradient(135deg, #fdbb2d, #b21f1f);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .version-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(253, 187, 45, 0.3);
+      }
+
+      .commands-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .command-item {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+      }
+
+      .command-item h4 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+      }
+
+      .command-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .command-list code {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      /* 🆕 NEW: Bun Runtime Versioning Styles */
+      .bun-runtime-overview {
+        margin-top: 20px;
+      }
+
+      .runtime-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .capabilities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .capability-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .capability-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .capability-card h3 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .performance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+      }
+
+      .performance-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .performance-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .performance-item h3 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .performance-item ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .performance-item li {
+        padding: 5px 0;
+        position: relative;
+        padding-left: 20px;
+      }
+
+      .performance-item li::before {
+        content: '⚡';
+        position: absolute;
+        left: 0;
+        color: #fdbb2d;
+      }
+
+      /* 🆕 NEW: Version Management & P2P Queue System Styles */
+      .versioning-overview {
+        margin-top: 20px;
+      }
+
+      .versioning-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .stat-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-3px);
+        border-color: rgba(253, 187, 45, 0.4);
+      }
+
+      .stat-number {
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fdbb2d;
+        margin-bottom: 10px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .feature-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .feature-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-3px);
+        border-color: rgba(253, 187, 45, 0.4);
+      }
+
+      .feature-item h3 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .version-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 15px;
+      }
+
+      .version-button {
+        background: rgba(253, 187, 45, 0.1);
+        color: #fdbb2d;
+        border: 1px solid rgba(253, 187, 45, 0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .version-button:hover {
+        background: rgba(253, 187, 45, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(253, 187, 45, 0.2);
+      }
+
+      .commands-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .command-item {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(253, 187, 45, 0.1);
+      }
+
+      .command-item h4 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+      .command-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .command-list code {
+        background: rgba(253, 187, 45, 0.1);
+        color: #fdbb2d;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        text-align: center;
+      }
+
+      .bun-runtime-overview {
+        margin-top: 20px;
+      }
+
+      .runtime-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .capabilities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+      }
+
+      .capability-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .capability-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(253, 187, 45, 0.15);
+      }
+
+      .capability-card h3 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+      }
+
+      /* 🆕 NEW: P2P Queue System Demo Styles */
+      .demo-controls {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .demo-button {
+        background: rgba(253, 187, 45, 0.2);
+        color: #fdbb2d;
+        border: 1px solid rgba(253, 187, 45, 0.4);
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .demo-button:hover {
+        background: rgba(253, 187, 45, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(253, 187, 45, 0.3);
+      }
+
+      .demo-queue-display {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .queue-section h3 {
+        color: #fdbb2d;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .queue-items {
+        min-height: 100px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 15px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+      }
+
+      .queue-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid #fdbb2d;
+      }
+
+      .queue-item.withdrawal {
+        border-left-color: #b21f1f;
+      }
+
+      .queue-item.deposit {
+        border-left-color: #4caf50;
+      }
+
+      .queue-item.match {
+        border-left-color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.2);
+      }
+
+      .amount {
+        font-weight: 600;
+        color: #fdbb2d;
+      }
+
+      .payment-type,
+      .source {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .priority {
+        font-size: 0.8rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        text-transform: uppercase;
+      }
+
+      .priority.high {
+        background: rgba(178, 31, 31, 0.3);
+        color: #b21f1f;
+      }
+
+      .priority.normal {
+        background: rgba(253, 187, 45, 0.3);
+        color: #fdbb2d;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* 🆕 NEW: Error Code System Styles */
+      .error-code-system {
+        margin-top: 20px;
+      }
+
+      .error-navigation {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: rgba(253, 187, 45, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+      }
+
+      .error-navigation h4 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+      }
+
+      .error-nav-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .error-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        border-radius: 8px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .error-nav-link:hover {
+        background: rgba(253, 187, 45, 0.1);
+        color: #fdbb2d;
+        border-color: rgba(253, 187, 45, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(253, 187, 45, 0.2);
+      }
+
+      .error-back-to-top {
+        margin-top: 30px;
+        text-align: center;
+        padding: 20px;
+        border-top: 1px solid rgba(253, 187, 45, 0.2);
+      }
+
+      .back-to-top-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: rgba(253, 187, 45, 0.1);
+        color: #fdbb2d;
+        text-decoration: none;
+        border-radius: 25px;
+        border: 1px solid rgba(253, 187, 45, 0.3);
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .back-to-top-link:hover {
+        background: rgba(253, 187, 45, 0.2);
+        border-color: rgba(253, 187, 45, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(253, 187, 45, 0.3);
+      }
+
+      .error-categories {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-top: 20px;
+      }
+
+      .error-category {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(253, 187, 45, 0.1);
+      }
+
+      .error-category h4 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .error-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 0.9rem;
+      }
+
+      .error-table th,
+      .error-table td {
+        padding: 12px 8px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        vertical-align: top;
+      }
+
+      .error-table th {
+        background: rgba(253, 187, 45, 0.1);
+        color: #fdbb2d;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .error-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .error-table code {
+        background: rgba(178, 31, 31, 0.2);
+        color: #b21f1f;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .error-response-format {
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(253, 187, 45, 0.1);
+      }
+
+      .error-response-format h4 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+      }
+
+      .error-handling-best-practices {
+        margin-top: 30px;
+      }
+
+      .error-handling-best-practices h4 {
+        color: #fdbb2d;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+      }
+
+      .best-practices-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+      }
+
+      .practice-item {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(253, 187, 45, 0.1);
+      }
+
+      .practice-item h5 {
+        color: #fdbb2d;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .practice-item p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .practice-item .code-block {
+        margin-top: 15px;
+      }
+
+      .practice-item .code-block pre {
+        font-size: 0.8rem;
+        line-height: 1.3;
+      }
+
+      /* 🆕 NEW: Data Handling & Permission Validation Styles */
+      .data-handling-permissions {
+        margin-top: 30px;
+      }
+
+      .data-handling-permissions h4 {
+        color: #fdbb2d;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+      }
+
+      .data-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-top: 20px;
+      }
+
+      .data-section {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(253, 187, 45, 0.1);
+      }
+
+      .data-section h5 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .data-section h5::before {
+        font-size: 1.2rem;
+      }
+
+      .data-section h5:contains('Permission Validation Failed')::before {
+        content: '🚨';
+      }
+
+      .data-section h5:contains('Successful Permission Response')::before {
+        content: '✅';
+      }
+
+      .data-section h5:contains('Data Validation Patterns')::before {
+        content: '🔍';
+      }
+
+      .data-section h5:contains('Error Handling for Data Responses')::before {
+        content: '🚨';
+      }
+
+      .data-section p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .data-section .code-block {
+        margin-top: 15px;
+      }
+
+      .data-section .code-block pre {
+        font-size: 0.75rem;
+        line-height: 1.2;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      /* Error Code Category Icons */
+      .error-category h4::before {
+        font-size: 1.2rem;
+      }
+
+      .error-category h4:contains('Authentication')::before {
+        content: '🔐';
+      }
+
+      .error-category h4:contains('Database')::before {
+        content: '💾';
+      }
+
+      .error-category h4:contains('API')::before {
+        content: '🔌';
+      }
+
+      .error-category h4:contains('Financial')::before {
+        content: '💰';
+      }
+
+      .error-category h4:contains('P2P Queue')::before {
+        content: '🔄';
+      }
+
+      .error-category h4:contains('System')::before {
+        content: '🏥';
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand-header">
+          <div class="brand-logo">
+            <div class="logo-icon">🔥</div>
+            <div class="logo-text">
+              <h1 class="company-name">Fire22</h1>
+              <span class="company-tagline">Igniting Digital Innovation</span>
+            </div>
+          </div>
+          <div class="brand-nav">
+            <a href="packages.html" class="nav-link">📦 Packages</a>
+            <a href="environment-variables.html" class="nav-link">🌍 Environment</a>
+            <a href="api-packages.html" class="nav-link active">🔌 API</a>
+            <a href="fire22-dashboard-config.html" class="nav-link">⚙️ Config</a>
+            <a href="@packages.html" class="nav-link">🧪 Testing</a>
+          </div>
+        </div>
+        <div class="page-header">
+          <h2>API Packages & Integrations</h2>
+          <p class="subtitle">Complete guide to API management and integrations</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h2>🚀 Quick Start</h2>
+        <p>Get started with API integrations in just a few steps:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># 1. Check current API configuration</span>
+<span class="code-function">bun pm pkg get config.security.jwt.algorithm</span>
+
+<span class="code-comment"># 2. Validate environment variables</span>
+<span class="code-function">bun run env:validate</span>
+
+<span class="code-comment"># 3. Test API connectivity</span>
+<span class="code-function">bun run env:integration</span>
+
+<span class="code-comment"># 4. Test new Fire22 endpoints</span>
+<span class="code-function">bun run test:quick</span>
+
+<span class="code-comment"># 5. Test permissions matrix debug</span>
+<span class="code-function">bun run health:permissions-matrix</span>
+
+<span class="code-comment"># 6. Test P2P queue system</span>
+<span class="code-function">bun run test:queue</span>
+
+<span class="code-comment"># 7. Run queue system demo</span>
+<span class="code-function">bun run queue:demo</span>
+
+<span class="code-comment"># 8. Open API documentation</span>
+<span class="code-function">bun run env:docs</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📡 API Integration Overview</h2>
+        <p>Your Fire22 Dashboard integrates with multiple external services for comprehensive functionality:</p>
+
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Purpose</th>
+              <th>Status</th>
+              <th>Environment Variables</th>
+              <th>New Endpoints</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Fire22 API</strong></td>
+              <td>Core sportsbook platform integration</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>FIRE22_API_URL, FIRE22_TOKEN</td>
+              <td>4 new endpoints</td>
+            </tr>
+            <tr>
+              <td><strong>Permissions Matrix</strong></td>
+              <td>Debug and monitoring system</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>N/A (Internal)</td>
+              <td>5 debug endpoints</td>
+            </tr>
+            <tr>
+              <td><strong>Stripe</strong></td>
+              <td>Payment processing and subscriptions</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET</td>
+              <td>Existing</td>
+            </tr>
+            <tr>
+              <td><strong>SendGrid</strong></td>
+              <td>Email notifications and marketing</td>
+              <td><span class="status-badge status-beta">Beta</span></td>
+              <td>SENDGRID_API_KEY</td>
+              <td>Existing</td>
+            </tr>
+            <tr>
+              <td><strong>Twilio</strong></td>
+              <td>SMS notifications and alerts</td>
+              <td><span class="status-badge status-development">Development</span></td>
+              <td>TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN</td>
+              <td>Existing</td>
+            </tr>
+            <tr>
+              <td><strong>Telegram Bot</strong></td>
+              <td>User notifications and support</td>
+              <td><span class="status-badge status-beta">Beta</span></td>
+              <td>BOT_TOKEN, CASHIER_BOT_TOKEN</td>
+              <td>Existing</td>
+            </tr>
+            <tr>
+              <td><strong>Cloudflare Workers</strong></td>
+              <td>Edge computing and deployment</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>N/A (Configuration-based)</td>
+              <td>Enhanced</td>
+            </tr>
+            <tr>
+              <td><strong>P2P Queue System</strong></td>
+              <td>Peer-to-peer transaction matching</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>N/A (Internal system)</td>
+              <td>8 new endpoints</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>🔥 Fire22 API Integration</h2>
+        <p>Core integration with the Fire22 sportsbook platform:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Base URL:</strong>
+            https://api.fire22.com
+          </div>
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            Bearer Token (JWT)
+          </div>
+          <div class="api-details">
+            <strong>Rate Limit:</strong>
+            1000 requests/minute
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (with signature verification)
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">FIRE22_API_URL</span>=<span class="code-string">https://api.fire22.com</span>
+<span class="code-keyword">FIRE22_TOKEN</span>=<span class="code-string">your_api_token_here</span>
+<span class="code-keyword">FIRE22_WEBHOOK_SECRET</span>=<span class="code-string">webhook_secret_for_verification</span>
+
+<span class="code-comment"># API Usage Example</span>
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(`${config.fire22.apiUrl}/agents`, {
+  headers: {
+    <span class="code-string">'Authorization'</span>: <span class="code-string">`Bearer ${config.fire22.token}`</span>,
+    <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span>
+  }
+});
+
+<span class="code-comment"># Webhook Verification</span>
+<span class="code-keyword">const</span> signature = request.headers.get(<span class="code-string">'x-fire22-signature'</span>);
+<span class="code-keyword">const</span> isValid = verifyWebhook(body, signature, config.fire22.webhookSecret);</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🔒 Security:</strong>
+          Always verify webhook signatures and use HTTPS for all API communications.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🆕 New Fire22 API Endpoints</h2>
+        <p>Recently added comprehensive Fire22 API endpoints for enhanced data access:</p>
+
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Method</th>
+              <th>Purpose</th>
+              <th>Response Format</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/api/fire22/customers</code></td>
+              <td>GET</td>
+              <td>Retrieve all Fire22 customers with fallback to D1 database</td>
+              <td>Customer list with metadata</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>/api/fire22/wagers</code></td>
+              <td>GET</td>
+              <td>Get all active wagers with volume and risk calculations</td>
+              <td>Wager data with statistics</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>/api/fire22/kpis</code></td>
+              <td>GET</td>
+              <td>Real-time key performance indicators and metrics</td>
+              <td>KPI data with alerts</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>/api/fire22/agent-performance</code></td>
+              <td>GET</td>
+              <td>Comprehensive agent performance analytics</td>
+              <td>Performance metrics and rankings</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Fire22 Customers Endpoint</span>
+<span class="code-keyword">const</span> customers = <span class="code-keyword">await</span> fetch(<span class="code-string">'/api/fire22/customers'</span>);
+<span class="code-keyword">const</span> customerData = <span class="code-keyword">await</span> customers.json();
+
+<span class="code-comment"># Response Format</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"data"</span>: [
+    {
+      <span class="code-string">"customer_id"</span>: <span class="code-string">"CUST001"</span>,
+      <span class="code-string">"balance"</span>: 1500.00,
+      <span class="code-string">"weekly_pnl"</span>: 250.00,
+      <span class="code-string">"active"</span>: <span class="code-keyword">true</span>
+    }
+  ],
+  <span class="code-string">"total"</span>: 1,
+  <span class="code-string">"timestamp"</span>: <span class="code-string">"2025-08-26T23:55:00.000Z"</span>
+}</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Fire22 Wagers Endpoint</span>
+<span class="code-keyword">const</span> wagers = <span class="code-keyword">await</span> fetch(<span class="code-string">'/api/fire22/wagers'</span>);
+<span class="code-keyword">const</span> wagerData = <span class="code-keyword">await</span> wagers.json();
+
+<span class="code-comment"># Response Format</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"wagers"</span>: [
+      {
+        <span class="code-string">"WagerNumber"</span>: 12345,
+        <span class="code-string">"CustomerID"</span>: <span class="code-string">"CUST001"</span>,
+        <span class="code-string">"AmountWagered"</span>: 100.00,
+        <span class="code-string">"ToWinAmount"</span>: 190.00
+      }
+    ],
+    <span class="code-string">"totalWagers"</span>: 1,
+    <span class="code-string">"totalVolume"</span>: 100.00,
+    <span class="code-string">"totalRisk"</span>: 190.00
+  }
+}</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Enhanced Features:</strong>
+          All endpoints include automatic fallback to D1 database when Fire22 API is unavailable, ensuring continuous
+          service.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔍 Permissions Matrix Debug Endpoints</h2>
+        <p>Comprehensive debugging and monitoring endpoints for the permissions matrix system:</p>
+
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Method</th>
+              <th>Purpose</th>
+              <th>Response Format</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/api/debug/permissions-matrix</code></td>
+              <td>GET</td>
+              <td>Main debug endpoint with comprehensive matrix data</td>
+              <td>Matrix data and validation results</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>/api/debug/permissions-matrix/validation</code></td>
+              <td>GET</td>
+              <td>Detailed validation results for permissions structure</td>
+              <td>Validation status and scores</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>/api/debug/permissions-matrix/agents</code></td>
+              <td>GET</td>
+              <td>Agent-specific permissions and commission details</td>
+              <td>Agent data and validation summary</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>/api/debug/permissions-matrix/performance</code></td>
+              <td>GET</td>
+              <td>Performance metrics and response time analytics</td>
+              <td>Performance data and cache stats</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>/api/debug/permissions-matrix/realtime</code></td>
+              <td>GET</td>
+              <td>Real-time status and active validation monitoring</td>
+              <td>Live metrics and system status</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Main Permissions Matrix Debug</span>
+<span class="code-keyword">const</span> matrixDebug = <span class="code-keyword">await</span> fetch(<span class="code-string">'/api/debug/permissions-matrix'</span>);
+<span class="code-keyword">const</span> debugData = <span class="code-keyword">await</span> matrixDebug.json();
+
+<span class="code-comment"># Response Format</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"matrixData"</span>: [
+    {
+      <span class="code-string">"agent_id"</span>: <span class="code-string">"AG001"</span>,
+      <span class="code-string">"permissions"</span>: {
+        <span class="code-string">"canPlaceBets"</span>: <span class="code-keyword">true</span>,
+        <span class="code-string">"canModifyInfo"</span>: <span class="code-keyword">true</span>
+      },
+      <span class="code-string">"commission_rates"</span>: {
+        <span class="code-string">"inet"</span>: 0.03,
+        <span class="code-string">"casino"</span>: 0.032
+      }
+    }
+  ],
+  <span class="code-string">"validationResults"</span>: {
+    <span class="code-string">"totalAgents"</span>: 4,
+    <span class="code-string">"validAgents"</span>: 4,
+    <span class="code-string">"dataQuality"</span>: 100
+  }
+}</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Performance Debug Endpoint</span>
+<span class="code-keyword">const</span> performance = <span class="code-keyword">await</span> fetch(<span class="code-string">'/api/debug/permissions-matrix/performance'</span>);
+<span class="code-keyword">const</span> perfData = <span class="code-keyword">await</span> performance.json();
+
+<span class="code-comment"># Response Format</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"responseTimes"</span>: {
+    <span class="code-string">"average"</span>: 45,
+    <span class="code-string">"min"</span>: 12,
+    <span class="code-string">"max"</span>: 89,
+    <span class="code-string">"p95"</span>: 67
+  },
+  <span class="code-string">"throughput"</span>: {
+    <span class="code-string">"requestsPerSecond"</span>: 22.5,
+    <span class="code-string">"totalRequests"</span>: 150
+  },
+  <span class="code-string">"cacheStats"</span>: {
+    <span class="code-string">"hitRate"</span>: <span class="code-string">"94.2%"</span>,
+    <span class="code-string">"cacheSize"</span>: 45
+  }
+}</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🔍 Debug Features:</strong>
+          These endpoints provide comprehensive insights into permissions matrix performance, validation status, and
+          system health for troubleshooting and optimization.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💳 Stripe Payment Integration</h2>
+        <p>Secure payment processing for subscriptions and transactions:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Environment:</strong>
+            Test/Production keys
+          </div>
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            Secret Key (Bearer)
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (with signature verification)
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            Payments, Subscriptions, Refunds, Disputes
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">STRIPE_SECRET_KEY</span>=<span class="code-string">sk_test_... or sk_live_...</span>
+<span class="code-keyword">STRIPE_WEBHOOK_SECRET</span>=<span class="code-string">whsec_webhook_secret</span>
+
+<span class="code-comment"># Payment Processing Example</span>
+<span class="code-keyword">const</span> stripe = <span class="code-keyword">new</span> Stripe(config.stripe.secretKey);
+
+<span class="code-keyword">const</span> paymentIntent = <span class="code-keyword">await</span> stripe.paymentIntents.create({
+  amount: 2000, <span class="code-comment">// $20.00</span>
+  currency: <span class="code-string">'usd'</span>,
+  metadata: {
+    userId: <span class="code-string">'user_123'</span>,
+    subscriptionId: <span class="code-string">'sub_456'</span>
+  }
+});
+
+<span class="code-comment"># Webhook Verification</span>
+<span class="code-keyword">const</span> event = stripe.webhooks.constructEvent(
+  body, 
+  signature, 
+  config.stripe.webhookSecret
+);</pre>
+        </div>
+
+        <div class="warning">
+          <strong>⚠️ Important:</strong>
+          Never expose your Stripe secret key in client-side code. Always use server-side processing.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📧 SendGrid Email Integration</h2>
+        <p>Reliable email delivery for notifications and marketing:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            API Key
+          </div>
+          <div class="api-details">
+            <strong>Rate Limit:</strong>
+            100 emails/second (free tier)
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            Templates, Dynamic Content, Analytics
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (delivery tracking)
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">SENDGRID_API_KEY</span>=<span class="code-string">SG.your_api_key_here</span>
+
+<span class="code-comment"># Email Sending Example</span>
+<span class="code-keyword">const</span> sgMail = <span class="code-keyword">require</span>(<span class="code-string">'@sendgrid/mail'</span>);
+sgMail.setApiKey(config.sendgrid.apiKey);
+
+<span class="code-keyword">const</span> msg = {
+  to: <span class="code-string">'user@example.com'</span>,
+  from: <span class="code-string">'noreply@fire22.com'</span>,
+  subject: <span class="code-string">'Welcome to Fire22 Dashboard'</span>,
+  templateId: <span class="code-string">'d-welcome-template-id'</span>,
+  dynamicTemplateData: {
+    userName: <span class="code-string">'John Doe'</span>,
+    dashboardUrl: <span class="code-string">'https://dashboard.fire22.com'</span>
+  }
+};
+
+<span class="code-keyword">await</span> sgMail.send(msg);</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Best Practice:</strong>
+          Use SendGrid templates for consistent branding and dynamic content for personalization.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📱 Twilio SMS Integration</h2>
+        <p>Real-time SMS notifications and alerts:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            Account SID + Auth Token
+          </div>
+          <div class="api-details">
+            <strong>Rate Limit:</strong>
+            1 SMS/second (free tier)
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            SMS, MMS, Voice, WhatsApp
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (delivery receipts)
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">TWILIO_ACCOUNT_SID</span>=<span class="code-string">AC...your_account_sid</span>
+<span class="code-keyword">TWILIO_AUTH_TOKEN</span>=<span class="code-string">your_auth_token</span>
+
+<span class="code-comment"># SMS Sending Example</span>
+<span class="code-keyword">const</span> twilio = <span class="code-keyword">require</span>(<span class="code-string">'twilio'</span>);
+<span class="code-keyword">const</span> client = twilio(config.twilio.accountSid, config.twilio.authToken);
+
+<span class="code-keyword">const</span> message = <span class="code-keyword">await</span> client.messages.create({
+  body: <span class="code-string">'Your Fire22 Dashboard alert: System is running normally.'</span>,
+  from: <span class="code-string">'+1234567890'</span>, <span class="code-comment">// Your Twilio number</span>
+  to: <span class="code-string">'+0987654321'</span>  <span class="code-comment">// User's number</span>
+});
+
+<span class="code-comment"># Webhook for Delivery Receipts</span>
+app.post(<span class="code-string">'/webhook/twilio'</span>, (req, res) => {
+  <span class="code-keyword">const</span> { MessageSid, MessageStatus } = req.body;
+  console.log(`Message ${MessageSid} status: ${MessageStatus}`);
+  res.sendStatus(200);
+});</pre>
+        </div>
+
+        <div class="callout">
+          <strong>📱 Pro Tip:</strong>
+          Use Twilio's webhook system to track SMS delivery status and handle failures gracefully.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🤖 Telegram Bot Integration</h2>
+        <p>User notifications and support via Telegram:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            Bot Token
+          </div>
+          <div class="api-details">
+            <strong>Rate Limit:</strong>
+            30 messages/second
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            Messages, Inline Keyboards, Webhooks
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (updates and commands)
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">BOT_TOKEN</span>=<span class="code-string">123456789:ABCdefGHIjklMNOpqrsTUVwxyz</span>
+<span class="code-keyword">CASHIER_BOT_TOKEN</span>=<span class="code-string">987654321:ZYXwvuTSRqpONMlkjIHGfedCBA</span>
+
+<span class="code-comment"># Bot Message Example</span>
+<span class="code-keyword">const</span> telegram = <span class="code-keyword">require</span>(<span class="code-string">'node-telegram-bot-api'</span>);
+<span class="code-keyword">const</span> bot = <span class="code-keyword">new</span> telegram(config.telegram.botToken);
+
+<span class="code-comment"># Send notification</span>
+<span class="code-keyword">await</span> bot.sendMessage(chatId, <span class="code-string">'🚨 Fire22 Dashboard Alert: New transaction detected!'</span>, {
+  reply_markup: {
+    inline_keyboard: [[
+      { text: <span class="code-string">'View Dashboard'</span>, url: <span class="code-string">'https://dashboard.fire22.com'</span> },
+      { text: <span class="code-string">'Dismiss'</span>, callback_data: <span class="code-string">'dismiss_alert'</span> }
+    ]]
+  }
+});
+
+<span class="code-comment"># Handle commands</span>
+bot.on(<span class="code-string">'message'</span>, (msg) => {
+  <span class="code-keyword">if</span> (msg.text === <span class="code-string">'/status'</span>) {
+    bot.sendMessage(msg.chat.id, <span class="code-string">'🟢 Fire22 Dashboard is running normally.'</span>);
+  }
+});</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Best Practice:</strong>
+          Use inline keyboards for interactive responses and webhooks for real-time updates.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔄 P2P Queue System Integration</h2>
+        <p>Peer-to-peer matching system for withdrawals and deposits with intelligent queue management:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>System Type:</strong>
+            Real-time P2P matching engine
+          </div>
+          <div class="api-details">
+            <strong>Matching Algorithm:</strong>
+            Intelligent priority-based matching
+          </div>
+          <div class="api-details">
+            <strong>Queue Management:</strong>
+            Automated processing and optimization
+          </div>
+          <div class="api-details">
+            <strong>Performance:</strong>
+            63,416 transactions/minute capacity
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># P2P Queue System Endpoints</span>
+<span class="code-comment"># Initialize queue system</span>
+<span class="code-keyword">POST</span> <span class="code-string">/api/queue/init</span>
+
+<span class="code-comment"># Add withdrawal to queue</span>
+<span class="code-keyword">POST</span> <span class="code-string">/api/queue/withdrawal</span>
+
+<span class="code-comment"># Add deposit to queue</span>
+<span class="code-keyword">POST</span> <span class="code-string">/api/queue/deposit</span>
+
+<span class="code-comment"># Get queue statistics</span>
+<span class="code-keyword">GET</span> <span class="code-string">/api/queue/stats</span>
+
+<span class="code-comment"># View queue items</span>
+<span class="code-keyword">GET</span> <span class="code-string">/api/queue/items</span>
+
+<span class="code-comment"># Find matching opportunities</span>
+<span class="code-keyword">GET</span> <span class="code-string">/api/queue/opportunities</span>
+
+<span class="code-comment"># Process queue matches</span>
+<span class="code-keyword">POST</span> <span class="code-string">/api/queue/process</span>
+
+<span class="code-comment"># Complete matched transactions</span>
+<span class="code-keyword">POST</span> <span class="code-string">/api/queue/complete</span></pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># P2P Queue System Usage Example</span>
+<span class="code-keyword">const</span> queueSystem = <span class="code-keyword">new</span> WithdrawalQueueSystem(env);
+
+<span class="code-comment"># Add withdrawal request</span>
+<span class="code-keyword">const</span> withdrawal = <span class="code-keyword">await</span> queueSystem.addWithdrawal({
+  customerId: <span class="code-string">'CUST001'</span>,
+  amount: 500.00,
+  paymentType: <span class="code-string">'Venmo'</span>,
+  priority: <span class="code-string">'high'</span>
+});
+
+<span class="code-comment"># Add deposit request</span>
+<span class="code-keyword">const</span> deposit = <span class="code-keyword">await</span> queueSystem.addDeposit({
+  customerId: <span class="code-string">'CUST002'</span>,
+  amount: 500.00,
+  paymentType: <span class="code-string">'PayPal'</span>,
+  source: <span class="code-string">'bank_transfer'</span>
+});
+
+<span class="code-comment"># Process matching</span>
+<span class="code-keyword">const</span> matches = <span class="code-keyword">await</span> queueSystem.processMatching();
+console.log(<span class="code-string">`Found ${matches.length} matches`</span>);</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ P2P Benefits:</strong>
+          Eliminates manual matching, reduces processing time, and provides real-time transaction optimization.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>☁️ Cloudflare Workers Integration</h2>
+        <p>Edge computing and serverless deployment platform:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Runtime:</strong>
+            V8 Isolates
+          </div>
+          <div class="api-details">
+            <strong>Global Network:</strong>
+            200+ locations
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            D1 Database, KV Storage, R2 Storage
+          </div>
+          <div class="api-details">
+            <strong>Deployment:</strong>
+            Wrangler CLI
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Wrangler Configuration</span>
+<span class="code-keyword">[wrangler]</span>
+<span class="code-keyword">name</span> = <span class="code-string">"dashboard-worker"</span>
+<span class="code-keyword">main</span> = <span class="code-string">"src/index.ts"</span>
+<span class="code-keyword">compatibility_date</span> = <span class="code-string">"2024-01-15"</span>
+
+<span class="code-comment"># Environment Variables</span>
+<span class="code-keyword">[wrangler.vars]</span>
+<span class="code-keyword">ENVIRONMENT</span> = <span class="code-string">"production"</span>
+<span class="code-keyword">VERSION</span> = <span class="code-string">"2.1.2-enhanced"</span>
+
+<span class="code-comment"># D1 Database</span>
+<span class="code-keyword">[[wrangler.d1_databases]]</span>
+<span class="code-keyword">binding</span> = <span class="code-string">"DB"</span>
+<span class="code-keyword">database_name</span> = <span class="code-string">"fire22-dashboard"</span>
+<span class="code-keyword">database_id</span> = <span class="code-string">"your-d1-database-id"</span>
+
+<span class="code-comment"># Deployment Commands</span>
+<span class="code-function">bun run deploy</span>              <span class="code-comment"># Deploy to production</span>
+<span class="code-function">bun run deploy:staging</span>      <span class="code-comment"># Deploy to staging</span>
+<span class="code-function">bun run deploy:check</span>        <span class="code-comment"># Validate deployment</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>🌍 Global Edge:</strong>
+          Your dashboard runs on Cloudflare's global network for optimal performance worldwide.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 API Security Best Practices</h2>
+        <p>Essential security measures for all API integrations:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># 1. Environment Variable Security</span>
+<span class="code-comment"># Never commit secrets to version control</span>
+<span class="code-keyword"># .gitignore</span>
+<span class="code-string">.env*</span>
+<span class="code-string">*.key</span>
+<span class="code-string">secrets/</span>
+
+<span class="code-comment"># 2. API Key Rotation</span>
+<span class="code-keyword">const</span> rotateApiKey = <span class="code-keyword">async</span> () => {
+  <span class="code-keyword">const</span> newKey = <span class="code-keyword">await</span> generateNewApiKey();
+  <span class="code-keyword">await</span> updateEnvironmentVariable(<span class="code-string">'FIRE22_TOKEN'</span>, newKey);
+  <span class="code-keyword">await</span> revokeOldApiKey(oldKey);
+};
+
+<span class="code-comment"># 3. Rate Limiting</span>
+<span class="code-keyword">const</span> rateLimiter = <span class="code-keyword">new</span> Map();
+<span class="code-keyword">const</span> checkRateLimit = (ip, limit = 100, window = 900000) => {
+  <span class="code-keyword">const</span> now = Date.now();
+  <span class="code-keyword">const</span> userRequests = rateLimiter.get(ip) || [];
+  <span class="code-keyword">const</span> validRequests = userRequests.filter(time => now - time < window);
+  
+  <span class="code-keyword">if</span> (validRequests.length >= limit) {
+    <span class="code-keyword">return</span> <span class="code-keyword">false</span>; <span class="code-comment">// Rate limited</span>
+  }
+  
+  validRequests.push(now);
+  rateLimiter.set(ip, validRequests);
+  <span class="code-keyword">return</span> <span class="code-keyword">true</span>;
+};
+
+<span class="code-comment"># 4. Webhook Signature Verification</span>
+<span class="code-keyword">const</span> verifyWebhook = (body, signature, secret) => {
+  <span class="code-keyword">const</span> expectedSignature = crypto
+    .createHmac(<span class="code-string">'sha256'</span>, secret)
+    .update(body)
+    .digest(<span class="code-string">'hex'</span>);
+  
+  <span class="code-keyword">return</span> crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+};</pre>
+        </div>
+
+        <div class="warning">
+          <strong>🔒 Critical:</strong>
+          Always verify webhook signatures, implement rate limiting, and rotate API keys regularly.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Testing API Integrations</h2>
+        <p>Comprehensive testing strategies for all API endpoints:</p>
+
+        <div class="example">
+          <div class="example-item">
+            <h3>🔍 Unit Testing</h3>
+            <div class="code-block">
+              <pre><span class="code-comment"># Test API client functions</span>
+<span class="code-keyword">describe</span>(<span class="code-string">'Fire22 API Client'</span>, () => {
+  <span class="code-keyword">it</span>(<span class="code-string">'should authenticate with valid token'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> client = <span class="code-keyword">new</span> Fire22Client(validToken);
+    <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> client.getAgents();
+    expect(response.status).toBe(200);
+  });
+  
+  <span class="code-keyword">it</span>(<span class="code-string">'should reject invalid token'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> client = <span class="code-keyword">new</span> Fire22Client(invalidToken);
+    <span class="code-keyword">await</span> expect(client.getAgents()).rejects.toThrow();
+  });
+});</pre>
+            </div>
+          </div>
+
+          <div class="example-item">
+            <h3>🌐 Integration Testing</h3>
+            <div class="code-block">
+              <pre><span class="code-comment"># Test complete API workflows</span>
+<span class="code-keyword">describe</span>(<span class="code-string">'Payment Flow'</span>, () => {
+  <span class="code-keyword">it</span>(<span class="code-string">'should process payment and send notification'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> payment = <span class="code-keyword">await</span> processPayment(paymentData);
+    expect(payment.status).toBe(<span class="code-string">'succeeded'</span>);
+    
+    <span class="code-keyword">const</span> email = <span class="code-keyword">await</span> sendPaymentConfirmation(payment);
+    expect(email.status).toBe(<span class="code-string">'sent'</span>);
+  });
+});</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>🧪 Test Commands:</strong>
+          Use
+          <code>bun run env:integration</code>
+          for comprehensive API testing and
+          <code>bun run test:checklist</code>
+          for full validation.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🆕 Enhanced Testing Commands</h2>
+        <p>New comprehensive testing commands for the enhanced Fire22 API and permissions system:</p>
+
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Purpose</th>
+              <th>Test Coverage</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>bun run test:all</code></td>
+              <td>Run all test suites (quick + checklist)</td>
+              <td>Complete system validation</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>bun run test:quick</code></td>
+              <td>Fast critical endpoint validation</td>
+              <td>Core functionality only</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>bun run test:checklist</code></td>
+              <td>Comprehensive system testing</td>
+              <td>Full feature validation</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>bun run health:permissions</code></td>
+              <td>Test permissions health endpoints</td>
+              <td>Permissions system validation</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>bun run health:permissions-matrix</code></td>
+              <td>Test permissions matrix health</td>
+              <td>Matrix validation and debug</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>bun run health:comprehensive</code></td>
+              <td>Full health system validation</td>
+              <td>Complete health monitoring</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>bun run test:queue</code></td>
+              <td>Test P2P queue system functionality</td>
+              <td>Queue matching and processing</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+            <tr>
+              <td><code>bun run queue:demo</code></td>
+              <td>Demonstrate P2P queue system</td>
+              <td>Live queue matching demo</td>
+              <td><span class="status-badge status-active">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Quick Test - Critical Endpoints</span>
+<span class="code-function">bun run test:quick</span>
+
+<span class="code-comment"># Output includes:</span>
+✅ Worker Accessibility
+✅ Live Metrics  
+✅ Fire22 API Integration
+✅ Permissions Health
+✅ Permissions Matrix Health
+✅ System Health
+✅ Dashboard Access
+
+<span class="code-comment"># Comprehensive Test - Full System</span>
+<span class="code-function">bun run test:checklist</span>
+
+<span class="code-comment"># Tests all categories:</span>
+📋 Fire22 API Integration (8 tests)
+📋 Fire22 Advanced Features (11 tests)
+📋 Permissions Matrix Debug (7 tests)
+📋 Health Endpoints & Monitoring (5 tests)
+📋 Database Connections (3 tests)
+📋 Authentication & Security (2 tests)</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Health System Testing</span>
+<span class="code-function">bun run health:permissions</span>
+<span class="code-comment"># Tests /api/health/permissions endpoint</span>
+
+<span class="code-function">bun run health:permissions-matrix</span>
+<span class="code-comment"># Tests /api/health/permissions-matrix endpoint</span>
+
+<span class="code-function">bun run health:comprehensive</span>
+<span class="code-comment"># Tests all health endpoints</span>
+
+<span class="code-comment"># Expected Results:</span>
+🏥 Health Check Summary: 3/3 healthy
+✅ All health endpoints operational
+📊 Quick Test Results: 9/9 passed</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Enhanced Testing:</strong>
+          All new endpoints are now covered by comprehensive testing suites with detailed reporting and validation.
+        </div>
+      </div>
+
+      <div class="card" id="error-codes">
+        <h2>🔍 Error Codes & Troubleshooting</h2>
+        <p>Comprehensive error code system and troubleshooting guide for all API integrations:</p>
+
+        <!-- 🆕 NEW: Error Code System -->
+        <div class="error-code-system">
+          <h3>🚨 Error Code System</h3>
+          <p>Standardized error codes across all Fire22 Dashboard systems:</p>
+
+          <!-- 🆕 NEW: Quick Navigation -->
+          <div class="error-navigation">
+            <h4>🔗 Quick Navigation</h4>
+            <div class="error-nav-links">
+              <a href="#auth-errors" class="error-nav-link">🔐 Authentication & Permissions (1000-1999)</a>
+              <a href="#db-errors" class="error-nav-link">💾 Database (2000-2999)</a>
+              <a href="#api-errors" class="error-nav-link">🔌 API Integration (3000-3999)</a>
+              <a href="#financial-errors" class="error-nav-link">💰 Financial (4000-4999)</a>
+              <a href="#queue-errors" class="error-nav-link">🔄 P2P Queue (5000-5999)</a>
+              <a href="#system-errors" class="error-nav-link">🏥 System Health (6000-6999)</a>
+            </div>
+          </div>
+
+          <div class="error-categories">
+            <div class="error-category" id="auth-errors">
+              <h4>🔐 Authentication & Security (1000-1999)</h4>
+              <table class="error-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Message</th>
+                    <th>Description</th>
+                    <th>Solution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>1001</code></td>
+                    <td>Invalid API Key</td>
+                    <td>API key is missing, expired, or invalid</td>
+                    <td>Regenerate API key in dashboard settings</td>
+                  </tr>
+                  <tr>
+                    <td><code>1002</code></td>
+                    <td>JWT Token Expired</td>
+                    <td>Authentication token has expired</td>
+                    <td>Refresh token or re-authenticate</td>
+                  </tr>
+                  <tr>
+                    <td><code>1003</code></td>
+                    <td>Insufficient Permissions</td>
+                    <td>User lacks required permissions for operation</td>
+                    <td>Contact admin for permission upgrade</td>
+                  </tr>
+                  <tr>
+                    <td><code>1006</code></td>
+                    <td>Permission Validation Failed</td>
+                    <td>Permission structure or inheritance validation failed</td>
+                    <td>Check agent permissions and configuration</td>
+                  </tr>
+                  <tr>
+                    <td><code>1007</code></td>
+                    <td>Invalid Permission Format</td>
+                    <td>Permission data format is malformed or invalid</td>
+                    <td>Validate permission structure against schema</td>
+                  </tr>
+                  <tr>
+                    <td><code>1008</code></td>
+                    <td>Permission Inheritance Error</td>
+                    <td>Permission inheritance chain is broken or invalid</td>
+                    <td>Review permission hierarchy and agent relationships</td>
+                  </tr>
+                  <tr>
+                    <td><code>1004</code></td>
+                    <td>Rate Limit Exceeded</td>
+                    <td>Too many requests in time window</td>
+                    <td>Wait for rate limit reset or upgrade plan</td>
+                  </tr>
+                  <tr>
+                    <td><code>1005</code></td>
+                    <td>Invalid Webhook Signature</td>
+                    <td>Webhook signature verification failed</td>
+                    <td>Check webhook secret and signature algorithm</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="error-category" id="db-errors">
+              <h4>💾 Database & Storage (2000-2999)</h4>
+              <table class="error-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Message</th>
+                    <th>Description</th>
+                    <th>Solution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>2001</code></td>
+                    <td>Database Connection Failed</td>
+                    <td>Unable to connect to database</td>
+                    <td>Check database status and connection string</td>
+                  </tr>
+                  <tr>
+                    <td><code>2002</code></td>
+                    <td>Query Timeout</td>
+                    <td>Database query exceeded time limit</td>
+                    <td>Optimize query or increase timeout</td>
+                  </tr>
+                  <tr>
+                    <td><code>2003</code></td>
+                    <td>Record Not Found</td>
+                    <td>Requested record doesn't exist</td>
+                    <td>Verify record ID and existence</td>
+                  </tr>
+                  <tr>
+                    <td><code>2004</code></td>
+                    <td>Duplicate Entry</td>
+                    <td>Attempting to create duplicate record</td>
+                    <td>Check for existing records before creation</td>
+                  </tr>
+                  <tr>
+                    <td><code>2005</code></td>
+                    <td>Constraint Violation</td>
+                    <td>Database constraint check failed</td>
+                    <td>Validate data against schema requirements</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="error-category" id="api-errors">
+              <h4>🔌 API & Integration (3000-3999)</h4>
+              <table class="error-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Message</th>
+                    <th>Description</th>
+                    <th>Solution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>3001</code></td>
+                    <td>Invalid Request Format</td>
+                    <td>Request body or parameters are malformed</td>
+                    <td>Check JSON syntax and required fields</td>
+                  </tr>
+                  <tr>
+                    <td><code>3002</code></td>
+                    <td>Missing Required Fields</td>
+                    <td>Required parameters are not provided</td>
+                    <td>Include all required fields in request</td>
+                  </tr>
+                  <tr>
+                    <td><code>3003</code></td>
+                    <td>Invalid Data Type</td>
+                    <td>Parameter has incorrect data type</td>
+                    <td>Convert data to expected type</td>
+                  </tr>
+                  <tr>
+                    <td><code>3004</code></td>
+                    <td>External API Unavailable</td>
+                    <td>Third-party service is down</td>
+                    <td>Check service status and retry later</td>
+                  </tr>
+                  <tr>
+                    <td><code>3005</code></td>
+                    <td>API Version Mismatch</td>
+                    <td>Client using incompatible API version</td>
+                    <td>Update client to supported version</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="error-category" id="financial-errors">
+              <h4>💰 Financial & Business (4000-4999)</h4>
+              <table class="error-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Message</th>
+                    <th>Description</th>
+                    <th>Solution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>4001</code></td>
+                    <td>Insufficient Balance</td>
+                    <td>Account balance too low for transaction</td>
+                    <td>Add funds or reduce transaction amount</td>
+                  </tr>
+                  <tr>
+                    <td><code>4002</code></td>
+                    <td>Transaction Limit Exceeded</td>
+                    <td>Transaction exceeds account limits</td>
+                    <td>Check account limits or contact support</td>
+                  </tr>
+                  <tr>
+                    <td><code>4003</code></td>
+                    <td>Invalid Payment Method</td>
+                    <td>Payment method not supported or invalid</td>
+                    <td>Use supported payment method</td>
+                  </tr>
+                  <tr>
+                    <td><code>4004</code></td>
+                    <td>Transaction Already Processed</td>
+                    <td>Duplicate transaction attempt</td>
+                    <td>Check transaction status before retry</td>
+                  </tr>
+                  <tr>
+                    <td><code>4005</code></td>
+                    <td>Account Suspended</td>
+                    <td>Account temporarily suspended</td>
+                    <td>Contact support for account review</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="error-category" id="queue-errors">
+              <h4>🔄 P2P Queue System (5000-5999)</h4>
+              <table class="error-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Message</th>
+                    <th>Description</th>
+                    <th>Solution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>5001</code></td>
+                    <td>Queue Full</td>
+                    <td>Queue has reached maximum capacity</td>
+                    <td>Wait for queue space or contact admin</td>
+                  </tr>
+                  <tr>
+                    <td><code>5002</code></td>
+                    <td>No Matching Items</td>
+                    <td>No suitable matches found in queue</td>
+                    <td>Wait for matching items or adjust criteria</td>
+                  </tr>
+                  <tr>
+                    <td><code>5003</code></td>
+                    <td>Queue Processing Failed</td>
+                    <td>Error during queue item processing</td>
+                    <td>Check queue status and retry</td>
+                  </tr>
+                  <tr>
+                    <td><code>5004</code></td>
+                    <td>Invalid Queue Item</td>
+                    <td>Queue item data is malformed</td>
+                    <td>Validate item data before submission</td>
+                  </tr>
+                  <tr>
+                    <td><code>5005</code></td>
+                    <td>Queue System Unavailable</td>
+                    <td>Queue system is temporarily down</td>
+                    <td>Wait for system recovery</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="error-category" id="system-errors">
+              <h4>🏥 System & Health (6000-6999)</h4>
+              <table class="error-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Message</th>
+                    <th>Description</th>
+                    <th>Solution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>6001</code></td>
+                    <td>Service Unavailable</td>
+                    <td>Service is temporarily unavailable</td>
+                    <td>Wait for service recovery</td>
+                  </tr>
+                  <tr>
+                    <td><code>6002</code></td>
+                    <td>Maintenance Mode</td>
+                    <td>System is in maintenance mode</td>
+                    <td>Wait for maintenance completion</td>
+                  </tr>
+                  <tr>
+                    <td><code>6003</code></td>
+                    <td>Configuration Error</td>
+                    <td>System configuration is invalid</td>
+                    <td>Contact system administrator</td>
+                  </tr>
+                  <tr>
+                    <td><code>6004</code></td>
+                    <td>Resource Exhausted</td>
+                    <td>System resources are depleted</td>
+                    <td>Wait for resource availability</td>
+                  </tr>
+                  <tr>
+                    <td><code>6005</code></td>
+                    <td>Health Check Failed</td>
+                    <td>System health check indicates problems</td>
+                    <td>Check system logs and status</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 🆕 NEW: Error Response Format -->
+          <div class="error-response-format">
+            <h4>📋 Standard Error Response Format</h4>
+            <div class="code-block">
+              <pre><span class="code-comment"># Error Response Structure</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">false</span>,
+  <span class="code-string">"error"</span>: {
+    <span class="code-string">"code"</span>: <span class="code-string">"1001"</span>,
+    <span class="code-string">"message"</span>: <span class="code-string">"Invalid API Key"</span>,
+    <span class="code-string">"description"</span>: <span class="code-string">"API key is missing, expired, or invalid"</span>,
+    <span class="code-string">"solution"</span>: <span class="code-string">"Regenerate API key in dashboard settings"</span>,
+    <span class="code-string">"timestamp"</span>: <span class="code-string">"2025-01-27T15:45:30.123Z"</span>,
+    <span class="code-string">"requestId"</span>: <span class="code-string">"req_1234567890abcdef"</span>,
+    <span class="code-string">"documentation"</span>: <span class="code-string">"https://docs.fire22.com/errors/1001"</span>
+  },
+  <span class="code-string">"data"</span>: <span class="code-keyword">null</span>
+}</pre>
+            </div>
+          </div>
+
+          <!-- 🆕 NEW: Data Handling & Permission Validation -->
+          <div class="data-handling-permissions">
+            <h4>🔐 Data Handling & Permission Validation</h4>
+            <p>Comprehensive guide to handling data responses and permission validation errors:</p>
+
+            <div class="data-sections">
+              <!-- Permission Validation Response Format -->
+              <div class="data-section">
+                <h5>🚨 Permission Validation Failed Response</h5>
+                <div class="code-block">
+                  <pre><span class="code-comment"># Permission Validation Failed (Error 1006)</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">false</span>,
+  <span class="code-string">"error"</span>: {
+    <span class="code-string">"code"</span>: <span class="code-string">"1006"</span>,
+    <span class="code-string">"message"</span>: <span class="code-string">"Permission Validation Failed"</span>,
+    <span class="code-string">"description"</span>: <span class="code-string">"Permission structure or inheritance validation failed"</span>,
+    <span class="code-string">"solution"</span>: <span class="code-string">"Check agent permissions and configuration"</span>,
+    <span class="code-string">"timestamp"</span>: <span class="code-string">"2025-01-27T15:45:30.123Z"</span>,
+    <span class="code-string">"requestId"</span>: <span class="code-string">"req_1234567890abcdef"</span>,
+    <span class="code-string">"documentation"</span>: <span class="code-string">"https://docs.fire22.com/errors/1006"</span>
+  },
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"validationErrors"</span>: [
+      {
+        <span class="code-string">"field"</span>: <span class="code-string">"agent_permissions"</span>,
+        <span class="code-string">"issue"</span>: <span class="code-string">"Missing required permission: can_place_bets"</span>,
+        <span class="code-string">"severity"</span>: <span class="code-string">"critical"</span>
+      },
+      {
+        <span class="code-string">"field"</span>: <span class="code-string">"permission_inheritance"</span>,
+        <span class="code-string">"issue"</span>: <span class="code-string">"Broken inheritance chain: parent_agent_id not found"</span>,
+        <span class="code-string">"severity"</span>: <span class="code-string">"high"</span>
+      }
+    ],
+    <span class="code-string">"affectedAgents"</span>: [<span class="code-string">"AGENT_001"</span>, <span class="code-string">"AGENT_002"</span>],
+    <span class="code-string">"permissionMatrix"</span>: {
+      <span class="code-string">"totalPermissions"</span>: 15,
+      <span class="code-string">"validPermissions"</span>: 12,
+      <span class="code-string">"invalidPermissions"</span>: 3,
+      <span class="code-string">"healthScore"</span>: 80.0
+    }
+  }
+}</pre>
+                </div>
+              </div>
+
+              <!-- Successful Permission Response -->
+              <div class="data-section">
+                <h5>✅ Successful Permission Response with Data</h5>
+                <div class="code-block">
+                  <pre><span class="code-comment"># Successful Permission Response</span>
+{
+  <span class="code-string">"success"</span>: <span class="code-keyword">true</span>,
+  <span class="code-string">"error"</span>: <span class="code-keyword">null</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"permissions"</span>: {
+      <span class="code-string">"agent_id"</span>: <span class="code-string">"AGENT_001"</span>,
+      <span class="code-string">"permission_set"</span>: {
+        <span class="code-string">"can_place_bets"</span>: <span class="code-keyword">true</span>,
+        <span class="code-string">"can_withdraw"</span>: <span class="code-keyword">true</span>,
+        <span class="code-string">"can_deposit"</span>: <span class="code-keyword">true</span>,
+        <span class="code-string">"can_manage_customers"</span>: <span class="code-keyword">true</span>,
+        <span class="code-string">"can_view_analytics"</span>: <span class="code-keyword">true</span>
+      },
+      <span class="code-string">"inherited_from"</span>: <span class="code-string">"SUPER_AGENT_001"</span>,
+      <span class="code-string">"commission_rates"</span>: {
+        <span class="code-string">"standard"</span>: 0.05,
+        <span class="code-string">"premium"</span>: 0.08,
+        <span class="code-string">"bonus"</span>: 0.02
+      },
+      <span class="code-string">"validation_status"</span>: <span class="code-string">"valid"</span>,
+      <span class="code-string">"last_validated"</span>: <span class="code-string">"2025-01-27T15:45:30.123Z"</span>
+    },
+    <span class="code-string">"matrix_health"</span>: {
+      <span class="code-string">"overall_score"</span>: 95.0,
+      <span class="code-string">"permission_coverage"</span>: 100.0,
+      <span class="code-string">"inheritance_health"</span>: 95.0,
+      <span class="code-string">"data_completeness"</span>: 100.0
+    }
+  }
+}</pre>
+                </div>
+              </div>
+
+              <!-- Data Validation Patterns -->
+              <div class="data-section">
+                <h5>🔍 Data Validation Patterns</h5>
+
+                <div class="code-block">
+                  <pre><span class="code-comment"># Data Validation Helper Functions</span>
+<span class="code-keyword">class</span> <span class="code-function">PermissionValidator</span> {
+  <span class="code-keyword">static</span> <span class="code-function">validatePermissionData</span>(data: <span class="code-keyword">any</span>): <span class="code-keyword">boolean</span> {
+    <span class="code-keyword">if</span> (!data || <span class="code-keyword">typeof</span> data !== <span class="code-string">'object'</span>) {
+      <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+    }
+    
+    <span class="code-comment">// Check required fields</span>
+    <span class="code-keyword">const</span> requiredFields = [<span class="code-string">'agent_id'</span>, <span class="code-string">'permission_set'</span>];
+    <span class="code-keyword">for</span> (<span class="code-keyword">const</span> field <span class="code-keyword">of</span> requiredFields) {
+      <span class="code-keyword">if</span> (!(field <span class="code-keyword">in</span> data)) {
+        <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+      }
+    }
+    
+    <span class="code-comment">// Validate permission set structure</span>
+    <span class="code-keyword">if</span> (!data.permission_set || <span class="code-keyword">typeof</span> data.permission_set !== <span class="code-string">'object'</span>) {
+      <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+    }
+    
+    <span class="code-comment">// Check permission values are boolean</span>
+    <span class="code-keyword">for</span> (<span class="code-keyword">const</span> [permission, value] <span class="code-keyword">of</span> Object.entries(data.permission_set)) {
+      <span class="code-keyword">if</span> (<span class="code-keyword">typeof</span> value !== <span class="code-string">'boolean'</span>) {
+        <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+      }
+    }
+    
+    <span class="code-keyword">return</span> <span class="code-keyword">true</span>;
+  }
+  
+  <span class="code-keyword">static</span> <span class="code-function">validateInheritanceChain</span>(data: <span class="code-keyword">any</span>): <span class="code-keyword">boolean</span> {
+    <span class="code-keyword">if</span> (data.inherited_from) {
+      <span class="code-keyword">return</span> <span class="code-keyword">typeof</span> data.inherited_from === <span class="code-string">'string'</span> && 
+             data.inherited_from.length > 0;
+    }
+    <span class="code-keyword">return</span> <span class="code-keyword">true</span>; <span class="code-comment">// Optional field</span>
+  }
+  
+  <span class="code-keyword">static</span> <span class="code-function">validateCommissionRates</span>(data: <span class="code-keyword">any</span>): <span class="code-keyword">boolean</span> {
+    <span class="code-keyword">if</span> (data.commission_rates) {
+      <span class="code-keyword">if</span> (<span class="code-keyword">typeof</span> data.commission_rates !== <span class="code-string">'object'</span>) {
+        <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+      }
+      
+      <span class="code-comment">// Check commission rates are numbers between 0 and 1</span>
+      <span class="code-keyword">for</span> (<span class="code-keyword">const</span> [rate, value] <span class="code-keyword">of</span> Object.entries(data.commission_rates)) {
+        <span class="code-keyword">if</span> (<span class="code-keyword">typeof</span> value !== <span class="code-string">'number'</span> || value < 0 || value > 1) {
+          <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+        }
+      }
+    }
+    <span class="code-keyword">return</span> <span class="code-keyword">true</span>; <span class="code-comment">// Optional field</span>
+  }
+}</pre>
+                </div>
+              </div>
+
+              <!-- Error Handling for Data Responses -->
+              <div class="data-section">
+                <h5>🚨 Error Handling for Data Responses</h5>
+                <div class="code-block">
+                  <pre><span class="code-comment"># Comprehensive Error Handling</span>
+<span class="code-keyword">async function</span> <span class="code-function">handlePermissionResponse</span>(response: <span class="code-keyword">any</span>) {
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">if</span> (!response.success) {
+      <span class="code-keyword">const</span> errorCode = response.error.code;
+      
+      <span class="code-keyword">switch</span> (errorCode) {
+        <span class="code-keyword">case</span> <span class="code-string">'1006'</span>: <span class="code-comment">// Permission Validation Failed</span>
+          <span class="code-keyword">await</span> handlePermissionValidationError(response);
+          <span class="code-keyword">break</span>;
+        <span class="code-keyword">case</span> <span class="code-string">'1007'</span>: <span class="code-comment">// Invalid Permission Format</span>
+          <span class="code-keyword">await</span> handlePermissionFormatError(response);
+          <span class="code-keyword">break</span>;
+        <span class="code-keyword">case</span> <span class="code-string">'1008'</span>: <span class="code-comment">// Permission Inheritance Error</span>
+          <span class="code-keyword">await</span> handleInheritanceError(response);
+          <span class="code-keyword">break</span>;
+        <span class="code-keyword">default</span>:
+          handleGenericError(response.error);
+      }
+      <span class="code-keyword">return</span>;
+    }
+    
+    <span class="code-keyword">// Validate successful response data</span>
+    <span class="code-keyword">if</span> (response.data) {
+      <span class="code-keyword">if</span> (!PermissionValidator.validatePermissionData(response.data.permissions)) {
+        <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'Invalid permission data structure'</span>);
+      }
+      
+      <span class="code-keyword">if</span> (!PermissionValidator.validateInheritanceChain(response.data.permissions)) {
+        <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'Invalid inheritance chain'</span>);
+      }
+      
+      <span class="code-keyword">if</span> (!PermissionValidator.validateCommissionRates(response.data.permissions)) {
+        <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'Invalid commission rates'</span>);
+      }
+      
+      <span class="code-comment">// Process valid permission data</span>
+      <span class="code-keyword">await</span> processValidPermissions(response.data);
+    }
+    
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Error handling permission response:'</span>, error);
+    <span class="code-keyword">await</span> handleUnexpectedError(error);
+  }
+}
+
+<span class="code-keyword">async function</span> <span class="code-function">handlePermissionValidationError</span>(response: <span class="code-keyword">any</span>) {
+  <span class="code-keyword">const</span> { validationErrors, affectedAgents, permissionMatrix } = response.data;
+  
+  console.error(<span class="code-string">'Permission validation failed:'</span>, {
+    errors: validationErrors,
+    agents: affectedAgents,
+    matrix: permissionMatrix
+  });
+  
+  <span class="code-comment">// Log validation errors for debugging</span>
+  validationErrors.forEach((error: <span class="code-keyword">any</span>) => {
+    console.error(<span class="code-string">`${error.severity.toUpperCase()}: ${error.field} - ${error.issue}`</span>);
+  });
+  
+  <span class="code-comment">// Show user-friendly error message</span>
+  showUserError(<span class="code-string">'Permission validation failed. Please check agent configuration.'</span>);
+  
+  <span class="code-comment">// Attempt automatic repair if possible</span>
+  <span class="code-keyword">if</span> (permissionMatrix.healthScore > 70) {
+    <span class="code-keyword">await</span> attemptPermissionRepair(affectedAgents);
+  }
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 🆕 NEW: Error Handling Best Practices -->
+          <div class="error-handling-best-practices">
+            <h4>🔧 Error Handling Best Practices</h4>
+            <div class="best-practices-grid">
+              <div class="practice-item">
+                <h5>✅ Always Check Error Codes</h5>
+                <p>Check the error code first, then handle specific error types appropriately.</p>
+                <div class="code-block">
+                  <pre><span class="code-keyword">if</span> (!response.success) {
+  <span class="code-keyword">const</span> errorCode = response.error.code;
+  
+  <span class="code-keyword">switch</span> (errorCode) {
+    <span class="code-keyword">case</span> <span class="code-string">'1001'</span>: <span class="code-comment">// Invalid API Key</span>
+      <span class="code-keyword">await</span> refreshApiKey();
+      <span class="code-keyword">break</span>;
+    <span class="code-keyword">case</span> <span class="code-string">'1004'</span>: <span class="code-comment">// Rate Limited</span>
+      <span class="code-keyword">await</span> waitForRateLimitReset();
+      <span class="code-keyword">break</span>;
+    <span class="code-keyword">default</span>:
+      handleGenericError(response.error);
+  }
+}</pre>
+                </div>
+              </div>
+
+              <div class="practice-item">
+                <h5>🔄 Implement Retry Logic</h5>
+                <p>Use exponential backoff for transient errors like rate limits and timeouts.</p>
+                <div class="code-block">
+                  <pre><span class="code-keyword">async function</span> <span class="code-function">retryWithBackoff</span>(apiCall, maxRetries = 3) {
+  <span class="code-keyword">for</span> (<span class="code-keyword">let</span> attempt = 1; attempt <= maxRetries; attempt++) {
+    <span class="code-keyword">try</span> {
+      <span class="code-keyword">return</span> <span class="code-keyword">await</span> apiCall();
+    } <span class="code-keyword">catch</span> (error) {
+      <span class="code-keyword">if</span> (attempt === maxRetries) <span class="code-keyword">throw</span> error;
+      
+      <span class="code-keyword">const</span> delay = Math.pow(2, attempt) * 1000;
+      <span class="code-keyword">await</span> <span class="code-function">sleep</span>(delay);
+    }
+  }
+}</pre>
+                </div>
+              </div>
+
+              <div class="practice-item">
+                <h5>📝 Log Error Details</h5>
+                <p>Log comprehensive error information for debugging and monitoring.</p>
+                <div class="code-block">
+                  <pre><span class="code-keyword">function</span> <span class="code-function">logError</span>(error, context) {
+  console.error(<span class="code-string">'API Error:'</span>, {
+    code: error.code,
+    message: error.message,
+    description: error.description,
+    solution: error.solution,
+    requestId: error.requestId,
+    timestamp: error.timestamp,
+    context: context,
+    stack: <span class="code-keyword">new</span> Error().stack
+  });
+}</pre>
+                </div>
+              </div>
+
+              <div class="practice-item">
+                <h5>🚨 User-Friendly Messages</h5>
+                <p>Show user-friendly error messages while logging technical details.</p>
+                <div class="code-block">
+                  <pre><span class="code-keyword">function</span> <span class="code-function">showUserError</span>(error) {
+  <span class="code-keyword">const</span> userMessage = getUserFriendlyMessage(error.code);
+  showNotification(userMessage, <span class="code-string">'error'</span>);
+  
+  <span class="code-comment">// Log technical details for developers</span>
+  logError(error, <span class="code-string">'user-facing'</span>);
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 🆕 NEW: Back to Top -->
+          <div class="error-back-to-top">
+            <a href="#error-codes" class="back-to-top-link">↑ Back to Error Codes Top</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔍 Troubleshooting Common Issues</h2>
+        <p>Solutions for frequent API integration problems:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Authentication Errors</strong>
+            <br />
+            Check API keys, token expiration, and permissions
+          </div>
+          <div class="api-details">
+            <strong>Rate Limiting</strong>
+            <br />
+            Implement exponential backoff and request queuing
+          </div>
+          <div class="api-details">
+            <strong>Webhook Failures</strong>
+            <br />
+            Verify signatures, check endpoint availability, implement retry logic
+          </div>
+          <div class="api-details">
+            <strong>Network Timeouts</strong>
+            <br />
+            Set appropriate timeout values and implement circuit breakers
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Circuit Breaker Implementation</span>
+<span class="code-keyword">class</span> CircuitBreaker {
+  <span class="code-keyword">constructor</span>(failureThreshold = 5, timeout = 60000) {
+    <span class="code-keyword">this</span>.failureThreshold = failureThreshold;
+    <span class="code-keyword">this</span>.timeout = timeout;
+    <span class="code-keyword">this</span>.failures = 0;
+    <span class="code-keyword">this</span>.lastFailureTime = 0;
+    <span class="code-keyword">this</span>.state = <span class="code-string">'CLOSED'</span>; <span class="code-comment">// CLOSED, OPEN, HALF_OPEN</span>
+  }
+  
+  <span class="code-keyword">async</span> call(apiCall) {
+    <span class="code-keyword">if</span> (<span class="code-keyword">this</span>.state === <span class="code-string">'OPEN'</span>) {
+      <span class="code-keyword">if</span> (Date.now() - <span class="code-keyword">this</span>.lastFailureTime > <span class="code-keyword">this</span>.timeout) {
+        <span class="code-keyword">this</span>.state = <span class="code-string">'HALF_OPEN'</span>;
+      } <span class="code-keyword">else</span> {
+        <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'Circuit breaker is OPEN'</span>);
+      }
+    }
+    
+    <span class="code-keyword">try</span> {
+      <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> apiCall();
+      <span class="code-keyword">this</span>.onSuccess();
+      <span class="code-keyword">return</span> result;
+    } <span class="code-keyword">catch</span> (error) {
+      <span class="code-keyword">this</span>.onFailure();
+      <span class="code-keyword">throw</span> error;
+    }
+  }
+  
+  onSuccess() {
+    <span class="code-keyword">this</span>.failures = 0;
+    <span class="code-keyword">this</span>.state = <span class="code-string">'CLOSED'</span>;
+  }
+  
+  onFailure() {
+    <span class="code-keyword">this</span>.failures++;
+    <span class="code-keyword">this</span>.lastFailureTime = Date.now();
+    
+    <span class="code-keyword">if</span> (<span class="code-keyword">this</span>.failures >= <span class="code-keyword">this</span>.failureThreshold) {
+      <span class="code-keyword">this</span>.state = <span class="code-string">'OPEN'</span>;
+    }
+  }
+}</pre>
+        </div>
+      </div>
+
+      <!-- 🆕 NEW: Version Management & Build System Integration -->
+      <div class="card">
+        <h2>🚀 Version Management & Build System</h2>
+        <p>Comprehensive version control and build automation system integrated with your Fire22 Dashboard:</p>
+
+        <div class="versioning-overview">
+          <div class="versioning-stats">
+            <div class="stat-item">
+              <span class="stat-number">3.0.8</span>
+              <span class="stat-label">Current Version</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">4</span>
+              <span class="stat-label">Modular Packages</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">5</span>
+              <span class="stat-label">Build Profiles</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">24</span>
+              <span class="stat-label">Total Dependencies</span>
+            </div>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-item">
+              <h3>📦 Package Version Management</h3>
+              <p>Advanced version control with bun pm pkg integration and semantic versioning</p>
+              <div class="version-buttons">
+                <button onclick="checkVersionStatus()" class="version-button">Check Status</button>
+                <button onclick="bumpVersion()" class="version-button">Bump Version</button>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <h3>🔧 Build Automation System</h3>
+              <p>Automated build process with multiple profiles and quality gates</p>
+              <div class="version-buttons">
+                <button onclick="showBuildStatus()" class="version-button">Build Status</button>
+                <button onclick="triggerBuild()" class="version-button">Trigger Build</button>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <h3>⚡ Bun Runtime Integration</h3>
+              <p>Full Bun runtime capabilities with versioning and performance monitoring</p>
+              <div class="version-buttons">
+                <button onclick="showBunRuntimeInfo()" class="version-button">Runtime Info</button>
+                <button onclick="checkBunCapabilities()" class="version-button">Capabilities</button>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <h3>🔍 Enhanced Documentation</h3>
+              <p>Advanced search, cross-references, and unified navigation system</p>
+              <div class="version-buttons">
+                <button onclick="openDocumentation()" class="version-button">Open Docs</button>
+                <button onclick="searchDocumentation()" class="version-button">Search</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="commands-grid">
+            <div class="command-item">
+              <h4>🚀 Version Management</h4>
+              <div class="command-list">
+                <code>bun run version:patch</code>
+
+                <code>bun run version:minor</code>
+
+                <code>bun run version:major</code>
+
+                <code>bun run version:status</code>
+              </div>
+            </div>
+
+            <div class="command-item">
+              <h4>🔧 Build System</h4>
+              <div class="command-list">
+                <code>bun run build:quick</code>
+
+                <code>bun run build:standard</code>
+
+                <code>bun run build:production</code>
+
+                <code>bun run build:packages</code>
+              </div>
+            </div>
+
+            <div class="command-item">
+              <h4>📦 Package Management</h4>
+              <div class="command-list">
+                <code>bun run package:info</code>
+
+                <code>bun run package:core</code>
+
+                <code>bun run package:matrix</code>
+
+                <code>bun run package:summary</code>
+              </div>
+            </div>
+
+            <div class="command-item">
+              <h4>🧪 Testing & Validation</h4>
+              <div class="command-list">
+                <code>bun run test:quick</code>
+
+                <code>bun run test:checklist</code>
+
+                <code>bun run env:validate</code>
+
+                <code>bun run env:integration</code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🆕 NEW: Bun Runtime Versioning & Integration -->
+      <div class="card">
+        <h2>⚡ Bun Runtime Versioning & Integration</h2>
+        <p>Comprehensive Bun runtime versioning integrated with your Fire22 Dashboard versioning system:</p>
+
+        <div class="bun-runtime-overview">
+          <div class="runtime-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="bunVersion">Loading...</span>
+              <span class="stat-label">Bun Runtime Version</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="bunRevision">Loading...</span>
+              <span class="stat-label">Git Revision</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="bunMain">Loading...</span>
+              <span class="stat-label">Entry Point</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="bunStatus">Active</span>
+              <span class="stat-label">Runtime Status</span>
+            </div>
+          </div>
+
+          <div class="capabilities-grid">
+            <div class="capability-card">
+              <h3>🚀 Version Information</h3>
+
+              <div class="code-block">
+                <pre><span class="code-comment"># Get Bun runtime version</span>
+<span class="code-keyword">const</span> version = <span class="code-function">Bun.version</span>;
+<span class="code-comment">// => "1.2.21"</span>
+
+<span class="code-comment"># Get git revision</span>
+<span class="code-keyword">const</span> revision = <span class="code-function">Bun.revision</span>;
+<span class="code-comment">// => "f02561530fda1ee9396f51c8bc99b38716e38296"</span>
+
+<span class="code-comment"># Get entry point</span>
+<span class="code-keyword">const</span> main = <span class="code-function">Bun.main</span>;
+<span class="code-comment">// => "/path/to/script.ts"</span></pre>
+              </div>
+            </div>
+
+            <div class="capability-card">
+              <h3>⏱️ Performance & Timing</h3>
+              <div class="code-block">
+                <pre><span class="code-comment"># Sleep functionality</span>
+<span class="code-keyword">await</span> <span class="code-function">Bun.sleep</span>(1000); <span class="code-comment">// 1 second</span>
+
+<span class="code-comment"># Sleep until specific time</span>
+<span class="code-keyword">const</span> future = <span class="code-keyword">new</span> Date(Date.now() + 5000);
+<span class="code-keyword">await</span> <span class="code-function">Bun.sleep</span>(future);
+
+<span class="code-comment"># Synchronous sleep</span>
+<span class="code-function">Bun.sleepSync</span>(1000); <span class="code-comment">// Blocks thread</span></pre>
+              </div>
+            </div>
+
+            <div class="capability-card">
+              <h3>🔍 System Utilities</h3>
+              <div class="code-block">
+                <pre><span class="code-comment"># Find executable path</span>
+<span class="code-keyword">const</span> ls = <span class="code-function">Bun.which</span>(<span class="code-string">"ls"</span>);
+<span class="code-comment">// => "/usr/bin/ls"</span>
+
+<span class="code-comment"># Generate UUID v7</span>
+<span class="code-keyword">const</span> uuid = <span class="code-function">Bun.randomUUIDv7</span>();
+<span class="code-comment">// => "0192ce11-26d5-7dc3-9305-1426de888c5a"</span>
+
+<span class="code-comment"># Environment access</span>
+<span class="code-keyword">const</span> env = <span class="code-function">Bun.env</span>; <span class="code-comment">// Alias for process.env</span></pre>
+              </div>
+            </div>
+
+            <div class="capability-card">
+              <h3>📊 Data Inspection</h3>
+
+              <div class="code-block">
+                <pre><span class="code-comment"># Inspect data with tables</span>
+<span class="code-function">Bun.inspect.table</span>(data, [<span class="code-string">'name'</span>, <span class="code-string">'value'</span>]);
+
+<span class="code-comment"># Pretty print objects</span>
+<span class="code-function">Bun.inspect</span>(object, { colors: <span class="code-keyword">true</span> });
+
+<span class="code-comment"># Custom inspection</span>
+<span class="code-function">Bun.inspect.custom</span>(object, customOptions);</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="performance-grid">
+            <div class="performance-item">
+              <h3>⚡ Performance Metrics</h3>
+              <p>Built-in performance monitoring and optimization tools</p>
+              <ul>
+                <li>Automatic timing measurements</li>
+                <li>Memory usage tracking</li>
+                <li>CPU utilization monitoring</li>
+                <li>Response time analytics</li>
+              </ul>
+            </div>
+
+            <div class="performance-item">
+              <h3>🔧 Development Tools</h3>
+              <p>Enhanced development experience with Bun runtime</p>
+              <ul>
+                <li>Hot reloading support</li>
+                <li>Built-in testing framework</li>
+                <li>Package management integration</li>
+                <li>TypeScript support</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="benefits">
+        <div class="benefit-card">
+          <div class="benefit-icon">🔌</div>
+          <h3>API Integration</h3>
+          <p>Comprehensive coverage of all external services and integrations used in your dashboard.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🔒</div>
+          <h3>Security First</h3>
+          <p>Best practices for API security, authentication, and webhook verification.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🧪</div>
+          <h3>Testing Strategy</h3>
+          <p>Complete testing approaches for unit, integration, and end-to-end API testing.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🚀</div>
+          <h3>Production Ready</h3>
+          <p>Real-world examples and troubleshooting for production deployment.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📚 Related Documentation</h2>
+        <p>Explore other aspects of your Fire22 Dashboard:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>🌍 Environment Management:</strong>
+            <code>bun run env:docs</code>
+            - Complete environment variable guide
+          </div>
+          <div class="api-details">
+            <strong>📦 Package Management:</strong>
+            <code>bun run pkg:docs</code>
+            - Package.json and bun pm pkg guide
+          </div>
+          <div class="api-details">
+            <strong>🔧 API Integration:</strong>
+            <code>bun run api:docs</code>
+            - This guide (external APIs and services)
+          </div>
+          <div class="api-details">
+            <strong>🎯 Live Demo:</strong>
+            <code>bun run env:demo</code>
+            - See integration in action
+          </div>
+          <div class="api-details">
+            <strong>🔄 P2P Queue System:</strong>
+            <code>bun run queue:demo</code>
+            - Peer-to-peer transaction matching demo
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-brand">
+          <div class="footer-logo">🔥</div>
+          <div class="footer-company">Fire22</div>
+          <div class="footer-tagline">Igniting Digital Innovation</div>
+        </div>
+
+        <div class="footer-links">
+          <a href="packages.html" class="footer-link">📦 Packages</a>
+          <a href="environment-variables.html" class="footer-link">🌍 Environment</a>
+          <a href="api-packages.html" class="footer-link">🔌 API</a>
+          <a href="fire22-dashboard-config.html" class="footer-link">⚙️ Config</a>
+          <a href="@packages.html" class="footer-link">🧪 Testing</a>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-copyright">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Built with ❤️ for secure and scalable API development</p>
+          <p><small>API Packages & Integrations | Fire22 Dashboard Best Practices</small></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simple client-side interactivity
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add animation to table rows
+        const tableRows = document.querySelectorAll('tr');
+        tableRows.forEach((row, index) => {
+          row.style.opacity = '0';
+          row.style.transition = `opacity 0.5s ease ${index * 0.1}s`;
+          setTimeout(() => {
+            row.style.opacity = '1';
+          }, 100);
+        });
+
+        // 🆕 NEW: Initialize version management and P2P queue system
+        initializeVersionManagement();
+        initializeP2PQueueSystem();
+
+        // Add hover effect to code blocks
+        const codeBlocks = document.querySelectorAll('.code-block');
+        codeBlocks.forEach(block => {
+          block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-5px)';
+            block.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.4)';
+          });
+
+          block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+          });
+        });
+
+        // Add click-to-copy functionality for code blocks
+        const codeBlocksPre = document.querySelectorAll('.code-block pre');
+        codeBlocksPre.forEach(code => {
+          code.style.cursor = 'pointer';
+          code.title = 'Click to copy';
+
+          code.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(code.textContent);
+              const originalText = code.textContent;
+              code.textContent = 'Copied!';
+              code.style.color = '#4CAF50';
+
+              setTimeout(() => {
+                code.textContent = originalText;
+                code.style.color = '';
+              }, 2000);
+            } catch (err) {
+              console.log('Failed to copy:', err);
+            }
+          });
+        });
+      });
+
+      // 🆕 NEW: Version Management System Functions
+      function checkVersionStatus() {
+        alert('🚀 Version Status: 3.0.8\n📦 Modular Packages: 4\n🔧 Build Status: Ready\n⚡ Bun Runtime: Active');
+      }
+
+      function bumpVersion() {
+        alert(
+          '🔧 Version Bump Options:\n• Patch (3.0.8 → 3.0.9)\n• Minor (3.0.8 → 3.1.0)\n• Major (3.0.8 → 4.0.0)\n\nRun: bun run version:patch/minor/major'
+        );
+      }
+
+      function showBuildStatus() {
+        alert(
+          '🏗️ Build System Status:\n• Quick Build: Ready\n• Standard Build: Ready\n• Production Build: Ready\n• Package Build: Ready\n\nRun: bun run build:quick'
+        );
+      }
+
+      function triggerBuild() {
+        alert(
+          '🚀 Triggering Build...\n\nRun: bun run build:quick\n\nThis will start the build process with the current configuration.'
+        );
+      }
+
+      function showBunRuntimeInfo() {
+        alert(
+          '⚡ Bun Runtime Information:\n• Version: 1.2.21\n• Git Revision: f02561530fda1ee9396f51c8bc99b38716e38296\n• Entry Point: /path/to/script.ts\n• Status: Active\n\nRuntime capabilities are fully integrated!'
+        );
+      }
+
+      function checkBunCapabilities() {
+        alert(
+          '🔍 Bun Runtime Capabilities:\n• Version Management: ✅\n• Performance Monitoring: ✅\n• System Utilities: ✅\n• Data Inspection: ✅\n• Hot Reloading: ✅\n• TypeScript Support: ✅\n\nAll capabilities are available!'
+        );
+      }
+
+      function openDocumentation() {
+        alert('📚 Opening Documentation...\n\nNavigate to the documentation section or run:\nbun run env:docs');
+      }
+
+      function searchDocumentation() {
+        alert(
+          '🔍 Documentation Search\n\nUse the search functionality in the main documentation or navigate to specific sections for detailed information.'
+        );
+      }
+
+      // 🆕 NEW: Bun Runtime Versioning Integration
+      function initializeBunRuntimeInfo() {
+        // Simulate Bun runtime information loading
+        setTimeout(() => {
+          const bunVersion = document.getElementById('bunVersion');
+          const bunRevision = document.getElementById('bunRevision');
+          const bunMain = document.getElementById('bunMain');
+
+          if (bunVersion) bunVersion.textContent = '1.2.21';
+          if (bunRevision) bunRevision.textContent = 'f025615...';
+          if (bunMain) bunMain.textContent = '/src/index.ts';
+        }, 1000);
+      }
+
+      // Initialize Bun runtime information when page loads
+      document.addEventListener('DOMContentLoaded', function () {
+        initializeBunRuntimeInfo();
+      });
+
+      // 🆕 NEW: P2P Queue System Functions
+      function initializeP2PQueueSystem() {
+        console.log('🔄 P2P Queue System Initialized');
+
+        // Add demo functionality for P2P queue system
+        addP2PQueueDemo();
+      }
+
+      function addP2PQueueDemo() {
+        // Create demo section if it doesn't exist
+        const existingDemo = document.querySelector('.p2p-queue-demo');
+        if (!existingDemo) {
+          const demoSection = document.createElement('div');
+          demoSection.className = 'p2p-queue-demo';
+          demoSection.innerHTML = `
+                    <div class="card">
+                        <h2>🔄 P2P Queue System Demo</h2>
+                        <p>Interactive demonstration of the peer-to-peer matching system:</p>
+                        <div class="demo-controls">
+                            <button onclick="addDemoWithdrawal()" class="demo-button">➕ Add Withdrawal</button>
+                            <button onclick="addDemoDeposit()" class="demo-button">➕ Add Deposit</button>
+                            <button onclick="processDemoMatching()" class="demo-button">🔄 Process Matching</button>
+                            <button onclick="clearDemoQueue()" class="demo-button">🗑️ Clear Queue</button>
+                        </div>
+                        <div class="demo-queue-display">
+                            <div class="queue-section">
+                                <h3>📤 Withdrawals Queue</h3>
+                                <div id="withdrawals-queue" class="queue-items"></div>
+                            </div>
+                            <div class="queue-section">
+                                <h3>📥 Deposits Queue</h3>
+                                <div id="deposits-queue" class="queue-items"></div>
+                            </div>
+                            <div class="queue-section">
+                                <h3>🔗 Matches</h3>
+                                <div id="matches-queue" class="queue-items"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+          // Insert after the P2P Queue System section
+          const p2pSection = document.querySelector('h2:contains("🔄 P2P Queue System Integration")');
+          if (p2pSection) {
+            p2pSection.parentNode.insertBefore(demoSection, p2pSection.nextSibling);
+          }
+        }
+      }
+
+      function addDemoWithdrawal() {
+        const queue = document.getElementById('withdrawals-queue');
+        const withdrawal = {
+          id: Date.now(),
+          amount: Math.floor(Math.random() * 1000) + 100,
+          paymentType: ['Venmo', 'PayPal', 'CashApp', 'Cash', 'Transfer'][Math.floor(Math.random() * 5)],
+          priority: Math.random() > 0.5 ? 'high' : 'normal',
+        };
+
+        const withdrawalElement = document.createElement('div');
+        withdrawalElement.className = 'queue-item withdrawal';
+        withdrawalElement.innerHTML = `
+                <span class="amount">$${withdrawal.amount}</span>
+                <span class="payment-type">${withdrawal.paymentType}</span>
+                <span class="priority ${withdrawal.priority}">${withdrawal.priority}</span>
+            `;
+
+        queue.appendChild(withdrawalElement);
+        showNotification('📤 Withdrawal added to queue');
+      }
+
+      function addDemoDeposit() {
+        const queue = document.getElementById('deposits-queue');
+        const deposit = {
+          id: Date.now(),
+          amount: Math.floor(Math.random() * 1000) + 100,
+          source: ['bank_transfer', 'credit_card', 'crypto', 'cash'][Math.floor(Math.random() * 4)],
+        };
+
+        const depositElement = document.createElement('div');
+        depositElement.className = 'queue-item deposit';
+        depositElement.innerHTML = `
+                <span class="amount">$${deposit.amount}</span>
+                <span class="source">${deposit.source}</span>
+            `;
+
+        queue.appendChild(depositElement);
+        showNotification('📥 Deposit added to queue');
+      }
+
+      function processDemoMatching() {
+        const withdrawals = document.querySelectorAll('#withdrawals-queue .queue-item');
+        const deposits = document.querySelectorAll('#deposits-queue .queue-item');
+        const matches = document.getElementById('matches-queue');
+
+        if (withdrawals.length > 0 && deposits.length > 0) {
+          const match = document.createElement('div');
+          match.className = 'queue-item match';
+          match.innerHTML = `
+                    <span class="match-info">🔄 Match Found!</span>
+                    <span class="amount">$${Math.floor(Math.random() * 1000) + 100}</span>
+                    <span class="status">Processing...</span>
+                `;
+
+          matches.appendChild(match);
+          showNotification('🔗 New match processed!');
+        } else {
+          showNotification('⚠️ Need both withdrawals and deposits to match');
+        }
+      }
+
+      function clearDemoQueue() {
+        document.getElementById('withdrawals-queue').innerHTML = '';
+        document.getElementById('deposits-queue').innerHTML = '';
+        document.getElementById('matches-queue').innerHTML = '';
+        showNotification('🗑️ Queue cleared');
+      }
+
+      function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(253, 187, 45, 0.9);
+                color: #1a2a6c;
+                padding: 15px 20px;
+                border-radius: 10px;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

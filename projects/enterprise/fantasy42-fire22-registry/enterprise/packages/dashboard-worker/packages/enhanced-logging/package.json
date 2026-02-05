@@ -1,0 +1,37 @@
+{
+  "name": "@fire22/enhanced-logging",
+  "version": "1.0.0-lkey.0",
+  "description": "Enhanced logging system with L-Key integration for Fire22 platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir=dist --target=bun",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "fire22",
+    "logging",
+    "l-key",
+    "audit",
+    "monitoring",
+    "bun"
+  ],
+  "dependencies": {
+    "@fire22/security-core": "workspace:*",
+    "@fire22/validator": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/enhanced-logging"
+  }
+}

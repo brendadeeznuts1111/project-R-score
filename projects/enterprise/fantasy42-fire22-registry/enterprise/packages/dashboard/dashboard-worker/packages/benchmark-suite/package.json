@@ -1,0 +1,67 @@
+{
+  "name": "@fire22/benchmark-suite",
+  "version": "1.0.3",
+  "description": "High-precision performance benchmarking using Bun's native APIs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "test": "bun test",
+    "bench": "bun run src/index.ts",
+    "preinstall": "echo 'Setting up benchmark suite...'",
+    "postinstall": "echo 'Benchmark suite ready!'",
+    "preprepare": "bun run build",
+    "prepare": "bun run build"
+  },
+  "keywords": [
+    "benchmark",
+    "performance",
+    "bun",
+    "nanoseconds",
+    "profiling"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "optionalDependencies": {
+    "mitata": "^1.0.0"
+  },
+  "trustedDependencies": [],
+  "workspaces": [],
+  "overrides": {},
+  "resolutions": {},
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "bun": {
+    "install": {
+      "frozen-lockfile": false,
+      "production": false,
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "concurrent-scripts": 4
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/benchmark-suite"
+  }
+}

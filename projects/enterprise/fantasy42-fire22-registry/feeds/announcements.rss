@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Fire22 Enterprise Registry</title>
+    <description>Enterprise package registry announcements and updates</description>
+    <link>https://registry.fire22.dev</link>
+    <atom:link href="https://registry.fire22.dev/feeds/announcements.rss" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 30 Aug 2025 15:55:39 GMT</lastBuildDate>
+    <generator>Fire22 Registry Automation</generator>
+
+    <item>
+      <title>🚀 Registry Release Flow Walkthrough - Department Heads Required Reading</title>
+      <description><![CDATA[
+        <h2>Enterprise Registry Release System Update</h2>
+
+        <p>All Department Heads are required to read and confirm understanding of the new Department-Driven Registry Release Flow.</p>
+
+        <h3>Your Responsibilities:</h3>
+        <ul>
+          <li>✅ Validate packages in your domain expertise</li>
+          <li>✅ Enforce department-specific compliance frameworks</li>
+          <li>✅ Ensure enterprise quality standards</li>
+          <li>✅ Complete validation within required SLAs</li>
+        </ul>
+
+        <h3>What's New:</h3>
+        <ul>
+          <li><strong>Intelligent Tagging:</strong> Automated semantic versioning</li>
+          <li><strong>Bun Semver Validation:</strong> Strict compliance checking</li>
+          <li><strong>Department Validation:</strong> Your department validates your packages</li>
+          <li><strong>Enterprise Compliance:</strong> SOC2, GDPR, PCI-DSS frameworks</li>
+        </ul>
+
+        <h3>Confirmation Required:</h3>
+        <p>Please confirm you've read this walkthrough by:</p>
+        <ol>
+          <li>Replying to your notification email with "CONFIRMED"</li>
+          <li>Commenting on this RSS feed item</li>
+          <li>Leaving a confirmation comment on the blog post</li>
+        </ol>
+
+        <p><strong>Timeline:</strong> Read and confirm within 24 hours</p>
+        <p><strong>Support:</strong> Contact enterprise@fire22.com for assistance</p>
+      ]]></description>
+      <link>https://docs.fire22.dev/registry-walkthrough</link>
+      <guid isPermaLink="true">https://docs.fire22.dev/registry-walkthrough</guid>
+      <pubDate>Sat, 30 Aug 2025 15:55:39 GMT</pubDate>
+      <category>announcements</category>
+      <category>department-heads</category>
+      <category>registry</category>
+      <category>training</category>
+    </item>
+  </channel>
+</rss>

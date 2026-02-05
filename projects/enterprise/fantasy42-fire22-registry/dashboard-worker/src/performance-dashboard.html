@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📊 Fire22 Performance Dashboard - Performance Performance Dashboard v4.0.0-staging v4.0.0-staging</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 20px 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .status {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .status-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .status-value {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .status-label {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+
+      .dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
+        border-radius: 15px;
+        z-index: -1;
+        opacity: 0.5;
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .card-title {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .metric {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .chart-container {
+        height: 200px;
+        margin-top: 15px;
+        position: relative;
+      }
+
+      .bar-chart {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        height: 100%;
+        padding: 10px;
+      }
+
+      .bar {
+        width: 30px;
+        background: linear-gradient(to top, #4ecdc4, #45b7d1);
+        border-radius: 5px 5px 0 0;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .bar:hover {
+        transform: translateY(-5px);
+        filter: brightness(1.2);
+      }
+
+      .bar-label {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 10px;
+        white-space: nowrap;
+      }
+
+      .line-chart {
+        width: 100%;
+        height: 100%;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .stat-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 8px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .btn.active {
+        background: #4ecdc4;
+      }
+
+      .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        background: #4ecdc4;
+        border-radius: 20px;
+        font-size: 12px;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.5);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .memory-usage {
+        width: 100%;
+        height: 20px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .memory-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+        transition: width 0.5s ease;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        font-size: 12px;
+      }
+
+      .latency-histogram {
+        display: flex;
+        align-items: flex-end;
+        height: 150px;
+        gap: 2px;
+      }
+
+      .histogram-bar {
+        flex: 1;
+        background: rgba(78, 205, 196, 0.7);
+        border-radius: 2px 2px 0 0;
+        min-height: 2px;
+        transition: all 0.3s ease;
+      }
+
+      .histogram-bar:hover {
+        background: #4ecdc4;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>
+          🚀 Fire22 Performance Dashboard
+          <span class="live-indicator">
+            <span class="pulse"></span>
+            LIVE
+          </span>
+        </h1>
+        <div class="status">
+          <div class="status-item">
+            <div class="status-value" id="uptime">00:00:00</div>
+            <div class="status-label">UPTIME</div>
+          </div>
+          <div class="status-item">
+            <div class="status-value" id="runtime">Bun v1.2.21</div>
+            <div class="status-label">RUNTIME</div>
+          </div>
+          <div class="status-item">
+            <div class="status-value" id="timestamp">--:--:--</div>
+            <div class="status-label">LAST UPDATE</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn active" onclick="setMode('realtime')">Real-time</button>
+        <button class="btn" onclick="setMode('1min')">1 Min</button>
+        <button class="btn" onclick="setMode('5min')">5 Min</button>
+        <button class="btn" onclick="setMode('15min')">15 Min</button>
+        <button class="btn" onclick="startBenchmark()">Run Benchmark</button>
+        <button class="btn" onclick="exportData()">Export Data</button>
+      </div>
+
+      <div class="dashboard">
+        <!-- Response Time Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚡ Response Time</div>
+            <span id="avg-response">0ms</span>
+          </div>
+          <div class="metric" id="response-time">0ms</div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-label">P50</div>
+              <div class="stat-value" id="p50">0ms</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">P95</div>
+              <div class="stat-value" id="p95">0ms</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">P99</div>
+              <div class="stat-value" id="p99">0ms</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">MAX</div>
+              <div class="stat-value" id="max-response">0ms</div>
+            </div>
+          </div>
+          <div class="chart-container">
+            <div class="latency-histogram" id="latency-histogram"></div>
+          </div>
+        </div>
+
+        <!-- Throughput Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 Throughput</div>
+            <span id="total-requests">0</span>
+          </div>
+          <div class="metric" id="throughput">0 req/s</div>
+          <div class="chart-container">
+            <canvas id="throughput-chart" class="line-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Memory Usage Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🧠 Memory Usage</div>
+            <span id="mem-percent">0%</span>
+          </div>
+          <div class="metric" id="memory">0 MB</div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-label">Heap Size</div>
+              <div class="stat-value" id="heap-size">0 MB</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Heap Used</div>
+              <div class="stat-value" id="heap-used">0 MB</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Objects</div>
+              <div class="stat-value" id="object-count">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">GC Runs</div>
+              <div class="stat-value" id="gc-runs">0</div>
+            </div>
+          </div>
+          <div class="memory-usage">
+            <div class="memory-bar" id="memory-bar" style="width: 0%">0%</div>
+          </div>
+        </div>
+
+        <!-- Operations/sec Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🎯 Operations/sec</div>
+            <span id="ops-trend">↑</span>
+          </div>
+          <div class="metric" id="ops">0 ops/s</div>
+          <div class="chart-container">
+            <div class="bar-chart" id="ops-chart"></div>
+          </div>
+        </div>
+
+        <!-- Error Rate Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">❌ Error Rate</div>
+            <span id="total-errors">0</span>
+          </div>
+          <div class="metric" id="error-rate">0%</div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-label">4xx</div>
+              <div class="stat-value" id="errors-4xx">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">5xx</div>
+              <div class="stat-value" id="errors-5xx">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Timeouts</div>
+              <div class="stat-value" id="timeouts">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Success</div>
+              <div class="stat-value" id="success-rate">100%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Connections Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🔌 Connections</div>
+            <span id="conn-status">●</span>
+          </div>
+          <div class="metric" id="connections">0</div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-label">Active</div>
+              <div class="stat-value" id="active-conn">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Idle</div>
+              <div class="stat-value" id="idle-conn">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">WebSocket</div>
+              <div class="stat-value" id="ws-conn">0</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Peak</div>
+              <div class="stat-value" id="peak-conn">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize performance monitoring
+      let eventSource = null;
+      let startTime = Date.now();
+      let mode = 'realtime';
+      let metricsHistory = {
+        throughput: [],
+        latency: [],
+        memory: [],
+        errors: [],
+        ops: [],
+      };
+
+      // Update timestamp
+      function updateTimestamp() {
+        const now = new Date();
+        document.getElementById('timestamp').textContent = now.toLocaleTimeString();
+      }
+
+      // Update uptime
+      function updateUptime() {
+        const elapsed = Date.now() - startTime;
+        const hours = Math.floor(elapsed / 3600000);
+        const minutes = Math.floor((elapsed % 3600000) / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+
+        document.getElementById('uptime').textContent =
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+
+      // Connect to SSE endpoint
+      function connectSSE() {
+        eventSource = new EventSource('/api/performance/stream');
+
+        eventSource.onmessage = function (event) {
+          const data = JSON.parse(event.data);
+          updateMetrics(data);
+        };
+
+        eventSource.onerror = function (error) {
+          console.error('SSE Error:', error);
+          setTimeout(connectSSE, 5000);
+        };
+      }
+
+      // Update metrics display
+      function updateMetrics(data) {
+        // Response time
+        if (data.responseTime) {
+          document.getElementById('response-time').textContent = `${data.responseTime.avg}ms`;
+          document.getElementById('p50').textContent = `${data.responseTime.p50}ms`;
+          document.getElementById('p95').textContent = `${data.responseTime.p95}ms`;
+          document.getElementById('p99').textContent = `${data.responseTime.p99}ms`;
+          document.getElementById('max-response').textContent = `${data.responseTime.max}ms`;
+          updateLatencyHistogram(data.responseTime.histogram);
+        }
+
+        // Throughput
+        if (data.throughput) {
+          document.getElementById('throughput').textContent = `${data.throughput} req/s`;
+          document.getElementById('total-requests').textContent = data.totalRequests || '0';
+          metricsHistory.throughput.push(data.throughput);
+          updateThroughputChart();
+        }
+
+        // Memory
+        if (data.memory) {
+          const memMB = (data.memory.heapUsed / 1024 / 1024).toFixed(2);
+          const heapMB = (data.memory.heapSize / 1024 / 1024).toFixed(2);
+          const percent = ((data.memory.heapUsed / data.memory.heapSize) * 100).toFixed(1);
+
+          document.getElementById('memory').textContent = `${memMB} MB`;
+          document.getElementById('heap-size').textContent = `${heapMB} MB`;
+          document.getElementById('heap-used').textContent = `${memMB} MB`;
+          document.getElementById('object-count').textContent = data.memory.objectCount || '0';
+          document.getElementById('gc-runs').textContent = data.memory.gcRuns || '0';
+          document.getElementById('mem-percent').textContent = `${percent}%`;
+
+          const memBar = document.getElementById('memory-bar');
+          memBar.style.width = `${percent}%`;
+          memBar.textContent = `${percent}%`;
+        }
+
+        // Operations/sec
+        if (data.opsPerSecond) {
+          document.getElementById('ops').textContent = `${data.opsPerSecond.toLocaleString()} ops/s`;
+          metricsHistory.ops.push(data.opsPerSecond);
+          updateOpsChart();
+        }
+
+        // Error rate
+        if (data.errors !== undefined) {
+          const errorRate = ((data.errors / (data.totalRequests || 1)) * 100).toFixed(2);
+          document.getElementById('error-rate').textContent = `${errorRate}%`;
+          document.getElementById('total-errors').textContent = data.errors || '0';
+          document.getElementById('success-rate').textContent = `${(100 - errorRate).toFixed(1)}%`;
+        }
+
+        // Connections
+        if (data.connections) {
+          document.getElementById('connections').textContent = data.connections.active || '0';
+          document.getElementById('active-conn').textContent = data.connections.active || '0';
+          document.getElementById('idle-conn').textContent = data.connections.idle || '0';
+          document.getElementById('ws-conn').textContent = data.connections.websocket || '0';
+          document.getElementById('peak-conn').textContent = data.connections.peak || '0';
+        }
+
+        updateTimestamp();
+      }
+
+      // Update latency histogram
+      function updateLatencyHistogram(histogram) {
+        const container = document.getElementById('latency-histogram');
+        container.innerHTML = '';
+
+        if (!histogram) return;
+
+        const max = Math.max(...histogram);
+        histogram.forEach((value, index) => {
+          const bar = document.createElement('div');
+          bar.className = 'histogram-bar';
+          bar.style.height = `${(value / max) * 100}%`;
+          bar.title = `${value} requests`;
+          container.appendChild(bar);
+        });
+      }
+
+      // Update throughput chart
+      function updateThroughputChart() {
+        // Simple implementation - would use Chart.js or similar in production
+        const canvas = document.getElementById('throughput-chart');
+        const ctx = canvas.getContext('2d');
+        // Draw chart...
+      }
+
+      // Update ops chart
+      function updateOpsChart() {
+        const container = document.getElementById('ops-chart');
+        container.innerHTML = '';
+
+        const recent = metricsHistory.ops.slice(-10);
+        const max = Math.max(...recent);
+
+        recent.forEach((value, index) => {
+          const bar = document.createElement('div');
+          bar.className = 'bar';
+          bar.style.height = `${(value / max) * 100}%`;
+
+          const label = document.createElement('div');
+          label.className = 'bar-label';
+          label.textContent = `-${10 - index}s`;
+          bar.appendChild(label);
+
+          container.appendChild(bar);
+        });
+      }
+
+      // Set monitoring mode
+      function setMode(newMode) {
+        mode = newMode;
+        document.querySelectorAll('.btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+      }
+
+      // Start benchmark
+      async function startBenchmark() {
+        try {
+          const response = await fetch('/api/benchmark/start', { method: 'POST' });
+          const result = await response.json();
+          alert('Benchmark started! Check console for progress.');
+        } catch (error) {
+          console.error('Failed to start benchmark:', error);
+        }
+      }
+
+      // Export performance data
+      function exportData() {
+        const data = {
+          timestamp: new Date().toISOString(),
+          metrics: metricsHistory,
+          runtime: document.getElementById('runtime').textContent,
+          uptime: document.getElementById('uptime').textContent,
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `performance-data-${Date.now()}.json`;
+        a.click();
+      }
+
+      // Initialize dashboard
+      document.addEventListener('DOMContentLoaded', () => {
+        // Update runtime info
+        if (typeof Bun !== 'undefined') {
+          document.getElementById('runtime').textContent = `Bun v${Bun.version}`;
+        }
+
+        // Start monitoring
+        connectSSE();
+
+        // Update displays
+        setInterval(updateUptime, 1000);
+        setInterval(updateTimestamp, 1000);
+
+        // Simulate data for demo (remove in production)
+        if (!window.location.hostname.includes('localhost')) {
+          setInterval(() => {
+            updateMetrics({
+              responseTime: {
+                avg: 20 + Math.random() * 10,
+                p50: 18 + Math.random() * 5,
+                p95: 35 + Math.random() * 10,
+                p99: 45 + Math.random() * 15,
+                max: 60 + Math.random() * 20,
+                histogram: Array(20)
+                  .fill(0)
+                  .map(() => Math.random() * 100),
+              },
+              throughput: 1000 + Math.random() * 500,
+              totalRequests: Math.floor(Math.random() * 100000),
+              memory: {
+                heapSize: 100 * 1024 * 1024,
+                heapUsed: (30 + Math.random() * 40) * 1024 * 1024,
+                objectCount: Math.floor(10000 + Math.random() * 5000),
+                gcRuns: Math.floor(Math.random() * 100),
+              },
+              opsPerSecond: Math.floor(5000 + Math.random() * 2000),
+              errors: Math.floor(Math.random() * 10),
+              connections: {
+                active: Math.floor(10 + Math.random() * 20),
+                idle: Math.floor(5 + Math.random() * 10),
+                websocket: Math.floor(Math.random() * 10),
+                peak: Math.floor(30 + Math.random() * 20),
+              },
+            });
+          }, 1000);
+        }
+      });
+    </script>
+  </body>
+</html>

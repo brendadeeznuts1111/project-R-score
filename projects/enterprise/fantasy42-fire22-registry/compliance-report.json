@@ -1,0 +1,556 @@
+{
+  "timestamp": "2025-08-30T05:13:39.457Z",
+  "frameworks": {
+    "gdpr": {
+      "framework": "gdpr",
+      "status": "non-compliant",
+      "requirements": {},
+      "violations": [
+        {
+          "requirement": "dataProcessingAgreement",
+          "severity": "medium",
+          "description": "Data processing agreement not found. Expected one of: data-processing-agreement.md",
+          "recommendation": "Create data processing agreement document"
+        },
+        {
+          "requirement": "privacyPolicy",
+          "severity": "medium",
+          "description": "Privacy policy document not found. Expected one of: privacy-policy.md, data-processing-agreement.md, gdpr-compliance.md",
+          "recommendation": "Create privacy policy document document"
+        },
+        {
+          "requirement": "consentManagement",
+          "severity": "medium",
+          "description": "Consent management implementation not found in codebase",
+          "recommendation": "Implement consent management implementation"
+        },
+        {
+          "requirement": "dataRetentionPolicy",
+          "severity": "medium",
+          "description": "Data retention policy not found. Expected one of: data-retention-policy.md",
+          "recommendation": "Create data retention policy document"
+        },
+        {
+          "requirement": "rightToErasure",
+          "severity": "medium",
+          "description": "Right to erasure implementation not found in codebase",
+          "recommendation": "Implement right to erasure implementation"
+        },
+        {
+          "requirement": "dataPortability",
+          "severity": "medium",
+          "description": "Data portability implementation not found in codebase",
+          "recommendation": "Implement data portability implementation"
+        },
+        {
+          "requirement": "breachNotification",
+          "severity": "medium",
+          "description": "Breach notification system not found in codebase",
+          "recommendation": "Implement breach notification system"
+        }
+      ],
+      "lastCheck": "2025-08-30T05:13:39.457Z"
+    },
+    "pci": {
+      "framework": "pci",
+      "status": "non-compliant",
+      "requirements": {},
+      "violations": [
+        {
+          "requirement": "cardholderDataProtection",
+          "severity": "medium",
+          "description": "Cardholder data protection not found in codebase",
+          "recommendation": "Implement cardholder data protection"
+        },
+        {
+          "requirement": "encryption",
+          "severity": "medium",
+          "description": "Data encryption implementation not found in codebase",
+          "recommendation": "Implement data encryption implementation"
+        },
+        {
+          "requirement": "accessControl",
+          "severity": "medium",
+          "description": "Access control implementation not found in codebase",
+          "recommendation": "Implement access control implementation"
+        },
+        {
+          "requirement": "vulnerabilityManagement",
+          "severity": "medium",
+          "description": "Vulnerability management not found. Expected one of: vulnerability-scan.sh, security-scan.ts",
+          "recommendation": "Create vulnerability management document"
+        },
+        {
+          "requirement": "regularTesting",
+          "severity": "medium",
+          "description": "Regular security testing not found. Expected one of: penetration-test.md, security-testing.md",
+          "recommendation": "Create regular security testing document"
+        },
+        {
+          "requirement": "informationSecurityPolicy",
+          "severity": "medium",
+          "description": "Information security policy not found. Expected one of: security-policy.md, information-security-policy.md",
+          "recommendation": "Create information security policy document"
+        }
+      ],
+      "lastCheck": "2025-08-30T05:13:39.458Z"
+    },
+    "aml": {
+      "framework": "aml",
+      "status": "non-compliant",
+      "requirements": {},
+      "violations": [
+        {
+          "requirement": "customerDueDiligence",
+          "severity": "medium",
+          "description": "Customer due diligence not found in codebase",
+          "recommendation": "Implement customer due diligence"
+        },
+        {
+          "requirement": "enhancedDueDiligence",
+          "severity": "medium",
+          "description": "Enhanced due diligence not found in codebase",
+          "recommendation": "Implement enhanced due diligence"
+        },
+        {
+          "requirement": "recordKeeping",
+          "severity": "medium",
+          "description": "Record keeping not found in codebase",
+          "recommendation": "Implement record keeping"
+        },
+        {
+          "requirement": "suspiciousActivityReporting",
+          "severity": "medium",
+          "description": "Suspicious activity reporting not found in codebase",
+          "recommendation": "Implement suspicious activity reporting"
+        },
+        {
+          "requirement": "riskAssessment",
+          "severity": "medium",
+          "description": "Risk assessment not found. Expected one of: risk-assessment.md, aml-risk.md",
+          "recommendation": "Create risk assessment document"
+        },
+        {
+          "requirement": "training",
+          "severity": "medium",
+          "description": "AML training not found. Expected one of: aml-training.md, compliance-training.md",
+          "recommendation": "Create aml training document"
+        }
+      ],
+      "lastCheck": "2025-08-30T05:13:39.459Z"
+    },
+    "kyc": {
+      "framework": "kyc",
+      "status": "non-compliant",
+      "requirements": {},
+      "violations": [
+        {
+          "requirement": "identityVerification",
+          "severity": "medium",
+          "description": "Identity verification not found in codebase",
+          "recommendation": "Implement identity verification"
+        },
+        {
+          "requirement": "addressVerification",
+          "severity": "medium",
+          "description": "Address verification not found in codebase",
+          "recommendation": "Implement address verification"
+        },
+        {
+          "requirement": "sourceOfFunds",
+          "severity": "medium",
+          "description": "Source of funds verification not found in codebase",
+          "recommendation": "Implement source of funds verification"
+        },
+        {
+          "requirement": "enhancedVerification",
+          "severity": "medium",
+          "description": "Enhanced verification not found in codebase",
+          "recommendation": "Implement enhanced verification"
+        },
+        {
+          "requirement": "ongoingMonitoring",
+          "severity": "medium",
+          "description": "Ongoing monitoring not found in codebase",
+          "recommendation": "Implement ongoing monitoring"
+        },
+        {
+          "requirement": "recordKeeping",
+          "severity": "medium",
+          "description": "KYC record keeping not found in codebase",
+          "recommendation": "Implement kyc record keeping"
+        }
+      ],
+      "lastCheck": "2025-08-30T05:13:39.459Z"
+    },
+    "responsibleGaming": {
+      "framework": "responsibleGaming",
+      "status": "non-compliant",
+      "requirements": {},
+      "violations": [
+        {
+          "requirement": "ageVerification",
+          "severity": "medium",
+          "description": "Age verification not found in codebase",
+          "recommendation": "Implement age verification"
+        },
+        {
+          "requirement": "depositLimits",
+          "severity": "medium",
+          "description": "Deposit limits not found in codebase",
+          "recommendation": "Implement deposit limits"
+        },
+        {
+          "requirement": "lossLimits",
+          "severity": "medium",
+          "description": "Loss limits not found in codebase",
+          "recommendation": "Implement loss limits"
+        },
+        {
+          "requirement": "timeLimits",
+          "severity": "medium",
+          "description": "Time limits not found in codebase",
+          "recommendation": "Implement time limits"
+        },
+        {
+          "requirement": "selfExclusion",
+          "severity": "medium",
+          "description": "Self exclusion not found in codebase",
+          "recommendation": "Implement self exclusion"
+        },
+        {
+          "requirement": "realityChecks",
+          "severity": "medium",
+          "description": "Reality checks not found in codebase",
+          "recommendation": "Implement reality checks"
+        }
+      ],
+      "lastCheck": "2025-08-30T05:13:39.459Z"
+    },
+    "dataProtection": {
+      "framework": "dataProtection",
+      "status": "non-compliant",
+      "requirements": {},
+      "violations": [
+        {
+          "requirement": "encryptionAtRest",
+          "severity": "medium",
+          "description": "Encryption at rest not found in codebase",
+          "recommendation": "Implement encryption at rest"
+        },
+        {
+          "requirement": "encryptionInTransit",
+          "severity": "medium",
+          "description": "Encryption in transit not found in codebase",
+          "recommendation": "Implement encryption in transit"
+        },
+        {
+          "requirement": "accessLogging",
+          "severity": "medium",
+          "description": "Access logging not found in codebase",
+          "recommendation": "Implement access logging"
+        },
+        {
+          "requirement": "dataMinimization",
+          "severity": "medium",
+          "description": "Data minimization not found in codebase",
+          "recommendation": "Implement data minimization"
+        },
+        {
+          "requirement": "secureDeletion",
+          "severity": "medium",
+          "description": "Secure deletion not found in codebase",
+          "recommendation": "Implement secure deletion"
+        },
+        {
+          "requirement": "backupSecurity",
+          "severity": "medium",
+          "description": "Backup security not found in codebase",
+          "recommendation": "Implement backup security"
+        }
+      ],
+      "lastCheck": "2025-08-30T05:13:39.459Z"
+    }
+  },
+  "summary": {
+    "totalFrameworks": 6,
+    "compliantFrameworks": 0,
+    "nonCompliantFrameworks": 6,
+    "totalRequirements": 37,
+    "metRequirements": 0,
+    "unmetRequirements": 37,
+    "criticalViolations": 0,
+    "highViolations": 0,
+    "mediumViolations": 37,
+    "lowViolations": 0
+  },
+  "recommendations": [
+    "⚖️ Review and fix non-compliant frameworks",
+    "📋 Implement missing compliance requirements",
+    "🇪🇺 GDPR: Implement comprehensive data protection measures",
+    "💳 PCI: Enhance payment card data security",
+    "💰 AML: Strengthen anti-money laundering controls",
+    "🎮 Responsible Gaming: Implement player protection measures"
+  ],
+  "violations": [
+    {
+      "framework": "gdpr",
+      "requirement": "dataProcessingAgreement",
+      "severity": "medium",
+      "description": "Data processing agreement not found. Expected one of: data-processing-agreement.md",
+      "recommendation": "Create data processing agreement document"
+    },
+    {
+      "framework": "gdpr",
+      "requirement": "privacyPolicy",
+      "severity": "medium",
+      "description": "Privacy policy document not found. Expected one of: privacy-policy.md, data-processing-agreement.md, gdpr-compliance.md",
+      "recommendation": "Create privacy policy document document"
+    },
+    {
+      "framework": "gdpr",
+      "requirement": "consentManagement",
+      "severity": "medium",
+      "description": "Consent management implementation not found in codebase",
+      "recommendation": "Implement consent management implementation"
+    },
+    {
+      "framework": "gdpr",
+      "requirement": "dataRetentionPolicy",
+      "severity": "medium",
+      "description": "Data retention policy not found. Expected one of: data-retention-policy.md",
+      "recommendation": "Create data retention policy document"
+    },
+    {
+      "framework": "gdpr",
+      "requirement": "rightToErasure",
+      "severity": "medium",
+      "description": "Right to erasure implementation not found in codebase",
+      "recommendation": "Implement right to erasure implementation"
+    },
+    {
+      "framework": "gdpr",
+      "requirement": "dataPortability",
+      "severity": "medium",
+      "description": "Data portability implementation not found in codebase",
+      "recommendation": "Implement data portability implementation"
+    },
+    {
+      "framework": "gdpr",
+      "requirement": "breachNotification",
+      "severity": "medium",
+      "description": "Breach notification system not found in codebase",
+      "recommendation": "Implement breach notification system"
+    },
+    {
+      "framework": "pci",
+      "requirement": "cardholderDataProtection",
+      "severity": "medium",
+      "description": "Cardholder data protection not found in codebase",
+      "recommendation": "Implement cardholder data protection"
+    },
+    {
+      "framework": "pci",
+      "requirement": "encryption",
+      "severity": "medium",
+      "description": "Data encryption implementation not found in codebase",
+      "recommendation": "Implement data encryption implementation"
+    },
+    {
+      "framework": "pci",
+      "requirement": "accessControl",
+      "severity": "medium",
+      "description": "Access control implementation not found in codebase",
+      "recommendation": "Implement access control implementation"
+    },
+    {
+      "framework": "pci",
+      "requirement": "vulnerabilityManagement",
+      "severity": "medium",
+      "description": "Vulnerability management not found. Expected one of: vulnerability-scan.sh, security-scan.ts",
+      "recommendation": "Create vulnerability management document"
+    },
+    {
+      "framework": "pci",
+      "requirement": "regularTesting",
+      "severity": "medium",
+      "description": "Regular security testing not found. Expected one of: penetration-test.md, security-testing.md",
+      "recommendation": "Create regular security testing document"
+    },
+    {
+      "framework": "pci",
+      "requirement": "informationSecurityPolicy",
+      "severity": "medium",
+      "description": "Information security policy not found. Expected one of: security-policy.md, information-security-policy.md",
+      "recommendation": "Create information security policy document"
+    },
+    {
+      "framework": "aml",
+      "requirement": "customerDueDiligence",
+      "severity": "medium",
+      "description": "Customer due diligence not found in codebase",
+      "recommendation": "Implement customer due diligence"
+    },
+    {
+      "framework": "aml",
+      "requirement": "enhancedDueDiligence",
+      "severity": "medium",
+      "description": "Enhanced due diligence not found in codebase",
+      "recommendation": "Implement enhanced due diligence"
+    },
+    {
+      "framework": "aml",
+      "requirement": "recordKeeping",
+      "severity": "medium",
+      "description": "Record keeping not found in codebase",
+      "recommendation": "Implement record keeping"
+    },
+    {
+      "framework": "aml",
+      "requirement": "suspiciousActivityReporting",
+      "severity": "medium",
+      "description": "Suspicious activity reporting not found in codebase",
+      "recommendation": "Implement suspicious activity reporting"
+    },
+    {
+      "framework": "aml",
+      "requirement": "riskAssessment",
+      "severity": "medium",
+      "description": "Risk assessment not found. Expected one of: risk-assessment.md, aml-risk.md",
+      "recommendation": "Create risk assessment document"
+    },
+    {
+      "framework": "aml",
+      "requirement": "training",
+      "severity": "medium",
+      "description": "AML training not found. Expected one of: aml-training.md, compliance-training.md",
+      "recommendation": "Create aml training document"
+    },
+    {
+      "framework": "kyc",
+      "requirement": "identityVerification",
+      "severity": "medium",
+      "description": "Identity verification not found in codebase",
+      "recommendation": "Implement identity verification"
+    },
+    {
+      "framework": "kyc",
+      "requirement": "addressVerification",
+      "severity": "medium",
+      "description": "Address verification not found in codebase",
+      "recommendation": "Implement address verification"
+    },
+    {
+      "framework": "kyc",
+      "requirement": "sourceOfFunds",
+      "severity": "medium",
+      "description": "Source of funds verification not found in codebase",
+      "recommendation": "Implement source of funds verification"
+    },
+    {
+      "framework": "kyc",
+      "requirement": "enhancedVerification",
+      "severity": "medium",
+      "description": "Enhanced verification not found in codebase",
+      "recommendation": "Implement enhanced verification"
+    },
+    {
+      "framework": "kyc",
+      "requirement": "ongoingMonitoring",
+      "severity": "medium",
+      "description": "Ongoing monitoring not found in codebase",
+      "recommendation": "Implement ongoing monitoring"
+    },
+    {
+      "framework": "kyc",
+      "requirement": "recordKeeping",
+      "severity": "medium",
+      "description": "KYC record keeping not found in codebase",
+      "recommendation": "Implement kyc record keeping"
+    },
+    {
+      "framework": "responsibleGaming",
+      "requirement": "ageVerification",
+      "severity": "medium",
+      "description": "Age verification not found in codebase",
+      "recommendation": "Implement age verification"
+    },
+    {
+      "framework": "responsibleGaming",
+      "requirement": "depositLimits",
+      "severity": "medium",
+      "description": "Deposit limits not found in codebase",
+      "recommendation": "Implement deposit limits"
+    },
+    {
+      "framework": "responsibleGaming",
+      "requirement": "lossLimits",
+      "severity": "medium",
+      "description": "Loss limits not found in codebase",
+      "recommendation": "Implement loss limits"
+    },
+    {
+      "framework": "responsibleGaming",
+      "requirement": "timeLimits",
+      "severity": "medium",
+      "description": "Time limits not found in codebase",
+      "recommendation": "Implement time limits"
+    },
+    {
+      "framework": "responsibleGaming",
+      "requirement": "selfExclusion",
+      "severity": "medium",
+      "description": "Self exclusion not found in codebase",
+      "recommendation": "Implement self exclusion"
+    },
+    {
+      "framework": "responsibleGaming",
+      "requirement": "realityChecks",
+      "severity": "medium",
+      "description": "Reality checks not found in codebase",
+      "recommendation": "Implement reality checks"
+    },
+    {
+      "framework": "dataProtection",
+      "requirement": "encryptionAtRest",
+      "severity": "medium",
+      "description": "Encryption at rest not found in codebase",
+      "recommendation": "Implement encryption at rest"
+    },
+    {
+      "framework": "dataProtection",
+      "requirement": "encryptionInTransit",
+      "severity": "medium",
+      "description": "Encryption in transit not found in codebase",
+      "recommendation": "Implement encryption in transit"
+    },
+    {
+      "framework": "dataProtection",
+      "requirement": "accessLogging",
+      "severity": "medium",
+      "description": "Access logging not found in codebase",
+      "recommendation": "Implement access logging"
+    },
+    {
+      "framework": "dataProtection",
+      "requirement": "dataMinimization",
+      "severity": "medium",
+      "description": "Data minimization not found in codebase",
+      "recommendation": "Implement data minimization"
+    },
+    {
+      "framework": "dataProtection",
+      "requirement": "secureDeletion",
+      "severity": "medium",
+      "description": "Secure deletion not found in codebase",
+      "recommendation": "Implement secure deletion"
+    },
+    {
+      "framework": "dataProtection",
+      "requirement": "backupSecurity",
+      "severity": "medium",
+      "description": "Backup security not found in codebase",
+      "recommendation": "Implement backup security"
+    }
+  ]
+}

@@ -1,0 +1,322 @@
+# Enhanced CI/CD Pipeline with bunx --package Support
+# Demonstrates explicit package specification for reliable builds
+
+name: 🚀 Enhanced CI with bunx --package
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  BUN_VERSION: '1.2.21'
+  NODE_ENV: 'test'
+
+jobs:
+  setup:
+    name: 📋 Setup & Cache
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun with explicit version
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 🔑 Generate cache key
+        id: cache-key
+        run: |
+          echo "key=bun-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}-${{ env.BUN_VERSION }}" >> $GITHUB_OUTPUT
+
+      - name: 💾 Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ env.BUN_VERSION }}-
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+  lint-and-format:
+    name: 🧹 Lint & Format with bunx --package
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 💾 Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🎯 TypeScript type checking with bunx --package
+        run: bunx --package typescript tsc --noEmit
+
+      - name: 🧹 ESLint with bunx --package (explicit package)
+        run: bunx --package @typescript-eslint/eslint-plugin eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0
+
+      - name: 💄 Prettier format check with bunx --package
+        run: bunx --package prettier prettier --check .
+
+      - name: 🎨 Stylelint CSS with bunx --package
+        run: bunx --package stylelint stylelint "**/*.css" || true
+
+  test:
+    name: 🧪 Test Suite with bunx --package
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix:
+        test-suite: [unit, integration, e2e]
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 💾 Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🧪 Run Bun tests (native)
+        if: matrix.test-suite == 'unit'
+        run: bun test --coverage
+
+      - name: 🧪 Run Jest tests with bunx --package
+        if: matrix.test-suite == 'integration'
+        run: bunx --package jest jest --coverage --testPathPattern=integration
+
+      - name: 🎭 Run Cypress E2E with bunx --package
+        if: matrix.test-suite == 'e2e'
+        run: |
+          bunx --package cypress cypress install
+          bunx --package cypress cypress run --headless
+
+  security:
+    name: 🛡️ Security Audit with bunx --package
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 💾 Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔍 Dependency audit (Bun native)
+        run: bun audit --audit-level=moderate --prod
+
+      - name: 🛡️ Enhanced security audit with bunx --package
+        run: |
+          bunx --package npm-audit-resolver npm-audit-resolver check || true
+
+      - name: 📊 Dependency analysis
+        run: bun run deps:analyze
+
+  build:
+    name: 🔨 Build with bunx --package Tools
+    runs-on: ubuntu-latest
+    needs: [lint-and-format, test, security]
+    strategy:
+      matrix:
+        build-target: [development, production, bundle-analysis]
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 💾 Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔨 Build with Bun (development)
+        if: matrix.build-target == 'development'
+        run: bun run build
+
+      - name: 🚀 Production build with bunx --package webpack
+        if: matrix.build-target == 'production'
+        run: |
+          bunx --package webpack webpack --config webpack.prod.js --mode production
+
+      - name: 📊 Bundle analysis with bunx --package
+        if: matrix.build-target == 'bundle-analysis'
+        run: |
+          bun run build
+          bunx --package webpack-bundle-analyzer webpack-bundle-analyzer dist/stats.json --mode static --report dist/bundle-report.html
+          bunx --package source-map-explorer source-map-explorer 'dist/**/*.js' --html dist/source-map-report.html
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.build-target }}
+          path: dist/
+          retention-days: 30
+
+  workspace-operations:
+    name: 🏢 Workspace Operations with bunx --package
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 💾 Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 📋 Workspace information
+        run: |
+          bun run workspaces:list
+          bun run version:status
+
+      - name: 🔧 Fix all workspace package.json files
+        run: bun run pkg:fix-all
+
+      - name: 🎯 Type check all workspaces with bunx --package
+        run: bunx --package typescript tsc --noEmit --filter="@fire22/*"
+
+      - name: 🧹 Lint all workspaces with bunx --package
+        run: bun run all:lint
+
+      - name: 🧪 Test all workspaces
+        run: bun run all:test
+
+      - name: 🔨 Build all workspaces
+        run: bun run all:build
+
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, workspace-operations]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: ✅ Pre-deployment validation with bunx --package
+        run: |
+          bunx --package typescript tsc --noEmit
+          bun run verify:pre-publish
+
+      - name: 🚀 Deploy to Cloudflare Workers
+        run: bun run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  deploy-production:
+    name: 🎯 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, workspace-operations]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔄 Version synchronization
+        run: bun run version:sync
+
+      - name: ✅ Final validation with bunx --package tools
+        run: |
+          bunx --package typescript tsc --noEmit
+          bunx --package @typescript-eslint/eslint-plugin eslint . --ext .ts,.tsx --max-warnings 0
+          bun run verify:pre-publish
+
+      - name: 📦 Create release packages
+        run: bun run pack:all
+
+      - name: 🚀 Deploy to Production
+        run: bun run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: 📊 Post-deployment bundle analysis
+        run: |
+          bunx --package webpack-bundle-analyzer webpack-bundle-analyzer dist/stats.json --mode json --report bundle-analysis.json
+
+  notify:
+    name: 📢 Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    steps:
+      - name: 📢 Notify deployment status
+        run: |
+          if [[ "${{ needs.deploy-staging.result }}" == "success" ]]; then
+            echo "✅ Staging deployment successful"
+          fi
+          if [[ "${{ needs.deploy-production.result }}" == "success" ]]; then
+            echo "🎯 Production deployment successful"
+          fi

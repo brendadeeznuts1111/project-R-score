@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial Report - {{periodStart}} to {{periodEnd}}</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f7fa;
+        color: #2c3e50;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        min-height: 100vh;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+      }
+      .header h1 {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+      }
+      .header .subtitle {
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+      .report-meta {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 30px;
+        background: #ecf0f1;
+        border-bottom: 1px solid #bdc3c7;
+      }
+      .meta-item {
+        text-align: center;
+      }
+      .meta-item .label {
+        font-size: 0.9em;
+        color: #7f8c8d;
+        margin-bottom: 5px;
+      }
+      .meta-item .value {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 30px;
+      }
+      .summary-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        border-left: 4px solid #3498db;
+        transition: transform 0.2s;
+      }
+      .summary-card:hover {
+        transform: translateY(-2px);
+      }
+      .summary-card h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+      }
+      .metric {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e9ecef;
+      }
+      .metric:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      .metric-label {
+        color: #6c757d;
+      }
+      .metric-value {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .positive {
+        color: #27ae60;
+      }
+      .negative {
+        color: #e74c3c;
+      }
+      .neutral {
+        color: #3498db;
+      }
+      .compliance-section {
+        padding: 30px;
+        background: #f8f9fa;
+      }
+      .compliance-section h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+      }
+      .compliance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .compliance-item {
+        background: white;
+        padding: 20px;
+        border-radius: 6px;
+        border-left: 4px solid #27ae60;
+      }
+      .compliance-item.failed {
+        border-left-color: #e74c3c;
+      }
+      .compliance-item .status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .compliance-item .status.passed {
+        background: #d4edda;
+        color: #155724;
+      }
+      .compliance-item .status.failed {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px;
+        background: #2c3e50;
+        color: white;
+        font-size: 0.9em;
+      }
+      .print-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+      }
+      .print-button:hover {
+        background: #2980b9;
+      }
+      @media print {
+        .print-button {
+          display: none;
+        }
+        body {
+          background: white;
+        }
+        .container {
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="print-button" onclick="window.print()">🖨️ Print Report</button>
+
+    <div class="container">
+      <div class="header">
+        <h1>📊 Financial Report</h1>
+        <div class="subtitle">{{periodStart}} to {{periodEnd}}</div>
+      </div>
+
+      <div class="report-meta">
+        <div class="meta-item">
+          <div class="label">Generated At</div>
+          <div class="value">{{generatedAt}}</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Report Type</div>
+          <div class="value">Monthly Summary</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Compliance Status</div>
+          <div class="value">✅ Compliant</div>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h3>💰 Revenue Summary</h3>
+          <div class="metric">
+            <span class="metric-label">Gross Revenue</span>
+            <span class="metric-value positive">${{totalRevenue}}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Net Revenue</span>
+            <span class="metric-value neutral">${{netProfit}}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Growth Rate</span>
+            <span class="metric-value positive">+12.5%</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <h3>💳 Collections</h3>
+          <div class="metric">
+            <span class="metric-label">Total Collections</span>
+            <span class="metric-value neutral">{{totalCollections}}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Success Rate</span>
+            <span class="metric-value positive">98.7%</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Average Amount</span>
+            <span class="metric-value neutral">$247.50</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <h3>⚖️ Compliance</h3>
+          <div class="metric">
+            <span class="metric-label">Compliance Rate</span>
+            <span class="metric-value positive">{{complianceRate}}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Audit Issues</span>
+            <span class="metric-value positive">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Last Audit</span>
+            <span class="metric-value neutral">2024-01-15</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="compliance-section">
+        <h2>🔒 Regulatory Compliance</h2>
+        <div class="compliance-grid">
+          <div class="compliance-item">
+            <span class="status passed">PASSED</span>
+            <h4>PCI DSS Compliance</h4>
+            <p>Payment Card Industry Data Security Standard requirements met</p>
+          </div>
+          <div class="compliance-item">
+            <span class="status passed">PASSED</span>
+            <h4>AML Compliance</h4>
+            <p>Anti-Money Laundering procedures verified</p>
+          </div>
+          <div class="compliance-item">
+            <span class="status passed">PASSED</span>
+            <h4>KYC Compliance</h4>
+            <p>Know Your Customer verification completed</p>
+          </div>
+          <div class="compliance-item">
+            <span class="status passed">PASSED</span>
+            <h4>GDPR Compliance</h4>
+            <p>General Data Protection Regulation requirements satisfied</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>Generated by Fire22 Enterprise System | Domain-Driven Architecture</p>
+        <p>Report ID: FR-{{generatedAt}} | Confidential Document</p>
+      </div>
+    </div>
+  </body>
+</html>

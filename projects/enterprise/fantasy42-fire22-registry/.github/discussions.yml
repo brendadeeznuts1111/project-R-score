@@ -1,0 +1,114 @@
+# GitHub Discussions Configuration for Fantasy42-Fire22 Registry
+
+# Discussion categories for enterprise collaboration
+categories:
+  # General discussions
+  - name: 'General'
+    emoji: '💬'
+    description: 'General discussions about the Fantasy42-Fire22 Registry'
+    slug: 'general'
+
+  # Domain-specific discussions
+  - name: 'Security Domain'
+    emoji: '🔐'
+    description: 'Discussions about security architecture and implementation'
+    slug: 'security-domain'
+
+  - name: 'Compliance Domain'
+    emoji: '🛡️'
+    description: 'Regulatory compliance and audit discussions'
+    slug: 'compliance-domain'
+
+  - name: 'Analytics Domain'
+    emoji: '📊'
+    description: 'Analytics, reporting, and business intelligence'
+    slug: 'analytics-domain'
+
+  - name: 'API Domain'
+    emoji: '🔌'
+    description: 'API design, development, and integration'
+    slug: 'api-domain'
+
+  - name: 'Database Domain'
+    emoji: '💾'
+    description: 'Database architecture, optimization, and management'
+    slug: 'database-domain'
+
+  - name: 'Cloudflare Domain'
+    emoji: '☁️'
+    description: 'Cloudflare Workers, Pages, and edge computing'
+    slug: 'cloudflare-domain'
+
+  # Development discussions
+  - name: 'Development'
+    emoji: '💻'
+    description: 'Development workflows, tools, and best practices'
+    slug: 'development'
+
+  - name: 'Code Review'
+    emoji: '👀'
+    description: 'Code review discussions and feedback'
+    slug: 'code-review'
+
+  - name: 'Architecture'
+    emoji: '🏗️'
+    description: 'System architecture and design discussions'
+    slug: 'architecture'
+
+  # Community and support
+  - name: 'Q&A'
+    emoji: '❓'
+    description: 'Questions and answers about the registry'
+    slug: 'q-and-a'
+
+  - name: 'Show and Tell'
+    emoji: '📢'
+    description: 'Share your projects, integrations, and achievements'
+    slug: 'show-and-tell'
+
+  - name: 'Ideas'
+    emoji: '💡'
+    description: 'Share your ideas for improving the registry'
+    slug: 'ideas'
+
+  # Enterprise-specific
+  - name: 'Enterprise'
+    emoji: '🏢'
+    description: 'Enterprise features, deployments, and integrations'
+    slug: 'enterprise'
+
+  - name: 'Security & Compliance'
+    emoji: '🔒'
+    description: 'Security and compliance related discussions'
+    slug: 'security-compliance'
+
+  - name: 'Performance'
+    emoji: '⚡'
+    description: 'Performance optimization and benchmarking'
+    slug: 'performance'
+
+  # Announcements and updates
+  - name: 'Announcements'
+    emoji: '📢'
+    description: 'Official announcements and updates'
+    slug: 'announcements'
+
+  - name: 'Releases'
+    emoji: '🚀'
+    description: 'Release notes and changelog discussions'
+    slug: 'releases'
+
+  - name: 'Roadmap'
+    emoji: '🗺️'
+    description: 'Product roadmap and future plans'
+    slug: 'roadmap'
+
+# Repository-specific settings
+repository: 'brendadeeznuts1111/fantasy42-fire22-registry'
+organization: 'nolarose1968-pixel'
+
+# Enable discussions for this repository
+enabled: true
+
+# Default category for new discussions
+default_category: 'general'

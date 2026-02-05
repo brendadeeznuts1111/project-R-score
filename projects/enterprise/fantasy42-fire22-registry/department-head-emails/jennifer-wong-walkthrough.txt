@@ -1,0 +1,56 @@
+
+Subject: 🚀 Fire22 Registry Release Flow - Specialist Review Walkthrough
+
+Dear Jennifer Wong,
+
+You are receiving this notification as a **Support Specialist** in the **Customer Support Department**.
+
+## 🎯 **Your Specialist Role**
+
+As **Technical Support & Troubleshooting** specialist, you provide deep technical expertise:
+
+- **Domain Expertise**: Technical Support & Troubleshooting validation and review
+- **Technical Review**: Detailed analysis of package compliance
+- **Quality Assurance**: Ensure standards in your specialty area
+- **Documentation**: Provide specialist feedback and recommendations
+
+### **Your Department Context**
+- **Department Head**: Mike Johnson (Chief Customer Officer)
+- **Secondary Validator**: Amanda Garcia (Customer Experience Lead)
+- **Your Colleagues**: David Martinez (Chat Specialist), Rachel Foster (Escalation Specialist)
+- **Focus Area**: SUPPORT_SLA, CUSTOMER_PRIVACY, GDPR
+
+## 📋 **Specialist Walkthrough Guide Attached**
+
+The attached guide includes:
+- **REGISTRY-RELEASE-SPECIALIST-WALKTHROUGH.md** - Specialist-focused guide
+- **Technical Support & Troubleshooting** specific validation procedures
+- **Review checklists** and best practices
+- **Reporting templates** for your findings
+
+## ⏰ **Required Actions**
+
+1. **Review specialist guide** (10-15 minutes)
+2. **Identify packages requiring your expertise**
+3. **Prepare review checklists** for your specialty
+4. **Confirm readiness** by replying with "CONFIRMED"
+
+## 📋 **Your Review Focus**
+
+**Specialty**: Technical Support & Troubleshooting
+**Department**: Customer Support
+**Compliance Areas**: SUPPORT_SLA, CUSTOMER_PRIVACY, GDPR
+
+## 📞 **Support**
+
+- **Department Head**: Mike Johnson (mike.johnson@fire22.com)
+- **Secondary Validator**: Amanda Garcia (amanda.garcia@fire22.com)
+- **Technical Support**: enterprise@fire22.com
+- **Specialist Colleagues**: david.martinez@fire22.com, rachel.foster@fire22.com
+
+---
+
+**Please reply with "CONFIRMED" once ready to begin specialist reviews.**
+
+Best regards,
+Fire22 Enterprise Registry Team

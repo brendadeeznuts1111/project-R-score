@@ -1,0 +1,340 @@
+name: 🔒 Security & Dependency Scanning
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run security scans daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of security scan to run'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - 'full'
+          - 'dependencies'
+          - 'code'
+          - 'secrets'
+
+env:
+  BUN_VERSION: '1.2.21'
+
+jobs:
+  # Dependency vulnerability scanning
+  dependency-scan:
+    name: 🔍 Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔍 Bun Audit
+        run: |
+          echo "## 🔍 Dependency Audit Results" >> $GITHUB_STEP_SUMMARY
+          if bun audit --json > audit-results.json 2>/dev/null; then
+            echo "✅ No critical vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+            cat audit-results.json
+          else
+            echo "⚠️ Vulnerabilities detected - review required" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: 📊 Upload Audit Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-audit-results
+          path: audit-results.json
+          retention-days: 30
+
+  # Secret scanning
+  secret-scan:
+    name: 🕵️ Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for comprehensive scanning
+
+      - name: 🔍 Scan for Secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+      - name: 🔐 Check Environment Files
+        run: |
+          echo "## 🔐 Environment File Security Check" >> $GITHUB_STEP_SUMMARY
+
+          # Check for .env files that shouldn't be committed
+          if find . -name ".env*" -not -path "./node_modules/*" -not -name ".env.example" -not -name ".env.template"; then
+            echo "⚠️ Found .env files - ensure no secrets are committed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No suspicious .env files found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check for common secret patterns in committed files
+          if grep -r -i "password\|secret\|key\|token" --include="*.ts" --include="*.js" --include="*.json" . | grep -v node_modules | head -5; then
+            echo "⚠️ Found potential secrets in code - review required" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No obvious secrets detected in code" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Code security analysis
+  code-security:
+    name: 📝 Code Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🛡️ Run Security Scanner
+        run: bun run scripts/security-scanner-demo.ts
+        continue-on-error: true
+
+      - name: 🔐 Environment Security Check
+        run: |
+          if [ -f "scripts/secure-env-manager.ts" ]; then
+            bun run scripts/secure-env-manager.ts audit
+          fi
+        continue-on-error: true
+
+      - name: 📊 Generate Security Report
+        run: |
+          echo "## 🛡️ Code Security Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Security scanner completed" >> $GITHUB_STEP_SUMMARY
+          echo "🔐 Environment audit completed" >> $GITHUB_STEP_SUMMARY
+
+  # SAST - Static Application Security Testing
+  static-analysis:
+    name: 🔬 Static Application Security Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🔍 ESLint Security Rules
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔍 Security-focused Linting
+        run: |
+          # Run ESLint with security-focused rules
+          if bun run lint 2>&1 | tee lint-security.log; then
+            echo "✅ No security linting issues found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Security linting issues detected" >> $GITHUB_STEP_SUMMARY
+            cat lint-security.log >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🔒 TypeScript Security Check
+        run: |
+          # Check for unsafe TypeScript patterns
+          echo "## 🔒 TypeScript Security Analysis" >> $GITHUB_STEP_SUMMARY
+
+          # Check for 'any' types that could bypass security
+          ANY_COUNT=$(grep -r ": any" src/ --include="*.ts" | wc -l || echo "0")
+          echo "- TypeScript 'any' types found: ${ANY_COUNT}" >> $GITHUB_STEP_SUMMARY
+
+          # Check for eval usage
+          EVAL_COUNT=$(grep -r "eval(" src/ --include="*.ts" --include="*.js" | wc -l || echo "0")
+          echo "- Potential eval() usage: ${EVAL_COUNT}" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$EVAL_COUNT" -gt "0" ]; then
+            echo "⚠️ eval() usage detected - security review required" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Workspace security validation
+  workspace-security:
+    name: 🏢 Workspace Security Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🏢 Validate Workspace Security
+        run: |
+          echo "## 🏢 Workspace Security Validation" >> $GITHUB_STEP_SUMMARY
+
+          # Check each workspace for security configurations
+          for workspace in workspaces/@fire22-*; do
+            if [ -d "$workspace" ]; then
+              WORKSPACE_NAME=$(basename "$workspace")
+              echo "### ${WORKSPACE_NAME}" >> $GITHUB_STEP_SUMMARY
+              
+              # Check for security-related files
+              if [ -f "$workspace/bunfig.toml" ]; then
+                echo "- ✅ Bun configuration present" >> $GITHUB_STEP_SUMMARY
+              fi
+              
+              if [ -f "$workspace/wrangler.toml" ] || [ -f "$workspace/wrangler.linked.toml" ]; then
+                echo "- ✅ Cloudflare Workers configuration present" >> $GITHUB_STEP_SUMMARY
+              fi
+              
+              # Check package.json for security-related dependencies
+              if [ -f "$workspace/package.json" ]; then
+                if grep -q "security\|auth\|crypto" "$workspace/package.json"; then
+                  echo "- 🔒 Security dependencies detected" >> $GITHUB_STEP_SUMMARY
+                fi
+              fi
+            fi
+          done
+
+      - name: 🔒 Security Registry Check
+        run: |
+          if [ -d "workspaces/@fire22-security-registry" ]; then
+            echo "## 🔒 Security Registry Status" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Security registry workspace exists" >> $GITHUB_STEP_SUMMARY
+            
+            # Run security registry validation if available
+            if [ -f "workspaces/@fire22-security-registry/src/cli.ts" ]; then
+              cd workspaces/@fire22-security-registry
+              if bun run src/cli.ts validate 2>/dev/null; then
+                echo "✅ Security registry validation passed" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "⚠️ Security registry validation issues detected" >> $GITHUB_STEP_SUMMARY
+              fi
+              cd ../..
+            fi
+          fi
+
+  # Container security (if using Docker)
+  container-security:
+    name: 🐳 Container Security Scan
+    runs-on: ubuntu-latest
+    if: hashFiles('Dockerfile') != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🐳 Build Docker Image
+        run: |
+          if [ -f "Dockerfile" ]; then
+            docker build -t fire22-dashboard:security-scan .
+          else
+            echo "No Dockerfile found, skipping container security scan"
+            exit 0
+          fi
+
+      - name: 🔍 Container Vulnerability Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'fire22-dashboard:security-scan'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: 📊 Upload Container Scan Results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # License compliance
+  license-check:
+    name: 📜 License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 📜 Check License Compliance
+        run: |
+          echo "## 📜 License Compliance Check" >> $GITHUB_STEP_SUMMARY
+
+          # Check for package licenses
+          bun pm ls --all 2>/dev/null | grep -E "license|License" | head -10 || echo "License information not available"
+
+          echo "✅ License compliance check completed" >> $GITHUB_STEP_SUMMARY
+
+  # Security summary
+  security-summary:
+    name: 📋 Security Summary
+    runs-on: ubuntu-latest
+    needs:
+      [
+        dependency-scan,
+        secret-scan,
+        code-security,
+        static-analysis,
+        workspace-security,
+        license-check,
+      ]
+    if: always()
+    steps:
+      - name: 📊 Generate Security Summary
+        run: |
+          echo "## 🔒 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 Dependency Scan | ${{ needs.dependency-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🕵️ Secret Detection | ${{ needs.secret-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📝 Code Security | ${{ needs.code-security.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔬 Static Analysis | ${{ needs.static-analysis.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🏢 Workspace Security | ${{ needs.workspace-security.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📜 License Check | ${{ needs.license-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+
+          # Determine overall security status
+          if [[ "${{ needs.dependency-scan.result }}" == "success" && \
+                "${{ needs.secret-scan.result }}" == "success" && \
+                "${{ needs.code-security.result }}" == "success" && \
+                "${{ needs.static-analysis.result }}" == "success" && \
+                "${{ needs.workspace-security.result }}" == "success" && \
+                "${{ needs.license-check.result }}" == "success" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🎉 **Overall Security Status: ✅ PASSED**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All security checks completed successfully! 🔒" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Overall Security Status: ❌ ATTENTION REQUIRED**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "One or more security checks require attention. Please review the failed checks above." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🔒 Security Gate
+        run: |
+          if [[ "${{ needs.dependency-scan.result }}" == "success" && \
+                "${{ needs.secret-scan.result }}" == "success" && \
+                ("${{ needs.code-security.result }}" == "success" || "${{ needs.code-security.result }}" == "skipped") && \
+                "${{ needs.static-analysis.result }}" == "success" && \
+                "${{ needs.workspace-security.result }}" == "success" && \
+                "${{ needs.license-check.result }}" == "success" ]]; then
+            echo "🎉 All critical security checks passed!"
+            exit 0
+          else
+            echo "❌ Critical security checks failed - blocking deployment"
+            exit 1
+          fi

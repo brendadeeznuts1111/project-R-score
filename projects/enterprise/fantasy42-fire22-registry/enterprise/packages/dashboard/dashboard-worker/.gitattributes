@@ -1,0 +1,297 @@
+# Fire22 Dashboard Worker - Git Attributes Configuration
+# This file defines how Git handles line endings, diff behavior, and file types
+
+# =============================================================================
+# Line Endings Configuration
+# =============================================================================
+
+# Set default behavior to automatically normalize line endings
+* text=auto eol=lf
+
+# Explicitly declare text files and ensure LF line endings on checkout
+*.ts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+
+# Web files
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+*.xml text eol=lf
+*.svg text eol=lf
+
+# Shell scripts (Unix line endings)
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+*.fish text eol=lf
+
+# Windows scripts (Windows line endings)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Documentation
+*.rst text eol=lf
+*.tex text eol=lf
+LICENSE text eol=lf
+CHANGELOG text eol=lf
+CONTRIBUTING text eol=lf
+README text eol=lf
+
+# Configuration files
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+.prettierrc text eol=lf
+.eslintrc text eol=lf
+tsconfig.json text eol=lf
+package.json text eol=lf
+package-lock.json text eol=lf
+bun.lockb binary
+yarn.lock text eol=lf
+
+# SQL files
+*.sql text eol=lf
+
+# =============================================================================
+# Binary Files (no line ending conversion)
+# =============================================================================
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+*.webp binary
+*.avif binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.tgz binary
+*.7z binary
+*.rar binary
+
+# Executables
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.app binary
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary
+
+# Database files
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+
+# Node.js
+node_modules/** binary
+
+# Bun
+*.bun binary
+
+# =============================================================================
+# Diff and Merge Configuration
+# =============================================================================
+
+# Define custom diff drivers for specific file types
+*.json diff=json
+*.md diff=markdown
+*.ts diff=typescript
+*.js diff=javascript
+
+# Use built-in diff drivers where available
+*.html diff=html
+*.css diff=css
+
+# =============================================================================
+# Language-Specific Settings
+# =============================================================================
+
+# TypeScript files
+*.ts text eol=lf linguist-language=TypeScript
+*.tsx text eol=lf linguist-language=TypeScript
+*.d.ts text eol=lf linguist-language=TypeScript
+
+# JavaScript files  
+*.js text eol=lf linguist-language=JavaScript
+*.mjs text eol=lf linguist-language=JavaScript
+*.jsx text eol=lf linguist-language=JavaScript
+
+# Configuration languages
+*.json text eol=lf linguist-language=JSON
+*.toml text eol=lf linguist-language=TOML
+*.yaml text eol=lf linguist-language=YAML
+*.yml text eol=lf linguist-language=YAML
+
+# Shell scripts
+*.sh text eol=lf linguist-language=Shell
+*.bash text eol=lf linguist-language=Shell
+
+# SQL
+*.sql text eol=lf linguist-language=SQL
+
+# =============================================================================
+# GitHub Linguist Configuration
+# =============================================================================
+
+# Exclude generated files from language statistics
+dist/** linguist-generated=true
+build/** linguist-generated=true
+coverage/** linguist-generated=true
+node_modules/** linguist-vendored=true
+*.min.js linguist-generated=true
+*.min.css linguist-generated=true
+
+# Documentation files
+docs/** linguist-documentation=true
+wiki/** linguist-documentation=true
+*.md linguist-documentation=true
+LICENSE linguist-documentation=true
+CONTRIBUTING.md linguist-documentation=true
+CHANGELOG.md linguist-documentation=true
+
+# Vendored dependencies
+packages/*/node_modules/** linguist-vendored=true
+workspaces/*/node_modules/** linguist-vendored=true
+
+# =============================================================================
+# Git LFS (Large File Storage) Configuration
+# =============================================================================
+
+# Use Git LFS for large binary files (if enabled)
+# *.zip filter=lfs diff=lfs merge=lfs -text
+# *.tar.gz filter=lfs diff=lfs merge=lfs -text
+# *.db filter=lfs diff=lfs merge=lfs -text
+
+# =============================================================================
+# Merge Strategies
+# =============================================================================
+
+# Use union merge for specific files to reduce conflicts
+CHANGELOG.md merge=union
+package.json merge=union
+
+# =============================================================================
+# Export Ignore (for git archive)
+# =============================================================================
+
+# Files to exclude when creating archives
+.gitattributes export-ignore
+.gitignore export-ignore
+.github/ export-ignore
+test/ export-ignore
+tests/ export-ignore
+*.test.ts export-ignore
+*.spec.ts export-ignore
+coverage/ export-ignore
+.nyc_output/ export-ignore
+
+# Development files
+.vscode/ export-ignore
+.idea/ export-ignore
+*.log export-ignore
+.env* export-ignore
+.DS_Store export-ignore
+Thumbs.db export-ignore
+
+# Benchmark and development artifacts
+bench/results/ export-ignore
+benchmark-*.json export-ignore
+benchmark-*.html export-ignore
+optimization-report.json export-ignore
+
+# =============================================================================
+# Custom Attributes for Fire22 Project
+# =============================================================================
+
+# Workspace configuration files
+workspace-config.json text eol=lf fire22-config=true
+workspaces/*/package.json text eol=lf fire22-workspace=true
+
+# Security-sensitive files (extra care in diffs)
+*.key binary fire22-security=true
+*.pem binary fire22-security=true
+*.cert binary fire22-security=true
+wrangler.toml text eol=lf fire22-security=true
+
+# Build system files
+build.config.ts text eol=lf fire22-build=true
+build.ts text eol=lf fire22-build=true
+scripts/build-*.ts text eol=lf fire22-build=true
+
+# Pattern system files
+src/patterns/*.ts text eol=lf fire22-pattern=true
+
+# API integration files
+src/*-api.ts text eol=lf fire22-api=true
+src/fire22-*.ts text eol=lf fire22-api=true
+
+# =============================================================================
+# Code Formatting Attributes
+# =============================================================================
+
+# Ensure consistent formatting for code examples in documentation
+*.md filter=markdown-format
+docs/*.html filter=html-format
+
+# Apply consistent indentation
+*.json text eol=lf indent=spaces:2
+*.yml text eol=lf indent=spaces:2
+*.yaml text eol=lf indent=spaces:2
+*.ts text eol=lf indent=spaces:2
+*.js text eol=lf indent=spaces:2
+
+# =============================================================================
+# Performance Optimizations
+# =============================================================================
+
+# Enable delta compression for text files
+*.ts delta=true
+*.js delta=true
+*.json delta=true
+*.md delta=true
+
+# Disable delta compression for already compressed files
+*.zip delta=false
+*.png delta=false
+*.jpg delta=false
+*.jpeg delta=false
+
+# =============================================================================
+# Diff Improvements
+# =============================================================================
+
+# Better diff output for structured files
+package.json diff=json text eol=lf
+package-lock.json diff=json -text eol=lf linguist-generated=true
+tsconfig.json diff=json text eol=lf
+workspace-config.json diff=json text eol=lf
+
+# Custom diff patterns for Fire22 specific files
+*.fire22 text eol=lf diff=fire22-config
+
+# SQL files with proper formatting
+*.sql text eol=lf diff=sql whitespace=trailing-space,space-before-tab,tab-in-indent

@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 CSS Highlight System - Enhanced Demo</title>
+    <link rel="stylesheet" href="../highlight-enhanced.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+      }
+
+      .demo-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 60px;
+        padding: 40px 20px;
+        background: rgba(10, 14, 39, 0.4);
+        border: 1px solid rgba(64, 224, 208, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+      }
+
+      .hero h1 {
+        font-size: clamp(28px, 5vw, 48px);
+        background: linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0 0 15px 0;
+        animation: hero-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes hero-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .hero p {
+        color: #9ca3af;
+        font-size: 16px;
+        margin: 10px 0;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero .badges {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+      }
+
+      .badge {
+        padding: 8px 15px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #40e0d0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .section {
+        margin-bottom: 60px;
+      }
+
+      .section-title {
+        color: #ff6b35;
+        font-size: 24px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, rgba(255, 107, 53, 0.5), transparent);
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 25px;
+      }
+
+      .demo-card {
+        background: rgba(10, 14, 39, 0.6);
+        border: 1px solid rgba(64, 224, 208, 0.15);
+        border-radius: 12px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      .demo-card:hover {
+        border-color: rgba(64, 224, 208, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .package-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      .package-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin: 0 0 8px 0;
+      }
+
+      .package-description {
+        font-size: 13px;
+        color: #9ca3af;
+        margin: 0 0 15px 0;
+        line-height: 1.4;
+      }
+
+      .package-version {
+        font-size: 11px;
+        padding: 4px 8px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 6px;
+        color: #40e0d0;
+        display: inline-block;
+        margin-bottom: 15px;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .tag {
+        font-size: 9px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(10, 14, 39, 0.9);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        backdrop-filter: blur(20px);
+        z-index: 1000;
+        min-width: 250px;
+      }
+
+      .controls h3 {
+        color: #ff6b35;
+        font-size: 14px;
+        margin: 0 0 15px 0;
+        text-align: center;
+      }
+
+      .control-group {
+        margin-bottom: 15px;
+      }
+
+      .control-group label {
+        display: block;
+        font-size: 11px;
+        color: #9ca3af;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .control-group button,
+      .control-group select {
+        width: 100%;
+        padding: 8px 12px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 6px;
+        color: #e0e6ed;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .control-group button:hover,
+      .control-group select:hover {
+        background: rgba(64, 224, 208, 0.2);
+        border-color: #40e0d0;
+      }
+
+      .stats {
+        background: rgba(10, 14, 39, 0.8);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #40e0d0;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .color-palette {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .color-sample {
+        text-align: center;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .color-sample.default {
+        border-color: oklch(70% 0.15 240);
+        color: oklch(70% 0.15 240);
+        background: rgba(70, 130, 246, 0.1);
+      }
+
+      .color-sample.success {
+        border-color: oklch(60% 0.1 120);
+        color: oklch(60% 0.1 120);
+        background: rgba(34, 197, 94, 0.1);
+      }
+
+      .color-sample.warning {
+        border-color: oklch(80% 0.15 80);
+        color: oklch(80% 0.15 80);
+        background: rgba(245, 158, 11, 0.1);
+      }
+
+      .color-sample.error {
+        border-color: oklch(60% 0.22 25);
+        color: oklch(60% 0.22 25);
+        background: rgba(239, 68, 68, 0.1);
+      }
+
+      .color-sample.info {
+        border-color: oklch(70% 0.15 260);
+        color: oklch(70% 0.15 260);
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .color-sample.draft {
+        border-color: oklch(60% 0.08 280);
+        color: oklch(60% 0.08 280);
+        background: rgba(139, 92, 246, 0.1);
+      }
+
+      .color-sample.archived {
+        border-color: oklch(50% 0.05 200);
+        color: oklch(50% 0.05 200);
+        background: rgba(107, 114, 128, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .controls {
+          position: relative;
+          top: auto;
+          right: auto;
+          margin: 20px 0;
+        }
+
+        .demo-container {
+          padding: 20px 15px;
+        }
+
+        .hero {
+          padding: 30px 15px;
+          margin-bottom: 40px;
+        }
+
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body data-fire22-debug="false">
+    <div class="demo-container">
+      <!-- Hero Section -->
+      <div class="hero">
+        <h1>🔥 Fire22 CSS Highlight System</h1>
+        <p>
+          Enterprise-grade CSS highlighting with OKLCH colors, comprehensive theming, and zero-configuration Bun
+          bundling
+        </p>
+        <p>
+          Built for the Fire22 Package Review Grid with accessibility, performance, and developer experience in mind
+        </p>
+        <div class="badges">
+          <span class="badge">OKLCH Colors</span>
+          <span class="badge">WCAG AA</span>
+          <span class="badge">Bun Bundling</span>
+          <span class="badge">Zero Config</span>
+          <span class="badge">4.1KB Gzipped</span>
+        </div>
+      </div>
+
+      <!-- Interactive Controls -->
+      <div class="controls">
+        <h3>🎛️ Interactive Controls</h3>
+
+        <div class="control-group">
+          <label>Debug Mode</label>
+          <button id="toggleDebug">Enable Debug Labels</button>
+        </div>
+
+        <div class="control-group">
+          <label>Theme</label>
+          <select id="themeSelect">
+            <option value="default">Default</option>
+            <option value="dark">Dark Mode</option>
+            <option value="high-contrast">High Contrast</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>Animation</label>
+          <button id="toggleAnimation">Disable Motion</button>
+        </div>
+
+        <div class="control-group">
+          <label>Test Actions</label>
+          <button id="randomizeStatus">Randomize Status</button>
+          <button id="addPulsing">Add Pulsing</button>
+          <button id="resetAll">Reset All</button>
+        </div>
+      </div>
+
+      <!-- System Stats -->
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-value">13</span>
+          <span class="stat-label">Total Packages</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">7</span>
+          <span class="stat-label">Status Types</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">4.1KB</span>
+          <span class="stat-label">Bundle Size</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">95%+</span>
+          <span class="stat-label">Browser Support</span>
+        </div>
+      </div>
+
+      <!-- Package Examples -->
+      <section class="section">
+        <h2 class="section-title">📦 Package Status Examples</h2>
+
+        <div class="demo-grid">
+          <!-- Default State -->
+          <div class="fire22-highlight fire22-package-card demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #3b82f6, #60a5fa)">📘</div>
+            <h3 class="package-name">@fire22/core-dashboard</h3>
+            <span class="package-version">v2.1.0</span>
+            <p class="package-description">Default blue highlight ring with hover effects and focus management</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3)"
+              >
+                core
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3)"
+              >
+                dashboard
+              </span>
+            </div>
+          </div>
+
+          <!-- Success State -->
+          <div class="fire22-highlight fire22-package-card success demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #22c55e, #4ade80)">✅</div>
+            <h3 class="package-name">@fire22/api-client</h3>
+            <span class="package-version">v3.0.9</span>
+            <p class="package-description">Approved package with success green highlight - production ready</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3)"
+              >
+                approved
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3)"
+              >
+                api
+              </span>
+            </div>
+          </div>
+
+          <!-- Warning State -->
+          <div class="fire22-highlight fire22-package-card warning demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24)">⚠️</div>
+            <h3 class="package-name">@fire22/queue-system</h3>
+            <span class="package-version">v1.0.0</span>
+            <p class="package-description">Warning yellow highlight - requires review or attention</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3)"
+              >
+                review
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(217, 119, 6, 0.2); color: #f59e0b; border: 1px solid rgba(217, 119, 6, 0.3)"
+              >
+                queue
+              </span>
+            </div>
+          </div>
+
+          <!-- Error State -->
+          <div class="fire22-highlight fire22-package-card error demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #ef4444, #f87171)">❌</div>
+            <h3 class="package-name">@fire22/broken-package</h3>
+            <span class="package-version">v0.9.0</span>
+            <p class="package-description">Error red highlight - rejected or failed validation</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3)"
+              >
+                rejected
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(220, 38, 38, 0.2); color: #ef4444; border: 1px solid rgba(220, 38, 38, 0.3)"
+              >
+                failed
+              </span>
+            </div>
+          </div>
+
+          <!-- Info State -->
+          <div class="fire22-highlight fire22-package-card info demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #3b82f6, #6366f1)">💡</div>
+            <h3 class="package-name">@fire22/pattern-system</h3>
+            <span class="package-version">v1.5.0</span>
+            <p class="package-description">Info blue highlight - informational status or under review</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3)"
+              >
+                info
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3)"
+              >
+                patterns
+              </span>
+            </div>
+          </div>
+
+          <!-- Draft State -->
+          <div class="fire22-highlight fire22-package-card draft demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa)">📝</div>
+            <h3 class="package-name">@fire22/draft-package</h3>
+            <span class="package-version">v0.1.0</span>
+            <p class="package-description">Draft purple highlight - work in progress with reduced opacity</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3)"
+              >
+                draft
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(124, 58, 237, 0.2); color: #8b5cf6; border: 1px solid rgba(124, 58, 237, 0.3)"
+              >
+                wip
+              </span>
+            </div>
+          </div>
+
+          <!-- Archived State -->
+          <div class="fire22-highlight fire22-package-card archived demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #6b7280, #9ca3af)">📦</div>
+            <h3 class="package-name">@fire22/legacy-package</h3>
+            <span class="package-version">v0.5.2</span>
+            <p class="package-description">Archived gray highlight - deprecated with reduced visibility</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3)"
+              >
+                archived
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(75, 85, 99, 0.2); color: #6b7280; border: 1px solid rgba(75, 85, 99, 0.3)"
+              >
+                legacy
+              </span>
+            </div>
+          </div>
+
+          <!-- Active State with Animation -->
+          <div class="fire22-highlight fire22-package-card active demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #ff6b35, #f7931e)">✨</div>
+            <h3 class="package-name">@fire22/shared-styles</h3>
+            <span class="package-version">v2.0.0</span>
+            <p class="package-description">Active state with animated rainbow glow - currently selected</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(255, 107, 53, 0.2); color: #ff8a65; border: 1px solid rgba(255, 107, 53, 0.3)"
+              >
+                active
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(247, 147, 30, 0.2); color: #ffb74d; border: 1px solid rgba(247, 147, 30, 0.3)"
+              >
+                selected
+              </span>
+            </div>
+          </div>
+
+          <!-- Pulsing State -->
+          <div class="fire22-highlight fire22-package-card pulsing warning demo-card" tabindex="0">
+            <div class="package-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2)">🔄</div>
+            <h3 class="package-name">@fire22/loading-package</h3>
+            <span class="package-version">v1.0.0</span>
+            <p class="package-description">Pulsing animation - loading or pending state with gentle breathing</p>
+            <div class="tags">
+              <span
+                class="tag"
+                style="background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3)"
+              >
+                loading
+              </span>
+              <span
+                class="tag"
+                style="background: rgba(8, 145, 178, 0.2); color: #06b6d4; border: 1px solid rgba(8, 145, 178, 0.3)"
+              >
+                pending
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Color Palette -->
+      <section class="section">
+        <h2 class="section-title">🎨 OKLCH Color Palette</h2>
+        <p style="color: #9ca3af; margin-bottom: 20px">
+          All colors use OKLCH color space for perceptual uniformity and better accessibility compliance. OKLCH provides
+          more natural color mixing and consistent brightness across hues.
+        </p>
+
+        <div class="color-palette">
+          <div class="color-sample default">
+            <div>Default</div>
+            <div style="font-size: 9px; margin-top: 5px; opacity: 0.7">oklch(70% 0.15 240)</div>
+          </div>
+          <div class="color-sample success">
+            <div>Success</div>
+            <div style="font-size: 9px; margin-top: 5px; opacity: 0.7">oklch(65% 0.18 145)</div>
+          </div>
+          <div class="color-sample warning">
+            <div>Warning</div>
+            <div style="font-size: 9px; margin-top: 5px; opacity: 0.7">oklch(75% 0.20 85)</div>
+          </div>
+          <div class="color-sample error">
+            <div>Error</div>
+            <div style="font-size: 9px; margin-top: 5px; opacity: 0.7">oklch(60% 0.22 25)</div>
+          </div>
+          <div class="color-sample info">
+            <div>Info</div>
+            <div style="font-size: 9px; margin-top: 5px; opacity: 0.7">oklch(70% 0.15 260)</div>
+          </div>
+          <div class="color-sample draft">
+            <div>Draft</div>
+            <div style="font-size: 9px; margin-top: 5px; opacity: 0.7">oklch(60% 0.08 280)</div>
+          </div>
+          <div class="color-sample archived">
+            <div>Archived</div>
+            <div style="font-size: 9px; margin-top: 5px; opacity: 0.7">oklch(50% 0.05 200)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Usage Examples -->
+      <section class="section">
+        <h2 class="section-title">💻 Usage Examples</h2>
+
+        <div
+          style="
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid rgba(64, 224, 208, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+          "
+        >
+          <h3 style="color: #40e0d0; margin-top: 0">Basic Implementation</h3>
+          <pre
+            style="
+              background: rgba(0, 0, 0, 0.3);
+              padding: 15px;
+              border-radius: 8px;
+              overflow-x: auto;
+              font-size: 12px;
+              line-height: 1.4;
+            "
+          ><code>&lt;!-- Basic highlight --&gt;
+&lt;div class="fire22-highlight fire22-package-card"&gt;
+  &lt;h3&gt;@fire22/package-name&lt;/h3&gt;
+  &lt;p&gt;Package description&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- Success state --&gt;
+&lt;div class="fire22-highlight fire22-package-card success"&gt;
+  &lt;h3&gt;@fire22/approved-package&lt;/h3&gt;
+  &lt;p&gt;This package has been approved&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- Active with animation --&gt;
+&lt;div class="fire22-highlight fire22-package-card active"&gt;
+  &lt;h3&gt;@fire22/current-package&lt;/h3&gt;
+  &lt;p&gt;Currently selected package&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+          <h3 style="color: #40e0d0; margin-top: 30px">CSS Import</h3>
+          <pre
+            style="
+              background: rgba(0, 0, 0, 0.3);
+              padding: 15px;
+              border-radius: 8px;
+              overflow-x: auto;
+              font-size: 12px;
+              line-height: 1.4;
+            "
+          ><code>/* Enhanced version (recommended) */
+@import "../../shared-styles/highlight-enhanced.css";
+
+/* Base version (minimal) */
+@import "../../shared-styles/highlight.css";
+
+/* Bun bundling */
+import "../../shared-styles/highlight-enhanced.css";</code></pre>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer style="text-align: center; margin-top: 80px; padding: 40px 20px; color: #6b7280; font-size: 14px">
+        <p style="margin: 10px 0">
+          ⚡ Built with
+          <strong>Bun</strong>
+          CSS bundling • 🎨 Styled with
+          <strong>OKLCH</strong>
+          colors • ♿
+          <strong>WCAG AA</strong>
+          compliant
+        </p>
+        <p style="margin: 10px 0">
+          🔥
+          <strong>Fire22 CSS Highlight System v2.0</strong>
+          - Enterprise ready, zero dependencies
+        </p>
+        <p style="margin: 10px 0; opacity: 0.7">Part of the Fire22 Dashboard ecosystem</p>
+      </footer>
+    </div>
+
+    <script>
+      console.log('🔥 Fire22 Enhanced Demo loaded');
+      console.log('📦 CSS System version: 2.0');
+      console.log('🎨 OKLCH color support detected:', CSS.supports('color', 'oklch(70% 0.15 240)'));
+
+      // Interactive controls
+      let debugMode = false;
+      let animationsEnabled = true;
+
+      // Debug mode toggle
+      document.getElementById('toggleDebug').addEventListener('click', e => {
+        debugMode = !debugMode;
+        document.body.dataset.fire22Debug = debugMode;
+        e.target.textContent = debugMode ? 'Disable Debug Labels' : 'Enable Debug Labels';
+        console.log('Debug mode:', debugMode);
+      });
+
+      // Theme selector
+      document.getElementById('themeSelect').addEventListener('change', e => {
+        const theme = e.target.value;
+        document.documentElement.dataset.theme = theme;
+
+        if (theme === 'dark') {
+          document.documentElement.style.filter = 'brightness(0.9) contrast(1.1)';
+        } else if (theme === 'high-contrast') {
+          document.documentElement.style.filter = 'contrast(1.3) saturate(1.2)';
+        } else {
+          document.documentElement.style.filter = '';
+        }
+        console.log('Theme changed to:', theme);
+      });
+
+      // Animation toggle
+      document.getElementById('toggleAnimation').addEventListener('click', e => {
+        animationsEnabled = !animationsEnabled;
+        const style = document.createElement('style');
+        style.id = 'animation-override';
+
+        if (!animationsEnabled) {
+          style.textContent = '* { animation: none !important; transition: none !important; }';
+          e.target.textContent = 'Enable Motion';
+        } else {
+          style.textContent = '';
+          e.target.textContent = 'Disable Motion';
+        }
+
+        const existing = document.getElementById('animation-override');
+        if (existing) existing.remove();
+        document.head.appendChild(style);
+        console.log('Animations:', animationsEnabled);
+      });
+
+      // Random status
+      document.getElementById('randomizeStatus').addEventListener('click', () => {
+        const statuses = ['', 'success', 'warning', 'error', 'info', 'draft', 'archived'];
+        const cards = document.querySelectorAll('.fire22-package-card');
+
+        cards.forEach(card => {
+          // Remove existing status classes
+          statuses.forEach(status => card.classList.remove(status));
+
+          // Add random status
+          const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+          if (randomStatus) card.classList.add(randomStatus);
+        });
+        console.log('Status randomized for', cards.length, 'cards');
+      });
+
+      // Add pulsing to all cards
+      document.getElementById('addPulsing').addEventListener('click', () => {
+        const cards = document.querySelectorAll('.fire22-package-card');
+        cards.forEach(card => card.classList.toggle('pulsing'));
+        console.log('Pulsing toggled for', cards.length, 'cards');
+      });
+
+      // Reset all cards
+      document.getElementById('resetAll').addEventListener('click', () => {
+        const cards = document.querySelectorAll('.fire22-package-card');
+        const defaultClasses = ['fire22-highlight', 'fire22-package-card', 'demo-card'];
+
+        cards.forEach((card, index) => {
+          card.className = defaultClasses.join(' ');
+
+          // Restore original status based on index
+          const originalStatuses = [
+            '',
+            'success',
+            'warning',
+            'error',
+            'info',
+            'draft',
+            'archived',
+            'active',
+            'pulsing warning',
+          ];
+          if (originalStatuses[index]) {
+            originalStatuses[index].split(' ').forEach(cls => {
+              if (cls) card.classList.add(cls);
+            });
+          }
+        });
+        console.log('Reset', cards.length, 'cards to original state');
+      });
+
+      // Click tracking
+      document.querySelectorAll('.fire22-package-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const name = card.querySelector('.package-name').textContent;
+          console.log('Package clicked:', name);
+
+          // Add temporary active state
+          card.classList.add('active');
+          setTimeout(() => card.classList.remove('active'), 2000);
+        });
+
+        card.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            card.click();
+          }
+        });
+      });
+
+      // Performance monitoring
+      const observer = new PerformanceObserver(list => {
+        for (const entry of list.getEntries()) {
+          if (entry.entryType === 'paint') {
+            console.log(`${entry.name}: ${entry.startTime.toFixed(2)}ms`);
+          }
+        }
+      });
+      observer.observe({ entryTypes: ['paint'] });
+
+      // Color space support detection
+      const colorSupport = {
+        oklch: CSS.supports('color', 'oklch(70% 0.15 240)'),
+        p3: CSS.supports('color', 'color(display-p3 1 0 0)'),
+        rec2020: CSS.supports('color', 'color(rec2020 1 0 0)'),
+      };
+
+      console.log('Color space support:', colorSupport);
+
+      // Accessibility features detection
+      const a11yFeatures = {
+        reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        highContrast: window.matchMedia('(prefers-contrast: high)').matches,
+        darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
+      };
+
+      console.log('Accessibility preferences:', a11yFeatures);
+
+      // Apply user preferences
+      if (a11yFeatures.reducedMotion) {
+        document.getElementById('toggleAnimation').click();
+      }
+
+      if (a11yFeatures.highContrast) {
+        document.getElementById('themeSelect').value = 'high-contrast';
+        document.getElementById('themeSelect').dispatchEvent(new Event('change'));
+      }
+
+      console.log('✅ Fire22 CSS Highlight System Demo fully loaded');
+      console.log('🔬 Try the interactive controls on the right →');
+      console.log('⌨️  Use Tab key to navigate between cards');
+    </script>
+  </body>
+</html>

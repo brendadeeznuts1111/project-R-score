@@ -1,0 +1,194 @@
+# 🔥 Fantasy42 Betting Engine License
+
+**MIT License | Enterprise Sports Betting Package**
+
+Copyright (c) 2025 Fantasy42-Fire22 Registry Enterprise
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## 🎮 **Sports Betting Engine - Enterprise Features**
+
+### **Core Functionality**
+- **Multi-Sport Support**: NFL, NBA, MLB, NHL, Soccer, Tennis, Golf
+- **Bet Types**: Moneyline, Spread, Total (Over/Under), Parlay, Teaser, Futures, Props
+- **Real-time Odds**: Live odds updates and adjustments
+- **Parlay Management**: Multi-leg parlay betting with risk assessment
+- **Live Betting**: In-game betting with dynamic odds
+
+### **Enterprise Security & Compliance**
+- **GDPR Compliance**: Data protection and privacy regulations
+- **PCI DSS**: Payment card industry security standards
+- **AML Compliance**: Anti-money laundering regulations
+- **Responsible Gambling**: Age verification and self-exclusion
+- **Sports Betting Regulations**: Jurisdiction-specific compliance
+
+### **Advanced Features**
+- **Fraud Detection**: Pattern analysis and anomaly detection
+- **Risk Management**: Dynamic risk scoring and limits
+- **Analytics Integration**: Real-time monitoring and reporting
+- **Audit Trails**: Comprehensive transaction logging
+- **Multi-tenancy**: Support for multiple operators
+
+---
+
+## 📋 **License Terms & Conditions**
+
+### **Permitted Use**
+- ✅ **Commercial Use**: Deploy in commercial betting platforms
+- ✅ **White-labeling**: Rebrand and customize for operators
+- ✅ **Integration**: Combine with existing betting systems
+- ✅ **Distribution**: Sell as part of larger platforms
+- ✅ **Modification**: Customize for specific requirements
+
+### **Compliance Requirements**
+- 🔒 **Regulatory Compliance**: Must comply with local gambling laws
+- 🔒 **Age Verification**: Implement 18+ age verification systems
+- 🔒 **Responsible Gambling**: Include self-exclusion and limits
+- 🔒 **Financial Controls**: Implement proper financial safeguards
+- 🔒 **Audit Logging**: Maintain comprehensive transaction logs
+
+### **Technical Requirements**
+- 🔧 **Security Integration**: Must integrate with security engines
+- 🔧 **Analytics Integration**: Must integrate with analytics systems
+- 🔧 **Compliance Integration**: Must integrate with compliance engines
+- 🔧 **Performance Standards**: Must maintain sub-millisecond response times
+- 🔧 **Scalability**: Must support high-volume betting operations
+
+---
+
+## 🏛️ **Enterprise Licensing Tiers**
+
+### **Standard License**
+- **Cost**: Contact sales@fire22.com
+- **Features**: Core betting engine functionality
+- **Support**: Community support via GitHub
+- **Updates**: Security and bug fix updates
+
+### **Enterprise License**
+- **Cost**: Custom pricing based on requirements
+- **Features**: All standard features plus:
+  - Advanced fraud detection algorithms
+  - Custom sports integrations
+  - Priority support and SLAs
+  - Custom compliance modules
+  - Performance optimization consulting
+
+### **White-label License**
+- **Cost**: Volume-based pricing
+- **Features**: Full rebranding and customization rights
+- **Support**: Dedicated technical account manager
+- **Updates**: All updates and new features included
+
+---
+
+## 🔒 **Security & Compliance Obligations**
+
+### **Data Protection**
+- Implement GDPR-compliant data handling
+- Regular security audits and penetration testing
+- Encryption of sensitive betting data
+- Secure data retention policies
+
+### **Regulatory Compliance**
+- Compliance with local gambling regulations
+- Regular compliance audits and certifications
+- Transparent reporting to regulatory bodies
+- Cooperation with regulatory investigations
+
+### **Responsible Gambling**
+- Age verification systems
+- Self-exclusion mechanisms
+- Betting limits and cooling-off periods
+- Problem gambling detection and intervention
+
+---
+
+## 📞 **Support & Contact**
+
+### **Technical Support**
+- **GitHub Issues**: Report bugs and request features
+- **Documentation**: https://docs.fire22.com/betting-engine
+- **API Reference**: https://api.fire22.com/betting-engine
+
+### **Enterprise Support**
+- **Email**: enterprise@fire22.com
+- **Phone**: Contact for enterprise support line
+- **Portal**: https://enterprise.fire22.com/support
+
+### **Compliance & Legal**
+- **Legal**: legal@fire22.com
+- **Compliance**: compliance@fantasy42.com
+- **Security**: security@fire22.com
+
+---
+
+## 🔄 **Updates & Maintenance**
+
+### **Security Updates**
+- Critical security patches released within 24 hours
+- Regular security updates with quarterly releases
+- Advanced notification system for security alerts
+
+### **Feature Updates**
+- Major releases quarterly with new sports and features
+- Minor updates monthly with improvements and optimizations
+- Patch releases weekly for bug fixes
+
+### **Compliance Updates**
+- Regulatory compliance updates as laws change
+- New jurisdiction support added regularly
+- Compliance certification renewals handled automatically
+
+---
+
+## ⚖️ **Legal Disclaimers**
+
+### **No Warranty**
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+THE AUTHORS AND LICENSORS MAKE NO REPRESENTATIONS OR WARRANTIES REGARDING THE
+SOFTWARE'S MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NONINFRINGEMENT.
+
+### **Limitation of Liability**
+IN NO EVENT SHALL THE AUTHORS OR LICENSORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
+
+### **Compliance Responsibility**
+LICENSEE IS SOLELY RESPONSIBLE FOR COMPLYING WITH ALL APPLICABLE LAWS AND
+REGULATIONS IN THEIR JURISDICTION, INCLUDING BUT NOT LIMITED TO GAMBLING LAWS,
+DATA PROTECTION LAWS, AND FINANCIAL REGULATIONS.
+
+---
+
+## 📜 **License Attribution**
+
+When using this software, please include the following attribution:
+
+```
+Powered by Fantasy42-Fire22 Betting Engine
+© 2025 Fantasy42-Fire22 Registry Enterprise
+Licensed under MIT License
+```
+
+---
+
+**Built with ❤️ for enterprise sports betting platforms**
+
+*Pure Bun Ecosystem | Enterprise-Grade | Production-Ready*

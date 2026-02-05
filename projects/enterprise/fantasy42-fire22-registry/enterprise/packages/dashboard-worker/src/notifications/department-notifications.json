@@ -1,0 +1,179 @@
+[
+  {
+    "id": "dept-technology-1756410003337",
+    "type": "package-assignment",
+    "department": "Technology",
+    "recipient": "mike.hunt@technology.fire22",
+    "head": "Mike Hunt",
+    "timestamp": "2025-08-28T19:40:03.337Z",
+    "subject": "Package Maintenance Assignments - Technology Department",
+    "priority": "critical",
+    "content": {
+      "totalPackages": 4,
+      "criticalPackages": 2,
+      "highPackages": 2,
+      "assignments": [
+        {
+          "packageName": "@fire22/core-dashboard",
+          "department": "Technology",
+          "maintainer": "Mike Hunt",
+          "priority": "critical",
+          "description": "Main dashboard application with SSE and real-time features"
+        },
+        {
+          "packageName": "@fire22/pattern-system",
+          "department": "Technology",
+          "maintainer": "Mike Hunt",
+          "priority": "critical",
+          "description": "Pattern Weaver system with 13 unified patterns"
+        },
+        {
+          "packageName": "@fire22/api-client",
+          "department": "Technology",
+          "maintainer": "Mike Hunt",
+          "priority": "high",
+          "description": "Fire22 API integration client with authentication"
+        },
+        {
+          "packageName": "@fire22/build-system",
+          "department": "Technology",
+          "maintainer": "Mike Hunt",
+          "priority": "high",
+          "description": "Multi-profile build system with 9 build profiles"
+        }
+      ],
+      "actionRequired": "Review and acknowledge assignments",
+      "dependencySubmissionRequired": true
+    }
+  },
+  {
+    "id": "dept-marketing-1756410003337",
+    "type": "package-assignment",
+    "department": "Marketing",
+    "recipient": "head@marketing.fire22",
+    "head": "TBD",
+    "timestamp": "2025-08-28T19:40:03.337Z",
+    "subject": "Package Maintenance Assignments - Marketing Department",
+    "priority": "medium",
+    "content": {
+      "totalPackages": 1,
+      "criticalPackages": 0,
+      "highPackages": 0,
+      "assignments": [
+        {
+          "packageName": "@fire22/telegram-integration",
+          "department": "Marketing",
+          "maintainer": "TBD",
+          "priority": "medium",
+          "description": "Telegram bot and notification system"
+        }
+      ],
+      "actionRequired": "Assign department head",
+      "dependencySubmissionRequired": true
+    }
+  },
+  {
+    "id": "dept-security-1756410003337",
+    "type": "package-assignment",
+    "department": "Security",
+    "recipient": "head@security.fire22",
+    "head": "TBD",
+    "timestamp": "2025-08-28T19:40:03.337Z",
+    "subject": "Package Maintenance Assignments - Security Department",
+    "priority": "critical",
+    "content": {
+      "totalPackages": 1,
+      "criticalPackages": 1,
+      "highPackages": 0,
+      "assignments": [
+        {
+          "packageName": "@fire22/security-scanner",
+          "department": "Security",
+          "maintainer": "TBD",
+          "priority": "critical",
+          "description": "Bun-native security scanner with CVE detection"
+        }
+      ],
+      "actionRequired": "Assign department head",
+      "dependencySubmissionRequired": true
+    }
+  },
+  {
+    "id": "dept-finance-1756410003337",
+    "type": "package-assignment",
+    "department": "Finance",
+    "recipient": "head@finance.fire22",
+    "head": "TBD",
+    "timestamp": "2025-08-28T19:40:03.337Z",
+    "subject": "Package Maintenance Assignments - Finance Department",
+    "priority": "high",
+    "content": {
+      "totalPackages": 1,
+      "criticalPackages": 0,
+      "highPackages": 1,
+      "assignments": [
+        {
+          "packageName": "@fire22/financial-reporting",
+          "department": "Finance",
+          "maintainer": "TBD",
+          "priority": "high",
+          "description": "Financial data processing and reporting tools"
+        }
+      ],
+      "actionRequired": "Assign department head",
+      "dependencySubmissionRequired": true
+    }
+  },
+  {
+    "id": "dept-operations-1756410003337",
+    "type": "package-assignment",
+    "department": "Operations",
+    "recipient": "head@operations.fire22",
+    "head": "TBD",
+    "timestamp": "2025-08-28T19:40:03.337Z",
+    "subject": "Package Maintenance Assignments - Operations Department",
+    "priority": "high",
+    "content": {
+      "totalPackages": 1,
+      "criticalPackages": 0,
+      "highPackages": 1,
+      "assignments": [
+        {
+          "packageName": "@fire22/sports-betting",
+          "department": "Operations",
+          "maintainer": "TBD",
+          "priority": "high",
+          "description": "Sports betting functionality and wager management"
+        }
+      ],
+      "actionRequired": "Assign department head",
+      "dependencySubmissionRequired": true
+    }
+  },
+  {
+    "id": "dept-legal-1756410003337",
+    "type": "package-assignment",
+    "department": "Legal",
+    "recipient": "head@legal.fire22",
+    "head": "TBD",
+    "timestamp": "2025-08-28T19:40:03.337Z",
+    "subject": "Package Maintenance Assignments - Legal Department",
+    "priority": "medium",
+    "content": {
+      "totalPackages": 1,
+      "criticalPackages": 0,
+      "highPackages": 0,
+      "assignments": [
+        {
+          "packageName": "@fire22/compliance-tools",
+          "department": "Legal",
+          "maintainer": "TBD",
+          "priority": "medium",
+          "description": "Legal compliance and audit trail management"
+        }
+      ],
+      "actionRequired": "Assign department head",
+      "dependencySubmissionRequired": true
+    }
+  }
+]

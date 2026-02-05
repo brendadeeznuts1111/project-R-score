@@ -1,0 +1,54 @@
+{
+  "name": "@fire22/core",
+  "version": "1.0.3",
+  "description": "Fire22 Dashboard Core - Essential functionality and types",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "types": "./dist/types.d.ts"
+    },
+    "./config": {
+      "import": "./dist/config.js",
+      "types": "./dist/config.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=node --outdir=dist --format=esm",
+    "build:types": "tsc --emitDeclarationOnly --declaration",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [
+    "fire22",
+    "core",
+    "dashboard"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/core"
+  }
+}

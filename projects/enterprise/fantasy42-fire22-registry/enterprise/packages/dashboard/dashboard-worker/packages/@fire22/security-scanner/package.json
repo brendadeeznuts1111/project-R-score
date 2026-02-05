@@ -1,0 +1,43 @@
+{
+  "name": "@fire22/security-scanner",
+  "version": "1.0.0",
+  "description": "Advanced security scanner for Fire22 Dashboard using Bun's native security features",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "bun build src/index.ts --target=bun --outdir=dist",
+    "test": "bun test",
+    "dev": "bun --watch src/index.ts",
+    "scan": "bun run src/scanner.ts"
+  },
+  "keywords": [
+    "security",
+    "vulnerability",
+    "scanner",
+    "bun",
+    "fire22"
+  ],
+  "author": "Fire22 Security Team",
+  "license": "MIT",
+  "dependencies": {
+    "semver": "^7.5.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/semver": "^7.5.8"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.20"
+  },
+  "engines": {
+    "bun": ">=1.2.20"
+  },
+  "publishConfig": {
+    "registry": "https://fire22.workers.dev/registry/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/@fire22/security-scanner"
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "name": "foxy-proxy",
+  "version": "1.0.0",
+  "description": "Unified proxy and DuoPlus management system with feature flags and enhanced templates",
+  "type": "module",
+  "homepage": "https://github.com/brendadeeznuts1111/foxy-duo-proxy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brendadeeznuts1111/foxy-duo-proxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/foxy-duo-proxy/issues"
+  },
+  "author": {
+    "name": "Foxy Proxy Team",
+    "email": "support@foxyproxy.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "proxy",
+    "duoplus",
+    "cloud-phone",
+    "cashapp",
+    "account-scaling",
+    "feature-flags",
+    "react",
+    "typescript",
+    "bun",
+    "enhanced-templates",
+    "unified-management",
+    "ipfoxy",
+    "mobile-proxy",
+    "phone-verification"
+  ],
+  "scripts": {
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "dev": "cd packages/dashboard && bun dev",
+    "build": "cd packages/dashboard && bun build",
+    "build:dev": "cd packages/dashboard && NODE_ENV=development bun build",
+    "build:prod": "cd packages/dashboard && NODE_ENV=production bun build",
+    "build:analyze": "cd packages/dashboard && bun build",
+    "build:staging": "cd packages/dashboard && NODE_ENV=staging bun build",
+    "test": "cd packages/dashboard && bun test",
+    "test:watch": "cd packages/dashboard && bun test --watch",
+    "test:coverage": "cd packages/dashboard && bun test --coverage",
+    "typecheck": "cd packages/dashboard && bun typecheck",
+    "clean": "cd packages/dashboard && rm -rf dist node_modules .nyc_output coverage",
+    "clean:all": "rm -rf node_modules packages/*/node_modules packages/*/dist",
+    "setup": "bun install && cd packages/dashboard && bun install",
+    "setup:ci": "bun install --frozen-lockfile",
+    "dev:staging": "NODE_ENV=staging bun run dev",
+    "deploy": "cd packages/dashboard && bun build && bun run deploy",
+    "deploy:staging": "bun run build:staging && bun run deploy:staging",
+    "deploy:prod": "bun run build:prod && bun run deploy:prod",
+    "tiers": "bash ./scripts/build-tiers.sh",
+    "tiers:free": "bash ./scripts/build-tiers.sh free",
+    "tiers:premium": "bash ./scripts/build-tiers.sh premium",
+    "tiers:enterprise": "bash ./scripts/build-tiers.sh enterprise",
+    "tiers:development": "bash ./scripts/build-tiers.sh development",
+    "tiers:staging": "bash ./scripts/build-tiers.sh staging",
+    "tiers:all": "bash ./scripts/build-tiers.sh all",
+    "tiers:compare": "bash ./scripts/build-tiers.sh compare",
+    "tiers:clean": "bash ./scripts/build-tiers.sh clean",
+    "cashapp": "cd packages/dashboard && bun run src/utils/scaling/cashapp-cli.ts",
+    "cashapp:demo": "cd packages/dashboard && bun run src/utils/scaling/cashapp-cli.ts demo",
+    "cashapp:provision": "cd packages/dashboard && bun run src/utils/scaling/cashapp-cli.ts provision",
+    "cashapp:monitor": "cd packages/dashboard && bun run src/utils/scaling/cashapp-cli.ts monitor",
+    "cashapp:report": "cd packages/dashboard && bun run src/utils/scaling/cashapp-cli.ts report",
+    "cashapp:names": "cd packages/dashboard && bun run src/utils/scaling/cashapp-cli.ts names",
+    "cashapp:addresses": "cd packages/dashboard && bun run src/utils/scaling/cashapp-cli.ts addresses",
+    "profile": "cd packages/dashboard && bun run src/utils/scaling/unified-cli.ts",
+    "profile:create": "cd packages/dashboard && bun run src/utils/scaling/unified-cli.ts create",
+    "profile:list": "cd packages/dashboard && bun run src/utils/scaling/unified-cli.ts list",
+    "profile:export": "cd packages/dashboard && bun run src/utils/scaling/unified-cli.ts export",
+    "profile:import": "cd packages/dashboard && bun run src/utils/scaling/unified-cli.ts import",
+    "docs:generate": "typedoc --out docs/ packages/dashboard/src/",
+    "docs:serve": "cd docs && python -m http.server 8080",
+    "security:audit": "bun audit",
+    "security:fix": "bun audit fix",
+    "start": "bun run dev",
+    "preview": "cd packages/dashboard && bun preview"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/node": "20.19.30",
+    "eslint": "8.57.1",
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "@typescript-eslint/parser": "6.21.0",
+    "prettier": "3.8.1",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-import": "2.32.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.3.8"
+  },
+  "dependencies": {
+    "types": "0.1.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

@@ -1,0 +1,78 @@
+# 🔥 Fire22 Dashboard Worker - Repository Configuration
+# This file documents GitHub repository settings and branch protection rules
+# These settings need to be configured manually via GitHub's web interface
+
+repository_settings:
+  general:
+    # Basic repository information
+    description: '🔥 Fire22 Dashboard Worker - Advanced Bun runtime system with workspace orchestration, real-time Fire22 API integration, and cross-platform executable compilation'
+    website: 'https://dashboard-worker.brendawill2233.workers.dev'
+    topics:
+      - 'bun'
+      - 'typescript'
+      - 'fire22'
+      - 'sportsbook'
+      - 'dashboard'
+      - 'cloudflare-workers'
+      - 'real-time'
+      - 'api'
+      - 'workspace-orchestration'
+      - 'simd-acceleration'
+      - 'cross-platform'
+      - 'executable-compilation'
+
+    # Repository visibility
+    visibility: 'private' # Set to public when ready
+
+    # Features
+    features:
+      issues: true
+      projects: true
+      wiki: true
+      discussions: false
+
+    # Merge button options
+    merge_options:
+      allow_merge_commits: true
+      allow_squash_merging: true
+      allow_rebase_merging: false
+
+    # Delete head branches after merge
+    delete_branch_on_merge: true
+
+    # Suggested changes
+    allow_suggested_changes: true
+
+  # Branch protection rules for main branch
+  branch_protection:
+    main:
+      # Require pull request reviews
+      required_reviews:
+        required_approving_reviews: 2
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+        require_last_push_approval: true
+
+      # Required status checks
+      required_status_checks:
+        strict: true # Require branches to be up to date
+        contexts:
+          - '🔍 Code Quality & Linting'
+          - '🔒 Security Scanning'
+          - '🧪 Test Suite (api-client)'
+          - '🧪 Test Suite (core-dashboard)'
+          - '🧪 Test Suite (sports-betting)'
+          - '🧪 Test Suite (telegram-integration)'
+          - '🧪 Test Suite (build-system)'
+          - '🧪 Test Suite (pattern-system)'
+          - '🏗️ Build Verification (ubuntu-latest)'
+          - '🏗️ Build Verification (windows-latest)'
+          - '🏗️ Build Verification (macos-latest)'
+          - '🏢 Workspace Health Check'
+          - '✅ CI Pipeline Success'
+
+      # Other protections
+      enforce_admins: false # Allow admins to bypass restrictions for emergencies
+      allow_force_pushes: false
+      allow_deletions: false
+      required_linear_history: false

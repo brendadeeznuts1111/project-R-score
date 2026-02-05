@@ -1,0 +1,123 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, refactor]
+  pull_request:
+    branches: [main]
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Type check
+        run: bun run typecheck
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Test
+        run: bun run test
+
+      - name: Build
+        run: bun run build:prod
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-files
+          path: packages/dashboard/dist/
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Audit dependencies
+        run: bun audit
+
+      - name: Run security scan
+        uses: securecodewarrior/github-action-add-sarif@v1
+        with:
+          sarif-file: "security-scan-results.sarif"
+
+  release:
+    name: Create Release
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build application
+        run: bun run build:prod
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=$(bun run -e 'console.log(JSON.parse(require("./package.json")).version)')" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          release_name: Release v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## Changes in v${{ steps.version.outputs.VERSION }}
+
+            ### Features
+            - ✨ Feature flag system integration
+            - ✨ Enhanced template system
+            - ✨ Improved build configuration
+
+            ### Fixes
+            - 🐛 React Hooks rules compliance
+            - 🐛 JSX syntax errors resolved
+            - 🐛 TypeScript compilation fixes
+
+            ### Improvements
+            - 🚀 Better development experience
+            - 📚 Comprehensive documentation
+            - 🔧 Enhanced tooling
+          draft: false
+          prerelease: false

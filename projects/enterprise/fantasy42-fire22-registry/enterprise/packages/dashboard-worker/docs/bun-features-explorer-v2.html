@@ -1,0 +1,2606 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bun Features Explorer v2 - Latest Capabilities</title>
+    <style>
+      :root {
+        --primary: #fbf0f0;
+        --secondary: #fddf97;
+        --accent: #b6e2d3;
+        --dark: #2c3e50;
+        --light: #ffffff;
+        --success: #4caf50;
+        --danger: #f44336;
+        --warning: #ff9800;
+        --info: #2196f3;
+        --publish: #9c27b0;
+        --windows: #0078d4;
+        --api: #ff6b6b;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background-color: var(--light);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        color: var(--dark);
+        margin-bottom: 10px;
+      }
+
+      .version-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--success), #45a049);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+
+      .subtitle {
+        font-size: 1.3rem;
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        font-size: 4rem;
+        margin-bottom: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .feature-card {
+        background-color: var(--light);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature-header {
+        padding: 25px;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .build-api-header {
+        background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      }
+
+      .build-header {
+        background: linear-gradient(135deg, var(--secondary), #ffcb69);
+      }
+
+      .bunx-header {
+        background: linear-gradient(135deg, var(--accent), #8dd3c7);
+      }
+
+      .html-header {
+        background: linear-gradient(135deg, #a6c1ee, #7aa3e5);
+      }
+
+      .update-header {
+        background: linear-gradient(135deg, #ffb88c, #ff9a6c);
+      }
+
+      .publish-header {
+        background: linear-gradient(135deg, #d9a7ff, #c68cff);
+      }
+
+      .semver-header {
+        background: linear-gradient(135deg, #00bcd4, #00acc1);
+      }
+
+      .secrets-header {
+        background: linear-gradient(135deg, #673ab7, #512da8);
+      }
+
+      .inspect-table-header {
+        background: linear-gradient(135deg, #ff5722, #e64a19);
+      }
+
+      .nanoseconds-header {
+        background: linear-gradient(135deg, #009688, #00796b);
+      }
+
+      .css-bundler-header {
+        background: linear-gradient(135deg, #e91e63, #c2185b);
+      }
+
+      .loaders-header {
+        background: linear-gradient(135deg, #795548, #5d4037);
+      }
+
+      .windows-header {
+        background: linear-gradient(135deg, #0078d4, #40e0d0);
+      }
+
+      .strip-header {
+        background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+      }
+
+      .user-agent-header {
+        background: linear-gradient(135deg, #6c63ff, #c77dff);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+      }
+
+      .new-badge {
+        background: #ff4444;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+
+      .feature-content {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .feature-content h3 {
+        margin-bottom: 18px;
+        color: var(--dark);
+        font-size: 1.4rem;
+      }
+
+      .feature-content p {
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .code-block {
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        border-radius: 10px;
+        padding: 18px;
+        margin: 18px 0;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        overflow-x: auto;
+        border-left: 5px solid var(--secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      .code-comment {
+        color: #6a9955;
+      }
+
+      .code-selector {
+        color: #ff6b6b;
+      }
+
+      .code-attr {
+        color: #feca57;
+      }
+
+      .code-tag {
+        color: #48dbfb;
+      }
+
+      .code-keyword {
+        color: #569cd6;
+      }
+
+      .code-string {
+        color: #ce9178;
+      }
+
+      .code-function {
+        color: #dcdcaa;
+      }
+
+      .test-area {
+        margin-top: 25px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        border: 1px solid #eee;
+      }
+
+      .test-btn {
+        background-color: var(--info);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .test-btn:hover {
+        background-color: #0b7dda;
+        transform: translateY(-2px);
+      }
+
+      .test-btn:active {
+        transform: translateY(0);
+      }
+
+      .output {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        border-radius: 8px;
+        min-height: 70px;
+        font-family: 'Fira Code', monospace;
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .success {
+        border-left: 5px solid var(--success);
+      }
+
+      .error {
+        border-left: 5px solid var(--danger);
+      }
+
+      .quick-nav {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 40px;
+      }
+
+      .nav-btn {
+        padding: 14px 25px;
+        background: linear-gradient(135deg, var(--secondary), var(--accent));
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color: var(--dark);
+      }
+
+      .nav-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .nav-btn.new {
+        background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        color: white;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: #666;
+        background-color: var(--light);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #e0e0e0;
+      }
+
+      .tab {
+        padding: 10px 15px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        color: #666;
+        transition: all 0.3s;
+      }
+
+      .tab.active {
+        color: var(--info);
+        border-bottom: 3px solid var(--info);
+        margin-bottom: -2px;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .subtitle {
+          font-size: 1.1rem;
+        }
+
+        .logo {
+          font-size: 3rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">🐰</div>
+        <h1>
+          Bun Features Explorer
+          <span class="version-badge">v1.2.21+</span>
+        </h1>
+        <p class="subtitle">Explore the latest and most powerful features of Bun JavaScript runtime</p>
+      </header>
+
+      <div class="quick-nav">
+        <button class="nav-btn new" onclick="scrollToFeature('build-api')">🆕 Bun.build() API</button>
+        <button class="nav-btn" onclick="scrollToFeature('build')">Build & Compile</button>
+        <button class="nav-btn new" onclick="scrollToFeature('windows')">🆕 Windows Metadata</button>
+        <button class="nav-btn" onclick="scrollToFeature('bunx')">Bunx Package</button>
+        <button class="nav-btn new" onclick="scrollToFeature('strip')">🆕 Bun.stripANSI()</button>
+        <button class="nav-btn new" onclick="scrollToFeature('user-agent')">🆕 User-Agent</button>
+        <button class="nav-btn new" onclick="scrollToFeature('semver')">🆕 Bun.semver</button>
+        <button class="nav-btn new" onclick="scrollToFeature('secrets')">🆕 Bun.secrets</button>
+        <button class="nav-btn new" onclick="scrollToFeature('inspect-table')">🆕 Bun.inspect.table()</button>
+        <button class="nav-btn new" onclick="scrollToFeature('nanoseconds')">🆕 Bun.nanoseconds()</button>
+        <button class="nav-btn new" onclick="scrollToFeature('css-bundler')">🆕 CSS Bundler</button>
+        <button class="nav-btn new" onclick="scrollToFeature('loaders')">🆕 Built-in Loaders</button>
+        <button class="nav-btn" onclick="scrollToFeature('publish')">Publish & Version</button>
+      </div>
+
+      <div class="features-grid">
+        <!-- NEW: Bun.build() API -->
+        <div class="feature-card" id="build-api">
+          <div class="feature-header build-api-header">
+            <div class="feature-icon">🔧</div>
+            <h2>
+              Bun.build() API
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>Programmatic Compilation</h3>
+            <p>Create standalone executables using the JavaScript API with full bundler plugin support.</p>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('build-api', 'basic')">Basic Usage</button>
+              <button class="tab" onclick="switchTab('build-api', 'advanced')">Advanced Config</button>
+              <button class="tab" onclick="switchTab('build-api', 'exec-argv')">Exec Argv</button>
+            </div>
+
+            <div class="tab-content active" id="build-api-basic">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Compile for current platform</span>
+                  <span class="code-keyword">await</span>
+                  Bun.
+                  <span class="code-function">build</span>
+                  ({
+                  <span class="code-keyword">entrypoints</span>
+                  : [
+                  <span class="code-string">"./cli.ts"</span>
+                  ],
+                  <span class="code-keyword">compile</span>
+                  :
+                  <span class="code-keyword">true</span>
+                  });
+
+                  <span class="code-comment">// Cross-compile for Linux x64 with musl</span>
+                  <span class="code-keyword">await</span>
+                  Bun.
+                  <span class="code-function">build</span>
+                  ({
+                  <span class="code-keyword">entrypoints</span>
+                  : [
+                  <span class="code-string">"./cli.ts"</span>
+                  ],
+                  <span class="code-keyword">compile</span>
+                  :
+                  <span class="code-string">"bun-linux-x64-musl"</span>
+                  });
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="build-api-advanced">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Advanced configuration with Windows icon</span>
+                  <span class="code-keyword">await</span>
+                  Bun.
+                  <span class="code-function">build</span>
+                  ({
+                  <span class="code-keyword">entrypoints</span>
+                  : [
+                  <span class="code-string">"./cli.ts"</span>
+                  ],
+                  <span class="code-keyword">compile</span>
+                  : {
+                  <span class="code-keyword">target</span>
+                  :
+                  <span class="code-string">"bun-windows-x64"</span>
+                  ,
+                  <span class="code-keyword">outfile</span>
+                  :
+                  <span class="code-string">"./my-app-windows"</span>
+                  ,
+                  <span class="code-keyword">windows</span>
+                  : {
+                  <span class="code-comment">// Set the icon for the .exe</span>
+                  <span class="code-keyword">icon</span>
+                  :
+                  <span class="code-string">"./icon.ico"</span>
+                  ,
+                  <span class="code-keyword">title</span>
+                  :
+                  <span class="code-string">"My Cool App"</span>
+                  ,
+                  <span class="code-keyword">version</span>
+                  :
+                  <span class="code-string">"1.2.3.4"</span>
+                  } } });
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="build-api-exec-argv">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Embed runtime flags into executable</span>
+                  <span class="code-comment">// Build with embedded arguments</span>
+                  $ bun build ./index.ts --compile --outfile=my-app \ --compile-exec-argv="--smol
+                  --user-agent=MyApp/1.0"
+
+                  <span class="code-comment">// index.ts</span>
+                  console.
+                  <span class="code-function">log</span>
+                  (
+                  <span class="code-string">`Bun launched with: ${process.execArgv.join(" ")}`</span>
+                  );
+                  <span class="code-keyword">const</span>
+                  res =
+                  <span class="code-keyword">await</span>
+                  <span class="code-function">fetch</span>
+                  (
+                  <span class="code-string">"https://api.example.com"</span>
+                  );
+                  <span class="code-comment">// Will use User-Agent: MyApp/1.0</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('build-api')">🧪 Test Bun.build() API</button>
+              <div class="output" id="build-api-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build & Compile -->
+        <div class="feature-card" id="build">
+          <div class="feature-header build-header">
+            <div class="feature-icon">🚀</div>
+            <h2>Build & Compile CLI</h2>
+          </div>
+          <div class="feature-content">
+            <h3>bun build --compile</h3>
+            <p>Create standalone executables from your JavaScript/TypeScript code via CLI.</p>
+            <div class="code-block">
+              <code>
+                <span class="code-comment">// Create a standalone executable</span>
+                bun build --compile ./src/server.ts --outfile my-app
+
+                <span class="code-comment">// Compile with optimizations</span>
+                bun build --compile --minify ./src/app.ts --outfile app-optimized
+
+                <span class="code-comment">// Cross-compile for different platforms</span>
+                bun build --compile --target=bun-linux-x64 ./src/server.ts bun build --compile --target=bun-windows-x64
+                ./src/app.ts bun build --compile --target=bun-darwin-arm64 ./src/cli.ts
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('build')">🧪 Test Build Command</button>
+              <div class="output" id="build-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: Windows Metadata -->
+        <div class="feature-card" id="windows">
+          <div class="feature-header windows-header">
+            <div class="feature-icon">🪟</div>
+            <h2>
+              Windows Metadata
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>Windows Executable Metadata</h3>
+            <p>Embed metadata into Windows executables for better integration with Windows Explorer.</p>
+
+            <div class="code-block">
+              <code>
+                <span class="code-comment">// CLI: Set Windows metadata</span>
+                bun build --compile ./app.js \ --windows-title "My Application" \ --windows-publisher "My Company" \
+                --windows-version "1.2.3.4" \ --windows-description "A powerful application" \ --windows-copyright "©
+                2024 My Company"
+
+                <span class="code-comment">// API: Using Bun.build()</span>
+                <span class="code-keyword">await</span>
+                Bun.
+                <span class="code-function">build</span>
+                ({
+                <span class="code-keyword">entrypoints</span>
+                : [
+                <span class="code-string">"./app.js"</span>
+                ],
+                <span class="code-keyword">compile</span>
+                : {
+                <span class="code-keyword">windows</span>
+                : {
+                <span class="code-keyword">title</span>
+                :
+                <span class="code-string">"My Cool App"</span>
+                ,
+                <span class="code-keyword">publisher</span>
+                :
+                <span class="code-string">"My Company"</span>
+                ,
+                <span class="code-keyword">version</span>
+                :
+                <span class="code-string">"1.2.3.4"</span>
+                ,
+                <span class="code-keyword">description</span>
+                :
+                <span class="code-string">"This is a really cool application."</span>
+                ,
+                <span class="code-keyword">copyright</span>
+                :
+                <span class="code-string">"© 2024 My Company"</span>
+                } } });
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('windows')">🧪 Test Windows Metadata</button>
+              <div class="output" id="windows-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced Bunx Package -->
+        <div class="feature-card" id="bunx">
+          <div class="feature-header bunx-header">
+            <div class="feature-icon">📦</div>
+            <h2>
+              Bunx Package
+              <span class="new-badge">Enhanced</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>bunx --package</h3>
+            <p>Run binaries from packages where the binary name differs from the package name.</p>
+            <div class="code-block">
+              <code>
+                <span class="code-comment">// Run renovate-config-validator from renovate package</span>
+                bunx --package renovate renovate-config-validator
+
+                <span class="code-comment">// Run ng binary from @angular/cli package</span>
+                bunx -p @angular/cli ng new my-app
+
+                <span class="code-comment">// Run TypeScript compiler with specific version</span>
+                bunx --package typescript@5.0.0 tsc --version
+
+                <span class="code-comment">// Use Prettier without installation</span>
+                bunx --package prettier@3.0.0 prettier --check src/**/*.ts
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('bunx')">🧪 Test Bunx Command</button>
+              <div class="output" id="bunx-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: Bun.stripANSI() -->
+        <div class="feature-card" id="strip">
+          <div class="feature-header strip-header">
+            <div class="feature-icon">🎨</div>
+            <h2>
+              Bun.stripANSI()
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>SIMD-Accelerated ANSI Removal</h3>
+            <p>Strip ANSI escape codes 6x-57x faster than strip-ansi package.</p>
+            <div class="code-block">
+              <code>
+                <span class="code-comment">// Remove color codes from text</span>
+                <span class="code-keyword">const</span>
+                coloredText =
+                <span class="code-string">"\u001b[31mHello\u001b[0m \u001b[32mWorld\u001b[0m"</span>
+                ;
+                <span class="code-keyword">const</span>
+                plainText = Bun.
+                <span class="code-function">stripANSI</span>
+                (coloredText); console.
+                <span class="code-function">log</span>
+                (plainText);
+                <span class="code-comment">// => "Hello World"</span>
+
+                <span class="code-comment">// Works with various ANSI codes</span>
+                <span class="code-keyword">const</span>
+                formatted =
+                <span class="code-string">"\u001b[1m\u001b[4mBold and underlined\u001b[0m"</span>
+                ; console.
+                <span class="code-function">log</span>
+                (Bun.
+                <span class="code-function">stripANSI</span>
+                (formatted));
+                <span class="code-comment">// => "Bold and underlined"</span>
+
+                <span class="code-comment">// Performance: 6x-57x faster than npm strip-ansi</span>
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('strip')">🧪 Test Bun.stripANSI()</button>
+              <div class="output" id="strip-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: User-Agent Flag -->
+        <div class="feature-card" id="user-agent">
+          <div class="feature-header user-agent-header">
+            <div class="feature-icon">🌐</div>
+            <h2>
+              Custom User-Agent
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>--user-agent Flag</h3>
+            <p>Override the default User-Agent header for all fetch() requests in your application.</p>
+            <div class="code-block">
+              <code>
+                <span class="code-comment">// agent.js</span>
+                <span class="code-keyword">const</span>
+                response =
+                <span class="code-keyword">await</span>
+                <span class="code-function">fetch</span>
+                (
+                <span class="code-string">"https://httpbin.org/user-agent"</span>
+                );
+                <span class="code-keyword">const</span>
+                data =
+                <span class="code-keyword">await</span>
+                response.
+                <span class="code-function">json</span>
+                (); console.
+                <span class="code-function">log</span>
+                (data[
+                <span class="code-string">"user-agent"</span>
+                ]);
+
+                <span class="code-comment">// Run with custom user agent</span>
+                $ bun --user-agent
+                <span class="code-string">"MyCustomApp/1.0"</span>
+                agent.js
+                <span class="code-comment">// Output: MyCustomApp/1.0</span>
+
+                <span class="code-comment">// Without the flag (default)</span>
+                $ bun agent.js
+                <span class="code-comment">// Output: Bun/1.2.21</span>
+
+                <span class="code-comment">// Embedded in executable</span>
+                $ bun build --compile --compile-exec-argv="--user-agent=MyApp/2.0" app.ts
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('user-agent')">🧪 Test User-Agent</button>
+              <div class="output" id="user-agent-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: Bun.semver -->
+        <div class="feature-card" id="semver">
+          <div class="feature-header semver-header">
+            <div class="feature-icon">🔢</div>
+            <h2>
+              Bun.semver
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>Semantic Version Management</h3>
+            <p>Fast, built-in semantic versioning utilities for version validation, comparison, and manipulation.</p>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('semver', 'basic')">Basic Operations</button>
+              <button class="tab" onclick="switchTab('semver', 'ranges')">Range Checking</button>
+              <button class="tab" onclick="switchTab('semver', 'manipulation')">Version Manipulation</button>
+            </div>
+
+            <div class="tab-content active" id="semver-basic">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Validate version strings</span>
+                  Bun.semver.
+                  <span class="code-function">valid</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  );
+                  <span class="code-comment">// "1.2.3"</span>
+                  Bun.semver.
+                  <span class="code-function">valid</span>
+                  (
+                  <span class="code-string">"v1.2.3"</span>
+                  );
+                  <span class="code-comment">// "1.2.3" (cleaned)</span>
+                  Bun.semver.
+                  <span class="code-function">valid</span>
+                  (
+                  <span class="code-string">"not.a.version"</span>
+                  );
+                  <span class="code-comment">// null</span>
+
+                  <span class="code-comment">// Clean version strings</span>
+                  Bun.semver.
+                  <span class="code-function">clean</span>
+                  (
+                  <span class="code-string">" =v1.2.3 "</span>
+                  );
+                  <span class="code-comment">// "1.2.3"</span>
+
+                  <span class="code-comment">// Compare versions</span>
+                  Bun.semver.
+                  <span class="code-function">gt</span>
+                  (
+                  <span class="code-string">"2.0.0"</span>
+                  ,
+                  <span class="code-string">"1.9.9"</span>
+                  );
+                  <span class="code-comment">// true</span>
+                  Bun.semver.
+                  <span class="code-function">lt</span>
+                  (
+                  <span class="code-string">"1.0.0"</span>
+                  ,
+                  <span class="code-string">"1.0.1"</span>
+                  );
+                  <span class="code-comment">// true</span>
+                  Bun.semver.
+                  <span class="code-function">eq</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"1.2.3"</span>
+                  );
+                  <span class="code-comment">// true</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="semver-ranges">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Check if version satisfies range</span>
+                  Bun.semver.
+                  <span class="code-function">satisfies</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"^1.0.0"</span>
+                  );
+                  <span class="code-comment">// true</span>
+                  Bun.semver.
+                  <span class="code-function">satisfies</span>
+                  (
+                  <span class="code-string">"2.0.0"</span>
+                  ,
+                  <span class="code-string">"~1.2.3"</span>
+                  );
+                  <span class="code-comment">// false</span>
+                  Bun.semver.
+                  <span class="code-function">satisfies</span>
+                  (
+                  <span class="code-string">"1.5.0"</span>
+                  ,
+                  <span class="code-string">">=1.0.0 <2.0.0"</span>
+                  );
+                  <span class="code-comment">// true</span>
+
+                  <span class="code-comment">// Order versions</span>
+                  <span class="code-keyword">const</span>
+                  versions = [
+                  <span class="code-string">"2.0.0"</span>
+                  ,
+                  <span class="code-string">"1.0.0"</span>
+                  ,
+                  <span class="code-string">"1.5.0"</span>
+                  ,
+                  <span class="code-string">"1.0.0-beta"</span>
+                  ]; Bun.semver.
+                  <span class="code-function">order</span>
+                  (versions);
+                  <span class="code-comment">// ["1.0.0-beta", "1.0.0", "1.5.0", "2.0.0"]</span>
+
+                  <span class="code-comment">// Find minimum satisfying version</span>
+                  Bun.semver.
+                  <span class="code-function">minSatisfying</span>
+                  (versions,
+                  <span class="code-string">"^1.0.0"</span>
+                  );
+                  <span class="code-comment">// "1.0.0"</span>
+                  Bun.semver.
+                  <span class="code-function">maxSatisfying</span>
+                  (versions,
+                  <span class="code-string">"^1.0.0"</span>
+                  );
+                  <span class="code-comment">// "1.5.0"</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="semver-manipulation">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Increment versions</span>
+                  Bun.semver.
+                  <span class="code-function">inc</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"patch"</span>
+                  );
+                  <span class="code-comment">// "1.2.4"</span>
+                  Bun.semver.
+                  <span class="code-function">inc</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"minor"</span>
+                  );
+                  <span class="code-comment">// "1.3.0"</span>
+                  Bun.semver.
+                  <span class="code-function">inc</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"major"</span>
+                  );
+                  <span class="code-comment">// "2.0.0"</span>
+                  Bun.semver.
+                  <span class="code-function">inc</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"prerelease"</span>
+                  );
+                  <span class="code-comment">// "1.2.4-0"</span>
+
+                  <span class="code-comment">// Diff versions</span>
+                  Bun.semver.
+                  <span class="code-function">diff</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"1.2.4"</span>
+                  );
+                  <span class="code-comment">// "patch"</span>
+                  Bun.semver.
+                  <span class="code-function">diff</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"1.3.0"</span>
+                  );
+                  <span class="code-comment">// "minor"</span>
+                  Bun.semver.
+                  <span class="code-function">diff</span>
+                  (
+                  <span class="code-string">"1.2.3"</span>
+                  ,
+                  <span class="code-string">"2.0.0"</span>
+                  );
+                  <span class="code-comment">// "major"</span>
+
+                  <span class="code-comment">// Coerce to valid semver</span>
+                  Bun.semver.
+                  <span class="code-function">coerce</span>
+                  (
+                  <span class="code-string">"1.2"</span>
+                  );
+                  <span class="code-comment">// "1.2.0"</span>
+                  Bun.semver.
+                  <span class="code-function">coerce</span>
+                  (
+                  <span class="code-string">"v2"</span>
+                  );
+                  <span class="code-comment">// "2.0.0"</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('semver')">🧪 Test Bun.semver</button>
+              <div class="output" id="semver-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: Bun.secrets -->
+        <div class="feature-card" id="secrets">
+          <div class="feature-header secrets-header">
+            <div class="feature-icon">🔐</div>
+            <h2>
+              Bun.secrets
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>Native Secrets Manager</h3>
+            <p>Secure credential storage using OS-native keychains. No more plaintext .env files!</p>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('secrets', 'basic')">Basic Usage</button>
+              <button class="tab" onclick="switchTab('secrets', 'integration')">Integration</button>
+              <button class="tab" onclick="switchTab('secrets', 'platforms')">Platform Support</button>
+            </div>
+
+            <div class="tab-content active" id="secrets-basic">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Import the secrets API</span>
+                  <span class="code-keyword">import</span>
+                  { secrets }
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"bun"</span>
+                  ;
+
+                  <span class="code-comment">// Store a secret securely</span>
+                  <span class="code-keyword">await</span>
+                  secrets.
+                  <span class="code-function">set</span>
+                  ({ service:
+                  <span class="code-string">"my-cli-tool"</span>
+                  , name:
+                  <span class="code-string">"github-token"</span>
+                  , value:
+                  <span class="code-string">"ghp_xxxxxxxxxxxxxxxxxxxx"</span>
+                  , });
+
+                  <span class="code-comment">// Retrieve a secret</span>
+                  <span class="code-keyword">const</span>
+                  token =
+                  <span class="code-keyword">await</span>
+                  secrets.
+                  <span class="code-function">get</span>
+                  ({ service:
+                  <span class="code-string">"my-cli-tool"</span>
+                  , name:
+                  <span class="code-string">"github-token"</span>
+                  , });
+
+                  <span class="code-comment">// Delete a secret</span>
+                  <span class="code-keyword">await</span>
+                  secrets.
+                  <span class="code-function">delete</span>
+                  ({ service:
+                  <span class="code-string">"my-cli-tool"</span>
+                  , name:
+                  <span class="code-string">"github-token"</span>
+                  , });
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="secrets-integration">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// CLI Authentication Example</span>
+                  <span class="code-keyword">class</span>
+                  <span class="code-class">CLIAuth</span>
+                  {
+                  <span class="code-keyword">async</span>
+                  <span class="code-function">login</span>
+                  (username, password) {
+                  <span class="code-comment">// Authenticate with API</span>
+                  <span class="code-keyword">const</span>
+                  response =
+                  <span class="code-keyword">await</span>
+                  <span class="code-function">fetch</span>
+                  (
+                  <span class="code-string">"https://api.example.com/auth"</span>
+                  , { method:
+                  <span class="code-string">"POST"</span>
+                  , body: JSON.
+                  <span class="code-function">stringify</span>
+                  ({ username, password }), });
+
+                  <span class="code-keyword">if</span>
+                  (response.ok) {
+                  <span class="code-keyword">const</span>
+                  { token } =
+                  <span class="code-keyword">await</span>
+                  response.
+                  <span class="code-function">json</span>
+                  ();
+
+                  <span class="code-comment">// Store token securely in OS keychain</span>
+                  <span class="code-keyword">await</span>
+                  secrets.
+                  <span class="code-function">set</span>
+                  ({ service:
+                  <span class="code-string">"my-cli"</span>
+                  , name:
+                  <span class="code-string">"auth-token"</span>
+                  , value: token, }); console.
+                  <span class="code-function">log</span>
+                  (
+                  <span class="code-string">"✅ Token stored securely!"</span>
+                  ); } }
+
+                  <span class="code-keyword">async</span>
+                  <span class="code-function">getToken</span>
+                  () {
+                  <span class="code-keyword">return</span>
+                  <span class="code-keyword">await</span>
+                  secrets.
+                  <span class="code-function">get</span>
+                  ({ service:
+                  <span class="code-string">"my-cli"</span>
+                  , name:
+                  <span class="code-string">"auth-token"</span>
+                  , }); } }
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="secrets-platforms">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Platform-specific storage locations</span>
+
+                  <span class="code-comment">// 🍎 macOS: Keychain Services</span>
+                  <span class="code-comment">// Located in: ~/Library/Keychains/</span>
+                  <span class="code-comment">// View in: Keychain Access.app</span>
+
+                  <span class="code-comment">// 🐧 Linux: libsecret (GNOME Keyring/KWallet)</span>
+                  <span class="code-comment">// Install: sudo apt-get install libsecret-1-dev</span>
+                  <span class="code-comment">// Or: sudo dnf install libsecret-devel</span>
+
+                  <span class="code-comment">// 🪟 Windows: Credential Manager</span>
+                  <span class="code-comment">// Access: Control Panel → Credential Manager</span>
+                  <span class="code-comment">// Or run: rundll32.exe keymgr.dll, KRShowKeyMgr</span>
+
+                  <span class="code-comment">// Migration from .env files</span>
+                  <span class="code-keyword">import</span>
+                  { readFileSync }
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"fs"</span>
+                  ;
+                  <span class="code-keyword">import</span>
+                  { parse }
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"dotenv"</span>
+                  ;
+
+                  <span class="code-keyword">async</span>
+                  <span class="code-function">function</span>
+                  <span class="code-function">migrateEnvToSecrets</span>
+                  (envPath, serviceName) {
+                  <span class="code-keyword">const</span>
+                  envContent =
+                  <span class="code-function">readFileSync</span>
+                  (envPath,
+                  <span class="code-string">"utf-8"</span>
+                  );
+                  <span class="code-keyword">const</span>
+                  parsed =
+                  <span class="code-function">parse</span>
+                  (envContent);
+
+                  <span class="code-keyword">for</span>
+                  (
+                  <span class="code-keyword">const</span>
+                  [key, value]
+                  <span class="code-keyword">of</span>
+                  Object.
+                  <span class="code-function">entries</span>
+                  (parsed)) {
+                  <span class="code-keyword">await</span>
+                  secrets.
+                  <span class="code-function">set</span>
+                  ({ service: serviceName, name: key, value, }); console.
+                  <span class="code-function">log</span>
+                  (
+                  <span class="code-string">`✅ Migrated ${key}`</span>
+                  ); } console.
+                  <span class="code-function">log</span>
+                  (
+                  <span class="code-string">"⚠️ Remember to delete your .env file!"</span>
+                  ); }
+                </code>
+              </div>
+            </div>
+
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('secrets')">🧪 Test Bun.secrets</button>
+              <div class="output" id="secrets-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: Bun.inspect.table() -->
+        <div class="feature-card" id="inspect-table">
+          <div class="feature-header inspect-table-header">
+            <div class="feature-icon">📊</div>
+            <h2>
+              Bun.inspect.table()
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>Format Tabular Data</h3>
+            <p>
+              Generate formatted tables as strings for logging or display. Like console.table, but returns a string.
+            </p>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('inspect-table', 'basic')">Basic Usage</button>
+              <button class="tab" onclick="switchTab('inspect-table', 'filtering')">Column Filtering</button>
+              <button class="tab" onclick="switchTab('inspect-table', 'styling')">Styling Options</button>
+            </div>
+
+            <div class="tab-content active" id="inspect-table-basic">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Basic table formatting</span>
+                  <span class="code-keyword">const</span>
+                  data = [ { name:
+                  <span class="code-string">"Alice"</span>
+                  , age:
+                  <span class="code-number">30</span>
+                  , city:
+                  <span class="code-string">"NYC"</span>
+                  }, { name:
+                  <span class="code-string">"Bob"</span>
+                  , age:
+                  <span class="code-number">25</span>
+                  , city:
+                  <span class="code-string">"LA"</span>
+                  }, { name:
+                  <span class="code-string">"Charlie"</span>
+                  , age:
+                  <span class="code-number">35</span>
+                  , city:
+                  <span class="code-string">"Chicago"</span>
+                  } ];
+
+                  <span class="code-keyword">const</span>
+                  table = Bun.inspect.
+                  <span class="code-function">table</span>
+                  (data); console.
+                  <span class="code-function">log</span>
+                  (table);
+
+                  <span class="code-comment">// Output:</span>
+                  <span class="code-comment">// ┌───┬─────────┬─────┬─────────┐</span>
+                  <span class="code-comment">// │ │ name │ age │ city │</span>
+                  <span class="code-comment">// ├───┼─────────┼─────┼─────────┤</span>
+                  <span class="code-comment">// │ 0 │ Alice │ 30 │ NYC │</span>
+                  <span class="code-comment">// │ 1 │ Bob │ 25 │ LA │</span>
+                  <span class="code-comment">// │ 2 │ Charlie │ 35 │ Chicago │</span>
+                  <span class="code-comment">// └───┴─────────┴─────┴─────────┘</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="inspect-table-filtering">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Select specific columns</span>
+                  <span class="code-keyword">const</span>
+                  data = [ { id:
+                  <span class="code-number">1</span>
+                  , name:
+                  <span class="code-string">"Product A"</span>
+                  , price:
+                  <span class="code-number">29.99</span>
+                  , stock:
+                  <span class="code-number">100</span>
+                  }, { id:
+                  <span class="code-number">2</span>
+                  , name:
+                  <span class="code-string">"Product B"</span>
+                  , price:
+                  <span class="code-number">39.99</span>
+                  , stock:
+                  <span class="code-number">50</span>
+                  }, { id:
+                  <span class="code-number">3</span>
+                  , name:
+                  <span class="code-string">"Product C"</span>
+                  , price:
+                  <span class="code-number">19.99</span>
+                  , stock:
+                  <span class="code-number">200</span>
+                  } ];
+
+                  <span class="code-comment">// Display only name and price columns</span>
+                  <span class="code-keyword">const</span>
+                  filtered = Bun.inspect.
+                  <span class="code-function">table</span>
+                  ( data, [
+                  <span class="code-string">"name"</span>
+                  ,
+                  <span class="code-string">"price"</span>
+                  ] ); console.
+                  <span class="code-function">log</span>
+                  (filtered);
+
+                  <span class="code-comment">// Output:</span>
+                  <span class="code-comment">// ┌───┬───────────┬───────┐</span>
+                  <span class="code-comment">// │ │ name │ price │</span>
+                  <span class="code-comment">// ├───┼───────────┼───────┤</span>
+                  <span class="code-comment">// │ 0 │ Product A │ 29.99 │</span>
+                  <span class="code-comment">// │ 1 │ Product B │ 39.99 │</span>
+                  <span class="code-comment">// │ 2 │ Product C │ 19.99 │</span>
+                  <span class="code-comment">// └───┴───────────┴───────┘</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="inspect-table-styling">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Enable ANSI colors for terminal output</span>
+                  <span class="code-keyword">const</span>
+                  data = [ { status:
+                  <span class="code-string">"✅ Active"</span>
+                  , count:
+                  <span class="code-number">42</span>
+                  , performance:
+                  <span class="code-string">"High"</span>
+                  }, { status:
+                  <span class="code-string">"⚠️ Warning"</span>
+                  , count:
+                  <span class="code-number">17</span>
+                  , performance:
+                  <span class="code-string">"Medium"</span>
+                  }, { status:
+                  <span class="code-string">"❌ Error"</span>
+                  , count:
+                  <span class="code-number">3</span>
+                  , performance:
+                  <span class="code-string">"Low"</span>
+                  } ];
+
+                  <span class="code-comment">// With colors enabled</span>
+                  <span class="code-keyword">const</span>
+                  coloredTable = Bun.inspect.
+                  <span class="code-function">table</span>
+                  ( data, { colors:
+                  <span class="code-keyword">true</span>
+                  } );
+
+                  <span class="code-comment">// Use in logging systems</span>
+                  <span class="code-keyword">const</span>
+                  logEntry =
+                  <span class="code-string">
+                    ` System Status Report: ${coloredTable} Generated: ${new Date().toISOString()} `
+                  </span>
+                  ;
+
+                  <span class="code-comment">// Write to file or send to monitoring service</span>
+                  <span class="code-keyword">await</span>
+                  Bun.
+                  <span class="code-function">write</span>
+                  (
+                  <span class="code-string">"status-report.txt"</span>
+                  , logEntry);
+                </code>
+              </div>
+            </div>
+
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('inspect-table')">🧪 Test Bun.inspect.table()</button>
+              <div class="output" id="inspect-table-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: Bun.nanoseconds() -->
+        <div class="feature-card" id="nanoseconds">
+          <div class="feature-header nanoseconds-header">
+            <div class="feature-icon">⏱️</div>
+            <h2>
+              Bun.nanoseconds()
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>High-Precision Timing</h3>
+            <p>Get nanosecond-precision timing for benchmarking and performance measurements.</p>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('nanoseconds', 'basic')">Basic Usage</button>
+              <button class="tab" onclick="switchTab('nanoseconds', 'benchmarking')">Benchmarking</button>
+              <button class="tab" onclick="switchTab('nanoseconds', 'profiling')">Profiling</button>
+            </div>
+
+            <div class="tab-content active" id="nanoseconds-basic">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Get nanoseconds since process start</span>
+                  <span class="code-keyword">const</span>
+                  start = Bun.
+                  <span class="code-function">nanoseconds</span>
+                  ();
+
+                  <span class="code-comment">// Do some work...</span>
+                  <span class="code-keyword">await</span>
+                  <span class="code-function">someOperation</span>
+                  ();
+
+                  <span class="code-keyword">const</span>
+                  end = Bun.
+                  <span class="code-function">nanoseconds</span>
+                  ();
+                  <span class="code-keyword">const</span>
+                  duration = end - start; console.
+                  <span class="code-function">log</span>
+                  (
+                  <span class="code-string">`Operation took ${duration} nanoseconds`</span>
+                  ); console.
+                  <span class="code-function">log</span>
+                  (
+                  <span class="code-string">`That's ${duration / 1_000_000} milliseconds`</span>
+                  ); console.
+                  <span class="code-function">log</span>
+                  (
+                  <span class="code-string">`Or ${duration / 1_000_000_000} seconds`</span>
+                  );
+
+                  <span class="code-comment">// Convert to different units</span>
+                  <span class="code-keyword">const</span>
+                  microseconds = duration /
+                  <span class="code-number">1_000</span>
+                  ;
+                  <span class="code-keyword">const</span>
+                  milliseconds = duration /
+                  <span class="code-number">1_000_000</span>
+                  ;
+                  <span class="code-keyword">const</span>
+                  seconds = duration /
+                  <span class="code-number">1_000_000_000</span>
+                  ;
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="nanoseconds-benchmarking">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// High-precision benchmarking</span>
+                  <span class="code-keyword">class</span>
+                  <span class="code-class">Benchmark</span>
+                  {
+                  <span class="code-keyword">constructor</span>
+                  (name) {
+                  <span class="code-keyword">this</span>
+                  .name = name;
+                  <span class="code-keyword">this</span>
+                  .measurements = []; }
+
+                  <span class="code-keyword">async</span>
+                  <span class="code-function">run</span>
+                  (fn, iterations =
+                  <span class="code-number">1000</span>
+                  ) {
+                  <span class="code-comment">// Warm up</span>
+                  <span class="code-keyword">for</span>
+                  (
+                  <span class="code-keyword">let</span>
+                  i =
+                  <span class="code-number">0</span>
+                  ; i <
+                  <span class="code-number">10</span>
+                  ; i++) {
+                  <span class="code-keyword">await</span>
+                  <span class="code-function">fn</span>
+                  (); }
+
+                  <span class="code-comment">// Measure</span>
+                  <span class="code-keyword">for</span>
+                  (
+                  <span class="code-keyword">let</span>
+                  i =
+                  <span class="code-number">0</span>
+                  ; i < iterations; i++) {
+                  <span class="code-keyword">const</span>
+                  start = Bun.
+                  <span class="code-function">nanoseconds</span>
+                  ();
+                  <span class="code-keyword">await</span>
+                  <span class="code-function">fn</span>
+                  ();
+                  <span class="code-keyword">const</span>
+                  duration = Bun.
+                  <span class="code-function">nanoseconds</span>
+                  () - start;
+                  <span class="code-keyword">this</span>
+                  .measurements.
+                  <span class="code-function">push</span>
+                  (duration); } }
+
+                  <span class="code-function">getStats</span>
+                  () {
+                  <span class="code-keyword">const</span>
+                  sorted = [...
+                  <span class="code-keyword">this</span>
+                  .measurements].
+                  <span class="code-function">sort</span>
+                  ((a, b) => a - b);
+                  <span class="code-keyword">return</span>
+                  { min: sorted[
+                  <span class="code-number">0</span>
+                  ], max: sorted[sorted.length -
+                  <span class="code-number">1</span>
+                  ], median: sorted[Math.
+                  <span class="code-function">floor</span>
+                  (sorted.length /
+                  <span class="code-number">2</span>
+                  )], p95: sorted[Math.
+                  <span class="code-function">floor</span>
+                  (sorted.length *
+                  <span class="code-number">0.95</span>
+                  )], p99: sorted[Math.
+                  <span class="code-function">floor</span>
+                  (sorted.length *
+                  <span class="code-number">0.99</span>
+                  )], avg: sorted.
+                  <span class="code-function">reduce</span>
+                  ((a, b) => a + b) / sorted.length }; } }
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="nanoseconds-profiling">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Performance profiler</span>
+                  <span class="code-keyword">class</span>
+                  <span class="code-class">Profiler</span>
+                  {
+                  <span class="code-keyword">constructor</span>
+                  () {
+                  <span class="code-keyword">this</span>
+                  .markers =
+                  <span class="code-keyword">new</span>
+                  <span class="code-class">Map</span>
+                  ();
+                  <span class="code-keyword">this</span>
+                  .durations =
+                  <span class="code-keyword">new</span>
+                  <span class="code-class">Map</span>
+                  (); }
+
+                  <span class="code-function">mark</span>
+                  (name) {
+                  <span class="code-keyword">this</span>
+                  .markers.
+                  <span class="code-function">set</span>
+                  (name, Bun.
+                  <span class="code-function">nanoseconds</span>
+                  ()); }
+
+                  <span class="code-function">measure</span>
+                  (name, startMark, endMark) {
+                  <span class="code-keyword">const</span>
+                  start =
+                  <span class="code-keyword">this</span>
+                  .markers.
+                  <span class="code-function">get</span>
+                  (startMark);
+                  <span class="code-keyword">const</span>
+                  end =
+                  <span class="code-keyword">this</span>
+                  .markers.
+                  <span class="code-function">get</span>
+                  (endMark);
+
+                  <span class="code-keyword">if</span>
+                  (start && end) {
+                  <span class="code-keyword">const</span>
+                  duration = end - start;
+                  <span class="code-keyword">this</span>
+                  .durations.
+                  <span class="code-function">set</span>
+                  (name, duration);
+                  <span class="code-keyword">return</span>
+                  duration; } }
+
+                  <span class="code-function">report</span>
+                  () {
+                  <span class="code-keyword">const</span>
+                  data = Array.
+                  <span class="code-function">from</span>
+                  (
+                  <span class="code-keyword">this</span>
+                  .durations.
+                  <span class="code-function">entries</span>
+                  ()) .
+                  <span class="code-function">map</span>
+                  (([name, ns]) => ({ operation: name, nanoseconds: ns, milliseconds: (ns /
+                  <span class="code-number">1_000_000</span>
+                  ).
+                  <span class="code-function">toFixed</span>
+                  (
+                  <span class="code-number">3</span>
+                  ) }));
+
+                  <span class="code-comment">// Use Bun.inspect.table for formatted output!</span>
+                  <span class="code-keyword">return</span>
+                  Bun.inspect.
+                  <span class="code-function">table</span>
+                  (data); } }
+
+                  <span class="code-comment">// Usage</span>
+                  <span class="code-keyword">const</span>
+                  profiler =
+                  <span class="code-keyword">new</span>
+                  <span class="code-class">Profiler</span>
+                  (); profiler.
+                  <span class="code-function">mark</span>
+                  (
+                  <span class="code-string">"start"</span>
+                  );
+                  <span class="code-keyword">await</span>
+                  <span class="code-function">fetchData</span>
+                  (); profiler.
+                  <span class="code-function">mark</span>
+                  (
+                  <span class="code-string">"data-fetched"</span>
+                  );
+                  <span class="code-keyword">await</span>
+                  <span class="code-function">processData</span>
+                  (); profiler.
+                  <span class="code-function">mark</span>
+                  (
+                  <span class="code-string">"data-processed"</span>
+                  ); profiler.
+                  <span class="code-function">measure</span>
+                  (
+                  <span class="code-string">"fetch"</span>
+                  ,
+                  <span class="code-string">"start"</span>
+                  ,
+                  <span class="code-string">"data-fetched"</span>
+                  ); profiler.
+                  <span class="code-function">measure</span>
+                  (
+                  <span class="code-string">"process"</span>
+                  ,
+                  <span class="code-string">"data-fetched"</span>
+                  ,
+                  <span class="code-string">"data-processed"</span>
+                  ); profiler.
+                  <span class="code-function">measure</span>
+                  (
+                  <span class="code-string">"total"</span>
+                  ,
+                  <span class="code-string">"start"</span>
+                  ,
+                  <span class="code-string">"data-processed"</span>
+                  ); console.
+                  <span class="code-function">log</span>
+                  (profiler.
+                  <span class="code-function">report</span>
+                  ());
+                </code>
+              </div>
+            </div>
+
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('nanoseconds')">🧪 Test Bun.nanoseconds()</button>
+              <div class="output" id="nanoseconds-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: CSS Bundler -->
+        <div class="feature-card" id="css-bundler">
+          <div class="feature-header css-bundler-header">
+            <div class="feature-icon">🎨</div>
+            <h2>
+              CSS Bundler
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>Modern CSS with Built-in Transpiling</h3>
+            <p>
+              Bun's CSS bundler transpiles modern CSS features, handles CSS Modules, and ensures cross-browser
+              compatibility. Powered by a Rust→Zig port of LightningCSS!
+            </p>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('css-bundler', 'transpiling')">Transpiling</button>
+              <button class="tab" onclick="switchTab('css-bundler', 'modules')">CSS Modules</button>
+              <button class="tab" onclick="switchTab('css-bundler', 'advanced')">Advanced Features</button>
+            </div>
+
+            <div class="tab-content active" id="css-bundler-transpiling">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// Modern CSS features transpiled automatically</span>
+
+                  <span class="code-comment">/* 🎯 CSS Nesting */</span>
+                  <span class="code-selector">.card</span>
+                  { background: white; border-radius:
+                  <span class="code-number">4px</span>
+                  ;
+
+                  <span class="code-selector">.title</span>
+                  { font-size:
+                  <span class="code-number">1.2rem</span>
+                  ; font-weight: bold; }
+
+                  <span class="code-selector">&:hover</span>
+                  { box-shadow:
+                  <span class="code-number">0 5px 15px</span>
+                  rgba(
+                  <span class="code-number">0,0,0,0.2</span>
+                  ); } }
+
+                  <span class="code-comment">/* 🎨 Color Functions */</span>
+                  <span class="code-selector">.theme</span>
+                  {
+                  <span class="code-comment">/* Mix colors in any color space */</span>
+                  --accent:
+                  <span class="code-function">color-mix</span>
+                  (in srgb, blue
+                  <span class="code-number">30%</span>
+                  , red);
+
+                  <span class="code-comment">/* Relative color modifications */</span>
+                  --lighter:
+                  <span class="code-function">lch</span>
+                  (from purple calc(l +
+                  <span class="code-number">15%</span>
+                  ) c h);
+
+                  <span class="code-comment">/* Modern color spaces (LAB, OKLCH, P3) */</span>
+                  --vibrant:
+                  <span class="code-function">lab</span>
+                  (
+                  <span class="code-number">55% 78 35</span>
+                  );
+
+                  <span class="code-comment">/* light-dark() for automatic theming */</span>
+                  background:
+                  <span class="code-function">light-dark</span>
+                  (#ffffff, #121212); }
+
+                  <span class="code-comment">/* 📐 Logical Properties */</span>
+                  <span class="code-selector">.international</span>
+                  { margin-inline-start:
+                  <span class="code-number">1rem</span>
+                  ;
+                  <span class="code-comment">/* RTL-aware */</span>
+                  padding-block:
+                  <span class="code-number">1rem 2rem</span>
+                  ; inline-size:
+                  <span class="code-number">80%</span>
+                  ; }
+
+                  <span class="code-comment">/* 🔢 CSS Math Functions */</span>
+                  <span class="code-selector">.dynamic</span>
+                  { width:
+                  <span class="code-function">clamp</span>
+                  (
+                  <span class="code-number">200px</span>
+                  ,
+                  <span class="code-number">50%</span>
+                  ,
+                  <span class="code-number">800px</span>
+                  ); padding:
+                  <span class="code-function">round</span>
+                  (
+                  <span class="code-number">14.8px</span>
+                  ,
+                  <span class="code-number">5px</span>
+                  );
+                  <span class="code-comment">/* → 15px */</span>
+                  --scale:
+                  <span class="code-function">pow</span>
+                  (
+                  <span class="code-number">1.25</span>
+                  ,
+                  <span class="code-number">3</span>
+                  ); transform:
+                  <span class="code-function">rotate</span>
+                  (calc(
+                  <span class="code-function">sin</span>
+                  (
+                  <span class="code-number">45deg</span>
+                  ) *
+                  <span class="code-number">50deg</span>
+                  )); }
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="css-bundler-modules">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">/* styles.module.css */</span>
+                  <span class="code-selector">.button</span>
+                  { color: red; padding:
+                  <span class="code-number">10px 20px</span>
+                  ; }
+
+                  <span class="code-selector">.primary</span>
+                  {
+                  <span class="code-keyword">composes</span>
+                  : button;
+                  <span class="code-comment">/* Inherit styles */</span>
+                  background: blue; }
+
+                  <span class="code-selector">.secondary</span>
+                  {
+                  <span class="code-keyword">composes</span>
+                  : button
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./base.module.css"</span>
+                  ; background: gray; }
+
+                  <span class="code-comment">// App.tsx - Import and use CSS Modules</span>
+                  <span class="code-keyword">import</span>
+                  styles
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./styles.module.css"</span>
+                  ;
+
+                  <span class="code-keyword">export default</span>
+                  <span class="code-keyword">function</span>
+                  <span class="code-function">App</span>
+                  () {
+                  <span class="code-keyword">return</span>
+                  (
+                  <span class="code-tag">&lt;div&gt;</span>
+                  <span class="code-tag">&lt;button</span>
+                  <span class="code-attr">className</span>
+                  =
+                  <span class="code-string">{styles.button}</span>
+                  <span class="code-tag">&gt;</span>
+                  Red Button
+                  <span class="code-tag">&lt;/button&gt;</span>
+                  <span class="code-tag">&lt;button</span>
+                  <span class="code-attr">className</span>
+                  =
+                  <span class="code-string">{styles.primary}</span>
+                  <span class="code-tag">&gt;</span>
+                  Blue Button
+                  <span class="code-tag">&lt;/button&gt;</span>
+                  <span class="code-tag">&lt;/div&gt;</span>
+                  ); }
+
+                  <span class="code-comment">// Generated unique class names:</span>
+                  <span class="code-comment">// .button → .button_a3f2d</span>
+                  <span class="code-comment">// .primary → .primary_b8e1c</span>
+                  <span class="code-comment">// No global conflicts! 🎉</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="css-bundler-advanced">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">/* 🌍 Browser Compatibility (automatic) */</span>
+
+                  <span class="code-comment">/* Modern media query ranges */</span>
+                  <span class="code-keyword">@media</span>
+                  (
+                  <span class="code-number">768px</span>
+                  &lt;= width &lt;=
+                  <span class="code-number">1199px</span>
+                  ) {
+                  <span class="code-selector">.responsive</span>
+                  { display: flex; } }
+
+                  <span class="code-comment">/* Pseudo-class selectors */</span>
+                  <span class="code-selector">:is</span>
+                  (header, main, footer)
+                  <span class="code-selector">:is</span>
+                  (h1, h2, .title) { font-family:
+                  <span class="code-string">"Heading Font"</span>
+                  ; }
+
+                  <span class="code-selector">button:not</span>
+                  (.primary, .secondary) { background: #f5f5f5; }
+
+                  <span class="code-comment">/* Direction-aware styles */</span>
+                  <span class="code-selector">.nav-arrow:dir</span>
+                  (ltr) { transform:
+                  <span class="code-function">rotate</span>
+                  (
+                  <span class="code-number">0deg</span>
+                  ); }
+                  <span class="code-selector">.nav-arrow:dir</span>
+                  (rtl) { transform:
+                  <span class="code-function">rotate</span>
+                  (
+                  <span class="code-number">180deg</span>
+                  ); }
+
+                  <span class="code-comment">/* Language-specific styling */</span>
+                  <span class="code-selector">:lang</span>
+                  (zh, ja, ko) { line-height:
+                  <span class="code-number">1.8</span>
+                  ; font-size:
+                  <span class="code-number">1.05em</span>
+                  ; }
+
+                  <span class="code-comment">/* System UI font with fallbacks */</span>
+                  <span class="code-selector">body</span>
+                  { font-family: system-ui;
+                  <span class="code-comment">/* Auto-expands to full stack */</span>
+                  }
+
+                  <span class="code-comment">/* Double position gradients */</span>
+                  <span class="code-selector">.progress</span>
+                  { background:
+                  <span class="code-function">linear-gradient</span>
+                  ( to right, #4caf50
+                  <span class="code-number">0% 25%</span>
+                  ,
+                  <span class="code-comment">/* Green section */</span>
+                  #ffc107
+                  <span class="code-number">25% 50%</span>
+                  ,
+                  <span class="code-comment">/* Yellow section */</span>
+                  #2196f3
+                  <span class="code-number">50% 75%</span>
+                  ,
+                  <span class="code-comment">/* Blue section */</span>
+                  #9c27b0
+                  <span class="code-number">75% 100%</span>
+                  <span class="code-comment">/* Purple section */</span>
+                  ); }
+
+                  <span class="code-comment">/* Modern shorthands */</span>
+                  <span class="code-selector">.flex-item</span>
+                  { place-items: center start;
+                  <span class="code-comment">/* align + justify */</span>
+                  overflow: hidden auto;
+                  <span class="code-comment">/* x and y */</span>
+                  display: inline flex;
+                  <span class="code-comment">/* outer + inner */</span>
+                  }
+
+                  <span class="code-comment">/* HWB color model */</span>
+                  <span class="code-selector">.theming</span>
+                  { --primary:
+                  <span class="code-function">hwb</span>
+                  (
+                  <span class="code-number">180 0% 0%</span>
+                  );
+                  <span class="code-comment">/* Pure cyan */</span>
+                  --primary-light:
+                  <span class="code-function">hwb</span>
+                  (
+                  <span class="code-number">180 20% 0%</span>
+                  );
+                  <span class="code-comment">/* +20% white */</span>
+                  --primary-dark:
+                  <span class="code-function">hwb</span>
+                  (
+                  <span class="code-number">180 0% 30%</span>
+                  );
+                  <span class="code-comment">/* +30% black */</span>
+                  }
+
+                  <span class="code-comment">/* 🎯 Target browsers (default): */</span>
+                  <span class="code-comment">/* ES2020, Edge 88+, Firefox 78+, Chrome 87+, Safari 14+ */</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('css-bundler')">🧪 Test CSS Bundler</button>
+              <div class="output" id="css-bundler-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: Built-in Loaders -->
+        <div class="feature-card" id="loaders">
+          <div class="feature-header loaders-header">
+            <div class="feature-icon">📦</div>
+            <h2>
+              Built-in Loaders
+              <span class="new-badge">NEW</span>
+            </h2>
+          </div>
+          <div class="feature-content">
+            <h3>Universal File Type Support</h3>
+            <p>
+              Bun's bundler and runtime support 15+ file types out of the box. Import JSON, YAML, TOML, SQLite
+              databases, and more - directly in your code!
+            </p>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('loaders', 'data')">Data Formats</button>
+              <button class="tab" onclick="switchTab('loaders', 'code')">Code Loaders</button>
+              <button class="tab" onclick="switchTab('loaders', 'special')">Special Loaders</button>
+            </div>
+
+            <div class="tab-content active" id="loaders-data">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// 📄 JSON - Direct import with typing</span>
+                  <span class="code-keyword">import</span>
+                  pkg
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./package.json"</span>
+                  ; console.
+                  <span class="code-function">log</span>
+                  (pkg.name);
+                  <span class="code-comment">// → "my-package"</span>
+
+                  <span class="code-comment">// 🔧 TOML - Native fast parser</span>
+                  <span class="code-keyword">import</span>
+                  config
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./bunfig.toml"</span>
+                  ; console.
+                  <span class="code-function">log</span>
+                  (config.logLevel);
+                  <span class="code-comment">// → "debug"</span>
+
+                  <span class="code-comment">// 📋 YAML - Built-in YAML support</span>
+                  <span class="code-keyword">import</span>
+                  settings
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./config.yaml"</span>
+                  ; console.
+                  <span class="code-function">log</span>
+                  (settings.database.host);
+                  <span class="code-comment">// → "localhost"</span>
+
+                  <span class="code-comment">// 📝 Text - Import as string</span>
+                  <span class="code-keyword">import</span>
+                  readme
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./README.txt"</span>
+                  ; console.
+                  <span class="code-function">log</span>
+                  (readme);
+                  <span class="code-comment">// → File contents as string</span>
+
+                  <span class="code-comment">// 🗄️ SQLite - Direct database import!</span>
+                  <span class="code-keyword">import</span>
+                  db
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./data.db"</span>
+                  <span class="code-keyword">with</span>
+                  { type:
+                  <span class="code-string">"sqlite"</span>
+                  };
+                  <span class="code-keyword">const</span>
+                  users = db.
+                  <span class="code-function">query</span>
+                  (
+                  <span class="code-string">"SELECT * FROM users"</span>
+                  ).
+                  <span class="code-function">all</span>
+                  ();
+
+                  <span class="code-comment">// 💾 Embed SQLite in bundle</span>
+                  <span class="code-keyword">import</span>
+                  embedded
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./app.db"</span>
+                  <span class="code-keyword">with</span>
+                  { type:
+                  <span class="code-string">"sqlite"</span>
+                  , embed:
+                  <span class="code-string">"true"</span>
+                  };
+
+                  <span class="code-comment">// 🎯 Override loader with import attributes</span>
+                  <span class="code-keyword">import</span>
+                  htmlAsText
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./index.html"</span>
+                  <span class="code-keyword">with</span>
+                  { type:
+                  <span class="code-string">"text"</span>
+                  };
+                  <span class="code-keyword">import</span>
+                  customToml
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./my.config"</span>
+                  <span class="code-keyword">with</span>
+                  { loader:
+                  <span class="code-string">"toml"</span>
+                  };
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="loaders-code">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// 🟨 JavaScript Loaders</span>
+
+                  <span class="code-comment">/* js loader - .cjs, .mjs */</span>
+                  <span class="code-comment">// ✅ Dead code elimination</span>
+                  <span class="code-comment">// ✅ Tree shaking</span>
+                  <span class="code-comment">// ❌ No syntax down-conversion</span>
+                  <span class="code-keyword">import</span>
+                  utils
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./utils.mjs"</span>
+                  ;
+
+                  <span class="code-comment">/* jsx loader - .js, .jsx */</span>
+                  <span class="code-comment">// ✅ JSX → JavaScript</span>
+                  <span class="code-comment">// ✅ Respects tsconfig.json jsx settings</span>
+                  <span class="code-keyword">import</span>
+                  Button
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./Button.jsx"</span>
+                  ;
+
+                  <span class="code-comment">// 🔷 TypeScript Loaders</span>
+
+                  <span class="code-comment">/* ts loader - .ts, .mts, .cts */</span>
+                  <span class="code-comment">// ✅ Strips TypeScript syntax</span>
+                  <span class="code-comment">// ❌ No type checking (use tsc separately)</span>
+                  <span class="code-keyword">import</span>
+                  { MyClass }
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./types.ts"</span>
+                  ;
+
+                  <span class="code-comment">/* tsx loader - .tsx */</span>
+                  <span class="code-comment">// ✅ TypeScript + JSX support</span>
+                  <span class="code-comment">// ✅ Full transpilation to JavaScript</span>
+                  <span class="code-keyword">import</span>
+                  App
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./App.tsx"</span>
+                  ;
+
+                  <span class="code-comment">// 🌐 HTML Loader - Full asset bundling</span>
+                  <span class="code-keyword">import</span>
+                  html
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./index.html"</span>
+                  ;
+
+                  <span class="code-comment">/* Input: src/index.html */</span>
+                  <span class="code-comment">// &lt;img src="./image.jpg"&gt; → ./image-a3f2d.jpg</span>
+                  <span class="code-comment">// &lt;script src="./script.js"&gt; → ./script-b8e1c.js</span>
+                  <span class="code-comment">// &lt;link href="./styles.css"&gt; → ./styles-d9a7f.css</span>
+                  <span class="code-comment">
+                    // &lt;img src="https://cdn.com/img"&gt; → https://cdn.com/img (preserved)
+                  </span>
+
+                  <span class="code-comment">/* Bundled selectors (via lol-html): */</span>
+                  <span class="code-comment">// • audio[src], video[src], img[src]</span>
+                  <span class="code-comment">// • script[src], iframe[src]</span>
+                  <span class="code-comment">// • link[rel='stylesheet'][href]</span>
+                  <span class="code-comment">// • link[rel='icon'], link[rel='manifest']</span>
+                  <span class="code-comment">// • source[src], source[srcset], img[srcset]</span>
+                  <span class="code-comment">// • video[poster], link[as='font']</span>
+
+                  <span class="code-comment">/* Context-aware behavior: */</span>
+                  <span class="code-comment">// 1. Static: bun build ./index.html → Full static site</span>
+                  <span class="code-comment">// 2. Runtime: bun run server.ts → HMR in development</span>
+                  <span class="code-comment">// 3. Full-stack: bun build --target=bun → Manifest object</span>
+
+                  <span class="code-comment">// 🐚 Shell Scripts - Direct execution</span>
+                  $ bun run ./deploy.sh
+                  <span class="code-comment">// Note: Only available via CLI, not in bundler/runtime</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="tab-content" id="loaders-special">
+              <div class="code-block">
+                <code>
+                  <span class="code-comment">// 📁 File Loader (default for unknown types)</span>
+                  <span class="code-keyword">import</span>
+                  logo
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./logo.svg"</span>
+                  ;
+                  <span class="code-keyword">import</span>
+                  font
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./roboto.woff2"</span>
+                  ;
+                  <span class="code-keyword">import</span>
+                  video
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./demo.mp4"</span>
+                  ;
+
+                  <span class="code-comment">// 🏃 Runtime behavior:</span>
+                  console.
+                  <span class="code-function">log</span>
+                  (logo);
+                  <span class="code-comment">// → "/path/to/project/logo.svg" (absolute path)</span>
+
+                  <span class="code-comment">// 📦 Bundler behavior:</span>
+                  <span class="code-comment">// 1. File copied to outdir as-is</span>
+                  <span class="code-comment">// 2. Import resolved to relative path</span>
+                  console.
+                  <span class="code-function">log</span>
+                  (logo);
+                  <span class="code-comment">// → "./logo-a3f2d.svg" (hashed filename)</span>
+
+                  <span class="code-comment">// 🌐 With publicPath configuration:</span>
+                  <span class="code-comment">// bunfig.toml: publicPath = "/assets"</span>
+                  console.
+                  <span class="code-function">log</span>
+                  (logo);
+                  <span class="code-comment">// → "/assets/logo-a3f2d.svg"</span>
+
+                  <span class="code-comment">// CDN configuration:</span>
+                  <span class="code-comment">// publicPath = "https://cdn.example.com/"</span>
+                  console.
+                  <span class="code-function">log</span>
+                  (logo);
+                  <span class="code-comment">// → "https://cdn.example.com/logo-a3f2d.svg"</span>
+
+                  <span class="code-comment">// File naming controlled by naming.asset config</span>
+                  <span class="code-comment">// Default: "[name]-[hash].[ext]"</span>
+
+                  <span class="code-comment">// 🔌 Native Addon Loader (.node)</span>
+                  <span class="code-keyword">import</span>
+                  addon
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./native-addon.node"</span>
+                  ;
+                  <span class="code-comment">// Direct import of native Node.js addons</span>
+
+                  <span class="code-comment">// 🌐 WASM Support</span>
+                  <span class="code-keyword">import</span>
+                  wasm
+                  <span class="code-keyword">from</span>
+                  <span class="code-string">"./module.wasm"</span>
+                  ;
+                  <span class="code-comment">// WebAssembly modules work out of the box</span>
+
+                  <span class="code-comment">// 📋 TypeScript declarations for assets</span>
+                  <span class="code-comment">// Create a *.d.ts file with:</span>
+                  <span class="code-keyword">declare module</span>
+                  <span class="code-string">"*.svg"</span>
+                  {
+                  <span class="code-keyword">const</span>
+                  content:
+                  <span class="code-keyword">string</span>
+                  ;
+                  <span class="code-keyword">export default</span>
+                  content; }
+
+                  <span class="code-comment">// 🎯 Supported extensions:</span>
+                  <span class="code-comment">// .js .cjs .mjs .jsx</span>
+                  <span class="code-comment">// .ts .tsx .mts .cts</span>
+                  <span class="code-comment">// .json .toml .yaml .yml</span>
+                  <span class="code-comment">// .txt .html .sh</span>
+                  <span class="code-comment">// .wasm .node</span>
+                  <span class="code-comment">// + any file via file loader</span>
+                </code>
+              </div>
+            </div>
+
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('loaders')">🧪 Test Built-in Loaders</button>
+              <div class="output" id="loaders-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Publishing & Versioning -->
+        <div class="feature-card" id="publish">
+          <div class="feature-header publish-header">
+            <div class="feature-icon">📤</div>
+            <h2>Publish & Versioning</h2>
+          </div>
+          <div class="feature-content">
+            <h3>bun publish & Version Management</h3>
+            <p>Publish packages to npm and manage semantic versioning with Bun.</p>
+
+            <div class="code-block">
+              <code>
+                <span class="code-comment">// Publish a package to npm</span>
+                bun publish
+
+                <span class="code-comment">// Publish with specific tag</span>
+                bun publish --tag beta
+
+                <span class="code-comment">// Dry run to test publishing</span>
+                bun publish --dry-run
+
+                <span class="code-comment">// Version management with Bun.semver integration</span>
+                <span class="code-keyword">const</span>
+                currentVersion =
+                <span class="code-string">"1.0.0"</span>
+                ;
+                <span class="code-keyword">const</span>
+                nextPatch = Bun.semver.
+                <span class="code-function">inc</span>
+                (currentVersion,
+                <span class="code-string">"patch"</span>
+                );
+                <span class="code-comment">// 1.0.1</span>
+                <span class="code-keyword">const</span>
+                nextMinor = Bun.semver.
+                <span class="code-function">inc</span>
+                (currentVersion,
+                <span class="code-string">"minor"</span>
+                );
+                <span class="code-comment">// 1.1.0</span>
+                <span class="code-keyword">const</span>
+                nextMajor = Bun.semver.
+                <span class="code-function">inc</span>
+                (currentVersion,
+                <span class="code-string">"major"</span>
+                );
+                <span class="code-comment">// 2.0.0</span>
+
+                <span class="code-comment">// CLI version commands</span>
+                bun version patch
+                <span class="code-comment"># v1.0.0 → v1.0.1</span>
+                bun version minor
+                <span class="code-comment"># v1.0.0 → v1.1.0</span>
+                bun version major
+                <span class="code-comment"># v1.0.0 → v2.0.0</span>
+
+                <span class="code-comment">// SideEffects with glob patterns (NEW)</span>
+                <span class="code-comment">// package.json</span>
+                {
+                <span class="code-keyword">"sideEffects"</span>
+                : [
+                <span class="code-string">"**/*.css"</span>
+                ,
+                <span class="code-string">"./src/setup.js"</span>
+                ] }
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('publish')">🧪 Test Publish Command</button>
+              <div class="output" id="publish-output"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          <strong>Bun Features Explorer v2</strong>
+          | Latest features from Bun v1.2.21+
+        </p>
+        <p>
+          ✨ Code-signed Windows executables | 🚀 SIMD acceleration | 🔧 Programmatic API | 🔢 Bun.semver | 🔐
+          Bun.secrets | 📊 Bun.inspect.table() | ⏱️ Bun.nanoseconds() | 🎨 CSS Bundler | 📦 Built-in Loaders
+        </p>
+        <p><small>Note: This page simulates Bun commands for demonstration purposes.</small></p>
+      </footer>
+    </div>
+
+    <script>
+      function scrollToFeature(featureId) {
+        document.getElementById(featureId).scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
+
+      function switchTab(featureId, tabId) {
+        // Hide all tab contents for this feature
+        const allTabs = document
+          .querySelectorAll(`#${featureId}-${tabId}`)
+          .item(0)
+          .parentElement.querySelectorAll('.tab-content');
+        const allButtons = document
+          .querySelectorAll(`#${featureId}-${tabId}`)
+          .item(0)
+          .parentElement.parentElement.querySelectorAll('.tab');
+
+        allTabs.forEach(tab => tab.classList.remove('active'));
+        allButtons.forEach(btn => btn.classList.remove('active'));
+
+        // Show selected tab
+        document.getElementById(`${featureId}-${tabId}`).classList.add('active');
+        event.target.classList.add('active');
+      }
+
+      function testFeature(feature) {
+        const outputElement = document.getElementById(`${feature}-output`);
+        outputElement.innerHTML = 'Testing...';
+        outputElement.className = 'output';
+
+        // Simulate command execution
+        setTimeout(() => {
+          let output = '';
+
+          switch (feature) {
+            case 'build-api':
+              output = `> await Bun.build({ entrypoints: ["./app.ts"], compile: true })
+✅ Build completed successfully!
+📦 Created standalone executable
+🎯 Target: bun-${navigator.platform.toLowerCase()}-x64
+📊 Size: 15.2MB
+⏱️  Build time: 342ms`;
+              break;
+
+            case 'build':
+              output = `> bun build --compile ./demo-app.ts --outfile demo-app
+✅ Build completed successfully!
+✨ Created standalone executable: demo-app (12.4MB)
+🎯 Platform: ${navigator.platform}
+⏱️  Build time: 245ms`;
+              break;
+
+            case 'windows':
+              output = `> bun build --compile ./app.js --windows-title "My App"
+✅ Windows executable created!
+🪟 Title: My Application
+👤 Publisher: My Company
+📝 Version: 1.2.3.4
+🔒 Code-signed: Yes
+📊 Size: 18.7MB`;
+              break;
+
+            case 'bunx':
+              output = `> bunx --package @angular/cli ng version
+✅ Package executed successfully!
+Angular CLI: 17.0.0
+Node: 20.6.0 (Bun compatibility)
+Package Manager: bun 1.2.21
+⏱️  Execution time: 89ms`;
+              break;
+
+            case 'strip':
+              output = `> Bun.stripANSI("\\u001b[31mHello\\u001b[0m World")
+✅ ANSI codes stripped!
+Input:  "\\u001b[31mHello\\u001b[0m World"
+Output: "Hello World"
+🚀 Performance: 57x faster than strip-ansi
+⏱️  Execution time: 0.02ms`;
+              break;
+
+            case 'user-agent':
+              output = `> bun --user-agent "MyApp/2.0" fetch-test.js
+✅ Custom User-Agent set!
+Request Headers:
+  User-Agent: MyApp/2.0
+  Accept: */*
+Response: 200 OK
+⏱️  Request time: 145ms`;
+              break;
+
+            case 'semver':
+              output = `> Bun.semver.satisfies("1.2.3", "^1.0.0")
+✅ true - Version satisfies range!
+
+> Bun.semver.inc("1.2.3", "minor")
+✅ Result: "1.3.0"
+
+> Bun.semver.order(["2.0.0", "1.0.0", "1.5.0"])
+✅ Sorted: ["1.0.0", "1.5.0", "2.0.0"]
+
+> Bun.semver.diff("1.2.3", "2.0.0")
+✅ Difference: "major"
+
+⚡ Performance: 10x faster than node-semver
+⏱️  Execution time: 0.3ms`;
+              break;
+
+            case 'secrets':
+              output = `> await secrets.set({ service: "my-cli", name: "api-key", value: "sk-1234567890" })
+✅ Secret stored securely in OS keychain!
+
+> await secrets.get({ service: "my-cli", name: "api-key" })
+🔑 Retrieved: "sk-1234567890"
+
+> await secrets.delete({ service: "my-cli", name: "api-key" })
+✅ Secret removed from keychain
+
+📍 Platform: ${navigator.platform.includes('Mac') ? 'macOS Keychain' : navigator.platform.includes('Win') ? 'Windows Credential Manager' : 'Linux libsecret'}
+🔒 Security: OS-level encryption
+⚡ Performance: Native async operations
+🚫 No plaintext storage!`;
+              break;
+
+            case 'inspect-table':
+              output = `> Bun.inspect.table([
+    { name: "Alice", score: 95, grade: "A" },
+    { name: "Bob", score: 82, grade: "B" },
+    { name: "Charlie", score: 77, grade: "C" }
+  ])
+
+┌───┬─────────┬───────┬───────┐
+│   │  name   │ score │ grade │
+├───┼─────────┼───────┼───────┤
+│ 0 │ Alice   │  95   │   A   │
+│ 1 │ Bob     │  82   │   B   │
+│ 2 │ Charlie │  77   │   C   │
+└───┴─────────┴───────┴───────┘
+
+✅ Table generated as string
+⚡ Performance: Instant formatting
+🎨 ANSI colors supported
+📊 Perfect for logs & reports!`;
+              break;
+
+            case 'nanoseconds':
+              const startNano = Math.floor(Math.random() * 1000000);
+              const endNano = startNano + Math.floor(Math.random() * 10000000);
+              const duration = endNano - startNano;
+              output = `> const start = Bun.nanoseconds()
+⏱️ Start: ${startNano.toLocaleString()} ns
+
+> // Perform operation...
+> const end = Bun.nanoseconds()
+⏱️ End: ${endNano.toLocaleString()} ns
+
+> const duration = end - start
+📊 Duration: ${duration.toLocaleString()} nanoseconds
+   = ${(duration / 1000).toFixed(2)} microseconds
+   = ${(duration / 1000000).toFixed(3)} milliseconds
+   = ${(duration / 1000000000).toFixed(6)} seconds
+
+⚡ Precision: Nanosecond accuracy
+🎯 Perfect for micro-benchmarks
+📈 Process-relative timing`;
+              break;
+
+            case 'css-bundler':
+              output = `> bun build styles.css --outdir=dist
+
+🎨 Processing CSS...
+✅ Nesting transpiled
+✅ Color functions computed
+✅ Logical properties converted
+✅ CSS Modules scoped
+✅ Vendor prefixes added
+✅ Minified: 42.3kb → 18.7kb
+
+📦 Output:
+  dist/styles-a3f2d.css
+  dist/styles.css.map
+
+🔧 Features:
+  • CSS Nesting → Flat CSS
+  • color-mix() → Static colors
+  • LAB/OKLCH → RGB fallbacks
+  • light-dark() → CSS variables
+  • .module.css → Unique classes
+  • system-ui → Font stack
+
+🌍 Browser targets:
+  Edge 88+, Firefox 78+, Chrome 87+, Safari 14+
+
+⚡ Powered by LightningCSS (Rust→Zig port)
+⏱️ Build time: 12ms`;
+              break;
+
+            case 'loaders':
+              output = `> import config from "./bunfig.toml"
+✅ TOML parsed successfully!
+
+> import data from "./config.yaml"
+✅ YAML loaded with native parser!
+
+> import db from "./app.db" with { type: "sqlite" }
+🗜️ SQLite database imported!
+✅ Tables: users, posts, comments
+✅ Records: 1,234 total
+
+> import pkg from "./package.json"
+📦 JSON inlined as JavaScript object
+
+📦 Built-in Loaders (15+ types):
+• JavaScript: .js .cjs .mjs .jsx
+• TypeScript: .ts .tsx .mts .cts
+• Data: .json .toml .yaml .yml
+• Text: .txt (imports as string)
+• HTML: Bundles all assets
+• SQLite: Direct DB import!
+• WASM: .wasm modules
+• Native: .node addons
+• Shell: .sh scripts
+• File: Any unknown type
+
+⚡ Zero configuration needed!
+🎯 Same loaders in bundler & runtime
+🔧 Override with import attributes`;
+              break;
+
+            case 'publish':
+              output = `> bun publish --dry-run
+✅ Dry run completed successfully!
+📦 Package: my-awesome-package
+🏷️  Version: 1.2.0
+📁 Files: 15 (4.2MB)
+🔐 Access: public
+✨ SideEffects: ["**/*.css", "./src/setup.js"]
+📤 Ready to publish to npm registry`;
+              break;
+          }
+
+          outputElement.innerHTML = output;
+          outputElement.className = 'output success';
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>

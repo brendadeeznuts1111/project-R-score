@@ -1,0 +1,1136 @@
+<!-- Adjustments Modal -->
+<div id="adjustments-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container large-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-sliders-h"></i>
+        <span data-language="L-279">Adjustments</span>
+        - Financial Corrections
+      </h3>
+      <button type="button" class="modal-close" onclick="closeAdjustmentsModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Dashboard Overview -->
+      <div class="adjustments-section">
+        <h4 class="section-title">
+          <i class="fas fa-chart-bar"></i>
+          Overview
+        </h4>
+
+        <div class="dashboard-cards">
+          <div class="metric-card">
+            <div class="metric-icon total">
+              <i class="fas fa-calculator"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="total-adjustments">0</div>
+              <div class="metric-label">Total Adjustments</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon pending">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="pending-approvals">0</div>
+              <div class="metric-label">Pending Approval</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon amount">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="total-adjusted">$0.00</div>
+              <div class="metric-label">Total Adjusted</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon today">
+              <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="adjustments-today">0</div>
+              <div class="metric-label">Adjustments Today</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="adjustments-section">
+        <h4 class="section-title">
+          <i class="fas fa-plus-circle"></i>
+          Quick Actions
+        </h4>
+
+        <div class="quick-actions">
+          <button class="btn btn-primary" onclick="showNewAdjustmentModal()">
+            <i class="fas fa-plus"></i>
+            New Adjustment
+          </button>
+          <button class="btn btn-secondary" onclick="showBulkAdjustmentModal()">
+            <i class="fas fa-list"></i>
+            Bulk Actions
+          </button>
+          <button class="btn btn-info" onclick="exportAdjustments()">
+            <i class="fas fa-download"></i>
+            Export
+          </button>
+          <button class="btn btn-warning" onclick="showPendingApprovals()">
+            <i class="fas fa-user-check"></i>
+            Pending Approvals
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="adjustments-section">
+        <h4 class="section-title">
+          <i class="fas fa-filter"></i>
+          Filters
+        </h4>
+
+        <div class="filters-row">
+          <div class="filter-group">
+            <label>Type:</label>
+            <select id="type-filter" onchange="loadAdjustments()">
+              <option value="all">All Types</option>
+              <option value="balance_adjustment">Balance Adjustment</option>
+              <option value="bet_correction">Bet Correction</option>
+              <option value="bonus_adjustment">Bonus Adjustment</option>
+              <option value="fee_reversal">Fee Reversal</option>
+              <option value="limit_adjustment">Limit Adjustment</option>
+              <option value="account_freeze">Account Freeze</option>
+              <option value="account_unfreeze">Account Unfreeze</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Status:</label>
+            <select id="status-filter" onchange="loadAdjustments()">
+              <option value="all">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="pending_approval">Pending Approval</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Customer:</label>
+            <input type="text" id="customer-filter" placeholder="Search customer..." onkeyup="filterAdjustments()" />
+          </div>
+
+          <div class="filter-group">
+            <label>Date From:</label>
+            <input type="date" id="date-from-filter" onchange="loadAdjustments()" />
+          </div>
+
+          <div class="filter-group">
+            <label>Date To:</label>
+            <input type="date" id="date-to-filter" onchange="loadAdjustments()" />
+          </div>
+
+          <button class="btn btn-secondary" onclick="loadAdjustments()">
+            <i class="fas fa-refresh"></i>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Adjustments List -->
+      <div class="adjustments-section">
+        <h4 class="section-title">
+          <i class="fas fa-list"></i>
+          Adjustments History
+          <span class="adjustment-count" id="adjustment-count">(0 adjustments)</span>
+        </h4>
+
+        <div class="adjustments-list" id="adjustments-list">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading adjustments...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="adjustment-info">
+        <span id="last-updated">Last updated: Loading...</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+          <i class="fas fa-eraser"></i>
+          Clear Filters
+        </button>
+        <button type="button" class="btn btn-primary" onclick="refreshAdjustments()">
+          <i class="fas fa-sync"></i>
+          Refresh All
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Adjustment Modal -->
+<div id="new-adjustment-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container medium-modal">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-plus"></i>
+        Create New Adjustment
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <form id="new-adjustment-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="adjustment-customer">Customer ID:</label>
+            <input type="text" id="adjustment-customer" required placeholder="CUST_001" />
+          </div>
+
+          <div class="form-group">
+            <label for="adjustment-type">Adjustment Type:</label>
+            <select id="adjustment-type" required onchange="onAdjustmentTypeChange()">
+              <option value="">Select Type</option>
+              <option value="balance_adjustment">Balance Adjustment</option>
+              <option value="bet_correction">Bet Correction</option>
+              <option value="bonus_adjustment">Bonus Adjustment</option>
+              <option value="fee_reversal">Fee Reversal</option>
+              <option value="limit_adjustment">Limit Adjustment</option>
+              <option value="account_freeze">Account Freeze</option>
+              <option value="account_unfreeze">Account Unfreeze</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adjustment-description">Description:</label>
+          <input type="text" id="adjustment-description" required placeholder="Brief description of the adjustment" />
+        </div>
+
+        <div class="form-group" id="amount-group" style="display: none">
+          <label for="adjustment-amount">Amount:</label>
+          <input type="number" id="adjustment-amount" step="0.01" placeholder="0.00" />
+          <small class="form-hint">Use negative amounts for deductions</small>
+        </div>
+
+        <div class="form-group">
+          <label for="adjustment-reason">Reason:</label>
+          <textarea id="adjustment-reason" rows="3" placeholder="Detailed reason for this adjustment"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="adjustment-notes">Additional Notes:</label>
+          <textarea id="adjustment-notes" rows="2" placeholder="Any additional notes or comments"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="adjustment-processed-by">Processed By:</label>
+          <input type="text" id="adjustment-processed-by" value="Agent" required />
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="requires-approval" />
+            Requires Manager Approval
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeNewAdjustmentModal()">
+          <i class="fas fa-times"></i>
+          Cancel
+        </button>
+        <button type="button" class="btn btn-success" onclick="createAdjustment()">
+          <i class="fas fa-check"></i>
+          Create Adjustment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Adjustment Details Modal -->
+<div id="adjustment-details-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container medium-modal">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-info-circle"></i>
+        Adjustment Details
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="adjustment-details" id="adjustment-details">
+        <!-- Adjustment details will be populated here -->
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeAdjustmentDetailsModal()">
+          <i class="fas fa-times"></i>
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" onclick="printAdjustment()" style="display: none" id="print-btn">
+          <i class="fas fa-print"></i>
+          Print
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Styles -->
+<style>
+  .large-modal .modal-container {
+    max-width: 1400px;
+    width: 95%;
+  }
+
+  .medium-modal .modal-container {
+    max-width: 800px;
+    width: 90%;
+  }
+
+  .dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 12px;
+    border: 2px solid var(--border-color, #e0e0e0);
+    transition: all 0.3s ease;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .metric-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    color: white;
+    font-size: 1.2rem;
+  }
+
+  .metric-icon.total {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+  }
+
+  .metric-icon.pending {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+  }
+
+  .metric-icon.amount {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+  }
+
+  .metric-icon.today {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+  }
+
+  .metric-content {
+    flex: 1;
+  }
+
+  .metric-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color, #333333);
+    margin-bottom: 4px;
+  }
+
+  .metric-label {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .quick-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filters-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    flex-wrap: wrap;
+  }
+
+  .filters-row .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 140px;
+  }
+
+  .filters-row label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-color, #333333);
+  }
+
+  .filters-row select,
+  .filters-row input {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+  }
+
+  .adjustments-list {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: white;
+  }
+
+  .adjustment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .adjustment-item:hover {
+    background: var(--surface-secondary, #f8f9fa);
+  }
+
+  .adjustment-item:last-child {
+    border-bottom: none;
+  }
+
+  .adjustment-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .adjustment-primary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .adjustment-customer {
+    font-weight: 600;
+    color: var(--text-color, #333333);
+    font-size: 1.1rem;
+  }
+
+  .adjustment-type {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .adjustment-type.balance_adjustment {
+    background: rgba(0, 123, 255, 0.1);
+    color: var(--primary-color, #007bff);
+  }
+
+  .adjustment-type.bet_correction {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color, #ffc107);
+  }
+
+  .adjustment-type.bonus_adjustment {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--success-color, #198754);
+  }
+
+  .adjustment-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    flex-wrap: wrap;
+  }
+
+  .adjustment-amount {
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .adjustment-amount.positive {
+    color: var(--success-color, #28a745);
+  }
+
+  .adjustment-amount.negative {
+    color: var(--danger-color, #dc3545);
+  }
+
+  .adjustment-status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .status-completed {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--success-color, #198754);
+  }
+
+  .status-pending_approval {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color, #ffc107);
+  }
+
+  .status-cancelled {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color, #dc3545);
+  }
+
+  .adjustment-actions {
+    display: flex;
+    gap: 8px;
+    min-width: 120px;
+  }
+
+  .btn-small {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+
+  .adjustment-count {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    font-weight: normal;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .form-row .form-group {
+    flex: 1;
+  }
+
+  .form-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted, #666666);
+    margin-top: 4px;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: normal;
+  }
+
+  .adjustment-summary {
+    background: var(--surface-secondary, #f8f9fa);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  .adjustment-summary h5 {
+    margin: 0 0 12px 0;
+    color: var(--text-color, #333333);
+  }
+
+  .adjustment-summary p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .large-modal .modal-container {
+      width: 98%;
+      margin: 10px;
+    }
+
+    .dashboard-cards {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .filters-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filters-row .filter-group {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .filters-row label {
+      min-width: 80px;
+      margin-bottom: 0;
+    }
+
+    .adjustment-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .adjustment-meta {
+      flex-wrap: wrap;
+    }
+
+    .adjustment-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .adjustment-amount {
+      text-align: right;
+    }
+
+    .form-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dashboard-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+      padding: 16px;
+    }
+
+    .metric-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+    }
+
+    .quick-actions {
+      flex-direction: column;
+    }
+
+    .quick-actions .btn {
+      width: 100%;
+    }
+
+    .adjustment-primary {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .adjustment-customer {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<!-- Adjustments Modal JavaScript -->
+<script>
+  // Global variables for adjustments
+  let currentAdjustments = [];
+  let adjustmentTypes = {};
+  let dashboardData = null;
+
+  // Adjustments Modal Functions
+  function openAdjustmentsModal() {
+    const modal = document.getElementById('adjustments-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      // Load initial data
+      loadAdjustmentTypes();
+      loadAdjustments();
+    }
+  }
+
+  function closeAdjustmentsModal() {
+    const modal = document.getElementById('adjustments-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  }
+
+  function closeNewAdjustmentModal() {
+    const modal = document.getElementById('new-adjustment-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  function closeAdjustmentDetailsModal() {
+    const modal = document.getElementById('adjustment-details-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  async function loadAdjustmentTypes() {
+    try {
+      const response = await fetch('/api/other/adjustments/types', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        adjustmentTypes = data.data.types;
+      }
+    } catch (error) {
+      console.error('Error loading adjustment types:', error);
+    }
+  }
+
+  async function loadAdjustments() {
+    const typeFilter = document.getElementById('type-filter').value;
+    const statusFilter = document.getElementById('status-filter').value;
+    const dateFrom = document.getElementById('date-from-filter').value;
+    const dateTo = document.getElementById('date-to-filter').value;
+    const adjustmentsList = document.getElementById('adjustments-list');
+
+    // Show loading state
+    adjustmentsList.innerHTML = `
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Loading adjustments...</span>
+    </div>
+  `;
+
+    try {
+      const params = new URLSearchParams();
+      if (typeFilter !== 'all') params.append('type', typeFilter);
+      if (statusFilter !== 'all') params.append('status', statusFilter);
+      if (dateFrom) params.append('dateFrom', dateFrom);
+      if (dateTo) params.append('dateTo', dateTo);
+
+      const response = await fetch(`/api/other/adjustments/history?${params}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        currentAdjustments = data.data.adjustments;
+        updateDashboardMetrics(data.data.summary);
+        displayAdjustments(currentAdjustments);
+        updateLastUpdated();
+        updateAdjustmentCount(currentAdjustments.length);
+      } else {
+        showNoAdjustments();
+      }
+    } catch (error) {
+      console.error('Error loading adjustments:', error);
+      adjustmentsList.innerHTML = `
+      <div style="padding: 40px; text-align: center; color: var(--danger-color, #dc3545);">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 12px;"></i>
+        <div>Failed to load adjustments: ${error.message}</div>
+        <button onclick="loadAdjustments()" style="margin-top: 12px; padding: 8px 16px; background: var(--primary-color, #007bff); color: white; border: none; border-radius: 4px; cursor: pointer;">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+    `;
+    }
+  }
+
+  function updateDashboardMetrics(summary) {
+    document.getElementById('total-adjustments').textContent = summary.totalAdjustments || 0;
+    document.getElementById('pending-approvals').textContent = summary.pendingAdjustments || 0;
+    document.getElementById('total-adjusted').textContent = `$${summary.totalAmountAdjusted?.toFixed(2) || '0.00'}`;
+    document.getElementById('adjustments-today').textContent = summary.completedAdjustments || 0;
+  }
+
+  function displayAdjustments(adjustments) {
+    const adjustmentsList = document.getElementById('adjustments-list');
+
+    if (!adjustments || adjustments.length === 0) {
+      showNoAdjustments();
+      return;
+    }
+
+    adjustmentsList.innerHTML = adjustments
+      .map(
+        adjustment => `
+    <div class="adjustment-item" onclick="showAdjustmentDetails('${adjustment.id}')">
+      <div class="adjustment-info">
+        <div class="adjustment-primary">
+          <div class="adjustment-customer">${adjustment.customerName}</div>
+          <span class="adjustment-type ${adjustment.type}">${adjustment.type.replace(/_/g, ' ')}</span>
+        </div>
+        <div class="adjustment-meta">
+          <div>${adjustment.description}</div>
+          <div>Processed: ${new Date(adjustment.processedAt).toLocaleDateString()}</div>
+          <div>By: ${adjustment.processedBy}</div>
+        </div>
+      </div>
+      <div class="adjustment-amount ${adjustment.amount >= 0 ? 'positive' : 'negative'}">
+        ${adjustment.amount >= 0 ? '+' : ''}$${Math.abs(adjustment.amount).toFixed(2)}
+      </div>
+      <div class="adjustment-status status-${adjustment.status}">
+        ${adjustment.status.replace(/_/g, ' ')}
+      </div>
+      <div class="adjustment-actions">
+        ${
+          adjustment.status === 'pending_approval'
+            ? `
+          <button class="btn btn-success btn-small" onclick="event.stopPropagation(); approveAdjustment('${adjustment.id}')">
+            <i class="fas fa-check"></i>
+            Approve
+          </button>
+        `
+            : ''
+        }
+        <button class="btn btn-info btn-small" onclick="event.stopPropagation(); showAdjustmentDetails('${adjustment.id}')">
+          <i class="fas fa-eye"></i>
+          View
+        </button>
+      </div>
+    </div>
+  `
+      )
+      .join('');
+  }
+
+  function showNoAdjustments() {
+    const adjustmentsList = document.getElementById('adjustments-list');
+    adjustmentsList.innerHTML = `
+    <div style="padding: 60px; text-align: center; color: var(--text-muted, #666666);">
+      <i class="fas fa-sliders-h" style="font-size: 4rem; margin-bottom: 16px; opacity: 0.5;"></i>
+      <div style="font-size: 1.2rem; margin-bottom: 8px;">No adjustments found</div>
+      <div>Use the filters above or create a new adjustment</div>
+    </div>
+  `;
+  }
+
+  function updateAdjustmentCount(count) {
+    document.getElementById('adjustment-count').textContent = `(${count} adjustment${count !== 1 ? 's' : ''})`;
+  }
+
+  function updateLastUpdated() {
+    const now = new Date();
+    document.getElementById('last-updated').textContent = `Last updated: ${now.toLocaleString()}`;
+  }
+
+  function filterAdjustments() {
+    const customerFilter = document.getElementById('customer-filter').value.toLowerCase();
+
+    if (!customerFilter) {
+      displayAdjustments(currentAdjustments);
+      return;
+    }
+
+    const filtered = currentAdjustments.filter(
+      adjustment =>
+        adjustment.customerName.toLowerCase().includes(customerFilter) ||
+        adjustment.customerId.toLowerCase().includes(customerFilter)
+    );
+
+    displayAdjustments(filtered);
+    updateAdjustmentCount(filtered.length);
+  }
+
+  function showNewAdjustmentModal() {
+    // Reset form
+    document.getElementById('new-adjustment-form').reset();
+    document.getElementById('amount-group').style.display = 'none';
+
+    // Show modal
+    document.getElementById('new-adjustment-modal').style.display = 'flex';
+  }
+
+  function onAdjustmentTypeChange() {
+    const type = document.getElementById('adjustment-type').value;
+    const amountGroup = document.getElementById('amount-group');
+
+    if (adjustmentTypes[type] && adjustmentTypes[type].requiresAmount) {
+      amountGroup.style.display = 'block';
+    } else {
+      amountGroup.style.display = 'none';
+    }
+  }
+
+  async function createAdjustment() {
+    const formData = {
+      customerId: document.getElementById('adjustment-customer').value,
+      type: document.getElementById('adjustment-type').value,
+      description: document.getElementById('adjustment-description').value,
+      amount: parseFloat(document.getElementById('adjustment-amount').value) || 0,
+      reason: document.getElementById('adjustment-reason').value,
+      notes: document.getElementById('adjustment-notes').value,
+      processedBy: document.getElementById('adjustment-processed-by').value,
+      requiresApproval: document.getElementById('requires-approval').checked,
+    };
+
+    // Validate required fields
+    if (!formData.customerId || !formData.type || !formData.description || !formData.processedBy) {
+      showError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/other/adjustments/create', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        showSuccess(data.message || 'Adjustment created successfully');
+        closeNewAdjustmentModal();
+
+        // Refresh data
+        loadAdjustments();
+      } else {
+        throw new Error(data.message || 'Failed to create adjustment');
+      }
+    } catch (error) {
+      console.error('Error creating adjustment:', error);
+      showError('Failed to create adjustment: ' + error.message);
+    }
+  }
+
+  async function approveAdjustment(adjustmentId) {
+    try {
+      const response = await fetch('/api/other/adjustments/approve', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: adjustmentId,
+          approvedBy: 'Manager', // In real implementation, get from current user
+          notes: 'Approved via dashboard',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        showSuccess('Adjustment approved successfully');
+
+        // Refresh data
+        loadAdjustments();
+      } else {
+        throw new Error(data.message || 'Failed to approve adjustment');
+      }
+    } catch (error) {
+      console.error('Error approving adjustment:', error);
+      showError('Failed to approve adjustment: ' + error.message);
+    }
+  }
+
+  function showAdjustmentDetails(adjustmentId) {
+    const adjustment = currentAdjustments.find(a => a.id === adjustmentId);
+    if (!adjustment) return;
+
+    const detailsHtml = `
+    <div class="adjustment-summary">
+      <h5>Adjustment Details</h5>
+      <p><strong>ID:</strong> ${adjustment.id}</p>
+      <p><strong>Customer:</strong> ${adjustment.customerName} (${adjustment.customerId})</p>
+      <p><strong>Type:</strong> ${adjustment.type.replace(/_/g, ' ')}</p>
+      <p><strong>Description:</strong> ${adjustment.description}</p>
+      <p><strong>Amount:</strong> $${adjustment.amount.toFixed(2)}</p>
+      <p><strong>Previous Balance:</strong> $${adjustment.previousBalance?.toFixed(2) || 'N/A'}</p>
+      <p><strong>New Balance:</strong> $${adjustment.newBalance?.toFixed(2) || 'N/A'}</p>
+      <p><strong>Status:</strong> ${adjustment.status.replace(/_/g, ' ')}</p>
+      <p><strong>Processed By:</strong> ${adjustment.processedBy}</p>
+      <p><strong>Processed At:</strong> ${new Date(adjustment.processedAt).toLocaleString()}</p>
+      ${adjustment.approvedBy ? `<p><strong>Approved By:</strong> ${adjustment.approvedBy}</p>` : ''}
+      ${adjustment.approvedAt ? `<p><strong>Approved At:</strong> ${new Date(adjustment.approvedAt).toLocaleString()}</p>` : ''}
+      ${adjustment.reason ? `<p><strong>Reason:</strong> ${adjustment.reason}</p>` : ''}
+      ${adjustment.notes ? `<p><strong>Notes:</strong> ${adjustment.notes}</p>` : ''}
+    </div>
+  `;
+
+    document.getElementById('adjustment-details').innerHTML = detailsHtml;
+
+    // Show print button for completed adjustments
+    const printBtn = document.getElementById('print-btn');
+    if (adjustment.status === 'completed') {
+      printBtn.style.display = 'inline-block';
+    } else {
+      printBtn.style.display = 'none';
+    }
+
+    document.getElementById('adjustment-details-modal').style.display = 'flex';
+  }
+
+  function clearFilters() {
+    document.getElementById('type-filter').value = 'all';
+    document.getElementById('status-filter').value = 'all';
+    document.getElementById('customer-filter').value = '';
+    document.getElementById('date-from-filter').value = '';
+    document.getElementById('date-to-filter').value = '';
+
+    loadAdjustments();
+  }
+
+  function refreshAdjustments() {
+    loadAdjustments();
+  }
+
+  function showBulkAdjustmentModal() {
+    showError('Bulk adjustments feature coming soon');
+  }
+
+  function showPendingApprovals() {
+    document.getElementById('status-filter').value = 'pending_approval';
+    loadAdjustments();
+  }
+
+  function exportAdjustments() {
+    // Create CSV export of current adjustments
+    if (currentAdjustments.length === 0) {
+      showError('No adjustments to export');
+      return;
+    }
+
+    const headers = ['ID', 'Customer', 'Type', 'Description', 'Amount', 'Status', 'Processed By', 'Processed At'];
+    const csvContent = [
+      headers.join(','),
+      ...currentAdjustments.map(a =>
+        [
+          `"${a.id}"`,
+          `"${a.customerName}"`,
+          `"${a.type}"`,
+          `"${a.description}"`,
+          a.amount,
+          `"${a.status}"`,
+          `"${a.processedBy}"`,
+          `"${new Date(a.processedAt).toLocaleDateString()}"`,
+        ].join(',')
+      ),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `adjustments_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showSuccess('Adjustments exported successfully');
+  }
+
+  function printAdjustment() {
+    window.print();
+  }
+
+  // Helper functions (should be defined elsewhere in your app)
+  function getAuthToken() {
+    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  }
+
+  function showSuccess(message) {
+    console.log('✅ Success:', message);
+    // Implement your success notification system
+    alert('Success: ' + message);
+  }
+
+  function showError(message) {
+    console.error('❌ Error:', message);
+    // Implement your error notification system
+    alert('Error: ' + message);
+  }
+
+  // Export functions for global access
+  window.openAdjustmentsModal = openAdjustmentsModal;
+  window.closeAdjustmentsModal = closeAdjustmentsModal;
+  window.closeNewAdjustmentModal = closeNewAdjustmentModal;
+  window.closeAdjustmentDetailsModal = closeAdjustmentDetailsModal;
+  window.loadAdjustments = loadAdjustments;
+  window.refreshAdjustments = refreshAdjustments;
+  window.exportAdjustments = exportAdjustments;
+</script>

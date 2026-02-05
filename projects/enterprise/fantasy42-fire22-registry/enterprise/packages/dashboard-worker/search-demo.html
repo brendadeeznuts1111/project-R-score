@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔍 Fire22 Account Search Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .search-results {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .search-result-item:hover {
+        background-color: #f8fafc;
+      }
+      .highlight {
+        background-color: #fef3c7;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+      .loading-spinner {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">🔍 Fire22 Account Search</h1>
+          <p class="text-gray-600">Advanced search functionality for customers and agents</p>
+        </div>
+
+        <!-- Search Interface -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <h2 class="text-xl font-semibold mb-4">Search Accounts</h2>
+
+          <!-- Search Input -->
+          <div class="relative mb-4">
+            <input
+              type="text"
+              id="account-search"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Search customers, agents, or accounts..."
+              autocomplete="off"
+            />
+            <div
+              id="search-results"
+              class="search-results absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-10 hidden"
+            >
+              <!-- Results will be populated here -->
+            </div>
+          </div>
+
+          <!-- Search Options -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Search Type</label>
+              <select id="search-type" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                <option value="all">All Accounts</option>
+                <option value="customers">Customers Only</option>
+                <option value="agents">Agents Only</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select id="status-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+              <select id="sort-by" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                <option value="name">Name</option>
+                <option value="balance">Balance</option>
+                <option value="lastActivity">Last Activity</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Search Stats -->
+          <div id="search-stats" class="text-sm text-gray-600 hidden">
+            Found
+            <span id="result-count">0</span>
+            results in
+            <span id="search-time">0</span>
+            ms
+          </div>
+        </div>
+
+        <!-- Sample Data Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <h2 class="text-xl font-semibold mb-4">📊 Sample Search Queries</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <h3 class="font-medium text-gray-800">Customer Searches:</h3>
+              <div class="space-y-1 text-sm">
+                <div class="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100" onclick="searchSample('BB100')">
+                  BB100
+                </div>
+                <div class="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100" onclick="searchSample('sam')">
+                  sam
+                </div>
+                <div class="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100" onclick="searchSample('john')">
+                  john
+                </div>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <h3 class="font-medium text-gray-800">Agent Searches:</h3>
+              <div class="space-y-1 text-sm">
+                <div class="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100" onclick="searchSample('BLAKE')">
+                  BLAKE
+                </div>
+                <div class="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100" onclick="searchSample('CSCALVIN')">
+                  CSCALVIN
+                </div>
+                <div class="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100" onclick="searchSample('MIYUKI')">
+                  MIYUKI
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Features Overview -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">✨ Search Features</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-medium text-gray-800 mb-2">🔍 Smart Search</h3>
+              <ul class="text-sm text-gray-600 space-y-1">
+                <li>• Real-time search with 300ms debounce</li>
+                <li>• Intelligent match scoring</li>
+                <li>• Highlighted search terms</li>
+                <li>• Fuzzy matching capabilities</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800 mb-2">🎯 Advanced Filtering</h3>
+              <ul class="text-sm text-gray-600 space-y-1">
+                <li>• Status-based filtering</li>
+                <li>• Balance range filters</li>
+                <li>• Agent assignment filters</li>
+                <li>• Activity date filters</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800 mb-2">📊 Rich Results</h3>
+              <ul class="text-sm text-gray-600 space-y-1">
+                <li>• Customer balance information</li>
+                <li>• Agent hierarchy details</li>
+                <li>• Last activity timestamps</li>
+                <li>• Status indicators</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800 mb-2">🚀 Performance</h3>
+              <ul class="text-sm text-gray-600 space-y-1">
+                <li>• Sub-200ms response times</li>
+                <li>• Parallel search execution</li>
+                <li>• Intelligent caching</li>
+                <li>• Optimized database queries</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search JavaScript -->
+    <script type="module">
+      import { initializeAccountSearch } from './src/components/account-search.ts';
+
+      class SearchDemo {
+        constructor() {
+          this.searchInput = document.getElementById('account-search');
+          this.resultsContainer = document.getElementById('search-results');
+          this.searchStats = document.getElementById('search-stats');
+          this.searchType = document.getElementById('search-type');
+          this.statusFilter = document.getElementById('status-filter');
+          this.sortBy = document.getElementById('sort-by');
+
+          this.searchTimeout = null;
+          this.currentQuery = '';
+          this.isLoading = false;
+
+          this.initializeSearch();
+          this.bindEvents();
+        }
+
+        initializeSearch() {
+          // Setup results container styling
+          this.resultsContainer.style.cssText = `
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border: 1px solid #d1d5db;
+                    border-radius: 8px;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                    max-height: 300px;
+                    overflow-y: auto;
+                    z-index: 1000;
+                    display: none;
+                `;
+        }
+
+        bindEvents() {
+          this.searchInput.addEventListener('input', e => this.handleInput(e));
+          this.searchInput.addEventListener('keydown', e => this.handleKeydown(e));
+          this.searchInput.addEventListener('focus', () => this.handleFocus());
+          this.searchInput.addEventListener('blur', () => this.handleBlur());
+
+          // Filter change events
+          this.searchType.addEventListener('change', () => this.updateSearchCriteria());
+          this.statusFilter.addEventListener('change', () => this.updateSearchCriteria());
+          this.sortBy.addEventListener('change', () => this.updateSearchCriteria());
+        }
+
+        handleInput(event) {
+          const query = event.target.value.trim();
+
+          if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+          }
+
+          this.currentQuery = query;
+
+          if (query.length === 0) {
+            this.hideResults();
+            return;
+          }
+
+          if (query.length >= 2) {
+            this.searchTimeout = setTimeout(() => {
+              this.performSearch(query);
+            }, 300);
+          }
+        }
+
+        handleKeydown(event) {
+          if (event.key === 'Escape') {
+            this.hideResults();
+          } else if (event.key === 'Enter') {
+            event.preventDefault();
+            this.selectFirstResult();
+          }
+        }
+
+        handleFocus() {
+          if (this.currentQuery.length >= 2 && this.resultsContainer.children.length > 0) {
+            this.showResults();
+          }
+        }
+
+        handleBlur() {
+          setTimeout(() => {
+            this.hideResults();
+          }, 200);
+        }
+
+        updateSearchCriteria() {
+          if (this.currentQuery.length >= 2) {
+            this.performSearch(this.currentQuery);
+          }
+        }
+
+        async performSearch(query) {
+          if (this.isLoading) return;
+
+          this.isLoading = true;
+          this.showLoadingState();
+
+          try {
+            const criteria = {
+              query,
+              type: this.searchType.value,
+              filters: {
+                status: this.statusFilter.value || undefined,
+              },
+              sortBy: this.sortBy.value,
+              sortOrder: 'asc',
+              limit: 10,
+            };
+
+            const response = await this.searchAccounts(criteria);
+
+            if (response.success) {
+              this.displayResults(response.results, query);
+              this.updateSearchStats(response);
+            } else {
+              this.showError('Search failed: ' + response.error);
+            }
+          } catch (error) {
+            console.error('Search error:', error);
+            this.showError('Search failed: ' + error.message);
+          } finally {
+            this.isLoading = false;
+          }
+        }
+
+        async searchAccounts(criteria) {
+          // Mock search for demo - in real implementation, this would call the API
+          const startTime = Date.now();
+
+          // Simulate API delay
+          await new Promise(resolve => setTimeout(resolve, 200));
+
+          // Mock data based on query
+          const mockResults = this.generateMockResults(criteria.query, criteria);
+
+          return {
+            success: true,
+            results: mockResults,
+            totalCount: mockResults.length,
+            searchTime: Date.now() - startTime,
+            query: criteria.query,
+          };
+        }
+
+        generateMockResults(query, criteria) {
+          const mockData = [
+            {
+              id: 'BB100',
+              type: 'customer',
+              name: 'Sam Johnson',
+              customerId: 'BB100',
+              agentId: 'BLAKEPPH',
+              balance: 2500.0,
+              status: 'active',
+              tier: 'standard',
+              lastActivity: '2024-01-15T10:30:00Z',
+              matchScore: 95,
+            },
+            {
+              id: 'BB1018',
+              type: 'customer',
+              name: 'John Smith',
+              customerId: 'BB1018',
+              agentId: 'CSCALVIN',
+              balance: 1250.75,
+              status: 'active',
+              tier: 'vip',
+              lastActivity: '2024-01-15T09:15:00Z',
+              matchScore: 88,
+            },
+            {
+              id: 'BLAKEPPH',
+              type: 'agent',
+              name: 'Blake Professional',
+              agentId: 'BLAKEPPH',
+              status: 'active',
+              tier: 'master_agent',
+              lastActivity: '2024-01-15T11:45:00Z',
+              matchScore: 92,
+            },
+          ];
+
+          return mockData
+            .filter(item => {
+              // Filter by type
+              if (criteria.type !== 'all') {
+                if (criteria.type === 'customers' && item.type !== 'customer') return false;
+                if (criteria.type === 'agents' && item.type !== 'agent') return false;
+              }
+
+              // Filter by status
+              if (criteria.filters?.status && item.status !== criteria.filters.status) {
+                return false;
+              }
+
+              // Filter by search query
+              const searchFields = [item.name, item.customerId, item.agentId].filter(Boolean);
+              return searchFields.some(field => field.toLowerCase().includes(query.toLowerCase()));
+            })
+            .sort((a, b) => {
+              if (criteria.sortBy === 'balance') {
+                return (b.balance || 0) - (a.balance || 0);
+              }
+              return b.matchScore - a.matchScore;
+            })
+            .slice(0, criteria.limit);
+        }
+
+        displayResults(results, query) {
+          this.resultsContainer.innerHTML = '';
+
+          if (results.length === 0) {
+            this.showNoResults(query);
+            return;
+          }
+
+          results.forEach(result => {
+            const resultItem = this.createResultItem(result, query);
+            this.resultsContainer.appendChild(resultItem);
+          });
+
+          this.showResults();
+        }
+
+        createResultItem(result, query) {
+          const item = document.createElement('div');
+          item.className = 'search-result-item p-3 border-b border-gray-200 hover:bg-gray-50 cursor-pointer';
+
+          const icon = result.type === 'customer' ? '👤' : '👨‍💼';
+          const statusColor = result.status === 'active' ? 'text-green-600' : 'text-gray-500';
+
+          item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="text-lg">${icon}</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900">${this.highlightText(result.name, query)}</div>
+                            <div class="text-sm text-gray-600">
+                                ${result.customerId || result.agentId}
+                                ${result.balance ? ` • $${result.balance.toFixed(2)}` : ''}
+                                ${result.agentId && result.type === 'customer' ? ` • Agent: ${result.agentId}` : ''}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs ${statusColor} font-medium">${result.status.toUpperCase()}</div>
+                            <div class="text-xs text-gray-500">${result.type}</div>
+                        </div>
+                    </div>
+                `;
+
+          item.addEventListener('click', () => {
+            this.selectResult(result);
+          });
+
+          return item;
+        }
+
+        highlightText(text, query) {
+          if (!query) return text;
+          const regex = new RegExp(`(${query})`, 'gi');
+          return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        selectResult(result) {
+          this.hideResults();
+
+          // Update search input
+          this.searchInput.value = result.name;
+
+          // Show result details (in a real implementation, this would navigate or show details)
+          console.log('Selected result:', result);
+          alert(`Selected: ${result.name} (${result.type})`);
+        }
+
+        selectFirstResult() {
+          const firstResult = this.resultsContainer.querySelector('.search-result-item');
+          if (firstResult) {
+            firstResult.click();
+          }
+        }
+
+        showLoadingState() {
+          this.resultsContainer.innerHTML = `
+                    <div class="p-4 text-center text-gray-600">
+                        <div class="loading-spinner inline-block mr-2"></div>
+                        Searching...
+                    </div>
+                `;
+          this.showResults();
+        }
+
+        showNoResults(query) {
+          this.resultsContainer.innerHTML = `
+                    <div class="p-4 text-center text-gray-600">
+                        No results found for "${query}"
+                    </div>
+                `;
+          this.showResults();
+        }
+
+        showError(message) {
+          this.resultsContainer.innerHTML = `
+                    <div class="p-4 text-center text-red-600">
+                        ❌ ${message}
+                    </div>
+                `;
+          this.showResults();
+        }
+
+        updateSearchStats(response) {
+          document.getElementById('result-count').textContent = response.totalCount;
+          document.getElementById('search-time').textContent = response.searchTime;
+          this.searchStats.classList.remove('hidden');
+        }
+
+        showResults() {
+          this.resultsContainer.style.display = 'block';
+        }
+
+        hideResults() {
+          this.resultsContainer.style.display = 'none';
+        }
+      }
+
+      // Initialize search demo
+      const searchDemo = new SearchDemo();
+
+      // Global function for sample searches
+      window.searchSample = query => {
+        document.getElementById('account-search').value = query;
+        document.getElementById('account-search').dispatchEvent(new Event('input'));
+      };
+
+      console.log('🔍 Fire22 Account Search Demo initialized');
+    </script>
+  </body>
+</html>

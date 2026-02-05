@@ -1,0 +1,91 @@
+{
+  "name": "@fire22/security-core",
+  "version": "1.0.0",
+  "description": "Fire22 Security Core - Bun native security APIs, credential management, and vulnerability scanning",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./secrets": {
+      "import": "./dist/secrets.js",
+      "types": "./dist/secrets.d.ts"
+    },
+    "./scanner": {
+      "import": "./dist/scanner.js",
+      "types": "./dist/scanner.d.ts"
+    },
+    "./env": {
+      "import": "./dist/env.js",
+      "types": "./dist/env.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "types": "./dist/types.d.ts"
+    }
+  },
+  "bin": {
+    "fire22-security": "./bin/fire22-security.js",
+    "f22-sec": "./bin/fire22-security.js"
+  },
+  "files": [
+    "dist/",
+    "bin/",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=node --outdir=dist --format=esm",
+    "build:types": "tsc --emitDeclarationOnly --declaration",
+    "build:bin": "bun build ./src/cli.ts --target=bun --outfile=bin/fire22-security.js --format=esm",
+    "build:all": "bun run build && bun run build:types && bun run build:bin",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "test:security": "bun test --grep security",
+    "demo": "bun run src/demo.ts",
+    "prepublishOnly": "bun run build:all"
+  },
+  "dependencies": {
+    "@fire22/core": "workspace:*",
+    "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [
+    "fire22",
+    "security",
+    "bun",
+    "secrets",
+    "scanner",
+    "credentials",
+    "vulnerability",
+    "native"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/security-core"
+  },
+  "engines": {
+    "bun": ">=1.2.21",
+    "node": ">=18.0.0"
+  },
+  "trustedDependencies": [
+    "@fire22/core",
+    "zod"
+  ]
+}

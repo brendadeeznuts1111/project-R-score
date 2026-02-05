@@ -1,0 +1,760 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fire22 Dashboard Error Code Registry",
+  "description": "Comprehensive machine-readable error code documentation and reference system",
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-28",
+
+  "errorCategories": {
+    "SYSTEM": {
+      "prefix": "E1",
+      "name": "System Errors",
+      "description": "Core system initialization and runtime errors",
+      "range": "1000-1999",
+      "severity": "HIGH",
+      "color": "#dc2626"
+    },
+    "DATABASE": {
+      "prefix": "E2",
+      "name": "Database Errors",
+      "description": "Database connection, query, and transaction errors",
+      "range": "2000-2999",
+      "severity": "HIGH",
+      "color": "#ef4444"
+    },
+    "API": {
+      "prefix": "E3",
+      "name": "API Errors",
+      "description": "REST API, authentication, and validation errors",
+      "range": "3000-3999",
+      "severity": "MEDIUM",
+      "color": "#f59e0b"
+    },
+    "NETWORK": {
+      "prefix": "E4",
+      "name": "Network Errors",
+      "description": "DNS, SSL, timeout, and connectivity errors",
+      "range": "4000-4999",
+      "severity": "MEDIUM",
+      "color": "#f97316"
+    },
+    "APPLICATION": {
+      "prefix": "E5",
+      "name": "Application Errors",
+      "description": "Business logic, validation, and resource errors",
+      "range": "5000-5999",
+      "severity": "MEDIUM",
+      "color": "#eab308"
+    },
+    "SECURITY": {
+      "prefix": "E6",
+      "name": "Security Errors",
+      "description": "Authentication, authorization, and security violations",
+      "range": "6000-6999",
+      "severity": "CRITICAL",
+      "color": "#dc2626"
+    },
+    "FIRE22": {
+      "prefix": "E7",
+      "name": "Fire22 Integration Errors",
+      "description": "Fire22 API integration and sports betting specific errors",
+      "range": "7000-7999",
+      "severity": "HIGH",
+      "color": "#fdbb2d"
+    },
+    "TELEGRAM": {
+      "prefix": "E8",
+      "name": "Telegram Integration Errors",
+      "description": "Telegram bot and messaging integration errors",
+      "range": "8000-8999",
+      "severity": "MEDIUM",
+      "color": "#0088cc"
+    }
+  },
+
+  "errorCodes": {
+    "E1001": {
+      "code": "E1001",
+      "name": "SYSTEM_INIT_FAILED",
+      "message": "System initialization failed",
+      "severity": "CRITICAL",
+      "category": "SYSTEM",
+      "httpStatusCode": 500,
+      "description": "Core system components failed to initialize properly. This typically occurs during application startup when essential services cannot be started.",
+      "causes": [
+        "Insufficient system resources (memory, disk space)",
+        "Missing or corrupted configuration files",
+        "Failed dependency injection",
+        "Database connection failure during startup",
+        "Missing environment variables"
+      ],
+      "solutions": [
+        "Check system resources (memory, disk space)",
+        "Verify configuration files syntax and completeness",
+        "Review system logs for detailed error messages",
+        "Validate all required environment variables",
+        "Test database connectivity before startup"
+      ],
+      "documentation": [
+        {
+          "title": "System Troubleshooting Guide",
+          "url": "/docs/system/troubleshooting",
+          "type": "guide"
+        },
+        {
+          "title": "Configuration Reference",
+          "url": "/docs/system/config",
+          "type": "reference"
+        },
+        {
+          "title": "Startup Sequence Documentation",
+          "url": "/docs/system/startup",
+          "type": "specification"
+        }
+      ],
+      "relatedCodes": ["E1002", "E1003", "E2001"],
+      "tags": ["startup", "initialization", "system"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E1002": {
+      "code": "E1002",
+      "name": "MEMORY_LIMIT_EXCEEDED",
+      "message": "Memory limit exceeded",
+      "severity": "ERROR",
+      "category": "SYSTEM",
+      "httpStatusCode": 507,
+      "description": "Application exceeded allocated memory limits, which can cause system instability or crashes.",
+      "causes": [
+        "Memory leak in application code",
+        "Insufficient memory allocation",
+        "Large dataset processing without proper pagination",
+        "Recursive functions causing stack overflow",
+        "Unoptimized database queries loading too much data"
+      ],
+      "solutions": [
+        "Increase memory allocation in configuration",
+        "Implement memory profiling and leak detection",
+        "Optimize data processing with streaming/pagination",
+        "Review and optimize database queries",
+        "Implement garbage collection tuning"
+      ],
+      "documentation": [
+        {
+          "title": "Memory Management Guide",
+          "url": "/docs/system/memory",
+          "type": "guide"
+        },
+        {
+          "title": "Performance Optimization",
+          "url": "/docs/performance/optimization",
+          "type": "guide"
+        },
+        {
+          "title": "Memory Profiling Tools",
+          "url": "/docs/tools/memory-profiling",
+          "type": "reference"
+        }
+      ],
+      "relatedCodes": ["E1001", "E5001"],
+      "tags": ["memory", "performance", "resource"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E2001": {
+      "code": "E2001",
+      "name": "DB_CONNECTION_FAILED",
+      "message": "Database connection failed",
+      "severity": "CRITICAL",
+      "category": "DATABASE",
+      "httpStatusCode": 503,
+      "description": "Unable to establish connection to database server, preventing all data operations.",
+      "causes": [
+        "Database server is down or unreachable",
+        "Invalid connection string or credentials",
+        "Network connectivity issues",
+        "Firewall blocking database port",
+        "Database server resource exhaustion"
+      ],
+      "solutions": [
+        "Verify database server is running and accessible",
+        "Test connection string and credentials",
+        "Check network connectivity to database host",
+        "Verify firewall rules allow database connections",
+        "Monitor database server resources and performance"
+      ],
+      "documentation": [
+        {
+          "title": "Database Setup Guide",
+          "url": "/docs/database/setup",
+          "type": "guide"
+        },
+        {
+          "title": "Connection Troubleshooting",
+          "url": "/docs/database/connection-troubleshooting",
+          "type": "troubleshooting"
+        },
+        {
+          "title": "Database Configuration Reference",
+          "url": "/docs/database/config",
+          "type": "reference"
+        }
+      ],
+      "relatedCodes": ["E2002", "E4001", "E1001"],
+      "tags": ["database", "connection", "infrastructure"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E2002": {
+      "code": "E2002",
+      "name": "DB_QUERY_TIMEOUT",
+      "message": "Database query timeout",
+      "severity": "ERROR",
+      "category": "DATABASE",
+      "httpStatusCode": 504,
+      "description": "Database query exceeded maximum execution time, indicating performance issues.",
+      "causes": [
+        "Inefficient or unoptimized queries",
+        "Missing database indexes",
+        "Large dataset operations without pagination",
+        "Database server resource contention",
+        "Network latency issues"
+      ],
+      "solutions": [
+        "Optimize query performance with proper indexes",
+        "Implement query pagination for large datasets",
+        "Increase query timeout settings if appropriate",
+        "Review and optimize query execution plans",
+        "Monitor database server performance"
+      ],
+      "documentation": [
+        {
+          "title": "Query Optimization Guide",
+          "url": "/docs/database/optimization",
+          "type": "guide"
+        },
+        {
+          "title": "Index Strategy Guide",
+          "url": "/docs/database/indexes",
+          "type": "guide"
+        },
+        {
+          "title": "Performance Monitoring",
+          "url": "/docs/database/monitoring",
+          "type": "guide"
+        }
+      ],
+      "relatedCodes": ["E2001", "E5001"],
+      "tags": ["database", "performance", "timeout"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E3001": {
+      "code": "E3001",
+      "name": "API_UNAUTHORIZED",
+      "message": "Unauthorized API request",
+      "severity": "WARNING",
+      "category": "API",
+      "httpStatusCode": 401,
+      "description": "Request lacks valid authentication credentials or token has expired.",
+      "causes": [
+        "Missing or invalid API key/token",
+        "Expired authentication token",
+        "Incorrect authentication header format",
+        "Revoked or suspended credentials",
+        "Clock skew causing token validation failure"
+      ],
+      "solutions": [
+        "Provide valid API key or authentication token",
+        "Check authentication header format and encoding",
+        "Verify token expiration and refresh if needed",
+        "Ensure system clocks are synchronized",
+        "Contact administrator if credentials are suspended"
+      ],
+      "documentation": [
+        {
+          "title": "API Authentication Guide",
+          "url": "/crystal-clear-architecture/docs/api/authentication",
+          "type": "guide"
+        },
+        {
+          "title": "Token Management",
+          "url": "/crystal-clear-architecture/docs/api/token-management",
+          "type": "reference"
+        },
+        {
+          "title": "API Security Best Practices",
+          "url": "/crystal-clear-architecture/docs/api/security",
+          "type": "guide"
+        }
+      ],
+      "relatedCodes": ["E3002", "E6001"],
+      "tags": ["api", "authentication", "security"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E3002": {
+      "code": "E3002",
+      "name": "API_RATE_LIMIT_EXCEEDED",
+      "message": "Rate limit exceeded",
+      "severity": "WARNING",
+      "category": "API",
+      "httpStatusCode": 429,
+      "description": "Request rate exceeds configured API limits. Implement proper rate limiting handling.",
+      "causes": [
+        "Too many requests in short time period",
+        "Missing rate limiting implementation in client",
+        "Inefficient API usage patterns",
+        "Multiple clients using same credentials",
+        "Burst traffic without proper throttling"
+      ],
+      "solutions": [
+        "Implement exponential backoff retry strategy",
+        "Use request caching to reduce API calls",
+        "Implement request queuing and throttling",
+        "Review and optimize API usage patterns",
+        "Consider upgrading rate limit tier"
+      ],
+      "documentation": [
+        {
+          "title": "Rate Limiting Guide",
+          "url": "/crystal-clear-architecture/docs/api/rate-limits",
+          "type": "guide"
+        },
+        {
+          "title": "API Optimization Strategies",
+          "url": "/crystal-clear-architecture/docs/api/optimization",
+          "type": "guide"
+        },
+        {
+          "title": "Caching Best Practices",
+          "url": "/crystal-clear-architecture/docs/api/caching",
+          "type": "guide"
+        },
+        {
+          "title": "Retry Pattern Implementation",
+          "url": "/crystal-clear-architecture/docs/api/retry-patterns",
+          "type": "guide"
+        }
+      ],
+      "relatedCodes": ["E3001", "E4001"],
+      "tags": ["api", "rate-limiting", "performance"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E4001": {
+      "code": "E4001",
+      "name": "NETWORK_TIMEOUT",
+      "message": "Network request timeout",
+      "severity": "ERROR",
+      "category": "NETWORK",
+      "httpStatusCode": 504,
+      "description": "Network request exceeded timeout duration, indicating connectivity or performance issues.",
+      "causes": [
+        "Slow network connection",
+        "Server overload or unresponsive",
+        "DNS resolution delays",
+        "Network congestion or packet loss",
+        "Insufficient timeout configuration"
+      ],
+      "solutions": [
+        "Increase request timeout settings appropriately",
+        "Check network connectivity and latency",
+        "Implement retry logic with exponential backoff",
+        "Monitor network performance and routing",
+        "Test from different network locations"
+      ],
+      "documentation": [
+        {
+          "title": "Network Configuration Guide",
+          "url": "/docs/network/configuration",
+          "type": "guide"
+        },
+        {
+          "title": "Timeout Settings Reference",
+          "url": "/docs/network/timeouts",
+          "type": "reference"
+        },
+        {
+          "title": "Network Troubleshooting",
+          "url": "/docs/network/troubleshooting",
+          "type": "troubleshooting"
+        }
+      ],
+      "relatedCodes": ["E4002", "E3002"],
+      "tags": ["network", "timeout", "connectivity"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E7001": {
+      "code": "E7001",
+      "name": "FIRE22_API_UNAUTHORIZED",
+      "message": "Fire22 API 401 Unauthorized - Data extraction blocked",
+      "severity": "CRITICAL",
+      "category": "FIRE22",
+      "httpStatusCode": 401,
+      "description": "Fire22 API returning 401 Unauthorized on all endpoints, completely blocking data extraction. This prevents customer sync, agent data, and all sportsbook operations.",
+      "causes": [
+        "Missing Fire22 API authentication token",
+        "Invalid or expired Fire22 credentials",
+        "Incorrect authentication header format",
+        "Fire22 API permissions not granted",
+        "Security team has not provided valid credentials"
+      ],
+      "solutions": [
+        "URGENT: Contact security team for valid Fire22 API credentials",
+        "Verify Fire22 API token format and authentication method",
+        "Check with Fire22 team for API access permissions",
+        "Test credentials against Fire22 staging environment first",
+        "Implement proper credential storage via Bun.secrets"
+      ],
+      "escalationRequired": true,
+      "blocksDataExtraction": true,
+      "affectedOperations": [
+        "Customer data sync (2,600+ records)",
+        "Agent hierarchy extraction",
+        "Transaction history retrieval",
+        "Betting data extraction",
+        "Live wager monitoring"
+      ],
+      "documentation": [
+        {
+          "title": "Fire22 Integration Guide",
+          "url": "/docs/integrations/fire22",
+          "type": "guide"
+        },
+        {
+          "title": "Fire22 API Authentication",
+          "url": "/crystal-clear-architecture/docs/api/fire22-auth",
+          "type": "reference"
+        },
+        {
+          "title": "Data Extraction Troubleshooting",
+          "url": "/docs/troubleshooting/data-extraction",
+          "type": "troubleshooting"
+        }
+      ],
+      "relatedCodes": ["E7002", "E6001", "E3001"],
+      "tags": ["fire22", "api", "unauthorized", "critical", "data-extraction", "blocked"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E7002": {
+      "code": "E7002",
+      "name": "FIRE22_CREDENTIALS_STORAGE_FAILED",
+      "message": "Bun.secrets credential storage not functioning",
+      "severity": "CRITICAL",
+      "category": "FIRE22",
+      "httpStatusCode": 500,
+      "description": "Bun.secrets.get() returning undefined, preventing secure credential retrieval and storage for Fire22 API integration.",
+      "causes": [
+        "Bun.secrets API not properly initialized",
+        "OS credential manager access denied",
+        "Missing Bun runtime permissions",
+        "Keychain/Keyring not accessible",
+        "Credential storage service not running"
+      ],
+      "solutions": [
+        "Verify Bun.secrets API availability and permissions",
+        "Check OS credential manager (Keychain/libsecret/CredMan) status",
+        "Test Bun.secrets with simple credential store/retrieve",
+        "Implement fallback to environment variables temporarily",
+        "Contact infrastructure team for credential storage setup"
+      ],
+      "escalationRequired": true,
+      "blocksDataExtraction": true,
+      "affectedOperations": [
+        "Secure credential storage and retrieval",
+        "Fire22 API authentication",
+        "Multi-environment credential management"
+      ],
+      "documentation": [
+        {
+          "title": "Bun.secrets Integration Guide",
+          "url": "/docs/security/bun-secrets",
+          "type": "guide"
+        },
+        {
+          "title": "Credential Management Best Practices",
+          "url": "/docs/security/credential-management",
+          "type": "guide"
+        }
+      ],
+      "relatedCodes": ["E7001", "E6001"],
+      "tags": ["credentials", "bun-secrets", "security", "critical", "storage"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E7003": {
+      "code": "E7003",
+      "name": "FIRE22_DATABASE_NOT_CONNECTED",
+      "message": "Fire22 database not connected - local data storage blocked",
+      "severity": "CRITICAL",
+      "category": "FIRE22",
+      "httpStatusCode": 503,
+      "description": "SQLite database connection failed, preventing local storage of Fire22 data extraction results.",
+      "causes": [
+        "Database not initialized with connect() method",
+        "SQLite file permissions issues",
+        "Database file corruption",
+        "Insufficient disk space",
+        "Database connection pool exhausted"
+      ],
+      "solutions": [
+        "Run: bun run scripts/verify-fire22-database.ts to initialize",
+        "Check database file permissions: ls -la dashboard.db",
+        "Verify available disk space for database operations",
+        "Test database connection: sqlite3 dashboard.db '.tables'",
+        "Run database schema initialization scripts"
+      ],
+      "escalationRequired": true,
+      "blocksDataExtraction": true,
+      "affectedOperations": [
+        "Local Fire22 data storage",
+        "Customer repository operations",
+        "Agent hierarchy caching",
+        "Transaction logging",
+        "Betting data persistence"
+      ],
+      "documentation": [
+        {
+          "title": "Database Setup Guide",
+          "url": "/docs/database/setup",
+          "type": "guide"
+        },
+        {
+          "title": "Fire22 Database Schema",
+          "url": "/docs/database/fire22-schema",
+          "type": "reference"
+        }
+      ],
+      "relatedCodes": ["E2001", "E7001"],
+      "tags": ["database", "sqlite", "fire22", "critical", "storage"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E7004": {
+      "code": "E7004",
+      "name": "CLOUDFLARE_KV_NAMESPACES_MISSING",
+      "message": "Cloudflare KV namespaces not configured - caching disabled",
+      "severity": "ERROR",
+      "category": "FIRE22",
+      "httpStatusCode": 503,
+      "description": "Cloudflare KV namespaces missing configuration IDs, preventing Fire22 data caching and performance optimization.",
+      "causes": [
+        "KV namespace IDs not set in wrangler.toml",
+        "KV namespaces not created in Cloudflare dashboard",
+        "Incorrect binding names in configuration",
+        "Cloudflare Workers environment not properly configured",
+        "Missing KV namespace permissions"
+      ],
+      "solutions": [
+        "Create KV namespaces: wrangler kv:namespace create fire22-data-cache",
+        "Update wrangler.toml with correct KV namespace IDs",
+        "Verify KV bindings match code expectations",
+        "Test KV access in development environment",
+        "Check Cloudflare Workers KV quota and permissions"
+      ],
+      "escalationRequired": false,
+      "blocksDataExtraction": false,
+      "affectedOperations": [
+        "Fire22 API response caching",
+        "Authentication token caching",
+        "Registry package caching",
+        "Performance optimization"
+      ],
+      "documentation": [
+        {
+          "title": "Cloudflare KV Setup Guide",
+          "url": "/docs/cloudflare/kv-setup",
+          "type": "guide"
+        },
+        {
+          "title": "Workers KV Integration",
+          "url": "/docs/cloudflare/workers-kv",
+          "type": "reference"
+        }
+      ],
+      "relatedCodes": ["E7001", "E4001"],
+      "tags": ["cloudflare", "kv", "caching", "configuration", "performance"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E8001": {
+      "code": "E8001",
+      "name": "TELEGRAM_BOT_AUTHENTICATION_FAILED",
+      "message": "Telegram bot authentication failed",
+      "severity": "ERROR",
+      "category": "TELEGRAM",
+      "httpStatusCode": 401,
+      "description": "Telegram bot token is invalid or expired, preventing bot functionality.",
+      "causes": [
+        "Invalid or expired Telegram bot token",
+        "Bot token revoked by Telegram",
+        "Incorrect bot token configuration",
+        "Network connectivity to Telegram API",
+        "Telegram API service disruption"
+      ],
+      "solutions": [
+        "Verify Telegram bot token validity",
+        "Regenerate bot token if compromised",
+        "Check bot token configuration and format",
+        "Test connectivity to api.telegram.org",
+        "Monitor Telegram API status"
+      ],
+      "documentation": [
+        {
+          "title": "Telegram Integration Guide",
+          "url": "/docs/integrations/telegram",
+          "type": "guide"
+        },
+        {
+          "title": "Telegram Bot Setup",
+          "url": "/docs/integrations/telegram-setup",
+          "type": "guide"
+        },
+        {
+          "title": "Telegram API Reference",
+          "url": "/crystal-clear-architecture/docs/api/telegram-endpoints",
+          "type": "reference"
+        }
+      ],
+      "relatedCodes": ["E8002", "E3001"],
+      "tags": ["telegram", "bot", "authentication", "integration"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    },
+
+    "E1003": {
+      "code": "E1003",
+      "name": "DIRECTORY_NOT_FOUND",
+      "message": "Required directory not found",
+      "severity": "ERROR",
+      "category": "SYSTEM",
+      "httpStatusCode": 404,
+      "description": "System cannot locate required directory path, preventing file operations and navigation.",
+      "causes": [
+        "Directory path does not exist in filesystem",
+        "Incorrect relative or absolute path configuration",
+        "Directory was moved or deleted",
+        "Insufficient filesystem permissions to access directory",
+        "Symbolic link pointing to non-existent location",
+        "Case-sensitive filesystem path mismatch"
+      ],
+      "solutions": [
+        "Verify directory path exists in filesystem: ls -la /path/to/directory",
+        "Check current working directory: pwd",
+        "Create missing directory: mkdir -p /path/to/directory",
+        "Verify filesystem permissions: ls -ld /path/to/directory",
+        "Use absolute paths instead of relative paths",
+        "Check for case-sensitive path issues on filesystem"
+      ],
+      "documentation": [
+        {
+          "title": "Filesystem Navigation Guide",
+          "url": "/docs/system/filesystem",
+          "type": "guide"
+        },
+        {
+          "title": "Directory Structure Reference",
+          "url": "/docs/system/directory-structure",
+          "type": "reference"
+        },
+        {
+          "title": "Path Resolution Troubleshooting",
+          "url": "/docs/system/path-troubleshooting",
+          "type": "troubleshooting"
+        }
+      ],
+      "relatedCodes": ["E1001", "E1004", "E5001"],
+      "tags": ["filesystem", "directory", "path", "navigation", "permissions"],
+      "introduced": "1.0.0",
+      "deprecated": false
+    }
+  },
+
+  "metadata": {
+    "totalErrorCodes": 9,
+    "categoryCounts": {
+      "SYSTEM": 3,
+      "DATABASE": 2,
+      "API": 2,
+      "NETWORK": 1,
+      "FIRE22": 1,
+      "TELEGRAM": 1
+    },
+    "severityCounts": {
+      "CRITICAL": 3,
+      "ERROR": 4,
+      "WARNING": 2
+    },
+    "httpStatusCodes": [401, 404, 429, 500, 503, 504, 507],
+    "tags": [
+      "api",
+      "authentication",
+      "bot",
+      "connection",
+      "connectivity",
+      "database",
+      "directory",
+      "filesystem",
+      "fire22",
+      "infrastructure",
+      "integration",
+      "memory",
+      "navigation",
+      "network",
+      "path",
+      "performance",
+      "permissions",
+      "rate-limiting",
+      "resource",
+      "security",
+      "sportsbook",
+      "startup",
+      "system",
+      "telegram",
+      "timeout"
+    ]
+  },
+
+  "usage": {
+    "errorTracking": {
+      "description": "Use error codes in application logging and monitoring",
+      "example": "logger.error('Database connection failed', { errorCode: 'E2001', userId: '12345' })"
+    },
+    "apiResponses": {
+      "description": "Include error codes in API error responses",
+      "example": {
+        "error": {
+          "code": "E3001",
+          "message": "Unauthorized API request",
+          "documentation": "/crystal-clear-architecture/docs/api/authentication"
+        }
+      }
+    },
+    "monitoring": {
+      "description": "Use error codes for alerting and dashboard metrics",
+      "example": "Alert when E2001 (DB_CONNECTION_FAILED) occurs more than 5 times in 5 minutes"
+    }
+  },
+
+  "links": {
+    "errorCodeRegistry": "/docs/error-codes.json",
+    "troubleshootingGuide": "/docs/troubleshooting",
+    "systemDocumentation": "/docs/system",
+    "apiDocumentation": "/docs/api",
+    "integrationGuides": "/docs/integrations"
+  }
+}

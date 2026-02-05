@@ -1,0 +1,19 @@
+name = "telegram-integration-standalone"
+compatibility_date = "2024-08-27"
+compatibility_flags = ["nodejs_compat"]
+main = "dist/standalone/index.js"
+[limits]
+cpu_time = 30000
+memory = "128MB"
+
+[bindings]
+D1 = ["telegram_db"]
+KV = ["telegram_cache"]
+QUEUE = ["p2p_messages","telegram_updates"]
+SECRETS = ["telegram_bot_token","cashier_bot_token"]
+
+[vars]
+WORKSPACE_MODE = "standalone"
+WORKSPACE_NAME = "@fire22/telegram-integration"
+BUILD_TARGET = "production"
+

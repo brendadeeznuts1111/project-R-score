@@ -1,0 +1,68 @@
+{
+  "name": "@fire22/benchmark-formatter",
+  "version": "1.0.3",
+  "description": "Beautiful benchmark output using Bun's native formatting utilities",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "test": "bun test",
+    "demo": "bun run src/index.ts",
+    "preinstall": "echo 'Setting up formatter...'",
+    "postinstall": "echo 'Formatter ready!'",
+    "prepare": "bun run build"
+  },
+  "keywords": [
+    "benchmark",
+    "formatter",
+    "bun",
+    "stringWidth",
+    "inspect",
+    "table"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "optionalDependencies": {
+    "chalk": "^5.3.0",
+    "kleur": "^4.1.5"
+  },
+  "trustedDependencies": [],
+  "workspaces": [],
+  "overrides": {},
+  "resolutions": {},
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "bun": {
+    "install": {
+      "frozen-lockfile": false,
+      "production": false,
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "concurrent-scripts": 2
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/benchmark-formatter"
+  }
+}

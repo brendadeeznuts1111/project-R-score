@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢 Fire22 Departments - Organizational Overview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .header {
+        background: rgba(10, 14, 39, 0.9);
+        border-bottom: 2px solid rgba(64, 224, 208, 0.3);
+        padding: 40px 20px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: clamp(32px, 6vw, 48px);
+        background: linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 15px;
+        animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        color: #9ca3af;
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #40e0d0;
+        display: block;
+      }
+
+      .header-stat-label {
+        font-size: 14px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 50px 20px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 40px;
+        padding: 20px 0;
+      }
+
+      .breadcrumb a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s ease;
+        font-size: 16px;
+      }
+
+      .breadcrumb a:hover {
+        color: #40e0d0;
+      }
+
+      .breadcrumb-separator {
+        margin: 0 15px;
+        color: #6b7280;
+      }
+
+      .breadcrumb-current {
+        color: #40e0d0;
+        font-weight: 600;
+      }
+
+      .departments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+      }
+
+      .department-card {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        backdrop-filter: blur(15px);
+        transition: all 0.4s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .department-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--dept-gradient);
+        transition: height 0.3s ease;
+      }
+
+      .department-card:hover::before {
+        height: 8px;
+      }
+
+      .department-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.05), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .department-card:hover::after {
+        left: 100%;
+      }
+
+      .department-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: var(--dept-primary);
+        box-shadow:
+          0 20px 40px rgba(0, 0, 0, 0.4),
+          0 0 30px var(--dept-shadow);
+      }
+
+      .department-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .department-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        background: var(--dept-bg);
+        border: 3px solid var(--dept-border);
+        box-shadow: 0 8px 25px var(--dept-shadow);
+        transition: all 0.3s ease;
+      }
+
+      .department-card:hover .department-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      .department-title {
+        flex: 1;
+      }
+
+      .department-name {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--dept-primary);
+        margin-bottom: 8px;
+      }
+
+      .department-description {
+        font-size: 14px;
+        color: #9ca3af;
+        line-height: 1.5;
+      }
+
+      .department-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .stat-item {
+        text-align: center;
+        flex: 1;
+      }
+
+      .stat-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--dept-primary);
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: #9ca3af;
+        text-transform: uppercase;
+      }
+
+      .department-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      /* Department-Specific Colors */
+      .dept-finance {
+        --dept-primary: #10b981;
+        --dept-gradient: linear-gradient(135deg, #10b981, #059669);
+        --dept-bg: rgba(16, 185, 129, 0.2);
+        --dept-border: rgba(16, 185, 129, 0.4);
+        --dept-shadow: rgba(16, 185, 129, 0.3);
+      }
+
+      .dept-support {
+        --dept-primary: #3b82f6;
+        --dept-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+        --dept-bg: rgba(59, 130, 246, 0.2);
+        --dept-border: rgba(59, 130, 246, 0.4);
+        --dept-shadow: rgba(59, 130, 246, 0.3);
+      }
+
+      .dept-compliance {
+        --dept-primary: #8b5cf6;
+        --dept-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        --dept-bg: rgba(139, 92, 246, 0.2);
+        --dept-border: rgba(139, 92, 246, 0.4);
+        --dept-shadow: rgba(139, 92, 246, 0.3);
+      }
+
+      .dept-operations {
+        --dept-primary: #f59e0b;
+        --dept-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        --dept-bg: rgba(245, 158, 11, 0.2);
+        --dept-border: rgba(245, 158, 11, 0.4);
+        --dept-shadow: rgba(245, 158, 11, 0.3);
+      }
+
+      .dept-technology {
+        --dept-primary: #06b6d4;
+        --dept-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+        --dept-bg: rgba(6, 182, 212, 0.2);
+        --dept-border: rgba(6, 182, 212, 0.4);
+        --dept-shadow: rgba(6, 182, 212, 0.3);
+      }
+
+      .dept-marketing {
+        --dept-primary: #ef4444;
+        --dept-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+        --dept-bg: rgba(239, 68, 68, 0.2);
+        --dept-border: rgba(239, 68, 68, 0.4);
+        --dept-shadow: rgba(239, 68, 68, 0.3);
+      }
+
+      .dept-management {
+        --dept-primary: #6b7280;
+        --dept-gradient: linear-gradient(135deg, #6b7280, #4b5563);
+        --dept-bg: rgba(107, 114, 128, 0.2);
+        --dept-border: rgba(107, 114, 128, 0.4);
+        --dept-shadow: rgba(107, 114, 128, 0.3);
+      }
+
+      .dept-team-contributors {
+        --dept-primary: #40e0d0;
+        --dept-gradient: linear-gradient(135deg, #40e0d0, #64ffda);
+        --dept-bg: rgba(64, 224, 208, 0.2);
+        --dept-border: rgba(64, 224, 208, 0.4);
+        --dept-shadow: rgba(64, 224, 208, 0.3);
+      }
+
+      /* Quick Actions Bar */
+      .quick-actions {
+        background: rgba(10, 14, 39, 0.9);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+      }
+
+      .quick-actions h3 {
+        color: #40e0d0;
+        margin-bottom: 20px;
+        font-size: 18px;
+      }
+
+      .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .action-button {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px 20px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        color: #40e0d0;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .action-button:hover {
+        background: rgba(64, 224, 208, 0.2);
+        border-color: rgba(64, 224, 208, 0.5);
+        transform: translateY(-2px);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .departments-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .header-stats {
+          gap: 20px;
+        }
+
+        .actions-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🏢 Fire22 Departments</h1>
+      <div class="header-subtitle">Comprehensive organizational structure and team management</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">8</span>
+          <div class="header-stat-label">Departments</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">156+</span>
+          <div class="header-stat-label">Team Members</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">96%</span>
+          <div class="header-stat-label">Operational Efficiency</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../dashboard.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">🏢 Departments</span>
+      </nav>
+
+      <div class="quick-actions">
+        <h3>⚡ Quick Actions</h3>
+        <div class="actions-grid">
+          <a href="../dashboard.html" class="action-button">
+            <span>📊</span>
+            Main Dashboard
+          </a>
+          <a href="team-contributors-department.html" class="action-button">
+            <span>👥</span>
+            All Contributors
+          </a>
+          <a href="../api/package-review-grid.ts" class="action-button">
+            <span>📦</span>
+            Package Reviews
+          </a>
+          <a href="../config/hub-connection.ts" class="action-button">
+            <span>🔗</span>
+            System Health
+          </a>
+        </div>
+      </div>
+
+      <div class="departments-grid">
+        <!-- Finance Department -->
+        <a href="finance-department.html" class="department-card dept-finance">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">💰</div>
+            <div class="department-title">
+              <div class="department-name">Finance</div>
+              <div class="department-description">Deposits, withdrawals, and financial operations management</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">12</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">8</div>
+              <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">98%</div>
+              <div class="stat-label">Efficiency</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Customer Support Department -->
+        <a href="customer-support-department.html" class="department-card dept-support">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">🎧</div>
+            <div class="department-title">
+              <div class="department-name">Customer Support</div>
+              <div class="department-description">General customer service and technical support</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">18</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">15</div>
+              <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">94%</div>
+              <div class="stat-label">Satisfaction</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Compliance Department -->
+        <a href="compliance-department.html" class="department-card dept-compliance">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">⚖️</div>
+            <div class="department-title">
+              <div class="department-name">Compliance</div>
+              <div class="department-description">Regulatory oversight and legal compliance management</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">8</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">12</div>
+              <div class="stat-label">Audits</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">100%</div>
+              <div class="stat-label">Compliance</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Operations Department -->
+        <a href="operations-department.html" class="department-card dept-operations">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">⚙️</div>
+            <div class="department-title">
+              <div class="department-name">Operations</div>
+              <div class="department-description">Daily business operations and workflow management</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">24</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">32</div>
+              <div class="stat-label">Processes</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">97%</div>
+              <div class="stat-label">Uptime</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Technology Department -->
+        <a href="technology-department.html" class="department-card dept-technology">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">💻</div>
+            <div class="department-title">
+              <div class="department-name">Technology</div>
+              <div class="department-description">IT infrastructure, development, and system architecture</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">16</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">45</div>
+              <div class="stat-label">Systems</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">99.2%</div>
+              <div class="stat-label">Uptime</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Marketing Department -->
+        <a href="marketing-department.html" class="department-card dept-marketing">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">📈</div>
+            <div class="department-title">
+              <div class="department-name">Marketing</div>
+              <div class="department-description">Customer acquisition and promotional campaigns</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">14</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">28</div>
+              <div class="stat-label">Campaigns</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">3.2%</div>
+              <div class="stat-label">CTR</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Management Department -->
+        <a href="management-department.html" class="department-card dept-management">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">👔</div>
+            <div class="department-title">
+              <div class="department-name">Management</div>
+              <div class="department-description">Executive leadership and strategic oversight</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">6</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">18</div>
+              <div class="stat-label">Initiatives</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">95%</div>
+              <div class="stat-label">Goals Met</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Team Contributors Department -->
+        <a href="team-contributors-department.html" class="department-card dept-team-contributors">
+          <div class="department-status">Active</div>
+          <div class="department-header">
+            <div class="department-icon">👥</div>
+            <div class="department-title">
+              <div class="department-name">Team Contributors</div>
+              <div class="department-description">Cross-functional development team and system architects</div>
+            </div>
+          </div>
+          <div class="department-stats">
+            <div class="stat-item">
+              <div class="stat-value">8</div>
+              <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">496+</div>
+              <div class="stat-label">Implementations</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">100%</div>
+              <div class="stat-label">Active</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🏢 Fire22 Departments Overview loaded');
+        console.log('📊 8 departments available');
+
+        // Add click animations
+        document.querySelectorAll('.department-card').forEach(card => {
+          card.addEventListener('click', e => {
+            // Visual feedback on click
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              card.style.transform = '';
+            }, 150);
+          });
+        });
+
+        // Add hover sound effect simulation (visual feedback)
+        document.querySelectorAll('.department-card').forEach(card => {
+          card.addEventListener('mouseenter', () => {
+            const icon = card.querySelector('.department-icon');
+            icon.style.transform = 'scale(1.1) rotate(5deg)';
+          });
+
+          card.addEventListener('mouseleave', () => {
+            const icon = card.querySelector('.department-icon');
+            icon.style.transform = '';
+          });
+        });
+      });
+    </script>
+
+    <!-- RSS Feed Discovery -->
+    <link rel="alternate" type="application/rss+xml" title="Fire22 Dashboard Blog" href="/blog/rss.xml" />
+    <link rel="alternate" type="application/atom+xml" title="Fire22 Dashboard Blog" href="/blog/atom.xml" />
+
+    <!-- Quick Blog & RSS Access Footer -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000">
+      <div style="display: flex; gap: 10px">
+        <a
+          href="/blog"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255, 107, 53, 0.9);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+          "
+          onmouseover="this.style.transform='translateY(-2px) scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(255, 107, 53, 0.5)'"
+          onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(255, 107, 53, 0.3)'"
+        >
+          📝 Blog
+        </a>
+        <a
+          href="/blog/rss.xml"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+          "
+          onmouseover="this.style.transform='translateY(-2px) scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.5)'"
+          onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)'"
+        >
+          📡 RSS
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

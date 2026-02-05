@@ -1,0 +1,268 @@
+{
+  "domain": "apexodds.com",
+  "cloudflare_config": {
+    "cname_records": [
+      {
+        "name": "dev",
+        "target": "fantasy42-fire22-dev.apexodds.workers.dev",
+        "ttl": 300,
+        "proxied": true,
+        "comment": "Development environment for Fantasy42-Fire22"
+      },
+      {
+        "name": "staging",
+        "target": "fantasy42-fire22-staging.apexodds.workers.dev",
+        "ttl": 300,
+        "proxied": true,
+        "comment": "Staging environment for Fantasy42-Fire22"
+      },
+      {
+        "name": "api",
+        "target": "fantasy42-fire22-prod.apexodds.workers.dev",
+        "ttl": 300,
+        "proxied": true,
+        "comment": "Production API for Fantasy42-Fire22"
+      },
+      {
+        "name": "registry",
+        "target": "fantasy42-fire22-prod.apexodds.workers.dev",
+        "ttl": 300,
+        "proxied": true,
+        "comment": "Package registry for Fantasy42-Fire22"
+      },
+      {
+        "name": "docs",
+        "target": "brendadeeznuts1111.github.io",
+        "ttl": 300,
+        "proxied": true,
+        "comment": "GitHub Pages documentation site"
+      },
+      {
+        "name": "dashboard",
+        "target": "fantasy42-fire22-prod.apexodds.workers.dev",
+        "ttl": 300,
+        "proxied": true,
+        "comment": "Dashboard interface for Fantasy42-Fire22"
+      }
+    ],
+    "mx_records": [
+      {
+        "name": "@",
+        "target": "route1.mx.cloudflare.net",
+        "priority": 58,
+        "ttl": 300,
+        "comment": "Primary MX for Cloudflare Email Routing"
+      },
+      {
+        "name": "@",
+        "target": "route2.mx.cloudflare.net",
+        "priority": 17,
+        "ttl": 300,
+        "comment": "Secondary MX for Cloudflare Email Routing"
+      },
+      {
+        "name": "@",
+        "target": "route3.mx.cloudflare.net",
+        "priority": 91,
+        "ttl": 300,
+        "comment": "Tertiary MX for Cloudflare Email Routing"
+      }
+    ],
+    "txt_records": [
+      {
+        "name": "@",
+        "content": "v=spf1 include:_spf.mx.cloudflare.net ~all",
+        "ttl": 300,
+        "comment": "SPF record for email authentication"
+      },
+      {
+        "name": "_dmarc",
+        "content": "v=DMARC1; p=quarantine; rua=mailto:dmarc@apexodds.com; ruf=mailto:forensic@apexodds.com; fo=1",
+        "ttl": 300,
+        "comment": "DMARC record for email security - rua to security, ruf to forensics"
+      },
+      {
+        "name": "@",
+        "content": "MS=ms12345678",
+        "ttl": 300,
+        "comment": "Microsoft verification for enterprise domain ownership"
+      },
+      {
+        "name": "google._domainkey",
+        "content": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+        "ttl": 300,
+        "comment": "DKIM record for Google Workspace email signing"
+      },
+      {
+        "name": "@",
+        "content": "google-site-verification=your-verification-code",
+        "ttl": 300,
+        "comment": "Google Search Console verification"
+      }
+    ],
+    "wildcard_records": [
+      {
+        "name": "*",
+        "target": "fantasy42-fire22-prod.apexodds.workers.dev",
+        "ttl": 300,
+        "proxied": true,
+        "comment": "Wildcard CNAME for dynamic subdomains"
+      }
+    ]
+  },
+  "email_routing": {
+    "rules": [
+      {
+        "name": "Enterprise Team",
+        "matchers": [
+          {
+            "type": "to",
+            "field": "to",
+            "value": "enterprise@apexodds.com"
+          }
+        ],
+        "actions": [
+          {
+            "type": "forward",
+            "value": ["team@fire22.com", "enterprise@fire22.com"]
+          }
+        ],
+        "enabled": true
+      },
+      {
+        "name": "Security Team",
+        "matchers": [
+          {
+            "type": "to",
+            "field": "to",
+            "value": "security@apexodds.com"
+          }
+        ],
+        "actions": [
+          {
+            "type": "forward",
+            "value": ["security@fire22.com", "ciso@fire22.com"]
+          }
+        ],
+        "enabled": true
+      },
+      {
+        "name": "Support Tickets",
+        "matchers": [
+          {
+            "type": "to",
+            "field": "to",
+            "value": "support@apexodds.com"
+          }
+        ],
+        "actions": [
+          {
+            "type": "forward",
+            "value": ["support@fire22.com"]
+          },
+          {
+            "type": "worker",
+            "script_name": "support-ticket-worker"
+          }
+        ],
+        "enabled": true
+      },
+      {
+        "name": "DMARC Reports",
+        "matchers": [
+          {
+            "type": "to",
+            "field": "to",
+            "value": "dmarc@apexodds.com"
+          }
+        ],
+        "actions": [
+          {
+            "type": "forward",
+            "value": ["security@fire22.com", "compliance@fire22.com"]
+          }
+        ],
+        "enabled": true,
+        "priority": 7
+      },
+      {
+        "name": "DMARC Forensic Reports",
+        "matchers": [
+          {
+            "type": "to",
+            "field": "to",
+            "value": "forensic@apexodds.com"
+          }
+        ],
+        "actions": [
+          {
+            "type": "forward",
+            "value": ["forensics@fire22.com", "security@fire22.com"]
+          },
+          {
+            "type": "worker",
+            "script_name": "dmarc-forensic-worker"
+          }
+        ],
+        "enabled": true,
+        "priority": 6
+      },
+      {
+        "name": "Wildcard Catch-All",
+        "matchers": [
+          {
+            "type": "to",
+            "field": "to",
+            "value": "*@apexodds.com"
+          }
+        ],
+        "actions": [
+          {
+            "type": "forward",
+            "value": ["catchall@fire22.com"]
+          },
+          {
+            "type": "worker",
+            "script_name": "email-logging-worker"
+          }
+        ],
+        "enabled": true,
+        "priority": 0
+      }
+    ],
+    "catch_all": {
+      "enabled": true,
+      "action": {
+        "type": "forward",
+        "value": ["catchall@fire22.com"]
+      }
+    }
+  },
+  "ssl_tls": {
+    "mode": "strict",
+    "certificate": "managed",
+    "always_use_https": true,
+    "min_tls_version": "1.2",
+    "opportunistic_encryption": true,
+    "tls_1_3": true,
+    "automatic_https_rewrites": true
+  },
+  "security": {
+    "waf": {
+      "enabled": true,
+      "mode": "block"
+    },
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 100,
+      "burst_size": 50
+    },
+    "ddos_protection": {
+      "enabled": true
+    },
+    "bot_management": {
+      "enabled": true,
+      "fight_mode": false
+    }
+  }
+}

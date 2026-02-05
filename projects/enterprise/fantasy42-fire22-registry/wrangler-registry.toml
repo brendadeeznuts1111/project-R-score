@@ -1,0 +1,44 @@
+name = "fire22-registry"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Account configuration
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
+
+# R2 Bucket bindings
+[[r2_buckets]]
+binding = "REGISTRY_BUCKET"
+bucket_name = "${R2_BUCKET}"
+preview_bucket_name = "${R2_BUCKET}-preview"
+
+# Environment variables
+[vars]
+REGISTRY_NAME = "fire22-registry"
+REGISTRY_VERSION = "1.0.0"
+PUBLIC_READ = "true"
+
+# Routes for custom domain
+[[routes]]
+pattern = "registry.fire22.dev/*"
+zone_name = "fire22.dev"
+
+# Development settings
+[dev]
+port = 8787
+local_protocol = "https"
+
+# Build configuration (if using Pages)
+[pages_build_config]
+build_command = "bun run build:registry"
+destination_dir = "dist"
+
+# CORS configuration
+[cors]
+origins = ["*"]
+methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST"]
+headers = ["*"]
+max_age = 86400
+
+# Security headers
+[security]
+content_security_policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"

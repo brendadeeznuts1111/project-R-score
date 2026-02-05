@@ -1,0 +1,75 @@
+{
+  "name": "@fire22/branding-audit",
+  "version": "2.1.0",
+  "description": "Advanced branding audit toolkit for Fire22 - ensures perfect color implementation, accessibility, and brand compliance",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "bin": {
+    "fire22-brand-audit": "./src/cli.ts"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun --sourcemap linked",
+    "build:dev": "bun build src/index.ts --outdir dist --target bun --sourcemap inline --minify false",
+    "dev": "bun --hot run src/cli.ts",
+    "test": "bun test src",
+    "test:watch": "bun test --watch src",
+    "test:coverage": "bun test --coverage src",
+    "lint": "bunx eslint src/**/*.ts demo.ts",
+    "type-check": "bunx tsc --noEmit",
+    "audit": "bun run src/cli.ts audit",
+    "audit:watch": "bun run src/cli.ts audit --watch",
+    "report": "bun run src/cli.ts report",
+    "demo": "bun run demo.ts",
+    "clean": "rm -rf dist demo-files *.tgz",
+    "prepublishOnly": "bun run build",
+    "release": "bun run clean && bun run type-check && bun run build"
+  },
+  "keywords": [
+    "branding",
+    "audit",
+    "colors",
+    "accessibility",
+    "fire22",
+    "design-system",
+    "contrast",
+    "validation",
+    "brand-compliance",
+    "bun",
+    "typescript"
+  ],
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fire22/branding-audit.git"
+  },
+  "homepage": "https://fire22.dev/branding-audit",
+  "bugs": {
+    "url": "https://github.com/fire22/branding-audit/issues"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "dependencies": {
+    "chroma-js": "^2.4.2",
+    "fast-glob": "^3.2.12",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "bun-types": "^1.0.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "demo.ts"
+  ],
+  "bun": {
+    "types": "src/index.ts"
+  }
+}

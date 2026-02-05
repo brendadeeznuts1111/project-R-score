@@ -1,0 +1,176 @@
+{
+  "lastUpdated": "2025-08-28T21:59:05.376Z",
+  "responses": [
+    {
+      "name": "William Harris",
+      "email": "william.harris@exec.fire22",
+      "department": "Executive Management",
+      "departmentId": "exec",
+      "securityTier": "TIER_1_MAXIMUM",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "ACKNOWLEDGED",
+      "escalationLevel": 0,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Schedule security briefing",
+      "priority": "HIGH",
+      "responseTime": "2024-08-28T18:30:00",
+      "acknowledgmentDetails": {
+        "confirmed": true,
+        "teamVerified": true,
+        "availabilityProvided": true,
+        "questionsRaised": ["Budget approval timeline", "Training schedule coordination"]
+      }
+    },
+    {
+      "name": "John Smith",
+      "email": "john.smith@finance.fire22",
+      "department": "Finance Department",
+      "departmentId": "finance",
+      "securityTier": "TIER_1_MAXIMUM",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "ACKNOWLEDGED",
+      "escalationLevel": 0,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Schedule security briefing",
+      "priority": "HIGH",
+      "responseTime": "2024-08-28T18:30:00",
+      "acknowledgmentDetails": {
+        "confirmed": true,
+        "teamVerified": true,
+        "availabilityProvided": true,
+        "questionsRaised": ["Budget approval timeline", "Training schedule coordination"]
+      }
+    },
+    {
+      "name": "Robert Brown",
+      "email": "robert.brown@compliance.fire22",
+      "department": "Compliance & Legal",
+      "departmentId": "compliance",
+      "securityTier": "TIER_1_MAXIMUM",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "ACKNOWLEDGED",
+      "escalationLevel": 0,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Schedule security briefing",
+      "priority": "MEDIUM",
+      "responseTime": "2024-08-28T19:15:00",
+      "acknowledgmentDetails": {
+        "confirmed": true,
+        "teamVerified": true,
+        "availabilityProvided": false,
+        "questionsRaised": ["Security clearance requirements"]
+      }
+    },
+    {
+      "name": "Jessica Martinez",
+      "email": "jessica.martinez@support.fire22",
+      "department": "Customer Support",
+      "departmentId": "support",
+      "securityTier": "TIER_2_HIGH",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "OVERDUE",
+      "escalationLevel": 1,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Phone call follow-up",
+      "priority": "HIGH"
+    },
+    {
+      "name": "Michael Johnson",
+      "email": "michael.johnson@operations.fire22",
+      "department": "Operations Department",
+      "departmentId": "operations",
+      "securityTier": "TIER_2_HIGH",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "OVERDUE",
+      "escalationLevel": 1,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Phone call follow-up",
+      "priority": "HIGH"
+    },
+    {
+      "name": "Sarah Martinez",
+      "email": "sarah.martinez@communications.fire22",
+      "department": "Communications Department",
+      "departmentId": "communications",
+      "securityTier": "TIER_2_HIGH",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "OVERDUE",
+      "escalationLevel": 1,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Phone call follow-up",
+      "priority": "HIGH"
+    },
+    {
+      "name": "Alex Rodriguez",
+      "email": "alex.rodriguez@technology.fire22",
+      "department": "Technology Department",
+      "departmentId": "technology",
+      "securityTier": "TIER_2_HIGH",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "ACKNOWLEDGED",
+      "escalationLevel": 0,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Schedule security briefing",
+      "priority": "MEDIUM",
+      "responseTime": "2024-08-28T19:15:00",
+      "acknowledgmentDetails": {
+        "confirmed": true,
+        "teamVerified": true,
+        "availabilityProvided": false,
+        "questionsRaised": ["Security clearance requirements"]
+      }
+    },
+    {
+      "name": "Emily Davis",
+      "email": "emily.davis@marketing.fire22",
+      "department": "Marketing Department",
+      "departmentId": "marketing",
+      "securityTier": "TIER_3_MEDIUM",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "OVERDUE",
+      "escalationLevel": 1,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Phone call follow-up",
+      "priority": "HIGH"
+    },
+    {
+      "name": "Isabella Martinez",
+      "email": "isabella.martinez@design.fire22",
+      "department": "Design Team",
+      "departmentId": "design",
+      "securityTier": "TIER_3_MEDIUM",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "OVERDUE",
+      "escalationLevel": 1,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Phone call follow-up",
+      "priority": "HIGH"
+    },
+    {
+      "name": "Chris Anderson",
+      "email": "chris.anderson@team.fire22",
+      "department": "Team Contributors",
+      "departmentId": "contributors",
+      "securityTier": "TIER_3_MEDIUM",
+      "notificationSent": "2024-08-28T16:47:56",
+      "responseStatus": "OVERDUE",
+      "escalationLevel": 1,
+      "lastContact": "2025-08-28T21:59:05.370Z",
+      "nextAction": "Phone call follow-up",
+      "priority": "HIGH"
+    }
+  ],
+  "summary": {
+    "acknowledged": 4,
+    "pending": 0,
+    "overdue": 6,
+    "escalated": 6,
+    "acknowledgedPercent": 40,
+    "pendingPercent": 0,
+    "overduePercent": 60,
+    "escalatedPercent": 60,
+    "averageResponseTime": "18.5 hours",
+    "fastestResponse": "1.7 hours",
+    "slaCompliance": 40
+  }
+}

@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🧪 Performance Test Dashboard</title>
+    <meta
+      name="description"
+      content="Comprehensive performance testing and benchmarking dashboard for analytics APIs"
+    />
+
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="../src/styles/framework.css" />
+    <link rel="stylesheet" href="../src/styles/mobile-responsive.css" />
+    <link rel="stylesheet" href="analytics.css" />
+
+    <!-- Performance Dashboard Styles -->
+    <style>
+      .performance-test-dashboard {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: white;
+      }
+
+      .test-container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .test-header {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .test-title {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        background: linear-gradient(45deg, #a855f7, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .test-subtitle {
+        opacity: 0.9;
+        font-size: 1.1em;
+        margin: 0 0 20px 0;
+      }
+
+      .test-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .control-group {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .control-group h3 {
+        margin: 0 0 15px 0;
+        font-size: 1.1em;
+        font-weight: 600;
+      }
+
+      .control-input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .control-input:focus {
+        outline: none;
+        border-color: #a855f7;
+        box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
+      }
+
+      .control-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .scenario-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+      }
+
+      .scenario-btn {
+        padding: 12px 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        background: transparent;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .scenario-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .scenario-btn.active {
+        background: #a855f7;
+        border-color: #a855f7;
+      }
+
+      .test-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .action-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .action-btn.primary {
+        background: linear-gradient(45deg, #a855f7, #3b82f6);
+        color: white;
+      }
+
+      .action-btn.secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .action-btn.danger {
+        background: #ef4444;
+        color: white;
+      }
+
+      .action-btn.success {
+        background: #10b981;
+        color: white;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .action-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .status-display {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .status-item.running {
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid #10b981;
+        color: #10b981;
+      }
+
+      .status-item.stopped {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid #ef4444;
+        color: #ef4444;
+      }
+
+      .status-item.ready {
+        background: rgba(59, 130, 246, 0.2);
+        border: 1px solid #3b82f6;
+        color: #3b82f6;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .test-results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .results-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .section-icon {
+        font-size: 24px;
+      }
+
+      .section-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin: 0;
+      }
+
+      .metrics-display {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .metric-item {
+        text-align: center;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .metric-value {
+        font-size: 1.8em;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .metric-label {
+        font-size: 0.9em;
+        opacity: 0.8;
+      }
+
+      .chart-area {
+        position: relative;
+        height: 300px;
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .benchmark-results {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .scenario-result {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        border-left: 4px solid;
+      }
+
+      .scenario-result.success {
+        border-left-color: #10b981;
+      }
+
+      .scenario-result.warning {
+        border-left-color: #f59e0b;
+      }
+
+      .scenario-result.error {
+        border-left-color: #ef4444;
+      }
+
+      .scenario-name {
+        font-weight: bold;
+        font-size: 1.1em;
+        margin-bottom: 8px;
+      }
+
+      .scenario-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        font-size: 0.9em;
+      }
+
+      .scenario-metric {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .metric-key {
+        opacity: 0.8;
+      }
+
+      .metric-val {
+        font-weight: 600;
+      }
+
+      .recommendations-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .recommendation-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .recommendation-item {
+        padding: 12px 15px;
+        border-radius: 8px;
+        border-left: 4px solid;
+        font-size: 0.95em;
+      }
+
+      .recommendation-item.info {
+        border-left-color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .recommendation-item.success {
+        border-left-color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+      }
+
+      .recommendation-item.warning {
+        border-left-color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+      }
+
+      .recommendation-item.danger {
+        border-left-color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+      }
+
+      .test-log {
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 15px;
+        padding: 25px;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 13px;
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .log-entry {
+        margin-bottom: 5px;
+        padding: 2px 0;
+      }
+
+      .log-timestamp {
+        color: #6b7280;
+        margin-right: 10px;
+      }
+
+      .log-level-info {
+        color: #3b82f6;
+      }
+
+      .log-level-success {
+        color: #10b981;
+      }
+
+      .log-level-warning {
+        color: #f59e0b;
+      }
+
+      .log-level-error {
+        color: #ef4444;
+      }
+
+      .no-data {
+        text-align: center;
+        opacity: 0.6;
+        font-style: italic;
+        padding: 40px;
+      }
+
+      @media (max-width: 768px) {
+        .test-title {
+          font-size: 2em;
+        }
+
+        .test-controls {
+          grid-template-columns: 1fr;
+        }
+
+        .scenario-buttons {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .test-actions {
+          flex-direction: column;
+        }
+
+        .action-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .test-results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics-display {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="performance-test-dashboard">
+      <div class="test-container">
+        <!-- Header Section -->
+        <div class="test-header">
+          <div>
+            <h1 class="test-title">🧪 Performance Test Dashboard</h1>
+            <p class="test-subtitle">Comprehensive performance testing and benchmarking for your analytics API</p>
+
+            <div class="status-display">
+              <div class="status-item ready">
+                <div class="pulse"></div>
+                <span id="test-status">Ready to test</span>
+              </div>
+              <div class="status-item">
+                <span id="current-scenario">No scenario selected</span>
+              </div>
+              <div class="status-item">
+                <span id="test-timer">--:--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Configuration -->
+          <div class="test-controls">
+            <div class="control-group">
+              <h3>🎯 Target Configuration</h3>
+              <input
+                type="url"
+                class="control-input"
+                id="target-url"
+                placeholder="API endpoint URL"
+                value="https://dashboard-worker.brendawill2233.workers.dev/api/health"
+              />
+              <input
+                type="number"
+                class="control-input"
+                id="concurrency"
+                placeholder="Concurrency"
+                value="10"
+                min="1"
+                max="100"
+              />
+              <input
+                type="number"
+                class="control-input"
+                id="duration"
+                placeholder="Duration (ms)"
+                value="30000"
+                min="1000"
+                max="300000"
+              />
+            </div>
+
+            <div class="control-group">
+              <h3>📊 Test Scenarios</h3>
+              <div class="scenario-buttons">
+                <button class="scenario-btn" data-scenario="smoke">🚭 Smoke</button>
+                <button class="scenario-btn" data-scenario="load">📈 Load</button>
+                <button class="scenario-btn" data-scenario="stress">💪 Stress</button>
+                <button class="scenario-btn" data-scenario="spike">⚡ Spike</button>
+                <button class="scenario-btn" data-scenario="endurance">🏃 Endurance</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <h3>🔧 Advanced Options</h3>
+              <input
+                type="number"
+                class="control-input"
+                id="ramp-up"
+                placeholder="Ramp-up (ms)"
+                value="2000"
+                min="0"
+                max="60000"
+              />
+              <input
+                type="number"
+                class="control-input"
+                id="timeout"
+                placeholder="Timeout (ms)"
+                value="10000"
+                min="1000"
+                max="60000"
+              />
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 14px">
+                <input type="checkbox" id="enable-heap" checked />
+                Enable Heap Monitoring
+              </label>
+            </div>
+          </div>
+
+          <!-- Test Actions -->
+          <div class="test-actions">
+            <button class="action-btn primary" id="run-selected">▶️ Run Selected Scenario</button>
+            <button class="action-btn secondary" id="run-all">🔄 Run All Scenarios</button>
+            <button class="action-btn danger" id="stop-test" disabled>⏹️ Stop Test</button>
+            <button class="action-btn success" id="export-results">📤 Export Results</button>
+            <a href="performance-dashboard.html" class="action-btn secondary">📊 Monitoring Dashboard</a>
+          </div>
+        </div>
+
+        <!-- Test Results Grid -->
+        <div class="test-results-grid">
+          <!-- Real-time Metrics -->
+          <div class="results-section">
+            <div class="section-header">
+              <span class="section-icon">📊</span>
+              <h2 class="section-title">Real-time Metrics</h2>
+            </div>
+
+            <div class="metrics-display">
+              <div class="metric-item">
+                <span class="metric-value" id="rt-requests">--</span>
+                <span class="metric-label">Total Requests</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="rt-success">--</span>
+                <span class="metric-label">Successful</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="rt-errors">--</span>
+                <span class="metric-label">Errors</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="rt-throughput">--</span>
+                <span class="metric-label">Req/Sec</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="rt-avg-latency">--</span>
+                <span class="metric-label">Avg Latency</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="rt-p95-latency">--</span>
+                <span class="metric-label">P95 Latency</span>
+              </div>
+            </div>
+
+            <div class="chart-area">
+              <canvas id="realtime-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- System Resources -->
+          <div class="results-section">
+            <div class="section-header">
+              <span class="section-icon">💻</span>
+              <h2 class="section-title">System Resources</h2>
+            </div>
+
+            <div class="metrics-display">
+              <div class="metric-item">
+                <span class="metric-value" id="sys-memory">--</span>
+                <span class="metric-label">Memory Usage</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="sys-heap">--</span>
+                <span class="metric-label">Heap Size</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="sys-cpu">--</span>
+                <span class="metric-label">CPU Usage</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-value" id="sys-gc">--</span>
+                <span class="metric-label">GC Cycles</span>
+              </div>
+            </div>
+
+            <div class="chart-area">
+              <canvas id="resources-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benchmark Results -->
+        <div class="benchmark-results">
+          <div class="section-header">
+            <span class="section-icon">🏁</span>
+            <h2 class="section-title">Benchmark Results</h2>
+          </div>
+
+          <div id="benchmark-results-content">
+            <div class="no-data">
+              <p>No benchmark results yet</p>
+              <p>Select a scenario and click "Run Selected Scenario" to start testing</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="recommendations-section">
+          <div class="section-header">
+            <span class="section-icon">💡</span>
+            <h2 class="section-title">Performance Recommendations</h2>
+          </div>
+
+          <div class="recommendation-list" id="recommendations-content">
+            <div class="recommendation-item info">
+              <p>ℹ️ Run performance tests to get personalized recommendations</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test Log -->
+        <div class="test-log" id="test-log">
+          <div class="log-entry">
+            <span class="log-timestamp">[00:00:00]</span>
+            <span class="log-level-info">Performance Test Dashboard initialized</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="performance-monitor.js"></script>
+    <script src="performance-benchmark.js"></script>
+
+    <script>
+      let currentBenchmark = null;
+      let selectedScenario = null;
+      let testStartTime = null;
+      let testTimerInterval = null;
+      let realtimeChart = null;
+      let resourcesChart = null;
+      let testLog = [];
+
+      // Initialize when DOM is ready
+      document.addEventListener('DOMContentLoaded', function () {
+        initializeTestDashboard();
+      });
+
+      function initializeTestDashboard() {
+        console.log('🚀 Initializing Performance Test Dashboard...');
+
+        // Setup event listeners
+        setupEventListeners();
+
+        // Initialize charts
+        initializeCharts();
+
+        // Update status
+        updateTestStatus('Ready for testing');
+
+        logMessage('Performance Test Dashboard initialized successfully', 'info');
+
+        console.log('✅ Performance Test Dashboard ready');
+      }
+
+      function setupEventListeners() {
+        // Scenario selection
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+          btn.addEventListener('click', () => selectScenario(btn.dataset.scenario));
+        });
+
+        // Test controls
+        document.getElementById('run-selected').addEventListener('click', runSelectedScenario);
+        document.getElementById('run-all').addEventListener('click', runAllScenarios);
+        document.getElementById('stop-test').addEventListener('click', stopCurrentTest);
+        document.getElementById('export-results').addEventListener('click', exportResults);
+
+        // Configuration changes
+        ['target-url', 'concurrency', 'duration', 'ramp-up', 'timeout'].forEach(id => {
+          document.getElementById(id).addEventListener('change', updateConfiguration);
+        });
+      }
+
+      function selectScenario(scenarioName) {
+        // Update UI
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+
+        const selectedBtn = document.querySelector(`[data-scenario="${scenarioName}"]`);
+        if (selectedBtn) {
+          selectedBtn.classList.add('active');
+        }
+
+        selectedScenario = scenarioName;
+        document.getElementById('current-scenario').textContent = scenarioName;
+
+        const scenario = window.BENCHMARK_SCENARIOS[scenarioName];
+        if (scenario) {
+          logMessage(`Selected scenario: ${scenario.name} - ${scenario.description}`, 'info');
+
+          // Auto-populate configuration
+          document.getElementById('concurrency').value = scenario.config.concurrency || 10;
+          document.getElementById('duration').value = scenario.config.duration || 30000;
+          document.getElementById('ramp-up').value = scenario.config.rampUpTime || 2000;
+        }
+      }
+
+      async function runSelectedScenario() {
+        if (!selectedScenario) {
+          alert('Please select a test scenario first');
+          return;
+        }
+
+        const config = getCurrentConfiguration();
+
+        try {
+          updateTestStatus('Running test...');
+          setTestButtonsState(true);
+
+          logMessage(`Starting ${selectedScenario} scenario...`, 'info');
+
+          currentBenchmark = new window.PerformanceBenchmark(config);
+          testStartTime = Date.now();
+          startTestTimer();
+
+          const results = await currentBenchmark.runBenchmark();
+
+          displayBenchmarkResults(selectedScenario, results);
+          updateRealTimeMetrics(results);
+          displayRecommendations(results);
+
+          logMessage(`${selectedScenario} scenario completed successfully`, 'success');
+        } catch (error) {
+          logMessage(`Test failed: ${error.message}`, 'error');
+          console.error('Benchmark error:', error);
+        } finally {
+          updateTestStatus('Test completed');
+          setTestButtonsState(false);
+          stopTestTimer();
+        }
+      }
+
+      async function runAllScenarios() {
+        const scenarios = Object.keys(window.BENCHMARK_SCENARIOS);
+        const allResults = {};
+
+        updateTestStatus('Running all scenarios...');
+        setTestButtonsState(true);
+
+        logMessage('Starting comprehensive benchmark suite...', 'info');
+
+        for (const scenarioName of scenarios) {
+          try {
+            logMessage(`Running ${scenarioName} scenario...`, 'info');
+
+            const config = getCurrentConfiguration();
+            const benchmark = new window.PerformanceBenchmark(config);
+            const results = await benchmark.runBenchmark();
+
+            allResults[scenarioName] = results;
+
+            logMessage(`${scenarioName} scenario completed`, 'success');
+          } catch (error) {
+            logMessage(`${scenarioName} scenario failed: ${error.message}`, 'error');
+            allResults[scenarioName] = { error: error.message };
+          }
+        }
+
+        // Generate comprehensive report
+        const report = window.generateBenchmarkReport(allResults, scenarios);
+        displayAllBenchmarkResults(report);
+
+        updateTestStatus('All tests completed');
+        setTestButtonsState(false);
+
+        logMessage('Comprehensive benchmark suite completed', 'success');
+      }
+
+      function stopCurrentTest() {
+        if (currentBenchmark) {
+          // Note: In a real implementation, you'd need to add a stop method to PerformanceBenchmark
+          logMessage('Test stop requested', 'warning');
+        }
+      }
+
+      function exportResults() {
+        if (!currentBenchmark) {
+          alert('No test results available. Run a test first.');
+          return;
+        }
+
+        try {
+          currentBenchmark.exportResults();
+          logMessage('Test results exported successfully', 'success');
+        } catch (error) {
+          logMessage('Export failed: ' + error.message, 'error');
+        }
+      }
+
+      function getCurrentConfiguration() {
+        return {
+          targetUrl: document.getElementById('target-url').value,
+          concurrency: parseInt(document.getElementById('concurrency').value),
+          duration: parseInt(document.getElementById('duration').value),
+          rampUpTime: parseInt(document.getElementById('ramp-up').value),
+          timeout: parseInt(document.getElementById('timeout').value),
+          enableHeapMonitoring: document.getElementById('enable-heap').checked,
+          enableMemoryProfiling: typeof performance.memory !== 'undefined',
+        };
+      }
+
+      function updateConfiguration() {
+        const config = getCurrentConfiguration();
+        logMessage(`Configuration updated: ${config.concurrency} concurrency, ${config.duration}ms duration`, 'info');
+      }
+
+      function setTestButtonsState(running) {
+        document.getElementById('run-selected').disabled = running;
+        document.getElementById('run-all').disabled = running;
+        document.getElementById('stop-test').disabled = !running;
+      }
+
+      function updateTestStatus(status) {
+        document.getElementById('test-status').textContent = status;
+      }
+
+      function startTestTimer() {
+        testTimerInterval = setInterval(() => {
+          if (testStartTime) {
+            const elapsed = Math.floor((Date.now() - testStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('test-timer').textContent =
+              `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          }
+        }, 1000);
+      }
+
+      function stopTestTimer() {
+        if (testTimerInterval) {
+          clearInterval(testTimerInterval);
+          testTimerInterval = null;
+        }
+      }
+
+      function displayBenchmarkResults(scenarioName, results) {
+        const scenario = window.BENCHMARK_SCENARIOS[scenarioName];
+        const resultClass = results.errorRate < 1 ? 'success' : results.errorRate < 5 ? 'warning' : 'error';
+
+        const resultHtml = `
+                <div class="scenario-result ${resultClass}">
+                    <div class="scenario-name">${scenario.name} (${scenarioName})</div>
+                    <div class="scenario-metrics">
+                        <div class="scenario-metric">
+                            <span class="metric-key">Requests:</span>
+                            <span class="metric-val">${results.totalRequests}</span>
+                        </div>
+                        <div class="scenario-metric">
+                            <span class="metric-key">Success Rate:</span>
+                            <span class="metric-val">${(100 - results.errorRate).toFixed(2)}%</span>
+                        </div>
+                        <div class="scenario-metric">
+                            <span class="metric-key">Avg Latency:</span>
+                            <span class="metric-val">${results.latency.avg.toFixed(2)}ms</span>
+                        </div>
+                        <div class="scenario-metric">
+                            <span class="metric-key">P95 Latency:</span>
+                            <span class="metric-val">${results.latency.p95.toFixed(2)}ms</span>
+                        </div>
+                        <div class="scenario-metric">
+                            <span class="metric-key">Throughput:</span>
+                            <span class="metric-val">${results.throughputStats.average.toFixed(1)} req/s</span>
+                        </div>
+                        <div class="scenario-metric">
+                            <span class="metric-key">Duration:</span>
+                            <span class="metric-val">${((results.endTime - results.startTime) / 1000).toFixed(1)}s</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        document.getElementById('benchmark-results-content').innerHTML = resultHtml;
+      }
+
+      function displayAllBenchmarkResults(report) {
+        let resultsHtml = '';
+
+        for (const [scenarioName, result] of Object.entries(report.scenarios)) {
+          if (result.error) {
+            resultsHtml += `
+                        <div class="scenario-result error">
+                            <div class="scenario-name">${scenarioName} - FAILED</div>
+                            <div class="scenario-metrics">
+                                <div class="scenario-metric">
+                                    <span class="metric-key">Error:</span>
+                                    <span class="metric-val">${result.error}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+          } else {
+            const successRate = ((result.metrics.successfulRequests / result.metrics.totalRequests) * 100).toFixed(2);
+            const resultClass =
+              parseFloat(successRate) > 99 ? 'success' : parseFloat(successRate) > 95 ? 'warning' : 'error';
+
+            resultsHtml += `
+                        <div class="scenario-result ${resultClass}">
+                            <div class="scenario-name">${result.name} (${scenarioName})</div>
+                            <div class="scenario-metrics">
+                                <div class="scenario-metric">
+                                    <span class="metric-key">Requests:</span>
+                                    <span class="metric-val">${result.metrics.totalRequests}</span>
+                                </div>
+                                <div class="scenario-metric">
+                                    <span class="metric-key">Success Rate:</span>
+                                    <span class="metric-val">${successRate}%</span>
+                                </div>
+                                <div class="scenario-metric">
+                                    <span class="metric-key">Avg Latency:</span>
+                                    <span class="metric-val">${result.metrics.avgResponseTime.toFixed(2)}ms</span>
+                                </div>
+                                <div class="scenario-metric">
+                                    <span class="metric-key">P95 Latency:</span>
+                                    <span class="metric-val">${result.metrics.p95ResponseTime.toFixed(2)}ms</span>
+                                </div>
+                                <div class="scenario-metric">
+                                    <span class="metric-key">Throughput:</span>
+                                    <span class="metric-val">${result.metrics.avgThroughput.toFixed(1)} req/s</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+          }
+        }
+
+        document.getElementById('benchmark-results-content').innerHTML = resultsHtml;
+      }
+
+      function updateRealTimeMetrics(results) {
+        document.getElementById('rt-requests').textContent = results.totalRequests;
+        document.getElementById('rt-success').textContent = results.successfulRequests;
+        document.getElementById('rt-errors').textContent = results.failedRequests;
+        document.getElementById('rt-throughput').textContent = results.throughputStats.average.toFixed(1);
+        document.getElementById('rt-avg-latency').textContent = results.latency.avg.toFixed(2) + 'ms';
+        document.getElementById('rt-p95-latency').textContent = results.latency.p95.toFixed(2) + 'ms';
+      }
+
+      function displayRecommendations(results) {
+        const recommendations = results.recommendations || [];
+        const recContent = document.getElementById('recommendations-content');
+
+        if (recommendations.length === 0) {
+          recContent.innerHTML =
+            '<div class="recommendation-item success"><p>✅ Performance metrics look good!</p></div>';
+          return;
+        }
+
+        const recHtml = recommendations
+          .map(rec => {
+            let type = 'info';
+            if (rec.includes('CRITICAL') || rec.includes('🚨')) type = 'danger';
+            else if (rec.includes('⚠️') || rec.includes('WARNING')) type = 'warning';
+            else if (rec.includes('✅')) type = 'success';
+
+            return `<div class="recommendation-item ${type}"><p>${rec}</p></div>`;
+          })
+          .join('');
+
+        recContent.innerHTML = recHtml;
+      }
+
+      function initializeCharts() {
+        // Real-time performance chart
+        const rtCtx = document.getElementById('realtime-chart').getContext('2d');
+        realtimeChart = new Chart(rtCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: 'Response Time (ms)',
+                data: [],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true },
+            },
+          },
+        });
+
+        // Resources chart
+        const resCtx = document.getElementById('resources-chart').getContext('2d');
+        resourcesChart = new Chart(resCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: 'Memory Usage (MB)',
+                data: [],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true },
+            },
+          },
+        });
+      }
+
+      function logMessage(message, level = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry';
+        logEntry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="log-level-${level}">${message}</span>
+            `;
+
+        const logContainer = document.getElementById('test-log');
+        logContainer.appendChild(logEntry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+
+        // Keep only last 100 entries
+        while (logContainer.children.length > 100) {
+          logContainer.removeChild(logContainer.firstChild);
+        }
+      }
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', function (e) {
+        // Ctrl+Shift+R to run selected scenario
+        if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+          e.preventDefault();
+          runSelectedScenario();
+        }
+
+        // Ctrl+Shift+A to run all scenarios
+        if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+          e.preventDefault();
+          runAllScenarios();
+        }
+
+        // Ctrl+Shift+E to export results
+        if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+          e.preventDefault();
+          exportResults();
+        }
+
+        // Ctrl+Shift+S to stop test
+        if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+          e.preventDefault();
+          stopCurrentTest();
+        }
+      });
+
+      console.log('🎯 Performance Test Dashboard loaded successfully!');
+      console.log('💡 Keyboard shortcuts:');
+      console.log('   Ctrl+Shift+R: Run selected scenario');
+      console.log('   Ctrl+Shift+A: Run all scenarios');
+      console.log('   Ctrl+Shift+E: Export results');
+      console.log('   Ctrl+Shift+S: Stop test');
+    </script>
+  </body>
+</html>

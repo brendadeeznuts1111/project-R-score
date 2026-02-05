@@ -1,0 +1,107 @@
+# 🔐 JWT Authentication Worker Configuration
+# Cloudflare Workers deployment configuration
+
+name = "jwt-auth-worker-enhanced"
+main = "jwt-auth-worker-enhanced.ts"
+compatibility_date = "2024-01-01"
+
+# Development settings
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+# Production settings
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+# Staging settings
+[env.staging]
+vars = { ENVIRONMENT = "staging" }
+
+# Custom domain configuration (uncomment and configure for production)
+# [env.production]
+# routes = [
+#   { pattern = "auth.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+# KV Storage binding (for user storage in production)
+# [[kv_namespaces]]
+# binding = "USERS_KV"
+# id = "your-kv-namespace-id"
+
+# D1 Database binding (for user storage in production)
+# [[d1_databases]]
+# binding = "USERS_DB"
+# database_name = "auth_users"
+# database_id = "your-d1-database-id"
+
+# R2 Storage binding (for file uploads or logs)
+# [[r2_buckets]]
+# binding = "AUTH_STORAGE"
+# bucket_name = "auth-storage-bucket"
+
+# Queue configuration (for async processing)
+# [[queues.producers]]
+# queue = "auth-events"
+# binding = "AUTH_QUEUE"
+
+# [[queues.consumers]]
+# queue = "auth-events"
+# max_batch_size = 10
+# max_wait_time_ms = 5000
+
+# Service bindings (for connecting to other workers)
+# [[services]]
+# binding = "USER_SERVICE"
+# service = "user-service-worker"
+
+# Analytics configuration
+[observability]
+enabled = true
+
+# Limits and timeouts
+[limits]
+cpu_ms = 50000  # 50 seconds CPU time
+memory_mb = 128 # 128MB memory
+
+# Build configuration
+[build]
+command = "bun build jwt-auth-worker.ts --outdir=dist --target=browser"
+
+# Environment variables (use wrangler secret for sensitive data)
+# [env.production.vars]
+# JWT_SECRET = ""  # Set with: wrangler secret put JWT_SECRET
+# DATABASE_URL = "" # Set with: wrangler secret put DATABASE_URL
+# REDIS_URL = ""    # Set with: wrangler secret put REDIS_URL
+
+# Development environment variables
+[env.development.vars]
+JWT_SECRET = "dev-secret-key-change-in-production"
+AUTH_BASE_URL = "http://localhost:8787"
+DEBUG_MODE = "true"
+
+# Staging environment variables
+[env.staging.vars]
+JWT_SECRET = "staging-secret-key-change-in-production"
+AUTH_BASE_URL = "https://jwt-auth-staging.your-subdomain.workers.dev"
+DEBUG_MODE = "false"
+
+# Production environment variables
+[env.production.vars]
+AUTH_BASE_URL = "https://auth.yourdomain.com"
+DEBUG_MODE = "false"
+
+# Custom domains (uncomment and configure for production)
+# [env.production]
+# custom_domains = [
+#   { pattern = "auth.yourdomain.com" }
+# ]
+
+# Cron triggers (for scheduled tasks)
+# [triggers]
+# crons = ["*/30 * * * * *"] # Every 30 seconds for cleanup tasks
+
+# Miniflare configuration for local development
+[miniflare]
+global_async_io = true
+global_timers = true
+compatibility_flags = ["streams_enable_constructors"]

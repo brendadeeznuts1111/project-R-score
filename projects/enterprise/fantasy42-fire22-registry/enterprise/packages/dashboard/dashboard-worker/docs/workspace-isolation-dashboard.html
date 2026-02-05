@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Workspace Isolation Dashboard - Bun Isolated Installs</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #ff6b35;
+        --secondary: #1e3a8a;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --dark: #1f2937;
+        --light: #f9fafb;
+        --border: #e5e7eb;
+        --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        font-family:
+          'SF Pro Display',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        color: var(--dark);
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .version-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .stat-card {
+        background: #f9fafb;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .stat-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-top: 5px;
+      }
+
+      .workspace-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .workspace-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .workspace-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .workspace-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .workspace-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .workspace-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      .workspace-size {
+        background: var(--success);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .workspace-info {
+        display: grid;
+        gap: 10px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px;
+        background: #f9fafb;
+        border-radius: 8px;
+      }
+
+      .info-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .info-value {
+        color: var(--dark);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .mode-badges {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .mode-badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        flex: 1;
+        text-align: center;
+      }
+
+      .linked {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .standalone {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .isolation-features {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .feature-card {
+        padding: 20px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: scale(1.05);
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .feature-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 5px;
+      }
+
+      .feature-desc {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .commands-section {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+      }
+
+      .command-group {
+        margin-top: 20px;
+      }
+
+      .command-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 15px;
+      }
+
+      .command-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .command-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        background: #f9fafb;
+        border-radius: 8px;
+        font-family: 'SF Mono', monospace;
+        transition: all 0.2s ease;
+      }
+
+      .command-item:hover {
+        background: #e5e7eb;
+        transform: translateX(5px);
+      }
+
+      .command-icon {
+        margin-right: 10px;
+        color: var(--primary);
+      }
+
+      .command-text {
+        flex: 1;
+        font-size: 0.95rem;
+        color: var(--dark);
+      }
+
+      .copy-button {
+        padding: 5px 10px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+      }
+
+      .copy-button:hover {
+        background: #dc2626;
+      }
+
+      .architecture-diagram {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+      }
+
+      .diagram-container {
+        margin-top: 20px;
+        padding: 20px;
+        background: #f9fafb;
+        border-radius: 12px;
+        font-family: 'SF Mono', monospace;
+        overflow-x: auto;
+      }
+
+      .tree-view {
+        white-space: pre;
+        line-height: 1.6;
+        color: var(--dark);
+      }
+
+      .highlight {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .success-badge {
+        background: var(--success);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>
+          🏗️ Fire22 Workspace Isolation Dashboard
+          <span class="version-badge">v3.0.8</span>
+        </h1>
+        <p class="subtitle">Advanced workspace management with Bun isolated installs</p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">6</div>
+            <div class="stat-label">Isolated Workspaces</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">99.4%</div>
+            <div class="stat-label">Size Reduction</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">364KB</div>
+            <div class="stat-label">Total Size</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Environments</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">✅</div>
+            <div class="stat-label">Isolated Installs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Phantom Deps</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="workspace-grid">
+        <div class="workspace-card">
+          <div class="workspace-header">
+            <span class="workspace-name">📊 @fire22/pattern-system</span>
+            <span class="workspace-size">69.5KB</span>
+          </div>
+          <div class="workspace-info">
+            <div class="info-row">
+              <span class="info-label">Layer:</span>
+              <span class="info-value">Foundation</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dependencies:</span>
+              <span class="info-value">0 (Zero)</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Purpose:</span>
+              <span class="info-value">Core patterns & utilities</span>
+            </div>
+          </div>
+          <div class="mode-badges">
+            <div class="mode-badge linked">🔗 Linked</div>
+            <div class="mode-badge standalone">📦 Standalone</div>
+          </div>
+        </div>
+
+        <div class="workspace-card">
+          <div class="workspace-header">
+            <span class="workspace-name">🔌 @fire22/api-client</span>
+            <span class="workspace-size">15.4KB</span>
+          </div>
+          <div class="workspace-info">
+            <div class="info-row">
+              <span class="info-label">Layer:</span>
+              <span class="info-value">Service</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dependencies:</span>
+              <span class="info-value">@fire22/core-dashboard</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Purpose:</span>
+              <span class="info-value">Fire22 API integration</span>
+            </div>
+          </div>
+          <div class="mode-badges">
+            <div class="mode-badge linked">🔗 Linked</div>
+            <div class="mode-badge standalone">📦 Standalone</div>
+          </div>
+        </div>
+
+        <div class="workspace-card">
+          <div class="workspace-header">
+            <span class="workspace-name">🎯 @fire22/core-dashboard</span>
+            <span class="workspace-size">187.1KB</span>
+          </div>
+          <div class="workspace-info">
+            <div class="info-row">
+              <span class="info-label">Layer:</span>
+              <span class="info-value">Application</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dependencies:</span>
+              <span class="info-value">pattern-system, api-client</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Purpose:</span>
+              <span class="info-value">Main dashboard & UI</span>
+            </div>
+          </div>
+          <div class="mode-badges">
+            <div class="mode-badge linked">🔗 Linked</div>
+            <div class="mode-badge standalone">📦 Standalone</div>
+          </div>
+        </div>
+
+        <div class="workspace-card">
+          <div class="workspace-header">
+            <span class="workspace-name">🎲 @fire22/sports-betting</span>
+            <span class="workspace-size">28.1KB</span>
+          </div>
+          <div class="workspace-info">
+            <div class="info-row">
+              <span class="info-label">Layer:</span>
+              <span class="info-value">Domain</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dependencies:</span>
+              <span class="info-value">api-client, core-dashboard</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Purpose:</span>
+              <span class="info-value">Betting & casino logic</span>
+            </div>
+          </div>
+          <div class="mode-badges">
+            <div class="mode-badge linked">🔗 Linked</div>
+            <div class="mode-badge standalone">📦 Standalone</div>
+          </div>
+        </div>
+
+        <div class="workspace-card">
+          <div class="workspace-header">
+            <span class="workspace-name">📱 @fire22/telegram-integration</span>
+            <span class="workspace-size">64.2KB</span>
+          </div>
+          <div class="workspace-info">
+            <div class="info-row">
+              <span class="info-label">Layer:</span>
+              <span class="info-value">Integration</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dependencies:</span>
+              <span class="info-value">@fire22/api-client</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Purpose:</span>
+              <span class="info-value">Bot & P2P queue</span>
+            </div>
+          </div>
+          <div class="mode-badges">
+            <div class="mode-badge linked">🔗 Linked</div>
+            <div class="mode-badge standalone">📦 Standalone</div>
+          </div>
+        </div>
+
+        <div class="workspace-card">
+          <div class="workspace-header">
+            <span class="workspace-name">🔧 @fire22/build-system</span>
+            <span class="workspace-size">Node.js</span>
+          </div>
+          <div class="workspace-info">
+            <div class="info-row">
+              <span class="info-label">Layer:</span>
+              <span class="info-value">Infrastructure</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dependencies:</span>
+              <span class="info-value">mitata, typescript</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Purpose:</span>
+              <span class="info-value">Build & dev tools</span>
+            </div>
+          </div>
+          <div class="mode-badges">
+            <div class="mode-badge linked">🔗 Linked</div>
+            <div class="mode-badge standalone">📦 Standalone</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="isolation-features">
+        <h2>🔒 Bun Isolated Install Features</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🚫</div>
+            <div class="feature-title">No Phantom Dependencies</div>
+            <div class="feature-desc">Packages can only access declared dependencies</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-title">Deterministic Builds</div>
+            <div class="feature-desc">Same dependency tree every time</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔗</div>
+            <div class="feature-title">Symlink Strategy</div>
+            <div class="feature-desc">Efficient storage with symlinks</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📦</div>
+            <div class="feature-title">Central Store</div>
+            <div class="feature-desc">.bun/ package store structure</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🏗️</div>
+            <div class="feature-title">Workspace Support</div>
+            <div class="feature-desc">workspace:* resolution</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">Fast Installs</div>
+            <div class="feature-desc">Hardlinks & clonefile support</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="commands-section">
+        <h2>🚀 Quick Commands</h2>
+
+        <div class="command-group">
+          <div class="command-title">Workspace Management</div>
+          <div class="command-list">
+            <div class="command-item">
+              <span class="command-icon">▶️</span>
+              <span class="command-text">bun workspaces/orchestration.ts install:isolated</span>
+              <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+            </div>
+            <div class="command-item">
+              <span class="command-icon">🏗️</span>
+              <span class="command-text">bun workspaces/orchestration.ts build:standalone</span>
+              <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+            </div>
+            <div class="command-item">
+              <span class="command-icon">🧪</span>
+              <span class="command-text">bun workspaces/orchestration.ts test:all</span>
+              <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="command-group">
+          <div class="command-title">Individual Workspace</div>
+          <div class="command-list">
+            <div class="command-item">
+              <span class="command-icon">📦</span>
+              <span class="command-text">cd workspaces/@fire22-pattern-system && bun install --linker isolated</span>
+              <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+            </div>
+            <div class="command-item">
+              <span class="command-icon">🔗</span>
+              <span class="command-text">bun run dev</span>
+              <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+            </div>
+            <div class="command-item">
+              <span class="command-icon">🚀</span>
+              <span class="command-text">bun run deploy:standalone</span>
+              <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="architecture-diagram">
+        <h2>📁 Directory Structure</h2>
+        <div class="diagram-container">
+          <pre class="tree-view">
+<span class="highlight">dashboard-worker/</span>
+├── <span class="highlight">workspaces/</span> <span class="success-badge">ISOLATED</span>
+│   ├── @fire22-pattern-system/
+│   │   ├── bunfig.toml <span class="highlight">(linker = "isolated")</span>
+│   │   ├── package.json
+│   │   ├── package.linked.json
+│   │   ├── package.standalone.json
+│   │   ├── node_modules/
+│   │   │   ├── <span class="highlight">.bun/</span> <span class="success-badge">CENTRAL STORE</span>
+│   │   │   │   ├── typescript@5.9.2/
+│   │   │   │   └── @types+bun@1.2.21/
+│   │   │   └── typescript → .bun/typescript@5.9.2/... <span class="highlight">SYMLINK</span>
+│   │   └── src/
+│   ├── @fire22-api-client/
+│   ├── @fire22-core-dashboard/
+│   ├── @fire22-sports-betting/
+│   ├── @fire22-telegram-integration/
+│   └── @fire22-build-system/
+├── <span class="highlight">packages/</span> <span class="success-badge">@fire22-core-packages</span>
+│   ├── security-core/
+│   ├── security-scanner/
+│   ├── env-manager/
+│   ├── middleware/
+│   ├── testing-framework/
+│   └── wager-system/
+└── <span class="highlight">docs/</span>
+    ├── workspace-isolation-dashboard.html <span class="success-badge">THIS FILE</span>
+    ├── @packages.html
+    └── workspace-architecture-visuals.md
+                </pre>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function copyCommand(button) {
+        const commandText = button.previousElementSibling.textContent;
+        navigator.clipboard.writeText(commandText).then(() => {
+          const originalText = button.textContent;
+          button.textContent = 'Copied!';
+          button.style.background = '#10b981';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.style.background = '';
+          }, 2000);
+        });
+      }
+
+      // Add animation on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.workspace-card, .feature-card, .stat-card');
+        cards.forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, index * 50);
+        });
+      });
+    </script>
+  </body>
+</html>

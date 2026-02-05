@@ -1,0 +1,51 @@
+{
+  "name": "@fire22-registry/analytics-dashboard",
+  "version": "2.7.0",
+  "description": "Analytics dashboard package for Fantasy42-Fire22 Registry",
+  "main": "src/agent-monitor.ts",
+  "types": "src/agent-monitor.ts",
+  "exports": {
+    ".": "./src/agent-monitor.ts"
+  },
+  "scripts": {
+    "build": "bun build ./src/agent-monitor.ts --outdir ./dist",
+    "build:demo": "bun run build-demo.js",
+    "test": "bun test",
+    "link": "bun link"
+  },
+  "dependencies": {
+    "@fire22-registry/core-security": "workspace:*",
+    "axios": "^1.11.0",
+    "chalk": "^5.6.0",
+    "boxen": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21"
+  },
+  "keywords": [
+    "fantasy42",
+    "fire22",
+    "analytics",
+    "dashboard",
+    "monitoring",
+    "typescript",
+    "bun"
+  ],
+  "author": "Fire22 Enterprise",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry.git",
+    "directory": "packages/analytics-dashboard"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "fantasy42": {
+    "category": "analytics",
+    "compliance": [
+      "GDPR"
+    ],
+    "security": "high"
+  }
+}

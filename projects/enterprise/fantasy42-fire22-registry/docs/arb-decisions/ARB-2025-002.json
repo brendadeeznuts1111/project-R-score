@@ -1,0 +1,62 @@
+{
+  "id": "ARB-2025-002",
+  "title": "Centralized PostgreSQL Migration",
+  "date": "2025-08-28",
+  "status": "rejected",
+  "participants": [
+    "CTO",
+    "Principal Engineer",
+    "Security Lead",
+    "Infrastructure Lead",
+    "Domain Lead - User Management"
+  ],
+  "context": "Infrastructure team proposed migrating from Cloudflare D1 (SQLite) to a centralized PostgreSQL cluster to support complex queries and better consistency guarantees for user data management.",
+  "decision": "REJECTED - The proposal does not align with our Edge-Native First principle and would introduce significant latency and operational complexity.",
+  "rationale": [
+    "Violates Edge-Native First principle from Engineering Playbook",
+    "Would introduce 50-100ms additional latency for global users",
+    "Increases operational complexity and infrastructure costs",
+    "D1 SQLite capabilities are sufficient for current user data requirements",
+    "Centralized database creates single point of failure"
+  ],
+  "alternatives": [
+    {
+      "option": "Optimize D1 queries and schema design",
+      "status": "recommended",
+      "reason": "Addresses performance concerns while maintaining edge-native architecture"
+    },
+    {
+      "option": "Implement read replicas using D1 in multiple regions",
+      "status": "recommended",
+      "reason": "Provides better global performance without centralization"
+    },
+    {
+      "option": "Use CQRS pattern with D1 for complex queries",
+      "status": "recommended",
+      "reason": "Separates complex read operations from simple writes"
+    }
+  ],
+  "recommendedPath": "Optimize current D1 implementation with better indexing, query optimization, and potentially CQRS patterns for complex analytical queries.",
+  "playbookAlignment": {
+    "tenets": ["Real-Time Imperative", "Scale as a Feature"],
+    "lenses": ["Edge-Native First", "Cost-Efficient Scaling"],
+    "score": 25,
+    "notes": "Poor alignment with playbook. Violates Edge-Native First principle and would negatively impact Real-Time Imperative."
+  },
+  "riskAssessment": {
+    "level": "HIGH",
+    "factors": [
+      "Significant latency increase for global users",
+      "Single point of failure introduction",
+      "Increased operational complexity",
+      "Higher infrastructure costs",
+      "Migration complexity and downtime risk"
+    ]
+  },
+  "followUpActions": [
+    "Infrastructure team to propose D1 optimization plan",
+    "Performance benchmarking of current D1 implementation",
+    "Investigation of D1 advanced features and indexing strategies",
+    "Consider CQRS implementation for complex analytical queries"
+  ]
+}

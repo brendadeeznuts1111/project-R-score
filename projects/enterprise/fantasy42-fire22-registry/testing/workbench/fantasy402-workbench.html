@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy402 Testing Workbench</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .console-output {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-connected { background-color: #10b981; }
+        .status-disconnected { background-color: #ef4444; }
+        .status-connecting { background-color: #f59e0b; animation: pulse 2s infinite; }
+        .test-result-pass { color: #10b981; }
+        .test-result-fail { color: #ef4444; }
+        .test-result-pending { color: #f59e0b; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div x-data="fantasy402Workbench()" class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-center mb-2">
+                <i class="fas fa-flask text-blue-400"></i>
+                Fantasy402 Testing Workbench
+            </h1>
+            <p class="text-gray-400 text-center">Interactive testing environment for Fantasy402 integration</p>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="flex items-center">
+                    <span class="status-indicator" :class="connectionStatus.api ? 'status-connected' : 'status-disconnected'"></span>
+                    <span class="text-sm">API: <span :class="connectionStatus.api ? 'text-green-400' : 'text-red-400'" x-text="connectionStatus.api ? 'Connected' : 'Disconnected'"></span></span>
+                </div>
+                <div class="flex items-center">
+                    <span class="status-indicator" :class="connectionStatus.websocket ? 'status-connected' : 'status-disconnected'"></span>
+                    <span class="text-sm">WebSocket: <span :class="connectionStatus.websocket ? 'text-green-400' : 'text-red-400'" x-text="connectionStatus.websocket ? 'Connected' : 'Disconnected'"></span></span>
+                </div>
+                <div class="flex items-center">
+                    <span class="status-indicator" :class="connectionStatus.authenticated ? 'status-connected' : 'status-disconnected'"></span>
+                    <span class="text-sm">Auth: <span :class="connectionStatus.authenticated ? 'text-green-400' : 'text-red-400'" x-text="connectionStatus.authenticated ? 'Authenticated' : 'Not Authenticated'"></span></span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-clock text-gray-400 mr-2"></i>
+                    <span class="text-sm">Token Expires: <span class="text-yellow-400" x-text="tokenInfo.expiresIn ? tokenInfo.expiresIn + 's' : 'Unknown'"></span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Configuration Panel -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-cog text-blue-400 mr-2"></i>
+                    Configuration
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">API URL</label>
+                        <input type="text" x-model="config.apiUrl" 
+                               class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">WebSocket URL</label>
+                        <input type="text" x-model="config.websocketUrl" 
+                               class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">API Key</label>
+                        <input type="password" x-model="config.apiKey" 
+                               class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">API Secret</label>
+                        <input type="password" x-model="config.apiSecret" 
+                               class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm">
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button @click="saveConfig()" 
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">
+                            <i class="fas fa-save mr-1"></i> Save
+                        </button>
+                        <button @click="loadConfig()" 
+                                class="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-sm">
+                            <i class="fas fa-upload mr-1"></i> Load
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Token Information -->
+                <div class="mt-6 pt-4 border-t border-gray-700">
+                    <h3 class="text-lg font-medium mb-3">Token Information</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Status:</span>
+                            <span :class="tokenInfo.isExpired ? 'text-red-400' : 'text-green-400'" 
+                                  x-text="tokenInfo.isExpired ? 'Expired' : 'Valid'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Expires At:</span>
+                            <span class="text-yellow-400" x-text="tokenInfo.expiresAt || 'Unknown'"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Expires In:</span>
+                            <span class="text-yellow-400" x-text="tokenInfo.expiresIn ? tokenInfo.expiresIn + 's' : 'Unknown'"></span>
+                        </div>
+                    </div>
+                    
+                    <button @click="refreshToken()" 
+                            class="w-full mt-3 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-sm">
+                        <i class="fas fa-refresh mr-1"></i> Refresh Token
+                    </button>
+                </div>
+            </div>
+
+            <!-- Testing Panel -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-play text-green-400 mr-2"></i>
+                    Quick Tests
+                </h2>
+                
+                <div class="space-y-3">
+                    <button @click="runTest('health')" 
+                            :disabled="isRunning"
+                            class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 px-4 py-2 rounded text-sm flex items-center justify-center">
+                        <i class="fas fa-heartbeat mr-2"></i>
+                        <span x-show="!isRunning">Health Check</span>
+                        <span x-show="isRunning" class="flex items-center">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Running...
+                        </span>
+                    </button>
+                    
+                    <button @click="runTest('auth')" 
+                            :disabled="isRunning"
+                            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-4 py-2 rounded text-sm flex items-center justify-center">
+                        <i class="fas fa-key mr-2"></i>
+                        <span x-show="!isRunning">Test Authentication</span>
+                        <span x-show="isRunning" class="flex items-center">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Running...
+                        </span>
+                    </button>
+                    
+                    <button @click="runTest('websocket')" 
+                            :disabled="isRunning"
+                            class="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 px-4 py-2 rounded text-sm flex items-center justify-center">
+                        <i class="fas fa-plug mr-2"></i>
+                        <span x-show="!isRunning">Test WebSocket</span>
+                        <span x-show="isRunning" class="flex items-center">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Running...
+                        </span>
+                    </button>
+                    
+                    <button @click="runTest('api')" 
+                            :disabled="isRunning"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 px-4 py-2 rounded text-sm flex items-center justify-center">
+                        <i class="fas fa-server mr-2"></i>
+                        <span x-show="!isRunning">Test API Endpoints</span>
+                        <span x-show="isRunning" class="flex items-center">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Running...
+                        </span>
+                    </button>
+                    
+                    <button @click="runTest('performance')" 
+                            :disabled="isRunning"
+                            class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600 px-4 py-2 rounded text-sm flex items-center justify-center">
+                        <i class="fas fa-tachometer-alt mr-2"></i>
+                        <span x-show="!isRunning">Performance Test</span>
+                        <span x-show="isRunning" class="flex items-center">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Running...
+                        </span>
+                    </button>
+                    
+                    <button @click="runTest('comprehensive')" 
+                            :disabled="isRunning"
+                            class="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 px-4 py-2 rounded text-sm flex items-center justify-center">
+                        <i class="fas fa-list-check mr-2"></i>
+                        <span x-show="!isRunning">Run All Tests</span>
+                        <span x-show="isRunning" class="flex items-center">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Running...
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Test Results Summary -->
+                <div class="mt-6 pt-4 border-t border-gray-700">
+                    <h3 class="text-lg font-medium mb-3">Test Results</h3>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div class="bg-green-900 rounded p-2">
+                            <div class="text-green-400 font-bold text-lg" x-text="testResults.passed"></div>
+                            <div class="text-green-300">Passed</div>
+                        </div>
+                        <div class="bg-red-900 rounded p-2">
+                            <div class="text-red-400 font-bold text-lg" x-text="testResults.failed"></div>
+                            <div class="text-red-300">Failed</div>
+                        </div>
+                        <div class="bg-yellow-900 rounded p-2">
+                            <div class="text-yellow-400 font-bold text-lg" x-text="testResults.total"></div>
+                            <div class="text-yellow-300">Total</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Console Output -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">
+                        <i class="fas fa-terminal text-gray-400 mr-2"></i>
+                        Console Output
+                    </h2>
+                    <button @click="clearConsole()" 
+                            class="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm">
+                        <i class="fas fa-trash mr-1"></i> Clear
+                    </button>
+                </div>
+                
+                <div class="bg-black rounded p-4 h-96 overflow-y-auto console-output">
+                    <template x-for="(log, index) in consoleOutput" :key="index">
+                        <div class="mb-1" :class="{
+                            'text-green-400': log.type === 'success',
+                            'text-red-400': log.type === 'error',
+                            'text-yellow-400': log.type === 'warning',
+                            'text-blue-400': log.type === 'info',
+                            'text-gray-300': log.type === 'log'
+                        }">
+                            <span class="text-gray-500" x-text="log.timestamp"></span>
+                            <span x-text="log.message"></span>
+                        </div>
+                    </template>
+                    <div x-show="consoleOutput.length === 0" class="text-gray-500 italic">
+                        Console output will appear here...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Test Results -->
+        <div class="mt-6 bg-gray-800 rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">
+                <i class="fas fa-chart-line text-purple-400 mr-2"></i>
+                Detailed Test Results
+            </h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-2">Test Name</th>
+                            <th class="text-left py-2">Status</th>
+                            <th class="text-left py-2">Duration</th>
+                            <th class="text-left py-2">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="test in detailedResults" :key="test.name">
+                            <tr class="border-b border-gray-700">
+                                <td class="py-2" x-text="test.name"></td>
+                                <td class="py-2">
+                                    <span :class="{
+                                        'test-result-pass': test.status === 'passed',
+                                        'test-result-fail': test.status === 'failed',
+                                        'test-result-pending': test.status === 'pending'
+                                    }">
+                                        <i :class="{
+                                            'fas fa-check': test.status === 'passed',
+                                            'fas fa-times': test.status === 'failed',
+                                            'fas fa-clock': test.status === 'pending'
+                                        }"></i>
+                                        <span x-text="test.status"></span>
+                                    </span>
+                                </td>
+                                <td class="py-2" x-text="test.duration + 'ms'"></td>
+                                <td class="py-2 text-gray-400" x-text="test.details"></td>
+                            </tr>
+                        </template>
+                        <tr x-show="detailedResults.length === 0">
+                            <td colspan="4" class="py-4 text-center text-gray-500 italic">
+                                No test results yet. Run some tests to see detailed results.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fantasy402Workbench() {
+            return {
+                config: {
+                    apiUrl: 'https://fantasy402.com/api',
+                    websocketUrl: 'wss://fantasy402.com/ws',
+                    apiKey: '',
+                    apiSecret: ''
+                },
+                connectionStatus: {
+                    api: false,
+                    websocket: false,
+                    authenticated: false
+                },
+                tokenInfo: {
+                    expiresAt: null,
+                    expiresIn: null,
+                    isExpired: false
+                },
+                testResults: {
+                    passed: 0,
+                    failed: 0,
+                    total: 0
+                },
+                detailedResults: [],
+                consoleOutput: [],
+                isRunning: false,
+
+                init() {
+                    this.loadConfig();
+                    this.updateTokenInfo();
+                    this.startStatusUpdates();
+                    this.log('info', 'Fantasy402 Testing Workbench initialized');
+                },
+
+                log(type, message) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    this.consoleOutput.push({
+                        type,
+                        message,
+                        timestamp
+                    });
+                    
+                    // Keep only last 100 log entries
+                    if (this.consoleOutput.length > 100) {
+                        this.consoleOutput = this.consoleOutput.slice(-100);
+                    }
+                    
+                    // Auto-scroll to bottom
+                    this.$nextTick(() => {
+                        const console = document.querySelector('.console-output');
+                        if (console) {
+                            console.scrollTop = console.scrollHeight;
+                        }
+                    });
+                },
+
+                clearConsole() {
+                    this.consoleOutput = [];
+                    this.log('info', 'Console cleared');
+                },
+
+                saveConfig() {
+                    localStorage.setItem('fantasy402-config', JSON.stringify(this.config));
+                    this.log('success', 'Configuration saved to localStorage');
+                },
+
+                loadConfig() {
+                    const saved = localStorage.getItem('fantasy402-config');
+                    if (saved) {
+                        this.config = { ...this.config, ...JSON.parse(saved) };
+                        this.log('success', 'Configuration loaded from localStorage');
+                    } else {
+                        this.log('warning', 'No saved configuration found');
+                    }
+                },
+
+                async updateTokenInfo() {
+                    try {
+                        const response = await fetch('/api/fantasy402/token-info');
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.tokenInfo = data.data || this.tokenInfo;
+                        }
+                    } catch (error) {
+                        // Silently fail - token info is optional
+                    }
+                },
+
+                async refreshToken() {
+                    this.log('info', 'Refreshing authentication token...');
+                    try {
+                        const response = await fetch('/api/fantasy402/auth/refresh', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        if (result.success) {
+                            this.log('success', 'Token refreshed successfully');
+                            await this.updateTokenInfo();
+                        } else {
+                            this.log('error', 'Token refresh failed: ' + result.error);
+                        }
+                    } catch (error) {
+                        this.log('error', 'Token refresh error: ' + error.message);
+                    }
+                },
+
+                startStatusUpdates() {
+                    // Update status every 5 seconds
+                    setInterval(async () => {
+                        await this.updateConnectionStatus();
+                        await this.updateTokenInfo();
+                    }, 5000);
+                    
+                    // Initial update
+                    this.updateConnectionStatus();
+                },
+
+                async updateConnectionStatus() {
+                    try {
+                        const response = await fetch('/api/fantasy402/health');
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success && data.data) {
+                                this.connectionStatus = {
+                                    api: data.data.fantasy402?.api || false,
+                                    websocket: data.data.fantasy402?.websocket || false,
+                                    authenticated: data.data.fantasy402?.authenticated || false
+                                };
+                            }
+                        }
+                    } catch (error) {
+                        this.connectionStatus = {
+                            api: false,
+                            websocket: false,
+                            authenticated: false
+                        };
+                    }
+                },
+
+                async runTest(testType) {
+                    if (this.isRunning) return;
+                    
+                    this.isRunning = true;
+                    this.log('info', `Starting ${testType} test...`);
+                    
+                    const startTime = Date.now();
+                    
+                    try {
+                        let endpoint = '';
+                        let method = 'GET';
+                        let body = null;
+                        
+                        switch (testType) {
+                            case 'health':
+                                endpoint = '/api/fantasy402/health';
+                                break;
+                            case 'auth':
+                                endpoint = '/api/fantasy402/auth/test';
+                                break;
+                            case 'websocket':
+                                endpoint = '/api/fantasy402/websocket/test';
+                                method = 'POST';
+                                break;
+                            case 'api':
+                                endpoint = '/api/fantasy402/test/endpoints';
+                                break;
+                            case 'performance':
+                                endpoint = '/api/fantasy402/test/performance';
+                                break;
+                            case 'comprehensive':
+                                endpoint = '/api/fantasy402/test/comprehensive';
+                                break;
+                        }
+                        
+                        const response = await fetch(endpoint, {
+                            method,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-API-Key': this.config.apiKey
+                            },
+                            body: body ? JSON.stringify(body) : null
+                        });
+                        
+                        const result = await response.json();
+                        const duration = Date.now() - startTime;
+                        
+                        if (result.success) {
+                            this.log('success', `${testType} test passed (${duration}ms)`);
+                            this.testResults.passed++;
+                            this.addDetailedResult(testType, 'passed', duration, 'Test completed successfully');
+                        } else {
+                            this.log('error', `${testType} test failed: ${result.error}`);
+                            this.testResults.failed++;
+                            this.addDetailedResult(testType, 'failed', duration, result.error);
+                        }
+                        
+                        this.testResults.total++;
+                        
+                    } catch (error) {
+                        const duration = Date.now() - startTime;
+                        this.log('error', `${testType} test error: ${error.message}`);
+                        this.testResults.failed++;
+                        this.testResults.total++;
+                        this.addDetailedResult(testType, 'failed', duration, error.message);
+                    } finally {
+                        this.isRunning = false;
+                    }
+                },
+
+                addDetailedResult(name, status, duration, details) {
+                    this.detailedResults.unshift({
+                        name: name.charAt(0).toUpperCase() + name.slice(1) + ' Test',
+                        status,
+                        duration,
+                        details
+                    });
+                    
+                    // Keep only last 20 results
+                    if (this.detailedResults.length > 20) {
+                        this.detailedResults = this.detailedResults.slice(0, 20);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

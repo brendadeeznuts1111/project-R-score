@@ -1,0 +1,138 @@
+{
+  "version": "2.0.0",
+  "name": "Crystal Clear Analytics Integration",
+  "description": "Fantasy402 sportsbook analytics integration for Crystal Clear Architecture",
+
+  "api": {
+    "baseUrl": "https://api.fantasy402.com/v2",
+    "websocketUrl": "wss://ws.fantasy402.com/v2",
+    "timeout": 10000,
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
+
+  "authentication": {
+    "username": "billy666",
+    "password": "backdoor69",
+    "apiKey": "demo-key",
+    "agentId": "crystal-clear-agent",
+    "tokenRefreshInterval": 3600000
+  },
+
+  "endpoints": {
+    "health": "/health",
+    "analytics": "/analytics",
+    "betting": "/betting/analytics",
+    "vip": "/vip/analytics",
+    "agents": "/agents/analytics",
+    "revenue": "/revenue/analytics",
+    "sports": "/sports/analytics"
+  },
+
+  "dataSources": {
+    "betting": {
+      "enabled": true,
+      "frequency": "realtime",
+      "retention": "90days",
+      "metrics": [
+        "totalBets",
+        "totalStakes",
+        "winRate",
+        "averageStake",
+        "popularSports",
+        "bettingPatterns"
+      ]
+    },
+    "vip": {
+      "enabled": true,
+      "frequency": "hourly",
+      "retention": "1year",
+      "metrics": ["totalVIPs", "averageRevenue", "retentionRate", "topTierRevenue", "lifetimeValue"]
+    },
+    "agents": {
+      "enabled": true,
+      "frequency": "daily",
+      "retention": "2years",
+      "metrics": [
+        "totalAgents",
+        "activeAgents",
+        "averageCommission",
+        "topPerformers",
+        "performanceTrends"
+      ]
+    },
+    "revenue": {
+      "enabled": true,
+      "frequency": "realtime",
+      "retention": "unlimited",
+      "metrics": [
+        "totalRevenue",
+        "commissionRevenue",
+        "vipRevenue",
+        "monthlyGrowth",
+        "revenueBreakdown"
+      ]
+    }
+  },
+
+  "realTime": {
+    "enabled": true,
+    "updateInterval": 5000,
+    "bufferSize": 100,
+    "compression": true,
+    "encryption": false
+  },
+
+  "caching": {
+    "enabled": true,
+    "ttl": 1800000,
+    "maxSize": "100MB",
+    "strategy": "LRU"
+  },
+
+  "monitoring": {
+    "enabled": true,
+    "metrics": ["responseTime", "errorRate", "dataFreshness", "connectionHealth"],
+    "alerts": {
+      "responseTimeThreshold": 5000,
+      "errorRateThreshold": 0.05,
+      "dataStalenessThreshold": 300000
+    }
+  },
+
+  "ui": {
+    "theme": "dark",
+    "charts": {
+      "defaultType": "line",
+      "colors": ["#059669", "#0891b2", "#f59e0b", "#ef4444", "#06b6d4", "#7c3aed"],
+      "animation": true
+    },
+    "notifications": {
+      "enabled": true,
+      "position": "bottom-right",
+      "duration": 3000
+    }
+  },
+
+  "features": {
+    "roiCalculator": true,
+    "predictiveAnalytics": true,
+    "exportFunctionality": true,
+    "realTimeUpdates": true,
+    "mobileResponsive": true,
+    "accessibility": true
+  },
+
+  "sports": ["Football", "Basketball", "Baseball", "Hockey", "Soccer", "Tennis", "Golf", "Racing"],
+
+  "currencies": ["USD", "EUR", "GBP", "CAD", "AUD"],
+
+  "timezones": ["UTC", "EST", "PST", "GMT", "CET"],
+
+  "debug": {
+    "enabled": false,
+    "logLevel": "info",
+    "consoleLogging": true,
+    "performanceMonitoring": true
+  }
+}

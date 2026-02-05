@@ -1,0 +1,30 @@
+# Snyk Security Configuration for Fantasy42-Fire22
+# External dependency vulnerability scanner configuration
+
+# Severity threshold - only fail on high/critical vulnerabilities in CI
+severity-threshold: high
+
+# Ignore specific false positives or accepted risks
+ignore:
+  # Example: Ignore a specific vulnerability that's been mitigated
+  - id: "SNYK-JS-LODASH-590103"
+    reason: "Using lodash v4.17.21+ which includes the fix"
+    expires: "2025-12-31"
+
+  # Example: Accept risk for development-only dependency
+  - id: "SNYK-JS-DEBUG-1076938"
+    reason: "Debug package only used in development, no production exposure"
+    expires: "2025-12-31"
+
+# Exclude development dependencies from production scans
+exclude:
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/*.test.*"
+  - "**/*.spec.*"
+
+# Additional Snyk settings
+fail-on: all
+show-vulnerable-paths: true
+json: true
+

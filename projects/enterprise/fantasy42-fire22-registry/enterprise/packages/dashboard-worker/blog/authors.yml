@@ -1,0 +1,78 @@
+fire22_team:
+  name: Fire22 Team
+  title: Dashboard Engineering Team
+  url: https://github.com/brendadeeznuts1111/fire22-dashboard-worker
+  image_url: https://github.com/fire22.png
+
+sarah_johnson:
+  name: Sarah Johnson
+  title: Chief Marketing Officer
+  email: sarah.johnson@fire22.ag
+  image_url: https://github.com/fire22.png
+
+technology_dept:
+  name: Technology Department
+  title: Fire22 Engineering Team
+  url: /docs/departments/technology
+  image_url: https://github.com/fire22.png
+
+operations_dept:
+  name: Operations Department
+  title: Fire22 Operations Team
+  url: /docs/departments/operations
+  image_url: https://github.com/fire22.png
+
+finance_dept:
+  name: Finance Department
+  title: Fire22 Finance Team
+  url: /docs/departments/finance
+  image_url: https://github.com/fire22.png
+
+customer_support_dept:
+  name: Customer Support Department
+  title: Fire22 Customer Success Team
+  url: /docs/departments/customer-support
+  image_url: https://github.com/fire22.png
+
+compliance_dept:
+  name: Compliance Department
+  title: Fire22 Compliance Team
+  url: /docs/departments/compliance
+  image_url: https://github.com/fire22.png
+
+security_dept:
+  name: Security Department
+  title: Fire22 Security Team
+  url: /docs/departments/security
+  image_url: https://github.com/fire22.png
+
+management_dept:
+  name: Management Department
+  title: Fire22 Leadership Team
+  url: /docs/departments/management
+  image_url: https://github.com/fire22.png
+
+sportsbook_dept:
+  name: Sportsbook Operations
+  title: Fire22 Sportsbook Team
+  url: /docs/departments/sportsbook-operations
+  image_url: https://github.com/fire22.png
+
+team_contributors_dept:
+  name: Team Contributors
+  title: Fire22 Development Contributors
+  url: /docs/departments/team-contributors
+  image_url: https://github.com/fire22.png
+
+vip_management_dept:
+  name: VIP Management Department
+  title: Fire22 VIP Customer Success Team
+  url: https://vip-management.fire22.workers.dev/
+  image_url: https://vip-management.fire22.workers.dev/assets/fire22-logo.png
+
+vinny2times:
+  name: Vinny2times
+  title: Head of VIP Management
+  email: vinny2times@vip.fire22
+  url: https://vinny2times.fire22.workers.dev/
+  image_url: https://vinny2times.fire22.workers.dev/assets/profile-photo.png

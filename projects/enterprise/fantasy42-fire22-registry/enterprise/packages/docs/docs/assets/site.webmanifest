@@ -1,0 +1,30 @@
+{
+  "name": "Crystal Clear Architecture",
+  "short_name": "CCA",
+  "description": "Enterprise-grade domain-driven architecture reference implementation",
+  "start_url": "/crystal-clear-architecture/docs/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "scope": "/crystal-clear-architecture/",
+  "icons": [
+    {
+      "src": "/crystal-clear-architecture/docs/assets/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/crystal-clear-architecture/docs/assets/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/crystal-clear-architecture/docs/assets/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["developer tools", "documentation", "education"],
+  "lang": "en-US"
+}

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Regulatory Reports</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .compliance-status {
+        background: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .report-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        margin-bottom: 30px;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .info-item {
+        text-align: center;
+      }
+      .info-label {
+        font-weight: bold;
+        color: #666;
+      }
+      .info-value {
+        font-size: 1.2em;
+        color: #007acc;
+        margin-top: 5px;
+      }
+      .requirements {
+        margin-top: 30px;
+      }
+      .requirement {
+        background: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+      }
+      .requirement-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .status-compliant {
+        color: #28a745;
+      }
+      .status-non-compliant {
+        color: #dc3545;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>⚖️ Regulatory Compliance</h1>
+        <p>Compliance Monitoring & Regulatory Reporting</p>
+      </div>
+
+      <div class="compliance-status">
+        <h3>✅ Compliance Status: {{complianceStatus}}</h3>
+      </div>
+
+      <div class="report-info">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Jurisdiction</div>
+            <div class="info-value">{{jurisdiction}}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Report Type</div>
+            <div class="info-value">{{reportType}}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Generated</div>
+            <div class="info-value">{{generatedAt}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="requirements">
+        <h2>Compliance Requirements</h2>
+        <div class="requirement">
+          <div class="requirement-header">
+            <span>PCI DSS Compliance</span>
+            <span class="status-compliant">✅ Compliant</span>
+          </div>
+        </div>
+        <div class="requirement">
+          <div class="requirement-header">
+            <span>AML/KYC Procedures</span>
+            <span class="status-compliant">✅ Compliant</span>
+          </div>
+        </div>
+        <div class="requirement">
+          <div class="requirement-header">
+            <span>Data Encryption</span>
+            <span class="status-compliant">✅ Compliant</span>
+          </div>
+        </div>
+        <div class="requirement">
+          <div class="requirement-header">
+            <span>Audit Logging</span>
+            <span class="status-compliant">✅ Compliant</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

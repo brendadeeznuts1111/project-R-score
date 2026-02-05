@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌐🤖 Fire22 Telegram Multilingual Integration</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      h3 {
+        font-size: 1.4rem;
+        margin: 15px 0;
+        color: #b21f1f;
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: 'Fira Code', monospace;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .code-keyword {
+        color: #569cd6;
+      }
+
+      .code-function {
+        color: #dcdcaa;
+      }
+
+      .code-parameter {
+        color: #9cdcfe;
+      }
+
+      .code-string {
+        color: #ce9178;
+      }
+
+      .code-comment {
+        color: #6a9955;
+      }
+
+      .callout {
+        background: rgba(253, 187, 45, 0.1);
+        border-left: 4px solid #fdbb2d;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: rgba(76, 175, 80, 0.1);
+        border-left: 4px solid #4caf50;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .language-demo {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .language-example {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 5px 0;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+      }
+
+      .flag {
+        font-size: 1.5rem;
+        margin-right: 10px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #fdbb2d;
+      }
+
+      .command-demo {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        font-family: monospace;
+      }
+
+      .bot-message {
+        background: rgba(26, 42, 108, 0.3);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 10px 0;
+        border-left: 4px solid #1a2a6c;
+      }
+
+      .user-message {
+        background: rgba(178, 31, 31, 0.3);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 10px 0;
+        border-left: 4px solid #b21f1f;
+      }
+
+      .keyboard-button {
+        display: inline-block;
+        background: rgba(253, 187, 45, 0.2);
+        color: #fdbb2d;
+        padding: 8px 12px;
+        border-radius: 20px;
+        margin: 5px;
+        border: 1px solid rgba(253, 187, 45, 0.3);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🌐🤖 Fire22 Telegram Multilingual Integration</h1>
+        <p class="subtitle">Complete multilingual Telegram bot with real-time language switching</p>
+        <p class="subtitle">Supporting 4 languages: English, Spanish, Portuguese, French</p>
+      </header>
+
+      <div class="card">
+        <h2>🚀 Quick Start</h2>
+        <p>Get started with Fire22's multilingual Telegram bot integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Install dependencies</span>
+<span class="code-function">bun add node-telegram-bot-api</span>
+
+<span class="code-comment"># Run multilingual Telegram demo</span>
+<span class="code-function">bun run scripts/telegram-language-demo.ts</span>
+
+<span class="code-comment"># Interactive demo mode</span>
+<span class="code-function">bun run scripts/telegram-language-demo.ts --interactive</span>
+
+<span class="code-comment"># Test language integration</span>
+<span class="code-function">bun run scripts/telegram-language-integration-test.ts</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📊 System Overview</h2>
+        <p>Complete statistics of the Fire22 Telegram multilingual system:</p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">77</div>
+            <div>Total Language Codes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">21</div>
+            <div>Telegram-Specific Codes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">4</div>
+            <div>Supported Languages</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div>Translation Coverage</div>
+          </div>
+        </div>
+
+        <h3>🌍 Language Support</h3>
+        <div class="language-demo">
+          <div class="language-example">
+            <span>
+              <span class="flag">🇺🇸</span>
+              English
+            </span>
+            <span>Native support with complete coverage</span>
+          </div>
+          <div class="language-example">
+            <span>
+              <span class="flag">🇪🇸</span>
+              Español
+            </span>
+            <span>Soporte nativo con cobertura completa</span>
+          </div>
+          <div class="language-example">
+            <span>
+              <span class="flag">🇵🇹</span>
+              Português
+            </span>
+            <span>Suporte nativo com cobertura completa</span>
+          </div>
+          <div class="language-example">
+            <span>
+              <span class="flag">🇫🇷</span>
+              Français
+            </span>
+            <span>Support natif avec couverture complète</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🤖 Multilingual Bot Commands</h2>
+        <p>All Telegram bot commands automatically adapt to user's preferred language:</p>
+
+        <h3>📝 Core Commands</h3>
+
+        <div class="command-demo">
+          <strong>/start</strong>
+          - Welcome and registration
+          <div class="bot-message">
+            🇺🇸
+            <strong>EN:</strong>
+            🎉 Welcome to Fire22 Dashboard!
+            <br />
+            🇪🇸
+            <strong>ES:</strong>
+            🎉 ¡Bienvenido al Dashboard de Fire22!
+            <br />
+            🇵🇹
+            <strong>PT:</strong>
+            🎉 Bem-vindo ao Dashboard Fire22!
+            <br />
+            🇫🇷
+            <strong>FR:</strong>
+            🎉 Bienvenue sur le tableau de bord Fire22!
+          </div>
+        </div>
+
+        <div class="command-demo">
+          <strong>/link user@example.com</strong>
+          - Link existing account
+          <div class="bot-message">
+            🇺🇸
+            <strong>EN:</strong>
+            ✅ Account Linked Successfully
+            <br />
+            🇪🇸
+            <strong>ES:</strong>
+            ✅ Cuenta Vinculada Exitosamente
+            <br />
+            🇵🇹
+            <strong>PT:</strong>
+            ✅ Conta Vinculada com Sucesso
+            <br />
+            🇫🇷
+            <strong>FR:</strong>
+            ✅ Compte Lié avec Succès
+          </div>
+        </div>
+
+        <div class="command-demo">
+          <strong>/language</strong>
+          - Change bot language
+          <div class="bot-message">
+            🌐 Select your preferred language:
+            <br />
+            <span class="keyboard-button">🇺🇸 English</span>
+            <span class="keyboard-button">🇪🇸 Español</span>
+            <br />
+            <span class="keyboard-button">🇵🇹 Português</span>
+            <span class="keyboard-button">🇫🇷 Français</span>
+          </div>
+        </div>
+
+        <div class="command-demo">
+          <strong>/dashboard</strong>
+          - Quick dashboard access
+          <div class="bot-message">
+            🇺🇸
+            <strong>EN:</strong>
+            🔥 View Dashboard
+            <br />
+            🇪🇸
+            <strong>ES:</strong>
+            🔥 Ver Dashboard
+            <br />
+            🇵🇹
+            <strong>PT:</strong>
+            🔥 Ver Dashboard
+            <br />
+            🇫🇷
+            <strong>FR:</strong>
+            🔥 Voir Tableau de Bord
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💰 Transaction Notifications</h2>
+        <p>Real-time multilingual transaction alerts with contextual information:</p>
+
+        <h3>🚨 Transaction Alert Examples</h3>
+
+        <div class="language-demo">
+          <div class="bot-message">
+            <strong>🇺🇸 English:</strong>
+            <br />
+            🚨 New Transaction Alert
+            <br />
+            <br />
+            💰 Amount: $500.00
+            <br />
+            📊 Type: Deposit
+            <br />
+            ⏰ Time: 8/27/2025, 10:15:32 PM
+            <br />
+            🆔 Reference: TXN_20240827_001
+            <br />
+            <br />
+            <span class="keyboard-button">View Dashboard</span>
+            <span class="keyboard-button">Dismiss</span>
+          </div>
+
+          <div class="bot-message">
+            <strong>🇪🇸 Español:</strong>
+            <br />
+            🚨 Alerta de Nueva Transacción
+            <br />
+            <br />
+            💰 Cantidad: $500.00
+            <br />
+            📊 Tipo: Depósito
+            <br />
+            ⏰ Tiempo: 27/8/2025 22:15:32
+            <br />
+            🆔 Referencia: TXN_20240827_001
+            <br />
+            <br />
+            <span class="keyboard-button">Ver Dashboard</span>
+            <span class="keyboard-button">Descartar</span>
+          </div>
+
+          <div class="bot-message">
+            <strong>🇵🇹 Português:</strong>
+            <br />
+            🚨 Alerta de Nova Transação
+            <br />
+            <br />
+            💰 Quantia: $500.00
+            <br />
+            📊 Tipo: Depósito
+            <br />
+            ⏰ Hora: 27/08/2025 22:15:32
+            <br />
+            🆔 Referência: TXN_20240827_001
+            <br />
+            <br />
+            <span class="keyboard-button">Ver Dashboard</span>
+            <span class="keyboard-button">Descartar</span>
+          </div>
+
+          <div class="bot-message">
+            <strong>🇫🇷 Français:</strong>
+            <br />
+            🚨 Alerte de Nouvelle Transaction
+            <br />
+            <br />
+            💰 Montant: $500.00
+            <br />
+            📊 Type: Dépôt
+            <br />
+            ⏰ Heure: 27/08/2025 à 22:15:32
+            <br />
+            🆔 Référence: TXN_20240827_001
+            <br />
+            <br />
+            <span class="keyboard-button">Voir Tableau de Bord</span>
+            <span class="keyboard-button">Ignorer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🎯 P2P Queue Integration</h2>
+        <p>Smart P2P matching with multilingual notifications and interactive controls:</p>
+
+        <div class="language-demo">
+          <div class="bot-message">
+            <strong>🇺🇸 English:</strong>
+            <br />
+            🎯 P2P Match Found
+            <br />
+            <br />
+            📋 Queue ID: QUEUE_12345
+            <br />
+            🔍 3 potential matches
+            <br />
+            <br />
+            1. $1000 via Bank Transfer (Score: 95%)
+            <br />
+            2. $1000 via PayPal (Score: 88%)
+            <br />
+            3. $950 via Crypto (Score: 82%)
+            <br />
+            <br />
+            <span class="keyboard-button">✅ Process Best Match</span>
+            <br />
+            <span class="keyboard-button">📋 View All</span>
+            <span class="keyboard-button">⏳ Wait for Better</span>
+          </div>
+
+          <div class="bot-message">
+            <strong>🇪🇸 Español:</strong>
+            <br />
+            🎯 Emparejamiento P2P Encontrado
+            <br />
+            <br />
+            📋 ID de Cola: QUEUE_12345
+            <br />
+            🔍 3 emparejamientos potenciales
+            <br />
+            <br />
+            1. $1000 via Transferencia Bancaria (Puntuación: 95%)
+            <br />
+            2. $1000 via PayPal (Puntuación: 88%)
+            <br />
+            3. $950 via Crypto (Puntuación: 82%)
+            <br />
+            <br />
+            <span class="keyboard-button">✅ Procesar Mejor Emparejamiento</span>
+            <br />
+            <span class="keyboard-button">📋 Ver Todos</span>
+            <span class="keyboard-button">⏳ Esperar por Mejor</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💸 Cashier Operations</h2>
+        <p>Complete cashier workflow with multilingual deposit/withdrawal management:</p>
+
+        <div class="language-demo">
+          <div class="bot-message">
+            <strong>🇺🇸 English:</strong>
+            <br />
+            💰 New Deposit Request
+            <br />
+            <br />
+            💵 Amount: $750.00
+            <br />
+            💳 Method: Credit Card
+            <br />
+            🆔 Transaction: DEP_20240827_002
+            <br />
+            ⏰ Status: Processing
+            <br />
+            <br />
+            <span class="keyboard-button">✅ Approve</span>
+            <span class="keyboard-button">❌ Reject</span>
+            <br />
+            <span class="keyboard-button">🔍 Details</span>
+          </div>
+
+          <div class="bot-message">
+            <strong>🇵🇹 Português:</strong>
+            <br />
+            💰 Nova Solicitação de Depósito
+            <br />
+            <br />
+            💵 Quantia: $750.00
+            <br />
+            💳 Método: Cartão de Crédito
+            <br />
+            🆔 Transação: DEP_20240827_002
+            <br />
+            ⏰ Status: Processando
+            <br />
+            <br />
+            <span class="keyboard-button">✅ Aprovar</span>
+            <span class="keyboard-button">❌ Rejeitar</span>
+            <br />
+            <span class="keyboard-button">🔍 Detalhes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🎫 Support Ticket System</h2>
+        <p>Multilingual support ticket management with automated escalation:</p>
+
+        <div class="language-demo">
+          <div class="bot-message">
+            <strong>🇫🇷 Français:</strong>
+            <br />
+            🎫 Ticket de Support Créé
+            <br />
+            <br />
+            📋 ID: 12345
+            <br />
+            📝 Sujet: Problème de Transaction
+            <br />
+            ⚠️ Priorité: Élevée
+            <br />
+            🏆 Niveau de Service: Premium
+            <br />
+            <br />
+            <span class="keyboard-button">✅ Accuser Réception</span>
+            <span class="keyboard-button">🚨 Escalader</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔧 Technical Implementation</h2>
+        <p>How to integrate Fire22's multilingual Telegram system:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Core Multilingual Bot Integration</span>
+<span class="code-keyword">import</span> { Fire22TelegramIntegration } <span class="code-keyword">from</span> <span class="code-string">'./src/telegram/fire22-telegram-integration'</span>;
+<span class="code-keyword">import</span> { MultilingualTelegramBot } <span class="code-keyword">from</span> <span class="code-string">'./src/telegram/multilingual-telegram-bot'</span>;
+
+<span class="code-comment"># Initialize multilingual bot</span>
+<span class="code-keyword">const</span> config = {
+  botToken: process.env.BOT_TOKEN,
+  cashierGroupId: process.env.CASHIER_GROUP_ID,
+  p2pQueueGroupId: process.env.P2P_QUEUE_GROUP_ID,
+  supportGroupId: process.env.SUPPORT_GROUP_ID
+};
+
+<span class="code-keyword">const</span> telegramBot = <span class="code-keyword">new</span> Fire22TelegramIntegration(config, telegramAPI);
+
+<span class="code-comment"># Send multilingual notifications</span>
+<span class="code-keyword">await</span> telegramBot.sendTransactionNotification(userId, {
+  amount: 500,
+  type: <span class="code-string">'Deposit'</span>,
+  timestamp: <span class="code-keyword">new</span> Date()
+});
+
+<span class="code-comment"># Language detection and switching</span>
+<span class="code-keyword">const</span> multiBot = <span class="code-keyword">new</span> MultilingualTelegramBot();
+<span class="code-keyword">const</span> userLang = multiBot.getUserLanguage(telegramUser);
+multiBot.setUserLanguage(userId, <span class="code-string">'es'</span>); <span class="code-comment">// Switch to Spanish</span></pre>
+        </div>
+
+        <h3>🌐 Language Code Integration</h3>
+        <div class="code-block">
+          <pre><span class="code-comment"># Telegram-specific language codes (L-1500 to L-1520)</span>
+L-1500: <span class="code-string">"Welcome to Fire22 Dashboard!"</span>
+L-1501: <span class="code-string">"Account Linked Successfully"</span>
+L-1502: <span class="code-string">"New Transaction Alert"</span>
+L-1503: <span class="code-string">"System Alert"</span>
+L-1504: <span class="code-string">"View Dashboard"</span>
+L-1505: <span class="code-string">"Dismiss"</span>
+L-1506: <span class="code-string">"New Deposit Request"</span>
+L-1507: <span class="code-string">"Approve"</span>
+L-1508: <span class="code-string">"Reject"</span>
+L-1509: <span class="code-string">"Details"</span>
+L-1510: <span class="code-string">"P2P Match Found"</span>
+L-1511: <span class="code-string">"Process Best Match"</span>
+L-1512: <span class="code-string">"View All"</span>
+L-1513: <span class="code-string">"Wait for Better"</span>
+L-1514: <span class="code-string">"Support Ticket Created"</span>
+L-1515: <span class="code-string">"Ticket Escalated"</span>
+L-1516: <span class="code-string">"Acknowledge"</span>
+L-1517: <span class="code-string">"Escalate"</span>
+L-1518: <span class="code-string">"User Registration Failed"</span>
+L-1519: <span class="code-string">"Account Linking Failed"</span>
+L-1520: <span class="code-string">"Language Changed"</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Testing & Validation</h2>
+        <p>Comprehensive testing suite for multilingual Telegram integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Run comprehensive language integration tests</span>
+<span class="code-function">bun run scripts/telegram-language-integration-test.ts</span>
+
+<span class="code-comment"># Interactive demo with real-time testing</span>
+<span class="code-function">bun run scripts/telegram-language-demo.ts --interactive</span>
+
+<span class="code-comment"># Validate all Telegram language codes</span>
+<span class="code-function">bun run scripts/validate-language-codes.ts --telegram-only</span>
+
+<span class="code-comment"># Performance testing</span>
+<span class="code-function">bun run scripts/telegram-performance-test.ts</span></pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Testing Features:</strong>
+          <ul style="margin-left: 20px; margin-top: 10px">
+            <li>🌐 Language detection and switching validation</li>
+            <li>💬 Message template generation in all 4 languages</li>
+            <li>🔄 Real-time language change testing</li>
+            <li>📊 Translation completeness verification</li>
+            <li>⚡ Performance benchmarking (sub-millisecond translation)</li>
+            <li>🎯 Integration testing with P2P queue system</li>
+            <li>💰 Cashier workflow validation</li>
+            <li>🎫 Support ticket multilingual processing</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📚 Production Deployment</h2>
+        <p>Ready-to-deploy multilingual Telegram integration:</p>
+
+        <div class="callout">
+          <strong>🚀 Production Ready:</strong>
+          Fire22 Telegram multilingual integration is production-ready with complete language support, real-time
+          switching, comprehensive error handling, and performance optimization.
+        </div>
+
+        <h3>🌍 Global Market Support</h3>
+        <ul style="margin-left: 20px">
+          <li>
+            <strong>🇺🇸 English Markets:</strong>
+            US, UK, Australia, Canada
+          </li>
+          <li>
+            <strong>🇪🇸 Spanish Markets:</strong>
+            Spain, Mexico, Argentina, Latin America
+          </li>
+          <li>
+            <strong>🇵🇹 Portuguese Markets:</strong>
+            Brazil, Portugal
+          </li>
+          <li>
+            <strong>🇫🇷 French Markets:</strong>
+            France, Canada, Francophone Africa
+          </li>
+        </ul>
+
+        <h3>⚡ Performance Metrics</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">&lt;1ms</div>
+            <div>Translation Speed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div>Translation Coverage</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">21</div>
+            <div>Telegram Language Codes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">Real-time</div>
+            <div>Language Switching</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔗 Related Documentation</h2>
+        <p>Explore other Fire22 multilingual integrations:</p>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+          "
+        >
+          <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px">
+            <h4 style="color: #fdbb2d">🌐 Language System</h4>
+            <p>Core Fire22 multilingual framework</p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px">
+            <h4 style="color: #fdbb2d">📦 Package Manager</h4>
+            <p>Multilingual CLI package operations</p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px">
+            <h4 style="color: #fdbb2d">🔄 P2P Queue</h4>
+            <p>Multilingual transaction matching</p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px">
+            <h4 style="color: #fdbb2d">📊 Dashboard</h4>
+            <p>Real-time language switching UI</p>
+          </div>
+        </div>
+      </div>
+
+      <footer
+        style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(0, 0, 0, 0.3); border-radius: 15px"
+      >
+        <h3 style="color: #fdbb2d; margin-bottom: 15px">🔥🤖 Fire22 Telegram Integration</h3>
+        <p style="opacity: 0.8">Production-ready multilingual Telegram bot with real-time language switching</p>
+        <p style="opacity: 0.8">Complete integration with Fire22 Dashboard ecosystem</p>
+        <p style="opacity: 0.6; margin-top: 15px">&copy; 2024 Fire22 Development Team</p>
+      </footer>
+    </div>
+
+    <script>
+      // Enhanced interactivity for the documentation
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add smooth animations to cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, 100);
+        });
+
+        // Interactive code blocks
+        const codeBlocks = document.querySelectorAll('.code-block');
+        codeBlocks.forEach(block => {
+          block.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(block.textContent);
+              const originalBg = block.style.background;
+              block.style.background = 'rgba(76, 175, 80, 0.2)';
+              block.style.border = '2px solid #4CAF50';
+
+              setTimeout(() => {
+                block.style.background = originalBg;
+                block.style.border = '';
+              }, 1000);
+            } catch (err) {
+              console.log('Could not copy code');
+            }
+          });
+
+          block.style.cursor = 'pointer';
+          block.title = 'Click to copy';
+        });
+
+        // Animated language examples
+        const langExamples = document.querySelectorAll('.language-example');
+        langExamples.forEach(example => {
+          example.addEventListener('mouseenter', () => {
+            example.style.transform = 'scale(1.02)';
+            example.style.transition = 'transform 0.2s ease';
+          });
+
+          example.addEventListener('mouseleave', () => {
+            example.style.transform = 'scale(1)';
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

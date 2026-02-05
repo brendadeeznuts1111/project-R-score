@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Fire22 Real-Time Build Dashboard</title>
+    <link rel="stylesheet" href="terminal-framework.css">
+    <style>
+        /* Dashboard-specific terminal styling */
+        .dashboard-header {
+            background: var(--secondary);
+            border: var(--border-width) var(--border-style) var(--border-color-accent);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            position: relative;
+        }
+        
+        .dashboard-header::before {
+            content: '╭────────────────────────────────────────────────────────────────────────╮';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            color: var(--accent);
+            font-size: var(--font-size-sm);
+            line-height: 1;
+            text-align: center;
+        }
+        
+        .dashboard-header::after {
+            content: '╰────────────────────────────────────────────────────────────────────────╯';
+            position: absolute;
+            bottom: -1px;
+            left: -1px;
+            right: -1px;
+            color: var(--accent);
+            font-size: var(--font-size-sm);
+            line-height: 1;
+            text-align: center;
+        }
+        
+        .dashboard-header h1 { 
+            color: var(--fire); 
+            font-size: var(--font-size-4xl); 
+            margin-bottom: var(--space-2);
+            text-shadow: var(--shadow-glow-fire);
+            animation: flame-flicker 2s ease-in-out infinite;
+        }
+        
+        .dashboard-header p {
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+        }
+        
+        .status-bar { 
+            display: flex; 
+            gap: var(--space-4); 
+            align-items: center; 
+            flex-wrap: wrap; 
+            margin-top: var(--space-4);
+        }
+        
+        .status-indicator { 
+            display: flex; 
+            align-items: center; 
+            gap: var(--space-2); 
+            padding: var(--space-2) var(--space-4); 
+            background: rgba(88, 166, 255, 0.1); 
+            border: var(--border-width) var(--border-style) var(--accent); 
+            font-family: var(--font-mono);
+        }
+        
+        .status-dot { 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+            background: var(--success); 
+        }
+        
+        .status-dot.running { background: var(--warning); animation: pulse 2s infinite; }
+        .status-dot.error { background: var(--danger); }
+        .status-dot.connecting { background: var(--info); }
+        
+        .main-content { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: var(--space-6); 
+        }
+        
+        .card { 
+            background: var(--secondary); 
+            border: var(--border-width) var(--border-style) var(--border-color); 
+            padding: var(--space-6); 
+            margin-bottom: var(--space-6);
+            position: relative;
+        }
+        
+        .card::before {
+            content: '╭';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            color: var(--accent);
+            font-size: 18px;
+        }
+        
+        .card::after {
+            content: '╯';
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            color: var(--accent);
+            font-size: 18px;
+        }
+        
+        .card h2 { 
+            color: var(--accent); 
+            margin-bottom: var(--space-4); 
+            font-size: var(--font-size-2xl); 
+            font-family: var(--font-mono);
+        }
+        
+        .progress-bar { 
+            width: 100%; 
+            height: 12px; 
+            background: var(--tertiary); 
+            border: var(--border-width) var(--border-style) var(--border-color);
+            overflow: hidden; 
+            margin-bottom: var(--space-3); 
+        }
+        
+        .progress-fill { 
+            height: 100%; 
+            background: var(--accent-gradient); 
+            width: 0%; 
+            transition: width var(--transition-base); 
+        }
+        
+        .controls { 
+            display: flex; 
+            gap: var(--space-3); 
+            flex-wrap: wrap; 
+            margin-top: var(--space-4); 
+        }
+        
+        .btn { 
+            padding: var(--space-3) var(--space-6); 
+            border: var(--border-width) var(--border-style); 
+            font-size: var(--font-size-base); 
+            font-weight: 500; 
+            cursor: pointer; 
+            transition: all var(--transition-base);
+            font-family: var(--font-mono);
+            position: relative;
+        }
+        
+        .btn::before {
+            content: '├─';
+            position: absolute;
+            left: -15px;
+            color: var(--accent);
+        }
+        
+        .btn::after {
+            content: '─┤';
+            position: absolute;
+            right: -15px;
+            color: var(--accent);
+        }
+        
+        .btn-primary { 
+            background: transparent; 
+            color: var(--fire); 
+            border-color: var(--fire);
+        }
+        
+        .btn-primary:hover { 
+            background: var(--fire); 
+            color: var(--primary);
+            transform: translateY(-2px); 
+            box-shadow: var(--shadow-glow-fire); 
+        }
+        
+        .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--text-secondary); }
+        .btn-secondary:hover { background: var(--text-secondary); color: var(--primary); }
+        
+        .btn-success { background: transparent; color: var(--success); border-color: var(--success); }
+        .btn-success:hover { background: var(--success); color: var(--primary); }
+        
+        .btn-danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: var(--primary); }
+        
+        .terminal { 
+            background: #000; 
+            color: var(--terminal-green); 
+            font-family: var(--font-mono); 
+            padding: var(--space-4); 
+            border: var(--border-width) var(--border-style) var(--terminal-green);
+            max-height: 300px; 
+            overflow-y: auto; 
+            font-size: var(--font-size-sm);
+            position: relative;
+        }
+        
+        .terminal::before {
+            content: '╭─ Live Terminal Output ──────────────────────────╮';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: #000;
+            padding: 0 var(--space-2);
+            color: var(--terminal-green);
+            font-size: var(--font-size-xs);
+        }
+        
+        .package-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: var(--space-3); 
+            margin-top: var(--space-4); 
+        }
+        
+        .package-card { 
+            background: var(--tertiary); 
+            border: var(--border-width) var(--border-style) var(--border-color); 
+            padding: var(--space-4); 
+            transition: all var(--transition-base); 
+            position: relative;
+        }
+        
+        .package-card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: var(--shadow-glow); 
+            border-color: var(--accent);
+        }
+        
+        .package-card::before {
+            content: '├─';
+            position: absolute;
+            top: var(--space-2);
+            left: -8px;
+            color: var(--accent);
+        }
+        
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: var(--space-3); 
+            margin-top: var(--space-4); 
+        }
+        
+        .stat-card { 
+            background: var(--accent-gradient); 
+            color: var(--text); 
+            padding: var(--space-4); 
+            text-align: center; 
+            border: var(--border-width) var(--border-style) var(--accent);
+            position: relative;
+        }
+        
+        .stat-card::before {
+            content: '╭';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            color: var(--text);
+            font-size: 16px;
+        }
+        
+        .stat-card::after {
+            content: '╯';
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            color: var(--text);
+            font-size: 16px;
+        }
+        
+        .stat-value { 
+            font-size: var(--font-size-3xl); 
+            font-weight: bold; 
+            margin-bottom: var(--space-1); 
+            font-family: var(--font-mono);
+        }
+        
+        .stat-label { 
+            font-size: var(--font-size-sm); 
+            opacity: 0.9; 
+            font-family: var(--font-mono);
+        }
+        
+        .connection-status { 
+            text-align: center; 
+            padding: var(--space-3); 
+            margin-bottom: var(--space-4); 
+            font-family: var(--font-mono);
+            border: var(--border-width) var(--border-style);
+        }
+        
+        .connection-status.connected { 
+            background: rgba(63, 185, 80, 0.1); 
+            border-color: var(--success); 
+            color: var(--success);
+        }
+        
+        .connection-status.disconnected { 
+            background: rgba(248, 81, 73, 0.1); 
+            border-color: var(--danger); 
+            color: var(--danger);
+        }
+        
+        .connection-status.connecting { 
+            background: rgba(210, 153, 34, 0.1); 
+            border-color: var(--warning); 
+            color: var(--warning);
+        }
+        
+        @media (max-width: 1200px) { 
+            .main-content { grid-template-columns: 1fr; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1>🔥 Fire22 Real-Time Build Dashboard</h1>
+            <p>Live integration with DashboardBridge for real build execution</p>
+            <div class="status-bar">
+                <div class="status-indicator">
+                    <div class="status-dot" id="connection-status-dot"></div>
+                    <span id="connection-status-text">Connecting...</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot" id="build-status-dot"></div>
+                    <span id="build-status-text">No Build Running</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot" id="packages-status-dot"></div>
+                    <span id="packages-status-text">Packages Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="connection-status connecting" id="connection-status">
+            <div>🔄 Connecting to DashboardBridge...</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <!-- Build Progress -->
+                <div class="card">
+                    <h2>⚡ Real Build Progress</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #666; margin-bottom: 20px;">
+                        <span id="progress-text">Ready to build</span>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" id="start-build-btn">🚀 Start Real Build</button>
+                        <button class="btn btn-secondary" id="stop-build-btn" disabled>⏹️ Stop Build</button>
+                        <button class="btn btn-success" id="refresh-btn">🔄 Refresh</button>
+                    </div>
+                </div>
+
+                <!-- Package Overview -->
+                <div class="card">
+                    <h2>📦 Live Package Overview</h2>
+                    <div class="package-grid" id="package-grid">
+                        <!-- Real packages loaded from DashboardBridge -->
+                    </div>
+                </div>
+
+                <!-- Terminal Output -->
+                <div class="card">
+                    <h2>💻 Live Build Output</h2>
+                    <div class="terminal" id="terminal">
+                        <div>Fire22 Real-Time Dashboard Ready</div>
+                        <div>Connecting to DashboardBridge...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <!-- Build Statistics -->
+                <div class="card">
+                    <h2>📊 Live Statistics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-packages">0</div>
+                            <div class="stat-label">Total Packages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="built-packages">0</div>
+                            <div class="stat-label">Built Packages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="success-rate">0%</div>
+                            <div class="stat-label">Success Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="last-update">--</div>
+                            <div class="stat-label">Last Update</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h2>⚙️ Quick Actions</h2>
+                    <div class="controls">
+                        <button class="btn btn-primary" id="quick-build-btn">⚡ Quick Build</button>
+                        <button class="btn btn-success" id="build-all-btn">📦 Build All</button>
+                        <button class="btn btn-danger" id="clean-btn">🧹 Clean</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class RealTimeDashboard {
+            constructor() {
+                this.ws = null;
+                this.connected = false;
+                this.buildRunning = false;
+                this.packages = [];
+                this.buildProgress = 0;
+                this.messageId = 0;
+                
+                this.initialize();
+            }
+
+            async initialize() {
+                this.setupEventListeners();
+                await this.connectToBridge();
+            }
+
+            setupEventListeners() {
+                document.getElementById('start-build-btn').addEventListener('click', () => {
+                    this.startBuild();
+                });
+
+                document.getElementById('stop-build-btn').addEventListener('click', () => {
+                    this.stopBuild();
+                });
+
+                document.getElementById('refresh-btn').addEventListener('click', () => {
+                    this.refreshData();
+                });
+
+                document.getElementById('quick-build-btn').addEventListener('click', () => {
+                    this.quickBuild();
+                });
+
+                document.getElementById('build-all-btn').addEventListener('click', () => {
+                    this.buildAllPackages();
+                });
+
+                document.getElementById('clean-btn').addEventListener('click', () => {
+                    this.cleanBuild();
+                });
+            }
+
+            async connectToBridge() {
+                try {
+                    this.updateConnectionStatus('connecting');
+                    this.addTerminalOutput('🔌 Connecting to DashboardBridge...');
+
+                    // Connect to WebSocket
+                    this.ws = new WebSocket('ws://localhost:3001/dashboard');
+
+                    this.ws.onopen = () => {
+                        this.connected = true;
+                        this.updateConnectionStatus('connected');
+                        this.addTerminalOutput('✅ Connected to DashboardBridge successfully!');
+                        this.loadInitialData();
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        this.handleWebSocketMessage(JSON.parse(event.data));
+                    };
+
+                    this.ws.onclose = () => {
+                        this.connected = false;
+                        this.updateConnectionStatus('disconnected');
+                        this.addTerminalOutput('❌ Disconnected from DashboardBridge');
+                    };
+
+                    this.ws.onerror = (error) => {
+                        this.connected = false;
+                        this.updateConnectionStatus('disconnected');
+                        this.addTerminalOutput(`❌ WebSocket error: ${error.message}`);
+                    };
+
+                } catch (error) {
+                    this.updateConnectionStatus('disconnected');
+                    this.addTerminalOutput(`❌ Connection failed: ${error.message}`);
+                }
+            }
+
+            async loadInitialData() {
+                if (!this.connected) return;
+
+                // Get packages
+                this.sendMessage('get_packages');
+                
+                // Get current status
+                this.sendMessage('get_status');
+            }
+
+            sendMessage(type, data = {}) {
+                if (!this.connected || !this.ws) return;
+
+                const message = {
+                    type,
+                    data,
+                    id: `msg_${++this.messageId}`
+                };
+
+                this.ws.send(JSON.stringify(message));
+            }
+
+            handleWebSocketMessage(message) {
+                console.log('📨 Received:', message.type);
+
+                switch (message.type) {
+                    case 'connected':
+                        this.addTerminalOutput(`✅ ${message.data.message}`);
+                        break;
+
+                    case 'packages_data':
+                        this.updatePackages(message.data.packages);
+                        this.updateStatistics(message.data.statistics);
+                        break;
+
+                    case 'build_started':
+                        this.buildStarted(message.data);
+                        break;
+
+                    case 'build_step_started':
+                        this.buildStepStarted(message.data);
+                        break;
+
+                    case 'build_step_completed':
+                        this.buildStepCompleted(message.data);
+                        break;
+
+                    case 'build_progress':
+                        this.updateBuildProgress(message.data);
+                        break;
+
+                    case 'build_completed':
+                        this.buildCompleted(message.data);
+                        break;
+
+                    case 'build_error':
+                        this.buildError(message.data);
+                        break;
+
+                    case 'build_stopped':
+                        this.buildStopped(message.data);
+                        break;
+
+                    case 'package_build_started':
+                        this.packageBuildStarted(message.data);
+                        break;
+
+                    case 'package_build_completed':
+                        this.packageBuildCompleted(message.data);
+                        break;
+
+                    case 'package_build_error':
+                        this.packageBuildError(message.data);
+                        break;
+
+                    case 'data_refreshed':
+                        this.dataRefreshed(message.data);
+                        break;
+
+                    case 'error':
+                        this.addTerminalOutput(`❌ Error: ${message.data.message}`, 'error');
+                        break;
+
+                    default:
+                        console.log('Unknown message type:', message.type);
+                }
+            }
+
+            updateConnectionStatus(status) {
+                const statusDot = document.getElementById('connection-status-dot');
+                const statusText = document.getElementById('connection-status-text');
+                const statusCard = document.getElementById('connection-status');
+
+                statusDot.className = `status-dot ${status}`;
+                statusCard.className = `connection-status ${status}`;
+
+                const statusMap = {
+                    'connecting': 'Connecting...',
+                    'connected': 'Connected',
+                    'disconnected': 'Disconnected'
+                };
+
+                statusText.textContent = statusMap[status] || status;
+            }
+
+            updatePackages(packages) {
+                this.packages = packages;
+                this.renderPackages();
+            }
+
+            renderPackages() {
+                const packageGrid = document.getElementById('package-grid');
+                packageGrid.innerHTML = '';
+
+                this.packages.forEach(pkg => {
+                    const packageCard = document.createElement('div');
+                    packageCard.className = 'package-card';
+                    packageCard.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div style="font-weight: 600; color: #1e3c72;">${pkg.name}</div>
+                            <div style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">${pkg.version}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${this.getStatusColor(pkg.status)};"></div>
+                            <span>${this.getStatusText(pkg.status)}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #666;">Size:</span>
+                                <span style="font-weight: 500;">${pkg.size}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #666;">Dependencies:</span>
+                                <span style="font-weight: 500;">${pkg.dependencies}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 15px;">
+                            <button onclick="dashboard.buildPackage('${pkg.name}')" style="background: rgba(253, 187, 45, 0.1); color: #fdbb2d; border: 1px solid rgba(253, 187, 45, 0.3); padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; flex: 1;">🏗️ Build</button>
+                        </div>
+                    `;
+                    packageGrid.appendChild(packageCard);
+                });
+            }
+
+            getStatusColor(status) {
+                const colors = {
+                    'built': '#28a745',
+                    'building': '#ffc107',
+                    'pending': '#6c757d',
+                    'error': '#dc3545'
+                };
+                return colors[status] || '#6c757d';
+            }
+
+            getStatusText(status) {
+                const texts = {
+                    'built': 'Built',
+                    'building': 'Building',
+                    'pending': 'Pending',
+                    'error': 'Error'
+                };
+                return texts[status] || status;
+            }
+
+            updateStatistics(stats) {
+                document.getElementById('total-packages').textContent = stats.total || 0;
+                document.getElementById('built-packages').textContent = stats.built || 0;
+                document.getElementById('success-rate').textContent = `${stats.successRate || 0}%`;
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+            }
+
+            buildStarted(data) {
+                this.buildRunning = true;
+                this.buildProgress = 0;
+                this.updateBuildStatus('running');
+                this.enableBuildControls();
+                this.addTerminalOutput(`🚀 Build started (ID: ${data.buildId})`);
+            }
+
+            buildStepStarted(data) {
+                this.addTerminalOutput(`📋 Step ${data.stepNumber}/${data.totalSteps}: ${data.step}`);
+            }
+
+            buildStepCompleted(data) {
+                this.addTerminalOutput(`✅ Step completed: ${data.step}`);
+            }
+
+            updateBuildProgress(data) {
+                this.buildProgress = data.progress;
+                document.getElementById('progress-fill').style.width = `${data.progress}%`;
+                document.getElementById('progress-percentage').textContent = `${Math.round(data.progress)}%`;
+                
+                if (data.progress === 0) {
+                    document.getElementById('progress-text').textContent = 'Ready to build';
+                } else if (data.progress === 100) {
+                    document.getElementById('progress-text').textContent = 'Build complete';
+                } else {
+                    document.getElementById('progress-text').textContent = `Building: ${data.currentStep}`;
+                }
+            }
+
+            buildCompleted(data) {
+                this.buildRunning = false;
+                this.buildProgress = 100;
+                this.updateBuildStatus('completed');
+                this.disableBuildControls();
+                this.addTerminalOutput(`🎉 Build completed successfully in ${Math.round(data.duration / 1000)}s`);
+            }
+
+            buildError(data) {
+                this.buildRunning = false;
+                this.updateBuildStatus('error');
+                this.disableBuildControls();
+                this.addTerminalOutput(`❌ Build failed: ${data.error}`, 'error');
+            }
+
+            buildStopped(data) {
+                this.buildRunning = false;
+                this.updateBuildStatus('stopped');
+                this.disableBuildControls();
+                this.addTerminalOutput(`⏹️ Build stopped by user`);
+            }
+
+            packageBuildStarted(data) {
+                this.addTerminalOutput(`🏗️ Building package: ${data.packageName}`);
+            }
+
+            packageBuildCompleted(data) {
+                this.addTerminalOutput(`✅ Package ${data.packageName} built successfully`);
+            }
+
+            packageBuildError(data) {
+                this.addTerminalOutput(`❌ Package ${data.packageName} build failed: ${data.error}`, 'error');
+            }
+
+            dataRefreshed(data) {
+                this.addTerminalOutput(`🔄 Data refreshed at ${new Date(data.timestamp).toLocaleTimeString()}`);
+            }
+
+            startBuild() {
+                if (!this.connected) {
+                    this.addTerminalOutput('❌ Not connected to DashboardBridge', 'error');
+                    return;
+                }
+
+                this.sendMessage('start_build');
+            }
+
+            stopBuild() {
+                if (!this.connected) {
+                    this.addTerminalOutput('❌ Not connected to DashboardBridge', 'error');
+                    return;
+                }
+
+                this.sendMessage('stop_build');
+            }
+
+            refreshData() {
+                if (!this.connected) {
+                    this.addTerminalOutput('❌ Not connected to DashboardBridge', 'error');
+                    return;
+                }
+
+                this.sendMessage('refresh');
+            }
+
+            buildPackage(packageName) {
+                if (!this.connected) {
+                    this.addTerminalOutput('❌ Not connected to DashboardBridge', 'error');
+                    return;
+                }
+
+                this.sendMessage('build_package', { packageName });
+            }
+
+            quickBuild() {
+                this.addTerminalOutput('⚡ Quick build not implemented yet - use full build');
+            }
+
+            buildAllPackages() {
+                this.addTerminalOutput('📦 Building all packages...');
+                this.packages.forEach(pkg => {
+                    this.buildPackage(pkg.name);
+                });
+            }
+
+            cleanBuild() {
+                this.addTerminalOutput('🧹 Clean build not implemented yet');
+            }
+
+            updateBuildStatus(status) {
+                const statusDot = document.getElementById('build-status-dot');
+                const statusText = document.getElementById('build-status-text');
+                
+                statusDot.className = `status-dot ${status}`;
+                
+                const statusMap = {
+                    'idle': 'No Build Running',
+                    'running': 'Build Running',
+                    'completed': 'Build Completed',
+                    'stopped': 'Build Stopped',
+                    'error': 'Build Error'
+                };
+                
+                statusText.textContent = statusMap[status] || 'Unknown Status';
+            }
+
+            enableBuildControls() {
+                document.getElementById('start-build-btn').disabled = true;
+                document.getElementById('stop-build-btn').disabled = false;
+            }
+
+            disableBuildControls() {
+                document.getElementById('start-build-btn').disabled = false;
+                document.getElementById('stop-build-btn').disabled = true;
+            }
+
+            addTerminalOutput(message, type = 'output') {
+                const terminal = document.getElementById('terminal');
+                const line = document.createElement('div');
+                line.style.marginBottom = '5px';
+                
+                if (type === 'error') {
+                    line.style.color = '#ff6b6b';
+                } else if (type === 'success') {
+                    line.style.color = '#51cf66';
+                }
+                
+                line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                terminal.appendChild(line);
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        }
+
+        // Initialize dashboard when page loads
+        let dashboard;
+        document.addEventListener('DOMContentLoaded', () => {
+            dashboard = new RealTimeDashboard();
+        });
+    </script>
+    </div>
+
+    <!-- Enhanced Terminal Footer -->
+    <footer class="terminal-footer">
+        <div class="footer-decoration">
+            ╭────────────────────────────────────────────────────────────────────────╮
+        </div>
+        
+        <div class="footer-content">
+            <!-- Main Footer Section -->
+            <div class="footer-main">
+                <div class="footer-logo">🔥</div>
+                <h2 class="footer-title">Fire22 Real-Time Dashboard</h2>
+                <p class="footer-tagline">Live Build Monitoring & WebSocket Integration</p>
+            </div>
+            
+            <!-- Feature List with Box Characters -->
+            <div class="footer-features">
+                <div class="features-header">
+                    ├─── Dashboard Features ───┤
+                </div>
+                <div class="features-grid">
+                    <div class="footer-feature">
+                        ├─ ⚡ Real-Time Build Monitoring
+                    </div>
+                    <div class="footer-feature">
+                        ├─ 🔌 WebSocket Live Updates
+                    </div>
+                    <div class="footer-feature">
+                        ├─ 📦 Package Build Tracking
+                    </div>
+                    <div class="footer-feature">
+                        ├─ 💻 Live Terminal Output
+                    </div>
+                    <div class="footer-feature">
+                        ├─ 📊 Build Statistics Dashboard
+                    </div>
+                    <div class="footer-feature">
+                        ╰─ 🎯 Interactive Build Controls
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="footer-navigation">
+                <div class="nav-section">
+                    ╭─ Dashboard ─────╮
+                    │ • Build Monitor │
+                    │ • Package View  │
+                    │ • Statistics    │
+                    ╰─────────────────╯
+                </div>
+                <div class="nav-section">
+                    ╭─ Integration ───╮
+                    │ • WebSocket API │
+                    │ • DashboardBridge│
+                    │ • Live Updates  │
+                    ╰─────────────────╯
+                </div>
+                <div class="nav-section">
+                    ╭─ Tools ─────────╮
+                    │ • Build Control │
+                    │ • Log Viewer    │
+                    │ • Status Monitor│
+                    ╰─────────────────╯
+                </div>
+            </div>
+            
+            <!-- Status Bar -->
+            <div class="footer-status">
+                ├───────────────────────────────────────────────────────────────────────┤
+                │ Status: ● Live | WebSocket: Active | Build System: Ready             │
+                ├───────────────────────────────────────────────────────────────────────┤
+            </div>
+            
+            <!-- Copyright Section -->
+            <div class="footer-copyright">
+                <p>© 2024 Fire22 Development Team. All rights reserved.</p>
+                <p>Built with ╭─🔥─╮ Real-time WebSocket monitoring for live builds</p>
+                <p>╰─────────────────────────────────────────────────────────────────╯</p>
+            </div>
+        </div>
+        
+        <div class="footer-decoration">
+            ╰────────────────────────────────────────────────────────────────────────╯
+        </div>
+    </footer>
+</body>
+</html>

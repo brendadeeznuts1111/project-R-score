@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌐🔗 Language & Telegram Integration Map</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: white;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .language-map {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .language-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #667eea;
+      }
+
+      .language-flags {
+        display: flex;
+        gap: 15px;
+      }
+
+      .flag-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 25px;
+        font-weight: 600;
+      }
+
+      .section-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .section-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #667eea;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .key-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        margin-bottom: 8px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+      }
+
+      .key-code {
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .key-text {
+        color: #495057;
+        flex: 1;
+        margin: 0 15px;
+      }
+
+      .key-languages {
+        display: flex;
+        gap: 5px;
+      }
+
+      .lang-badge {
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .telegram-integration {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .telegram-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .telegram-commands {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .command-group {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .command-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #667eea;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .command-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .command-item:last-child {
+        border-bottom: none;
+      }
+
+      .command-name {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #495057;
+      }
+
+      .command-key {
+        font-size: 0.8rem;
+        color: #6c757d;
+      }
+
+      .integration-flow {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        color: #333;
+      }
+
+      .flow-diagram {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 30px 0;
+        position: relative;
+      }
+
+      .flow-step {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        position: relative;
+      }
+
+      .flow-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: #667eea;
+        z-index: 1;
+      }
+
+      .flow-arrow:nth-child(2) {
+        left: 23%;
+      }
+      .flow-arrow:nth-child(4) {
+        left: 43%;
+      }
+      .flow-arrow:nth-child(6) {
+        left: 63%;
+      }
+
+      .step-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #667eea;
+      }
+
+      .step-desc {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .summary-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .summary-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .summary-item:last-child {
+        border-bottom: none;
+      }
+
+      .summary-label {
+        opacity: 0.9;
+      }
+
+      .summary-value {
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .section-grid,
+        .telegram-commands,
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .flow-diagram {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .flow-arrow {
+          display: none;
+        }
+
+        .language-flags {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>🌐🔗 Language & Telegram Integration Map</h1>
+        <p>Complete Multilingual System Overview</p>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-number">77</span>
+          <span class="stat-label">Language Keys</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">4</span>
+          <span class="stat-label">Supported Languages</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">25+</span>
+          <span class="stat-label">Telegram Commands</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">100%</span>
+          <span class="stat-label">Integration Mapped</span>
+        </div>
+      </div>
+
+      <!-- Language System Map -->
+      <div class="language-map">
+        <div class="language-header">
+          <h2>🌍 Fire22 Language System</h2>
+          <div class="language-flags">
+            <div class="flag-item">🇺🇸 English</div>
+            <div class="flag-item">🇪🇸 Español</div>
+            <div class="flag-item">🇵🇹 Português</div>
+            <div class="flag-item">🇫🇷 Français</div>
+          </div>
+        </div>
+
+        <div class="section-grid">
+          <!-- Navigation & Core UI -->
+          <div class="section-card">
+            <div class="section-title">🧭 Navigation & Core UI</div>
+            <div class="key-item">
+              <span class="key-code">L-20</span>
+              <span class="key-text">Scores</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-28</span>
+              <span class="key-text">Cashier</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-233</span>
+              <span class="key-text">Pending</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard & Analytics -->
+          <div class="section-card">
+            <div class="section-title">📊 Dashboard & Analytics</div>
+            <div class="key-item">
+              <span class="key-code">L-257</span>
+              <span class="key-text">Weekly Figures</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-317</span>
+              <span class="key-text">Transactions History</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-333</span>
+              <span class="key-text">IP Tracker</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Management -->
+          <div class="section-card">
+            <div class="section-title">👥 Customer Management</div>
+            <div class="key-item">
+              <span class="key-code">L-830</span>
+              <span class="key-text">Customer Search</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-831</span>
+              <span class="key-text">Customer Profile</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-836</span>
+              <span class="key-text">KYC Verification</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agent Management -->
+          <div class="section-card">
+            <div class="section-title">👑 Agent Management</div>
+            <div class="key-item">
+              <span class="key-code">L-820</span>
+              <span class="key-text">Messaging</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-821</span>
+              <span class="key-text">Add Customer</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+            <div class="key-item">
+              <span class="key-code">L-827</span>
+              <span class="key-text">Agent Admin</span>
+              <div class="key-languages">
+                <span class="lang-badge" style="background: #e3f2fd">EN</span>
+                <span class="lang-badge" style="background: #fff3e0">ES</span>
+                <span class="lang-badge" style="background: #f3e5f5">PT</span>
+                <span class="lang-badge" style="background: #fce4ec">FR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telegram Integration -->
+      <div class="telegram-integration">
+        <div class="telegram-header">
+          <h2>🤖 Telegram Bot Integration</h2>
+          <p>Complete multilingual Telegram bot with real-time notifications</p>
+        </div>
+
+        <div class="telegram-commands">
+          <!-- Basic Commands -->
+          <div class="command-group">
+            <div class="command-title">🎯 Basic Commands</div>
+            <div class="command-item">
+              <span class="command-name">/start</span>
+              <span class="command-key">L-1500</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/help</span>
+              <span class="command-key">L-1407</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/language</span>
+              <span class="command-key">L-1520</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/dashboard</span>
+              <span class="command-key">L-1504</span>
+            </div>
+          </div>
+
+          <!-- Account Management -->
+          <div class="command-group">
+            <div class="command-title">👤 Account Management</div>
+            <div class="command-item">
+              <span class="command-name">/register</span>
+              <span class="command-key">L-1518</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/link</span>
+              <span class="command-key">L-1501</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/profile</span>
+              <span class="command-key">L-831</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/balance</span>
+              <span class="command-key">L-846</span>
+            </div>
+          </div>
+
+          <!-- Financial Operations -->
+          <div class="command-group">
+            <div class="command-title">💰 Financial Operations</div>
+            <div class="command-item">
+              <span class="command-name">/deposit</span>
+              <span class="command-key">L-1506</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/withdraw</span>
+              <span class="command-key">L-845</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/wagers</span>
+              <span class="command-key">L-842</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/commission</span>
+              <span class="command-key">L-1023</span>
+            </div>
+          </div>
+
+          <!-- Business Management -->
+          <div class="command-group">
+            <div class="command-title">🏢 Business Management</div>
+            <div class="command-item">
+              <span class="command-name">/vip</span>
+              <span class="command-key">L-836</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/groups</span>
+              <span class="command-key">L-821</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/affiliate</span>
+              <span class="command-key">L-1394</span>
+            </div>
+            <div class="command-item">
+              <span class="command-name">/casino</span>
+              <span class="command-key">L-543</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Integration Flow -->
+      <div class="integration-flow">
+        <h2 style="text-align: center; margin-bottom: 20px">🔄 Language & Telegram Integration Flow</h2>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="step-title">User Input</div>
+            <div class="step-desc">Telegram message or web request</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="step-title">Language Detection</div>
+            <div class="step-desc">Auto-detect user language or use preference</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="step-title">Key Resolution</div>
+            <div class="step-desc">Map command/function to L-XXXX key</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="step-title">Translation</div>
+            <div class="step-desc">Lookup translation from language files</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="step-title">Response</div>
+            <div class="step-desc">Return localized response to user</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-title">📊 Language System Stats</div>
+          <div class="summary-item">
+            <span class="summary-label">Total Language Keys</span>
+            <span class="summary-value">77</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Supported Languages</span>
+            <span class="summary-value">4</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Customer Management Keys</span>
+            <span class="summary-value">21</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Telegram Integration Keys</span>
+            <span class="summary-value">23</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-title">🤖 Telegram Integration</div>
+          <div class="summary-item">
+            <span class="summary-label">Bot Commands</span>
+            <span class="summary-value">25+</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Notification Types</span>
+            <span class="summary-value">12</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Interactive Buttons</span>
+            <span class="summary-value">8</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Language Support</span>
+            <span class="summary-value">100%</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-title">🔗 System Integration</div>
+          <div class="summary-item">
+            <span class="summary-label">Mapped Commands</span>
+            <span class="summary-value">100%</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Context Support</span>
+            <span class="summary-value">Advanced</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Template Variables</span>
+            <span class="summary-value">15+</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Validation Rules</span>
+            <span class="summary-value">Complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

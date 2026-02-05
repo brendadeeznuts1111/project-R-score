@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bun Features Explorer</title>
+    <style>
+      :root {
+        --primary: #fbf0f0;
+        --secondary: #fddf97;
+        --accent: #b6e2d3;
+        --dark: #2c3e50;
+        --light: #ffffff;
+        --success: #4caf50;
+        --danger: #f44336;
+        --warning: #ff9800;
+        --info: #2196f3;
+        --publish: #9c27b0;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background-color: var(--light);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        color: var(--dark);
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        font-size: 1.3rem;
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        font-size: 4rem;
+        margin-bottom: 20px;
+      }
+
+      .container {
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .feature-card {
+        background-color: var(--light);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature-header {
+        padding: 25px;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .build-header {
+        background: linear-gradient(135deg, var(--secondary), #ffcb69);
+      }
+
+      .bunx-header {
+        background: linear-gradient(135deg, var(--accent), #8dd3c7);
+      }
+
+      .html-header {
+        background: linear-gradient(135deg, #a6c1ee, #7aa3e5);
+      }
+
+      .update-header {
+        background: linear-gradient(135deg, #ffb88c, #ff9a6c);
+      }
+
+      .publish-header {
+        background: linear-gradient(135deg, #d9a7ff, #c68cff);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+      }
+
+      .feature-content {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .feature-content h3 {
+        margin-bottom: 18px;
+        color: var(--dark);
+        font-size: 1.4rem;
+      }
+
+      .feature-content p {
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .code-block {
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        border-radius: 10px;
+        padding: 18px;
+        margin: 18px 0;
+        font-family: 'Fira Code', monospace;
+        overflow-x: auto;
+        border-left: 5px solid var(--secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .code-block code {
+        display: block;
+      }
+
+      .test-area {
+        margin-top: 25px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        border: 1px solid #eee;
+      }
+
+      .test-btn {
+        background-color: var(--info);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .test-btn:hover {
+        background-color: #0b7dda;
+        transform: translateY(-2px);
+      }
+
+      .test-btn:active {
+        transform: translateY(0);
+      }
+
+      .output {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        border-radius: 8px;
+        min-height: 70px;
+        font-family: 'Fira Code', monospace;
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .success {
+        border-left: 5px solid var(--success);
+      }
+
+      .error {
+        border-left: 5px solid var(--danger);
+      }
+
+      .quick-nav {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 40px;
+      }
+
+      .nav-btn {
+        padding: 14px 25px;
+        background: linear-gradient(135deg, var(--secondary), var(--accent));
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .publish-btn {
+        background: linear-gradient(135deg, #d9a7ff, #c68cff);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: #666;
+        background-color: var(--light);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        .subtitle {
+          font-size: 1.1rem;
+        }
+
+        .logo {
+          font-size: 3rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">🐰</div>
+        <h1>Bun Features Explorer</h1>
+        <p class="subtitle">Test and explore the powerful features of Bun JavaScript runtime</p>
+      </header>
+
+      <div class="quick-nav">
+        <button class="nav-btn" onclick="scrollToFeature('build')">Build & Compile</button>
+        <button class="nav-btn" onclick="scrollToFeature('bunx')">Bunx Package</button>
+        <button class="nav-btn" onclick="scrollToFeature('html')">HTML Serving</button>
+        <button class="nav-btn" onclick="scrollToFeature('update')">Package Updates</button>
+        <button class="nav-btn publish-btn" onclick="scrollToFeature('publish')">Publish & Versioning</button>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card" id="build">
+          <div class="feature-header build-header">
+            <div class="feature-icon">🚀</div>
+            <h2>Build & Compile</h2>
+          </div>
+          <div class="feature-content">
+            <h3>bun build --compile</h3>
+            <p>Create standalone executables from your JavaScript/TypeScript code.</p>
+
+            <div class="code-block">
+              <code>
+                // Create a standalone executable
+                <br />
+                bun build --compile ./src/server.ts --outfile my-app
+                <br />
+                <br />
+                // Compile with optimizations
+                <br />
+                bun build --compile --minify ./src/app.ts --outfile app-optimized
+                <br />
+                <br />
+                // Target specific environment
+                <br />
+                bun build --compile --target=bun ./src/server.ts --outfile server
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('build')">🧪 Test Build Command</button>
+              <div class="output" id="build-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card" id="bunx">
+          <div class="feature-header bunx-header">
+            <div class="feature-icon">📦</div>
+            <h2>Bunx Package</h2>
+          </div>
+          <div class="feature-content">
+            <h3>bunx --package</h3>
+            <p>Run packages with specific versions without installing them globally.</p>
+
+            <div class="code-block">
+              <code>
+                // Run TypeScript compiler with specific version
+                <br />
+                bunx --package typescript@5.0.0 tsc --version
+                <br />
+                <br />
+                // Use Prettier without installation
+                <br />
+                bunx --package prettier@3.0.0 --check src/**/*.ts
+                <br />
+                <br />
+                // Execute create-react-app without npx
+                <br />
+                bunx --package create-react-app@5.0.0 my-app
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('bunx')">🧪 Test Bunx Command</button>
+              <div class="output" id="bunx-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card" id="html">
+          <div class="feature-header html-header">
+            <div class="feature-icon">🌐</div>
+            <h2>HTML Serving</h2>
+          </div>
+          <div class="feature-content">
+            <h3>bun ./**/*.html</h3>
+            <p>Serve multiple HTML files easily with Bun's built-in server capabilities.</p>
+
+            <div class="code-block">
+              <code>
+                // Serve all HTML files in current directory
+                <br />
+                bun ./*.html
+                <br />
+                <br />
+                // Serve HTML files recursively
+                <br />
+                bun ./**/*.html
+                <br />
+                <br />
+                // Serve specific HTML files
+                <br />
+                bun index.html about.html contact.html
+                <br />
+                <br />
+                // Serve with custom port
+                <br />
+                bun --port 3000 ./*.html
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('html')">🧪 Test HTML Serving</button>
+              <div class="output" id="html-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card" id="update">
+          <div class="feature-header update-header">
+            <div class="feature-icon">🔄</div>
+            <h2>Package Updates</h2>
+          </div>
+          <div class="feature-content">
+            <h3>bun update --interactive</h3>
+            <p>Manage your dependencies with interactive package updates.</p>
+
+            <div class="code-block">
+              <code>
+                // Interactive package updates
+                <br />
+                bun update --interactive
+                <br />
+                <br />
+                // Check for available updates
+                <br />
+                bun update --check
+                <br />
+                <br />
+                // Update all dependencies
+                <br />
+                bun update
+                <br />
+                <br />
+                // Update specific package
+                <br />
+                bun update react
+                <br />
+                <br />
+                // Update to latest versions
+                <br />
+                bun update --latest
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('update')">🧪 Test Update Command</button>
+              <div class="output" id="update-output"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-card" id="publish">
+          <div class="feature-header publish-header">
+            <div class="feature-icon">📤</div>
+            <h2>Publish & Versioning</h2>
+          </div>
+          <div class="feature-content">
+            <h3>bun publish & Version Management</h3>
+            <p>Publish packages to npm and manage semantic versioning with Bun.</p>
+
+            <div class="code-block">
+              <code>
+                // Publish a package to npm
+                <br />
+                bun publish
+                <br />
+                <br />
+                // Publish with specific tag
+                <br />
+                bun publish --tag beta
+                <br />
+                <br />
+                // Dry run to test publishing
+                <br />
+                bun publish --dry-run
+                <br />
+                <br />
+                // Version management commands
+                <br />
+                bun version patch # v1.0.0 → v1.0.1
+                <br />
+                bun version minor # v1.0.0 → v1.1.0
+                <br />
+                bun version major # v1.0.0 → v2.0.0
+                <br />
+                <br />
+                // Version with message
+                <br />
+                bun version minor -m "New features added"
+              </code>
+            </div>
+            <div class="test-area">
+              <button class="test-btn" onclick="testFeature('publish')">🧪 Test Publish Command</button>
+              <div class="output" id="publish-output"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>Bun Features Explorer | Now with Publishing & Versioning Support</p>
+        <p>Note: This page simulates Bun commands for demonstration purposes.</p>
+      </footer>
+    </div>
+
+    <script>
+      function scrollToFeature(featureId) {
+        document.getElementById(featureId).scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
+
+      function testFeature(feature) {
+        const outputElement = document.getElementById(`${feature}-output`);
+        outputElement.innerHTML = 'Testing...';
+        outputElement.className = 'output';
+
+        // Simulate command execution (in a real environment, this would call Bun)
+        setTimeout(() => {
+          let output = '';
+
+          switch (feature) {
+            case 'build':
+              output = `> bun build --compile ./demo-app.ts --outfile demo-app\n✅ Build completed successfully!\n✨ Created standalone executable: demo-app (12.4MB)\n⏱️  Build time: 245ms`;
+              break;
+            case 'bunx':
+              output = `> bunx --package typescript@5.0.0 --version\n✅ Package executed successfully!\nVersion 5.0.0\n⏱️  Execution time: 120ms`;
+              break;
+            case 'html':
+              output = `> bun ./**/*.html\n✅ Serving 5 HTML files:\n- index.html\n- about.html\n- contact.html\n- products/index.html\n- blog/index.html\n🌐 Server running at http://localhost:3000/\n⏱️  Server started in 15ms`;
+              break;
+            case 'update':
+              output = `> bun update --interactive\n✅ Interactive update mode\n📦 Checking for updates...\n\nThe following packages have updates available:\n• react: 18.2.0 → 18.3.1\n• typescript: 5.0.0 → 5.1.3\n⏱️  Check completed in 320ms`;
+              break;
+            case 'publish':
+              output = `> bun publish --dry-run\n✅ Dry run completed successfully!\n📦 Package name: my-awesome-package\n🏷️  Version: 1.0.0\n📁 Files included: 12\n📊 Size: 4.2MB\n🔐 Access: public\n\n> bun version minor\n✅ Version updated successfully!\n🆕 New version: 1.1.0 (from 1.0.0)\n📝 Git tag created: v1.1.0`;
+              break;
+          }
+
+          outputElement.innerHTML = output;
+          outputElement.className = 'output success';
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>

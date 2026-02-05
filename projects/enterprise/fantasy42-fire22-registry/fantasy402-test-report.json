@@ -1,0 +1,223 @@
+{
+  "timestamp": "2025-08-30T08:38:52.212Z",
+  "summary": {
+    "totalTests": 21,
+    "passed": 14,
+    "failed": 7,
+    "successRate": "66.7",
+    "duration": 56617
+  },
+  "suites": [
+    {
+      "name": "Health Check Tests",
+      "tests": [
+        {
+          "name": "Basic health check",
+          "passed": false,
+          "duration": 3019,
+          "error": "Health check returned false"
+        },
+        {
+          "name": "Service initialization",
+          "passed": false,
+          "duration": 6011,
+          "error": "Service initialization failed"
+        },
+        {
+          "name": "Service readiness check",
+          "passed": true,
+          "duration": 0,
+          "details": {
+            "ready": false
+          }
+        }
+      ],
+      "passed": 1,
+      "failed": 2,
+      "duration": 9030
+    },
+    {
+      "name": "Authentication Tests",
+      "tests": [
+        {
+          "name": "API key authentication",
+          "passed": false,
+          "duration": 3005,
+          "error": "Authentication failed"
+        },
+        {
+          "name": "Access token validation",
+          "passed": false,
+          "duration": 1,
+          "error": "Client not authenticated"
+        },
+        {
+          "name": "Token refresh mechanism",
+          "passed": true,
+          "duration": 3016,
+          "details": {
+            "refreshed": false
+          }
+        }
+      ],
+      "passed": 1,
+      "failed": 2,
+      "duration": 6022
+    },
+    {
+      "name": "API Endpoint Tests",
+      "tests": [
+        {
+          "name": "Get system status",
+          "passed": true,
+          "duration": 3006,
+          "details": {}
+        },
+        {
+          "name": "Create test user",
+          "passed": false,
+          "duration": 3022,
+          "error": "User creation failed"
+        },
+        {
+          "name": "Get user by username",
+          "passed": true,
+          "duration": 3004,
+          "details": {
+            "userFound": false
+          }
+        },
+        {
+          "name": "Data synchronization",
+          "passed": true,
+          "duration": 3005,
+          "details": {
+            "synced": false
+          }
+        }
+      ],
+      "passed": 3,
+      "failed": 1,
+      "duration": 12037
+    },
+    {
+      "name": "WebSocket Tests",
+      "tests": [
+        {
+          "name": "WebSocket connection",
+          "passed": false,
+          "duration": 3004,
+          "error": "WebSocket connection failed"
+        },
+        {
+          "name": "WebSocket status check",
+          "passed": true,
+          "duration": 0,
+          "details": {
+            "connected": false
+          }
+        },
+        {
+          "name": "WebSocket message handling",
+          "passed": true,
+          "duration": 5002,
+          "details": {
+            "messageReceived": false,
+            "note": "No messages received within timeout"
+          }
+        },
+        {
+          "name": "WebSocket disconnection",
+          "passed": true,
+          "duration": 0,
+          "details": {
+            "disconnected": true
+          }
+        }
+      ],
+      "passed": 3,
+      "failed": 1,
+      "duration": 8006
+    },
+    {
+      "name": "Data Synchronization Tests",
+      "tests": [
+        {
+          "name": "Sync user data",
+          "passed": true,
+          "duration": 3008,
+          "details": {
+            "synced": false
+          }
+        },
+        {
+          "name": "Sync configuration data",
+          "passed": true,
+          "duration": 3009,
+          "details": {
+            "synced": false
+          }
+        },
+        {
+          "name": "Sync large dataset",
+          "passed": true,
+          "duration": 3016,
+          "details": {
+            "synced": false,
+            "recordCount": 1000,
+            "duration": 3016
+          }
+        }
+      ],
+      "passed": 3,
+      "failed": 0,
+      "duration": 9033
+    },
+    {
+      "name": "Error Handling Tests",
+      "tests": [
+        {
+          "name": "Invalid API credentials",
+          "passed": true,
+          "duration": 3005,
+          "details": {
+            "failedAsExpected": true
+          }
+        },
+        {
+          "name": "Network timeout handling",
+          "passed": true,
+          "duration": 3011,
+          "details": {
+            "timeoutHandled": false,
+            "note": "Request completed within timeout"
+          }
+        },
+        {
+          "name": "Retry mechanism",
+          "passed": true,
+          "duration": 116,
+          "details": {
+            "retryTested": true,
+            "success": false
+          }
+        },
+        {
+          "name": "WebSocket reconnection",
+          "passed": false,
+          "duration": 6355,
+          "error": "Initial WebSocket connection failed"
+        }
+      ],
+      "passed": 3,
+      "failed": 1,
+      "duration": 12487
+    }
+  ],
+  "environment": {
+    "fantasy402Url": "https://fantasy402.com/",
+    "bunVersion": "1.2.21",
+    "platform": "darwin",
+    "arch": "arm64"
+  }
+}

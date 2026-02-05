@@ -1,0 +1,98 @@
+{
+  "name": "Fire22 Analytics Dashboard",
+  "short_name": "Fire22 Analytics",
+  "description": "Enterprise-grade analytics dashboard with Fantasy402 integration for comprehensive business intelligence",
+  "start_url": "/analytics/index.html",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#58a6ff",
+  "orientation": "portrait-primary",
+  "scope": "/analytics/",
+  "lang": "en-US",
+  "categories": ["business", "finance", "analytics"],
+  "icons": [
+    {
+      "src": "/analytics/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/analytics/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/analytics/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/analytics/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/analytics/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/analytics/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/analytics/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/analytics/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Performance Dashboard",
+      "short_name": "Performance",
+      "description": "View system performance metrics",
+      "url": "/performance-dashboard.html",
+      "icons": [{ "src": "/analytics/icons/performance-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "ROI Calculator",
+      "short_name": "ROI",
+      "description": "Calculate return on investment",
+      "url": "/analytics/index.html#roi-calculator",
+      "icons": [{ "src": "/analytics/icons/calculator-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/analytics/screenshots/dashboard-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/analytics/screenshots/dashboard-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}

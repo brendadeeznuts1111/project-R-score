@@ -1,0 +1,75 @@
+name = "pattern-system-cloudflare"
+compatibility_date = "2024-08-27"
+compatibility_flags = ["nodejs_compat", "streams", "webgpu"]
+main = "dist/cloudflare/index.js"
+
+# Enhanced Cloudflare Workers configuration
+[limits]
+cpu_time = 50000
+memory = "256MB"
+
+# Environment variables
+[vars]
+WORKSPACE_MODE = "cloudflare"
+WORKSPACE_NAME = "@fire22/pattern-system"
+BUILD_TARGET = "cloudflare"
+ENVIRONMENT = "cloudflare"
+DEBUG_MODE = "false"
+LOG_LEVEL = "warn"
+
+# Pattern system specific configuration
+PATTERN_SYSTEM_ENABLED = "true"
+PATTERN_WEAVING_MODE = "cloudflare"
+STREAM_PROCESSING_ENABLED = "true"
+PATTERN_REGISTRY_CACHE_SIZE = "5000"
+
+# Cloudflare optimizations
+HOT_RELOAD_ENABLED = "false"
+PATTERN_DEBUGGING = "false"
+PERFORMANCE_MONITORING = "true"
+EDGE_COMPUTING_OPTIMIZED = "true"
+
+# Security settings
+PATTERN_VALIDATION_STRICT = "true"
+PATTERN_SANDBOXING = "true"
+MAX_PATTERN_EXECUTION_TIME = "25000"
+EDGE_SECURITY_ENABLED = "true"
+
+# Monitoring and analytics
+METRICS_COLLECTION = "true"
+PATTERN_EXECUTION_LOGGING = "true"
+ERROR_REPORTING = "true"
+CLOUDFLARE_ANALYTICS = "true"
+
+# Build and deployment
+BUILD_TIMESTAMP = "2024-08-27T01:00:00Z"
+VERSION = "3.0.9"
+DEPLOYMENT_MODE = "cloudflare"
+
+# Cloudflare-specific settings
+PATTERN_CACHE_TTL = "1800"
+MAX_CONCURRENT_PATTERNS = "50"
+PATTERN_TIMEOUT = "20000"
+EDGE_CACHE_ENABLED = "true"
+
+# Cloudflare Workers KV (if needed)
+# [[kv_namespaces]]
+# binding = "PATTERN_CACHE"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
+
+# Cloudflare Workers Durable Objects (if needed)
+# [[durable_objects.bindings]]
+# name = "PATTERN_STATE"
+# class_name = "PatternState"
+
+# Cloudflare Workers R2 (if needed)
+# [[r2_buckets]]
+# binding = "PATTERN_STORAGE"
+# bucket_name = "pattern-system-storage"
+
+# Cloudflare Workers D1 (if needed)
+# [[d1_databases]]
+# binding = "PATTERN_DB"
+# database_name = "pattern-system-db"
+# database_id = "your-d1-database-id"

@@ -1,0 +1,1390 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis Dashboard - Business Intelligence</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Date Range Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.js"></script>
+
+    <style>
+      .analysis-dashboard {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .dashboard-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+        border: none;
+      }
+
+      .card-header-custom {
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px;
+        border: none;
+      }
+
+      .kpi-card {
+        transition: transform 0.2s ease;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .kpi-value {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin: 15px 0 5px 0;
+      }
+
+      .kpi-label {
+        color: #6c757d;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .kpi-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.8em;
+        margin-top: 5px;
+      }
+
+      .kpi-change.positive {
+        color: #28a745;
+      }
+
+      .kpi-change.negative {
+        color: #dc3545;
+      }
+
+      .kpi-change.neutral {
+        color: #6c757d;
+      }
+
+      .filter-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .analytics-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+      }
+
+      .analytics-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .analytics-title {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin: 0;
+      }
+
+      .analytics-value {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #007bff;
+      }
+
+      .analytics-subtitle {
+        color: #6c757d;
+        font-size: 0.9em;
+        margin: 5px 0 0 0;
+      }
+
+      .chart-container {
+        height: 400px;
+        margin-bottom: 20px;
+      }
+
+      .trend-analysis-modal .modal-dialog {
+        max-width: 1000px;
+      }
+
+      .search-input {
+        position: relative;
+      }
+
+      .search-input i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+      }
+
+      .analysis-tools {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        z-index: 10;
+      }
+
+      .performance-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .metric-item {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .metric-value {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #007bff;
+      }
+
+      .metric-label {
+        color: #6c757d;
+        font-size: 0.8em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .predictive-insights {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .insight-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 3px solid #ffc107;
+      }
+
+      .insight-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .insight-description {
+        font-size: 0.9em;
+        opacity: 0.9;
+      }
+
+      .customer-segmentation {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .segment-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .segment-percentage {
+        font-size: 2em;
+        font-weight: bold;
+        color: #007bff;
+      }
+
+      .segment-label {
+        color: #6c757d;
+        font-size: 0.9em;
+      }
+
+      .segment-count {
+        font-size: 1.2em;
+        color: #28a745;
+        margin-top: 5px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .comparison-table th {
+        background: #f8f9fa;
+        font-weight: bold;
+      }
+
+      .forecast-card {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .forecast-value {
+        font-size: 2em;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .forecast-label {
+        opacity: 0.9;
+        font-size: 0.9em;
+      }
+
+      .risk-assessment {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .risk-level {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
+      .risk-low {
+        background: #d4edda;
+        color: #155724;
+      }
+      .risk-medium {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .risk-high {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      @media (max-width: 768px) {
+        .analytics-grid {
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .performance-metrics {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .customer-segmentation {
+          grid-template-columns: 1fr;
+        }
+
+        .analysis-tools {
+          justify-content: center;
+        }
+
+        .filter-section .row > div {
+          margin-bottom: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="analysis-dashboard">
+      <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h2 class="mb-0">
+                  <i class="fas fa-chart-line mr-2"></i>
+                  Analysis Dashboard
+                  <span class="badge badge-light ml-2" id="system-status">Active</span>
+                </h2>
+                <p class="mb-0 mt-2 opacity-75">
+                  Business intelligence, performance analytics, and predictive insights
+                </p>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group search-input">
+                      <label for="analysis-search">Search Analytics</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="analysis-search"
+                        placeholder="KPI, metric, or insight"
+                      />
+                      <i class="fas fa-search"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="analysis-category">Category</label>
+                      <select class="form-control" id="analysis-category">
+                        <option value="all">All Categories</option>
+                        <option value="financial">Financial</option>
+                        <option value="customer">Customer</option>
+                        <option value="operational">Operational</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="risk">Risk</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="time-period">Time Period</label>
+                      <select class="form-control" id="time-period">
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d" selected>Last 30 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                        <option value="1y">Last Year</option>
+                        <option value="custom">Custom Range</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Date Range</label>
+                      <input type="text" class="form-control" id="date-range-picker" placeholder="Select date range" />
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label>&nbsp;</label>
+                      <div class="analysis-tools">
+                        <button class="btn btn-outline-primary btn-sm" id="refresh-analysis">
+                          <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" id="generate-report">
+                          <i class="fas fa-file-alt"></i>
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" id="export-analysis">
+                          <i class="fas fa-download"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Performance Indicators -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="analytics-grid" id="kpi-grid">
+              <!-- KPI cards will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Predictive Insights -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="predictive-insights">
+              <h4 class="mb-3">
+                <i class="fas fa-brain mr-2"></i>
+                Predictive Insights
+              </h4>
+              <div id="predictive-insights">
+                <!-- Predictive insights will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-4">
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="fas fa-chart-area mr-2"></i>
+                  Revenue Trends
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="revenueTrendsChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="fas fa-users mr-2"></i>
+                  Customer Growth
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="customerGrowthChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="row mb-4">
+          <div class="col-lg-8">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="fas fa-tachometer-alt mr-2"></i>
+                  Performance Metrics
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="performance-metrics" id="performance-metrics">
+                  <!-- Performance metrics will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="risk-assessment">
+              <h5 class="mb-3">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                Risk Assessment
+              </h5>
+              <div id="risk-assessment-content">
+                <!-- Risk assessment will be populated by JavaScript -->
+              </div>
+            </div>
+
+            <div class="forecast-card">
+              <div class="forecast-label">Revenue Forecast</div>
+              <div class="forecast-value" id="revenue-forecast">$0</div>
+              <div class="forecast-label">Next 30 Days</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Segmentation -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="fas fa-user-friends mr-2"></i>
+                  Customer Segmentation
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="customer-segmentation" id="customer-segmentation">
+                  <!-- Customer segments will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparative Analysis -->
+        <div class="row">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="fas fa-balance-scale mr-2"></i>
+                  Comparative Analysis
+                </h4>
+              </div>
+              <div class="card-body position-relative">
+                <div id="loading-overlay" class="loading-overlay" style="display: none">
+                  <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="mt-2">Loading comparative analysis...</div>
+                  </div>
+                </div>
+
+                <div id="comparative-analysis">
+                  <!-- Comparative analysis will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trend Analysis Modal -->
+    <div class="modal fade trend-analysis-modal" id="trendAnalysisModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-chart-line mr-2"></i>
+              Trend Analysis
+            </h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="trend-analysis-content">
+            <!-- Trend analysis will be populated here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="export-trend">
+              <i class="fas fa-download mr-1"></i>
+              Export Trend Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Analysis Dashboard JavaScript -->
+    <script>
+      class AnalysisDashboard {
+        constructor() {
+          this.analytics = {};
+          this.charts = {};
+          this.currentPeriod = '30d';
+          this.filters = {
+            search: '',
+            category: 'all',
+            timePeriod: '30d',
+            dateRange: null,
+          };
+
+          this.initializeEventHandlers();
+          this.initializeCharts();
+          this.initializeDateRangePicker();
+          this.loadInitialData();
+          this.startRealTimeUpdates();
+        }
+
+        initializeEventHandlers() {
+          // Search functionality
+          $('#analysis-search').on('input', e => {
+            this.filters.search = e.target.value;
+            this.applyFilters();
+          });
+
+          // Filter controls
+          $('#analysis-category, #time-period').on('change', () => {
+            this.filters.category = $('#analysis-category').val();
+            this.filters.timePeriod = $('#time-period').val();
+            this.currentPeriod = this.filters.timePeriod;
+            this.applyFilters();
+          });
+
+          // Analysis tools
+          $('#refresh-analysis').on('click', () => {
+            this.loadAnalyticsData();
+          });
+
+          $('#generate-report').on('click', () => {
+            this.generateReport();
+          });
+
+          $('#export-analysis').on('click', () => {
+            this.exportAnalysis();
+          });
+
+          // KPI card clicks
+          $(document).on('click', '.kpi-card', e => {
+            const metric = $(e.currentTarget).data('metric');
+            this.showTrendAnalysis(metric);
+          });
+
+          // Export trend button
+          $('#export-trend').on('click', () => {
+            this.exportTrendData();
+          });
+        }
+
+        initializeCharts() {
+          // Revenue Trends Chart
+          const revenueCtx = document.getElementById('revenueTrendsChart').getContext('2d');
+          this.charts.revenue = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+              labels: [],
+              datasets: [
+                {
+                  label: 'Revenue',
+                  data: [],
+                  borderColor: '#28a745',
+                  backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                  tension: 0.4,
+                  fill: true,
+                },
+                {
+                  label: 'Target',
+                  data: [],
+                  borderColor: '#007bff',
+                  backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                  tension: 0.4,
+                  borderDash: [5, 5],
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'top',
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function (value) {
+                      return '$' + value.toLocaleString();
+                    },
+                  },
+                },
+              },
+            },
+          });
+
+          // Customer Growth Chart
+          const customerCtx = document.getElementById('customerGrowthChart').getContext('2d');
+          this.charts.customer = new Chart(customerCtx, {
+            type: 'bar',
+            data: {
+              labels: [],
+              datasets: [
+                {
+                  label: 'New Customers',
+                  data: [],
+                  backgroundColor: '#007bff',
+                  borderColor: '#0056b3',
+                  borderWidth: 1,
+                },
+                {
+                  label: 'Active Customers',
+                  data: [],
+                  backgroundColor: '#28a745',
+                  borderColor: '#1e7e34',
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'top',
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        }
+
+        initializeDateRangePicker() {
+          $('#date-range-picker').daterangepicker(
+            {
+              autoApply: true,
+              locale: {
+                format: 'MM/DD/YYYY',
+              },
+              ranges: {
+                Today: [moment(), moment()],
+                Yesterday: [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'Last 90 Days': [moment().subtract(89, 'days'), moment()],
+                'This Year': [moment().startOf('year'), moment()],
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+              },
+            },
+            (start, end) => {
+              this.filters.dateRange = {
+                start: start.format('YYYY-MM-DD'),
+                end: end.format('YYYY-MM-DD'),
+              };
+              this.applyFilters();
+            }
+          );
+        }
+
+        async loadInitialData() {
+          this.showLoadingState();
+          await Promise.all([this.loadAnalyticsData(), this.loadKPIs(), this.loadPredictiveInsights()]);
+          this.hideLoadingState();
+        }
+
+        async loadAnalyticsData() {
+          try {
+            // Simulate API call - replace with actual analytics API endpoints
+            const response = await this.simulateAnalyticsDataFetch();
+            this.analytics = response.data;
+            this.updateCharts();
+            this.updateKPIs();
+            this.updateRiskAssessment();
+            this.updateCustomerSegmentation();
+            this.updateComparativeAnalysis();
+          } catch (error) {
+            console.error('Failed to load analytics data:', error);
+            this.showError('Failed to load analytics data');
+          }
+        }
+
+        async simulateAnalyticsDataFetch() {
+          // Mock comprehensive analytics data
+          return new Promise(resolve => {
+            setTimeout(() => {
+              const now = new Date();
+              const data = {
+                kpis: {
+                  totalRevenue: 125000,
+                  totalCustomers: 2500,
+                  averageOrderValue: 125,
+                  customerRetentionRate: 78.5,
+                  profitMargin: 23.4,
+                  monthlyGrowthRate: 12.3,
+                },
+                trends: {
+                  revenue: this.generateTrendData(30, 10000, 15000),
+                  customers: this.generateTrendData(30, 150, 250),
+                  orders: this.generateTrendData(30, 800, 1200),
+                },
+                segments: {
+                  vip: { count: 125, percentage: 5, revenue: 45000 },
+                  regular: { count: 1875, percentage: 75, revenue: 62500 },
+                  new: { count: 500, percentage: 20, revenue: 17500 },
+                },
+                performance: {
+                  conversionRate: 3.2,
+                  bounceRate: 45.6,
+                  avgSessionDuration: 185,
+                  pageViewsPerSession: 3.8,
+                },
+                risks: {
+                  churnRisk: 'medium',
+                  highValueCustomerRisk: 'low',
+                  marketVolatility: 'high',
+                  operationalEfficiency: 'medium',
+                },
+                predictions: {
+                  revenueForecast: 150000,
+                  customerGrowth: 3200,
+                  marketShare: 15.2,
+                },
+              };
+
+              resolve({ data });
+            }, 1500);
+          });
+        }
+
+        generateTrendData(days, minValue, maxValue) {
+          const data = [];
+          for (let i = days - 1; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const value = Math.floor(Math.random() * (maxValue - minValue) + minValue);
+            data.push({
+              date: date.toISOString().split('T')[0],
+              value: value,
+            });
+          }
+          return data;
+        }
+
+        applyFilters() {
+          // Filter logic would be applied here
+          this.loadAnalyticsData();
+        }
+
+        updateCharts() {
+          // Update Revenue Trends Chart
+          const revenueLabels = this.analytics.trends.revenue.map(item =>
+            new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          );
+          const revenueData = this.analytics.trends.revenue.map(item => item.value);
+          const targetData = revenueData.map(value => value * 1.1); // 10% above actual
+
+          this.charts.revenue.data.labels = revenueLabels;
+          this.charts.revenue.data.datasets[0].data = revenueData;
+          this.charts.revenue.data.datasets[1].data = targetData;
+          this.charts.revenue.update();
+
+          // Update Customer Growth Chart
+          const customerLabels = this.analytics.trends.customers.map(item =>
+            new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          );
+          const newCustomers = this.analytics.trends.customers.map(item => Math.floor(item.value * 0.3));
+          const activeCustomers = this.analytics.trends.customers.map(item => item.value);
+
+          this.charts.customer.data.labels = customerLabels;
+          this.charts.customer.data.datasets[0].data = newCustomers;
+          this.charts.customer.data.datasets[1].data = activeCustomers;
+          this.charts.customer.update();
+        }
+
+        async loadKPIs() {
+          const kpis = [
+            {
+              id: 'revenue',
+              label: 'Total Revenue',
+              value: `$${this.analytics.kpis?.totalRevenue?.toLocaleString() || '0'}`,
+              change: '+12.5%',
+              changeType: 'positive',
+              icon: 'fas fa-dollar-sign',
+              color: '#28a745',
+            },
+            {
+              id: 'customers',
+              label: 'Total Customers',
+              value: this.analytics.kpis?.totalCustomers?.toLocaleString() || '0',
+              change: '+8.3%',
+              changeType: 'positive',
+              icon: 'fas fa-users',
+              color: '#007bff',
+            },
+            {
+              id: 'aov',
+              label: 'Avg Order Value',
+              value: `$${this.analytics.kpis?.averageOrderValue?.toFixed(2) || '0.00'}`,
+              change: '+3.2%',
+              changeType: 'positive',
+              icon: 'fas fa-shopping-cart',
+              color: '#ffc107',
+            },
+            {
+              id: 'retention',
+              label: 'Customer Retention',
+              value: `${this.analytics.kpis?.customerRetentionRate?.toFixed(1) || '0.0'}%`,
+              change: '-2.1%',
+              changeType: 'negative',
+              icon: 'fas fa-user-check',
+              color: '#17a2b8',
+            },
+            {
+              id: 'margin',
+              label: 'Profit Margin',
+              value: `${this.analytics.kpis?.profitMargin?.toFixed(1) || '0.0'}%`,
+              change: '+1.8%',
+              changeType: 'positive',
+              icon: 'fas fa-chart-pie',
+              color: '#e83e8c',
+            },
+            {
+              id: 'growth',
+              label: 'Monthly Growth',
+              value: `${this.analytics.kpis?.monthlyGrowthRate?.toFixed(1) || '0.0'}%`,
+              change: '+5.4%',
+              changeType: 'positive',
+              icon: 'fas fa-chart-line',
+              color: '#dc3545',
+            },
+          ];
+
+          this.renderKPIs(kpis);
+        }
+
+        renderKPIs(kpis) {
+          const grid = $('#kpi-grid');
+
+          grid.html(
+            kpis
+              .map(
+                kpi => `
+                    <div class="kpi-card" data-metric="${kpi.id}" style="border-left: 4px solid ${kpi.color}">
+                        <div class="kpi-value" style="color: ${kpi.color}">
+                            ${kpi.value}
+                        </div>
+                        <div class="kpi-label">${kpi.label}</div>
+                        <div class="kpi-change ${kpi.changeType}">
+                            <i class="fas fa-arrow-${kpi.changeType === 'positive' ? 'up' : kpi.changeType === 'negative' ? 'down' : 'right'}"></i>
+                            <span>${kpi.change}</span>
+                        </div>
+                    </div>
+                `
+              )
+              .join('')
+          );
+        }
+
+        async loadPredictiveInsights() {
+          const insights = [
+            {
+              title: 'Revenue Growth Prediction',
+              description:
+                'Based on current trends, revenue is expected to grow by 15.2% in the next quarter. Key drivers include increased customer acquisition and higher average order values.',
+              type: 'positive',
+              confidence: 85,
+            },
+            {
+              title: 'Customer Churn Alert',
+              description:
+                'High-value customers in the VIP segment show increased churn risk. Consider implementing retention strategies targeting this group.',
+              type: 'warning',
+              confidence: 78,
+            },
+            {
+              title: 'Market Opportunity',
+              description:
+                'Competitor analysis shows a 23% market share gap in the under-25 demographic. Consider targeted marketing campaigns.',
+              type: 'opportunity',
+              confidence: 92,
+            },
+            {
+              title: 'Operational Efficiency',
+              description:
+                'Process automation could reduce operational costs by 12% while maintaining service quality. Focus on order fulfillment optimization.',
+              type: 'info',
+              confidence: 88,
+            },
+          ];
+
+          this.renderPredictiveInsights(insights);
+        }
+
+        renderPredictiveInsights(insights) {
+          const container = $('#predictive-insights');
+
+          container.html(
+            insights
+              .map(
+                insight => `
+                    <div class="insight-item">
+                        <div class="insight-title">
+                            <i class="fas fa-${this.getInsightIcon(insight.type)} mr-2"></i>
+                            ${insight.title}
+                            <span class="badge badge-${this.getInsightBadgeClass(insight.type)} ml-2">
+                                ${insight.confidence}% confidence
+                            </span>
+                        </div>
+                        <div class="insight-description">${insight.description}</div>
+                    </div>
+                `
+              )
+              .join('')
+          );
+        }
+
+        getInsightIcon(type) {
+          const icons = {
+            positive: 'chart-line',
+            warning: 'exclamation-triangle',
+            opportunity: 'lightbulb',
+            info: 'info-circle',
+          };
+          return icons[type] || 'info-circle';
+        }
+
+        getInsightBadgeClass(type) {
+          const classes = {
+            positive: 'success',
+            warning: 'warning',
+            opportunity: 'info',
+            info: 'secondary',
+          };
+          return classes[type] || 'secondary';
+        }
+
+        updateKPIs() {
+          // KPIs are already rendered in loadKPIs
+          this.updatePerformanceMetrics();
+          this.updateRiskAssessment();
+          this.updateCustomerSegmentation();
+          this.updateComparativeAnalysis();
+        }
+
+        updatePerformanceMetrics() {
+          const metrics = [
+            {
+              label: 'Conversion Rate',
+              value: `${this.analytics.performance?.conversionRate || 0}%`,
+              icon: 'fas fa-bullseye',
+            },
+            {
+              label: 'Bounce Rate',
+              value: `${this.analytics.performance?.bounceRate || 0}%`,
+              icon: 'fas fa-door-open',
+            },
+            {
+              label: 'Avg Session',
+              value: `${Math.floor((this.analytics.performance?.avgSessionDuration || 0) / 60)}m ${((this.analytics.performance?.avgSessionDuration || 0) % 60).toFixed(0)}s`,
+              icon: 'fas fa-clock',
+            },
+            {
+              label: 'Page Views',
+              value: this.analytics.performance?.pageViewsPerSession?.toFixed(1) || '0.0',
+              icon: 'fas fa-eye',
+            },
+          ];
+
+          const container = $('#performance-metrics');
+          container.html(
+            metrics
+              .map(
+                metric => `
+                    <div class="metric-item">
+                        <div class="metric-value">${metric.value}</div>
+                        <div class="metric-label">${metric.label}</div>
+                    </div>
+                `
+              )
+              .join('')
+          );
+        }
+
+        updateRiskAssessment() {
+          const risks = this.analytics.risks || {};
+          const riskLevels = Object.entries(risks);
+
+          const container = $('#risk-assessment-content');
+          container.html(`
+                    <div class="mb-3">
+                        ${riskLevels
+                          .map(
+                            ([risk, level]) => `
+                            <span class="risk-level risk-${level}">${risk.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span>
+                        `
+                          )
+                          .join('')}
+                    </div>
+                    <p class="mb-0">Overall risk assessment based on current market conditions, customer behavior, and operational metrics.</p>
+                `);
+
+          // Update revenue forecast
+          $('#revenue-forecast').text(`$${this.analytics.predictions?.revenueForecast?.toLocaleString() || '0'}`);
+        }
+
+        updateCustomerSegmentation() {
+          const segments = this.analytics.segments || {};
+
+          const container = $('#customer-segmentation');
+          const segmentData = Object.entries(segments).map(([key, data]) => ({
+            label: key.charAt(0).toUpperCase() + key.slice(1),
+            percentage: data.percentage,
+            count: data.count,
+            revenue: data.revenue,
+          }));
+
+          container.html(
+            segmentData
+              .map(
+                segment => `
+                    <div class="segment-card">
+                        <div class="segment-percentage">${segment.percentage}%</div>
+                        <div class="segment-label">${segment.label} Customers</div>
+                        <div class="segment-count">${segment.count.toLocaleString()}</div>
+                        <div class="segment-revenue">$${segment.revenue.toLocaleString()}</div>
+                    </div>
+                `
+              )
+              .join('')
+          );
+        }
+
+        updateComparativeAnalysis() {
+          const comparison = this.analytics.comparison || {
+            thisPeriod: { revenue: 125000, customers: 2500, orders: 1200 },
+            lastPeriod: { revenue: 110000, customers: 2300, orders: 1100 },
+          };
+
+          const container = $('#comparative-analysis');
+          container.html(`
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Current Period</th>
+                                <th>Previous Period</th>
+                                <th>Change</th>
+                                <th>% Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Revenue</td>
+                                <td>$${comparison.thisPeriod.revenue.toLocaleString()}</td>
+                                <td>$${comparison.lastPeriod.revenue.toLocaleString()}</td>
+                                <td class="text-success">+$${comparison.thisPeriod.revenue - comparison.lastPeriod.revenue}</td>
+                                <td class="text-success">+${(((comparison.thisPeriod.revenue - comparison.lastPeriod.revenue) / comparison.lastPeriod.revenue) * 100).toFixed(1)}%</td>
+                            </tr>
+                            <tr>
+                                <td>Customers</td>
+                                <td>${comparison.thisPeriod.customers.toLocaleString()}</td>
+                                <td>${comparison.lastPeriod.customers.toLocaleString()}</td>
+                                <td class="text-success">+${comparison.thisPeriod.customers - comparison.lastPeriod.customers}</td>
+                                <td class="text-success">+${(((comparison.thisPeriod.customers - comparison.lastPeriod.customers) / comparison.lastPeriod.customers) * 100).toFixed(1)}%</td>
+                            </tr>
+                            <tr>
+                                <td>Orders</td>
+                                <td>${comparison.thisPeriod.orders.toLocaleString()}</td>
+                                <td>${comparison.lastPeriod.orders.toLocaleString()}</td>
+                                <td class="text-success">+${comparison.thisPeriod.orders - comparison.lastPeriod.orders}</td>
+                                <td class="text-success">+${(((comparison.thisPeriod.orders - comparison.lastPeriod.orders) / comparison.lastPeriod.orders) * 100).toFixed(1)}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `);
+        }
+
+        showTrendAnalysis(metric) {
+          const metricData = this.getMetricData(metric);
+          const modalContent = `
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>Detailed Trend Analysis</h6>
+                            <p>Showing ${metric} trends over the selected time period.</p>
+                            <div style="height: 300px;">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Key Insights</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-arrow-up text-success mr-2"></i>Growth trend identified</li>
+                                <li><i class="fas fa-chart-line text-info mr-2"></i>Seasonal patterns detected</li>
+                                <li><i class="fas fa-exclamation-triangle text-warning mr-2"></i>Volatility increased</li>
+                                <li><i class="fas fa-lightbulb text-primary mr-2"></i>Optimization opportunity</li>
+                            </ul>
+
+                            <h6 class="mt-3">Forecast</h6>
+                            <p class="text-muted">Next period prediction: <strong class="text-success">+8.5%</strong></p>
+                        </div>
+                    </div>
+                `;
+
+          $('#trend-analysis-content').html(modalContent);
+          $('#trendAnalysisModal').modal('show');
+
+          // Initialize trend chart
+          setTimeout(() => {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: metricData.labels,
+                datasets: [
+                  {
+                    label: metric,
+                    data: metricData.values,
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    tension: 0.4,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+              },
+            });
+          }, 100);
+        }
+
+        getMetricData(metric) {
+          // Mock trend data based on metric
+          const labels = [];
+          const values = [];
+          const now = new Date();
+
+          for (let i = 29; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(date.getDate() - i);
+            labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+
+            let baseValue = 1000;
+            switch (metric) {
+              case 'revenue':
+                baseValue = 10000;
+                break;
+              case 'customers':
+                baseValue = 200;
+                break;
+              case 'aov':
+                baseValue = 125;
+                break;
+              case 'retention':
+                baseValue = 80;
+                break;
+              case 'margin':
+                baseValue = 25;
+                break;
+              case 'growth':
+                baseValue = 10;
+                break;
+            }
+
+            values.push(baseValue + Math.random() * baseValue * 0.2 - baseValue * 0.1);
+          }
+
+          return { labels, values };
+        }
+
+        generateReport() {
+          this.showSuccess('Comprehensive analysis report generated successfully');
+          // In a real implementation, this would generate a detailed PDF report
+        }
+
+        exportAnalysis() {
+          const data = {
+            kpis: this.analytics.kpis,
+            trends: this.analytics.trends,
+            predictions: this.analytics.predictions,
+            exportDate: new Date().toISOString(),
+          };
+
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `analysis-export-${new Date().toISOString().split('T')[0]}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          this.showSuccess('Analysis data exported successfully');
+        }
+
+        exportTrendData() {
+          const trendData = this.getMetricData('revenue'); // Default to revenue
+          const csvContent = [
+            'Date,Value',
+            ...trendData.labels.map((label, index) => `${label},${trendData.values[index]}`),
+          ].join('\\n');
+
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `trend-analysis-${new Date().toISOString().split('T')[0]}.csv`;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          $('#trendAnalysisModal').modal('hide');
+          this.showSuccess('Trend data exported successfully');
+        }
+
+        showLoadingState() {
+          $('#loading-overlay').show();
+        }
+
+        hideLoadingState() {
+          $('#loading-overlay').hide();
+        }
+
+        showError(message) {
+          const alert = $(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>${message}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span>&times;</span>
+                    </button>
+                </div>`);
+
+          $('.container-fluid').prepend(alert);
+          setTimeout(() => alert.alert('close'), 5000);
+        }
+
+        showSuccess(message) {
+          const alert = $(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle mr-2"></i>${message}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span>&times;</span>
+                    </button>
+                </div>`);
+
+          $('.container-fluid').prepend(alert);
+          setTimeout(() => alert.alert('close'), 3000);
+        }
+
+        startRealTimeUpdates() {
+          // Update data every 5 minutes for analysis dashboard
+          setInterval(() => {
+            if (document.visibilityState === 'visible') {
+              this.loadAnalyticsData();
+            }
+          }, 300000); // 5 minutes
+        }
+      }
+
+      // Initialize the dashboard when the page loads
+      $(document).ready(() => {
+        window.analysisDashboard = new AnalysisDashboard();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Fire22 v5.1.1: Enterprise Dashboard Transformation & Cloudflare Integration</title>
+    <meta name="description" content="Major release v5.1.1 brings AI-powered insights, real-time collaboration, and Cloudflare integration to Fire22 enterprise dashboards">
+    <meta name="keywords" content="Fire22, v5.1.1, enterprise dashboard, Cloudflare integration, AI insights, real-time collaboration, release notes">
+    <meta property="og:title" content="🚀 Fire22 v5.1.1: Enterprise Dashboard Transformation">
+    <meta property="og:description" content="Major release bringing AI-powered insights, real-time collaboration, and Cloudflare integration">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fire22.dev/blog/release-v5.1.1">
+    <meta property="og:image" content="https://fire22.dev/images/release-v5.1.1-banner.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="🚀 Fire22 v5.1.1: Enterprise Dashboard Transformation">
+    <meta name="twitter:description" content="Major release bringing AI-powered insights and Cloudflare integration">
+
+    <!-- Cloudflare Analytics -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "analytics-token"}'></script>
+
+    <!-- Modern CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --cf-blue: #0066cc;
+            --cf-orange: #ff7900;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .hero-section {
+            background: var(--gradient-primary);
+            background-attachment: fixed;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .code-block {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: #e5e7eb;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--cf-blue);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--cf-blue);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <img src="https://www.cloudflare.com/img/logo-cloudflare-dark.svg" alt="Cloudflare" class="h-8">
+                    <div class="h-8 w-px bg-gray-300"></div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Fire22</h1>
+                        <span class="text-sm text-gray-600">Enterprise Platform</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <i class="fas fa-tag mr-1"></i>v5.1.1
+                    </span>
+                    <a href="https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/releases/tag/v5.1.1"
+                       class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-200">
+                        <i class="fab fa-github mr-2"></i>View on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-20 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="mb-8">
+                <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-4 inline-block">
+                    <i class="fas fa-rocket mr-1"></i>Major Release
+                </span>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    🚀 Fire22 <span class="text-yellow-300">v5.1.1</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto leading-relaxed">
+                    Enterprise Dashboard Transformation with AI-Powered Insights,
+                    Real-Time Collaboration, and Cloudflare Integration
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 min-w-[200px]">
+                    <div class="text-3xl font-bold text-yellow-300">1094</div>
+                    <div class="text-blue-200">Files Enhanced</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 min-w-[200px]">
+                    <div class="text-3xl font-bold text-green-300">400%</div>
+                    <div class="text-blue-200">Performance Boost</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 min-w-[200px]">
+                    <div class="text-3xl font-bold text-purple-300">99.9%</div>
+                    <div class="text-blue-200">Uptime SLA</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#features" class="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors duration-200 shadow-lg">
+                    <i class="fas fa-eye mr-2"></i>Explore Features
+                </a>
+                <a href="#download" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors duration-200">
+                    <i class="fas fa-download mr-2"></i>Get Started
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-16">
+        <!-- Key Highlights -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">🎯 Key Highlights</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="feature-card rounded-xl p-6 fade-in">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-brain text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">AI-Powered Insights</h3>
+                    <p class="text-gray-600">Predictive analytics and intelligent recommendations for proactive system optimization.</p>
+                </div>
+
+                <div class="feature-card rounded-xl p-6 fade-in">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Real-Time Collaboration</h3>
+                    <p class="text-gray-600">Live cursor tracking, collaborative editing, and presence indicators for team productivity.</p>
+                </div>
+
+                <div class="feature-card rounded-xl p-6 fade-in">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-cloud text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Cloudflare Integration</h3>
+                    <p class="text-gray-600">Enterprise-grade deployment with R2 storage, Workers, and global CDN optimization.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Features -->
+        <section id="features" class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">✨ New Features & Enhancements</h2>
+
+            <div class="space-y-8">
+                <!-- AI Insights -->
+                <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">🤖 AI Insights Integration</h3>
+                            <p class="text-gray-700 mb-6 text-lg">
+                                Revolutionary AI-powered analytics that transform how you monitor and optimize your dashboards.
+                            </p>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="highlight-box">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Predictive Analytics</h4>
+                                    <p class="text-gray-700">AI algorithms predict performance issues before they impact users, with automated recommendations for optimization.</p>
+                                </div>
+
+                                <div class="highlight-box">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Anomaly Detection</h4>
+                                    <p class="text-gray-700">Machine learning models identify unusual patterns and automatically trigger alerts for investigation.</p>
+                                </div>
+
+                                <div class="highlight-box">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Intelligent Recommendations</h4>
+                                    <p class="text-gray-700">Context-aware suggestions for improving performance, security, and user experience based on your specific usage patterns.</p>
+                                </div>
+
+                                <div class="highlight-box">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Confidence Scoring</h4>
+                                    <p class="text-gray-700">Every AI insight comes with a confidence score, helping you prioritize actions based on reliability.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-Time Collaboration -->
+                <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-users text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">👥 Real-Time Collaboration</h3>
+                            <p class="text-gray-700 mb-6 text-lg">
+                                Work together seamlessly with live collaboration features that make remote teamwork feel natural.
+                            </p>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-mouse-pointer text-blue-500"></i>
+                                        <span class="font-medium">Live Cursor Tracking</span>
+                                    </div>
+                                    <p class="text-gray-600 ml-7">See where your teammates are working in real-time</p>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-comments text-green-500"></i>
+                                        <span class="font-medium">Contextual Comments</span>
+                                    </div>
+                                    <p class="text-gray-600 ml-7">Add comments directly on dashboard elements</p>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-user-circle text-purple-500"></i>
+                                        <span class="font-medium">Presence Indicators</span>
+                                    </div>
+                                    <p class="text-gray-600 ml-7">Know who's online and what they're working on</p>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-history text-orange-500"></i>
+                                        <span class="font-medium">Change Tracking</span>
+                                    </div>
+                                    <p class="text-gray-600 ml-7">See who made what changes and when</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cloudflare Integration -->
+                <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-cloud text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">☁️ Cloudflare Integration</h3>
+                            <p class="text-gray-700 mb-6 text-lg">
+                                Enterprise-grade infrastructure with global performance and security.
+                            </p>
+
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-globe text-blue-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Global CDN</h4>
+                                    <p class="text-gray-600 text-sm">250+ edge locations worldwide</p>
+                                </div>
+
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-shield-alt text-green-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Enterprise Security</h4>
+                                    <p class="text-gray-600 text-sm">Advanced threat protection</p>
+                                </div>
+
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-tachometer-alt text-purple-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Performance</h4>
+                                    <p class="text-gray-600 text-sm">Sub-millisecond response times</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Improvements -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">⚡ Performance Improvements</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="metric-card rounded-xl p-6 text-center fade-in">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">93%</div>
+                    <div class="text-gray-700 font-medium">Faster Error Recovery</div>
+                    <div class="text-sm text-gray-500 mt-1">Intelligent retry logic</div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6 text-center fade-in">
+                    <div class="text-4xl font-bold text-green-600 mb-2">99.9%</div>
+                    <div class="text-gray-700 font-medium">Uptime SLA</div>
+                    <div class="text-sm text-gray-500 mt-1">Enterprise reliability</div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6 text-center fade-in">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">80%</div>
+                    <div class="text-gray-700 font-medium">Response Time Reduction</div>
+                    <div class="text-sm text-gray-500 mt-1">Global optimization</div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6 text-center fade-in">
+                    <div class="text-4xl font-bold text-orange-600 mb-2">400%</div>
+                    <div class="text-gray-700 font-medium">System Reliability</div>
+                    <div class="text-sm text-gray-500 mt-1">Advanced monitoring</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Migration Guide -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">🚀 Migration Guide</h2>
+
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <div class="space-y-6">
+                    <div class="timeline-item">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">1. Environment Setup</h3>
+                        <p class="text-gray-700">Configure Cloudflare credentials and update environment variables.</p>
+                        <div class="code-block mt-3">
+                            <code>cp .env.example .env
+# Edit .env with your Cloudflare credentials
+npm install -g wrangler
+wrangler auth login</code>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">2. Registry Setup</h3>
+                        <p class="text-gray-700">Initialize R2 storage and configure automated deployments.</p>
+                        <div class="code-block mt-3">
+                            <code>bun run r2-registry-setup.bun.ts --init
+bun run registry-upload.bun.ts</code>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">3. AI Integration</h3>
+                        <p class="text-gray-700">Enable AI insights and configure predictive analytics.</p>
+                        <div class="code-block mt-3">
+                            <code>bun run ai-insights-integration.bun.ts
+# Configure AI settings in dashboard</code>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">4. Collaboration Setup</h3>
+                        <p class="text-gray-700">Enable real-time collaboration features for your team.</p>
+                        <div class="code-block mt-3">
+                            <code>bun run realtime-collaboration-system.bun.ts
+# Configure WebSocket endpoints</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What's Next -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">🔮 What's Next</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Short-term (Weeks 1-4)</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>✅ Critical accessibility improvements</li>
+                        <li>✅ Advanced security hardening</li>
+                        <li>✅ Performance optimization</li>
+                        <li>✅ User feedback integration</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Medium-term (Months 1-3)</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>🔄 Machine learning model improvements</li>
+                        <li>🔄 Advanced collaboration features</li>
+                        <li>🔄 Multi-region deployment</li>
+                        <li>🔄 Enhanced mobile experience</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section id="download" class="text-center bg-gray-900 text-white rounded-xl p-12">
+            <h2 class="text-3xl font-bold mb-6">🎯 Ready to Get Started?</h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Experience the future of enterprise dashboards with AI-powered insights,
+                real-time collaboration, and Cloudflare performance.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/releases/tag/v5.1.1"
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors duration-200 shadow-lg">
+                    <i class="fab fa-github mr-2"></i>Download v5.1.1
+                </a>
+
+                <a href="https://docs.fire22.dev/getting-started"
+                   class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors duration-200">
+                    <i class="fas fa-book mr-2"></i>View Documentation
+                </a>
+            </div>
+
+            <div class="mt-8 text-gray-400">
+                <p class="text-sm">Need help? <a href="mailto:support@fire22.dev" class="text-blue-400 hover:text-blue-300">Contact our support team</a></p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Fire22</h3>
+                    <p class="text-gray-400 text-sm">
+                        Enterprise-grade dashboard platform with AI-powered insights
+                        and real-time collaboration capabilities.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API Reference</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Changelog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Support</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4">Community</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">GitHub</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Discord</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Twitter</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Security</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2025 Fire22. All rights reserved. | Version 5.1.1</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="fixed bottom-8 right-8 bg-blue-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-200 opacity-0 pointer-events-none">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Scroll to Top Functionality
+        const scrollButton = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollButton.classList.remove('opacity-0', 'pointer-events-none');
+                scrollButton.classList.add('opacity-100', 'pointer-events-auto');
+            } else {
+                scrollButton.classList.remove('opacity-100', 'pointer-events-auto');
+                scrollButton.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+
+        scrollButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        });
+
+        // Observe all elements with fade-in class
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add pulse glow to key metrics
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('pulse-glow');
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('pulse-glow');
+            });
+        });
+    </script>
+</body>
+</html>

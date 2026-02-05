@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📝 Fire22 Form Management Demo</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap DateTimePicker CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
+    />
+
+    <!-- Bootstrap DateRangePicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
+
+    <!-- Pick-a-Date CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/themes/default.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/themes/default.date.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/themes/default.time.css"
+    />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Custom Styles -->
+    <style>
+      .form-management-demo {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .demo-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+        padding: 20px;
+      }
+
+      .form-container {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .component-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .component-demo {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid #e9ecef;
+      }
+
+      .component-demo h4 {
+        margin-top: 0;
+        color: #495057;
+        font-size: 1.1rem;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-success {
+        background-color: #28a745;
+      }
+      .status-error {
+        background-color: #dc3545;
+      }
+      .status-loading {
+        background-color: #ffc107;
+      }
+
+      .feature-highlight {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+      }
+
+      .code-example {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 5px;
+        padding: 15px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+
+      .live-demo {
+        background: rgba(40, 167, 69, 0.1);
+        border: 2px solid #28a745;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .error-message {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid #dc3545;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+      }
+
+      .success-message {
+        background: rgba(40, 167, 69, 0.1);
+        border: 1px solid #28a745;
+        color: #155724;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #495057;
+      }
+
+      .form-control {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        transition:
+          border-color 0.15s ease-in-out,
+          box-shadow 0.15s ease-in-out;
+      }
+
+      .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.375rem;
+        transition:
+          color 0.15s ease-in-out,
+          background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out,
+          box-shadow 0.15s ease-in-out;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+      }
+
+      .btn-secondary {
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #6c757d;
+      }
+
+      .required-indicator {
+        color: #dc3545;
+        margin-left: 4px;
+      }
+
+      .field-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="form-management-demo">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Header -->
+          <div class="text-center mb-5">
+            <div class="d-inline-flex align-items-center gap-3 mb-4">
+              <div class="text-4xl">📝</div>
+              <h1 class="h1 text-white">Fire22 Form Management</h1>
+            </div>
+            <p class="lead text-white-50 max-w-4xl mx-auto">
+              Comprehensive form handling system with Select2, date pickers, validation, and data management for all
+              Fire22 components
+            </p>
+          </div>
+
+          <!-- Status Indicators -->
+          <div class="demo-card">
+            <h2 class="h4 mb-4 text-gray-800">🔧 System Status</h2>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="text-center">
+                  <div class="status-indicator status-success"></div>
+                  <span>Select2 Components</span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="text-center">
+                  <div class="status-indicator status-success"></div>
+                  <span>Date/Time Pickers</span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="text-center">
+                  <div class="status-indicator status-success"></div>
+                  <span>Validation Engine</span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="text-center">
+                  <div class="status-indicator status-success"></div>
+                  <span>Form Management</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="demo-card">
+            <h2 class="h4 mb-4 text-gray-800">⚡ Quick Actions</h2>
+            <div class="row">
+              <div class="col-md-6">
+                <button onclick="showAgentForm()" class="btn btn-primary btn-lg w-100 mb-3">
+                  👥 Create Agent Form
+                </button>
+              </div>
+              <div class="col-md-6">
+                <button onclick="showTransactionFilter()" class="btn btn-primary btn-lg w-100 mb-3">
+                  🔍 Transaction Filters
+                </button>
+              </div>
+              <div class="col-md-6">
+                <button onclick="demoAllComponents()" class="btn btn-secondary btn-lg w-100 mb-3">
+                  🎮 Demo All Components
+                </button>
+              </div>
+              <div class="col-md-6">
+                <button onclick="showCodeExamples()" class="btn btn-secondary btn-lg w-100">💻 Code Examples</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Demo Container -->
+          <div id="demo-container" class="demo-card" style="display: none">
+            <div id="demo-content"></div>
+          </div>
+
+          <!-- Component Showcase -->
+          <div class="demo-card">
+            <h2 class="h4 mb-4 text-gray-800">🎨 Component Showcase</h2>
+
+            <div class="component-grid">
+              <!-- Select2 Components -->
+              <div class="component-demo">
+                <h4>🔽 Select2 Dropdowns</h4>
+                <div class="mb-3">
+                  <label class="form-label">Basic Select:</label>
+                  <select id="demo-select-basic" class="form-control select2">
+                    <option value="">Select an option</option>
+                    <option value="option1">Option 1</option>
+                    <option value="option2">Option 2</option>
+                    <option value="option3">Option 3</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Multi-Select:</label>
+                  <select id="demo-select-multi" class="form-control select2" multiple>
+                    <option value="item1">Item 1</option>
+                    <option value="item2">Item 2</option>
+                    <option value="item3">Item 3</option>
+                    <option value="item4">Item 4</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Date/Time Pickers -->
+              <div class="component-demo">
+                <h4>📅 Date/Time Pickers</h4>
+                <div class="mb-3">
+                  <label class="form-label">Date Picker:</label>
+                  <input type="text" id="demo-date" class="form-control pickadate" placeholder="Select date" />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Time Picker:</label>
+                  <input type="text" id="demo-time" class="form-control pickatime" placeholder="Select time" />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Date Range:</label>
+                  <input
+                    type="text"
+                    id="demo-daterange"
+                    class="form-control daterange"
+                    placeholder="Select date range"
+                  />
+                </div>
+              </div>
+
+              <!-- Bootstrap DateTimePicker -->
+              <div class="component-demo">
+                <h4>🕒 Bootstrap DateTime</h4>
+                <div class="mb-3">
+                  <label class="form-label">DateTime Picker:</label>
+                  <div class="input-group date" id="demo-datetime">
+                    <input type="text" class="form-control" placeholder="Select date and time" />
+                    <span class="input-group-addon">
+                      <i class="fas fa-calendar"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Validation Demo -->
+              <div class="component-demo">
+                <h4>✅ Validation Demo</h4>
+                <form id="validation-demo-form" class="fire22-form">
+                  <div class="mb-3">
+                    <label class="form-label">
+                      Required Field
+                      <span class="required-indicator">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="validation-required"
+                      class="form-control"
+                      data-fire22-field="required-field"
+                      placeholder="This field is required"
+                    />
+                    <div class="field-error" id="error-validation-required"></div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Email Field</label>
+                    <input
+                      type="email"
+                      id="validation-email"
+                      class="form-control"
+                      data-fire22-field="email-field"
+                      placeholder="Enter email address"
+                    />
+                    <div class="field-error" id="error-validation-email"></div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Number Field (1-100)</label>
+                    <input
+                      type="number"
+                      id="validation-number"
+                      class="form-control"
+                      data-fire22-field="number-field"
+                      placeholder="Enter number 1-100"
+                      min="1"
+                      max="100"
+                    />
+                    <div class="field-error" id="error-validation-number"></div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Validate Form</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Features Overview -->
+          <div class="demo-card">
+            <h2 class="h4 mb-4 text-gray-800">✨ Key Features</h2>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="feature-highlight">
+                  <h5 class="mb-3">🔧 Advanced Components</h5>
+                  <ul class="list-unstyled mb-0">
+                    <li>• Select2 dropdowns with search</li>
+                    <li>• Multiple date/time pickers</li>
+                    <li>• Bootstrap DateRangePicker</li>
+                    <li>• Pick-a-Date/Time components</li>
+                    <li>• Icon formatting and themes</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="feature-highlight">
+                  <h5 class="mb-3">📋 Form Management</h5>
+                  <ul class="list-unstyled mb-0">
+                    <li>• Real-time validation</li>
+                    <li>• Conditional logic</li>
+                    <li>• Form state management</li>
+                    <li>• Data persistence</li>
+                    <li>• Event-driven architecture</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Examples -->
+          <div id="code-examples" class="demo-card" style="display: none">
+            <h2 class="h4 mb-4 text-gray-800">💻 Code Examples</h2>
+
+            <div class="mb-4">
+              <h5>Initialize Form Management Service</h5>
+              <div class="code-example">
+                import { initializeFormManagement, createForm } from './src/services/form-management-service.ts'; //
+                Initialize the service const formService = await initializeFormManagement(); // Create a form await
+                createForm('agent-management', document.getElementById('form-container'));
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5>Register Custom Form Configuration</h5>
+              <div class="code-example">
+                const customFormConfig = { id: 'custom-form', title: 'Custom Form', fields: [ { id: 'name', type:
+                'text', label: 'Name', required: true, validation: { minLength: 2, maxLength: 50 } }, { id: 'category',
+                type: 'select', label: 'Category', options: [ { id: 'option1', text: 'Option 1' }, { id: 'option2',
+                text: 'Option 2' } ] } ] }; formService.registerForm(customFormConfig);
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5>Handle Form Events</h5>
+              <div class="code-example">
+                formService.on('form-submit-success', ({ formId, data, result }) => { console.log(`Form ${formId}
+                submitted successfully:`, result); // Handle success (show notification, redirect, etc.) });
+                formService.on('form-validation-failed', ({ formId, errors }) => { console.error(`Form ${formId}
+                validation failed:`, errors); // Handle validation errors }); formService.on('field-changed', ({ formId,
+                fieldId, value }) => { console.log(`Field ${fieldId} in form ${formId} changed to:`, value); // Handle
+                field changes (conditional logic, etc.) });
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Demo Section -->
+          <div id="live-demo" class="demo-card" style="display: none">
+            <h2 class="h4 mb-4 text-gray-800">🎮 Live Demo</h2>
+            <div id="live-demo-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (required for most components) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Form Management Service Integration -->
+    <script type="module">
+      import {
+        FormManagementService,
+        initializeFormManagement,
+        createForm,
+        resetForm,
+      } from './src/services/form-management-service.ts';
+
+      let formService = null;
+
+      // Global functions for HTML buttons
+      window.showAgentForm = async function () {
+        const demoContainer = document.getElementById('demo-container');
+        const demoContent = document.getElementById('demo-content');
+
+        demoContainer.style.display = 'block';
+        demoContent.innerHTML =
+          '<div class="text-center"><div class="spinner-border" role="status"></div><span class="ml-2">Loading Agent Form...</span></div>';
+
+        try {
+          if (!formService) {
+            formService = await initializeFormManagement();
+          }
+
+          demoContent.innerHTML = '<div id="agent-form-container"></div>';
+          await createForm('agent-management', document.getElementById('agent-form-container'));
+
+          // Scroll to demo
+          demoContainer.scrollIntoView({ behavior: 'smooth' });
+        } catch (error) {
+          console.error('Error loading agent form:', error);
+          demoContent.innerHTML = `<div class="error-message">Error loading form: ${error.message}</div>`;
+        }
+      };
+
+      window.showTransactionFilter = async function () {
+        const demoContainer = document.getElementById('demo-container');
+        const demoContent = document.getElementById('demo-content');
+
+        demoContainer.style.display = 'block';
+        demoContent.innerHTML =
+          '<div class="text-center"><div class="spinner-border" role="status"></div><span class="ml-2">Loading Transaction Filter...</span></div>';
+
+        try {
+          if (!formService) {
+            formService = await initializeFormManagement();
+          }
+
+          demoContent.innerHTML = '<div id="transaction-filter-container"></div>';
+          await createForm('transaction-filter', document.getElementById('transaction-filter-container'));
+
+          // Scroll to demo
+          demoContainer.scrollIntoView({ behavior: 'smooth' });
+        } catch (error) {
+          console.error('Error loading transaction filter:', error);
+          demoContent.innerHTML = `<div class="error-message">Error loading filter: ${error.message}</div>`;
+        }
+      };
+
+      window.demoAllComponents = async function () {
+        const liveDemo = document.getElementById('live-demo');
+        const liveDemoContent = document.getElementById('live-demo-content');
+
+        liveDemo.style.display = 'block';
+
+        if (!formService) {
+          formService = await initializeFormManagement();
+        }
+
+        // Demo all components with a comprehensive form
+        const demoFormConfig = {
+          id: 'component-demo',
+          title: 'Component Showcase Form',
+          fields: [
+            {
+              id: 'basic-select',
+              type: 'select',
+              label: 'Basic Select2',
+              options: [
+                { id: 'opt1', text: 'Option 1' },
+                { id: 'opt2', text: 'Option 2' },
+                { id: 'opt3', text: 'Option 3' },
+              ],
+            },
+            {
+              id: 'multi-select',
+              type: 'multiselect',
+              label: 'Multi-Select',
+              options: [
+                { id: 'cat1', text: 'Category 1' },
+                { id: 'cat2', text: 'Category 2' },
+                { id: 'cat3', text: 'Category 3' },
+                { id: 'cat4', text: 'Category 4' },
+              ],
+            },
+            {
+              id: 'date-field',
+              type: 'date',
+              label: 'Date Picker',
+              placeholder: 'Select a date',
+            },
+            {
+              id: 'time-field',
+              type: 'time',
+              label: 'Time Picker',
+              placeholder: 'Select a time',
+            },
+            {
+              id: 'datetime-field',
+              type: 'datetime',
+              label: 'DateTime Picker',
+              placeholder: 'Select date and time',
+            },
+            {
+              id: 'daterange-field',
+              type: 'daterange',
+              label: 'Date Range',
+              placeholder: 'Select date range',
+            },
+            {
+              id: 'required-text',
+              type: 'text',
+              label: 'Required Text Field',
+              required: true,
+              validation: { minLength: 3 },
+            },
+            {
+              id: 'email-field',
+              type: 'email',
+              label: 'Email Field',
+              validation: { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+            },
+            {
+              id: 'number-field',
+              type: 'number',
+              label: 'Number Field',
+              validation: { min: 0, max: 100 },
+            },
+          ],
+          submitButton: { text: 'Submit Demo Form', class: 'btn btn-success' },
+          cancelButton: { text: 'Reset', class: 'btn btn-secondary' },
+        };
+
+        formService.registerForm(demoFormConfig);
+        liveDemoContent.innerHTML = '<div id="component-demo-container"></div>';
+        await createForm('component-demo', document.getElementById('component-demo-container'));
+
+        // Scroll to demo
+        liveDemo.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      window.showCodeExamples = function () {
+        const codeExamples = document.getElementById('code-examples');
+        codeExamples.style.display = codeExamples.style.display === 'none' ? 'block' : 'none';
+      };
+
+      // Initialize demo on page load
+      document.addEventListener('DOMContentLoaded', async () => {
+        console.log('📝 Fire22 Form Management Demo initialized');
+
+        try {
+          // Initialize form management service
+          formService = await initializeFormManagement();
+
+          // Setup form event listeners for validation demo
+          const validationForm = document.getElementById('validation-demo-form');
+          if (validationForm) {
+            validationForm.addEventListener('submit', e => {
+              e.preventDefault();
+              handleValidationDemo();
+            });
+          }
+
+          // Initialize Select2 components
+          if (typeof $ !== 'undefined' && $.fn.select2) {
+            $('.select2').select2();
+            $('.pickadate').pickadate();
+            $('.pickatime').pickatime();
+            $('.daterange').daterangepicker();
+            $('#demo-datetime').datetimepicker();
+          }
+
+          console.log('✅ All components initialized successfully');
+        } catch (error) {
+          console.error('❌ Error initializing demo:', error);
+          alert('Error initializing demo: ' + error.message);
+        }
+      });
+
+      // Handle validation demo
+      function handleValidationDemo() {
+        const form = document.getElementById('validation-demo-form');
+        const requiredField = document.getElementById('validation-required');
+        const emailField = document.getElementById('validation-email');
+        const numberField = document.getElementById('validation-number');
+
+        let hasErrors = false;
+
+        // Validate required field
+        if (!requiredField.value.trim()) {
+          showFieldError('validation-required', 'This field is required');
+          hasErrors = true;
+        } else {
+          hideFieldError('validation-required');
+        }
+
+        // Validate email field
+        if (emailField.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value)) {
+          showFieldError('validation-email', 'Please enter a valid email address');
+          hasErrors = true;
+        } else {
+          hideFieldError('validation-email');
+        }
+
+        // Validate number field
+        if (numberField.value) {
+          const num = parseInt(numberField.value);
+          if (isNaN(num) || num < 1 || num > 100) {
+            showFieldError('validation-number', 'Please enter a number between 1 and 100');
+            hasErrors = true;
+          } else {
+            hideFieldError('validation-number');
+          }
+        } else {
+          hideFieldError('validation-number');
+        }
+
+        // Show result
+        if (!hasErrors) {
+          showSuccessMessage('✅ Form validation passed! All fields are valid.');
+        } else {
+          showErrorMessage('❌ Form validation failed. Please fix the errors above.');
+        }
+      }
+
+      function showFieldError(fieldId, message) {
+        const errorElement = document.getElementById(`error-${fieldId}`);
+        const fieldElement = document.getElementById(fieldId);
+
+        if (errorElement) {
+          errorElement.textContent = message;
+          errorElement.style.display = 'block';
+        }
+
+        if (fieldElement) {
+          fieldElement.classList.add('is-invalid');
+        }
+      }
+
+      function hideFieldError(fieldId) {
+        const errorElement = document.getElementById(`error-${fieldId}`);
+        const fieldElement = document.getElementById(fieldId);
+
+        if (errorElement) {
+          errorElement.textContent = '';
+          errorElement.style.display = 'none';
+        }
+
+        if (fieldElement) {
+          fieldElement.classList.remove('is-invalid');
+        }
+      }
+
+      function showSuccessMessage(message) {
+        const existing = document.querySelector('.success-message, .error-message');
+        if (existing) existing.remove();
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'success-message';
+        messageDiv.innerHTML = message;
+
+        const form = document.getElementById('validation-demo-form');
+        form.parentNode.insertBefore(messageDiv, form);
+
+        setTimeout(() => {
+          if (messageDiv.parentNode) {
+            messageDiv.parentNode.removeChild(messageDiv);
+          }
+        }, 3000);
+      }
+
+      function showErrorMessage(message) {
+        const existing = document.querySelector('.success-message, .error-message');
+        if (existing) existing.remove();
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'error-message';
+        messageDiv.innerHTML = message;
+
+        const form = document.getElementById('validation-demo-form');
+        form.parentNode.insertBefore(messageDiv, form);
+
+        setTimeout(() => {
+          if (messageDiv.parentNode) {
+            messageDiv.parentNode.removeChild(messageDiv);
+          }
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>

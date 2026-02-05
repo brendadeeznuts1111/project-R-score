@@ -1,0 +1,1629 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudflare Enhanced Analytics - Fire22 Dashboard</title>
+    <link rel="stylesheet" href="fire22-branding.css" />
+    <style>
+      :root {
+        --cf-orange: #ff6600;
+        --cf-blue: #0066cc;
+        --cf-gray: #666666;
+        --success-green: #10b981;
+        --warning-yellow: #f59e0b;
+        --error-red: #ef4444;
+      }
+
+      .cloudflare-header {
+        background: linear-gradient(135deg, var(--cf-orange), var(--cf-blue));
+        color: white;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .cf-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .cf-metric-card {
+        background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+        border: 2px solid var(--cf-orange);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .cf-metric-card h3 {
+        color: var(--cf-blue);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--cf-orange);
+        margin: 0.5rem 0;
+      }
+
+      .metric-trend {
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .trend-up {
+        color: var(--success-green);
+      }
+      .trend-down {
+        color: var(--error-red);
+      }
+      .trend-stable {
+        color: var(--cf-gray);
+      }
+
+      .cf-optimization-card {
+        background: linear-gradient(145deg, #fff7ed, #fed7aa);
+        border: 2px solid var(--warning-yellow);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .priority-critical {
+        border-left: 5px solid var(--error-red);
+      }
+      .priority-high {
+        border-left: 5px solid var(--warning-yellow);
+      }
+      .priority-medium {
+        border-left: 5px solid var(--cf-blue);
+      }
+      .priority-low {
+        border-left: 5px solid var(--cf-gray);
+      }
+
+      .implementation-steps {
+        background: #f1f5f9;
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+      }
+
+      .implementation-steps ol {
+        margin: 0;
+        padding-left: 1.5rem;
+      }
+
+      .cost-savings {
+        background: var(--success-green);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: bold;
+        margin: 0.5rem 0;
+      }
+
+      .geographic-data {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      .country-list,
+      .colo-list {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+      }
+
+      .country-item,
+      .colo-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .country-item:last-child,
+      .colo-item:last-child {
+        border-bottom: none;
+      }
+
+      .percentage-bar {
+        height: 4px;
+        background: var(--cf-orange);
+        border-radius: 2px;
+        margin-top: 0.25rem;
+      }
+
+      .alert-banner {
+        background: linear-gradient(90deg, var(--error-red), #dc2626);
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .alert-warning {
+        background: linear-gradient(90deg, var(--warning-yellow), #d97706);
+      }
+
+      .service-tabs {
+        display: flex;
+        gap: 1rem;
+        margin: 2rem 0 1rem;
+        border-bottom: 2px solid #e9ecef;
+      }
+
+      .service-tab {
+        padding: 0.75rem 1.5rem;
+        background: #f8f9fa;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .service-tab.active {
+        background: var(--cf-orange);
+        color: white;
+      }
+
+      .service-content {
+        display: none;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 0 8px 8px 8px;
+      }
+
+      .service-content.active {
+        display: block;
+      }
+
+      .code-block {
+        background: #1a1a1a;
+        color: #00ff00;
+        padding: 1rem;
+        border-radius: 5px;
+        overflow-x: auto;
+        font-family: 'Courier New', monospace;
+        margin: 1rem 0;
+      }
+
+      .integration-example {
+        background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+        border: 2px solid var(--cf-blue);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      @media (max-width: 768px) {
+        .cf-metrics-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .geographic-data {
+          grid-template-columns: 1fr;
+        }
+
+        .service-tabs {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="cloudflare-header">
+      <h1>🟠 Cloudflare Enhanced Analytics Dashboard</h1>
+      <p>Comprehensive monitoring and optimization for Cloudflare Workers, KV, R2, D1, and more</p>
+      <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center">
+        <span id="live-status" style="background: var(--success-green); padding: 0.5rem 1rem; border-radius: 20px">
+          ● Live Monitoring Active
+        </span>
+        <button
+          id="debug-toggle"
+          onclick="toggleDebugPanel()"
+          style="
+            background: #666;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+          "
+        >
+          🐛 Debug
+        </button>
+        <button
+          id="system-status-toggle"
+          onclick="toggleSystemStatus()"
+          style="
+            background: var(--cf-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+          "
+        >
+          🔧 System Status
+        </button>
+        <span
+          id="connection-status"
+          style="background: var(--success-green); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem"
+        >
+          🌐 Online
+        </span>
+      </div>
+    </header>
+
+    <!-- Debug Panel (Hidden by default) -->
+    <div
+      id="debug-panel"
+      style="
+        display: none;
+        background: #1a1a1a;
+        color: #00ff00;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.8rem;
+        max-height: 300px;
+        overflow-y: auto;
+      "
+    >
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem">
+        <h3 style="margin: 0">🐛 Debug Console</h3>
+        <div>
+          <button
+            onclick="clearDebugLog()"
+            style="
+              background: #666;
+              color: white;
+              border: none;
+              padding: 0.25rem 0.5rem;
+              border-radius: 4px;
+              cursor: pointer;
+              margin-right: 0.5rem;
+            "
+          >
+            Clear
+          </button>
+          <button
+            onclick="exportDebugLog()"
+            style="
+              background: #666;
+              color: white;
+              border: none;
+              padding: 0.25rem 0.5rem;
+              border-radius: 4px;
+              cursor: pointer;
+              margin-right: 0.5rem;
+            "
+          >
+            Export
+          </button>
+          <button
+            onclick="toggleDebugPanel()"
+            style="
+              background: #666;
+              color: white;
+              border: none;
+              padding: 0.25rem 0.5rem;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            ×
+          </button>
+        </div>
+      </div>
+      <div id="debug-log" style="background: #000; padding: 0.5rem; border-radius: 4px; min-height: 200px">
+        <div id="debug-entries"></div>
+      </div>
+      <div style="margin-top: 0.5rem; display: flex; gap: 1rem">
+        <span id="error-count">Errors: 0</span>
+        <span id="warning-count">Warnings: 0</span>
+        <span id="info-count">Info: 0</span>
+        <span id="retry-count">Retries: 0</span>
+      </div>
+    </div>
+
+    <main class="container">
+      <!-- Real-time Overview -->
+      <section id="overview">
+        <h2>📊 Real-time Cloudflare Metrics</h2>
+        <div class="cf-metrics-grid">
+          <div class="cf-metric-card">
+            <h3>🚀 Workers Performance</h3>
+            <div class="metric-value" id="total-requests">2,847,391</div>
+            <div class="metric-trend trend-up">↗ +12.3% from last hour</div>
+            <p>
+              Total Requests:
+              <strong>99.97% Success Rate</strong>
+            </p>
+            <p>
+              Avg Response:
+              <strong>23ms</strong>
+            </p>
+            <p>
+              CPU Time:
+              <strong>4.2ms avg</strong>
+            </p>
+          </div>
+
+          <div class="cf-metric-card">
+            <h3>🗄️ KV Store Operations</h3>
+            <div class="metric-value" id="kv-operations">1,429,847</div>
+            <div class="metric-trend trend-up">↗ +8.7% hit rate improvement</div>
+            <p>
+              Hit Rate:
+              <strong>94.2%</strong>
+              (Target: 95%)
+            </p>
+            <p>
+              P95 Latency:
+              <strong>18ms</strong>
+            </p>
+            <p>
+              Data Transfer:
+              <strong>142GB</strong>
+            </p>
+          </div>
+
+          <div class="cf-metric-card">
+            <h3>💾 R2 Storage</h3>
+            <div class="metric-value" id="r2-operations">487,293</div>
+            <div class="metric-trend trend-stable">→ Stable performance</div>
+            <p>
+              Gets:
+              <strong>421,847</strong>
+              | Puts:
+              <strong>65,446</strong>
+            </p>
+            <p>
+              P95 Latency:
+              <strong>89ms</strong>
+            </p>
+            <p>
+              Data Transfer:
+              <strong>2.3TB</strong>
+            </p>
+          </div>
+
+          <div class="cf-metric-card">
+            <h3>🗃️ D1 Database</h3>
+            <div class="metric-value" id="d1-queries">892,547</div>
+            <div class="metric-trend trend-down">↘ -15% query time (optimized!)</div>
+            <p>
+              Reads:
+              <strong>743K</strong>
+              | Writes:
+              <strong>149K</strong>
+            </p>
+            <p>
+              Avg Query Time:
+              <strong>12ms</strong>
+            </p>
+            <p>
+              Rows Processed:
+              <strong>12.4M</strong>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Status Section -->
+      <section id="system-status" style="display: none">
+        <h2>🔧 System Status</h2>
+        <div class="cf-metrics-grid">
+          <div class="cf-metric-card">
+            <h3>📊 Overall Health</h3>
+            <div class="metric-value" id="overall-health">Healthy</div>
+            <div class="metric-trend trend-up" id="health-trend">All systems operational</div>
+            <p id="health-details">All monitoring systems are functioning normally</p>
+          </div>
+
+          <div class="cf-metric-card">
+            <h3>🔄 Failed Operations</h3>
+            <div class="metric-value" id="failed-ops-count">0</div>
+            <div class="metric-trend" id="failed-ops-trend">No failures detected</div>
+            <p id="failed-ops-details">Click retry to attempt recovery</p>
+            <button
+              onclick="retryAllFailed()"
+              style="
+                background: var(--cf-orange);
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 0.5rem;
+              "
+            >
+              🔄 Retry All Failed
+            </button>
+          </div>
+
+          <div class="cf-metric-card">
+            <h3>⏱️ Response Times</h3>
+            <div class="metric-value" id="avg-response-time">--ms</div>
+            <div class="metric-trend" id="response-trend">Measuring...</div>
+            <p id="response-details">Average API response time</p>
+          </div>
+
+          <div class="cf-metric-card">
+            <h3>📱 Connection Status</h3>
+            <div class="metric-value" id="connection-quality">Good</div>
+            <div class="metric-trend" id="connection-trend">Stable connection</div>
+            <p id="connection-details">Network connectivity is optimal</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Offline Mode Banner (Hidden by default) -->
+      <div
+        id="offline-banner"
+        style="
+          display: none;
+          background: linear-gradient(90deg, var(--warning-yellow), #f59e0b);
+          color: #92400e;
+          padding: 1rem;
+          margin: 1rem 0;
+          border-radius: 8px;
+          text-align: center;
+        "
+      >
+        <h3>⚠️ You're Currently Offline</h3>
+        <p>The dashboard is running in offline mode. Some features may be limited.</p>
+        <p>Real-time data updates are paused and will resume when connection is restored.</p>
+        <button
+          onclick="document.getElementById('offline-banner').style.display='none'"
+          style="
+            background: #92400e;
+            color: #fbbf24;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+          "
+        >
+          Dismiss
+        </button>
+      </div>
+
+      <!-- Alerts Section -->
+      <section id="alerts">
+        <h2>🚨 Active Alerts & Recommendations</h2>
+
+        <div class="alert-banner alert-warning">
+          <span>⚠️</span>
+          <div>
+            <strong>KV Latency Warning:</strong>
+            P95 latency (89ms) approaching threshold (100ms)
+            <br />
+            <small>Recommendation: Implement regional key optimization</small>
+          </div>
+        </div>
+
+        <div class="alert-banner">
+          <span>🚨</span>
+          <div>
+            <strong>Workers CPU Time Alert:</strong>
+            Average CPU time increased by 23% in last hour
+            <br />
+            <small>Action Required: Review recent deployments and optimize hot paths</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- Service-specific Analytics -->
+      <section id="service-analytics">
+        <h2>🔧 Service-specific Analytics & Optimizations</h2>
+
+        <div class="service-tabs">
+          <button class="service-tab active" onclick="showService('workers')">Workers</button>
+          <button class="service-tab" onclick="showService('kv')">KV Store</button>
+          <button class="service-tab" onclick="showService('r2')">R2 Storage</button>
+          <button class="service-tab" onclick="showService('d1')">D1 Database</button>
+        </div>
+
+        <div id="workers-content" class="service-content active">
+          <h3>🚀 Cloudflare Workers Analytics</h3>
+          <div class="cf-optimization-card priority-high">
+            <h4>High CPU Time Optimization - HIGH Priority</h4>
+            <p>
+              <strong>Issue:</strong>
+              Average CPU time: 52.3ms (target: <50ms)
+            </p>
+            <p>
+              <strong>Expected Impact:</strong>
+              40-60% reduction in CPU time and billing costs
+            </p>
+            <div class="cost-savings">Estimated Savings: $142.50/month</div>
+
+            <div class="implementation-steps">
+              <h5>Implementation Steps:</h5>
+              <ol>
+                <li>Profile Worker execution with Performance API</li>
+                <li>Optimize hot code paths and algorithms</li>
+                <li>Implement caching for expensive computations</li>
+                <li>Use WebAssembly for CPU-intensive tasks</li>
+                <li>Optimize JSON parsing and serialization</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="integration-example">
+            <h4>🔨 Integration Example</h4>
+            <div class="code-block">
+              // Enhanced Workers Analytics Integration import { CloudflareAnalyticsIntegration } from
+              '@fire22/enhanced-logging'; const cfAnalytics = new CloudflareAnalyticsIntegration( cacheMonitor,
+              analyticsLogger, { accountId: 'your-account-id', enableRealTimeStats: true, alertThresholds: { errorRate:
+              0.01, responseTime: 100, cpuTime: 50, kvLatency: 100, r2Latency: 200, d1QueryTime: 50 } } ); // Log Worker
+              invocation cfAnalytics.logWorkerInvocation( 'dashboard-worker', request.headers.get('cf-request-id'),
+              request.cf.colo, request.cf.country, { cpuTime: performance.now() * 1000, wallTime: Date.now() -
+              startTime, memoryUsage: getMemoryUsage() } );
+            </div>
+          </div>
+        </div>
+
+        <div id="kv-content" class="service-content">
+          <h3>🗄️ KV Store Optimization</h3>
+          <div class="cf-optimization-card priority-medium">
+            <h4>KV Latency Optimization - MEDIUM Priority</h4>
+            <p>
+              <strong>Issue:</strong>
+              P95 latency: 89.3ms (target: <50ms)
+            </p>
+            <p>
+              <strong>Expected Impact:</strong>
+              50-70% latency reduction, improved cache hit rates
+            </p>
+            <div class="cost-savings">Estimated Savings: $78.20/month</div>
+
+            <div class="implementation-steps">
+              <h5>Implementation Steps:</h5>
+              <ol>
+                <li>Optimize key naming patterns for better locality</li>
+                <li>Implement key prefixing by region/user</li>
+                <li>Use batch operations where possible</li>
+                <li>Implement TTL-based cache warming</li>
+                <li>Monitor and optimize hot keys</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="integration-example">
+            <h4>🔨 KV Analytics Integration</h4>
+            <div class="code-block">
+              // KV Operation Logging with Enhanced Analytics cfAnalytics.logKVOperation( 'GET', 'user_profile_12345',
+              true, // hit 18, // latency ms 2048, // size bytes 'LAX', // colo { component: 'user-service' } ); // Get
+              KV-specific optimizations const kvOptimizations = cfAnalytics.getCloudflareOptimizations() .filter(opt =>
+              opt.service === 'KV');
+            </div>
+          </div>
+        </div>
+
+        <div id="r2-content" class="service-content">
+          <h3>💾 R2 Storage Analytics</h3>
+          <div class="cf-optimization-card priority-medium">
+            <h4>R2 Latency Optimization - MEDIUM Priority</h4>
+            <p>
+              <strong>Issue:</strong>
+              P95 latency: 189ms (target: <100ms)
+            </p>
+            <p>
+              <strong>Expected Impact:</strong>
+              30-50% latency reduction, 20-40% cost savings
+            </p>
+            <div class="cost-savings">Estimated Savings: $94.70/month</div>
+          </div>
+        </div>
+
+        <div id="d1-content" class="service-content">
+          <h3>🗃️ D1 Database Analytics</h3>
+          <div class="cf-optimization-card priority-high">
+            <h4>D1 Query Optimization - HIGH Priority</h4>
+            <p>
+              <strong>Issue:</strong>
+              Average query time: 67ms (target: <30ms)
+            </p>
+            <p>
+              <strong>Expected Impact:</strong>
+              60-80% query time reduction, improved throughput
+            </p>
+            <div class="cost-savings">Estimated Savings: $56.30/month</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Geographic Analytics -->
+      <section id="geographic">
+        <h2>🌍 Geographic Performance Analytics</h2>
+        <div class="geographic-data">
+          <div class="country-list">
+            <h3>Top Countries by Requests</h3>
+            <div class="country-item">
+              <span>🇺🇸 United States</span>
+              <div>
+                <strong>847,392</strong>
+                (29.8%)
+                <div class="percentage-bar" style="width: 30%"></div>
+              </div>
+            </div>
+            <div class="country-item">
+              <span>🇬🇧 United Kingdom</span>
+              <div>
+                <strong>423,847</strong>
+                (14.9%)
+                <div class="percentage-bar" style="width: 15%"></div>
+              </div>
+            </div>
+            <div class="country-item">
+              <span>🇩🇪 Germany</span>
+              <div>
+                <strong>398,291</strong>
+                (14.0%)
+                <div class="percentage-bar" style="width: 14%"></div>
+              </div>
+            </div>
+            <div class="country-item">
+              <span>🇫🇷 France</span>
+              <div>
+                <strong>284,473</strong>
+                (10.0%)
+                <div class="percentage-bar" style="width: 10%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="colo-list">
+            <h3>Top Data Centers (Colos)</h3>
+            <div class="colo-item">
+              <span>LAX (Los Angeles)</span>
+              <div>
+                <strong>194,847</strong>
+                | 15ms avg
+              </div>
+            </div>
+            <div class="colo-item">
+              <span>LHR (London)</span>
+              <div>
+                <strong>167,293</strong>
+                | 28ms avg
+              </div>
+            </div>
+            <div class="colo-item">
+              <span>FRA (Frankfurt)</span>
+              <div>
+                <strong>142,847</strong>
+                | 31ms avg
+              </div>
+            </div>
+            <div class="colo-item">
+              <span>CDG (Paris)</span>
+              <div>
+                <strong>128,394</strong>
+                | 33ms avg
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cost Analysis -->
+      <section id="cost-analysis">
+        <h2>💰 Cloudflare Cost Analysis & Optimization</h2>
+        <div class="cf-metrics-grid">
+          <div class="cf-metric-card">
+            <h3>💵 Current Monthly Costs</h3>
+            <div class="metric-value">$247.83</div>
+            <div style="margin: 1rem 0">
+              <div>
+                Workers:
+                <strong>$89.40</strong>
+              </div>
+              <div>
+                KV Store:
+                <strong>$67.23</strong>
+              </div>
+              <div>
+                R2 Storage:
+                <strong>$76.50</strong>
+              </div>
+              <div>
+                D1 Database:
+                <strong>$14.70</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="cf-metric-card">
+            <h3>📈 Optimization Potential</h3>
+            <div class="metric-value" style="color: var(--success-green)">-$89.20</div>
+            <div class="metric-trend trend-down" style="color: var(--success-green)">
+              ↘ 36% potential cost reduction
+            </div>
+            <div style="margin: 1rem 0">
+              <div>
+                Projected:
+                <strong>$158.63/month</strong>
+              </div>
+              <div>
+                Annual Savings:
+                <strong>$1,070.40</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Implementation Guide -->
+      <section id="implementation">
+        <h2>🛠️ Implementation Guide</h2>
+        <div class="integration-example">
+          <h3>Quick Start Integration</h3>
+          <div class="code-block">
+            import { CloudflareAnalyticsIntegration, createEnhancedAnalyticsSystem } from '@fire22/enhanced-logging'; //
+            1. Create enhanced analytics system const { analyticsLogger, cacheMonitor } =
+            createEnhancedAnalyticsSystem(); // 2. Initialize Cloudflare integration const cfAnalytics = new
+            CloudflareAnalyticsIntegration( cacheMonitor, analyticsLogger, { accountId:
+            process.env.CLOUDFLARE_ACCOUNT_ID, enableRealTimeStats: true, enableLogpush: true, alertThresholds: {
+            errorRate: 0.01, responseTime: 100, cpuTime: 50, kvLatency: 100, r2Latency: 200, d1QueryTime: 50 } } ); //
+            3. Use in your Worker export default { async fetch(request, env, ctx) { const startTime = Date.now(); try {
+            // Your worker logic here const response = await handleRequest(request); // Log successful invocation
+            cfAnalytics.logWorkerInvocation( 'dashboard-worker', request.headers.get('cf-request-id'), request.cf.colo,
+            request.cf.country, { cpuTime: performance.now() * 1000, wallTime: Date.now() - startTime } ); return
+            response; } catch (error) { // Log errors with context cfAnalytics.logWorkerInvocation( 'dashboard-worker',
+            request.headers.get('cf-request-id'), request.cf.colo, request.cf.country, { cpuTime: performance.now() *
+            1000, wallTime: Date.now() - startTime }, { errors: [{ name: error.name, message: error.message, stack:
+            error.stack }] } ); throw error; } } }; // 4. Get analytics dashboard data const dashboardData =
+            cfAnalytics.getCloudflareAnalytics();
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Enhanced Error Handling System
+      class AnalyticsErrorHandler {
+        constructor() {
+          this.retryAttempts = new Map();
+          this.maxRetries = 3;
+          this.retryDelay = 1000; // Start with 1 second
+          this.connectionStatus = navigator.onLine;
+          this.errorStates = new Map();
+          this.timeoutIds = new Set();
+          this.debugLog = [];
+          this.errorCounts = { error: 0, warning: 0, info: 0 };
+          this.retryCount = 0;
+          this.failedOperations = new Set();
+        }
+
+        // Network connectivity monitoring
+        monitorConnectivity() {
+          const connectionStatusEl = document.getElementById('connection-status');
+          window.addEventListener('online', () => {
+            this.connectionStatus = true;
+            if (connectionStatusEl) {
+              connectionStatusEl.style.background = 'var(--success-green)';
+              connectionStatusEl.innerHTML = '🌐 Online';
+            }
+            this.handleReconnection();
+            this.showNotification('Connection restored', 'success');
+            this.logDebug('Connection restored', 'info');
+          });
+
+          window.addEventListener('offline', () => {
+            this.connectionStatus = false;
+            if (connectionStatusEl) {
+              connectionStatusEl.style.background = 'var(--error-red)';
+              connectionStatusEl.innerHTML = '🚫 Offline';
+            }
+            this.showNotification('Connection lost - working offline', 'warning');
+            this.logDebug('Connection lost - working offline', 'warning');
+          });
+        }
+
+        // Show user-friendly notifications
+        showNotification(message, type = 'info', duration = 5000) {
+          const notification = document.createElement('div');
+          notification.className = `alert-banner alert-${type}`;
+          notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1000;
+                    max-width: 400px;
+                    animation: slideIn 0.3s ease-out;
+                `;
+
+          const icon = type === 'error' ? '🚨' : type === 'warning' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️';
+          notification.innerHTML = `
+                    <span>${icon}</span>
+                    <div>
+                        <strong>${message}</strong>
+                        ${type === 'error' ? '<br><small>Click to retry or check console for details</small>' : ''}
+                    </div>
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer; margin-left: auto;">×</button>
+                `;
+
+          document.body.appendChild(notification);
+
+          if (duration > 0) {
+            setTimeout(() => {
+              if (notification.parentElement) {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+              }
+            }, duration);
+          }
+
+          // Add click handler for error notifications
+          if (type === 'error') {
+            notification.addEventListener('click', () => {
+              this.retryFailedOperations();
+              notification.remove();
+            });
+          }
+        }
+
+        // Handle reconnection
+        async handleReconnection() {
+          const failedElements = document.querySelectorAll('[data-error-state="true"]');
+          this.logDebug(`Attempting to reconnect ${failedElements.length} failed operations`, 'info');
+
+          for (const element of failedElements) {
+            await this.retryOperation(element.id);
+          }
+        }
+
+        // Debug logging system
+        logDebug(message, level = 'info', data = null) {
+          const entry = {
+            timestamp: new Date().toISOString(),
+            level: level.toUpperCase(),
+            message,
+            data,
+            stack: level === 'error' ? new Error().stack : null,
+          };
+
+          this.debugLog.push(entry);
+          if (this.debugLog.length > 500) {
+            this.debugLog.shift(); // Keep only last 500 entries
+          }
+
+          this.errorCounts[level] = (this.errorCounts[level] || 0) + 1;
+          this.updateDebugUI();
+
+          // Also log to console with appropriate level
+          const logMethod = level === 'error' ? 'error' : level === 'warning' ? 'warn' : 'log';
+          console[logMethod](`[${entry.timestamp}] ${level.toUpperCase()}: ${message}`, data || '');
+        }
+
+        // Update debug UI
+        updateDebugUI() {
+          const debugEntries = document.getElementById('debug-entries');
+          const errorCount = document.getElementById('error-count');
+          const warningCount = document.getElementById('warning-count');
+          const infoCount = document.getElementById('info-count');
+          const retryCountEl = document.getElementById('retry-count');
+
+          if (debugEntries) {
+            const recentEntries = this.debugLog.slice(-20); // Show last 20 entries
+            debugEntries.innerHTML = recentEntries
+              .map(entry => {
+                const time = new Date(entry.timestamp).toLocaleTimeString();
+                const levelColor =
+                  entry.level === 'ERROR' ? '#ff4444' : entry.level === 'WARNING' ? '#ffaa00' : '#44ff44';
+                return `<div style="margin: 2px 0; border-left: 3px solid ${levelColor}; padding-left: 5px;">
+                            <span style="color: #888;">[${time}]</span>
+                            <span style="color: ${levelColor}; font-weight: bold;">${entry.level}</span>
+                            <span style="color: #fff;">${entry.message}</span>
+                        </div>`;
+              })
+              .join('');
+            debugEntries.scrollTop = debugEntries.scrollHeight;
+          }
+
+          if (errorCount) errorCount.textContent = `Errors: ${this.errorCounts.error || 0}`;
+          if (warningCount) warningCount.textContent = `Warnings: ${this.errorCounts.warning || 0}`;
+          if (infoCount) infoCount.textContent = `Info: ${this.errorCounts.info || 0}`;
+          if (retryCountEl) retryCountEl.textContent = `Retries: ${this.retryCount}`;
+        }
+
+        // Retry failed operations with exponential backoff
+        async retryOperation(operationId, operation = null) {
+          if (!this.retryAttempts.has(operationId)) {
+            this.retryAttempts.set(operationId, 0);
+          }
+
+          const attempts = this.retryAttempts.get(operationId);
+
+          if (attempts >= this.maxRetries) {
+            this.failedOperations.add(operationId);
+            this.showErrorState(operationId, 'Max retry attempts exceeded');
+            this.logDebug(`Max retries exceeded for ${operationId}`, 'error');
+            return false;
+          }
+
+          this.retryCount++;
+          this.logDebug(`Retrying ${operationId} (attempt ${attempts + 1}/${this.maxRetries})`, 'info');
+
+          try {
+            this.retryAttempts.set(operationId, attempts + 1);
+            const delay = this.retryDelay * Math.pow(2, attempts); // Exponential backoff
+
+            await new Promise(resolve => {
+              const timeoutId = setTimeout(resolve, delay);
+              this.timeoutIds.add(timeoutId);
+            });
+
+            if (operation) {
+              await operation();
+            }
+
+            this.retryAttempts.delete(operationId);
+            this.failedOperations.delete(operationId);
+            this.clearErrorState(operationId);
+            this.logDebug(`Successfully recovered ${operationId}`, 'info');
+            return true;
+          } catch (error) {
+            this.logDebug(`Retry attempt ${attempts + 1} failed for ${operationId}: ${error.message}`, 'warning');
+            return false;
+          }
+        }
+
+        // Retry all failed operations
+        async retryFailedOperations() {
+          const failedElements = document.querySelectorAll('[data-error-state="true"]');
+          const failedIds = Array.from(failedElements).map(el => el.id);
+
+          this.logDebug(`Retrying ${failedIds.length} failed operations`, 'info');
+
+          const results = await Promise.allSettled(failedIds.map(id => this.retryOperation(id)));
+
+          const successCount = results.filter(r => r.status === 'fulfilled' && r.value).length;
+          const failCount = results.length - successCount;
+
+          this.showNotification(
+            `Retry complete: ${successCount} recovered, ${failCount} still failing`,
+            failCount > 0 ? 'warning' : 'success'
+          );
+        }
+
+        // Show error state for specific elements
+        showErrorState(elementId, message = 'Failed to load data') {
+          const element = document.getElementById(elementId);
+          if (!element) return;
+
+          element.setAttribute('data-error-state', 'true');
+          element.style.opacity = '0.5';
+          element.style.position = 'relative';
+
+          // Add error overlay
+          const overlay = document.createElement('div');
+          overlay.className = 'error-overlay';
+          overlay.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(239, 68, 68, 0.1);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 2px dashed var(--error-red);
+                    border-radius: 8px;
+                    cursor: pointer;
+                `;
+          overlay.innerHTML = `
+                    <div style="text-align: center; color: var(--error-red);">
+                        <div style="font-size: 24px; margin-bottom: 8px;">❌</div>
+                        <div style="font-size: 12px;">${message}</div>
+                        <div style="font-size: 10px; margin-top: 4px;">Click to retry</div>
+                    </div>
+                `;
+
+          overlay.addEventListener('click', () => this.retryOperation(elementId));
+          element.appendChild(overlay);
+        }
+
+        // Clear error state
+        clearErrorState(elementId) {
+          const element = document.getElementById(elementId);
+          if (!element) return;
+
+          element.removeAttribute('data-error-state');
+          element.style.opacity = '1';
+
+          const overlay = element.querySelector('.error-overlay');
+          if (overlay) {
+            overlay.remove();
+          }
+        }
+
+        // Validate data before processing
+        validateData(data, schema) {
+          if (!data) {
+            throw new Error('Data is null or undefined');
+          }
+
+          if (typeof data !== 'object') {
+            throw new Error('Data must be an object');
+          }
+
+          // Check required fields
+          if (schema.required) {
+            for (const field of schema.required) {
+              if (!(field in data)) {
+                throw new Error(`Required field '${field}' is missing`);
+              }
+            }
+          }
+
+          // Validate data types
+          if (schema.types) {
+            for (const [field, expectedType] of Object.entries(schema.types)) {
+              if (field in data && typeof data[field] !== expectedType) {
+                throw new Error(`Field '${field}' must be of type ${expectedType}`);
+              }
+            }
+          }
+
+          return true;
+        }
+
+        // Safe async operation wrapper
+        async safeAsyncOperation(operation, operationId, fallbackValue = null) {
+          try {
+            if (!this.connectionStatus) {
+              throw new Error('No internet connection');
+            }
+
+            const result = await this.withTimeout(operation(), 10000); // 10 second timeout
+            return result;
+          } catch (error) {
+            console.error(`Operation ${operationId} failed:`, error);
+            this.showErrorState(operationId, error.message);
+
+            // Log error for monitoring
+            this.logError({
+              operationId,
+              error: error.message,
+              stack: error.stack,
+              timestamp: new Date().toISOString(),
+              userAgent: navigator.userAgent,
+            });
+
+            return fallbackValue;
+          }
+        }
+
+        // Timeout wrapper for operations
+        withTimeout(promise, timeoutMs) {
+          return Promise.race([
+            promise,
+            new Promise((_, reject) => {
+              const timeoutId = setTimeout(() => {
+                reject(new Error(`Operation timed out after ${timeoutMs}ms`));
+              }, timeoutMs);
+              this.timeoutIds.add(timeoutId);
+            }),
+          ]);
+        }
+
+        // Log errors for monitoring
+        logError(errorData) {
+          // Use debug logging system
+          this.logDebug(errorData.message || 'Unknown error', 'error', errorData);
+
+          // Store in local storage for debugging
+          const errors = JSON.parse(localStorage.getItem('analytics-errors') || '[]');
+          errors.push({
+            ...errorData,
+            timestamp: new Date().toISOString(),
+          });
+          if (errors.length > 100) errors.shift(); // Keep only last 100 errors
+          localStorage.setItem('analytics-errors', JSON.stringify(errors));
+        }
+
+        // Get system health status
+        getHealthStatus() {
+          const failedCount = document.querySelectorAll('[data-error-state="true"]').length;
+          const totalOperations = 4; // total-requests, kv-operations, r2-operations, d1-queries
+
+          return {
+            status: failedCount === 0 ? 'healthy' : failedCount < totalOperations / 2 ? 'degraded' : 'critical',
+            failedOperations: failedCount,
+            totalOperations,
+            connectionStatus: this.connectionStatus,
+            retryCount: this.retryCount,
+            errorCounts: { ...this.errorCounts },
+          };
+        }
+
+        // Reset error state
+        resetErrorState() {
+          this.retryAttempts.clear();
+          this.errorStates.clear();
+          this.failedOperations.clear();
+          this.retryCount = 0;
+          this.errorCounts = { error: 0, warning: 0, info: 0 };
+
+          // Clear all error overlays
+          document.querySelectorAll('.error-overlay').forEach(overlay => overlay.remove());
+          document.querySelectorAll('[data-error-state="true"]').forEach(element => {
+            element.removeAttribute('data-error-state');
+            element.style.opacity = '1';
+          });
+
+          this.logDebug('Error state reset', 'info');
+        }
+
+        // Cleanup on page unload
+        cleanup() {
+          this.timeoutIds.forEach(id => clearTimeout(id));
+          this.timeoutIds.clear();
+          this.retryAttempts.clear();
+        }
+      }
+
+      // Initialize error handler
+      const errorHandler = new AnalyticsErrorHandler();
+
+      // Debug panel functions
+      function toggleDebugPanel() {
+        const panel = document.getElementById('debug-panel');
+        if (panel) {
+          panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+      }
+
+      function clearDebugLog() {
+        errorHandler.debugLog = [];
+        errorHandler.errorCounts = { error: 0, warning: 0, info: 0 };
+        errorHandler.retryCount = 0;
+        errorHandler.updateDebugUI();
+        errorHandler.logDebug('Debug log cleared', 'info');
+      }
+
+      function exportDebugLog() {
+        try {
+          const data = {
+            debugLog: errorHandler.debugLog,
+            errorCounts: errorHandler.errorCounts,
+            healthStatus: errorHandler.getHealthStatus(),
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+          };
+
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `analytics-debug-${new Date().toISOString().slice(0, 19)}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          errorHandler.logDebug('Debug log exported', 'info');
+        } catch (error) {
+          errorHandler.logDebug(`Failed to export debug log: ${error.message}`, 'error');
+        }
+      }
+
+      // System status management
+      function toggleSystemStatus() {
+        const statusSection = document.getElementById('system-status');
+        if (statusSection) {
+          statusSection.style.display = statusSection.style.display === 'none' ? 'block' : 'none';
+        }
+      }
+
+      function retryAllFailed() {
+        errorHandler.retryFailedOperations();
+      }
+
+      function updateSystemStatus() {
+        try {
+          const healthStatus = errorHandler.getHealthStatus();
+          const failedCount = document.querySelectorAll('[data-error-state="true"]').length;
+
+          // Update overall health
+          const healthEl = document.getElementById('overall-health');
+          const healthTrendEl = document.getElementById('health-trend');
+          const healthDetailsEl = document.getElementById('health-details');
+
+          if (healthEl) {
+            healthEl.textContent = healthStatus.status.charAt(0).toUpperCase() + healthStatus.status.slice(1);
+            healthEl.style.color =
+              healthStatus.status === 'healthy'
+                ? 'var(--success-green)'
+                : healthStatus.status === 'degraded'
+                  ? 'var(--warning-yellow)'
+                  : 'var(--error-red)';
+          }
+
+          if (healthTrendEl) {
+            const trendClass =
+              healthStatus.status === 'healthy'
+                ? 'trend-up'
+                : healthStatus.status === 'critical'
+                  ? 'trend-down'
+                  : 'trend-stable';
+            healthTrendEl.className = `metric-trend ${trendClass}`;
+            healthTrendEl.textContent =
+              healthStatus.status === 'healthy'
+                ? 'All systems operational'
+                : healthStatus.status === 'degraded'
+                  ? 'Some systems degraded'
+                  : 'Critical system issues';
+          }
+
+          if (healthDetailsEl) {
+            healthDetailsEl.textContent = `${healthStatus.failedOperations} of ${healthStatus.totalOperations} operations failing`;
+          }
+
+          // Update failed operations
+          const failedOpsCountEl = document.getElementById('failed-ops-count');
+          const failedOpsTrendEl = document.getElementById('failed-ops-trend');
+
+          if (failedOpsCountEl) {
+            failedOpsCountEl.textContent = failedCount.toString();
+            failedOpsCountEl.style.color = failedCount > 0 ? 'var(--error-red)' : 'var(--success-green)';
+          }
+
+          if (failedOpsTrendEl) {
+            failedOpsTrendEl.className = `metric-trend ${failedCount > 0 ? 'trend-down' : 'trend-up'}`;
+            failedOpsTrendEl.textContent =
+              failedCount > 0 ? `${failedCount} operations need attention` : 'No failures detected';
+          }
+
+          // Update connection status
+          const connectionQualityEl = document.getElementById('connection-quality');
+          const connectionTrendEl = document.getElementById('connection-trend');
+          const connectionDetailsEl = document.getElementById('connection-details');
+
+          if (connectionQualityEl) {
+            const quality = errorHandler.connectionStatus ? 'Good' : 'Offline';
+            connectionQualityEl.textContent = quality;
+            connectionQualityEl.style.color = errorHandler.connectionStatus
+              ? 'var(--success-green)'
+              : 'var(--error-red)';
+          }
+
+          if (connectionTrendEl) {
+            connectionTrendEl.className = `metric-trend ${errorHandler.connectionStatus ? 'trend-up' : 'trend-down'}`;
+            connectionTrendEl.textContent = errorHandler.connectionStatus
+              ? 'Stable connection'
+              : 'No network connection';
+          }
+
+          if (connectionDetailsEl) {
+            connectionDetailsEl.textContent = errorHandler.connectionStatus
+              ? 'Network connectivity is optimal'
+              : 'Real-time updates are paused';
+          }
+
+          // Show/hide offline banner
+          const offlineBanner = document.getElementById('offline-banner');
+          if (offlineBanner) {
+            offlineBanner.style.display = errorHandler.connectionStatus ? 'none' : 'block';
+          }
+        } catch (error) {
+          errorHandler.logDebug(`Failed to update system status: ${error.message}`, 'error');
+        }
+      }
+
+      // Service tab switching with error handling
+      function showService(service) {
+        try {
+          errorHandler.logDebug(`Switching to service: ${service}`, 'info');
+
+          // Hide all content
+          document.querySelectorAll('.service-content').forEach(content => {
+            content.classList.remove('active');
+          });
+
+          // Remove active from all tabs
+          document.querySelectorAll('.service-tab').forEach(tab => {
+            tab.classList.remove('active');
+          });
+
+          // Show selected content and activate tab
+          const targetContent = document.getElementById(service + '-content');
+          const targetTab = event.target;
+
+          if (!targetContent) {
+            throw new Error(`Service content '${service}' not found`);
+          }
+
+          targetContent.classList.add('active');
+          if (targetTab) {
+            targetTab.classList.add('active');
+          }
+
+          errorHandler.logDebug(`Successfully switched to service: ${service}`, 'info');
+        } catch (error) {
+          errorHandler.logDebug(`Failed to switch service tab: ${error.message}`, 'error');
+          errorHandler.showNotification('Failed to switch service view', 'error');
+        }
+      }
+
+      // Enhanced metrics update with error handling
+      async function updateMetrics() {
+        if (!errorHandler.connectionStatus) {
+          errorHandler.logDebug('Skipping metrics update - no connection', 'warning');
+          return;
+        }
+
+        errorHandler.logDebug('Starting metrics update', 'info');
+
+        const operations = {
+          'total-requests': async () => {
+            const data = await errorHandler.safeAsyncOperation(
+              async () => {
+                // Simulate API call that might fail
+                if (Math.random() < 0.1) {
+                  // 10% chance of failure
+                  throw new Error('API rate limit exceeded');
+                }
+                return Math.floor(2847391 + Math.random() * 1000);
+              },
+              'total-requests',
+              2847391 // fallback value
+            );
+            return data;
+          },
+          'kv-operations': async () => {
+            const data = await errorHandler.safeAsyncOperation(
+              async () => {
+                if (Math.random() < 0.05) {
+                  // 5% chance of failure
+                  throw new Error('KV store temporarily unavailable');
+                }
+                return Math.floor(1429847 + Math.random() * 500);
+              },
+              'kv-operations',
+              1429847
+            );
+            return data;
+          },
+          'r2-operations': async () => {
+            const data = await errorHandler.safeAsyncOperation(
+              async () => {
+                if (Math.random() < 0.08) {
+                  // 8% chance of failure
+                  throw new Error('R2 service timeout');
+                }
+                return Math.floor(487293 + Math.random() * 200);
+              },
+              'r2-operations',
+              487293
+            );
+            return data;
+          },
+          'd1-queries': async () => {
+            const data = await errorHandler.safeAsyncOperation(
+              async () => {
+                if (Math.random() < 0.03) {
+                  // 3% chance of failure
+                  throw new Error('D1 database connection error');
+                }
+                return Math.floor(892547 + Math.random() * 300);
+              },
+              'd1-queries',
+              892547
+            );
+            return data;
+          },
+        };
+
+        for (const [id, operation] of Object.entries(operations)) {
+          try {
+            const value = await operation();
+            const element = document.getElementById(id);
+            if (element && value !== null) {
+              element.textContent = value.toLocaleString();
+              errorHandler.clearErrorState(id);
+              errorHandler.logDebug(`Updated ${id}: ${value}`, 'info');
+            } else {
+              errorHandler.logDebug(`Failed to update ${id}: element not found or null value`, 'warning');
+            }
+          } catch (error) {
+            errorHandler.logDebug(`Failed to update ${id}: ${error.message}`, 'error');
+            // Error state already handled by safeAsyncOperation
+          }
+        }
+
+        errorHandler.logDebug('Metrics update completed', 'info');
+      }
+
+      // Enhanced live status with error handling
+      async function updateLiveStatus() {
+        try {
+          errorHandler.logDebug('Checking live status', 'info');
+
+          const status = document.getElementById('live-status');
+          if (!status) {
+            throw new Error('Live status element not found');
+          }
+
+          const isLive = await errorHandler.safeAsyncOperation(
+            async () => {
+              // Simulate API health check
+              if (Math.random() < 0.05) {
+                // 5% chance of failure
+                throw new Error('Health check failed');
+              }
+              return Math.random() > 0.1; // 90% uptime simulation
+            },
+            'live-status-check',
+            true // fallback to live
+          );
+
+          if (isLive) {
+            status.style.background = 'var(--success-green)';
+            status.innerHTML = '● Live Monitoring Active';
+            errorHandler.logDebug('Live status: Active', 'info');
+          } else {
+            status.style.background = 'var(--warning-yellow)';
+            status.innerHTML = '⚠ Partial Monitoring';
+            errorHandler.logDebug('Live status: Partial monitoring', 'warning');
+          }
+        } catch (error) {
+          errorHandler.logDebug(`Failed to update live status: ${error.message}`, 'error');
+          errorHandler.showNotification('Status check failed', 'warning');
+        }
+      }
+
+      // Enhanced initialization with error handling
+      async function initializeDashboard() {
+        try {
+          errorHandler.logDebug('Initializing Cloudflare Enhanced Analytics Dashboard', 'info');
+
+          // Validate required DOM elements
+          const requiredElements = [
+            'overview',
+            'alerts',
+            'service-analytics',
+            'geographic',
+            'cost-analysis',
+            'live-status',
+          ];
+
+          for (const elementId of requiredElements) {
+            if (!document.getElementById(elementId)) {
+              throw new Error(`Required element '${elementId}' not found`);
+            }
+          }
+
+          errorHandler.logDebug(`Validated ${requiredElements.length} required elements`, 'info');
+
+          // Initialize connectivity monitoring
+          errorHandler.monitorConnectivity();
+          errorHandler.logDebug('Connectivity monitoring initialized', 'info');
+
+          // Initial data load with error handling
+          errorHandler.logDebug('Starting initial data load', 'info');
+          const initialLoadResults = await Promise.allSettled([updateMetrics(), updateLiveStatus()]);
+
+          const successCount = initialLoadResults.filter(r => r.status === 'fulfilled').length;
+          const failCount = initialLoadResults.length - successCount;
+
+          errorHandler.logDebug(`Initial data load: ${successCount} successful, ${failCount} failed`, 'info');
+
+          // Start periodic updates
+          const metricsInterval = setInterval(updateMetrics, 5000);
+          const statusInterval = setInterval(updateLiveStatus, 30000);
+          const systemStatusInterval = setInterval(updateSystemStatus, 10000); // Update system status every 10 seconds
+
+          // Store intervals for cleanup
+          errorHandler.timeoutIds.add(metricsInterval);
+          errorHandler.timeoutIds.add(statusInterval);
+          errorHandler.timeoutIds.add(systemStatusInterval);
+
+          // Initial system status update
+          updateSystemStatus();
+
+          errorHandler.logDebug('Periodic updates scheduled', 'info');
+
+          // Add error boundary for unhandled errors
+          window.addEventListener('error', event => {
+            errorHandler.logError({
+              type: 'unhandled',
+              message: event.message,
+              stack: event.error?.stack,
+              timestamp: new Date().toISOString(),
+              filename: event.filename,
+              lineno: event.lineno,
+              colno: event.colno,
+            });
+          });
+
+          window.addEventListener('unhandledrejection', event => {
+            errorHandler.logError({
+              type: 'unhandled-promise',
+              message: event.reason?.message || 'Unhandled promise rejection',
+              stack: event.reason?.stack,
+              timestamp: new Date().toISOString(),
+              reason: event.reason,
+            });
+          });
+
+          // Log successful initialization
+          const healthStatus = errorHandler.getHealthStatus();
+          errorHandler.logDebug(`Dashboard initialized successfully. Health: ${healthStatus.status}`, 'info');
+
+          console.log('✅ Cloudflare Enhanced Analytics Dashboard initialized successfully');
+          console.log('📊 Real-time monitoring active for Workers, KV, R2, and D1');
+        } catch (error) {
+          errorHandler.logError({
+            type: 'initialization',
+            message: error.message,
+            stack: error.stack,
+            timestamp: new Date().toISOString(),
+          });
+
+          errorHandler.showNotification(
+            'Dashboard initialization failed. Some features may not work properly.',
+            'error',
+            0 // Don't auto-hide critical errors
+          );
+        }
+      }
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        errorHandler.cleanup();
+      });
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+      } else {
+        initializeDashboard();
+      }
+
+      // Add CSS animations for notifications
+      const style = document.createElement('style');
+      style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

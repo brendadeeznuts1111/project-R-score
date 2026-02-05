@@ -1,0 +1,3041 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢📊 Fire22 Telegram Bot - Departmental Command Flows</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .department-nav {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .dept-tab {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        border: 2px solid transparent;
+      }
+
+      .dept-tab:hover {
+        background: rgba(253, 187, 45, 0.2);
+        border-color: rgba(253, 187, 45, 0.5);
+        transform: translateY(-3px);
+      }
+
+      .dept-tab.active {
+        background: rgba(253, 187, 45, 0.3);
+        border-color: #fdbb2d;
+      }
+
+      .dept-emoji {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .department-section {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        display: none;
+      }
+
+      .department-section.active {
+        display: block;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      .workflow-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .workflow-card {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        border-left: 4px solid #fdbb2d;
+      }
+
+      .workflow-title {
+        font-size: 1.2rem;
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .command-flow {
+        margin: 15px 0;
+      }
+
+      .flow-step {
+        display: flex;
+        align-items: flex-start;
+        margin: 10px 0;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+
+      .step-number {
+        background: #fdbb2d;
+        color: #000;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .step-content {
+        flex-grow: 1;
+      }
+
+      .step-title {
+        font-weight: bold;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+      }
+
+      .step-description {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+
+      .step-code {
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        margin: 10px 0;
+      }
+
+      .step-code pre {
+        margin: 0;
+        padding: 15px;
+      }
+
+      .step-code code {
+        color: #4caf50;
+        line-height: 1.4;
+        display: block;
+      }
+
+      .step-code .comment {
+        color: #888;
+        font-style: italic;
+      }
+
+      .step-code .keyword {
+        color: #ff6b6b;
+      }
+
+      .step-code .string {
+        color: #4ecdc4;
+      }
+
+      .step-code .number {
+        color: #ffe66d;
+      }
+
+      .step-data {
+        background: rgba(26, 42, 108, 0.3);
+        padding: 8px;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 0.85rem;
+      }
+
+      .permissions-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .permissions-table th,
+      .permissions-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .permissions-table th {
+        background: rgba(253, 187, 45, 0.2);
+        font-weight: bold;
+      }
+
+      .access-level {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+
+      .access-admin {
+        background: rgba(178, 31, 31, 0.8);
+        color: white;
+      }
+
+      .access-manager {
+        background: rgba(253, 187, 45, 0.8);
+        color: black;
+      }
+
+      .access-user {
+        background: rgba(76, 175, 80, 0.8);
+        color: white;
+      }
+
+      .notification-flow {
+        background: rgba(26, 42, 108, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+      }
+
+      .notification-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      .notification-type {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 6px;
+        text-align: center;
+        border: 1px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .integration-points {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+      }
+
+      .integration-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin: 10px 0;
+      }
+
+      .integration-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 3px solid #fdbb2d;
+      }
+
+      .command-examples {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+      }
+
+      .command-example {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 5px;
+        margin: 8px 0;
+        font-family: monospace;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin: 15px 0;
+      }
+
+      .metric-card {
+        background: rgba(253, 187, 45, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .metric-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fdbb2d;
+      }
+
+      .escalation-path {
+        background: linear-gradient(90deg, rgba(76, 175, 80, 0.2), rgba(255, 193, 7, 0.2), rgba(244, 67, 54, 0.2));
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+      }
+
+      .escalation-levels {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .escalation-level {
+        background: rgba(255, 255, 255, 0.9);
+        color: #000;
+        padding: 10px;
+        border-radius: 6px;
+        font-weight: bold;
+        min-width: 100px;
+        text-align: center;
+      }
+
+      .arrow {
+        font-size: 1.5rem;
+        color: #fdbb2d;
+      }
+
+      @media (max-width: 768px) {
+        .workflow-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .department-nav {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .escalation-levels {
+          flex-direction: column;
+        }
+
+        .arrow {
+          transform: rotate(90deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🏢📊 Fire22 Telegram Bot - Departmental Flows</h1>
+        <p class="subtitle">Comprehensive departmental organization of bot commands, workflows & data flows</p>
+        <p class="subtitle">Complete multilingual business process automation</p>
+
+        <div
+          style="
+            background: rgba(253, 187, 45, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid rgba(253, 187, 45, 0.3);
+          "
+        >
+          <h3 style="color: #fdbb2d; margin-bottom: 15px">📋 Code Organization System</h3>
+          <p style="margin-bottom: 10px"><strong>Even-Odd Naming Pattern:</strong></p>
+          <ul style="text-align: left; margin-left: 20px; margin-bottom: 15px">
+            <li>
+              <strong>Even Numbers (2, 4, 6, 8...):</strong>
+              Core business logic functions
+            </li>
+            <li>
+              <strong>Odd Numbers (1, 3, 5, 7...):</strong>
+              Utility and support functions
+            </li>
+          </ul>
+          <p style="margin-bottom: 10px"><strong>Clean Naming Conventions:</strong></p>
+          <ul style="text-align: left; margin-left: 20px; margin-bottom: 15px">
+            <li>Descriptive function names with clear purpose</li>
+            <li>Consistent parameter naming and structure</li>
+            <li>Proper error handling and return values</li>
+            <li>Comprehensive comments and documentation</li>
+          </ul>
+
+          <h4 style="color: #fdbb2d; margin: 20px 0 15px 0">🔑 L-Key Integration System</h4>
+          <p style="margin-bottom: 15px"><strong>Core L-Keys by Department:</strong></p>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+              gap: 15px;
+              margin-bottom: 15px;
+            "
+          >
+            <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px">
+              <strong style="color: #fdbb2d">🎧 Customer Service</strong>
+              <br />
+              L-1514: Support Ticket Created
+              <br />
+              L-1515: Ticket Escalated
+              <br />
+              L-1516: Acknowledge Button
+              <br />
+              L-1517: Escalate Button
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px">
+              <strong style="color: #fdbb2d">💰 Finance</strong>
+              <br />
+              L-202: Deposit Amount
+              <br />
+              L-69: Amount
+              <br />
+              L-287: Transaction
+              <br />
+              L-426: Account
+              <br />
+              L-187: Balance
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px">
+              <strong style="color: #fdbb2d">⚙️ Operations</strong>
+              <br />
+              L-1510: P2P Match Found
+              <br />
+              L-1511: Process Best Match
+              <br />
+              L-1512: View All Matches
+              <br />
+              L-1513: Wait for Better
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px">
+              <strong style="color: #fdbb2d">🛡️ Compliance</strong>
+              <br />
+              L-1388: Account Verification
+              <br />
+              L-1387: Security Settings
+              <br />
+              L-1389: Risk Management
+              <br />
+              L-1391: Audit Trail
+            </div>
+          </div>
+          <p style="margin-bottom: 10px"><strong>L-Key Benefits:</strong></p>
+          <ul style="text-align: left; margin-left: 20px">
+            <li>Multilingual support across all workflows</li>
+            <li>Consistent terminology and messaging</li>
+            <li>Centralized language management</li>
+            <li>Easy localization and updates</li>
+          </ul>
+        </div>
+      </header>
+
+      <div class="department-nav">
+        <div class="dept-tab active" onclick="showDepartment('customer-service')">
+          <span class="dept-emoji">🎧</span>
+          <strong>Customer Service</strong>
+          <div>Support & Escalation</div>
+        </div>
+
+        <div class="dept-tab" onclick="showDepartment('finance')">
+          <span class="dept-emoji">💰</span>
+          <strong>Finance</strong>
+          <div>Cashier & Transactions</div>
+        </div>
+
+        <div class="dept-tab" onclick="showDepartment('operations')">
+          <span class="dept-emoji">⚙️</span>
+          <strong>Operations</strong>
+          <div>P2P Queue & Processing</div>
+        </div>
+
+        <div class="dept-tab" onclick="showDepartment('compliance')">
+          <span class="dept-emoji">🛡️</span>
+          <strong>Compliance</strong>
+          <div>KYC & Risk Management</div>
+        </div>
+
+        <div class="dept-tab" onclick="showDepartment('management')">
+          <span class="dept-emoji">📈</span>
+          <strong>Management</strong>
+          <div>Reports & Analytics</div>
+        </div>
+
+        <div class="dept-tab" onclick="showDepartment('technical')">
+          <span class="dept-emoji">🔧</span>
+          <strong>Technical</strong>
+          <div>System Administration</div>
+        </div>
+      </div>
+
+      <!-- Customer Service Department -->
+      <div id="customer-service" class="department-section active">
+        <h2>🎧 Customer Service Department</h2>
+        <p>Complete support ticket management, escalation workflows, and multilingual customer interactions</p>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🎫</span>
+              <span>Support Ticket Creation</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Customer Issue Reported</div>
+                  <div class="step-description">User contacts support via Telegram or creates ticket</div>
+                  <div class="step-code">
+                    <pre><code>// Customer initiates support request
+const supportRequest = {
+    userId: "user_12345",
+    issueType: "technical",
+    priority: "medium",
+    language: "en"
+};
+
+// Process incoming support request using L-keys
+const languageKeys = {
+    L_603: 'customer_id',        // Customer ID
+    L_526: 'customer_name',      // Name
+    L_152: 'customer_type',      // Type
+    L_407: 'settings_config'     // Settings
+};
+
+processSupportRequest(supportRequest, languageKeys);</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Data: User ID (L-603), Issue Category (L-152), Priority Level, Language Preference (L-407)
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Automatic Classification</div>
+                  <div class="step-description">AI categorizes issue and assigns priority</div>
+                  <div class="step-code">
+                    <pre><code>// AI-powered issue classification
+function classifyIssue(message, userHistory, serviceLevel) {
+    const classification = {
+        category: determineCategory(message),
+        priority: calculatePriority(userHistory, serviceLevel),
+        complexity: assessComplexity(message),
+        estimatedTime: estimateResolutionTime()
+    };
+    
+    // L-keys for classification categories
+    const categoryKeys = {
+        L_426: 'account',         // Account
+        L_287: 'transaction',     // Transaction
+        L_407: 'technical',       // Technical
+        L_152: 'billing',         // Billing
+        L_880: 'general'          // General
+    };
+    
+    return { ...classification, categoryKeys };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Categories: Account (L-426), Transaction (L-287), Technical (L-407), Billing (L-152), General
+                    (L-880)
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Service Level Assignment</div>
+                  <div class="step-description">Determine SLA based on user tier and issue priority</div>
+                  <div class="step-code">
+                    <pre><code>// Service level assignment logic
+function assignServiceLevel(userTier, issuePriority) {
+    const slaMatrix = {
+        basic: { high: "4h", medium: "8h", low: "24h" },
+        premium: { high: "2h", medium: "4h", low: "12h" },
+        vip: { high: "1h", medium: "2h", low: "6h" },
+        enterprise: { high: "30m", medium: "1h", low: "4h" }
+    };
+    
+    // L-keys for service levels
+    const serviceLevelKeys = {
+        L_849: 'report_settings',    // Report Settings
+        L_407: 'settings_config',    // Settings
+        L_152: 'customer_type',      // Customer Type
+        L_603: 'customer_id'         // Customer ID
+    };
+    
+    return { sla: slaMatrix[userTier][issuePriority], keys: serviceLevelKeys };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Levels: Basic (4h), Premium (2h), VIP (1h), Enterprise (30m) | L-keys: L-849, L-407, L-152, L-603
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Multilingual Notification</div>
+                  <div class="step-description">Generate ticket confirmation in user's language</div>
+                  <div class="step-code">
+                    <pre><code>// Multilingual notification generation
+function generateSupportTicketNotification(ticketData, userLanguage) {
+    const templates = {
+        en: "Support ticket #{id} created successfully",
+        es: "Ticket de soporte #{id} creado exitosamente",
+        pt: "Ticket de suporte #{id} criado com sucesso",
+        fr: "Ticket de support #{id} créé avec succès"
+    };
+    
+    // L-keys for notification system
+    const notificationKeys = {
+        L_1514: 'support_ticket_created',    // Support Ticket Created
+        L_1515: 'ticket_escalated',         // Ticket Escalated
+        L_1516: 'acknowledge_button',        // Acknowledge Button
+        L_1517: 'escalate_button'            // Escalate Button
+    };
+    
+    return { 
+        message: templates[userLanguage].replace("{id}", ticketData.id),
+        keys: notificationKeys 
+    };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Languages: EN, ES, PT, FR with localized formatting | L-keys: L-1514, L-1515, L-1516, L-1517
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                  <div class="step-title">Team Routing</div>
+                  <div class="step-description">Route to appropriate support team based on category</div>
+                  <div class="step-code">
+                    <pre><code>// Intelligent team routing
+function routeToTeam(category, language, expertise) {
+    const teamAssignment = {
+        account: "L1-General",
+        transaction: "L2-Finance",
+        technical: "L2-Technical",
+        billing: "L1-Billing",
+        general: "L1-General"
+    };
+    
+    // L-keys for team routing
+    const routingKeys = {
+        L_869: 'agent',            // Agent
+        L_871: 'player',           // Player
+        L_887: 'status',           // Status
+        L_888: 'agent_id',         // Agent ID
+        L_889: 'login_id'          // Login ID
+    };
+    
+    return { 
+        team: selectOptimalTeam(teamAssignment[category], language, expertise),
+        keys: routingKeys 
+    };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Teams: L1 General, L2 Technical, L3 Specialist, Escalation | L-keys: L-869, L-871, L-887, L-888,
+                    L-889
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🚨</span>
+              <span>Escalation Management</span>
+            </div>
+
+            <div class="escalation-path">
+              <h4>Automated Escalation Path</h4>
+              <div class="escalation-levels">
+                <div class="escalation-level">L1 Support</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">L2 Technical</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">L3 Specialist</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">Management</div>
+              </div>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">SLA Monitor</div>
+                  <div class="step-description">Automatic monitoring of response times</div>
+                  <div class="step-code">
+                    <pre><code>// Continuous SLA monitoring
+function checkTicketEscalation(ticketId, currentTime) {
+    const ticket = getTicketById(ticketId);
+    const timeElapsed = currentTime - ticket.createdAt;
+    const slaThreshold = getSLAThreshold(ticket.priority, ticket.userTier);
+    
+    if (timeElapsed > slaThreshold) {
+        return { shouldEscalate: true, reason: "SLA breached" };
+    }
+    
+    return { shouldEscalate: false, timeRemaining: slaThreshold - timeElapsed };
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Escalation Trigger</div>
+                  <div class="step-description">Automatic escalation when SLA breached</div>
+                  <div class="step-code">
+                    <pre><code>// Automated escalation processing
+function escalateTicket(ticketId, newPriority, targetTeam) {
+    const escalation = {
+        ticketId: ticketId,
+        previousPriority: getTicketPriority(ticketId),
+        newPriority: newPriority,
+        targetTeam: targetTeam,
+        escalatedAt: new Date(),
+        reason: "SLA breach"
+    };
+    
+    return processEscalation(escalation);
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Multi-Channel Alerts</div>
+                  <div class="step-description">Notify customer and management</div>
+                  <div class="step-code">
+                    <pre><code>// Multi-channel notification system
+function sendEscalationAlert(customer, manager, telegram) {
+    const notificationChannels = {
+        customer: sendCustomerNotification(customer),
+        manager: sendManagerAlert(manager),
+        telegram: sendTelegramBotAlert(telegram),
+        dashboard: updateDashboardStatus()
+    };
+    
+    return Promise.all(Object.values(notificationChannels));
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>📞</span>
+              <span>Live Chat Integration</span>
+            </div>
+
+            <div class="integration-points">
+              <h4>Real-time Support Channels</h4>
+              <div class="integration-list">
+                <div class="integration-item">
+                  <strong>Telegram Bot</strong>
+                  <br />
+                  Primary support interface with multilingual commands
+                </div>
+                <div class="integration-item">
+                  <strong>Dashboard Chat</strong>
+                  <br />
+                  Web-based chat widget integration
+                </div>
+                <div class="integration-item">
+                  <strong>Email Integration</strong>
+                  <br />
+                  Automatic email ticket creation and updates
+                </div>
+                <div class="integration-item">
+                  <strong>Voice Support</strong>
+                  <br />
+                  Phone system integration with ticket linking
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="permissions-table">
+          <h3>👥 Customer Service Access Levels</h3>
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Telegram Commands</th>
+                <th>Ticket Actions</th>
+                <th>Escalation Rights</th>
+                <th>Language Support</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="access-level access-admin">CS Manager</span></td>
+                <td>All commands, /escalate, /reassign, /close</td>
+                <td>Create, Update, Close, Transfer, Escalate</td>
+                <td>Full escalation authority</td>
+                <td>All 4 languages + management reports</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-manager">Senior Agent</span></td>
+                <td>/respond, /update, /escalate, /transfer</td>
+                <td>Create, Update, Escalate to L3</td>
+                <td>L2 → L3 escalation</td>
+                <td>2-3 languages based on specialization</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Agent</span></td>
+                <td>/respond, /update, /request_escalation</td>
+                <td>Create, Update, Request escalation</td>
+                <td>Request escalation only</td>
+                <td>1-2 native languages</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Customer</span></td>
+                <td>/start, /support, /status, /language</td>
+                <td>Create tickets, View status</td>
+                <td>None</td>
+                <td>Auto-detected preferred language</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="notification-flow">
+          <h3>🔔 Customer Service Notifications</h3>
+          <div class="notification-types">
+            <div class="notification-type">
+              <strong>L-1514</strong>
+              <br />
+              Support Ticket Created
+              <br />
+              <em>4 languages</em>
+            </div>
+            <div class="notification-type">
+              <strong>L-1515</strong>
+              <br />
+              Ticket Escalated
+              <br />
+              <em>Auto-management alert</em>
+            </div>
+            <div class="notification-type">
+              <strong>L-1516</strong>
+              <br />
+              Acknowledge Button
+              <br />
+              <em>Interactive response</em>
+            </div>
+            <div class="notification-type">
+              <strong>L-1517</strong>
+              <br />
+              Escalate Button
+              <br />
+              <em>One-click escalation</em>
+            </div>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">4</div>
+            <div>Service Levels</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">30s</div>
+            <div>Enterprise SLA</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">24/7</div>
+            <div>Availability</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">4</div>
+            <div>Languages</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Finance Department -->
+      <div id="finance" class="department-section">
+        <h2>💰 Finance Department</h2>
+        <p>Complete cashier operations, transaction processing, and financial workflow automation</p>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>💸</span>
+              <span>Deposit Processing</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Deposit Request</div>
+                  <div class="step-description">Customer initiates deposit via multiple channels</div>
+                  <div class="step-code">
+                    <pre><code>// Deposit processing workflow
+function processDeposit(userId, amount, paymentMethod) {
+    const deposit = {
+        id: generateDepositId(),
+        userId: userId,
+        amount: amount,
+        method: paymentMethod,
+        status: "pending",
+        createdAt: new Date()
+    };
+    
+    // L-keys for deposit processing
+    const depositKeys = {
+        L_202: 'deposit_amount',     // Deposit
+        L_69: 'amount',              // Amount
+        L_287: 'transaction',        // Transaction
+        L_426: 'account',            // Account
+        L_187: 'balance'             // Balance
+    };
+    
+    return { 
+        deposit: validateAndQueueDeposit(deposit),
+        keys: depositKeys 
+    };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Methods: Bank Transfer, Credit Card, Crypto, PayPal, Skrill | L-keys: L-202, L-69, L-287, L-426,
+                    L-187
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Fraud Screening</div>
+                  <div class="step-description">Automated fraud detection and risk assessment</div>
+                  <div class="step-code">
+                    <pre><code>// Comprehensive fraud detection
+function fraudScreen(transaction, userHistory, riskFactors) {
+    const fraudScore = calculateFraudScore({
+        ipAddress: transaction.ip,
+        deviceFingerprint: transaction.device,
+        amountPattern: analyzeAmountPattern(userHistory),
+        velocity: checkTransactionVelocity(userHistory),
+        blacklist: checkBlacklistStatus(transaction.userId)
+    });
+    
+    // L-keys for fraud detection
+    const fraudKeys = {
+        L_848: 'fraud_detection',    // Fraud Detection
+        L_1389: 'risk_management',   // Risk Management
+        L_1387: 'security_settings', // Security Settings
+        L_1388: 'account_verification', // Account Verification
+        L_1391: 'audit_trail'        // Audit Trail
+    };
+    
+    return { 
+        score: fraudScore, 
+        risk: determineRiskLevel(fraudScore),
+        keys: fraudKeys 
+    };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Checks: IP, Device, Amount Pattern, Velocity, Blacklist | L-keys: L-848, L-1389, L-1387, L-1388,
+                    L-1391
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Multilingual Notification</div>
+                  <div class="step-description">Send deposit notification to cashier team</div>
+                  <div class="step-code">
+                    <pre><code>// Localized notification system
+function generateDepositNotification(depositData, teamLanguage) {
+    const notificationTemplates = {
+        en: "New deposit request: ${amount} via ${method}",
+        es: "Nueva solicitud de depósito: ${amount} via ${method}",
+        pt: "Nova solicitação de depósito: ${amount} via ${method}",
+        fr: "Nouvelle demande de dépôt: ${amount} via ${method}"
+    };
+    
+    return notificationTemplates[teamLanguage]
+        .replace("${amount}", formatCurrency(depositData.amount))
+        .replace("${method}", depositData.method);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Teams: English (Global), Spanish (LATAM), Portuguese (Brazil)</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Approval Workflow</div>
+                  <div class="step-description">Cashier review with interactive Telegram controls</div>
+                  <div class="step-code">
+                    <pre><code>// Interactive approval system
+function approveDeposit(operationId, cashierId, notes) {
+    const approval = {
+        operationId: operationId,
+        cashierId: cashierId,
+        decision: "approved",
+        notes: notes,
+        approvedAt: new Date(),
+        telegramMessageId: getCurrentMessageId()
+    };
+    
+    return processApprovalDecision(approval);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Actions: ✅ Approve, ❌ Reject, 🔍 Request More Info</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                  <div class="step-title">Account Credit & Confirmation</div>
+                  <div class="step-description">Credit account and notify customer</div>
+                  <div class="step-code">
+                    <pre><code>// Account credit processing
+function creditAccount(userId, amount, confirmToUser) {
+    const creditTransaction = {
+        userId: userId,
+        amount: amount,
+        type: "deposit",
+        status: "completed",
+        processedAt: new Date()
+    };
+    
+    return Promise.all([
+        updateAccountBalance(userId, amount),
+        logTransaction(creditTransaction),
+        sendConfirmationToUser(userId, confirmToUser)
+    ]);
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Real-time: Account balance update, customer notification, transaction log
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="command-examples">
+              <h4>💸 Deposit Command Examples</h4>
+              <div class="command-example">🇺🇸 EN: "💰 New Deposit Request - $500.00 via Credit Card"</div>
+              <div class="command-example">
+                🇪🇸 ES: "💰 Nueva Solicitud de Depósito - $500.00 via Tarjeta de Crédito"
+              </div>
+              <div class="command-example">
+                🇵🇹 PT: "💰 Nova Solicitação de Depósito - $500.00 via Cartão de Crédito"
+              </div>
+              <div class="command-example">🇫🇷 FR: "💰 Nouvelle Demande de Dépôt - $500.00 via Carte de Crédit"</div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>💳</span>
+              <span>Withdrawal Processing</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Withdrawal Request</div>
+                  <div class="step-description">Customer requests withdrawal with KYC verification</div>
+                  <div class="step-code">
+                    <pre><code>// Withdrawal request processing
+function requestWithdrawal(userId, amount, method, documents) {
+    const withdrawal = {
+        id: generateWithdrawalId(),
+        userId: userId,
+        amount: amount,
+        method: method,
+        documents: documents,
+        status: "pending_verification",
+        requestedAt: new Date()
+    };
+    
+    return validateWithdrawalRequest(withdrawal);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Verification: Identity, Address, Payment Method Ownership</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Balance & Limit Checks</div>
+                  <div class="step-description">Verify sufficient balance and withdrawal limits</div>
+                  <div class="step-code">
+                    <pre><code>// Withdrawal validation system
+function validateWithdrawal(balance, dailyLimit, monthlyLimit) {
+    const validation = {
+        hasSufficientBalance: balance >= withdrawal.amount,
+        withinDailyLimit: checkDailyLimit(userId, amount),
+        withinMonthlyLimit: checkMonthlyLimit(userId, amount),
+        kycVerified: isKYCVerified(userId),
+        documentsValid: validateDocuments(documents)
+    };
+    
+    return { isValid: Object.values(validation).every(Boolean), details: validation };
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Limits: Daily ($5K), Weekly ($25K), Monthly ($100K) - varies by tier</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">P2P Queue Integration</div>
+                  <div class="step-description">Add to P2P queue for potential matching</div>
+                  <div class="step-code">
+                    <pre><code>// P2P queue management
+function addToP2PQueue(withdrawal, findMatches = true) {
+    const queueEntry = {
+        withdrawalId: withdrawal.id,
+        amount: withdrawal.amount,
+        currency: withdrawal.currency,
+        paymentMethod: withdrawal.method,
+        location: getUserLocation(withdrawal.userId),
+        priority: calculatePriority(withdrawal),
+        queuedAt: new Date()
+    };
+    
+    if (findMatches) {
+        return findP2PMatches(queueEntry);
+    }
+    
+    return addToQueue(queueEntry);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Matching: Amount, Currency, Payment Method, Geographic Location</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Processing Decision</div>
+                  <div class="step-description">Direct processing or P2P matching based on availability</div>
+                  <div class="step-code">
+                    <pre><code>// Processing decision engine
+function processOrQueue(withdrawal, matches, processingCost) {
+    const decision = {
+        hasP2PMatches: matches.length > 0,
+        bestMatch: findBestMatch(matches),
+        directProcessingCost: calculateDirectCost(withdrawal),
+        p2pProcessingCost: 0, // P2P is free
+        recommendation: determineOptimalPath(matches, processingCost)
+    };
+    
+    return executeProcessingDecision(decision, withdrawal);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Decision: Instant P2P (0% fee) vs Direct (2-5% fee)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>📊</span>
+              <span>Transaction Monitoring</span>
+            </div>
+
+            <div class="notification-flow">
+              <h4>Real-time Transaction Alerts</h4>
+              <div class="notification-types">
+                <div class="notification-type">
+                  <strong>High-Value Alert</strong>
+                  <br />
+                  >$10,000
+                  <br />
+                  <em>Immediate manager notification</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Suspicious Pattern</strong>
+                  <br />
+                  Fraud Detection
+                  <br />
+                  <em>Security team alert</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Failed Transaction</strong>
+                  <br />
+                  Payment Issues
+                  <br />
+                  <em>Customer & cashier notification</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Daily Summary</strong>
+                  <br />
+                  Volume & Stats
+                  <br />
+                  <em>Management reports</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">$2.5M</div>
+                <div>Daily Volume</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">1,247</div>
+                <div>Daily Transactions</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">98.7%</div>
+                <div>Success Rate</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">2.3min</div>
+                <div>Avg Process Time</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="permissions-table">
+          <h3>💰 Finance Department Access Levels</h3>
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Transaction Limits</th>
+                <th>Telegram Commands</th>
+                <th>Approval Authority</th>
+                <th>Reporting Access</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="access-level access-admin">Finance Director</span></td>
+                <td>Unlimited</td>
+                <td>All finance commands, /override, /audit</td>
+                <td>All transactions, policy override</td>
+                <td>Full P&L, regulatory reports</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-manager">Cashier Manager</span></td>
+                <td>$100,000</td>
+                <td>/approve, /reject, /investigate, /escalate</td>
+                <td>Standard transactions, escalation</td>
+                <td>Operational reports, KPIs</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Senior Cashier</span></td>
+                <td>$25,000</td>
+                <td>/process, /approve, /request_approval</td>
+                <td>Within limit, requires approval above</td>
+                <td>Daily transaction reports</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Cashier</span></td>
+                <td>$5,000</td>
+                <td>/process, /verify, /request_approval</td>
+                <td>Small transactions only</td>
+                <td>Personal transaction log</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="integration-points">
+          <h3>🔗 Financial System Integrations</h3>
+          <div class="integration-list">
+            <div class="integration-item">
+              <strong>Banking APIs</strong>
+              <br />
+              Direct integration with major banks for wire transfers and ACH processing
+            </div>
+            <div class="integration-item">
+              <strong>Payment Processors</strong>
+              <br />
+              Stripe, PayPal, Skrill integration for card and e-wallet processing
+            </div>
+            <div class="integration-item">
+              <strong>Cryptocurrency</strong>
+              <br />
+              Bitcoin, Ethereum, USDT processing with cold wallet security
+            </div>
+            <div class="integration-item">
+              <strong>Fraud Detection</strong>
+              <br />
+              Machine learning fraud detection with real-time scoring
+            </div>
+            <div class="integration-item">
+              <strong>Compliance Systems</strong>
+              <br />
+              AML/KYC automation with regulatory reporting
+            </div>
+            <div class="integration-item">
+              <strong>Accounting Software</strong>
+              <br />
+              QuickBooks, SAP integration for financial reconciliation
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations Department -->
+      <div id="operations" class="department-section">
+        <h2>⚙️ Operations Department</h2>
+        <p>P2P queue management, transaction processing optimization, and operational workflow automation</p>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🎯</span>
+              <span>P2P Transaction Matching</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Queue Entry</div>
+                  <div class="step-description">Transaction enters P2P matching queue</div>
+                  <div class="step-code">
+                    <pre><code>// P2P queue entry processing
+function addToP2PQueue(transaction, priority, matchingCriteria) {
+    const queueEntry = {
+        transactionId: transaction.id,
+        type: transaction.type,
+        amount: transaction.amount,
+        currency: transaction.currency,
+        paymentMethod: transaction.method,
+        location: transaction.location,
+        priority: priority,
+        criteria: matchingCriteria,
+        queuedAt: new Date()
+    };
+    
+    // L-keys for P2P queue management
+    const queueKeys = {
+        L_1510: 'p2p_match_found',      // P2P Match Found
+        L_1511: 'process_best_match',   // Process Best Match
+        L_1512: 'view_all_matches',     // View All Matches
+        L_1513: 'wait_for_better'       // Wait for Better
+    };
+    
+    return { 
+        entry: insertIntoMatchingQueue(queueEntry),
+        keys: queueKeys 
+    };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Criteria: Amount ±5%, Currency, Payment Method, Geography, Time Window | L-keys: L-1510, L-1511,
+                    L-1512, L-1513
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Intelligent Matching</div>
+                  <div class="step-description">AI-powered matching algorithm with scoring</div>
+                  <div class="step-code">
+                    <pre><code>// AI-powered matching algorithm
+function findMatches(withdrawal, deposits, scoringAlgorithm) {
+    const potentialMatches = deposits.filter(deposit => {
+        return isEligibleForMatching(withdrawal, deposit);
+    });
+    
+    const scoredMatches = potentialMatches.map(deposit => ({
+        deposit: deposit,
+        score: calculateMatchScore(withdrawal, deposit, scoringAlgorithm),
+        factors: analyzeMatchFactors(withdrawal, deposit)
+    }));
+    
+    return scoredMatches.sort((a, b) => b.score - a.score);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Scoring: Amount (40%), Method (30%), Location (20%), Time (10%)</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Match Notification</div>
+                  <div class="step-description">Real-time multilingual match notifications</div>
+                  <div class="step-code">
+                    <pre><code>// Multilingual match notifications
+function generateP2PMatchNotification(matchData, languages) {
+    const notificationData = {
+        matchId: matchData.id,
+        amount: matchData.amount,
+        currency: matchData.currency,
+        score: matchData.score,
+        timestamp: new Date(),
+        recipients: determineNotificationRecipients(matchData)
+    };
+    
+    return Promise.all(
+        languages.map(lang => 
+            sendLocalizedNotification(notificationData, lang)
+        )
+    );
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Recipients: Operations team, both customers, management dashboard</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Interactive Approval</div>
+                  <div class="step-description">Telegram bot interactive approval system</div>
+                  <div class="step-code">
+                    <pre><code>// Interactive approval system
+function processMatchApproval(matchId, operatorId, decision) {
+    const approval = {
+        matchId: matchId,
+        operatorId: operatorId,
+        decision: decision,
+        timestamp: new Date(),
+        telegramMessageId: getCurrentMessageId()
+    };
+    
+    const actions = {
+        "process_best": () => processBestMatch(matchId),
+        "view_all": () => showAllMatches(matchId),
+        "wait_better": () => deferMatching(matchId),
+        "manual_review": () => escalateToManualReview(matchId)
+    };
+    
+    return actions[decision]();
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Options: ✅ Process Best, 📋 View All, ⏳ Wait Better, ❌ Manual Review
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                  <div class="step-title">Execution & Settlement</div>
+                  <div class="step-description">Atomic transaction execution with rollback capability</div>
+                  <div class="step-code">
+                    <pre><code>// Atomic P2P execution
+function executeP2PMatch(depositor, withdrawer, amount, escrow) {
+    const execution = {
+        matchId: generateMatchId(),
+        depositor: depositor,
+        withdrawer: withdrawer,
+        amount: amount,
+        escrow: escrow,
+        status: "executing",
+        startedAt: new Date()
+    };
+    
+    return executeWithRollback(execution, [
+        lockEscrow(escrow),
+        transferFunds(depositor, withdrawer, amount),
+        updateBalances(depositor, withdrawer, amount),
+        sendConfirmations(depositor, withdrawer),
+        releaseEscrow(escrow)
+    ]);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Process: Escrow → Verification → Settlement → Confirmation</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="command-examples">
+              <h4>🎯 P2P Match Examples</h4>
+              <div class="command-example">🇺🇸 "🎯 P2P Match Found - $1000 via Bank Transfer (Score: 95%)"</div>
+              <div class="command-example">🇪🇸 "🎯 Emparejamiento P2P Encontrado - $1000 via Transferencia (95%)"</div>
+              <div class="command-example">🇵🇹 "🎯 Correspondência P2P - $1000 via Transferência Bancária (95%)"</div>
+              <div class="command-example">🇫🇷 "🎯 Correspondance P2P Trouvée - $1000 via Virement (95%)"</div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>📋</span>
+              <span>Queue Management</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Queue Monitoring</div>
+                  <div class="step-description">Real-time queue health monitoring</div>
+                  <div class="step-code">
+                    <pre><code>// Queue health monitoring system
+function monitorQueueHealth(waitTimes, matchRates, volumes) {
+    const healthMetrics = {
+        averageWaitTime: calculateAverageWaitTime(waitTimes),
+        matchRate: calculateMatchRate(matchRates),
+        queueDepth: getCurrentQueueDepth(),
+        successRate: calculateSuccessRate(volumes),
+        timestamp: new Date()
+    };
+    
+    return analyzeQueueHealth(healthMetrics);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Metrics: Wait time, Match rate, Queue depth, Success rate</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Optimization Algorithms</div>
+                  <div class="step-description">Dynamic queue optimization and rebalancing</div>
+                  <div class="step-code">
+                    <pre><code>// AI-powered queue optimization
+function optimizeQueue(currentState, historicalData, predictions) {
+    const optimization = {
+        currentState: currentState,
+        historicalPatterns: analyzeHistoricalData(historicalData),
+        predictions: generatePredictions(predictions),
+        recommendations: generateOptimizationRecommendations(),
+        actions: determineOptimizationActions()
+    };
+    
+    return executeQueueOptimization(optimization);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 AI-powered: Load balancing, priority adjustment, batch processing</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Performance Alerts</div>
+                  <div class="step-description">Automated alerts for queue performance issues</div>
+                  <div class="step-code">
+                    <pre><code>// Performance alert system
+function sendQueueAlert(alertType, severity, affectedRegions) {
+    const alert = {
+        type: alertType,
+        severity: severity,
+        regions: affectedRegions,
+        timestamp: new Date(),
+        message: generateAlertMessage(alertType, severity),
+        recipients: determineAlertRecipients(severity)
+    };
+    
+    return distributeAlert(alert);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Alerts: High wait times, low match rates, system bottlenecks</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">2.3min</div>
+                <div>Avg Wait Time</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">87%</div>
+                <div>Match Rate</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">342</div>
+                <div>Queue Depth</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">99.1%</div>
+                <div>Success Rate</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🔄</span>
+              <span>Process Automation</span>
+            </div>
+
+            <div class="integration-points">
+              <h4>Automated Operations Workflows</h4>
+              <div class="integration-list">
+                <div class="integration-item">
+                  <strong>Smart Routing</strong>
+                  <br />
+                  Automatic routing based on amount, region, and historical success rates
+                </div>
+                <div class="integration-item">
+                  <strong>Batch Processing</strong>
+                  <br />
+                  Bulk transaction processing during optimal times for cost efficiency
+                </div>
+                <div class="integration-item">
+                  <strong>Load Balancing</strong>
+                  <br />
+                  Dynamic workload distribution across processing nodes and regions
+                </div>
+                <div class="integration-item">
+                  <strong>Failover Systems</strong>
+                  <br />
+                  Automatic failover to backup systems with zero downtime
+                </div>
+                <div class="integration-item">
+                  <strong>Health Monitoring</strong>
+                  <br />
+                  Continuous system health monitoring with predictive alerting
+                </div>
+                <div class="integration-item">
+                  <strong>Performance Optimization</strong>
+                  <br />
+                  ML-powered performance optimization based on historical patterns
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="permissions-table">
+          <h3>⚙️ Operations Department Access Levels</h3>
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Queue Management</th>
+                <th>Telegram Commands</th>
+                <th>System Controls</th>
+                <th>Emergency Powers</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="access-level access-admin">Ops Director</span></td>
+                <td>Full queue control, emergency stop</td>
+                <td>All ops commands, /emergency_stop, /system_override</td>
+                <td>System configuration, performance tuning</td>
+                <td>Emergency shutdown, system rollback</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-manager">Queue Manager</span></td>
+                <td>Queue rebalancing, priority adjustment</td>
+                <td>/rebalance_queue, /priority_boost, /manual_match</td>
+                <td>Queue parameters, matching algorithms</td>
+                <td>Queue emergency procedures</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Ops Specialist</span></td>
+                <td>Match processing, manual intervention</td>
+                <td>/process_match, /manual_review, /escalate_issue</td>
+                <td>Transaction processing, quality control</td>
+                <td>Escalation to management</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Ops Analyst</span></td>
+                <td>Monitoring, reporting</td>
+                <td>/queue_status, /performance_report, /alert_summary</td>
+                <td>Read-only access, reporting tools</td>
+                <td>Alert escalation procedures</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="notification-flow">
+          <h3>🔔 Operations Notifications</h3>
+          <div class="notification-types">
+            <div class="notification-type">
+              <strong>L-1510</strong>
+              <br />
+              P2P Match Found
+              <br />
+              <em>Real-time match alerts</em>
+            </div>
+            <div class="notification-type">
+              <strong>L-1511</strong>
+              <br />
+              Process Best Match
+              <br />
+              <em>One-click processing</em>
+            </div>
+            <div class="notification-type">
+              <strong>L-1512</strong>
+              <br />
+              View All Matches
+              <br />
+              <em>Detailed match analysis</em>
+            </div>
+            <div class="notification-type">
+              <strong>L-1513</strong>
+              <br />
+              Wait for Better
+              <br />
+              <em>Queue optimization</em>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compliance Department -->
+      <div id="compliance" class="department-section">
+        <h2>🛡️ Compliance Department</h2>
+        <p>KYC/AML processes, risk management, regulatory compliance, and audit trail maintenance</p>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🔍</span>
+              <span>KYC Verification Process</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Document Collection</div>
+                  <div class="step-description">Automated document request via Telegram</div>
+                  <div class="step-code">
+                    <pre><code>// KYC document collection
+function requestKYCDocuments(userId, requiredDocs, language) {
+    const documentRequest = {
+        userId: userId,
+        requiredDocuments: requiredDocs,
+        language: language,
+        requestedAt: new Date(),
+        status: "pending",
+        telegramMessageId: getCurrentMessageId()
+    };
+    
+    // L-keys for KYC verification
+    const kycKeys = {
+        L_1388: 'account_verification', // Account Verification
+        L_1387: 'security_settings',    // Security Settings
+        L_1389: 'risk_management',      // Risk Management
+        L_1391: 'audit_trail'           // Audit Trail
+    };
+    
+    return { 
+        request: sendDocumentRequest(documentRequest),
+        keys: kycKeys 
+    };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Docs: Government ID, Proof of Address, Selfie, Bank Statement | L-keys: L-1388, L-1387, L-1389,
+                    L-1391
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">AI Document Verification</div>
+                  <div class="step-description">Machine learning document authenticity check</div>
+                  <div class="step-code">
+                    <pre><code>// AI-powered document verification
+function verifyDocuments(docs, aiEngine, fraudDetection) {
+    const verification = {
+        documents: docs,
+        aiEngine: aiEngine,
+        fraudDetection: fraudDetection,
+        results: {},
+        timestamp: new Date()
+    };
+    
+    const verificationResults = docs.map(doc => ({
+        documentId: doc.id,
+        ocrValidation: performOCRValidation(doc),
+        faceMatch: performFaceMatching(doc),
+        tamperingCheck: checkDocumentTampering(doc),
+        databaseCrossReference: crossReferenceDatabase(doc)
+    }));
+    
+    return { verification, results: verificationResults };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Checks: OCR validation, Face match, Document tampering, Database cross-reference
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Risk Scoring</div>
+                  <div class="step-description">Comprehensive risk assessment algorithm</div>
+                  <div class="step-code">
+                    <pre><code>// Risk assessment engine
+function calculateRiskScore(profile, geography, behavior, history) {
+    const riskFactors = {
+        location: assessGeographicRisk(geography),
+        transactionPatterns: analyzeTransactionPatterns(behavior),
+        sourceOfFunds: validateSourceOfFunds(profile),
+        pepLists: checkPEPLists(profile),
+        sanctions: checkSanctionsLists(profile)
+    };
+    
+    const totalScore = Object.values(riskFactors).reduce((sum, score) => sum + score, 0);
+    
+    return { totalScore, factors: riskFactors, riskLevel: determineRiskLevel(totalScore) };
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Factors: Location, Transaction patterns, Source of funds, PEP lists</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Compliance Decision</div>
+                  <div class="step-description">Automated or manual review based on risk level</div>
+                  <div class="step-code">
+                    <pre><code>// Compliance decision engine
+function makeComplianceDecision(riskScore, autoApprovalThreshold) {
+    const decision = {
+        riskScore: riskScore,
+        threshold: autoApprovalThreshold,
+        timestamp: new Date(),
+        decision: null,
+        reason: null
+    };
+    
+    if (riskScore <= autoApprovalThreshold) {
+        decision.decision = "auto_approve";
+        decision.reason = "Risk score below threshold";
+    } else if (riskScore <= autoApprovalThreshold * 1.5) {
+        decision.decision = "manual_review";
+        decision.reason = "Risk score requires human review";
+    } else {
+        decision.decision = "reject";
+        decision.reason = "Risk score too high for approval";
+    }
+    
+    return decision;
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Outcomes: Auto-approve, Manual review, Additional docs, Rejection</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                  <div class="step-title">Status Notification</div>
+                  <div class="step-description">Multilingual status update to customer</div>
+                  <div class="step-code">
+                    <pre><code>// KYC status notification
+function sendKYCStatusUpdate(userId, status, nextSteps, language) {
+    const statusUpdate = {
+        userId: userId,
+        status: status,
+        nextSteps: nextSteps,
+        language: language,
+        timestamp: new Date(),
+        notificationId: generateNotificationId()
+    };
+    
+    const templates = {
+        verified: getVerificationTemplate(language),
+        pending: getPendingTemplate(language),
+        rejected: getRejectionTemplate(language),
+        additional_info: getAdditionalInfoTemplate(language)
+    };
+    
+    return sendLocalizedNotification(statusUpdate, templates[status]);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Statuses: Verified, Pending, Rejected, Additional Info Required</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="command-examples">
+              <h4>🔍 KYC Status Examples</h4>
+              <div class="command-example">🇺🇸 "✅ Account Verified - Welcome to Fire22!"</div>
+              <div class="command-example">🇪🇸 "✅ Cuenta Verificada - ¡Bienvenido a Fire22!"</div>
+              <div class="command-example">🇵🇹 "✅ Conta Verificada - Bem-vindo ao Fire22!"</div>
+              <div class="command-example">🇫🇷 "✅ Compte Vérifié - Bienvenue sur Fire22!"</div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>⚠️</span>
+              <span>AML Monitoring</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Real-time Transaction Monitoring</div>
+                  <div class="step-description">Continuous monitoring of all transactions</div>
+                  <div class="step-code">
+                    <pre><code>// Real-time transaction monitoring
+function monitorTransaction(tx, patterns, thresholds, blacklists) {
+    const monitoring = {
+        transaction: tx,
+        patterns: patterns,
+        thresholds: thresholds,
+        blacklists: blacklists,
+        timestamp: new Date(),
+        alerts: []
+    };
+    
+    const triggers = [
+        checkLargeAmounts(tx, thresholds),
+        checkUnusualPatterns(tx, patterns),
+        checkHighRiskCountries(tx, blacklists),
+        checkVelocityLimits(tx, patterns)
+    ];
+    
+    return { monitoring, triggers, hasAlerts: triggers.some(t => t.triggered) };
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Triggers: Large amounts, Unusual patterns, High-risk countries</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Suspicious Activity Detection</div>
+                  <div class="step-description">ML-powered pattern recognition</div>
+                  <div class="step-code">
+                    <pre><code>// ML-powered suspicious activity detection
+function detectSuspiciousActivity(userBehavior, networkAnalysis) {
+    const detection = {
+        userBehavior: userBehavior,
+        networkAnalysis: networkAnalysis,
+        timestamp: new Date(),
+        patterns: []
+    };
+    
+    const suspiciousPatterns = [
+        detectStructuring(userBehavior),
+        detectRapidTransfers(userBehavior),
+        detectMultipleAccounts(networkAnalysis),
+        detectUnusualTiming(userBehavior)
+    ];
+    
+    return { detection, patterns: suspiciousPatterns, riskLevel: calculateRiskLevel(suspiciousPatterns) };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Patterns: Structuring, Rapid transfers, Multiple accounts, Unusual timing
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Investigation Workflow</div>
+                  <div class="step-description">Automated investigation with analyst assignment</div>
+                  <div class="step-code">
+                    <pre><code>// Automated investigation workflow
+function initiateInvestigation(case, priority, analyst, timeline) {
+    const investigation = {
+        caseId: generateCaseId(),
+        priority: priority,
+        assignedAnalyst: analyst,
+        timeline: timeline,
+        status: "active",
+        startedAt: new Date(),
+        tasks: generateInvestigationTasks(case)
+    };
+    
+    return Promise.all([
+        assignAnalyst(investigation),
+        createInvestigationCase(investigation),
+        sendInvestigationNotification(investigation)
+    ]);
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Investigation: Document review, Enhanced due diligence, Source of funds
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">SAR Filing</div>
+                  <div class="step-description">Suspicious Activity Report generation and filing</div>
+                  <div class="step-code">
+                    <pre><code>// SAR generation and filing
+function generateSAR(findings, evidence, regulatoryRequirements) {
+    const sar = {
+        sarId: generateSARId(),
+        findings: findings,
+        evidence: evidence,
+        regulatoryRequirements: regulatoryRequirements,
+        generatedAt: new Date(),
+        status: "draft"
+    };
+    
+    const sarDocument = {
+        header: generateSARHeader(sar),
+        narrative: generateSARNarrative(findings),
+        evidence: compileEvidence(evidence),
+        regulatory: validateRegulatoryCompliance(regulatoryRequirements)
+    };
+    
+    return finalizeAndFileSAR(sar, sarDocument);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Regulatory: FinCEN filing, Evidence package, Timeline documentation</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="escalation-path">
+              <h4>AML Alert Escalation</h4>
+              <div class="escalation-levels">
+                <div class="escalation-level">System Alert</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">Analyst Review</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">Senior Analyst</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">Compliance Officer</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">Regulatory Filing</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>📋</span>
+              <span>Regulatory Reporting</span>
+            </div>
+
+            <div class="notification-flow">
+              <h4>Automated Compliance Reports</h4>
+              <div class="notification-types">
+                <div class="notification-type">
+                  <strong>Daily CTR</strong>
+                  <br />
+                  Currency Transaction Reports
+                  <br />
+                  <em>>$10K transactions</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Weekly SAR</strong>
+                  <br />
+                  Suspicious Activity Reports
+                  <br />
+                  <em>Regulatory submissions</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Monthly Audit</strong>
+                  <br />
+                  Compliance Audit Trail
+                  <br />
+                  <em>Internal review reports</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Quarterly Review</strong>
+                  <br />
+                  Risk Assessment Updates
+                  <br />
+                  <em>Board reporting</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">99.8%</div>
+                <div>KYC Pass Rate</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">0.03%</div>
+                <div>SAR Rate</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">24h</div>
+                <div>Review SLA</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">100%</div>
+                <div>Regulatory Compliance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="permissions-table">
+          <h3>🛡️ Compliance Department Access Levels</h3>
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Investigation Authority</th>
+                <th>Telegram Commands</th>
+                <th>Regulatory Powers</th>
+                <th>Account Controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="access-level access-admin">Chief Compliance Officer</span></td>
+                <td>Full investigation authority</td>
+                <td>All compliance commands, /regulatory_override</td>
+                <td>SAR filing, regulatory communication</td>
+                <td>Account freeze, closure, seizure</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-manager">Senior Compliance Analyst</span></td>
+                <td>Complex case investigation</td>
+                <td>/investigate, /escalate_sar, /risk_assessment</td>
+                <td>SAR recommendations, enhanced due diligence</td>
+                <td>Temporary holds, escalation requests</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Compliance Analyst</span></td>
+                <td>Standard case review</td>
+                <td>/review_case, /request_docs, /risk_score</td>
+                <td>Investigation reports, documentation</td>
+                <td>Transaction holds, document requests</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">KYC Specialist</span></td>
+                <td>Document verification</td>
+                <td>/verify_docs, /approve_kyc, /request_additional</td>
+                <td>KYC approvals, document review</td>
+                <td>Account verification status changes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Management Department -->
+      <div id="management" class="department-section">
+        <h2>📈 Management Department</h2>
+        <p>Executive dashboards, performance analytics, strategic reporting, and business intelligence</p>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>📊</span>
+              <span>Executive Dashboard</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Real-time KPI Collection</div>
+                  <div class="step-description">Automated collection of key performance indicators</div>
+                  <div class="step-code">
+                    <pre><code>// Real-time KPI collection system
+function collectKPIs(timeframe, departments, metrics, granularity) {
+    const kpiCollection = {
+        timeframe: timeframe,
+        departments: departments,
+        metrics: metrics,
+        granularity: granularity,
+        timestamp: new Date(),
+        data: {}
+    };
+    
+    const kpiData = {
+        revenue: collectRevenueMetrics(timeframe, granularity),
+        volume: collectVolumeMetrics(timeframe, granularity),
+        customerGrowth: collectCustomerMetrics(timeframe, granularity),
+        operationalEfficiency: collectOperationalMetrics(timeframe, granularity),
+        compliance: collectComplianceMetrics(timeframe, granularity)
+    };
+    
+    // L-keys for KPI collection
+    const kpiKeys = {
+        L_849: 'report_settings',    // Report Settings
+        L_1351: 'dashboard_view',    // Dashboard
+        L_407: 'settings_config',    // Settings
+        L_449: 'date_today',         // Today
+        L_451: 'time'                // Time
+    };
+    
+    return { kpiCollection, kpiData, keys: kpiKeys };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 KPIs: Revenue, Volume, Customer Growth, Operational Efficiency, Compliance | L-keys: L-849,
+                    L-1351, L-407, L-449, L-451
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Data Aggregation & Analysis</div>
+                  <div class="step-description">Multi-dimensional data analysis with trend detection</div>
+                  <div class="step-code">
+                    <pre><code>// Multi-dimensional data analysis
+function analyzePerformance(data, benchmarks, trends, forecasts) {
+    const analysis = {
+        data: data,
+        benchmarks: benchmarks,
+        trends: trends,
+        forecasts: forecasts,
+        timestamp: new Date(),
+        results: {}
+    };
+    
+    const analysisResults = {
+        yearOverYear: calculateYearOverYearGrowth(data),
+        seasonalPatterns: identifySeasonalPatterns(data),
+        departmentalPerformance: analyzeDepartmentalPerformance(data),
+        riskIndicators: calculateRiskIndicators(data),
+        trendAnalysis: performTrendAnalysis(trends)
+    };
+    
+    return { analysis, results: analysisResults };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Analysis: YoY growth, seasonal patterns, departmental performance, risk indicators
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Executive Alerts</div>
+                  <div class="step-description">Intelligent alerting for significant events</div>
+                  <div class="step-code">
+                    <pre><code>// Intelligent executive alerting
+function generateExecutiveAlerts(thresholds, anomalies, opportunities) {
+    const alerting = {
+        thresholds: thresholds,
+        anomalies: anomalies,
+        opportunities: opportunities,
+        timestamp: new Date(),
+        alerts: []
+    };
+    
+    const executiveAlerts = [
+        checkRevenueTargets(thresholds),
+        identifyOperationalIssues(anomalies),
+        flagComplianceConcerns(anomalies),
+        highlightMarketOpportunities(opportunities)
+    ];
+    
+    return { alerting, alerts: executiveAlerts.filter(alert => alert.triggered) };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Alerts: Revenue targets, operational issues, compliance concerns, market opportunities
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Automated Reporting</div>
+                  <div class="step-description">Multi-format report generation and distribution</div>
+                  <div class="step-code">
+                    <pre><code>// Multi-format report generation
+function generateReports(templates, recipients, delivery, languages) {
+    const reporting = {
+        templates: templates,
+        recipients: recipients,
+        delivery: delivery,
+        languages: languages,
+        timestamp: new Date(),
+        reports: {}
+    };
+    
+    const reportFormats = {
+        telegram: generateTelegramSummary(templates, languages),
+        pdf: generatePDFReport(templates, languages),
+        excel: generateExcelDashboard(templates),
+        powerbi: integrateWithPowerBI(templates)
+    };
+    
+    return distributeReports(reportFormats, recipients, delivery);
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Formats: Telegram summaries, PDF reports, Excel dashboards, PowerBI integration
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">$12.5M</div>
+                <div>Monthly Revenue</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">45,678</div>
+                <div>Active Customers</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">98.7%</div>
+                <div>System Uptime</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">4.8/5</div>
+                <div>Customer Satisfaction</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>📈</span>
+              <span>Performance Analytics</span>
+            </div>
+
+            <div class="notification-flow">
+              <h4>Management Dashboards by Role</h4>
+              <div class="notification-types">
+                <div class="notification-type">
+                  <strong>CEO Dashboard</strong>
+                  <br />
+                  Strategic KPIs
+                  <br />
+                  <em>High-level business metrics</em>
+                </div>
+                <div class="notification-type">
+                  <strong>CFO Dashboard</strong>
+                  <br />
+                  Financial Performance
+                  <br />
+                  <em>Revenue, costs, profitability</em>
+                </div>
+                <div class="notification-type">
+                  <strong>COO Dashboard</strong>
+                  <br />
+                  Operational Metrics
+                  <br />
+                  <em>Efficiency, capacity, quality</em>
+                </div>
+                <div class="notification-type">
+                  <strong>CRO Dashboard</strong>
+                  <br />
+                  Risk & Compliance
+                  <br />
+                  <em>Risk exposure, compliance status</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="command-examples">
+              <h4>📈 Executive Summary Examples</h4>
+              <div class="command-example">📊 Daily Summary: Revenue +15% | Volume +22% | Customer Growth +8%</div>
+              <div class="command-example">⚠️ Alert: Transaction processing delays detected in LATAM region</div>
+              <div class="command-example">🎯 Goal Update: Q4 revenue target 87% complete (ahead of schedule)</div>
+              <div class="command-example">🏆 Achievement: Customer satisfaction reached all-time high of 4.8/5</div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🎯</span>
+              <span>Strategic Planning</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Market Intelligence</div>
+                  <div class="step-description">Competitive analysis and market trend monitoring</div>
+                  <div class="step-code">
+                    <pre><code>// Market intelligence gathering
+function gatherMarketIntelligence(competitors, trends, opportunities) {
+    const intelligence = {
+        competitors: competitors,
+        trends: trends,
+        opportunities: opportunities,
+        timestamp: new Date(),
+        data: {}
+    };
+    
+    const marketData = {
+        industryReports: collectIndustryReports(),
+        competitorAnalysis: analyzeCompetitors(competitors),
+        customerFeedback: aggregateCustomerFeedback(),
+        regulatoryChanges: monitorRegulatoryChanges()
+    };
+    
+    return { intelligence, marketData };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Sources: Industry reports, competitor analysis, customer feedback, regulatory changes
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Predictive Analytics</div>
+                  <div class="step-description">Machine learning-powered business forecasting</div>
+                  <div class="step-code">
+                    <pre><code>// ML-powered business forecasting
+function generateForecasts(historical, market, scenarios, confidence) {
+    const forecasting = {
+        historical: historical,
+        market: market,
+        scenarios: scenarios,
+        confidence: confidence,
+        timestamp: new Date(),
+        forecasts: {}
+    };
+    
+    const businessForecasts = {
+        revenue: forecastRevenue(historical, market, scenarios),
+        customerAcquisition: forecastCustomerGrowth(historical, market),
+        marketExpansion: forecastMarketExpansion(market, scenarios),
+        riskScenarios: forecastRiskScenarios(historical, scenarios)
+    };
+    
+    return { forecasting, forecasts: businessForecasts };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Forecasts: Revenue, customer acquisition, market expansion, risk scenarios
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Strategic Recommendations</div>
+                  <div class="step-description">AI-powered strategic recommendations</div>
+                  <div class="step-code">
+                    <pre><code>// AI-powered strategic recommendations
+function generateRecommendations(data, goals, constraints, priorities) {
+    const recommendations = {
+        data: data,
+        goals: goals,
+        constraints: constraints,
+        priorities: priorities,
+        timestamp: new Date(),
+        suggestions: {}
+    };
+    
+    const strategicAreas = {
+        marketExpansion: recommendMarketExpansion(data, goals),
+        productDevelopment: recommendProductDevelopment(data, goals),
+        operationalOptimization: recommendOperationalOptimization(data, constraints),
+        riskManagement: recommendRiskManagement(data, priorities)
+    };
+    
+    return { recommendations, strategicAreas };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Areas: Market expansion, product development, operational optimization, risk management
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="permissions-table">
+          <h3>📈 Management Department Access Levels</h3>
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Data Access Level</th>
+                <th>Telegram Commands</th>
+                <th>Reporting Authority</th>
+                <th>Strategic Controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="access-level access-admin">C-Suite</span></td>
+                <td>All company data, competitive intelligence</td>
+                <td>All commands, /strategic_override, /board_report</td>
+                <td>Board reports, regulatory filings</td>
+                <td>Strategic decisions, budget approval</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-manager">VP Level</span></td>
+                <td>Departmental + cross-functional data</td>
+                <td>/dept_summary, /performance_analysis, /forecast</td>
+                <td>Executive reports, department KPIs</td>
+                <td>Departmental strategy, resource allocation</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Director</span></td>
+                <td>Departmental data + limited cross-functional</td>
+                <td>/team_performance, /budget_status, /goals_update</td>
+                <td>Department reports, team performance</td>
+                <td>Team goals, tactical decisions</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Manager</span></td>
+                <td>Team data, operational metrics</td>
+                <td>/team_stats, /daily_summary, /issue_escalation</td>
+                <td>Team reports, operational summaries</td>
+                <td>Team management, process improvement</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Technical Department -->
+      <div id="technical" class="department-section">
+        <h2>🔧 Technical Department</h2>
+        <p>System administration, infrastructure monitoring, development operations, and technical support</p>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🖥️</span>
+              <span>System Monitoring</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Infrastructure Monitoring</div>
+                  <div class="step-description">Real-time monitoring of all system components</div>
+                  <div class="step-code">
+                    <pre><code>// Infrastructure monitoring system
+function monitorInfrastructure(servers, databases, networks, applications) {
+    const monitoring = {
+        servers: servers,
+        databases: databases,
+        networks: networks,
+        applications: applications,
+        timestamp: new Date(),
+        metrics: {}
+    };
+    
+    const systemMetrics = {
+        cpu: collectCPUMetrics(servers),
+        memory: collectMemoryMetrics(servers),
+        disk: collectDiskMetrics(servers),
+        network: collectNetworkMetrics(networks),
+        responseTime: collectResponseTimeMetrics(applications),
+        errorRates: collectErrorRateMetrics(applications)
+    };
+    
+    // L-keys for system monitoring
+    const monitoringKeys = {
+        L_407: 'settings_config',    // Settings
+        L_887: 'status',             // Status
+        L_881: 'active',             // Active
+        L_882: 'inactive',           // Inactive
+        L_883: 'pending'             // Pending
+    };
+    
+    return { monitoring, metrics: systemMetrics, keys: monitoringKeys };
+}</code></pre>
+                  </div>
+                  <div class="step-data">
+                    📊 Metrics: CPU, Memory, Disk, Network, Response Time, Error Rates | L-keys: L-407, L-887, L-881,
+                    L-882, L-883
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Automated Alerting</div>
+                  <div class="step-description">Intelligent alerting with escalation paths</div>
+                  <div class="step-code">
+                    <pre><code>// Intelligent system alerting
+function generateSystemAlerts(thresholds, severity, escalation) {
+    const alerting = {
+        thresholds: thresholds,
+        severity: severity,
+        escalation: escalation,
+        timestamp: new Date(),
+        alerts: []
+    };
+    
+    const systemAlerts = [
+        detectPerformanceDegradation(thresholds),
+        detectSystemFailures(thresholds),
+        detectSecurityIncidents(thresholds)
+    ];
+    
+    return { alerting, alerts: systemAlerts, escalationPath: determineEscalationPath(severity) };
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Alerts: Performance degradation, system failures, security incidents</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Self-healing Systems</div>
+                  <div class="step-description">Automated remediation and recovery</div>
+                  <div class="step-code">
+                    <pre><code>// Automated system remediation
+function autoRemediate(issue, procedures, failsafes) {
+    const remediation = {
+        issue: issue,
+        procedures: procedures,
+        failsafes: failsafes,
+        timestamp: new Date(),
+        actions: []
+    };
+    
+    const remediationActions = [
+        restartService(issue.service),
+        rebalanceLoad(issue.loadBalancer),
+        activateFailover(issue.failover),
+        scaleResources(issue.scaling)
+    ];
+    
+    return executeRemediation(remediationActions, failsafes);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Actions: Service restart, load balancing, failover, scaling</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <div class="step-title">Incident Management</div>
+                  <div class="step-description">Automated incident creation and tracking</div>
+                  <div class="step-code">
+                    <pre><code>// Automated incident management
+function createIncident(severity, impact, assignee, timeline) {
+    const incident = {
+        incidentId: generateIncidentId(),
+        severity: severity,
+        impact: impact,
+        assignee: assignee,
+        timeline: timeline,
+        status: "open",
+        createdAt: new Date(),
+        workflow: generateIncidentWorkflow(severity)
+    };
+    
+    const incidentWorkflow = {
+        detection: logDetection(incident),
+        triage: performTriage(incident),
+        assignment: assignIncident(incident, assignee),
+        resolution: trackResolution(incident),
+        postMortem: schedulePostMortem(incident)
+    };
+    
+    return { incident, workflow: incidentWorkflow };
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Process: Detection → Triage → Assignment → Resolution → Post-mortem</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">99.9%</div>
+                <div>System Uptime</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">120ms</div>
+                <div>Avg Response Time</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">0.01%</div>
+                <div>Error Rate</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">2.3min</div>
+                <div>MTTR</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🚀</span>
+              <span>DevOps Pipeline</span>
+            </div>
+
+            <div class="command-flow">
+              <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <div class="step-title">Continuous Integration</div>
+                  <div class="step-description">Automated code integration and testing</div>
+                  <div class="step-code">
+                    <pre><code>// CI pipeline execution
+function runCIPipeline(codeChanges, tests, qualityGates) {
+    const pipeline = {
+        codeChanges: codeChanges,
+        tests: tests,
+        qualityGates: qualityGates,
+        timestamp: new Date(),
+        status: "running"
+    };
+    
+    const pipelineStages = [
+        { stage: "code_commit", action: processCodeCommit(codeChanges) },
+        { stage: "build", action: executeBuild(codeChanges) },
+        { stage: "test", action: runTestSuite(tests) },
+        { stage: "quality_gates", action: validateQualityGates(qualityGates) },
+        { stage: "integration", action: performIntegration(codeChanges) }
+    ];
+    
+    return executePipelineStages(pipelineStages);
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Process: Code commit → Build → Test → Quality gates → Integration</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <div class="step-title">Deployment Automation</div>
+                  <div class="step-description">Zero-downtime deployment with rollback</div>
+                  <div class="step-code">
+                    <pre><code>// Automated deployment system
+function deployApplication(environment, strategy, rollbackPlan) {
+    const deployment = {
+        environment: environment,
+        strategy: strategy,
+        rollbackPlan: rollbackPlan,
+        timestamp: new Date(),
+        status: "deploying"
+    };
+    
+    const deploymentStrategies = {
+        "blue-green": executeBlueGreenDeployment(deployment),
+        "canary": executeCanaryDeployment(deployment),
+        "rolling": executeRollingDeployment(deployment)
+    };
+    
+    return deploymentStrategies[strategy] || deploymentStrategies["rolling"];
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Strategies: Blue-green, Canary, Rolling deployment</div>
+                </div>
+              </div>
+
+              <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="step-title">Release Notifications</div>
+                  <div class="step-description">Automated notifications to stakeholders</div>
+                  <div class="step-code">
+                    <pre><code>// Deployment notification system
+function notifyDeployment(status, changes, stakeholders, telegram) {
+    const notification = {
+        status: status,
+        changes: changes,
+        stakeholders: stakeholders,
+        telegram: telegram,
+        timestamp: new Date(),
+        notificationId: generateNotificationId()
+    };
+    
+    const notificationRecipients = {
+        developmentTeam: notifyDevelopmentTeam(notification),
+        operations: notifyOperations(notification),
+        management: notifyManagement(notification),
+        customerSuccess: notifyCustomerSuccess(notification)
+    };
+    
+    return Promise.all(Object.values(notificationRecipients));
+}</code></pre>
+                  </div>
+                  <div class="step-data">📊 Recipients: Development team, Operations, Management, Customer Success</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="workflow-title">
+              <span>🔒</span>
+              <span>Security Operations</span>
+            </div>
+
+            <div class="notification-flow">
+              <h4>Security Monitoring & Response</h4>
+              <div class="notification-types">
+                <div class="notification-type">
+                  <strong>Intrusion Detection</strong>
+                  <br />
+                  Real-time threat monitoring
+                  <br />
+                  <em>24/7 automated scanning</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Vulnerability Assessment</strong>
+                  <br />
+                  Regular security scans
+                  <br />
+                  <em>Automated patch management</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Access Control</strong>
+                  <br />
+                  Identity & access management
+                  <br />
+                  <em>Multi-factor authentication</em>
+                </div>
+                <div class="notification-type">
+                  <strong>Incident Response</strong>
+                  <br />
+                  Security incident handling
+                  <br />
+                  <em>Automated containment</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="escalation-path">
+              <h4>Security Incident Escalation</h4>
+              <div class="escalation-levels">
+                <div class="escalation-level">Automated Detection</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">SOC Analyst</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">Security Engineer</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">CISO</div>
+                <div class="arrow">➡️</div>
+                <div class="escalation-level">Executive Team</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="permissions-table">
+          <h3>🔧 Technical Department Access Levels</h3>
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>System Access</th>
+                <th>Telegram Commands</th>
+                <th>Emergency Powers</th>
+                <th>Deployment Rights</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="access-level access-admin">CTO</span></td>
+                <td>Full system access, architecture decisions</td>
+                <td>All tech commands, /system_override, /emergency_maintenance</td>
+                <td>Complete system control, emergency procedures</td>
+                <td>Production deployment approval</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-manager">Senior DevOps Engineer</span></td>
+                <td>Infrastructure management, deployment pipelines</td>
+                <td>/deploy, /rollback, /scaling, /monitoring_config</td>
+                <td>Service restart, emergency scaling</td>
+                <td>Staging and production deployments</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">DevOps Engineer</span></td>
+                <td>Application deployment, monitoring configuration</td>
+                <td>/deploy_staging, /monitor_status, /log_analysis</td>
+                <td>Non-critical service management</td>
+                <td>Development and staging only</td>
+              </tr>
+              <tr>
+                <td><span class="access-level access-user">Developer</span></td>
+                <td>Development environment, code repositories</td>
+                <td>/build_status, /test_results, /code_quality</td>
+                <td>Development environment control</td>
+                <td>Development environment only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="integration-points">
+          <h3>🔗 Technical System Integrations</h3>
+          <div class="integration-list">
+            <div class="integration-item">
+              <strong>Monitoring Stack</strong>
+              <br />
+              Prometheus, Grafana, ELK Stack for comprehensive system monitoring
+            </div>
+            <div class="integration-item">
+              <strong>CI/CD Pipeline</strong>
+              <br />
+              GitLab CI, Jenkins, Docker, Kubernetes for automated deployment
+            </div>
+            <div class="integration-item">
+              <strong>Cloud Infrastructure</strong>
+              <br />
+              AWS, Azure, Google Cloud with auto-scaling and load balancing
+            </div>
+            <div class="integration-item">
+              <strong>Security Tools</strong>
+              <br />
+              SIEM, vulnerability scanners, intrusion detection systems
+            </div>
+            <div class="integration-item">
+              <strong>Communication Tools</strong>
+              <br />
+              Slack, Telegram, PagerDuty for alert management and team collaboration
+            </div>
+            <div class="integration-item">
+              <strong>Database Management</strong>
+              <br />
+              Database clustering, backup automation, performance optimization
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer
+        style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(0, 0, 0, 0.3); border-radius: 15px"
+      >
+        <h3 style="color: #fdbb2d; margin-bottom: 15px">🏢📊 Fire22 Telegram Bot - Departmental Organization</h3>
+        <p style="opacity: 0.8">Complete departmental workflow automation with multilingual support</p>
+        <p style="opacity: 0.6; margin-top: 15px">&copy; 2024 Fire22 Development Team</p>
+      </footer>
+    </div>
+
+    <script>
+      function showDepartment(deptId) {
+        // Hide all department sections
+        document.querySelectorAll('.department-section').forEach(section => {
+          section.classList.remove('active');
+        });
+
+        // Remove active class from all tabs
+        document.querySelectorAll('.dept-tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+
+        // Show selected department
+        document.getElementById(deptId).classList.add('active');
+
+        // Add active class to clicked tab
+        event.target.closest('.dept-tab').classList.add('active');
+      }
+
+      // Add smooth animations on page load
+      document.addEventListener('DOMContentLoaded', function () {
+        const sections = document.querySelectorAll('.workflow-card');
+        sections.forEach((section, index) => {
+          section.style.opacity = '0';
+          section.style.transform = 'translateY(20px)';
+          section.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+
+          setTimeout(() => {
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+          }, 200);
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+{
+  "name": "@fire22/telegram-bot",
+  "version": "1.0.0",
+  "description": "Fire22 Telegram Bot with Grammy framework integration",
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-telegram-bot"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "fire22",
+    "grammy",
+    "multilingual",
+    "p2p"
+  ],
+  "engines": {
+    "bun": ">=1.2.21"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "bin": {
+    "fire22-telegram-bot": "./dist/telegram-bot.js",
+    "fire22-bot": "./dist/telegram-bot.js",
+    "telegram-bot": "./dist/telegram-bot.js"
+  },
+  "sideEffects": [
+    "./src/**/*.css",
+    "./src/telegram-constants.ts",
+    "./src/telegram-env.ts",
+    "**/*.d.ts"
+  ],
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "start": "bun run src/telegram-bot.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm",
+    "build:bin": "bun build src/telegram-bot.ts --outdir dist --target bun --format esm --compile --outfile telegram-bot.js",
+    "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
+    "build:all": "bun run build && bun run build:bin",
+    "test": "bun test",
+    "test:integration": "bun test tests/integration/",
+    "benchmark": "bun run tests/benchmarks/bot-performance.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "grammy": "^1.21.1",
+    "@fire22/api-client": "3.0.9",
+    "@fire22/multilingual": "workspace:*",
+    "@fire22/queue-system": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "fire22": {
+    "workspace": "telegram-bot",
+    "isolation": {
+      "standalone": true,
+      "linked": true
+    },
+    "include": [
+      "src/telegram-bot.ts",
+      "src/telegram-constants.ts",
+      "src/telegram-env.ts"
+    ]
+  }
+}

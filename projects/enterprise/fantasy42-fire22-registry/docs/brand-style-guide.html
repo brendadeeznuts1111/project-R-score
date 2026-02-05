@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎨 Fire22 Brand Style Guide - Version 2.1.0</title>
+    <meta name="description" content="Comprehensive brand style guide for Fire22 enterprise platform" />
+    <meta name="keywords" content="brand, style guide, Fire22, branding, design system, guidelines" />
+
+    <!-- Brand Styles -->
+    <link rel="stylesheet" href="../src/styles/branding.css" />
+    <style>
+      body {
+        font-family: var(--font-primary);
+        line-height: var(--leading-relaxed);
+        color: var(--text-primary);
+        background: var(--bg-primary);
+      }
+
+      .brand-guide {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--space-8);
+      }
+
+      .guide-section {
+        background: var(--bg-tertiary);
+        border-radius: var(--border-radius-xl);
+        border: var(--border-width) solid var(--border-color);
+        margin-bottom: var(--space-8);
+        overflow: hidden;
+      }
+
+      .section-header {
+        background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+        color: white;
+        padding: var(--space-6);
+      }
+
+      .section-title {
+        font-size: var(--text-3xl);
+        font-weight: var(--font-bold);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .section-content {
+        padding: var(--space-8);
+      }
+
+      .color-palette {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+        margin: var(--space-6) 0;
+      }
+
+      .color-item {
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .color-swatch {
+        height: 120px;
+        position: relative;
+      }
+
+      .color-info {
+        padding: var(--space-4);
+        background: var(--bg-secondary);
+      }
+
+      .color-name {
+        font-weight: var(--font-semibold);
+        margin-bottom: var(--space-1);
+      }
+
+      .color-hex {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        opacity: 0.8;
+      }
+
+      .typography-examples {
+        display: grid;
+        gap: var(--space-6);
+        margin: var(--space-6) 0;
+      }
+
+      .type-example {
+        border: var(--border-width) solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+      }
+
+      .type-label {
+        font-size: var(--text-sm);
+        color: var(--text-secondary);
+        margin-bottom: var(--space-2);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .logo-showcase {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-6);
+        margin: var(--space-6) 0;
+      }
+
+      .logo-item {
+        text-align: center;
+        padding: var(--space-6);
+        border: var(--border-width) solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        background: var(--bg-secondary);
+      }
+
+      .logo-preview {
+        margin-bottom: var(--space-4);
+        padding: var(--space-4);
+        background: white;
+        border-radius: var(--border-radius);
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .component-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-6);
+        margin: var(--space-6) 0;
+      }
+
+      .component-item {
+        border: var(--border-width) solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+        background: var(--bg-secondary);
+      }
+
+      .component-title {
+        font-weight: var(--font-semibold);
+        margin-bottom: var(--space-3);
+        color: var(--text-primary);
+      }
+
+      .usage-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-6);
+        margin: var(--space-6) 0;
+      }
+
+      .usage-item {
+        border: var(--border-width) solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-4);
+      }
+
+      .usage-do,
+      .usage-dont {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+      }
+
+      .usage-do {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: var(--brand-success);
+      }
+
+      .usage-dont {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: var(--brand-error);
+      }
+
+      .usage-icon {
+        font-size: var(--text-xl);
+        flex-shrink: 0;
+        margin-top: var(--space-1);
+      }
+
+      .guidelines-list {
+        display: grid;
+        gap: var(--space-4);
+        margin: var(--space-6) 0;
+      }
+
+      .guideline-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        border: var(--border-width) solid var(--border-color);
+        border-radius: var(--border-radius);
+        background: var(--bg-secondary);
+      }
+
+      .guideline-icon {
+        font-size: var(--text-lg);
+        color: var(--brand-primary);
+        flex-shrink: 0;
+        margin-top: var(--space-1);
+      }
+
+      .spacing-demo {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: var(--space-4);
+        margin: var(--space-6) 0;
+      }
+
+      .space-item {
+        text-align: center;
+        padding: var(--space-3);
+        border: var(--border-width) solid var(--border-color);
+        border-radius: var(--border-radius);
+        background: var(--bg-secondary);
+      }
+
+      .space-visual {
+        height: 40px;
+        background: var(--brand-primary);
+        border-radius: var(--border-radius-sm);
+        margin-bottom: var(--space-2);
+      }
+
+      .code-example {
+        background: var(--bg-secondary);
+        border: var(--border-width) solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: var(--space-4);
+        margin: var(--space-4) 0;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        overflow-x: auto;
+      }
+
+      .download-section {
+        text-align: center;
+        padding: var(--space-8);
+        background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+        border-radius: var(--border-radius-xl);
+        margin: var(--space-6) 0;
+      }
+
+      .download-buttons {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+        margin-top: var(--space-4);
+      }
+
+      @media (max-width: 768px) {
+        .brand-guide {
+          padding: var(--space-4);
+        }
+
+        .color-palette,
+        .logo-showcase,
+        .component-grid,
+        .usage-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .spacing-demo {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .download-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header
+      style="
+        text-align: center;
+        padding: var(--space-12) 0;
+        background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+        color: white;
+      "
+    >
+      <div class="brand-guide">
+        <h1 style="font-size: var(--text-5xl); margin-bottom: var(--space-2)">🎨 Fire22 Brand Style Guide</h1>
+        <p style="font-size: var(--text-xl); opacity: 0.9; max-width: 600px; margin: 0 auto">
+          Comprehensive design system and brand guidelines for Fire22 enterprise platform
+        </p>
+        <div style="margin-top: var(--space-4)">
+          <span class="status-indicator status-info">📋 Version 2.1.0</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="brand-guide">
+      <!-- Brand Overview -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">🌟 Brand Overview</h2>
+        </div>
+        <div class="section-content">
+          <p>
+            Fire22 is a modern enterprise platform that delivers powerful analytics, real-time data processing, and
+            advanced business intelligence solutions. Our brand reflects innovation, reliability, and cutting-edge
+            technology.
+          </p>
+
+          <h3>Brand Values</h3>
+          <ul>
+            <li>
+              <strong>Innovation:</strong>
+              Pushing boundaries with advanced technology
+            </li>
+            <li>
+              <strong>Reliability:</strong>
+              Enterprise-grade solutions you can trust
+            </li>
+            <li>
+              <strong>Performance:</strong>
+              Lightning-fast data processing and analytics
+            </li>
+            <li>
+              <strong>Security:</strong>
+              Protecting your data with military-grade encryption
+            </li>
+          </ul>
+
+          <h3>Brand Personality</h3>
+          <ul>
+            <li>
+              <strong>Professional:</strong>
+              Clean, modern, and trustworthy
+            </li>
+            <li>
+              <strong>Technical:</strong>
+              Precise, accurate, and data-driven
+            </li>
+            <li>
+              <strong>Innovative:</strong>
+              Forward-thinking and cutting-edge
+            </li>
+            <li>
+              <strong>Reliable:</strong>
+              Stable, dependable, and consistent
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Color Palette -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">🎨 Color Palette</h2>
+        </div>
+        <div class="section-content">
+          <p>
+            Our color palette is designed to convey trust, innovation, and professionalism. The primary blue represents
+            technology and reliability, while the accent colors provide visual hierarchy and feedback.
+          </p>
+
+          <h3>Primary Colors</h3>
+          <div class="color-palette">
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--brand-primary)"></div>
+              <div class="color-info">
+                <div class="color-name">Primary Blue</div>
+                <div class="color-hex">#2563eb</div>
+                <div style="font-size: var(--text-sm); margin-top: var(--space-1)">
+                  Used for primary actions, links, and brand elements
+                </div>
+              </div>
+            </div>
+
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--brand-secondary)"></div>
+              <div class="color-info">
+                <div class="color-name">Secondary Gray</div>
+                <div class="color-hex">#64748b</div>
+                <div style="font-size: var(--text-sm); margin-top: var(--space-1)">
+                  Used for secondary text and subtle elements
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3>Accent Colors</h3>
+          <div class="color-palette">
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--brand-accent)"></div>
+              <div class="color-info">
+                <div class="color-name">Accent Gold</div>
+                <div class="color-hex">#f59e0b</div>
+                <div style="font-size: var(--text-sm); margin-top: var(--space-1)">
+                  Used for highlights, warnings, and premium features
+                </div>
+              </div>
+            </div>
+
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--brand-success)"></div>
+              <div class="color-info">
+                <div class="color-name">Success Green</div>
+                <div class="color-hex">#10b981</div>
+                <div style="font-size: var(--text-sm); margin-top: var(--space-1)">
+                  Used for success states and positive feedback
+                </div>
+              </div>
+            </div>
+
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--brand-error)"></div>
+              <div class="color-info">
+                <div class="color-name">Error Red</div>
+                <div class="color-hex">#ef4444</div>
+                <div style="font-size: var(--text-sm); margin-top: var(--space-1)">
+                  Used for error states and critical alerts
+                </div>
+              </div>
+            </div>
+
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--brand-info)"></div>
+              <div class="color-info">
+                <div class="color-name">Info Cyan</div>
+                <div class="color-hex">#06b6d4</div>
+                <div style="font-size: var(--text-sm); margin-top: var(--space-1)">
+                  Used for informational content and links
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3>Neutral Colors</h3>
+          <div class="color-palette">
+            <div class="color-item">
+              <div
+                class="color-swatch"
+                style="background: var(--neutral-50); border: 1px solid var(--neutral-200)"
+              ></div>
+              <div class="color-info">
+                <div class="color-name">Background</div>
+                <div class="color-hex">#f8fafc</div>
+              </div>
+            </div>
+
+            <div class="color-item">
+              <div
+                class="color-swatch"
+                style="background: var(--neutral-100); border: 1px solid var(--neutral-200)"
+              ></div>
+              <div class="color-info">
+                <div class="color-name">Surface</div>
+                <div class="color-hex">#f1f5f9</div>
+              </div>
+            </div>
+
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--neutral-200)"></div>
+              <div class="color-info">
+                <div class="color-name">Border</div>
+                <div class="color-hex">#e2e8f0</div>
+              </div>
+            </div>
+
+            <div class="color-item">
+              <div class="color-swatch" style="background: var(--neutral-700)"></div>
+              <div class="color-info">
+                <div class="color-name">Text Primary</div>
+                <div class="color-hex">#334155</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Typography -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">📝 Typography</h2>
+        </div>
+        <div class="section-content">
+          <p>
+            Our typography system uses a clean, modern font stack that ensures readability and professionalism across
+            all platforms and devices.
+          </p>
+
+          <h3>Font Families</h3>
+          <div class="typography-examples">
+            <div class="type-example">
+              <div class="type-label">Primary Font Family</div>
+              <div
+                style="font-family: var(--font-primary); font-size: var(--text-2xl); font-weight: var(--font-normal)"
+              >
+                -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Display Font Family</div>
+              <div
+                style="font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--font-normal)"
+              >
+                'Inter', system fonts
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Monospace Font Family</div>
+              <div style="font-family: var(--font-mono); font-size: var(--text-lg)">
+                'SF Mono', 'Monaco', 'Inconsolata', monospace
+              </div>
+            </div>
+          </div>
+
+          <h3>Type Scale</h3>
+          <div class="typography-examples">
+            <div class="type-example">
+              <div class="type-label">Display (text-6xl)</div>
+              <div style="font-size: var(--text-6xl); font-weight: var(--font-bold); line-height: var(--leading-tight)">
+                Fire22 Platform
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Heading 1 (text-5xl)</div>
+              <div style="font-size: var(--text-5xl); font-weight: var(--font-bold); line-height: var(--leading-tight)">
+                Advanced Analytics Dashboard
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Heading 2 (text-4xl)</div>
+              <div
+                style="font-size: var(--text-4xl); font-weight: var(--font-semibold); line-height: var(--leading-tight)"
+              >
+                Real-time Data Processing
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Body Large (text-xl)</div>
+              <div style="font-size: var(--text-xl); line-height: var(--leading-relaxed)">
+                Our platform delivers enterprise-grade analytics with real-time data processing capabilities.
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Body (text-base)</div>
+              <div style="font-size: var(--text-base); line-height: var(--leading-relaxed)">
+                Fire22 provides comprehensive business intelligence solutions with advanced visualization tools.
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Body Small (text-sm)</div>
+              <div style="font-size: var(--text-sm); line-height: var(--leading-relaxed)">
+                Additional details and secondary information appear in smaller text sizes for optimal hierarchy.
+              </div>
+            </div>
+
+            <div class="type-example">
+              <div class="type-label">Code (text-sm, monospace)</div>
+              <div
+                style="
+                  font-family: var(--font-mono);
+                  font-size: var(--text-sm);
+                  background: var(--bg-secondary);
+                  padding: var(--space-2);
+                  border-radius: var(--border-radius);
+                "
+              >
+                const dashboard = new UnifiedDashboard();
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Logo and Branding -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">🚀 Logo & Brand Assets</h2>
+        </div>
+        <div class="section-content">
+          <p>
+            Our logo represents the fusion of fire (energy, power) and technology (precision, innovation). The
+            flame-like design symbolizes transformation and the "22" represents advanced technology.
+          </p>
+
+          <h3>Primary Logo</h3>
+          <div class="logo-showcase">
+            <div class="logo-item">
+              <div class="logo-preview">
+                <div class="brand-logo">
+                  <div class="brand-logo-icon">🔥</div>
+                  <div class="brand-logo-text">Fire22</div>
+                </div>
+              </div>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary)">Primary logo with icon and text</div>
+            </div>
+
+            <div class="logo-item">
+              <div class="logo-preview">
+                <div class="brand-logo">
+                  <div class="brand-logo-text">Fire22</div>
+                </div>
+              </div>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary)">
+                Text-only logo for compact spaces
+              </div>
+            </div>
+
+            <div class="logo-item">
+              <div class="logo-preview">
+                <div class="brand-logo-icon" style="width: 60px; height: 60px; font-size: 30px">🔥</div>
+              </div>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary)">
+                Icon-only logo for favicons and small spaces
+              </div>
+            </div>
+          </div>
+
+          <h3>Logo Usage Guidelines</h3>
+          <div class="guidelines-list">
+            <div class="guideline-item">
+              <div class="guideline-icon">📏</div>
+              <div>
+                <strong>Minimum Size:</strong>
+                Logo should be at least 32px in height for digital use
+              </div>
+            </div>
+
+            <div class="guideline-item">
+              <div class="guideline-icon">🎨</div>
+              <div>
+                <strong>Color Variations:</strong>
+                Use brand colors only - no custom colors allowed
+              </div>
+            </div>
+
+            <div class="guideline-item">
+              <div class="guideline-icon">📐</div>
+              <div>
+                <strong>Clear Space:</strong>
+                Maintain 1x logo height as clear space around the logo
+              </div>
+            </div>
+
+            <div class="guideline-item">
+              <div class="guideline-icon">🚫</div>
+              <div>
+                <strong>Don't:</strong>
+                Stretch, distort, or modify the logo proportions
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Components -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">🧩 UI Components</h2>
+        </div>
+        <div class="section-content">
+          <p>
+            Our component library provides consistent, accessible, and reusable UI elements that maintain brand
+            consistency across all platforms.
+          </p>
+
+          <h3>Button Components</h3>
+          <div class="component-grid">
+            <div class="component-item">
+              <div class="component-title">Primary Button</div>
+              <button class="btn btn-primary">Primary Action</button>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-2)">
+                Used for primary actions and main CTAs
+              </div>
+            </div>
+
+            <div class="component-item">
+              <div class="component-title">Secondary Button</div>
+              <button class="btn btn-secondary">Secondary Action</button>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-2)">
+                Used for secondary actions and cancel buttons
+              </div>
+            </div>
+
+            <div class="component-item">
+              <div class="component-title">Success Button</div>
+              <button class="btn btn-success">Success Action</button>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-2)">
+                Used for positive actions and confirmations
+              </div>
+            </div>
+
+            <div class="component-item">
+              <div class="component-title">Warning Button</div>
+              <button class="btn btn-warning">Warning Action</button>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-2)">
+                Used for cautionary actions
+              </div>
+            </div>
+          </div>
+
+          <h3>Status Indicators</h3>
+          <div class="component-grid">
+            <div class="component-item">
+              <div class="component-title">Status Badges</div>
+              <div style="display: flex; flex-wrap: wrap; gap: var(--space-2)">
+                <span class="status-indicator status-success">🟢 Healthy</span>
+                <span class="status-indicator status-warning">⚠️ Warning</span>
+                <span class="status-indicator status-error">🔴 Error</span>
+                <span class="status-indicator status-info">ℹ️ Info</span>
+              </div>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-2)">
+                Used to indicate system status and alerts
+              </div>
+            </div>
+
+            <div class="component-item">
+              <div class="component-title">Loading States</div>
+              <div style="padding: var(--space-4)">
+                <div class="loading-spinner">
+                  <span>Loading data...</span>
+                </div>
+              </div>
+              <div style="font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-2)">
+                Used during data fetching and processing
+              </div>
+            </div>
+          </div>
+
+          <h3>Form Components</h3>
+          <div class="component-grid">
+            <div class="component-item">
+              <div class="component-title">Input Field</div>
+              <div class="form-group">
+                <label class="form-label" for="demo-input">Email Address</label>
+                <input type="email" id="demo-input" class="form-input" placeholder="user@fire22.com" />
+              </div>
+            </div>
+
+            <div class="component-item">
+              <div class="component-title">Select Dropdown</div>
+              <div class="form-group">
+                <label class="form-label" for="demo-select">Time Range</label>
+                <select id="demo-select" class="form-select">
+                  <option>Last Hour</option>
+                  <option>Last 24 Hours</option>
+                  <option>Last 7 Days</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Spacing System -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">📐 Spacing System</h2>
+        </div>
+        <div class="section-content">
+          <p>
+            Our spacing system uses a consistent scale based on multiples of 4px (0.25rem) to ensure visual harmony and
+            proper information hierarchy.
+          </p>
+
+          <div class="spacing-demo">
+            <div class="space-item">
+              <div class="space-visual" style="height: 4px"></div>
+              <div style="font-size: var(--text-sm); font-weight: var(--font-medium)">space-1</div>
+              <div style="font-size: var(--text-xs); color: var(--text-secondary)">4px</div>
+            </div>
+
+            <div class="space-item">
+              <div class="space-visual" style="height: 8px"></div>
+              <div style="font-size: var(--text-sm); font-weight: var(--font-medium)">space-2</div>
+              <div style="font-size: var(--text-xs); color: var(--text-secondary)">8px</div>
+            </div>
+
+            <div class="space-item">
+              <div class="space-visual" style="height: 12px"></div>
+              <div style="font-size: var(--text-sm); font-weight: var(--font-medium)">space-3</div>
+              <div style="font-size: var(--text-xs); color: var(--text-secondary)">12px</div>
+            </div>
+
+            <div class="space-item">
+              <div class="space-visual" style="height: 16px"></div>
+              <div style="font-size: var(--text-sm); font-weight: var(--font-medium)">space-4</div>
+              <div style="font-size: var(--text-xs); color: var(--text-secondary)">16px</div>
+            </div>
+
+            <div class="space-item">
+              <div class="space-visual" style="height: 20px"></div>
+              <div style="font-size: var(--text-sm); font-weight: var(--font-medium)">space-5</div>
+              <div style="font-size: var(--text-xs); color: var(--text-secondary)">20px</div>
+            </div>
+
+            <div class="space-item">
+              <div class="space-visual" style="height: 24px"></div>
+              <div style="font-size: var(--text-sm); font-weight: var(--font-medium)">space-6</div>
+              <div style="font-size: var(--text-xs); color: var(--text-secondary)">24px</div>
+            </div>
+          </div>
+
+          <h3>Usage Guidelines</h3>
+          <div class="guidelines-list">
+            <div class="guideline-item">
+              <div class="guideline-icon">📏</div>
+              <div>
+                <strong>Consistency:</strong>
+                Always use values from the spacing scale
+              </div>
+            </div>
+
+            <div class="guideline-item">
+              <div class="guideline-icon">🔄</div>
+              <div>
+                <strong>Responsive:</strong>
+                Spacing should adapt to different screen sizes
+              </div>
+            </div>
+
+            <div class="guideline-item">
+              <div class="guideline-icon">📊</div>
+              <div>
+                <strong>Hierarchy:</strong>
+                Use larger spacing for more important elements
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Usage Guidelines -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">✅ Usage Guidelines</h2>
+        </div>
+        <div class="section-content">
+          <h3>Do's and Don'ts</h3>
+          <div class="usage-grid">
+            <div class="usage-item">
+              <div class="usage-do">
+                <div class="usage-icon">✅</div>
+                <div>
+                  <strong>Use brand colors consistently</strong>
+                  <br />
+                  Stick to the defined color palette for all UI elements
+                </div>
+              </div>
+            </div>
+
+            <div class="usage-item">
+              <div class="usage-dont">
+                <div class="usage-icon">❌</div>
+                <div>
+                  <strong>Don't use custom colors</strong>
+                  <br />
+                  Avoid colors outside the brand palette
+                </div>
+              </div>
+            </div>
+
+            <div class="usage-item">
+              <div class="usage-do">
+                <div class="usage-icon">✅</div>
+                <div>
+                  <strong>Maintain proper spacing</strong>
+                  <br />
+                  Use the spacing scale for consistent layouts
+                </div>
+              </div>
+            </div>
+
+            <div class="usage-item">
+              <div class="usage-dont">
+                <div class="usage-icon">❌</div>
+                <div>
+                  <strong>Don't use arbitrary spacing</strong>
+                  <br />
+                  Avoid random margin and padding values
+                </div>
+              </div>
+            </div>
+
+            <div class="usage-item">
+              <div class="usage-do">
+                <div class="usage-icon">✅</div>
+                <div>
+                  <strong>Use proper typography hierarchy</strong>
+                  <br />
+                  Follow the type scale for consistent text sizing
+                </div>
+              </div>
+            </div>
+
+            <div class="usage-item">
+              <div class="usage-dont">
+                <div class="usage-icon">❌</div>
+                <div>
+                  <strong>Don't mix font sizes randomly</strong>
+                  <br />
+                  Stick to the defined typography scale
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3>Implementation Guide</h3>
+          <div class="code-example">
+            <strong>CSS Variables Usage:</strong>
+            <pre><code>/* Use CSS custom properties for consistent theming */
+.my-component {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-4);
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+}</code></pre>
+          </div>
+
+          <div class="code-example">
+            <strong>JavaScript Implementation:</strong>
+            <pre><code>// Use the brand classes for consistent styling
+const button = document.createElement('button');
+button.className = 'btn btn-primary';
+button.textContent = 'Primary Action';</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Downloads -->
+      <section class="guide-section">
+        <div class="section-header">
+          <h2 class="section-title">📥 Brand Assets</h2>
+        </div>
+        <div class="section-content">
+          <div class="download-section">
+            <h3 style="margin-bottom: var(--space-2)">Download Brand Assets</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--space-4)">
+              Get access to logos, style guides, and design resources for implementing the Fire22 brand.
+            </p>
+
+            <div class="download-buttons">
+              <button class="btn btn-primary">📋 Download Style Guide (PDF)</button>
+              <button class="btn btn-secondary">🎨 Download Logo Assets (SVG/PNG)</button>
+              <button class="btn btn-secondary">💻 Download CSS Framework</button>
+              <button class="btn btn-secondary">🎯 Download Sketch/Figma Templates</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer
+        style="
+          text-align: center;
+          margin-top: var(--space-12);
+          padding: var(--space-8) 0;
+          border-top: 1px solid var(--border-color);
+        "
+      >
+        <p style="color: var(--text-secondary); margin: 0">
+          © 2025 Fire22 Enterprise Platform • Brand Style Guide v2.1.0
+        </p>
+        <p style="color: var(--text-secondary); font-size: var(--text-sm); margin: var(--space-2) 0 0 0">
+          For brand questions or asset requests, contact the design team at
+          <a href="mailto:design@fire22.com" style="color: var(--brand-primary)">design@fire22.com</a>
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      // Theme toggle functionality
+      const themeToggle = document.createElement('button');
+      themeToggle.className = 'btn btn-secondary';
+      themeToggle.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000;';
+      themeToggle.innerHTML = '🌙 Dark Mode';
+      themeToggle.onclick = () => {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        themeToggle.innerHTML = newTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+      };
+      document.body.appendChild(themeToggle);
+
+      // Interactive color swatches
+      document.querySelectorAll('.color-swatch').forEach(swatch => {
+        swatch.addEventListener('click', () => {
+          const hex = swatch.nextElementSibling.querySelector('.color-hex').textContent;
+          navigator.clipboard.writeText(hex).then(() => {
+            // Show temporary feedback
+            const original = swatch.textContent || '';
+            swatch.textContent = '📋 Copied!';
+            setTimeout(() => {
+              swatch.textContent = original;
+            }, 1000);
+          });
+        });
+        swatch.style.cursor = 'pointer';
+        swatch.title = 'Click to copy color code';
+      });
+    </script>
+  </body>
+</html>

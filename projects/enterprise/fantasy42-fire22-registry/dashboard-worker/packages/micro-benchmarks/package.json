@@ -1,0 +1,69 @@
+{
+  "name": "@fire22/micro-benchmarks",
+  "version": "1.0.3",
+  "description": "Precision microbenchmarking for critical functions",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "test": "bun test",
+    "bench": "bun run src/index.ts",
+    "preinstall": "echo 'Setting up microbenchmarks...'",
+    "postinstall": "echo 'Microbenchmarks ready!'",
+    "prepare": "bun run build"
+  },
+  "keywords": [
+    "microbenchmark",
+    "performance",
+    "precision",
+    "testing"
+  ],
+  "dependencies": {
+    "@fire22/benchmark-suite": "workspace:*",
+    "@fire22/memory-profiler": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "optionalDependencies": {
+    "mitata": "^1.0.0"
+  },
+  "trustedDependencies": [
+    "mitata"
+  ],
+  "overrides": {},
+  "resolutions": {},
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "bun": {
+    "install": {
+      "frozen-lockfile": false,
+      "production": false,
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "concurrent-scripts": 2
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/micro-benchmarks"
+  }
+}

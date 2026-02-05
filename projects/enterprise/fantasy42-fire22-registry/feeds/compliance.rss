@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Compliance Department Updates</title>
+    <description>Department updates and announcements</description>
+    <link>https://fire22.com</link>
+    <language>en-us</language>
+    <managingEditor>compliance@fire22.com</managingEditor>
+    <webMaster>admin@fire22.com</webMaster>
+    <lastBuildDate>Sat, 30 Aug 2025 15:36:51 GMT</lastBuildDate>
+    <ttl>60</ttl>
+    <atom:link href="https://fire22.com/feeds/compliance.rss" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title><![CDATA[SOC 2 Type II Certification Achieved]]></title>
+      <description><![CDATA[Platform now fully compliant with SOC 2 Type II standards]]></description>
+      <link>https://fire22.com/compliance/soc2-certified</link>
+      <author>Compliance Team</author>
+      <category>certification</category>
+      <pubDate>undefined</pubDate>
+      <guid>https://fire22.com/feeds/compliance/compliance-1756568211377-pdd1h7ysx</guid>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,37 @@
+[Unit]
+Description=Enhanced Bucket Visualization Server
+Documentation=https://github.com/your-username/foxy-proxy
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+Group=YOUR_GROUP
+WorkingDirectory=/Users/nolarose/foxy-proxy/packages/dashboard
+Environment=NODE_ENV=production
+ExecStart=/usr/local/bin/bun run dev
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGINT
+TimeoutStopSec=5
+Restart=always
+RestartSec=10
+SyslogIdentifier=bucket-visualizer
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/Users/nolarose/foxy-proxy/logs
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Environment file
+EnvironmentFile=/Users/nolarose/foxy-proxy/packages/dashboard/.env
+
+[Install]
+WantedBy=multi-user.target

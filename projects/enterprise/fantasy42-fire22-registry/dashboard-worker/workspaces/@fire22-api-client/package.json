@@ -1,0 +1,63 @@
+{
+  "name": "@fire22/api-client",
+  "version": "3.0.9",
+  "description": "Fire22 API integration and data management",
+  "type": "module",
+  "main": "src/fire22-api.ts",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm",
+    "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
+    "build:cloudflare": "bun build src/index.ts --outdir dist/cloudflare --target bun --format esm --minify",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "lint": "bunx eslint src/",
+    "typecheck": "bunx tsc --noEmit",
+    "install:isolated": "bun install --linker isolated",
+    "install:linked": "bun install --linker isolated",
+    "install:standalone": "bun install --linker isolated --frozen-lockfile",
+    "deploy:linked": "wrangler deploy --config wrangler.linked.toml",
+    "deploy:standalone": "wrangler deploy --config wrangler.standalone.toml"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "fire22": {
+    "workspace": "api-client",
+    "isolation": {
+      "standalone": true,
+      "linked": true,
+      "separateTests": true,
+      "independentDeploy": true
+    },
+    "include": [
+      "src/fire22-api.ts",
+      "src/fire22-config.ts",
+      "src/fire22-api.test.ts",
+      "*.sql",
+      "src/types/",
+      "src/config/"
+    ],
+    "exclude": [],
+    "bunIsolated": true
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "tag": "latest"
+  },
+  "sideEffects": [
+    "src/simd-logger.ts",
+    "src/index.ts",
+    "**/*.css",
+    "**/*.scss",
+    "**/*.html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-api-client"
+  }
+}

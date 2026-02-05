@@ -1,0 +1,394 @@
+{
+  "timestamp": "2025-08-30T15:05:31.900Z",
+  "overall": {
+    "score": 66.66666666666666,
+    "totalTests": 33,
+    "passed": 22,
+    "failed": 2,
+    "skipped": 9,
+    "errors": 0,
+    "duration": 48325
+  },
+  "suites": [
+    {
+      "name": "Playbook Compliance",
+      "description": "Test all playbook compliance automation and validation",
+      "tests": [
+        {
+          "testName": "playbook-auditor-missing-deps",
+          "category": "Playbook Compliance",
+          "status": "FAIL",
+          "duration": 36,
+          "message": "Should handle missing repository gracefully",
+          "timestamp": "2025-08-30T15:04:43.611Z"
+        },
+        {
+          "testName": "playbook-auditor-empty-repo",
+          "category": "Playbook Compliance",
+          "status": "PASS",
+          "duration": 37,
+          "message": "Should handle empty repositories",
+          "timestamp": "2025-08-30T15:04:43.648Z"
+        },
+        {
+          "testName": "playbook-auditor-output-formats",
+          "category": "Playbook Compliance",
+          "status": "PASS",
+          "duration": 564,
+          "message": "Should support multiple output formats",
+          "timestamp": "2025-08-30T15:04:44.212Z"
+        },
+        {
+          "testName": "playbook-invalid-config",
+          "category": "Playbook Compliance",
+          "status": "PASS",
+          "duration": 41,
+          "message": "Should handle syntax errors gracefully",
+          "timestamp": "2025-08-30T15:04:44.253Z"
+        }
+      ],
+      "summary": {
+        "total": 4,
+        "passed": 3,
+        "failed": 1,
+        "skipped": 0,
+        "errors": 0,
+        "duration": 678
+      }
+    },
+    {
+      "name": "ARB Design Document Process",
+      "description": "Test ARB design document validation and workflow",
+      "tests": [
+        {
+          "testName": "arb-valid-document",
+          "category": "ARB Design Document Process",
+          "status": "PASS",
+          "duration": 36,
+          "message": "Should validate correct ARB design document",
+          "timestamp": "2025-08-30T15:04:44.290Z"
+        },
+        {
+          "testName": "arb-missing-document",
+          "category": "ARB Design Document Process",
+          "status": "PASS",
+          "duration": 36,
+          "message": "Should handle missing ARB documents",
+          "timestamp": "2025-08-30T15:04:44.326Z"
+        },
+        {
+          "testName": "arb-invalid-format",
+          "category": "ARB Design Document Process",
+          "status": "PASS",
+          "duration": 42,
+          "message": "Should reject invalid ARB document format",
+          "timestamp": "2025-08-30T15:04:44.368Z"
+        },
+        {
+          "testName": "arb-ticket-format",
+          "category": "ARB Design Document Process",
+          "status": "PASS",
+          "duration": 43,
+          "message": "Should validate ARB ticket format",
+          "timestamp": "2025-08-30T15:04:44.411Z"
+        }
+      ],
+      "summary": {
+        "total": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "duration": 157
+      }
+    },
+    {
+      "name": "CI/CD Integration",
+      "description": "Test CI/CD pipelines and automation",
+      "tests": [
+        {
+          "testName": "ci-cd-workflow-syntax",
+          "category": "CI/CD Integration",
+          "status": "PASS",
+          "duration": 0,
+          "message": "Should validate CI/CD workflow syntax",
+          "timestamp": "2025-08-30T15:04:44.411Z"
+        },
+        {
+          "testName": "ci-cd-security-gates",
+          "category": "CI/CD Integration",
+          "status": "PASS",
+          "duration": 1,
+          "message": "Should have security gates configured",
+          "timestamp": "2025-08-30T15:04:44.412Z"
+        },
+        {
+          "testName": "ci-cd-playbook-integration",
+          "category": "CI/CD Integration",
+          "status": "PASS",
+          "duration": 0,
+          "message": "Should integrate playbook compliance checks",
+          "timestamp": "2025-08-30T15:04:44.412Z"
+        },
+        {
+          "testName": "ci-cd-notifications",
+          "category": "CI/CD Integration",
+          "status": "PASS",
+          "duration": 0,
+          "message": "Should have failure notifications configured",
+          "timestamp": "2025-08-30T15:04:44.412Z"
+        }
+      ],
+      "summary": {
+        "total": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "duration": 1
+      }
+    },
+    {
+      "name": "Security Scanning",
+      "description": "Test security scanning and dependency auditing",
+      "tests": [
+        {
+          "testName": "security-dependency-audit",
+          "category": "Security Scanning",
+          "status": "PASS",
+          "duration": 161,
+          "message": "Should run dependency audit successfully",
+          "timestamp": "2025-08-30T15:04:44.573Z"
+        },
+        {
+          "testName": "security-audit-scripts",
+          "category": "Security Scanning",
+          "status": "PASS",
+          "duration": 0,
+          "message": "Should have audit scripts in package.json",
+          "timestamp": "2025-08-30T15:04:44.573Z"
+        },
+        {
+          "testName": "security-scanner-availability",
+          "category": "Security Scanning",
+          "status": "SKIP",
+          "duration": 13,
+          "message": "Should have security scanner available",
+          "timestamp": "2025-08-30T15:04:44.586Z"
+        },
+        {
+          "testName": "security-critical-detection",
+          "category": "Security Scanning",
+          "status": "PASS",
+          "duration": 143,
+          "message": "Should run vulnerability detection successfully",
+          "timestamp": "2025-08-30T15:04:44.729Z"
+        }
+      ],
+      "summary": {
+        "total": 4,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 1,
+        "errors": 0,
+        "duration": 317
+      }
+    },
+    {
+      "name": "Fantasy402 Integration",
+      "description": "Test Fantasy402 integration edge cases and error handling",
+      "tests": [
+        {
+          "testName": "fantasy402-invalid-credentials",
+          "category": "Fantasy402 Integration",
+          "status": "PASS",
+          "duration": 10018,
+          "message": "Should handle invalid credentials gracefully",
+          "timestamp": "2025-08-30T15:04:54.747Z"
+        },
+        {
+          "testName": "fantasy402-network-timeout",
+          "category": "Fantasy402 Integration",
+          "status": "PASS",
+          "duration": 5019,
+          "message": "Should handle network timeouts gracefully",
+          "timestamp": "2025-08-30T15:04:59.766Z"
+        },
+        {
+          "testName": "fantasy402-session-persistence",
+          "category": "Fantasy402 Integration",
+          "status": "SKIP",
+          "duration": 1,
+          "message": "Should persist session data correctly",
+          "timestamp": "2025-08-30T15:04:59.767Z"
+        },
+        {
+          "testName": "fantasy402-demo-mode",
+          "category": "Fantasy402 Integration",
+          "status": "SKIP",
+          "duration": 30004,
+          "message": "Should support demo mode for testing",
+          "timestamp": "2025-08-30T15:05:29.771Z"
+        },
+        {
+          "testName": "fantasy402-config-validation",
+          "category": "Fantasy402 Integration",
+          "status": "PASS",
+          "duration": 1,
+          "message": "Should validate configuration files",
+          "timestamp": "2025-08-30T15:05:29.772Z"
+        }
+      ],
+      "summary": {
+        "total": 5,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 2,
+        "errors": 0,
+        "duration": 45043
+      }
+    },
+    {
+      "name": "Session Management",
+      "description": "Test session storage and token refresh mechanisms",
+      "tests": [
+        {
+          "testName": "session-file-creation",
+          "category": "Session Management",
+          "status": "SKIP",
+          "duration": 0,
+          "message": "Should create valid session files",
+          "timestamp": "2025-08-30T15:05:29.772Z"
+        },
+        {
+          "testName": "session-file-security",
+          "category": "Session Management",
+          "status": "SKIP",
+          "duration": 0,
+          "message": "Should have secure file permissions",
+          "timestamp": "2025-08-30T15:05:29.772Z"
+        },
+        {
+          "testName": "session-token-expiry",
+          "category": "Session Management",
+          "status": "SKIP",
+          "duration": 0,
+          "message": "Should handle token expiry correctly",
+          "timestamp": "2025-08-30T15:05:29.772Z"
+        },
+        {
+          "testName": "session-cleanup",
+          "category": "Session Management",
+          "status": "SKIP",
+          "duration": 0,
+          "message": "Should handle session cleanup and recreation",
+          "timestamp": "2025-08-30T15:05:29.772Z"
+        }
+      ],
+      "summary": {
+        "total": 4,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 4,
+        "errors": 0,
+        "duration": 0
+      }
+    },
+    {
+      "name": "Package Benchmarking",
+      "description": "Test package benchmarking and performance analysis",
+      "tests": [
+        {
+          "testName": "benchmark-orchestrator-execution",
+          "category": "Package Benchmarking",
+          "status": "SKIP",
+          "duration": 927,
+          "message": "Should execute benchmark orchestrator",
+          "timestamp": "2025-08-30T15:05:30.699Z"
+        },
+        {
+          "testName": "benchmark-report-generation",
+          "category": "Package Benchmarking",
+          "status": "PASS",
+          "duration": 587,
+          "message": "Should generate benchmark reports",
+          "timestamp": "2025-08-30T15:05:31.286Z"
+        },
+        {
+          "testName": "benchmark-standards-validation",
+          "category": "Package Benchmarking",
+          "status": "PASS",
+          "duration": 0,
+          "message": "Should validate against enterprise standards",
+          "timestamp": "2025-08-30T15:05:31.286Z"
+        }
+      ],
+      "summary": {
+        "total": 3,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 1,
+        "errors": 0,
+        "duration": 1514
+      }
+    },
+    {
+      "name": "Edge Cases",
+      "description": "Test various edge cases and error conditions",
+      "tests": [
+        {
+          "testName": "edge-case-memory-constraints",
+          "category": "Edge Cases",
+          "status": "SKIP",
+          "duration": 4,
+          "message": "Should handle memory constraints gracefully",
+          "timestamp": "2025-08-30T15:05:31.290Z"
+        },
+        {
+          "testName": "edge-case-large-repository",
+          "category": "Edge Cases",
+          "status": "PASS",
+          "duration": 59,
+          "message": "Should handle large repositories",
+          "timestamp": "2025-08-30T15:05:31.349Z"
+        },
+        {
+          "testName": "edge-case-concurrent-operations",
+          "category": "Edge Cases",
+          "status": "PASS",
+          "duration": 449,
+          "message": "Should handle concurrent operations",
+          "timestamp": "2025-08-30T15:05:31.798Z"
+        },
+        {
+          "testName": "edge-case-network-failures",
+          "category": "Edge Cases",
+          "status": "PASS",
+          "duration": 62,
+          "message": "Should handle network failures gracefully",
+          "timestamp": "2025-08-30T15:05:31.861Z"
+        },
+        {
+          "testName": "edge-case-file-permissions",
+          "category": "Edge Cases",
+          "status": "FAIL",
+          "duration": 38,
+          "message": "Should handle file permission issues",
+          "timestamp": "2025-08-30T15:05:31.899Z"
+        }
+      ],
+      "summary": {
+        "total": 5,
+        "passed": 3,
+        "failed": 1,
+        "skipped": 1,
+        "errors": 0,
+        "duration": 614
+      }
+    }
+  ],
+  "recommendations": [
+    "📈 Improve overall test coverage and reliability",
+    "⚡ Implement skipped tests for better coverage"
+  ]
+}

@@ -1,0 +1,56 @@
+
+Subject: 🚀 Fire22 Registry Release Flow - Specialist Review Walkthrough
+
+Dear Kevin Zhang,
+
+You are receiving this notification as a **Deployment Specialist** in the **Operations Department**.
+
+## 🎯 **Your Specialist Role**
+
+As **CI/CD & Deployment Automation** specialist, you provide deep technical expertise:
+
+- **Domain Expertise**: CI/CD & Deployment Automation validation and review
+- **Technical Review**: Detailed analysis of package compliance
+- **Quality Assurance**: Ensure standards in your specialty area
+- **Documentation**: Provide specialist feedback and recommendations
+
+### **Your Department Context**
+- **Department Head**: Robert Garcia (Chief Operations Officer)
+- **Secondary Validator**: Linda Martinez (DevOps Lead)
+- **Your Colleagues**: Anna Schmidt (Monitoring Specialist), Tom Anderson (Reliability Specialist)
+- **Focus Area**: DEPLOYMENT, MONITORING, RELIABILITY
+
+## 📋 **Specialist Walkthrough Guide Attached**
+
+The attached guide includes:
+- **REGISTRY-RELEASE-SPECIALIST-WALKTHROUGH.md** - Specialist-focused guide
+- **CI/CD & Deployment Automation** specific validation procedures
+- **Review checklists** and best practices
+- **Reporting templates** for your findings
+
+## ⏰ **Required Actions**
+
+1. **Review specialist guide** (10-15 minutes)
+2. **Identify packages requiring your expertise**
+3. **Prepare review checklists** for your specialty
+4. **Confirm readiness** by replying with "CONFIRMED"
+
+## 📋 **Your Review Focus**
+
+**Specialty**: CI/CD & Deployment Automation
+**Department**: Operations
+**Compliance Areas**: DEPLOYMENT, MONITORING, RELIABILITY
+
+## 📞 **Support**
+
+- **Department Head**: Robert Garcia (robert.garcia@fire22.com)
+- **Secondary Validator**: Linda Martinez (linda.martinez@fire22.com)
+- **Technical Support**: enterprise@fire22.com
+- **Specialist Colleagues**: anna.schmidt@fire22.com, tom.anderson@fire22.com
+
+---
+
+**Please reply with "CONFIRMED" once ready to begin specialist reviews.**
+
+Best regards,
+Fire22 Enterprise Registry Team

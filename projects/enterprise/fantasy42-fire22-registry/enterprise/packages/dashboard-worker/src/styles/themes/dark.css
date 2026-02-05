@@ -1,0 +1,393 @@
+/* Dark Theme for Fire22 Dashboard */
+
+/* Dark mode specific variables and overrides */
+[data-theme='dark'],
+body.dark-mode {
+  /* Primary Colors */
+  --color-primary: #ff4444;
+  --color-primary-light: #ff6666;
+  --color-primary-dark: #cc0000;
+
+  /* Background Colors */
+  --color-background: #1a1a1a;
+  --color-background-light: #2a2a2a;
+  --color-background-dark: #0f0f0f;
+  --color-surface: #242424;
+  --color-surface-light: #2e2e2e;
+  --color-surface-dark: #1e1e1e;
+
+  /* Text Colors */
+  --color-text: #e0e0e0;
+  --color-text-muted: #a0a0a0;
+  --color-text-light: #f5f5f5;
+  --color-text-dark: #999999;
+
+  /* Border Colors */
+  --color-border: #333333;
+  --color-border-light: #444444;
+  --color-border-dark: #222222;
+
+  /* Status Colors */
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+
+  /* Card and Modal Backgrounds */
+  --card-bg: #2a2a2a;
+  --card-border: #3a3a3a;
+  --modal-bg: #1e1e1e;
+  --modal-overlay: rgba(0, 0, 0, 0.8);
+
+  /* Table Colors */
+  --table-bg: #1e1e1e;
+  --table-header-bg: #2a2a2a;
+  --table-row-hover: #333333;
+  --table-row-alt: #252525;
+
+  /* Form Elements */
+  --input-bg: #2a2a2a;
+  --input-border: #444444;
+  --input-focus-border: #ff4444;
+  --input-text: #e0e0e0;
+  --input-placeholder: #808080;
+
+  /* Button Variations */
+  --btn-primary-bg: #ff4444;
+  --btn-primary-hover: #ff6666;
+  --btn-secondary-bg: #444444;
+  --btn-secondary-hover: #555555;
+
+  /* Fire22 Brand Dark Mode */
+  --fire22-gradient: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+  --fire22-gradient-dark: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+
+  /* Shadows for Dark Mode */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.8);
+
+  /* Dashboard Specific */
+  --dashboard-header-bg: #1a1a1a;
+  --dashboard-sidebar-bg: #242424;
+  --dashboard-content-bg: #2a2a2a;
+
+  /* Charts and Data Visualization */
+  --chart-grid: #333333;
+  --chart-axis: #666666;
+  --chart-text: #999999;
+
+  /* Scrollbar Styling */
+  --scrollbar-track: #1a1a1a;
+  --scrollbar-thumb: #444444;
+  --scrollbar-thumb-hover: #555555;
+}
+
+/* System Preference Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme='light']) {
+    /* Apply same dark theme variables */
+    --color-primary: #ff4444;
+    --color-primary-light: #ff6666;
+    --color-primary-dark: #cc0000;
+
+    --color-background: #1a1a1a;
+    --color-background-light: #2a2a2a;
+    --color-background-dark: #0f0f0f;
+    --color-surface: #242424;
+    --color-surface-light: #2e2e2e;
+    --color-surface-dark: #1e1e1e;
+
+    --color-text: #e0e0e0;
+    --color-text-muted: #a0a0a0;
+    --color-text-light: #f5f5f5;
+    --color-text-dark: #999999;
+
+    --color-border: #333333;
+    --color-border-light: #444444;
+    --color-border-dark: #222222;
+
+    --color-success: #4caf50;
+    --color-warning: #ff9800;
+    --color-error: #f44336;
+    --color-info: #2196f3;
+
+    --card-bg: #2a2a2a;
+    --card-border: #3a3a3a;
+    --modal-bg: #1e1e1e;
+    --modal-overlay: rgba(0, 0, 0, 0.8);
+
+    --table-bg: #1e1e1e;
+    --table-header-bg: #2a2a2a;
+    --table-row-hover: #333333;
+    --table-row-alt: #252525;
+
+    --input-bg: #2a2a2a;
+    --input-border: #444444;
+    --input-focus-border: #ff4444;
+    --input-text: #e0e0e0;
+    --input-placeholder: #808080;
+
+    --btn-primary-bg: #ff4444;
+    --btn-primary-hover: #ff6666;
+    --btn-secondary-bg: #444444;
+    --btn-secondary-hover: #555555;
+
+    --fire22-gradient: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    --fire22-gradient-dark: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.7);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.8);
+
+    --dashboard-header-bg: #1a1a1a;
+    --dashboard-sidebar-bg: #242424;
+    --dashboard-content-bg: #2a2a2a;
+
+    --chart-grid: #333333;
+    --chart-axis: #666666;
+    --chart-text: #999999;
+
+    --scrollbar-track: #1a1a1a;
+    --scrollbar-thumb: #444444;
+    --scrollbar-thumb-hover: #555555;
+  }
+}
+
+/* Dark Mode Specific Component Overrides */
+[data-theme='dark'] body,
+body.dark-mode {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Smooth transitions for theme switching */
+body {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Tables in Dark Mode */
+[data-theme='dark'] table,
+body.dark-mode table {
+  background-color: var(--table-bg);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] th,
+body.dark-mode th {
+  background-color: var(--table-header-bg);
+  color: var(--color-text-light);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] td,
+body.dark-mode td {
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] tr:hover,
+body.dark-mode tr:hover {
+  background-color: var(--table-row-hover);
+}
+
+/* Cards in Dark Mode */
+[data-theme='dark'] .card,
+body.dark-mode .card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* Forms in Dark Mode */
+[data-theme='dark'] input,
+[data-theme='dark'] textarea,
+[data-theme='dark'] select,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-text);
+}
+
+[data-theme='dark'] input::placeholder,
+[data-theme='dark'] textarea::placeholder,
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+[data-theme='dark'] input:focus,
+[data-theme='dark'] textarea:focus,
+[data-theme='dark'] select:focus,
+body.dark-mode input:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+  border-color: var(--input-focus-border);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
+}
+
+/* Buttons in Dark Mode */
+[data-theme='dark'] .btn-primary,
+body.dark-mode .btn-primary {
+  background: var(--btn-primary-bg);
+  color: white;
+  border: none;
+}
+
+[data-theme='dark'] .btn-primary:hover,
+body.dark-mode .btn-primary:hover {
+  background: var(--btn-primary-hover);
+}
+
+[data-theme='dark'] .btn-secondary,
+body.dark-mode .btn-secondary {
+  background: var(--btn-secondary-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+[data-theme='dark'] .btn-secondary:hover,
+body.dark-mode .btn-secondary:hover {
+  background: var(--btn-secondary-hover);
+}
+
+/* Modals in Dark Mode */
+[data-theme='dark'] .modal,
+body.dark-mode .modal {
+  background-color: var(--modal-bg);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .modal-overlay,
+body.dark-mode .modal-overlay {
+  background-color: var(--modal-overlay);
+}
+
+/* Custom Scrollbar for Dark Mode */
+[data-theme='dark'] ::-webkit-scrollbar-track,
+body.dark-mode ::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb,
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover,
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Links in Dark Mode */
+[data-theme='dark'] a,
+body.dark-mode a {
+  color: var(--color-primary-light);
+}
+
+[data-theme='dark'] a:hover,
+body.dark-mode a:hover {
+  color: var(--color-primary);
+}
+
+/* Code blocks in Dark Mode */
+[data-theme='dark'] code,
+[data-theme='dark'] pre,
+body.dark-mode code,
+body.dark-mode pre {
+  background-color: var(--color-background-dark);
+  color: #f8f8f2;
+  border-color: var(--color-border);
+}
+
+/* Dashboard Specific Dark Mode */
+[data-theme='dark'] .dashboard-header,
+body.dark-mode .dashboard-header {
+  background: var(--dashboard-header-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-theme='dark'] .dashboard-sidebar,
+body.dark-mode .dashboard-sidebar {
+  background: var(--dashboard-sidebar-bg);
+  border-right: 1px solid var(--color-border);
+}
+
+[data-theme='dark'] .dashboard-content,
+body.dark-mode .dashboard-content {
+  background: var(--dashboard-content-bg);
+}
+
+/* Fire22 Brand Elements in Dark Mode */
+[data-theme='dark'] .fire22-header,
+body.dark-mode .fire22-header {
+  background: var(--fire22-gradient-dark);
+}
+
+[data-theme='dark'] .fire22-badge,
+body.dark-mode .fire22-badge {
+  background: var(--fire22-gradient);
+  color: white;
+}
+
+/* Theme Toggle Button Styling */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50px;
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.theme-toggle-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Hide opposite theme icon */
+[data-theme='dark'] .theme-icon-dark,
+body.dark-mode .theme-icon-dark,
+[data-theme='light'] .theme-icon-light,
+body:not([data-theme='dark']):not(.dark-mode) .theme-icon-dark {
+  display: none;
+}
+
+[data-theme='dark'] .theme-icon-light,
+body.dark-mode .theme-icon-light {
+  display: inline-block;
+}
+
+/* Animation for theme transition */
+* {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}

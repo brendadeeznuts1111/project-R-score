@@ -1,0 +1,77 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# TypeScript/JavaScript files
+[*.{ts,tsx,js,jsx}]
+indent_size = 2
+max_line_length = 100
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# TOML files
+[*.toml]
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 80
+
+# HTML files
+[*.html]
+indent_size = 2
+max_line_length = 120
+
+# CSS/SCSS files
+[*.{css,scss,less}]
+indent_size = 2
+
+# Shell scripts
+[*.{sh,bash}]
+indent_size = 2
+
+# Makefiles
+[{Makefile,makefile}]
+indent_style = tab
+
+# Batch files (Windows)
+[*.bat]
+end_of_line = crlf
+
+# Python files (if any)
+[*.py]
+indent_size = 4
+
+# Go files (if any)
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Rust files (if any)
+[*.rs]
+indent_size = 4
+
+# Package files
+[{package.json,package-lock.json,bun.lockb}]
+indent_size = 2
+
+# Config files
+[{tsconfig*.json,.prettierrc*,.eslintrc*}]
+indent_size = 2

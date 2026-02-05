@@ -1,0 +1,77 @@
+{
+  "name": "@fire22/security-audit",
+  "version": "1.0.0",
+  "description": "Enterprise-grade security auditing for Fantasy42-Fire22 packages",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "fire22-security-audit": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --compile --outfile=./dist/index.js --target=node",
+    "build:types": "bunx tsc --emitDeclarationOnly --outDir ./dist",
+    "build:cli": "bun build ./src/cli.ts --compile --outfile=./dist/cli.js --target=node",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "lint": "bunx eslint src/**/*.ts",
+    "benchmark": "bun run scripts/benchmark.ts"
+  },
+  "keywords": [
+    "security",
+    "audit",
+    "fantasy42",
+    "fire22",
+    "enterprise",
+    "compliance",
+    "vulnerability",
+    "penetration-testing"
+  ],
+  "author": "Fire22 Security Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry",
+    "directory": "packages/security-audit"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/issues"
+  },
+  "homepage": "https://fire22.com/docs/security-audit",
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "bun": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "fire22": {
+    "domain": "security",
+    "category": "auditing",
+    "criticality": "high",
+    "compliance": [
+      "gdpr",
+      "pci",
+      "aml"
+    ],
+    "benchmark": {
+      "minSecurityScore": 85,
+      "maxCriticalIssues": 0,
+      "maxHighIssues": 2
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "fire22-dashboard-worker",
+  "version": "1.0.0",
+  "description": "Fire22 Dashboard - Clean Build",
+  "private": true,
+  "scripts": {
+    "docs:start": "docusaurus start",
+    "docs:build": "docusaurus build",
+    "docs:swizzle": "docusaurus swizzle",
+    "docs:deploy": "docusaurus deploy",
+    "docs:clear": "docusaurus clear",
+    "docs:serve": "docusaurus serve",
+    "docs:clean": "bun run scripts/maintenance/clean-and-organize-builds.ts",
+    "docs:start:clean": "bun run docs:clean && bun run docs:start",
+    "docs:build:clean": "bun run docs:clean && bun run docs:build"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.8.1",
+    "@docusaurus/preset-classic": "3.8.1",
+    "@docusaurus/plugin-content-docs": "3.8.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@mdx-js/react": "3.1.0",
+    "prism-react-renderer": "2.3.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.8.1",
+    "@docusaurus/types": "3.8.1",
+    "typescript": "5.9.2"
+  },
+  "browserslist": {
+    "production": [">0.5%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+  },
+  "engines": {
+    "node": ">=18.0",
+    "bun": ">=1.1.0"
+  }
+}

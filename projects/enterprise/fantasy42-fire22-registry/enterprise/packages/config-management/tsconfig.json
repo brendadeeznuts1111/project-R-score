@@ -1,0 +1,56 @@
+{
+  "compilerOptions": {
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "types": ["@types/bun"],
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "allowJs": true,
+    "checkJs": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "declaration": false,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ff/*": ["./*"],
+      "@/*": ["./src/*"],
+      "@/domains/*": ["./src/domains/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/collections/*": ["./src/collections/*"],
+      "@/interfaces/*": ["./src/interfaces/*"],
+      "@/application/*": ["./src/application/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "tests/**/*",
+    "dashboard-server.ts",
+    "performance-profiling-script.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "crystal-clear-architecture/**/*",
+    "dashboard-worker/**/*",
+    "fire22-*/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

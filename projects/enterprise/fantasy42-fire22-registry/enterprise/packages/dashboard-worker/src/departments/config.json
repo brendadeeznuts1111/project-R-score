@@ -1,0 +1,94 @@
+{
+  "departments": [
+    {
+      "id": "finance",
+      "name": "Finance Department",
+      "email": "finance@fire22.ag",
+      "domain": "finance.fire22.ag",
+      "color": "#28a745",
+      "icon": "💰",
+      "description": "Manages financial operations, transactions, and reporting."
+    },
+    {
+      "id": "support",
+      "name": "Customer Support",
+      "email": "support@fire22.ag",
+      "domain": "support.fire22.ag",
+      "color": "#17a2b8",
+      "icon": "🎧",
+      "description": "Provides 24/7 customer assistance and issue resolution."
+    },
+    {
+      "id": "compliance",
+      "name": "Compliance & Legal",
+      "email": "compliance@fire22.ag",
+      "domain": "compliance.fire22.ag",
+      "color": "#6610f2",
+      "icon": "⚖️",
+      "description": "Ensures regulatory compliance and legal requirements."
+    },
+    {
+      "id": "operations",
+      "name": "Operations",
+      "email": "operations@fire22.ag",
+      "domain": "operations.fire22.ag",
+      "color": "#fd7e14",
+      "icon": "⚙️",
+      "description": "Manages day-to-day operations and process optimization."
+    },
+    {
+      "id": "technology",
+      "name": "Technology",
+      "email": "tech@fire22.ag",
+      "domain": "tech.fire22.ag",
+      "color": "#6f42c1",
+      "icon": "💻",
+      "description": "Develops and maintains technical infrastructure."
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "email": "marketing@fire22.ag",
+      "domain": "marketing.fire22.ag",
+      "color": "#e83e8c",
+      "icon": "📢",
+      "description": "Handles marketing campaigns and brand management."
+    },
+    {
+      "id": "management",
+      "name": "Management",
+      "email": "management@fire22.ag",
+      "domain": "management.fire22.ag",
+      "color": "#dc3545",
+      "icon": "👔",
+      "description": "Executive leadership and strategic planning."
+    },
+    {
+      "id": "hr",
+      "name": "Human Resources",
+      "email": "hr@fire22.ag",
+      "domain": "hr.fire22.ag",
+      "color": "#20c997",
+      "icon": "👥",
+      "description": "Manages recruitment, training, and employee relations."
+    },
+    {
+      "id": "qa",
+      "name": "Quality Assurance",
+      "email": "qa@fire22.ag",
+      "domain": "qa.fire22.ag",
+      "color": "#ffc107",
+      "icon": "✅",
+      "description": "Ensures quality standards and testing processes."
+    },
+    {
+      "id": "contributors",
+      "name": "Team Contributors",
+      "email": "team@fire22.ag",
+      "domain": "team.fire22.ag",
+      "color": "#795548",
+      "icon": "🤝",
+      "description": "Community contributors and external partners."
+    }
+  ]
+}

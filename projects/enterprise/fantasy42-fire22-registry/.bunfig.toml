@@ -1,0 +1,65 @@
+# Fire22 Global Bun Configuration
+# This is a GLOBAL configuration file that applies to all projects
+# Location: $HOME/.bunfig.toml or $XDG_CONFIG_HOME/.bunfig.toml
+
+# ============================================================================
+# GLOBAL SETTINGS - Apply to all projects
+# ============================================================================
+
+# Log level for all Bun operations
+logLevel = "warn"
+
+# Global telemetry - disabled for enterprise privacy
+telemetry = false
+
+# Console output depth for all projects
+[console]
+depth = 4
+
+# ============================================================================
+# GLOBAL LOADER CONFIGURATIONS
+# ============================================================================
+
+[loader]
+# Global file extension mappings
+".fire22" = "ts"
+".enterprise" = "tsx"
+".config" = "json"
+
+# ============================================================================
+# GLOBAL TEST CONFIGURATION
+# ============================================================================
+
+[test]
+# Global test settings
+smol = false
+coverage = false
+
+# Global coverage settings (can be overridden per project)
+coverageThreshold = { line = 0.5, function = 0.5, statement = 0.5 }
+coverageSkipTestFiles = true
+
+# ============================================================================
+# GLOBAL PACKAGE MANAGER SETTINGS
+# ============================================================================
+
+[install]
+# Global installation behavior
+dev = true
+optional = true
+peer = true
+production = false
+
+# Global cache settings
+[install.cache]
+disable = false
+disableManifest = false
+
+# ============================================================================
+# GLOBAL ENVIRONMENT DEFINES
+# ============================================================================
+
+[define]
+# Global environment constants
+"process.env.BUN_GLOBAL_CONFIG" = "'true'"
+"process.env.FIRE22_GLOBAL" = "'enabled'"

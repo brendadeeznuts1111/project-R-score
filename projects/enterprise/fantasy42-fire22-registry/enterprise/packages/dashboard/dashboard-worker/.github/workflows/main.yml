@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: 🔍 Environment Validation
+        run: bun run env:validate
+
+      - name: 🔒 Security Audit
+        run: bun run env:audit
+
+      - name: ⚡ Performance Check
+        run: bun run env:performance
+
+      - name: 🧪 Integration Test
+        run: bun run env:integration
+
+      - name: 🧪 Quick Tests
+        run: bun run test:quick
+
+      - name: 🧪 Comprehensive Tests
+        run: bun run test:checklist
+
+      - name: 🧪 Environment Tests
+        run: bun run env:test
+
+      - name: 🏗️ Build Application
+        run: bun run build:prod
+
+      - name: 📊 Analyze Build
+        run: bun run build:analyze
+
+      - name: 🔍 Pre-deployment Validation
+        run: bun run env:deploy
+
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/main'
+        run: bun run deploy:prod
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Regulatory Export - {{jurisdiction}}</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Courier New', monospace;
+        background: #f8f9fa;
+        color: #2c3e50;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        min-height: 100vh;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 3px solid #7d3c98;
+      }
+      .header h1 {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+        font-family: 'Segoe UI', sans-serif;
+      }
+      .header .meta {
+        font-size: 0.9em;
+        opacity: 0.9;
+      }
+      .regulatory-notice {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 15px 20px;
+        margin: 20px;
+        border-radius: 4px;
+      }
+      .regulatory-notice .title {
+        font-weight: bold;
+        color: #856404;
+        margin-bottom: 8px;
+      }
+      .regulatory-notice .content {
+        color: #856404;
+        font-size: 11px;
+      }
+      .summary-table {
+        margin: 20px;
+        border: 1px solid #bdc3c7;
+        border-collapse: collapse;
+      }
+      .summary-table th,
+      .summary-table td {
+        padding: 8px 12px;
+        border: 1px solid #bdc3c7;
+        text-align: left;
+      }
+      .summary-table th {
+        background: #ecf0f1;
+        font-weight: bold;
+        font-size: 11px;
+      }
+      .summary-table .label {
+        font-weight: bold;
+      }
+      .data-section {
+        margin: 20px;
+      }
+      .section-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #2c3e50;
+        border-bottom: 2px solid #8e44ad;
+        padding-bottom: 5px;
+      }
+      .records-table {
+        width: 100%;
+        border: 1px solid #bdc3c7;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+      .records-table th,
+      .records-table td {
+        padding: 6px 8px;
+        border: 1px solid #bdc3c7;
+        text-align: left;
+        vertical-align: top;
+      }
+      .records-table th {
+        background: #34495e;
+        color: white;
+        font-weight: bold;
+        font-size: 10px;
+        text-transform: uppercase;
+      }
+      .records-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+      .records-table .amount {
+        text-align: right;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+      }
+      .records-table .currency {
+        text-align: center;
+        font-weight: bold;
+      }
+      .records-table .status {
+        text-align: center;
+      }
+      .status-completed {
+        background: #d4edda;
+        color: #155724;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 9px;
+        font-weight: bold;
+      }
+      .status-failed {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 9px;
+        font-weight: bold;
+      }
+      .footer {
+        margin: 20px;
+        padding: 15px;
+        background: #ecf0f1;
+        border: 1px solid #bdc3c7;
+        font-size: 10px;
+        color: #7f8c8d;
+      }
+      .footer .disclaimer {
+        margin-bottom: 10px;
+        font-style: italic;
+      }
+      .export-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .export-info div {
+        text-align: center;
+      }
+      .record-count {
+        background: #e74c3c;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📋 REGULATORY TRANSACTION REPORT</h1>
+        <div class="meta">
+          Jurisdiction: {{jurisdiction}} | Generated: {{generatedAt}} | Records:
+          <span class="record-count">{{recordCount}}</span>
+        </div>
+      </div>
+
+      <div class="regulatory-notice">
+        <div class="title">⚠️ REGULATORY COMPLIANCE NOTICE</div>
+        <div class="content">
+          This report contains confidential financial transaction data for regulatory compliance purposes. Distribution
+          is restricted to authorized personnel only. All data handling must comply with applicable data protection and
+          financial regulations.
+        </div>
+      </div>
+
+      <table class="summary-table">
+        <tr>
+          <th colspan="2">REPORT SUMMARY</th>
+        </tr>
+        <tr>
+          <td class="label">Report Period:</td>
+          <td>Daily Transaction Report</td>
+        </tr>
+        <tr>
+          <td class="label">Jurisdiction:</td>
+          <td>{{jurisdiction}}</td>
+        </tr>
+        <tr>
+          <td class="label">Total Records:</td>
+          <td>{{recordCount}}</td>
+        </tr>
+        <tr>
+          <td class="label">Generated By:</td>
+          <td>Fire22 Enterprise System</td>
+        </tr>
+        <tr>
+          <td class="label">Generation Time:</td>
+          <td>{{generatedAt}}</td>
+        </tr>
+      </table>
+
+      <div class="data-section">
+        <div class="section-title">📊 TRANSACTION RECORDS</div>
+
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>EFFECTIVE_DATE</th>
+              <th>CUSTOMER_ID</th>
+              <th>USERNAME</th>
+              <th>TRANSACTION_TYPE</th>
+              <th>ACCOUNT_TYPE</th>
+              <th class="amount">AMOUNT</th>
+              <th class="currency">CURRENCY</th>
+              <th>CURRENCY_CODE</th>
+              <th class="amount">BALANCE_BEFORE</th>
+              <th class="amount">BALANCE_AFTER</th>
+              <th>DESCRIPTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample records - in real implementation, these would be populated from data -->
+            <tr>
+              <td>2024-01-15T10:30:00.000Z</td>
+              <td>CUST_001</td>
+              <td>john.doe</td>
+              <td>BET</td>
+              <td>CUSTOMER_WALLET</td>
+              <td class="amount">500.00</td>
+              <td class="currency">USD</td>
+              <td>840</td>
+              <td class="amount">1000.00</td>
+              <td class="amount">500.00</td>
+              <td>Sports betting transaction</td>
+            </tr>
+            <tr>
+              <td>2024-01-15T11:15:00.000Z</td>
+              <td>CUST_002</td>
+              <td>jane.smith</td>
+              <td>WIN</td>
+              <td>CUSTOMER_WALLET</td>
+              <td class="amount">750.00</td>
+              <td class="currency">USD</td>
+              <td>840</td>
+              <td class="amount">250.00</td>
+              <td class="amount">1000.00</td>
+              <td>Betting winnings payout</td>
+            </tr>
+            <tr>
+              <td>2024-01-15T14:20:00.000Z</td>
+              <td>CUST_003</td>
+              <td>bob.wilson</td>
+              <td>DEP</td>
+              <td>CUSTOMER_WALLET</td>
+              <td class="amount">1000.00</td>
+              <td class="currency">USD</td>
+              <td>840</td>
+              <td class="amount">0.00</td>
+              <td class="amount">1000.00</td>
+              <td>Account deposit</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <div class="disclaimer">
+          This regulatory report was generated automatically by the Fire22 Enterprise System. All timestamps are in UTC.
+          Data integrity is maintained through cryptographic hashing. For questions regarding this report, contact the
+          Compliance Officer.
+        </div>
+
+        <div class="export-info">
+          <div>
+            <strong>Report ID:</strong>
+            REG-{{generatedAt}}
+            <br />
+            <strong>Format:</strong>
+            HTML
+            <br />
+            <strong>Version:</strong>
+            1.0
+          </div>
+          <div>
+            <strong>System:</strong>
+            Fire22 Enterprise
+            <br />
+            <strong>Module:</strong>
+            Regulatory Export
+            <br />
+            <strong>Architecture:</strong>
+            Domain-Driven
+          </div>
+          <div>
+            <strong>Generated:</strong>
+            {{generatedAt}}
+            <br />
+            <strong>Jurisdiction:</strong>
+            {{jurisdiction}}
+            <br />
+            <strong>Records:</strong>
+            {{recordCount}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "fire22-wager-system",
+  "domain": "wager",
+  "registry": "private",
+  "packages": ["@fire22/wager-system"],
+  "dependencies": ["@fire22/core", "@fire22/middleware"],
+  "orchestrator": {
+    "version": "1.0.0",
+    "created": "2025-08-27T05:43:39.412Z",
+    "lastUpdated": "2025-08-27T05:43:39.412Z"
+  }
+}

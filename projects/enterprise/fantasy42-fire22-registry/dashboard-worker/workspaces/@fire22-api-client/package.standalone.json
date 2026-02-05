@@ -1,0 +1,41 @@
+{
+  "name": "@fire22/api-client-standalone",
+  "version": "3.0.9",
+  "description": "Fire22 API integration and data management (Standalone Production Version)",
+  "type": "module",
+  "main": "src/fire22-api.ts",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify --splitting",
+    "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
+    "build:cloudflare": "bun build src/index.ts --outdir dist/cloudflare --target bun --format esm --minify",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "lint": "bunx eslint src/",
+    "typecheck": "bunx tsc --noEmit",
+    "install:isolated": "bun install --linker isolated",
+    "install:linked": "bun install --linker isolated",
+    "install:standalone": "bun install --linker isolated --frozen-lockfile",
+    "deploy:linked": "wrangler deploy --config wrangler.linked.toml",
+    "deploy:standalone": "wrangler deploy --config wrangler.standalone.toml",
+    "start": "bun run dist/standalone/index.js",
+    "install": "bun install --linker isolated --frozen-lockfile"
+  },
+  "dependencies": {
+    "@fire22/core-dashboard": "3.0.9"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "workspaces": {
+    "linked": false,
+    "standalone": true
+  },
+  "fire22": {
+    "workspace": "api-client",
+    "isolation": "standalone",
+    "buildTarget": "production",
+    "linker": "isolated"
+  }
+}

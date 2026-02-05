@@ -1,0 +1,106 @@
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Bun cache
+.bun-cache/
+bun.lockb
+
+# Testing
+coverage/
+*.lcov
+.nyc_output
+
+# Production
+dist/
+build/
+*.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# Benchmark Results
+bench/results/*.json
+bench/results/*.html
+bench/results/*.csv
+bench/.benchmark-baseline.json
+bench/.benchmark-history.json
+bench/demo-heap.json
+bench/heap-*.json
+benchmark-*.json
+benchmark-*.md
+benchmark-*.html
+benchmark-*.csv
+
+# Bun
+bun.lockb
+*.bun
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.temp
+.cache/
+tmp/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+dashboard.db-shm
+dashboard.db-wal
+
+# Tokens and secrets
+token.txt
+*.key
+*.pem
+*.cert
+
+# Build artifacts
+dist-test/
+*.exe
+fire22-*
+
+# Package manager
+.npm
+.yarn
+
+# Session markers
+.session-active

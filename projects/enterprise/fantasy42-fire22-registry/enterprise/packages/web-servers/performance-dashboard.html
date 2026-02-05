@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Performance Dashboard</title>
+    <link rel="stylesheet" href="terminal-framework.css" />
+    <style>
+      /* Performance Dashboard Specific Styling */
+      body {
+        background: var(--bg-gradient);
+        color: var(--text);
+      }
+
+      .performance-header {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color-accent);
+        padding: var(--space-6);
+        margin-bottom: var(--space-6);
+        position: relative;
+      }
+
+      .performance-header::before {
+        content: '╭────────────────────────────────────────────────────────────────────────╮';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-size: var(--font-size-sm);
+        line-height: 1;
+        text-align: center;
+      }
+
+      .performance-header::after {
+        content: '╰────────────────────────────────────────────────────────────────────────╯';
+        position: absolute;
+        bottom: -1px;
+        left: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-size: var(--font-size-sm);
+        line-height: 1;
+        text-align: center;
+      }
+
+      .performance-header h1 {
+        color: var(--fire);
+        font-size: var(--font-size-4xl);
+        margin-bottom: var(--space-2);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        text-shadow: var(--shadow-glow-fire);
+        animation: flame-flicker 2s ease-in-out infinite;
+        font-family: var(--font-mono);
+      }
+
+      .performance-header .fire22-logo {
+        color: var(--fire);
+        font-size: var(--font-size-5xl);
+      }
+
+      .performance-header p {
+        color: var(--text-secondary);
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--space-4);
+        font-family: var(--font-mono);
+      }
+
+      /* Performance Metrics Grid */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
+      }
+
+      .metric-card {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        padding: var(--space-5);
+        position: relative;
+        transition: all var(--transition-base);
+      }
+
+      .metric-card::before {
+        content: '╭';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .metric-card::after {
+        content: '╯';
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow);
+        border-color: var(--accent);
+      }
+
+      .metric-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-3);
+      }
+
+      .metric-title {
+        color: var(--accent);
+        font-size: var(--font-size-lg);
+        font-family: var(--font-mono);
+        font-weight: bold;
+      }
+
+      .metric-status {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      .metric-status.excellent {
+        background: var(--success);
+      }
+      .metric-status.good {
+        background: var(--warning);
+      }
+      .metric-status.poor {
+        background: var(--danger);
+      }
+
+      .metric-value {
+        font-size: var(--font-size-3xl);
+        color: var(--text);
+        font-weight: bold;
+        margin-bottom: var(--space-2);
+        font-family: var(--font-mono);
+      }
+
+      .metric-label {
+        color: var(--text-secondary);
+        font-size: var(--font-size-sm);
+        font-family: var(--font-mono);
+      }
+
+      .metric-trend {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        margin-top: var(--space-2);
+        font-size: var(--font-size-sm);
+      }
+
+      .trend-up {
+        color: var(--success);
+      }
+      .trend-down {
+        color: var(--danger);
+      }
+      .trend-stable {
+        color: var(--warning);
+      }
+
+      /* Performance Charts Container */
+      .charts-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-6);
+        margin-bottom: var(--space-6);
+      }
+
+      .chart-card {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        padding: var(--space-5);
+        position: relative;
+      }
+
+      .chart-card::before {
+        content: '├─';
+        position: absolute;
+        top: var(--space-3);
+        left: -8px;
+        color: var(--accent);
+      }
+
+      .chart-title {
+        color: var(--accent);
+        font-size: var(--font-size-xl);
+        margin-bottom: var(--space-4);
+        font-family: var(--font-mono);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      /* Live Performance Monitor */
+      .performance-monitor {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        padding: var(--space-5);
+        margin-bottom: var(--space-6);
+        position: relative;
+      }
+
+      .performance-monitor::before {
+        content: '╭─ Live Performance Monitor ─────────────────────────────────────────────╮';
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background: var(--secondary);
+        padding: 0 var(--space-2);
+        color: var(--accent);
+        font-size: var(--font-size-xs);
+      }
+
+      .monitor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+      }
+
+      .monitor-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3);
+        background: var(--tertiary);
+        border-left: 3px solid var(--accent);
+      }
+
+      .monitor-label {
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+      }
+
+      .monitor-value {
+        color: var(--text);
+        font-weight: bold;
+        font-family: var(--font-mono);
+      }
+
+      .monitor-value.critical {
+        color: var(--danger);
+      }
+      .monitor-value.warning {
+        color: var(--warning);
+      }
+      .monitor-value.healthy {
+        color: var(--success);
+      }
+
+      /* System Resources Section */
+      .resources-section {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        padding: var(--space-5);
+        margin-bottom: var(--space-6);
+        position: relative;
+      }
+
+      .resources-section h2 {
+        color: var(--accent);
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-4);
+        font-family: var(--font-mono);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .resource-bar {
+        margin-bottom: var(--space-4);
+      }
+
+      .resource-bar-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: var(--space-2);
+        font-family: var(--font-mono);
+      }
+
+      .resource-bar-label {
+        color: var(--text-secondary);
+      }
+
+      .resource-bar-value {
+        color: var(--text);
+        font-weight: bold;
+      }
+
+      .resource-bar-container {
+        width: 100%;
+        height: 12px;
+        background: var(--tertiary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .resource-bar-fill {
+        height: 100%;
+        background: var(--accent-gradient);
+        transition: width var(--transition-base);
+        position: relative;
+      }
+
+      .resource-bar-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shimmer 2s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      /* API Performance Table */
+      .api-performance-table {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        margin-bottom: var(--space-6);
+        position: relative;
+      }
+
+      .api-performance-table h3 {
+        color: var(--accent);
+        font-size: var(--font-size-xl);
+        padding: var(--space-4) var(--space-5);
+        margin: 0;
+        border-bottom: var(--border-width) var(--border-style) var(--border-color);
+        font-family: var(--font-mono);
+      }
+
+      .api-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .api-table th {
+        background: var(--tertiary);
+        color: var(--accent);
+        padding: var(--space-3) var(--space-4);
+        text-align: left;
+        font-family: var(--font-mono);
+        border-bottom: var(--border-width) var(--border-style) var(--border-color);
+      }
+
+      .api-table td {
+        padding: var(--space-3) var(--space-4);
+        border-bottom: var(--border-width) var(--border-style) rgba(255, 255, 255, 0.1);
+        font-family: var(--font-mono);
+      }
+
+      .api-table tr:hover {
+        background: var(--tertiary);
+      }
+
+      .api-status {
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--border-radius-sm);
+        font-size: var(--font-size-xs);
+        font-weight: bold;
+      }
+
+      .api-status.healthy {
+        background: var(--success);
+        color: var(--primary);
+      }
+      .api-status.slow {
+        background: var(--warning);
+        color: var(--primary);
+      }
+      .api-status.error {
+        background: var(--danger);
+        color: var(--primary);
+      }
+
+      .response-time {
+        color: var(--text);
+      }
+
+      .response-time.fast {
+        color: var(--success);
+      }
+      .response-time.moderate {
+        color: var(--warning);
+      }
+      .response-time.slow {
+        color: var(--danger);
+      }
+
+      /* Controls Section */
+      .controls {
+        display: flex;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+        margin-bottom: var(--space-6);
+      }
+
+      .btn {
+        padding: var(--space-3) var(--space-6);
+        border: var(--border-width) var(--border-style);
+        font-size: var(--font-size-base);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        font-family: var(--font-mono);
+        position: relative;
+        background: transparent;
+      }
+
+      .btn::before {
+        content: '├─';
+        position: absolute;
+        left: -15px;
+        color: inherit;
+      }
+
+      .btn::after {
+        content: '─┤';
+        position: absolute;
+        right: -15px;
+        color: inherit;
+      }
+
+      .btn-primary {
+        color: var(--fire);
+        border-color: var(--fire);
+      }
+
+      .btn-primary:hover {
+        background: var(--fire);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow-fire);
+      }
+
+      .btn-secondary {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .btn-secondary:hover {
+        background: var(--accent);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1200px) {
+        .charts-container {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics-grid {
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .performance-header h1 {
+          font-size: var(--font-size-3xl);
+        }
+
+        .monitor-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="terminal-container">
+      <!-- Header -->
+      <header class="performance-header">
+        <h1>
+          <span class="fire22-logo">🔥</span>
+          Fire22 Performance Dashboard
+        </h1>
+        <p>Real-time system performance monitoring and optimization analytics</p>
+      </header>
+
+      <!-- Performance Metrics Overview -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Response Time</span>
+            <div class="metric-status excellent"></div>
+          </div>
+          <div class="metric-value" id="response-time">142ms</div>
+          <div class="metric-label">Average API Response</div>
+          <div class="metric-trend trend-up">↗ +12% improved</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Throughput</span>
+            <div class="metric-status good"></div>
+          </div>
+          <div class="metric-value" id="throughput">1,247</div>
+          <div class="metric-label">Requests per minute</div>
+          <div class="metric-trend trend-up">↗ +8% increased</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Error Rate</span>
+            <div class="metric-status excellent"></div>
+          </div>
+          <div class="metric-value" id="error-rate">0.02%</div>
+          <div class="metric-label">System error rate</div>
+          <div class="metric-trend trend-down">↘ -15% reduced</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Uptime</span>
+            <div class="metric-status excellent"></div>
+          </div>
+          <div class="metric-value" id="uptime">99.94%</div>
+          <div class="metric-label">Last 30 days</div>
+          <div class="metric-trend trend-stable">→ Stable</div>
+        </div>
+      </section>
+
+      <!-- Live Performance Monitor -->
+      <section class="performance-monitor">
+        <div class="monitor-grid">
+          <div class="monitor-item">
+            <span class="monitor-label">CPU Usage</span>
+            <span class="monitor-value healthy" id="cpu-usage">23%</span>
+          </div>
+          <div class="monitor-item">
+            <span class="monitor-label">Memory Usage</span>
+            <span class="monitor-value healthy" id="memory-usage">67%</span>
+          </div>
+          <div class="monitor-item">
+            <span class="monitor-label">Active Connections</span>
+            <span class="monitor-value healthy" id="active-connections">342</span>
+          </div>
+          <div class="monitor-item">
+            <span class="monitor-label">Queue Length</span>
+            <span class="monitor-value healthy" id="queue-length">12</span>
+          </div>
+          <div class="monitor-item">
+            <span class="monitor-label">Cache Hit Rate</span>
+            <span class="monitor-value healthy" id="cache-hit-rate">87%</span>
+          </div>
+          <div class="monitor-item">
+            <span class="monitor-label">Database Queries/sec</span>
+            <span class="monitor-value healthy" id="db-queries">156</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Resources -->
+      <section class="resources-section">
+        <h2>📊 System Resources</h2>
+
+        <div class="resource-bar">
+          <div class="resource-bar-header">
+            <span class="resource-bar-label">CPU Load</span>
+            <span class="resource-bar-value" id="cpu-load-value">23%</span>
+          </div>
+          <div class="resource-bar-container">
+            <div class="resource-bar-fill" id="cpu-load-bar" style="width: 23%"></div>
+          </div>
+        </div>
+
+        <div class="resource-bar">
+          <div class="resource-bar-header">
+            <span class="resource-bar-label">Memory Usage</span>
+            <span class="resource-bar-value" id="memory-usage-value">67%</span>
+          </div>
+          <div class="resource-bar-container">
+            <div class="resource-bar-fill" id="memory-usage-bar" style="width: 67%"></div>
+          </div>
+        </div>
+
+        <div class="resource-bar">
+          <div class="resource-bar-header">
+            <span class="resource-bar-label">Disk Usage</span>
+            <span class="resource-bar-value" id="disk-usage-value">42%</span>
+          </div>
+          <div class="resource-bar-container">
+            <div class="resource-bar-fill" id="disk-usage-bar" style="width: 42%"></div>
+          </div>
+        </div>
+
+        <div class="resource-bar">
+          <div class="resource-bar-header">
+            <span class="resource-bar-label">Network I/O</span>
+            <span class="resource-bar-value" id="network-io-value">18%</span>
+          </div>
+          <div class="resource-bar-container">
+            <div class="resource-bar-fill" id="network-io-bar" style="width: 18%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- API Performance Table -->
+      <section class="api-performance-table">
+        <h3>🔌 API Endpoint Performance</h3>
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Status</th>
+              <th>Avg Response Time</th>
+              <th>Requests/min</th>
+              <th>Error Rate</th>
+              <th>Last Check</th>
+            </tr>
+          </thead>
+          <tbody id="api-performance-body">
+            <tr>
+              <td>/api/manager/getLiveWagers</td>
+              <td><span class="api-status healthy">HEALTHY</span></td>
+              <td><span class="response-time fast">89ms</span></td>
+              <td>234</td>
+              <td>0.01%</td>
+              <td>2 sec ago</td>
+            </tr>
+            <tr>
+              <td>/api/manager/getWeeklyFigure</td>
+              <td><span class="api-status healthy">HEALTHY</span></td>
+              <td><span class="response-time fast">156ms</span></td>
+              <td>89</td>
+              <td>0.00%</td>
+              <td>5 sec ago</td>
+            </tr>
+            <tr>
+              <td>/api/manager/getCustomerAdmin</td>
+              <td><span class="api-status slow">SLOW</span></td>
+              <td><span class="response-time moderate">445ms</span></td>
+              <td>67</td>
+              <td>0.03%</td>
+              <td>1 sec ago</td>
+            </tr>
+            <tr>
+              <td>/api/manager/getAgentPerformance</td>
+              <td><span class="api-status healthy">HEALTHY</span></td>
+              <td><span class="response-time fast">123ms</span></td>
+              <td>145</td>
+              <td>0.02%</td>
+              <td>3 sec ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Control Panel -->
+      <section class="controls">
+        <button class="btn btn-primary" id="refresh-metrics">🔄 Refresh Metrics</button>
+        <button class="btn btn-secondary" id="export-report">📊 Export Report</button>
+        <button class="btn btn-secondary" id="system-optimize">⚡ Optimize System</button>
+        <button class="btn btn-secondary" id="clear-cache">🧹 Clear Cache</button>
+      </section>
+    </div>
+
+    <!-- Enhanced Terminal Footer -->
+    <footer class="terminal-footer">
+      <div class="footer-decoration">╭────────────────────────────────────────────────────────────────────────╮</div>
+
+      <div class="footer-content">
+        <!-- Main Footer Section -->
+        <div class="footer-main">
+          <div class="footer-logo">🔥</div>
+          <h2 class="footer-title">Fire22 Performance Dashboard</h2>
+          <p class="footer-tagline">Advanced System Performance Monitoring & Analytics</p>
+        </div>
+
+        <!-- Feature List with Box Characters -->
+        <div class="footer-features">
+          <div class="features-header">├─── Performance Monitoring Features ───┤</div>
+          <div class="features-grid">
+            <div class="footer-feature">├─ ⚡ Real-Time Response Time Tracking</div>
+            <div class="footer-feature">├─ 📊 System Resource Monitoring</div>
+            <div class="footer-feature">├─ 🔌 API Endpoint Performance Analysis</div>
+            <div class="footer-feature">├─ 💻 Live System Health Metrics</div>
+            <div class="footer-feature">├─ 📈 Throughput & Error Rate Analytics</div>
+            <div class="footer-feature">╰─ 🎯 Performance Optimization Tools</div>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="footer-navigation">
+          <div class="nav-section">
+            ╭─ Metrics ───────╮ │ • Response Time │ │ • Throughput │ │ • Error Rates │ ╰─────────────────╯
+          </div>
+          <div class="nav-section">
+            ╭─ Resources ─────╮ │ • CPU Usage │ │ • Memory Stats │ │ • Network I/O │ ╰─────────────────╯
+          </div>
+          <div class="nav-section">
+            ╭─ API Monitor ───╮ │ • Endpoint Health│ │ • Performance │ │ • Optimization │ ╰─────────────────╯
+          </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="footer-status">
+          ├───────────────────────────────────────────────────────────────────────┤ │ Status: ● Active | Performance:
+          Excellent | Uptime: 99.94% │ ├───────────────────────────────────────────────────────────────────────┤
+        </div>
+
+        <!-- Copyright Section -->
+        <div class="footer-copyright">
+          <p>© 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Built with ╭─🔥─╮ Advanced performance monitoring and system optimization</p>
+          <p>╰─────────────────────────────────────────────────────────────────╯</p>
+        </div>
+      </div>
+
+      <div class="footer-decoration">╰────────────────────────────────────────────────────────────────────────╯</div>
+    </footer>
+
+    <script>
+      class PerformanceDashboard {
+        constructor() {
+          this.metrics = {
+            responseTime: 142,
+            throughput: 1247,
+            errorRate: 0.02,
+            uptime: 99.94,
+            cpuUsage: 23,
+            memoryUsage: 67,
+            activeConnections: 342,
+            queueLength: 12,
+            cacheHitRate: 87,
+            dbQueries: 156,
+          };
+
+          this.initialize();
+        }
+
+        initialize() {
+          this.setupEventListeners();
+          this.startRealTimeUpdates();
+          this.loadApiPerformance();
+        }
+
+        setupEventListeners() {
+          document.getElementById('refresh-metrics').addEventListener('click', () => {
+            this.refreshAllMetrics();
+          });
+
+          document.getElementById('export-report').addEventListener('click', () => {
+            this.exportPerformanceReport();
+          });
+
+          document.getElementById('system-optimize').addEventListener('click', () => {
+            this.optimizeSystem();
+          });
+
+          document.getElementById('clear-cache').addEventListener('click', () => {
+            this.clearSystemCache();
+          });
+        }
+
+        startRealTimeUpdates() {
+          setInterval(() => {
+            this.updateMetrics();
+            this.updateResourceBars();
+            this.updateApiPerformance();
+          }, 3000); // Update every 3 seconds
+        }
+
+        updateMetrics() {
+          // Simulate real-time metric updates with small variations
+          this.metrics.responseTime = 142 + Math.floor(Math.random() * 50 - 25);
+          this.metrics.throughput = 1247 + Math.floor(Math.random() * 200 - 100);
+          this.metrics.errorRate = Math.max(0, 0.02 + (Math.random() - 0.5) * 0.05);
+          this.metrics.cpuUsage = Math.max(10, Math.min(80, 23 + Math.floor(Math.random() * 20 - 10)));
+          this.metrics.memoryUsage = Math.max(50, Math.min(90, 67 + Math.floor(Math.random() * 10 - 5)));
+          this.metrics.activeConnections = 342 + Math.floor(Math.random() * 100 - 50);
+          this.metrics.queueLength = Math.max(0, 12 + Math.floor(Math.random() * 10 - 5));
+          this.metrics.cacheHitRate = Math.max(70, Math.min(95, 87 + Math.floor(Math.random() * 8 - 4)));
+          this.metrics.dbQueries = 156 + Math.floor(Math.random() * 40 - 20);
+
+          // Update DOM elements
+          document.getElementById('response-time').textContent = this.metrics.responseTime + 'ms';
+          document.getElementById('throughput').textContent = this.formatNumber(this.metrics.throughput);
+          document.getElementById('error-rate').textContent = this.metrics.errorRate.toFixed(2) + '%';
+          document.getElementById('uptime').textContent = this.metrics.uptime.toFixed(2) + '%';
+          document.getElementById('cpu-usage').textContent = this.metrics.cpuUsage + '%';
+          document.getElementById('memory-usage').textContent = this.metrics.memoryUsage + '%';
+          document.getElementById('active-connections').textContent = this.formatNumber(this.metrics.activeConnections);
+          document.getElementById('queue-length').textContent = this.formatNumber(this.metrics.queueLength);
+          document.getElementById('cache-hit-rate').textContent = this.metrics.cacheHitRate + '%';
+          document.getElementById('db-queries').textContent = this.formatNumber(this.metrics.dbQueries);
+
+          // Update status colors based on values
+          this.updateMetricStatuses();
+        }
+
+        updateResourceBars() {
+          const diskUsage = Math.max(30, Math.min(70, 42 + Math.floor(Math.random() * 10 - 5)));
+          const networkIo = Math.max(10, Math.min(40, 18 + Math.floor(Math.random() * 8 - 4)));
+
+          // Update resource bar values and widths
+          document.getElementById('cpu-load-value').textContent = this.metrics.cpuUsage + '%';
+          document.getElementById('cpu-load-bar').style.width = this.metrics.cpuUsage + '%';
+
+          document.getElementById('memory-usage-value').textContent = this.metrics.memoryUsage + '%';
+          document.getElementById('memory-usage-bar').style.width = this.metrics.memoryUsage + '%';
+
+          document.getElementById('disk-usage-value').textContent = diskUsage + '%';
+          document.getElementById('disk-usage-bar').style.width = diskUsage + '%';
+
+          document.getElementById('network-io-value').textContent = networkIo + '%';
+          document.getElementById('network-io-bar').style.width = networkIo + '%';
+        }
+
+        updateMetricStatuses() {
+          const responseTimeStatus = document.querySelector('.metric-card:nth-child(1) .metric-status');
+          const throughputStatus = document.querySelector('.metric-card:nth-child(2) .metric-status');
+          const errorRateStatus = document.querySelector('.metric-card:nth-child(3) .metric-status');
+
+          // Update status indicators based on thresholds
+          responseTimeStatus.className = `metric-status ${this.metrics.responseTime < 150 ? 'excellent' : this.metrics.responseTime < 300 ? 'good' : 'poor'}`;
+          throughputStatus.className = `metric-status ${this.metrics.throughput > 1000 ? 'excellent' : this.metrics.throughput > 800 ? 'good' : 'poor'}`;
+          errorRateStatus.className = `metric-status ${this.metrics.errorRate < 0.05 ? 'excellent' : this.metrics.errorRate < 0.1 ? 'good' : 'poor'}`;
+
+          // Update monitor value colors
+          document.getElementById('cpu-usage').className =
+            `monitor-value ${this.metrics.cpuUsage < 50 ? 'healthy' : this.metrics.cpuUsage < 80 ? 'warning' : 'critical'}`;
+          document.getElementById('memory-usage').className =
+            `monitor-value ${this.metrics.memoryUsage < 70 ? 'healthy' : this.metrics.memoryUsage < 85 ? 'warning' : 'critical'}`;
+          document.getElementById('queue-length').className =
+            `monitor-value ${this.metrics.queueLength < 20 ? 'healthy' : this.metrics.queueLength < 50 ? 'warning' : 'critical'}`;
+        }
+
+        loadApiPerformance() {
+          // Simulate loading API performance data
+          console.log('Loading API performance data...');
+        }
+
+        updateApiPerformance() {
+          // Simulate updating API performance metrics
+          const tableBody = document.getElementById('api-performance-body');
+          const rows = tableBody.querySelectorAll('tr');
+
+          rows.forEach((row, index) => {
+            const responseTimeCell = row.querySelector('.response-time');
+            const requestsCell = row.cells[3];
+
+            if (responseTimeCell && requestsCell) {
+              // Simulate varying response times and request counts
+              const baseResponseTime = [89, 156, 445, 123][index] || 100;
+              const newResponseTime = baseResponseTime + Math.floor(Math.random() * 50 - 25);
+
+              responseTimeCell.textContent = Math.max(50, newResponseTime) + 'ms';
+              responseTimeCell.className = `response-time ${newResponseTime < 200 ? 'fast' : newResponseTime < 400 ? 'moderate' : 'slow'}`;
+
+              const baseRequests = [234, 89, 67, 145][index] || 100;
+              const newRequests = baseRequests + Math.floor(Math.random() * 20 - 10);
+              requestsCell.textContent = Math.max(1, newRequests);
+            }
+          });
+        }
+
+        refreshAllMetrics() {
+          this.showNotification('Refreshing all performance metrics...', 'info');
+
+          setTimeout(() => {
+            this.updateMetrics();
+            this.updateResourceBars();
+            this.updateApiPerformance();
+            this.showNotification('All metrics refreshed successfully!', 'success');
+          }, 1500);
+        }
+
+        exportPerformanceReport() {
+          this.showNotification('Exporting performance report...', 'info');
+
+          setTimeout(() => {
+            const reportData = {
+              timestamp: new Date().toISOString(),
+              metrics: this.metrics,
+              summary: {
+                overallHealth: 'Excellent',
+                recommendations: [
+                  'System performance is optimal',
+                  'Monitor memory usage trends',
+                  'API response times are healthy',
+                ],
+              },
+            };
+
+            console.log('Performance Report:', reportData);
+            this.showNotification('Performance report exported successfully!', 'success');
+          }, 2000);
+        }
+
+        optimizeSystem() {
+          this.showNotification('Starting system optimization...', 'info');
+
+          setTimeout(() => {
+            // Simulate optimization improvements
+            this.metrics.responseTime = Math.max(80, this.metrics.responseTime - 20);
+            this.metrics.memoryUsage = Math.max(40, this.metrics.memoryUsage - 10);
+            this.metrics.cpuUsage = Math.max(15, this.metrics.cpuUsage - 8);
+
+            this.updateMetrics();
+            this.updateResourceBars();
+            this.showNotification('System optimization completed!', 'success');
+          }, 3000);
+        }
+
+        clearSystemCache() {
+          this.showNotification('Clearing system cache...', 'info');
+
+          setTimeout(() => {
+            this.metrics.cacheHitRate = Math.min(95, this.metrics.cacheHitRate + 5);
+            this.metrics.responseTime = Math.max(80, this.metrics.responseTime - 15);
+
+            this.updateMetrics();
+            this.showNotification('System cache cleared successfully!', 'success');
+          }, 1000);
+        }
+
+        showNotification(message, type = 'info') {
+          // Create notification element
+          const notification = document.createElement('div');
+          notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent)'};
+                    color: var(--primary);
+                    padding: var(--space-4);
+                    border-radius: var(--border-radius);
+                    font-family: var(--font-mono);
+                    font-weight: bold;
+                    z-index: 1000;
+                    opacity: 0;
+                    transform: translateX(100%);
+                    transition: all var(--transition-base);
+                `;
+          notification.textContent = message;
+
+          document.body.appendChild(notification);
+
+          // Animate in
+          setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+          }, 100);
+
+          // Remove after 3 seconds
+          setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+              if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+              }
+            }, 300);
+          }, 3000);
+        }
+
+        formatNumber(num) {
+          return new Intl.NumberFormat('en-US').format(num);
+        }
+      }
+
+      // Initialize performance dashboard when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new PerformanceDashboard();
+      });
+    </script>
+  </body>
+</html>

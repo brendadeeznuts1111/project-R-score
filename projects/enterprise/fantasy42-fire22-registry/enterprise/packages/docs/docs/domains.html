@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏛️ Domain Architecture - Crystal Clear Architecture</title>
+    <meta
+      name="description"
+      content="Five specialized business domains delivering clear separation of concerns and optimized performance in Crystal Clear Architecture."
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #1e40af;
+        --accent-color: #06b6d4;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-light: #f9fafb;
+        --bg-white: #ffffff;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+          sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background-color: var(--bg-light);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 2rem 0;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .header .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .nav-links a:hover {
+        opacity: 0.8;
+      }
+
+      .back-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .back-link:hover {
+        opacity: 0.8;
+      }
+
+      .hero {
+        padding: 4rem 0;
+        text-align: center;
+        background: var(--bg-white);
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero .subtitle {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .domains-section {
+        padding: 4rem 0;
+        background: var(--bg-light);
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .section-subtitle {
+        text-align: center;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .domains-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .domain-card {
+        background: var(--bg-white);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid #e5e7eb;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .domain-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .domain-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      }
+
+      .domain-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .domain-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .domain-description {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+      }
+
+      .domain-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .domain-features li {
+        padding: 0.5rem 0;
+        color: var(--text-secondary);
+        border-bottom: 1px solid #f3f4f6;
+      }
+
+      .domain-features li:last-child {
+        border-bottom: none;
+      }
+
+      .domain-features li:before {
+        content: '✓';
+        color: var(--success-color);
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
+
+      .architecture-section {
+        padding: 4rem 0;
+        background: var(--bg-white);
+      }
+
+      .architecture-diagram {
+        background: var(--bg-light);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        margin: 2rem 0;
+        font-family: 'Courier New', monospace;
+        white-space: pre-line;
+        overflow-x: auto;
+        line-height: 1.4;
+        border: 1px solid #e5e7eb;
+      }
+
+      .benefits-section {
+        padding: 4rem 0;
+        background: var(--bg-light);
+      }
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .benefit-card {
+        background: var(--bg-white);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        text-align: center;
+        border: 1px solid #e5e7eb;
+      }
+
+      .benefit-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .benefit-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .benefit-description {
+        color: var(--text-secondary);
+      }
+
+      .cta-section {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        text-align: center;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+
+      .cta-primary {
+        background: var(--accent-color);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: var(--transition);
+      }
+
+      .cta-primary:hover {
+        background: #0891b2;
+        transform: translateY(-2px);
+      }
+
+      .footer {
+        padding: 2rem 0;
+        background: var(--text-primary);
+        color: white;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        .header .container {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .nav-links {
+          gap: 1rem;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .domains-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .benefits-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="https://github.com/brendadeeznuts1111/crystal-clear-architecture" target="_blank">GitHub</a>
+          <a href="https://dashboard-worker.brendawill2233.workers.dev/dashboard" target="_blank">Live Demo</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h1 class="fade-in-up">🏛️ Domain Architecture</h1>
+        <p class="subtitle fade-in-up">
+          Five specialized business domains delivering clear separation of concerns and optimized performance
+        </p>
+      </div>
+    </section>
+
+    <!-- Domains Section -->
+    <section class="domains-section">
+      <div class="container">
+        <h2 class="section-title">💼 Business Domains</h2>
+        <p class="section-subtitle">
+          Specialized domains handling specific business concerns with isolated data management and optimized workflows
+        </p>
+
+        <div class="domains-grid">
+          <div class="domain-card">
+            <span class="domain-icon">💰</span>
+            <h3 class="domain-title">Collections</h3>
+            <p class="domain-description">
+              Settlement processing and payment management with optimized transaction workflows
+            </p>
+            <ul class="domain-features">
+              <li>Real-time settlement processing</li>
+              <li>Payment gateway integration</li>
+              <li>Audit trail management</li>
+              <li>Regulatory compliance</li>
+            </ul>
+          </div>
+
+          <div class="domain-card">
+            <span class="domain-icon">📊</span>
+            <h3 class="domain-title">Distributions</h3>
+            <p class="domain-description">Commission calculations and payout distributions with multi-tier support</p>
+            <ul class="domain-features">
+              <li>Multi-tier commission structures</li>
+              <li>Automated payout processing</li>
+              <li>Revenue analytics</li>
+              <li>Tax compliance tracking</li>
+            </ul>
+          </div>
+
+          <div class="domain-card">
+            <span class="domain-icon">🎮</span>
+            <h3 class="domain-title">Free Play</h3>
+            <p class="domain-description">Bonus wagering and promotional transaction handling</p>
+            <ul class="domain-features">
+              <li>Bonus lifecycle management</li>
+              <li>Wagering requirement tracking</li>
+              <li>Promotional campaigns</li>
+              <li>Fraud detection</li>
+            </ul>
+          </div>
+
+          <div class="domain-card">
+            <span class="domain-icon">⚖️</span>
+            <h3 class="domain-title">Balance</h3>
+            <p class="domain-description">Account management and validation with real-time balance tracking</p>
+            <ul class="domain-features">
+              <li>Real-time balance updates</li>
+              <li>Account validation</li>
+              <li>Transaction history</li>
+              <li>Balance reconciliation</li>
+            </ul>
+          </div>
+
+          <div class="domain-card">
+            <span class="domain-icon">🔧</span>
+            <h3 class="domain-title">Adjustment</h3>
+            <p class="domain-description">Transaction modifications and corrections with audit trails</p>
+            <ul class="domain-features">
+              <li>Transaction corrections</li>
+              <li>Audit logging</li>
+              <li>Approval workflows</li>
+              <li>Compliance reporting</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture-section">
+      <div class="container">
+        <h2 class="section-title">🏗️ Architecture Overview</h2>
+        <p class="section-subtitle">Clean separation of concerns with event-driven communication between domains</p>
+
+        <div class="architecture-diagram">
+          ┌─────────────────────────────────────────────────────────────────────────────────┐ │ DOMAIN ARCHITECTURE │
+          ├─────────────────────────────────────────────────────────────────────────────────┤ │ 💰 Collections 📊
+          Distributions 🎮 Free Play ⚖️ Balance 🔧 Adjustment │ │ ┌─────────────────┐ ┌─────────────────┐
+          ┌─────────────────┐ ┌─────────────────┐ │ │ │ Settlement Proc │ │ Commission Calc │ │ Bonus Wagers │ │ Account
+          Mgmt │ │ │ │ Payment Gateway │ │ Payout Dist │ │ Promo Tracking │ │ Balance Updates │ │ │ │ Audit Trails │ │
+          Revenue Analytics│ │ Fraud Detection │ │ Reconciliation │ │ │ └─────────────────┘ └─────────────────┘
+          └─────────────────┘ └─────────────────┘ │
+          └─────────────────────────────────────────────────────────────────────────────────┘ │ ▼
+          ┌─────────────────────────────────────────────────────────────────────────────────┐ │ EVENT COMMUNICATION │
+          ├─────────────────────────────────────────────────────────────────────────────────┤ │ 🔄 Event Bus 📡 Message
+          Queue 🌐 API Gateway ⚡ WebSocket │ │ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+          ┌─────────────────┐ │ │ │ Domain Events │ │ Async Processing │ │ REST/GraphQL │ │ Real-time │ │ │ │ Event
+          Sourcing │ │ Queue Management │ │ Rate Limiting │ │ Bidirectional │ │ │ │ Event Streaming │ │ Message Routing
+          │ │ Authentication │ │ Auto-reconnect │ │ │ └─────────────────┘ └─────────────────┘ └─────────────────┘
+          └─────────────────┘ │ └─────────────────────────────────────────────────────────────────────────────────┘ │ ▼
+          ┌─────────────────────────────────────────────────────────────────────────────────┐ │ CORE INFRASTRUCTURE │
+          ├─────────────────────────────────────────────────────────────────────────────────┤ │ 🚀 Bun Runtime 💾 SQLite
+          DB 🔐 Security 📊 Monitoring │ │ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+          ┌─────────────────┐ │ │ │ Domain Logging │ │ WAL Mode │ │ JWT Auth │ │ Health Checks │ │ │ │ Command Exec │ │
+          Migrations │ │ Password Hash │ │ Performance │ │ │ │ File Operations │ │ Query Builder │ │ Rate Limiting │ │
+          Alerting │ │ │ └─────────────────┘ └─────────────────┘ └─────────────────┘ └─────────────────┘ │
+          └─────────────────────────────────────────────────────────────────────────────────┘
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+      <div class="container">
+        <h2 class="section-title">🎯 Domain Benefits</h2>
+        <p class="section-subtitle">Why domain-driven architecture delivers superior results</p>
+
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <span class="benefit-icon">🛡️</span>
+            <h3 class="benefit-title">Isolation</h3>
+            <p class="benefit-description">
+              Each domain operates independently, preventing cascading failures and improving maintainability
+            </p>
+          </div>
+
+          <div class="benefit-card">
+            <span class="benefit-icon">⚡</span>
+            <h3 class="benefit-title">Performance</h3>
+            <p class="benefit-description">
+              Specialized optimization for each domain's specific requirements and use cases
+            </p>
+          </div>
+
+          <div class="benefit-card">
+            <span class="benefit-icon">🔧</span>
+            <h3 class="benefit-title">Maintainability</h3>
+            <p class="benefit-description">
+              Clear boundaries and responsibilities make code easier to understand and modify
+            </p>
+          </div>
+
+          <div class="benefit-card">
+            <span class="benefit-icon">📈</span>
+            <h3 class="benefit-title">Scalability</h3>
+            <p class="benefit-description">
+              Domains can be scaled independently based on their specific load requirements
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="container">
+        <h2>🚀 Experience Domain-Driven Excellence</h2>
+        <p>
+          Discover how Crystal Clear Architecture's domain-driven approach transforms complex systems into maintainable,
+          scalable solutions.
+        </p>
+        <div class="cta-buttons">
+          <a
+            href="https://github.com/brendadeeznuts1111/crystal-clear-architecture"
+            target="_blank"
+            class="cta-primary"
+          >
+            🚀 View Implementation
+          </a>
+          <a href="https://dashboard-worker.brendawill2233.workers.dev/dashboard" target="_blank" class="cta-primary">
+            🎮 Live Domain Demo
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div>
+          <strong>🏗️ Crystal Clear Architecture</strong>
+          <br />
+          Enterprise Domain-Driven Reference Implementation
+        </div>
+        <div style="margin-top: 1rem; opacity: 0.8">
+          Built with ❤️ using Domain-Driven Design, TypeScript, and Bun Runtime
+          <br />
+          © 2024 Crystal Clear Engineering Team
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px',
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('fade-in-up');
+            }
+          });
+        }, observerOptions);
+
+        document.querySelectorAll('.domain-card, .benefit-card').forEach(card => {
+          observer.observe(card);
+        });
+      });
+    </script>
+  </body>
+</html>

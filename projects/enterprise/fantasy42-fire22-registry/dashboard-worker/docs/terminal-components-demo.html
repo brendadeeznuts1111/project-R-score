@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Terminal Components Demo</title>
+    <link rel="stylesheet" href="terminal-framework.css" />
+    <link rel="stylesheet" href="terminal-components.css" />
+    <style>
+      /* Demo-specific styles */
+      .demo-section {
+        margin-bottom: var(--space-8);
+        padding: var(--space-6);
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+      }
+
+      .demo-section h3 {
+        color: var(--accent);
+        margin-bottom: var(--space-4);
+        font-family: var(--font-mono);
+        font-size: var(--font-size-xl);
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+
+      .code-example {
+        background: #000;
+        color: var(--terminal-green);
+        padding: var(--space-4);
+        border: var(--border-width) var(--border-style) var(--terminal-green);
+        font-family: var(--font-mono);
+        font-size: var(--font-size-sm);
+        overflow-x: auto;
+        margin-top: var(--space-4);
+      }
+
+      .component-showcase {
+        padding: var(--space-4);
+        background: var(--tertiary);
+        border-left: 3px solid var(--accent);
+        margin-bottom: var(--space-4);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Theme Toggle -->
+    <button class="terminal-btn terminal-btn--secondary theme-toggle" data-terminal-theme-toggle>
+      🌓 Toggle Theme
+    </button>
+
+    <div class="terminal-container">
+      <!-- Demo Header -->
+      <header class="terminal-header">
+        <h1 class="terminal-title">
+          <span class="terminal-logo">🔥</span>
+          Fire22 Terminal Components Demo
+        </h1>
+        <p class="terminal-subtitle">Interactive showcase of all terminal components</p>
+      </header>
+
+      <!-- Controls Section -->
+      <section class="demo-section">
+        <h3>🎮 Demo Controls</h3>
+        <div class="terminal-flex terminal-flex--center" style="gap: var(--space-4); flex-wrap: wrap">
+          <button class="terminal-btn terminal-btn--primary" onclick="startRealTimeDemo()">
+            <span class="terminal-btn__icon">⚡</span>
+            <span class="terminal-btn__text">Start Real-Time Demo</span>
+          </button>
+          <button class="terminal-btn terminal-btn--secondary" onclick="refreshAllComponents()">
+            <span class="terminal-btn__text">Refresh Components</span>
+          </button>
+          <button class="terminal-btn terminal-btn--success" onclick="showAllNotifications()">
+            <span class="terminal-btn__text">Test Notifications</span>
+          </button>
+          <button class="terminal-btn terminal-btn--danger" onclick="resetDemo()">
+            <span class="terminal-btn__text">Reset Demo</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Header Components -->
+      <section class="demo-section">
+        <h3>📋 Header Components</h3>
+        <div class="component-showcase">
+          <div class="terminal-header terminal-header--compact">
+            <h2 class="terminal-title" style="font-size: var(--font-size-2xl)">
+              <span class="terminal-logo" style="font-size: var(--font-size-3xl)">🔥</span>
+              Compact Header Example
+            </h2>
+            <p class="terminal-subtitle">This is a compact header variant</p>
+          </div>
+          <div class="code-example">
+            &lt;div class="terminal-header terminal-header--compact"&gt; &lt;h1 class="terminal-title"&gt; &lt;span
+            class="terminal-logo"&gt;🔥&lt;/span&gt; Header Title &lt;/h1&gt; &lt;p
+            class="terminal-subtitle"&gt;Subtitle text&lt;/p&gt; &lt;/div&gt;
+          </div>
+        </div>
+      </section>
+
+      <!-- Card Components -->
+      <section class="demo-section">
+        <h3>🃏 Card Components</h3>
+        <div class="demo-grid">
+          <div class="terminal-card terminal-card--interactive">
+            <div class="terminal-card__header">
+              <h4 class="terminal-card__title">📊 Interactive Card</h4>
+              <div class="terminal-status-dot terminal-status-dot--active"></div>
+            </div>
+            <div class="terminal-card__content">
+              <p>This card has hover effects and interactive features.</p>
+              <div class="terminal-metric" style="text-align: center; margin-top: var(--space-4)">
+                <div class="terminal-metric__value">1,247</div>
+                <div class="terminal-metric__label">Active Sessions</div>
+                <div class="terminal-metric__trend terminal-metric__trend--up">↗ +12% improved</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="terminal-card terminal-card--accent">
+            <div class="terminal-card__header">
+              <h4 class="terminal-card__title">⚡ Accent Card</h4>
+              <div class="terminal-status-dot terminal-status-dot--warning"></div>
+            </div>
+            <div class="terminal-card__content">
+              <p>This card uses accent border styling.</p>
+              <div class="terminal-progress terminal-mt-4">
+                <div class="terminal-progress__header">
+                  <span class="terminal-progress__label">CPU Usage</span>
+                  <span class="terminal-progress__value">67%</span>
+                </div>
+                <div class="terminal-progress__bar">
+                  <div class="terminal-progress__fill" data-progress="67"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="code-example">
+          &lt;div class="terminal-card terminal-card--interactive"&gt; &lt;div class="terminal-card__header"&gt; &lt;h4
+          class="terminal-card__title"&gt;📊 Card Title&lt;/h4&gt; &lt;div class="terminal-status-dot
+          terminal-status-dot--active"&gt;&lt;/div&gt; &lt;/div&gt; &lt;div class="terminal-card__content"&gt; Card
+          content goes here... &lt;/div&gt; &lt;/div&gt;
+        </div>
+      </section>
+
+      <!-- Button Components -->
+      <section class="demo-section">
+        <h3>🔘 Button Components</h3>
+        <div class="component-showcase">
+          <div class="terminal-flex" style="gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-4)">
+            <button class="terminal-btn terminal-btn--primary">
+              <span class="terminal-btn__icon">🚀</span>
+              <span class="terminal-btn__text">Primary</span>
+            </button>
+            <button class="terminal-btn terminal-btn--secondary">
+              <span class="terminal-btn__text">Secondary</span>
+            </button>
+            <button class="terminal-btn terminal-btn--success">
+              <span class="terminal-btn__icon">✅</span>
+              <span class="terminal-btn__text">Success</span>
+            </button>
+            <button class="terminal-btn terminal-btn--danger">
+              <span class="terminal-btn__icon">❌</span>
+              <span class="terminal-btn__text">Danger</span>
+            </button>
+            <button class="terminal-btn terminal-btn--ghost">
+              <span class="terminal-btn__text">Ghost</span>
+            </button>
+          </div>
+          <div class="terminal-flex" style="gap: var(--space-3); flex-wrap: wrap">
+            <button class="terminal-btn terminal-btn--primary" disabled>
+              <span class="terminal-btn__text">Disabled</span>
+            </button>
+            <a href="#" class="terminal-btn terminal-btn--secondary">
+              <span class="terminal-btn__text">Link Button</span>
+            </a>
+          </div>
+          <div class="code-example">
+            &lt;button class="terminal-btn terminal-btn--primary"&gt; &lt;span
+            class="terminal-btn__icon"&gt;🚀&lt;/span&gt; &lt;span class="terminal-btn__text"&gt;Primary&lt;/span&gt;
+            &lt;/button&gt;
+          </div>
+        </div>
+      </section>
+
+      <!-- Metrics Components -->
+      <section class="demo-section">
+        <h3>📈 Metrics Components</h3>
+        <div class="terminal-metrics">
+          <div class="terminal-metric" data-live="true" data-base-value="142" data-variation="20">
+            <div class="terminal-metric__value" id="demo-response-time">142ms</div>
+            <div class="terminal-metric__label">Response Time</div>
+            <div class="terminal-metric__trend terminal-metric__trend--up">↗ +8% improved</div>
+          </div>
+          <div class="terminal-metric" data-live="true" data-base-value="1247" data-variation="100">
+            <div class="terminal-metric__value" id="demo-throughput">1,247</div>
+            <div class="terminal-metric__label">Requests/min</div>
+            <div class="terminal-metric__trend terminal-metric__trend--stable">→ Stable</div>
+          </div>
+          <div class="terminal-metric" data-live="true" data-base-value="99.94" data-variation="0.1">
+            <div class="terminal-metric__value" id="demo-uptime">99.94%</div>
+            <div class="terminal-metric__label">Uptime</div>
+            <div class="terminal-metric__trend terminal-metric__trend--down">↘ -0.02% decreased</div>
+          </div>
+        </div>
+        <div class="code-example">
+          &lt;div class="terminal-metric"&gt; &lt;div class="terminal-metric__value"&gt;142ms&lt;/div&gt; &lt;div
+          class="terminal-metric__label"&gt;Response Time&lt;/div&gt; &lt;div class="terminal-metric__trend
+          terminal-metric__trend--up"&gt;↗ +8% improved&lt;/div&gt; &lt;/div&gt;
+        </div>
+      </section>
+
+      <!-- Progress Components -->
+      <section class="demo-section">
+        <h3>📊 Progress Components</h3>
+        <div class="component-showcase">
+          <div class="terminal-progress">
+            <div class="terminal-progress__header">
+              <span class="terminal-progress__label">CPU Usage</span>
+              <span class="terminal-progress__value" id="cpu-progress-value">45%</span>
+            </div>
+            <div class="terminal-progress__bar">
+              <div class="terminal-progress__fill" id="cpu-progress-fill" data-progress="45"></div>
+            </div>
+          </div>
+
+          <div class="terminal-progress terminal-progress--warning">
+            <div class="terminal-progress__header">
+              <span class="terminal-progress__label">Memory Usage</span>
+              <span class="terminal-progress__value">78%</span>
+            </div>
+            <div class="terminal-progress__bar">
+              <div class="terminal-progress__fill" data-progress="78"></div>
+            </div>
+          </div>
+
+          <div class="terminal-progress terminal-progress--danger">
+            <div class="terminal-progress__header">
+              <span class="terminal-progress__label">Disk Usage</span>
+              <span class="terminal-progress__value">92%</span>
+            </div>
+            <div class="terminal-progress__bar">
+              <div class="terminal-progress__fill" data-progress="92"></div>
+            </div>
+          </div>
+
+          <button class="terminal-btn terminal-btn--primary terminal-mt-4" onclick="animateProgress()">
+            <span class="terminal-btn__text">Animate Progress</span>
+          </button>
+
+          <div class="code-example">
+            &lt;div class="terminal-progress"&gt; &lt;div class="terminal-progress__header"&gt; &lt;span
+            class="terminal-progress__label"&gt;CPU Usage&lt;/span&gt; &lt;span
+            class="terminal-progress__value"&gt;45%&lt;/span&gt; &lt;/div&gt; &lt;div class="terminal-progress__bar"&gt;
+            &lt;div class="terminal-progress__fill" data-progress="45"&gt;&lt;/div&gt; &lt;/div&gt; &lt;/div&gt;
+          </div>
+        </div>
+      </section>
+
+      <!-- Status Components -->
+      <section class="demo-section">
+        <h3>🚦 Status Components</h3>
+        <div class="component-showcase">
+          <div class="demo-grid">
+            <div>
+              <h4 class="terminal-text--accent terminal-mb-3">Status Indicators</h4>
+              <div class="terminal-status terminal-mb-2">
+                <div class="terminal-status-dot terminal-status-dot--active"></div>
+                <span class="terminal-status__text">System Active</span>
+              </div>
+              <div class="terminal-status terminal-mb-2">
+                <div class="terminal-status-dot terminal-status-dot--warning"></div>
+                <span class="terminal-status__text">Performance Warning</span>
+              </div>
+              <div class="terminal-status">
+                <div class="terminal-status-dot terminal-status-dot--error"></div>
+                <span class="terminal-status__text">Connection Error</span>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="terminal-text--accent terminal-mb-3">Status Badges</h4>
+              <div class="terminal-mb-2">
+                <span class="terminal-badge terminal-badge--success">HEALTHY</span>
+              </div>
+              <div class="terminal-mb-2">
+                <span class="terminal-badge terminal-badge--warning">SLOW</span>
+              </div>
+              <div class="terminal-mb-2">
+                <span class="terminal-badge terminal-badge--danger">ERROR</span>
+              </div>
+              <div>
+                <span class="terminal-badge terminal-badge--info">INFO</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="terminal-btn terminal-btn--secondary terminal-mt-4" onclick="cycleStatuses()">
+            <span class="terminal-btn__text">Cycle Status States</span>
+          </button>
+
+          <div class="code-example">
+            &lt;div class="terminal-status"&gt; &lt;div class="terminal-status-dot
+            terminal-status-dot--active"&gt;&lt;/div&gt; &lt;span class="terminal-status__text"&gt;System
+            Active&lt;/span&gt; &lt;/div&gt; &lt;span class="terminal-badge
+            terminal-badge--success"&gt;HEALTHY&lt;/span&gt;
+          </div>
+        </div>
+      </section>
+
+      <!-- Table Component -->
+      <section class="demo-section">
+        <h3>📋 Table Components</h3>
+        <div class="terminal-table" data-sortable>
+          <div class="terminal-table__header">
+            <h4 class="terminal-table__title">📊 API Performance Monitor</h4>
+          </div>
+          <table class="terminal-table__table">
+            <thead>
+              <tr class="terminal-table__row terminal-table__row--header">
+                <th class="terminal-table__cell">Endpoint</th>
+                <th class="terminal-table__cell">Status</th>
+                <th class="terminal-table__cell">Response Time</th>
+                <th class="terminal-table__cell">Requests/min</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="terminal-table__row">
+                <td class="terminal-table__cell">/api/users</td>
+                <td class="terminal-table__cell">
+                  <span class="terminal-badge terminal-badge--success">HEALTHY</span>
+                </td>
+                <td class="terminal-table__cell">89ms</td>
+                <td class="terminal-table__cell">234</td>
+              </tr>
+              <tr class="terminal-table__row">
+                <td class="terminal-table__cell">/api/data</td>
+                <td class="terminal-table__cell">
+                  <span class="terminal-badge terminal-badge--warning">SLOW</span>
+                </td>
+                <td class="terminal-table__cell">445ms</td>
+                <td class="terminal-table__cell">67</td>
+              </tr>
+              <tr class="terminal-table__row">
+                <td class="terminal-table__cell">/api/analytics</td>
+                <td class="terminal-table__cell">
+                  <span class="terminal-badge terminal-badge--success">HEALTHY</span>
+                </td>
+                <td class="terminal-table__cell">123ms</td>
+                <td class="terminal-table__cell">145</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-example">
+          &lt;div class="terminal-table"&gt; &lt;div class="terminal-table__header"&gt; &lt;h4
+          class="terminal-table__title"&gt;📊 Table Title&lt;/h4&gt; &lt;/div&gt; &lt;table
+          class="terminal-table__table"&gt; &lt;thead&gt; &lt;tr class="terminal-table__row
+          terminal-table__row--header"&gt; &lt;th class="terminal-table__cell"&gt;Header&lt;/th&gt; &lt;/tr&gt;
+          &lt;/thead&gt; &lt;tbody&gt; &lt;tr class="terminal-table__row"&gt; &lt;td
+          class="terminal-table__cell"&gt;Data&lt;/td&gt; &lt;/tr&gt; &lt;/tbody&gt; &lt;/table&gt; &lt;/div&gt;
+        </div>
+      </section>
+
+      <!-- Form Components -->
+      <section class="demo-section">
+        <h3>📝 Form Components</h3>
+        <div class="component-showcase">
+          <div class="terminal-grid--2">
+            <div>
+              <form class="terminal-form">
+                <div class="terminal-form__group">
+                  <label class="terminal-form__label">Agent ID</label>
+                  <input class="terminal-form__input" type="text" placeholder="Enter agent ID..." required />
+                </div>
+
+                <div class="terminal-form__group">
+                  <label class="terminal-form__label">Status</label>
+                  <select class="terminal-form__select">
+                    <option>Active</option>
+                    <option>Inactive</option>
+                    <option>Suspended</option>
+                  </select>
+                </div>
+
+                <div class="terminal-form__group">
+                  <label class="terminal-form__label">Description</label>
+                  <textarea class="terminal-form__textarea" placeholder="Enter description..."></textarea>
+                </div>
+
+                <div class="terminal-form__group">
+                  <label class="terminal-form__checkbox">
+                    <input type="checkbox" />
+                    <span>Enable notifications</span>
+                  </label>
+                </div>
+
+                <div class="terminal-flex" style="gap: var(--space-3); margin-top: var(--space-4)">
+                  <button type="submit" class="terminal-btn terminal-btn--primary">
+                    <span class="terminal-btn__text">Submit</span>
+                  </button>
+                  <button type="reset" class="terminal-btn terminal-btn--secondary">
+                    <span class="terminal-btn__text">Reset</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="code-example">
+            &lt;form class="terminal-form"&gt; &lt;div class="terminal-form__group"&gt; &lt;label
+            class="terminal-form__label"&gt;Label&lt;/label&gt; &lt;input class="terminal-form__input" type="text"
+            placeholder="Placeholder..."&gt; &lt;/div&gt; &lt;/form&gt;
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation Component -->
+      <section class="demo-section">
+        <h3>🧭 Navigation Components</h3>
+        <div class="component-showcase">
+          <div class="terminal-nav">
+            <div class="terminal-nav__section">
+              ╭─ Dashboard ─────╮ │ • Overview │ │ • Analytics │ │ • Settings │ ╰─────────────────╯
+            </div>
+            <div class="terminal-nav__section">
+              ╭─ Management ────╮ │ • Users │ │ • Permissions │ │ • Logs │ ╰─────────────────╯
+            </div>
+            <div class="terminal-nav__section">
+              ╭─ System ────────╮ │ • Performance │ │ • Monitoring │ │ • Health │ ╰─────────────────╯
+            </div>
+          </div>
+
+          <div class="terminal-flex terminal-flex--center terminal-mt-6" style="gap: var(--space-3); flex-wrap: wrap">
+            <button class="terminal-nav-button terminal-nav-button--active">Dashboard</button>
+            <button class="terminal-nav-button">Analytics</button>
+            <button class="terminal-nav-button">Settings</button>
+            <button class="terminal-nav-button">Help</button>
+          </div>
+
+          <div class="code-example">
+            &lt;div class="terminal-nav"&gt; &lt;div class="terminal-nav__section"&gt; ╭─ Section ───────╮ │ • Item 1 │
+            │ • Item 2 │ ╰─────────────────╯ &lt;/div&gt; &lt;/div&gt;
+          </div>
+        </div>
+      </section>
+
+      <!-- Utility Classes Demo -->
+      <section class="demo-section">
+        <h3>🔧 Utility Classes</h3>
+        <div class="component-showcase">
+          <div class="demo-grid">
+            <div>
+              <h4 class="terminal-text--accent terminal-mb-3">Typography</h4>
+              <p class="terminal-text--fire terminal-mb-2">Fire22 Brand Color</p>
+              <p class="terminal-text--success terminal-mb-2">Success Text</p>
+              <p class="terminal-text--warning terminal-mb-2">Warning Text</p>
+              <p class="terminal-text--danger terminal-mb-2">Danger Text</p>
+              <p class="terminal-text--muted">Muted Text</p>
+            </div>
+
+            <div>
+              <h4 class="terminal-text--accent terminal-mb-3">Animations</h4>
+              <div
+                class="terminal-pulse terminal-mb-2"
+                style="width: 50px; height: 20px; background: var(--success)"
+              ></div>
+              <div class="terminal-glow terminal-text--fire terminal-mb-2">Glowing Text</div>
+              <div class="terminal-flame terminal-mb-2">🔥</div>
+            </div>
+          </div>
+
+          <div class="code-example">
+            &lt;p class="terminal-text--fire"&gt;Fire22 Brand Color&lt;/p&gt; &lt;div class="terminal-pulse"&gt;Pulsing
+            Element&lt;/div&gt; &lt;div class="terminal-glow"&gt;Glowing Text&lt;/div&gt;
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Demo Controls -->
+      <section class="demo-section">
+        <h3>🎛️ Live Demo Controls</h3>
+        <div class="component-showcase">
+          <div class="terminal-grid--4">
+            <button
+              class="terminal-btn terminal-btn--secondary"
+              onclick="updateMetric('demo-response-time', Math.floor(Math.random() * 300) + 50)"
+            >
+              Update Response Time
+            </button>
+            <button
+              class="terminal-btn terminal-btn--secondary"
+              onclick="updateMetric('demo-throughput', Math.floor(Math.random() * 1000) + 800)"
+            >
+              Update Throughput
+            </button>
+            <button class="terminal-btn terminal-btn--secondary" onclick="randomizeProgress()">
+              Randomize Progress
+            </button>
+            <button class="terminal-btn terminal-btn--secondary" onclick="testNotification()">Test Notification</button>
+          </div>
+
+          <div class="terminal-mt-4">
+            <p class="terminal-text--secondary">
+              <strong>Keyboard Shortcuts:</strong>
+              Ctrl+K (Focus search) | Ctrl+R (Refresh) | ESC (Close notifications)
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Terminal Footer -->
+    <footer class="terminal-footer">
+      <div class="footer-decoration">╭────────────────────────────────────────────────────────────────────────╮</div>
+
+      <div class="footer-content">
+        <div class="footer-main">
+          <div class="footer-logo">🔥</div>
+          <h2 class="footer-title">Fire22 Terminal Components</h2>
+          <p class="footer-tagline">Comprehensive Terminal UI Component Library</p>
+        </div>
+
+        <div class="footer-features">
+          <div class="features-header">├─── Component Library Features ───┤</div>
+          <div class="features-grid">
+            <div class="footer-feature">├─ 🎨 Consistent Terminal Styling</div>
+            <div class="footer-feature">├─ 📱 Fully Responsive Design</div>
+            <div class="footer-feature">├─ ⚡ Interactive Components</div>
+            <div class="footer-feature">├─ 🔧 Utility Classes</div>
+            <div class="footer-feature">├─ 🌓 Theme Support</div>
+            <div class="footer-feature">╰─ ♿ Accessibility Features</div>
+          </div>
+        </div>
+
+        <div class="footer-navigation">
+          <div class="nav-section">╭─ Components ────╮ │ • Headers │ │ • Cards │ │ • Buttons │ ╰─────────────────╯</div>
+          <div class="nav-section">
+            ╭─ Features ──────╮ │ • Metrics │ │ • Progress │ │ • Status │ ╰─────────────────╯
+          </div>
+          <div class="nav-section">
+            ╭─ Utilities ─────╮ │ • Typography │ │ • Animations │ │ • Layouts │ ╰─────────────────╯
+          </div>
+        </div>
+
+        <div class="footer-status">
+          ├───────────────────────────────────────────────────────────────────────┤ │ Status: ● Demo Active |
+          Components: Loaded | Theme:
+          <span id="current-theme">Dark</span>
+          │ ├───────────────────────────────────────────────────────────────────────┤
+        </div>
+
+        <div class="footer-copyright">
+          <p>© 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Built with ╭─🔥─╮ terminal-inspired components for modern web apps</p>
+          <p>╰─────────────────────────────────────────────────────────────────╯</p>
+        </div>
+      </div>
+
+      <div class="footer-decoration">╰────────────────────────────────────────────────────────────────────────╯</div>
+    </footer>
+
+    <script src="terminal-components.js"></script>
+    <script>
+      // Demo-specific functionality
+      let demoInterval = null;
+      let progressAnimationInterval = null;
+
+      function startRealTimeDemo() {
+        if (demoInterval) {
+          clearInterval(demoInterval);
+          demoInterval = null;
+          window.terminalComponents.notify('Real-time demo stopped', 'info');
+          return;
+        }
+
+        demoInterval = setInterval(() => {
+          // Update live metrics
+          const responseTime = 142 + Math.floor(Math.random() * 100 - 50);
+          const throughput = 1247 + Math.floor(Math.random() * 400 - 200);
+          const uptime = 99.94 + (Math.random() - 0.5) * 0.2;
+
+          updateMetric('demo-response-time', responseTime + 'ms');
+          updateMetric('demo-throughput', throughput.toLocaleString());
+          updateMetric('demo-uptime', uptime.toFixed(2) + '%');
+
+          // Update progress bars randomly
+          const cpuProgress = Math.max(10, Math.min(90, 45 + Math.random() * 30 - 15));
+          window.terminalComponents.setProgress('cpu-progress-fill', cpuProgress);
+          document.getElementById('cpu-progress-value').textContent = Math.round(cpuProgress) + '%';
+        }, 2000);
+
+        window.terminalComponents.notify('Real-time demo started! Watch the metrics update.', 'success');
+      }
+
+      function updateMetric(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.textContent = value;
+          element.style.animation = 'none';
+          element.offsetHeight; // Trigger reflow
+          element.style.animation = 'glow 0.5s ease-in-out';
+        }
+      }
+
+      function refreshAllComponents() {
+        window.terminalComponents.refreshComponents();
+      }
+
+      function showAllNotifications() {
+        window.terminalComponents.notify('Success notification example', 'success');
+        setTimeout(() => window.terminalComponents.notify('Warning notification example', 'warning'), 500);
+        setTimeout(() => window.terminalComponents.notify('Error notification example', 'error'), 1000);
+        setTimeout(() => window.terminalComponents.notify('Info notification example', 'info'), 1500);
+      }
+
+      function resetDemo() {
+        if (demoInterval) {
+          clearInterval(demoInterval);
+          demoInterval = null;
+        }
+        if (progressAnimationInterval) {
+          clearInterval(progressAnimationInterval);
+          progressAnimationInterval = null;
+        }
+
+        // Reset metrics to initial values
+        updateMetric('demo-response-time', '142ms');
+        updateMetric('demo-throughput', '1,247');
+        updateMetric('demo-uptime', '99.94%');
+
+        // Reset progress bars
+        window.terminalComponents.setProgress('cpu-progress-fill', 45);
+        document.getElementById('cpu-progress-value').textContent = '45%';
+
+        window.terminalComponents.notify('Demo reset to initial state', 'info');
+      }
+
+      function animateProgress() {
+        if (progressAnimationInterval) {
+          clearInterval(progressAnimationInterval);
+          progressAnimationInterval = null;
+          return;
+        }
+
+        let progress = 0;
+        progressAnimationInterval = setInterval(() => {
+          progress += 2;
+          if (progress > 100) {
+            progress = 0;
+          }
+          window.terminalComponents.setProgress('cpu-progress-fill', progress);
+          document.getElementById('cpu-progress-value').textContent = progress + '%';
+        }, 100);
+      }
+
+      function randomizeProgress() {
+        const progress = Math.floor(Math.random() * 100);
+        window.terminalComponents.setProgress('cpu-progress-fill', progress);
+        document.getElementById('cpu-progress-value').textContent = progress + '%';
+      }
+
+      function cycleStatuses() {
+        const statusDots = document.querySelectorAll('.terminal-status-dot');
+        const states = ['active', 'warning', 'error', 'inactive'];
+
+        statusDots.forEach((dot, index) => {
+          const currentState = states.find(state => dot.classList.contains(`terminal-status-dot--${state}`));
+          const currentIndex = states.indexOf(currentState);
+          const nextState = states[(currentIndex + 1) % states.length];
+
+          // Remove all state classes
+          states.forEach(state => dot.classList.remove(`terminal-status-dot--${state}`));
+
+          // Add next state
+          dot.classList.add(`terminal-status-dot--${nextState}`);
+        });
+      }
+
+      function testNotification() {
+        const messages = [
+          'Component test successful!',
+          'System performance optimal',
+          'New data received',
+          'Connection established',
+        ];
+        const types = ['success', 'info', 'warning'];
+
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        const type = types[Math.floor(Math.random() * types.length)];
+
+        window.terminalComponents.notify(message, type);
+      }
+
+      // Update theme indicator when theme changes
+      document.addEventListener('click', e => {
+        if (e.target.matches('[data-terminal-theme-toggle]')) {
+          setTimeout(() => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const themeElement = document.getElementById('current-theme');
+            if (themeElement) {
+              themeElement.textContent = currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1);
+            }
+          }, 100);
+        }
+      });
+
+      // Initialize demo on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🔥 Fire22 Terminal Components Demo Loaded');
+        console.log('Available global: window.terminalComponents');
+
+        // Start with a welcome message
+        setTimeout(() => {
+          window.terminalComponents.notify('Welcome to the Terminal Components Demo! 🔥', 'success');
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

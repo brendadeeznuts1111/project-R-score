@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "created": "2025-08-27T06:54:48.133Z",
+  "workspaces": 6,
+  "isolation": {
+    "type": "bun-isolated",
+    "modes": ["linked", "standalone"],
+    "deployments": ["development", "production"],
+    "linker": "isolated"
+  },
+  "workspaceList": [
+    "core-dashboard",
+    "pattern-system",
+    "api-client",
+    "sports-betting",
+    "telegram-integration",
+    "build-system"
+  ],
+  "buildOrder": [
+    "pattern-system",
+    "api-client",
+    "core-dashboard",
+    "sports-betting",
+    "telegram-integration"
+  ],
+  "scripts": {
+    "build:all:linked": "cd core-dashboard && bun run build && cd pattern-system && bun run build && cd api-client && bun run build && cd sports-betting && bun run build && cd telegram-integration && bun run build && cd build-system && bun run build",
+    "build:all:standalone": "cd core-dashboard && bun run build:standalone && cd pattern-system && bun run build:standalone && cd api-client && bun run build:standalone && cd sports-betting && bun run build:standalone && cd telegram-integration && bun run build:standalone && cd build-system && bun run build:standalone",
+    "install:all:isolated": "cd core-dashboard && bun install --linker isolated && cd pattern-system && bun install --linker isolated && cd api-client && bun install --linker isolated && cd sports-betting && bun install --linker isolated && cd telegram-integration && bun install --linker isolated && cd build-system && bun install --linker isolated",
+    "test:all": "cd core-dashboard && bun test && cd pattern-system && bun test && cd api-client && bun test && cd sports-betting && bun test && cd telegram-integration && bun test && cd build-system && bun test",
+    "deploy:all:linked": "cd core-dashboard && bun run deploy:linked && cd pattern-system && bun run deploy:linked && cd api-client && bun run deploy:linked && cd sports-betting && bun run deploy:linked && cd telegram-integration && bun run deploy:linked && cd build-system && bun run deploy:linked",
+    "deploy:all:standalone": "cd core-dashboard && bun run deploy:standalone && cd pattern-system && bun run deploy:standalone && cd api-client && bun run deploy:standalone && cd sports-betting && bun run deploy:standalone && cd telegram-integration && bun run deploy:standalone && cd build-system && bun run deploy:standalone"
+  }
+}

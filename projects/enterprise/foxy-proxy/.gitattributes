@@ -1,0 +1,44 @@
+# GitHub Linguist Configuration
+# Optimizes language detection for the Foxy Proxy repository
+
+# Exclude generated files and dependencies from language detection
+vendor/**/* linguist-generated
+node_modules/**/* linguist-generated
+dist/**/* linguist-generated
+build/**/* linguist-generated
+coverage/**/* linguist-generated
+.nyc_output/**/* linguist-generated
+.cache/**/* linguist-generated
+.next/**/* linguist-generated
+.out/**/* linguist-generated
+.storybook-out/**/* linguist-generated
+
+# Exclude old module directories
+.old_modules*/**/* linguist-generated
+
+# Exclude Wrangler state
+.wrangler/**/* linguist-generated
+
+# Exclude test artifacts
+test-results/**/* linguist-generated
+playwright-report/**/* linguist-generated
+
+# Exclude cache directories
+.vite/**/* linguist-generated
+.parcel-cache/**/* linguist-generated
+
+# Handle specific file types
+bun.lock linguist-vendored
+bun.lockb linguist-vendored
+LICENSE linguist-vendored
+
+# Handle configuration files
+.env* linguist-vendored
+.gitignore linguist-vendored
+.eslintrc* linguist-language=YAML
+.prettierrc* linguist-language=YAML
+
+# Handle build files
+vite.config.* linguist-language=TypeScript
+vitest.config.* linguist-language=TypeScript
+tsconfig*.json linguist-language=JSON

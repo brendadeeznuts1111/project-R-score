@@ -1,0 +1,88 @@
+{
+  "name": "@fire22-registry/fraud-detection",
+  "version": "3.1.0",
+  "description": "Fantasy42 Fraud Detection Service with enterprise security",
+  "main": "dist/fraud-detection-prod-linux-x64",
+  "bin": {
+    "fantasy42-fraud-detection": "dist/fraud-detection-prod-linux-x64"
+  },
+  "scripts": {
+    "build": "bun run build.ts",
+    "build:prod": "bun build --user-agent=\"Fantasy42-FraudDetector/3.1.0-Prod (production) (GDPR-Compliant PCI-DSS AML-Ready)\" ./src/main.ts --outfile=./dist/fraud-detection-prod --compile-exec-argv=\"--smol --no-macros --strict-validation --fraud-detection-enabled --audit-trails-enabled --environment=production --geo-region=global --security-level=maximum --compliance=true\"",
+    "build:staging": "bun build --user-agent=\"Fantasy42-FraudDetector/3.1.0-Staging (staging) (GDPR-Compliant PCI-DSS AML-Ready)\" ./src/main.ts --outfile=./dist/fraud-detection-staging --compile-exec-argv=\"--smol --no-macros --strict-validation --fraud-detection-enabled --audit-trails-enabled --environment=staging --geo-region=us --security-level=enhanced --compliance=true\"",
+    "build:dev": "bun build --user-agent=\"Fantasy42-FraudDetector/3.1.0-Dev (development)\" ./src/main.ts --outfile=./dist/fraud-detection-dev --compile-exec-argv=\"--inspect --hot --strict-validation --fraud-detection-enabled --environment=development --geo-region=us --security-level=standard --compliance=false\"",
+    "build:enterprise": "bun build --user-agent=\"Fantasy42-FraudDetector/3.1.0-Enterprise (enterprise) (GDPR-Compliant PCI-DSS AML-Ready) (Global-Compliance)\" ./src/main.ts --outfile=./dist/fraud-detection-enterprise --compile-exec-argv=\"--smol --no-macros --strict-validation --fraud-detection-enabled --audit-trails-enabled --real-time-monitoring --environment=enterprise --geo-region=global --security-level=maximum --compliance=true\"",
+    "build:all": "bun run build.ts build",
+    "build:clean": "bun run build.ts clean",
+    "build:info": "bun run build.ts info",
+    "start": "bun run start:prod",
+    "start:prod": "bun --user-agent=\"Fantasy42-FraudDetector/3.1.0-Prod (production) (GDPR-Compliant PCI-DSS AML-Ready)\" ./dist/fraud-detection-prod",
+    "start:staging": "bun --user-agent=\"Fantasy42-FraudDetector/3.1.0-Staging (staging) (GDPR-Compliant PCI-DSS AML-Ready)\" ./dist/fraud-detection-staging",
+    "start:dev": "bun --user-agent=\"Fantasy42-FraudDetector/3.1.0-Dev (development)\" ./dist/fraud-detection-dev",
+    "start:enterprise": "bun --user-agent=\"Fantasy42-FraudDetector/3.1.0-Enterprise (enterprise) (GDPR-Compliant PCI-DSS AML-Ready) (Global-Compliance)\" ./dist/fraud-detection-enterprise",
+    "dev": "bun --hot --user-agent=\"Fantasy42-FraudDetector/3.1.0-Dev (development)\" ./src/main.ts",
+    "test": "bun test",
+    "test:security": "bun test --user-agent=\"Fantasy42-TestRunner/1.0.0-Security\" ./tests/security/",
+    "test:integration": "bun test --user-agent=\"Fantasy42-TestRunner/1.0.0-Integration\" ./tests/integration/",
+    "lint": "bun run eslint ./src --ext .ts",
+    "format": "bun run prettier --write ./src/**/*.{ts,js}",
+    "security:audit": "bunx --package @fire22-registry/security-scanner vulnerability-scan",
+    "compliance:check": "bunx -p @fire22-registry/compliance-core regulatory-verify",
+    "fraud:monitor": "bun run scripts/fraud-monitor.ts"
+  },
+  "dependencies": {
+    "@fire22-registry/core-security": "^3.1.0"
+  },
+  "devDependencies": {
+    "bun-types": "^1.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "peerDependencies": {
+    "@fire22-registry/compliance-core": "^4.3.0"
+  },
+  "keywords": [
+    "fantasy42",
+    "fraud-detection",
+    "security",
+    "compliance",
+    "gdpr",
+    "aml",
+    "enterprise"
+  ],
+  "author": "Fire22 Security Team",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fire22/fantasy42-registry.git",
+    "directory": "packages/core-security/fraud-detection"
+  },
+  "bugs": {
+    "url": "https://github.com/fire22/fantasy42-registry/issues"
+  },
+  "homepage": "https://docs.fantasy42.com/packages/fraud-detection",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "restricted"
+  },
+  "fantasy42": {
+    "category": "core-security",
+    "compliance": {
+      "gdpr": true,
+      "aml": true,
+      "kyc": false,
+      "responsibleGaming": false
+    },
+    "security": {
+      "level": "maximum",
+      "auditRequired": true,
+      "realTime": true
+    },
+    "dependencies": [
+      "core-security",
+      "compliance-core"
+    ]
+  }
+}

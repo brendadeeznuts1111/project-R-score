@@ -1,0 +1,78 @@
+{
+  "name": "@fire22/benchmark-orchestrator",
+  "version": "1.0.0",
+  "description": "Enterprise benchmark orchestrator ensuring every package meets security and performance standards",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "fire22-benchmark": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --compile --outfile=./dist/index.js --target=node",
+    "build:types": "bunx tsc --emitDeclarationOnly --outDir ./dist",
+    "build:cli": "bun build ./src/cli.ts --compile --outfile=./dist/cli.js --target=node",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "lint": "bunx eslint src/**/*.ts",
+    "benchmark": "bun run scripts/benchmark.ts"
+  },
+  "keywords": [
+    "benchmark",
+    "performance",
+    "security",
+    "testing",
+    "quality",
+    "enterprise",
+    "fantasy42",
+    "fire22",
+    "orchestrator",
+    "validation"
+  ],
+  "author": "Fire22 DevOps Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry",
+    "directory": "packages/benchmark-orchestrator"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/issues"
+  },
+  "homepage": "https://fire22.com/docs/benchmark-orchestrator",
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "bun": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "fire22": {
+    "domain": "devops",
+    "category": "benchmarking",
+    "criticality": "critical",
+    "compliance": [
+      "enterprise-standards"
+    ],
+    "benchmark": {
+      "minOverallScore": 80,
+      "maxPackageFailures": 0,
+      "performanceBudget": "2MB bundle, 1s load time",
+      "securityThreshold": 85
+    }
+  }
+}

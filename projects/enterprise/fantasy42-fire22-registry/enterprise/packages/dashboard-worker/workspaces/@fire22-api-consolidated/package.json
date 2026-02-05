@@ -1,0 +1,91 @@
+{
+  "name": "@fire22/api-consolidated",
+  "version": "1.0.0",
+  "description": "Fire22 consolidated API implementation with enterprise-grade security and validation",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "import": "./dist/middleware/index.js"
+    },
+    "./controllers": {
+      "types": "./dist/controllers/index.d.ts",
+      "import": "./dist/controllers/index.js"
+    },
+    "./routes": {
+      "types": "./dist/routes/index.d.ts",
+      "import": "./dist/routes/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && bun build src/index.ts --outdir=dist --target=bun",
+    "build:watch": "tsc --watch",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "benchmark": "bun run tests/benchmark.test.ts",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "type-check": "tsc --noEmit",
+    "pack": "bun pack",
+    "publish:registry": "bun publish --registry https://fire22.workers.dev/registry/"
+  },
+  "dependencies": {
+    "itty-router": "^4.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "@fire22/validator": "workspace:*",
+    "@fire22/security-core": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@fire22/security-core": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  },
+  "keywords": [
+    "fire22",
+    "api",
+    "consolidated",
+    "security",
+    "enterprise",
+    "bun",
+    "cloudflare",
+    "workers"
+  ],
+  "author": "Fire22 Engineering Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-api-consolidated"
+  },
+  "publishConfig": {
+    "registry": "https://fire22.workers.dev/registry/",
+    "access": "restricted"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "bun": ">=1.2.21"
+  }
+}

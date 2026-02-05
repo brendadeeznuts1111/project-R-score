@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📱 Communication Layers - Crystal Clear Architecture</title>
+    <meta
+      name="description"
+      content="Enterprise-grade communication interfaces connecting domain architecture to users across multiple channels with Telegram, Web Dashboard, and APIs."
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #1e40af;
+        --accent-color: #06b6d4;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-light: #f9fafb;
+        --bg-white: #ffffff;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+          sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background-color: var(--bg-light);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 2rem 0;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .header .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .back-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .back-link:hover {
+        opacity: 0.8;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .nav-links a:hover {
+        opacity: 0.8;
+      }
+
+      .hero {
+        padding: 4rem 0;
+        text-align: center;
+        background: var(--bg-white);
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero .subtitle {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .communication-section {
+        padding: 4rem 0;
+        background: var(--bg-light);
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .section-subtitle {
+        text-align: center;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .comm-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .comm-card {
+        background: var(--bg-white);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid #e5e7eb;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .comm-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .comm-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      }
+
+      .comm-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .comm-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .comm-description {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+      }
+
+      .comm-features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+
+      .comm-feature {
+        background: var(--bg-light);
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        text-align: center;
+      }
+
+      .comm-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .stat-item {
+        background: var(--bg-light);
+        padding: 1rem;
+        border-radius: 4px;
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        display: block;
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+      }
+
+      .architecture-section {
+        padding: 4rem 0;
+        background: var(--bg-white);
+      }
+
+      .architecture-diagram {
+        background: var(--bg-light);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        margin: 2rem 0;
+        font-family: 'Courier New', monospace;
+        white-space: pre-line;
+        overflow-x: auto;
+        line-height: 1.4;
+        border: 1px solid #e5e7eb;
+      }
+
+      .integration-section {
+        padding: 4rem 0;
+        background: var(--bg-light);
+      }
+
+      .integration-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .integration-card {
+        background: var(--bg-white);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        text-align: center;
+        border: 1px solid #e5e7eb;
+      }
+
+      .integration-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .integration-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .integration-description {
+        color: var(--text-secondary);
+      }
+
+      .cta-section {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        text-align: center;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+
+      .cta-primary {
+        background: var(--accent-color);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: var(--transition);
+      }
+
+      .cta-primary:hover {
+        background: #0891b2;
+        transform: translateY(-2px);
+      }
+
+      .footer {
+        padding: 2rem 0;
+        background: var(--text-primary);
+        color: white;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        .header .container {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .nav-links {
+          gap: 1rem;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .comm-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .comm-features {
+          grid-template-columns: 1fr;
+        }
+
+        .comm-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .integration-features {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="domains.html">Domains</a>
+          <a href="performance.html">Performance</a>
+          <a href="https://github.com/brendadeeznuts1111/crystal-clear-architecture" target="_blank">GitHub</a>
+          <a href="https://dashboard-worker.brendawill2233.workers.dev/dashboard" target="_blank">Live Demo</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h1 class="fade-in-up">📱 Communication Layers</h1>
+        <p class="subtitle fade-in-up">
+          Enterprise-grade communication interfaces connecting domain architecture to users across multiple channels
+        </p>
+      </div>
+    </section>
+
+    <!-- Communication Channels Section -->
+    <section class="communication-section">
+      <div class="container">
+        <h2 class="section-title">🔗 Communication Channels</h2>
+        <p class="section-subtitle">
+          Comprehensive communication interfaces enabling seamless interaction between users and domain architecture
+        </p>
+
+        <div class="comm-grid">
+          <div class="comm-card">
+            <span class="comm-icon">📱</span>
+            <h3 class="comm-title">Telegram Bot Integration</h3>
+            <p class="comm-description">
+              Complete multilingual Telegram bot system with department workflows, P2P queue matching, and real-time
+              dashboard integration
+            </p>
+            <div class="comm-stats">
+              <div class="stat-item">
+                <span class="stat-number">30+</span>
+                <span class="stat-label">Commands</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">4</span>
+                <span class="stat-label">Languages</span>
+              </div>
+            </div>
+            <div class="comm-features">
+              <div class="comm-feature">P2P Queue Matching</div>
+              <div class="comm-feature">Department Workflows</div>
+              <div class="comm-feature">Real-time Dashboard</div>
+              <div class="comm-feature">Multi-channel Support</div>
+            </div>
+          </div>
+
+          <div class="comm-card">
+            <span class="comm-icon">🌐</span>
+            <h3 class="comm-title">Web Dashboard Interface</h3>
+            <p class="comm-description">
+              Modern web dashboard with real-time metrics, domain monitoring, and comprehensive system oversight
+            </p>
+            <div class="comm-stats">
+              <div class="stat-item">
+                <span class="stat-number">Real-time</span>
+                <span class="stat-label">Metrics</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">Responsive</span>
+                <span class="stat-label">Design</span>
+              </div>
+            </div>
+            <div class="comm-features">
+              <div class="comm-feature">Domain Monitoring</div>
+              <div class="comm-feature">User Management</div>
+              <div class="comm-feature">Advanced Reports</div>
+              <div class="comm-feature">Mobile Optimized</div>
+            </div>
+          </div>
+
+          <div class="comm-card">
+            <span class="comm-icon">📡</span>
+            <h3 class="comm-title">API Integration Layer</h3>
+            <p class="comm-description">
+              RESTful and GraphQL APIs with comprehensive endpoint coverage, security policies, and performance
+              optimization
+            </p>
+            <div class="comm-stats">
+              <div class="stat-item">
+                <span class="stat-number">94+</span>
+                <span class="stat-label">Endpoints</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">REST+GraphQL</span>
+                <span class="stat-label">APIs</span>
+              </div>
+            </div>
+            <div class="comm-features">
+              <div class="comm-feature">Rate Limiting</div>
+              <div class="comm-feature">Security Policies</div>
+              <div class="comm-feature">Performance Opt.</div>
+              <div class="comm-feature">Auto Documentation</div>
+            </div>
+          </div>
+
+          <div class="comm-card">
+            <span class="comm-icon">🔄</span>
+            <h3 class="comm-title">Real-Time Communication</h3>
+            <p class="comm-description">
+              WebSocket and SSE integration for live data streaming, notifications, and bidirectional communication
+            </p>
+            <div class="comm-stats">
+              <div class="stat-item">
+                <span class="stat-number">WebSocket</span>
+                <span class="stat-label">Server</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">SSE</span>
+                <span class="stat-label">Streaming</span>
+              </div>
+            </div>
+            <div class="comm-features">
+              <div class="comm-feature">Live Streaming</div>
+              <div class="comm-feature">Auto-reconnect</div>
+              <div class="comm-feature">Bidirectional</div>
+              <div class="comm-feature">Broadcasting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture-section">
+      <div class="container">
+        <h2 class="section-title">🏗️ Communication Architecture</h2>
+        <p class="section-subtitle">
+          Complete communication framework connecting users to domain architecture through multiple channels
+        </p>
+
+        <div class="architecture-diagram">
+          ┌─────────────────────────────────────────────────────────────────────────────────┐ │ COMMUNICATION LAYERS │
+          ├─────────────────────────────────────────────────────────────────────────────────┤ │ 📱 Telegram Bot 🌐 Web
+          Dashboard 📡 API Gateway 🔄 WebSocket │ │ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+          ┌─────────────────┐ │ │ │ 30+ Commands │ │ Real-time UI │ │ 94+ Endpoints │ │ Live Streaming │ │ │ │ 4
+          Languages │ │ Domain Metrics │ │ REST/GraphQL │ │ Bidirectional │ │ │ │ P2P Queue │ │ User Management │ │ Rate
+          Limiting │ │ Auto-reconnect │ │ │ │ Dept Workflows │ │ Advanced Reports │ │ Security │ │ Broadcasting │ │ │
+          └─────────────────┘ └─────────────────┘ └─────────────────┘ └─────────────────┘ │
+          └─────────────────────────────────────────────────────────────────────────────────┘ │ ▼
+          ┌─────────────────────────────────────────────────────────────────────────────────┐ │ EVENT COMMUNICATION │
+          ├─────────────────────────────────────────────────────────────────────────────────┤ │ 🔄 Event Bus 📡 Message
+          Queue 🌐 API Gateway ⚡ WebSocket │ │ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+          ┌─────────────────┐ │ │ │ Domain Events │ │ Async Processing │ │ REST/GraphQL │ │ Real-time │ │ │ │ Event
+          Sourcing │ │ Queue Management │ │ Authentication │ │ Bidirectional │ │ │ │ Event Streaming │ │ Message Routing
+          │ │ Authorization │ │ Auto-reconnect │ │ │ └─────────────────┘ └─────────────────┘ └─────────────────┘
+          └─────────────────┘ │ └─────────────────────────────────────────────────────────────────────────────────┘ │ ▼
+          ┌─────────────────────────────────────────────────────────────────────────────────┐ │ DOMAIN ARCHITECTURE │
+          ├─────────────────────────────────────────────────────────────────────────────────┤ │ 💰 Collections 📊
+          Distributions 🎮 Free Play ⚖️ Balance 🔧 Adjustment │ │ ┌─────────────────┐ ┌─────────────────┐
+          ┌─────────────────┐ ┌─────────────────┐ │ │ │ Settlement Proc │ │ Commission Calc │ │ Bonus Wagers │ │ Account
+          Mgmt │ │ │ │ Payment Gateway │ │ Payout Dist │ │ Promo Tracking │ │ Balance Updates │ │ │ │ Audit Trails │ │
+          Revenue Analytics│ │ Fraud Detection │ │ Reconciliation │ │ │ └─────────────────┘ └─────────────────┘
+          └─────────────────┘ └─────────────────┘ │
+          └─────────────────────────────────────────────────────────────────────────────────┘
+        </div>
+      </div>
+    </section>
+
+    <!-- Integration Features Section -->
+    <section class="integration-section">
+      <div class="container">
+        <h2 class="section-title">🔗 Integration Features</h2>
+        <p class="section-subtitle">
+          Advanced integration capabilities ensuring seamless communication across all channels
+        </p>
+
+        <div class="integration-features">
+          <div class="integration-card">
+            <span class="integration-icon">🔄</span>
+            <h3 class="integration-title">Event-Driven</h3>
+            <p class="integration-description">Asynchronous communication between domains and communication layers</p>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">📡</span>
+            <h3 class="integration-title">Message Queue</h3>
+            <p class="integration-description">
+              Reliable message processing with guaranteed delivery and error handling
+            </p>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">🌐</span>
+            <h3 class="integration-title">API Gateway</h3>
+            <p class="integration-description">
+              Centralized API management with routing, authentication, and rate limiting
+            </p>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">⚡</span>
+            <h3 class="integration-title">Real-Time Sync</h3>
+            <p class="integration-description">Instant synchronization across all communication channels and devices</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="container">
+        <h2>🚀 Experience Seamless Communication</h2>
+        <p>
+          Discover how Crystal Clear Architecture enables seamless communication across multiple channels with
+          enterprise-grade reliability and performance.
+        </p>
+        <div class="cta-buttons">
+          <a href="https://dashboard-worker.brendawill2233.workers.dev/dashboard" target="_blank" class="cta-primary">
+            🌐 View Live Dashboard
+          </a>
+          <a
+            href="https://github.com/brendadeeznuts1111/crystal-clear-architecture"
+            target="_blank"
+            class="cta-primary"
+          >
+            📱 Explore Integrations
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div>
+          <strong>🏗️ Crystal Clear Architecture</strong>
+          <br />
+          Enterprise Domain-Driven Reference Implementation
+        </div>
+        <div style="margin-top: 1rem; opacity: 0.8">
+          Built with ❤️ using Domain-Driven Design, TypeScript, and Bun Runtime
+          <br />
+          © 2024 Crystal Clear Engineering Team
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px',
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('fade-in-up');
+            }
+          });
+        }, observerOptions);
+
+        document.querySelectorAll('.comm-card, .integration-card').forEach(card => {
+          observer.observe(card);
+        });
+      });
+    </script>
+  </body>
+</html>

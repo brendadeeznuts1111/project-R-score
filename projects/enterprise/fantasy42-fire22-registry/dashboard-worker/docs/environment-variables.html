@@ -1,0 +1,2228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bun Environment Variables Management - Fire22 Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      h3 {
+        font-size: 1.4rem;
+        margin: 15px 0;
+        color: #b21f1f;
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: 'Fira Code', monospace;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .code-keyword {
+        color: #569cd6;
+      }
+
+      .code-function {
+        color: #dcdcaa;
+      }
+
+      .code-parameter {
+        color: #9cdcfe;
+      }
+
+      .code-string {
+        color: #ce9178;
+      }
+
+      .code-comment {
+        color: #6a9955;
+      }
+
+      .env-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .env-table th,
+      .env-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .env-table th {
+        background: rgba(0, 0, 0, 0.3);
+        font-weight: 600;
+        color: #fdbb2d;
+      }
+
+      .env-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .example {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .example-item {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .benefits {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .benefit-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .benefit-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #fdbb2d;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 20px;
+        opacity: 0.7;
+        font-size: 0.9rem;
+      }
+
+      .callout {
+        background: rgba(253, 187, 45, 0.1);
+        border-left: 4px solid #fdbb2d;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .file-structure {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-family: 'Fira Code', monospace;
+      }
+
+      .cli-commands {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .cli-command {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        font-family: 'Fira Code', monospace;
+      }
+
+      .cli-command strong {
+        color: #fdbb2d;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        .example {
+          flex-direction: column;
+        }
+      }
+
+      /* Enhanced Branding Styles */
+      .brand-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 0;
+        border-bottom: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        font-size: 3rem;
+        animation: flame-flicker 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+        }
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .company-name {
+        font-size: 2.5rem;
+        margin: 0;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .company-tagline {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        letter-spacing: 1px;
+      }
+
+      .brand-nav {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.1);
+        border-color: rgba(253, 187, 45, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .nav-link.active {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.15);
+        border-color: #fdbb2d;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .page-header h2 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Enhanced Footer Branding */
+      .footer {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 50px;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .footer-brand {
+        margin-bottom: 20px;
+      }
+
+      .footer-logo {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .footer-company {
+        font-size: 1.5rem;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      .footer-tagline {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-link:hover {
+        color: #fdbb2d;
+      }
+
+      .footer-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+      }
+
+      .footer-copyright {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Branding */
+      @media (max-width: 768px) {
+        .brand-header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .brand-nav {
+          justify-content: center;
+        }
+
+        .nav-link {
+          font-size: 0.9rem;
+          padding: 8px 12px;
+        }
+
+        .company-name {
+          font-size: 2rem;
+        }
+
+        .logo-icon {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* Enhanced animations and interactions */
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand-header">
+          <div class="brand-logo">
+            <div class="logo-icon">🔥</div>
+            <div class="logo-text">
+              <h1 class="company-name">Fire22</h1>
+              <span class="company-tagline">Igniting Digital Innovation</span>
+            </div>
+          </div>
+          <div class="brand-nav">
+            <a href="packages.html" class="nav-link">📦 Packages</a>
+            <a href="environment-variables.html" class="nav-link active">🌍 Environment</a>
+            <a href="api-packages.html" class="nav-link">🔌 API</a>
+            <a href="fire22-dashboard-config.html" class="nav-link">⚙️ Config</a>
+            <a href="packages.html#production-testing-checklist" class="nav-link">🧪 Testing Workflow</a>
+          </div>
+        </div>
+        <div class="page-header">
+          <h2>Bun Environment Variables Management</h2>
+          <p class="subtitle">Complete guide to environment variable management with Bun</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h2>🔗 System Integration Status</h2>
+        <p>Your environment management system is now fully integrated with the production testing workflow:</p>
+
+        <div class="benefits">
+          <div class="benefit-card">
+            <div class="benefit-icon">🎯</div>
+            <h3>Testing Integration</h3>
+            <p>Environment variables support all wager and middleware testing</p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">🔒</div>
+            <h3>Security Testing</h3>
+            <p>Financial and security environment validation</p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">⚡</div>
+            <h3>Performance Testing</h3>
+            <p>Middleware and system performance validation</p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">🚀</div>
+            <h3>Production Ready</h3>
+            <p>Complete workflow from validation to deployment</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>📋 Complete Workflow:</strong>
+          See the
+          <a href="packages.html#production-testing-checklist" style="color: #fdbb2d">Production Testing Checklist</a>
+          for the full testing strategy!
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🚀 Quick Start</h2>
+        <p>Get started with environment variables in just a few steps:</p>
+
+        <div class="cli-commands">
+          <div class="cli-command">
+            <strong>1.</strong>
+            Copy the example environment file:
+            <br />
+            <code>cp .env.example .env</code>
+          </div>
+          <div class="cli-command">
+            <strong>2.</strong>
+            Fill in your environment variables in
+            <code>.env</code>
+          </div>
+          <div class="cli-command">
+            <strong>3.</strong>
+            Validate your configuration:
+            <br />
+
+            <code>bun run env:validate</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📁 Environment File Structure</h2>
+        <p>Bun automatically loads environment variables from these files (in order of precedence):</p>
+
+        <div class="file-structure">
+          <strong>1.</strong>
+          Command line variables
+          <br />
+          <strong>2.</strong>
+          .env.local (except in test mode)
+          <br />
+          <strong>3.</strong>
+          .env.[NODE_ENV] (e.g., .env.development)
+          <br />
+          <strong>4.</strong>
+          .env
+          <br />
+          <strong>5.</strong>
+          wrangler.toml (for Cloudflare Workers)
+        </div>
+
+        <div class="callout">
+          <strong>Note:</strong>
+          When NODE_ENV=test, .env.local is not loaded to ensure consistent test environments.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🚀 Enhanced CLI Management</h2>
+        <p>The Fire22 Dashboard includes powerful CLI tools for environment variable management:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Core Environment Management</span>
+<span class="code-function">bun run env:validate</span>    <span class="code-comment"># ✅ Validate configuration</span>
+<span class="code-function">bun run env:list</span>        <span class="code-comment"># 📋 List all variables (masked)</span>
+<span class="code-function">bun run env:check</span>        <span class="code-comment"># 🔍 Check environment status</span>
+<span class="code-function">bun run env:help</span>        <span class="code-comment"># ❓ Get help</span>
+<span class="code-function">bun run env:test</span>        <span class="code-comment"># 🧪 Quick validation test</span>
+<span class="code-function">bun run env:docs</span>        <span class="code-comment"># 📚 Open HTML documentation</span>
+
+<span class="code-comment"># Advanced Features</span>
+<span class="code-function">bun run env:setup</span>       <span class="code-comment"># 🚀 Interactive setup wizard</span>
+<span class="code-function">bun run env:audit</span>       <span class="code-comment"># 🔒 Security audit</span>
+<span class="code-function">bun run env:performance</span> <span class="code-comment"># ⚡ Performance check</span>
+<span class="code-function">bun run env:integration</span> <span class="code-comment"># 🧪 Full integration test</span>
+
+<span class="code-comment"># New Advanced Commands</span>
+<span class="code-function">bun run env:generate</span>    <span class="code-comment"># 🎯 Generate .env from template</span>
+<span class="code-function">bun run env:backup</span>      <span class="code-comment"># 💾 Backup current environment</span>
+<span class="code-function">bun run env:restore</span>     <span class="code-comment"># 🔄 Restore from backup</span>
+<span class="code-function">bun run env:diff</span>        <span class="code-comment"># 🔍 Compare environment files</span>
+<span class="code-function">bun run env:sync</span>        <span class="code-comment"># 🔄 Sync across environments</span>
+<span class="code-function">bun run env:monitor</span>     <span class="code-comment"># 📊 Real-time monitoring</span>
+<span class="code-function">bun run env:export</span>      <span class="code-comment"># 📤 Export to different formats</span>
+<span class="code-function">bun run env:import</span>      <span class="code-comment"># 📥 Import from external sources</span>
+<span class="code-function">bun run env:demo</span>         <span class="code-comment"># 🎯 Demo package.json integration</span>
+
+<span class="code-comment"># Security Team Integration</span>
+<span class="code-function">bun run security:team:test</span>      <span class="code-comment"># 🔒 Test security team connectivity</span>
+<span class="code-function">bun run security:team:status</span>   <span class="code-comment"># 📊 Check security team status</span>
+<span class="code-function">bun run security:team:alert</span>    <span class="code-comment"># 🚨 Send security alert</span>
+<span class="code-function">bun run security:team:escalate</span> <span class="code-comment"># ⚡ Escalate to security team</span>
+
+<span class="code-comment"># Telegram Alert Management</span>
+<span class="code-function">bun run telegram:alert:test</span>      <span class="code-comment"># 📱 Test Telegram alerts</span>
+<span class="code-function">bun run telegram:alert:configure</span> <span class="code-comment"># ⚙️ Configure alert channels</span>
+<span class="code-function">bun run telegram:alert:status</span>   <span class="code-comment"># 📊 Check alert channel health</span>
+
+<span class="code-comment"># Quick Start</span>
+<span class="code-function">bun run quick:start</span>     <span class="code-comment"># 🚀 Automated setup for new developers</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Pro Tip:</strong>
+          Use
+          <code>bun run quick:start</code>
+          for automated onboarding of new team members!
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📋 Package.json Integration</h2>
+        <p>Your enhanced package.json now includes comprehensive environment configuration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment file mapping</span>
+<span class="code-keyword">"envFiles"</span>: {
+  <span class="code-string">"development"</span>: <span class="code-string">".env.development"</span>,
+  <span class="code-string">"staging"</span>: <span class="code-string">".env.staging"</span>,
+  <span class="code-string">"production"</span>: <span class="code-string">".env.production"</span>,
+  <span class="code-string">"test"</span>: <span class="code-string">".env.test"</span>
+}
+
+<span class="code-comment"># Validation rules</span>
+<span class="code-keyword">"envValidation"</span>: {
+  <span class="code-string">"required"</span>: [<span class="code-string">"JWT_SECRET"</span>, <span class="code-string">"ADMIN_PASSWORD"</span>],
+  <span class="code-string">"secrets"</span>: [<span class="code-string">"JWT_SECRET"</span>, <span class="code-string">"STRIPE_SECRET_KEY"</span>]
+}
+
+<span class="code-comment"># Access via bun pm pkg</span>
+<span class="code-function">bun pm pkg get config.envFiles.development</span>
+<span class="code-function">bun pm pkg get config.envValidation.required</span>
+<span class="code-function">bun pm pkg get metadata.environment.cliCommands</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Integration Tip:</strong>
+          Use
+          <code>bun pm pkg</code>
+          commands to inspect and modify environment configuration directly!
+        </div>
+
+        <div class="callout">
+          <strong>📚 Related Documentation:</strong>
+          Check out
+          <code>bun run pkg:docs</code>
+          for complete package management documentation!
+        </div>
+
+        <div class="callout">
+          <strong>🔧 bun pm pkg Integration:</strong>
+          Use
+          <code>bun pm pkg</code>
+          commands to inspect and modify environment configuration directly!
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔧 Advanced bun pm pkg Integration</h2>
+        <p>
+          Your enhanced package.json now includes comprehensive environment configuration that can be managed with
+          <code>bun pm pkg</code>
+          commands:
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration Access</span>
+<span class="code-function">bun pm pkg get config.environment</span>                    <span class="code-comment"># Get current environment</span>
+<span class="code-function">bun pm pkg get config.envFiles.development</span>           <span class="code-comment"># Get dev env file path</span>
+<span class="code-function">bun pm pkg get config.envValidation.required</span>         <span class="code-comment"># Get required variables</span>
+
+<span class="code-comment"># Environment Metadata</span>
+<span class="code-function">bun pm pkg get metadata.environment.cliCommands</span>      <span class="code-comment"># List all env commands</span>
+<span class="code-function">bun pm pkg get metadata.environment.supportedEnvironments</span>  <span class="code-comment"># Get all environments</span>
+
+<span class="code-comment"># Modify Environment Configuration</span>
+<span class="code-function">bun pm pkg set config.environment="staging"</span>          <span class="code-comment"># Switch to staging</span>
+<span class="code-function">bun pm pkg set config.port=8080</span>                     <span class="code-comment"># Update port</span>
+<span class="code-function">bun pm pkg set config.newFeature.enabled=true</span>       <span class="code-comment"># Enable new feature</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>💡 Pro Tip:</strong>
+          Use
+          <code>bun run env:demo</code>
+          to see a live demonstration of the package.json integration!
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔗 Consistent Notation Support</h2>
+        <p>
+          All
+          <code>bun pm pkg</code>
+          commands support both dot and bracket notation for consistent data access:
+        </p>
+
+        <div class="script-category">
+          <h3>📋 Dot Notation Examples</h3>
+          <div class="code-block">
+            <pre><span class="code-comment"># Basic Properties</span>
+<span class="code-function">bun pm pkg get name</span>                    <span class="code-comment"># fire22-dashboard-worker</span>
+<span class="code-function">bun pm pkg get version</span>                 <span class="code-comment"># 3.0.1</span>
+<span class="code-function">bun pm pkg get description</span>             <span class="code-comment"># Get full description</span>
+
+<span class="code-comment"># Nested Properties</span>
+<span class="code-function">bun pm pkg get author.name</span>             <span class="code-comment"># Fire22 Development Team</span>
+<span class="code-function">bun pm pkg get author.email</span>            <span class="code-comment"># dev@fire22.com</span>
+<span class="code-function">bun pm pkg get config.environment</span>       <span class="code-comment"># development</span>
+<span class="code-function">bun pm pkg get config.port</span>              <span class="code-comment"># 3000</span>
+
+<span class="code-comment"># Deep Nesting</span>
+<span class="code-function">bun pm pkg get config.database.pool.max</span> <span class="code-comment"># 10</span>
+<span class="code-function">bun pm pkg get config.security.jwt.algorithm</span> <span class="code-comment"># HS256</span>
+<span class="code-function">bun pm pkg get metadata.environment.cliCommands</span> <span class="code-comment"># List of commands</span>
+
+<span class="code-comment"># Numeric Indices (dot notation)</span>
+<span class="code-function">bun pm pkg get contributors.0.name</span>     <span class="code-comment"># Nola Rose</span>
+<span class="code-function">bun pm pkg get contributors.1.role</span>     <span class="code-comment"># backend-developer</span>
+<span class="code-function">bun pm pkg get workspaces.0</span>            <span class="code-comment"># First workspace</span></pre>
+          </div>
+        </div>
+
+        <div class="script-category">
+          <h3>🔗 Bracket Notation Examples</h3>
+
+          <div class="code-block">
+            <pre><span class="code-comment"># Array Access</span>
+<span class="code-function">bun pm pkg get "contributors[0]"</span>        <span class="code-comment"># First contributor object</span>
+<span class="code-function">bun pm pkg get "contributors[1].role"</span>   <span class="code-comment"># Second contributor role</span>
+<span class="code-function">bun pm pkg get "scripts[0]"</span>             <span class="code-comment"># First script</span>
+
+<span class="code-comment"># Special Characters (colons, hyphens, etc.)</span>
+<span class="code-function">bun pm pkg get 'scripts["test:watch"]'</span>   <span class="code-comment"># Get test:watch script</span>
+<span class="code-function">bun pm pkg get 'scripts["env:audit"]'</span>    <span class="code-comment"># Get env:audit script</span>
+<span class="code-function">bun pm pkg get 'scripts["deps:audit"]'</span>   <span class="code-comment"># Get deps:audit script</span>
+
+<span class="code-comment"># Complex Property Names</span>
+<span class="code-function">bun pm pkg get "config.envValidation.required[0]"</span> <span class="code-comment"># First required env var</span>
+<span class="code-function">bun pm pkg get "metadata.environment.supportedEnvironments[2]"</span> <span class="code-comment"># Third environment</span></pre>
+          </div>
+        </div>
+
+        <div class="script-category">
+          <h3>⚡ Mixed Notation Patterns</h3>
+          <div class="code-block">
+            <pre><span class="code-comment"># Combine dot and bracket notation</span>
+<span class="code-function">bun pm pkg get contributors[0].name</span>     <span class="code-comment"># Array access + dot notation</span>
+<span class="code-function">bun pm pkg get "scripts[\"test:watch\"]"</span> <span class="code-comment"># Bracket with quotes</span>
+<span class="code-function">bun pm pkg get config.database.pool.max</span> <span class="code-comment"># Pure dot notation</span>
+
+<span class="code-comment"># Setting Values with Mixed Notation</span>
+<span class="code-function">bun pm pkg set config.environment="staging"</span> <span class="code-comment"># Dot notation</span>
+<span class="code-function">bun pm pkg set "scripts[\"deploy:canary\"]"="bun run deploy:staging"</span> <span class="code-comment"># Bracket notation</span>
+<span class="code-function">bun pm pkg set "config.envValidation.required[4]"="NEW_VAR"</span> <span class="code-comment"># Mixed notation</span></pre>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>💡 Pro Tip:</strong>
+          Use dot notation for simple nested properties and bracket notation for array access or special characters.
+          Both work consistently across all
+          <code>bun pm pkg</code>
+          commands!
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>⚠️ Important bun pm pkg Limitations</h2>
+        <p>Based on our testing, here are key limitations to be aware of:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># ❌ Version Numbers with Dots (Common Issue)</span>
+<span class="code-comment"># This will FAIL:</span>
+<span class="code-function">bun pm pkg get metadata.roadmap.v2.2.0</span>        <span class="code-comment"># InvalidPath error</span>
+<span class="code-function">bun pm pkg get "metadata.roadmap[\"v2.2.0\"]"</span> <span class="code-comment"># InvalidPath error</span>
+
+<span class="code-comment"># ✅ Workaround - Access the full object:</span>
+<span class="code-function">bun pm pkg get metadata.roadmap</span>                <span class="code-comment"># Returns complete roadmap</span>
+
+<span class="code-comment"># ❌ Array Index Manipulation (Important Limitation)</span>
+<span class="code-comment"># Setting array[index] overwrites the entire array:</span>
+<span class="code-function">bun pm pkg set "config.envValidation.required[4]"="NEW_VAR"</span>  <span class="code-comment"># ❌ Overwrites array!</span>
+
+<span class="code-comment"># ✅ Best Practice - Set entire arrays:</span>
+<span class="code-function">bun pm pkg set "config.envValidation.required"='["VAR1", "VAR2", "VAR3"]'</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>🔍 Discovered Behavior:</strong>
+          <code>bun pm pkg set</code>
+          with array indices doesn't work like JavaScript arrays. It overwrites the entire array instead of extending
+          it.
+        </div>
+
+        <div class="callout">
+          <strong>📖 Complete Details:</strong>
+          See
+          <code>bun run pkg:docs</code>
+          for comprehensive troubleshooting and best practices!
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔧 Package.json Environment Management with bun pm pkg</h2>
+        <p>
+          Use
+          <code>bun pm pkg</code>
+          commands to inspect and modify environment configuration directly:
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Get environment file mappings</span>
+<span class="code-function">bun pm pkg get config.envFiles.development</span>    <span class="code-comment"># .env.development</span>
+<span class="code-function">bun pm pkg get config.envFiles.production</span>   <span class="code-comment"># .env.production</span>
+
+<span class="code-comment"># Check validation rules</span>
+<span class="code-function">bun pm pkg get config.envValidation.required</span>  <span class="code-comment"># ["JWT_SECRET", "ADMIN_PASSWORD", ...]</span>
+<span class="code-function">bun pm pkg get config.envValidation.secrets</span>   <span class="code-comment"># ["JWT_SECRET", "STRIPE_SECRET_KEY", ...]</span>
+
+<span class="code-comment"># View environment metadata</span>
+<span class="code-function">bun pm pkg get metadata.environment.cliCommands</span>     <span class="code-comment"># List all env commands</span>
+<span class="code-function">bun pm pkg get metadata.environment.supportedEnvironments</span>  <span class="code-comment"># ["development", "staging", ...]</span>
+
+<span class="code-comment"># Modify environment configuration</span>
+<span class="code-function">bun pm pkg set config.envFiles.staging=".env.staging.local"</span>
+<span class="code-function">bun pm pkg set config.envValidation.required[3]="NEW_REQUIRED_VAR"</span>
+<span class="code-function">bun pm pkg set metadata.environment.validationRules.secrets="Minimum 64 characters"</span>
+
+<span class="code-comment"># Add new environment files</span>
+<span class="code-function">bun pm pkg set config.envFiles.canary=".env.canary"</span>
+<span class="code-function">bun pm pkg set config.envFiles.demo=".env.demo"</span>
+
+<span class="code-comment"># Update validation rules</span>
+<span class="code-function">bun pm pkg set config.envValidation.optional[3]="DEMO_MODE"</span>
+<span class="code-function">bun pm pkg set config.envValidation.secrets[3]="DEMO_SECRET"</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Pro Tip:</strong>
+          Use bracket notation for array access:
+          <code>bun pm pkg get "config.envValidation.required[0]"</code>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔥 Fire22 API Integration</h2>
+        <p>
+          Complete integration with the Fire22 sportsbook platform including authentication, rate limiting, and webhook
+          verification:
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Core Fire22 Configuration</span>
+<span class="code-keyword">FIRE22_API_URL</span>=https://api.fire22.com
+<span class="code-keyword">FIRE22_TOKEN</span>=your_api_token_here
+<span class="code-keyword">FIRE22_WEBHOOK_SECRET</span>=webhook_secret_for_verification
+
+<span class="code-comment"># API Usage Example</span>
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(`${config.fire22.apiUrl}/agents`, {
+  headers: {
+    'Authorization': `Bearer ${config.fire22.token}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+<span class="code-comment"># Webhook Verification</span>
+<span class="code-keyword">const</span> signature = request.headers.get('x-fire22-signature');
+<span class="code-keyword">const</span> isValid = verifyWebhook(body, signature, config.fire22.webhookSecret);</pre>
+        </div>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+              <th>Required</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>FIRE22_API_URL</td>
+              <td>Base URL for Fire22 API endpoints</td>
+              <td>✅</td>
+              <td>https://api.fire22.com</td>
+            </tr>
+            <tr>
+              <td>FIRE22_TOKEN</td>
+              <td>JWT Bearer token for API authentication</td>
+              <td>✅</td>
+              <td>eyJhbGciOiJIUzI1NiIs...</td>
+            </tr>
+            <tr>
+              <td>FIRE22_WEBHOOK_SECRET</td>
+              <td>Secret for webhook signature verification</td>
+              <td>✅</td>
+              <td>whsec_webhook_secret_here</td>
+            </tr>
+          </tbody>
+        </div>
+
+        <div class="callout">
+          <strong>🔒 Security:</strong>
+          Always verify webhook signatures and use HTTPS for all API communications. Never expose your API token in
+          client-side code.
+        </div>
+
+        <div class="callout">
+          <strong>⚡ Rate Limiting:</strong>
+          Fire22 API has a limit of 1000 requests/minute. Implement proper rate limiting and caching in your
+          application.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔗 Hub Connection Configuration</h2>
+        <p>
+          Centralized connection management for D1, R2, SQLite, and Language systems through
+          <a href="/src/config/constants.js" style="color: #fdbb2d; text-decoration: none">constants.js</a>
+          :
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Hub Connection Environment Variables</span>
+<span class="code-keyword">HUB_URL</span>=http://localhost:3001
+<span class="code-keyword">HUB_API_KEY</span>=your_hub_api_key_here
+<span class="code-keyword">HUB_TIMEOUT</span>=10000
+<span class="code-keyword">HUB_RETRIES</span>=3
+<span class="code-keyword">HUB_ENABLE_HEALTH_CHECK</span>=true
+
+<span class="code-comment"># Hub Connection Usage Example</span>
+<span class="code-keyword">import</span> { hubConnection } <span class="code-keyword">from</span> <span class="code-string">'../src/config/hub-connection'</span>;
+
+<span class="code-comment"># Connect to all services through hub</span>
+<span class="code-keyword">const</span> result = <span class="code-keyword">await</span> hubConnection.connectToHub();
+console.log(<span class="code-string">'Connected services:'</span>, result.connections.length);
+
+<span class="code-comment"># Execute D1 database query</span>
+<span class="code-keyword">const</span> data = <span class="code-keyword">await</span> hubConnection.executeD1Query(
+  <span class="code-string">'fire22-dashboard'</span>, 
+  <span class="code-string">'SELECT * FROM config WHERE env = ?'</span>, 
+  [<span class="code-string">'production'</span>]
+);
+
+<span class="code-comment"># Sync language data</span>
+<span class="code-keyword">await</span> hubConnection.syncLanguageData(<span class="code-string">'push'</span>);</pre>
+        </div>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+              <th>Required</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>HUB_URL</td>
+              <td>Base URL for hub connection endpoints</td>
+              <td>✅</td>
+              <td>http://localhost:3001</td>
+            </tr>
+            <tr>
+              <td>HUB_API_KEY</td>
+              <td>API key for hub authentication</td>
+              <td>❌</td>
+              <td>hub_key_123abc...</td>
+            </tr>
+            <tr>
+              <td>HUB_TIMEOUT</td>
+              <td>Connection timeout in milliseconds</td>
+              <td>❌</td>
+              <td>10000</td>
+            </tr>
+            <tr>
+              <td>HUB_RETRIES</td>
+              <td>Number of connection retry attempts</td>
+              <td>❌</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>HUB_ENABLE_HEALTH_CHECK</td>
+              <td>Enable automatic health checking</td>
+              <td>❌</td>
+              <td>true</td>
+            </tr>
+          </tbody>
+        </div>
+
+        <h3>🗄️ Supported Service Connections</h3>
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Service Name</th>
+              <th>Type</th>
+              <th>Binding</th>
+              <th>Endpoint</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>fire22-dashboard</td>
+              <td>D1</td>
+              <td>DB</td>
+              <td>/api/d1/fire22-dashboard</td>
+            </tr>
+            <tr>
+              <td>fire22-registry</td>
+              <td>D1</td>
+              <td>REGISTRY_DB</td>
+              <td>/api/d1/fire22-registry</td>
+            </tr>
+            <tr>
+              <td>fire22-packages</td>
+              <td>R2</td>
+              <td>REGISTRY_STORAGE</td>
+              <td>/api/r2/fire22-packages</td>
+            </tr>
+            <tr>
+              <td>sqlite-local</td>
+              <td>SQLite</td>
+              <td>-</td>
+              <td>/api/sqlite/sync</td>
+            </tr>
+          </tbody>
+        </div>
+
+        <div class="callout">
+          <strong>🔗 Hub Integration:</strong>
+          The hub connection system provides centralized access to all Fire22 services. Use
+          <code>hubConnection.healthCheck()</code>
+          to monitor service availability.
+        </div>
+
+        <div class="callout">
+          <strong>⚡ Performance:</strong>
+          Hub connections support automatic retry, timeout handling, and health monitoring. Configure appropriate
+          timeouts for your deployment environment.
+        </div>
+
+        <h3>🛠️ Hub Connection CLI Commands</h3>
+        <div class="code-block">
+          <pre><span class="code-comment"># Hub connection management</span>
+<span class="code-function">bun run hub:connect</span>              <span class="code-comment"># Connect to all hub services</span>
+<span class="code-function">bun run hub:health</span>               <span class="code-comment"># Check hub health status</span>
+<span class="code-function">bun run hub:sync:language</span>        <span class="code-comment"># Sync language data</span>
+<span class="code-function">bun run hub:sync:sqlite</span>          <span class="code-comment"># Sync SQLite data</span>
+
+<span class="code-comment"># Database operations</span>
+<span class="code-function">bun run hub:d1:query</span>             <span class="code-comment"># Execute D1 queries</span>
+<span class="code-function">bun run hub:r2:upload</span>            <span class="code-comment"># Upload to R2 storage</span>
+<span class="code-function">bun run hub:r2:download</span>          <span class="code-comment"># Download from R2 storage</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 Security Team Integration & Alert Channels</h2>
+        <p>
+          Your enhanced environment manager includes comprehensive security team integration with Telegram alert
+          channels:
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Security Team Alert Commands</span>
+<span class="code-function">bun run security:team:alert</span>        <span class="code-comment"># Send immediate security alert</span>
+<span class="code-function">bun run security:team:status</span>       <span class="code-comment"># Check security team status</span>
+<span class="code-function">bun run security:team:escalate</span>     <span class="code-comment"># Escalate to security team</span>
+
+<span class="code-comment"># Telegram Alert Channel Management</span>
+<span class="code-function">bun run telegram:alert:test</span>        <span class="code-comment"># Test alert channels</span>
+<span class="code-function">bun run telegram:alert:configure</span>   <span class="code-comment"># Configure alert channels</span>
+<span class="code-function">bun run telegram:alert:status</span>     <span class="code-comment"># Check alert channel status</span>
+
+<span class="code-comment"># Security Incident Response</span>
+<span class="code-function">bun run security:incident:report</span>   <span class="code-comment"># Report security incident</span>
+<span class="code-function">bun run security:incident:track</span>    <span class="code-comment"># Track incident status</span>
+<span class="code-function">bun run security:incident:resolve</span>  <span class="code-comment"># Mark incident resolved</span></pre>
+        </div>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Security Component</th>
+              <th>Description</th>
+              <th>Environment Variables</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Security Team</td>
+              <td>Core security team integration</td>
+              <td>SECURITY_TEAM_ID, SECURITY_TEAM_TOKEN</td>
+              <td>🟢 Active</td>
+            </tr>
+            <tr>
+              <td>Telegram Alerts</td>
+              <td>Security alert notifications</td>
+              <td>SECURITY_BOT_TOKEN, SECURITY_CHAT_ID</td>
+              <td>🟢 Active</td>
+            </tr>
+            <tr>
+              <td>Incident Response</td>
+              <td>Security incident management</td>
+              <td>INCIDENT_WEBHOOK_URL, INCIDENT_API_KEY</td>
+              <td>🟡 Configured</td>
+            </tr>
+            <tr>
+              <td>Security Monitoring</td>
+              <td>Real-time security monitoring</td>
+              <td>SECURITY_MONITOR_URL, SECURITY_MONITOR_KEY</td>
+              <td>🟢 Active</td>
+            </tr>
+          </tbody>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 Security Audit Features</h2>
+        <p>The enhanced environment manager includes comprehensive security auditing:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Run security audit</span>
+<span class="code-function">bun run env:audit</span>
+
+<span class="code-comment"># Checks performed:</span>
+<span class="code-comment"># • Weak secrets (length validation)</span>
+<span class="code-comment"># • Default values detection</span>
+<span class="code-comment"># • Exposed secret patterns</span>
+<span class="code-comment"># • Security recommendations</span>
+<span class="code-comment"># • Security team integration status</span>
+<span class="code-comment"># • Telegram alert channel health</span></pre>
+        </div>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Security Check</th>
+              <th>Description</th>
+              <th>Action Required</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>JWT Secret Length</td>
+              <td>Minimum 32 characters</td>
+              <td>Generate strong secret</td>
+            </tr>
+            <tr>
+              <td>Default Values</td>
+              <td>Detect placeholder values</td>
+              <td>Replace with real values</td>
+            </tr>
+            <tr>
+              <td>Exposed Patterns</td>
+              <td>Check for live API keys</td>
+              <td>Use test keys in dev</td>
+            </tr>
+            <tr>
+              <td>Security Team Status</td>
+              <td>Verify security team connectivity</td>
+              <td>Check SECURITY_TEAM_TOKEN</td>
+            </tr>
+            <tr>
+              <td>Telegram Alert Health</td>
+              <td>Verify alert channel functionality</td>
+              <td>Test SECURITY_BOT_TOKEN</td>
+            </tr>
+          </tbody>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>⚡ Performance Monitoring</h2>
+        <p>Monitor environment variable access performance:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Check performance</span>
+<span class="code-function">bun run env:performance</span>
+
+<span class="code-comment"># Metrics provided:</span>
+<span class="code-comment"># • Access time per operation</span>
+<span class="code-comment"># • Operations per second</span>
+<span class="code-comment"># • Performance recommendations</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Security Team & Telegram Alert Testing</h2>
+        <p>Test your security team integration and Telegram alert channels with these commands:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Security Team Integration Testing</span>
+<span class="code-function">bun run security:team:test</span>          <span class="code-comment"># Test security team connectivity</span>
+<span class="code-function">bun run security:team:status</span>       <span class="code-comment"># Check security team status</span>
+<span class="code-function">bun run security:team:ping</span>         <span class="code-comment"># Ping security team API</span>
+
+<span class="code-comment"># Telegram Alert Channel Testing</span>
+<span class="code-function">bun run telegram:alert:test</span>        <span class="code-comment"># Send test alert to Telegram</span>
+<span class="code-function">bun run telegram:alert:configure</span>   <span class="code-comment"># Configure alert channels</span>
+<span class="code-function">bun run telegram:alert:status</span>     <span class="code-comment"># Check alert channel health</span>
+
+<span class="code-comment"># Security Incident Testing</span>
+<span class="code-function">bun run security:incident:test</span>     <span class="code-comment"># Test incident reporting</span>
+<span class="code-function">bun run security:incident:simulate</span> <span class="code-comment"># Simulate security incident</span>
+<span class="code-function">bun run security:incident:list</span>    <span class="code-comment"># List recent incidents</span>
+
+<span class="code-comment"># Comprehensive Security Testing</span>
+<span class="code-function">bun run security:test:all</span>         <span class="code-comment"># Run all security tests</span>
+<span class="code-function">bun run security:test:integration</span> <span class="code-comment"># Test complete security integration</span>
+<span class="code-function">bun run security:test:telegram</span>    <span class="code-comment"># Test Telegram integration</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>🧪 Test Environment:</strong>
+          Use separate security team test credentials for development and testing to avoid affecting production security
+          systems.
+        </div>
+
+        <div class="callout">
+          <strong>🔍 Built-in Validation:</strong>
+          Your system includes comprehensive security team configuration validation in
+          <code>src/security-team-config.ts</code>
+          .
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Fire22 Integration Testing</h2>
+        <p>Test your Fire22 API integration with these commands:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Test Fire22 configuration</span>
+<span class="code-function">bun run env:validate</span>                <span class="code-comment"># Validate Fire22 environment variables</span>
+<span class="code-function">bun run env:test</span>                     <span class="code-comment"># Quick Fire22 connection test</span>
+<span class="code-function">bun run env:integration</span>              <span class="code-comment"># Full integration test including Fire22</span>
+
+<span class="code-comment"># Test specific Fire22 endpoints</span>
+<span class="code-function">bun run test:quick</span>                   <span class="code-comment"># Daily health checks including Fire22</span>
+<span class="code-function">bun run test:checklist</span>              <span class="code-comment"># Full validation before deployments</span>
+
+<span class="code-comment"># Advanced Fire22 testing</span>
+<span class="code-function">bun run env:audit</span>                    <span class="code-comment"># Security audit including Fire22 tokens</span>
+<span class="code-function">bun run env:performance</span>             <span class="code-comment"># Performance check for Fire22 API calls</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>🧪 Test Environment:</strong>
+          Use separate Fire22 test credentials for development and testing to avoid affecting production data.
+        </div>
+
+        <div class="callout">
+          <strong>🔍 Built-in Validation:</strong>
+          Your system includes comprehensive Fire22 configuration validation in
+          <code>src/fire22-config.ts</code>
+          .
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🎯 Production Testing Workflow Integration</h2>
+        <p>Your environment management system now integrates with the complete production testing workflow:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># 1. Environment Validation (Environment Management)</span>
+<span class="code-function">bun run env:validate</span>                 <span class="code-comment"># ✅ Validate all environment variables</span>
+<span class="code-function">bun run env:integration</span>              <span class="code-comment"># ✅ Test complete environment integration</span>
+
+<span class="code-comment"># 2. Wager System Testing (Financial Environment)</span>
+<span class="code-function">bun run test:wager:unit</span>              <span class="code-comment"># ✅ Test wager environment configuration</span>
+<span class="code-function">bun run test:wager:financial</span>         <span class="code-comment"># ✅ Validate financial environment variables</span>
+<span class="code-function">bun run test:wager:security</span>          <span class="code-comment"># ✅ Test security environment settings</span>
+
+<span class="code-comment"># 3. Middleware Testing (System Environment)</span>
+<span class="code-function">bun run test:middleware:request-body</span> <span class="code-comment"># ✅ Test request body environment handling</span>
+<span class="code-function">bun run test:middleware:error-format</span> <span class="code-comment"># ✅ Test error formatting environment</span>
+<span class="code-function">bun run test:middleware:performance</span>  <span class="code-comment"># ✅ Test performance environment settings</span>
+
+<span class="code-comment"># 4. Environment Switch & Deploy</span>
+<span class="code-function">bun pm pkg set config.environment="staging"</span>  <span class="code-comment"># Switch environment</span>
+<span class="code-function">bun run deploy:staging</span>               <span class="code-comment"># Deploy with new environment</span>
+
+<span class="code-comment"># 5. Post-deployment Environment Validation</span>
+<span class="code-function">bun run test:quick</span>                   <span class="code-comment"># Verify environment in staging</span>
+<span class="code-function">bun run test:wager:smoke</span>             <span class="code-comment"># Test wager environment in staging</span></pre>
+        </div>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Testing Component</th>
+              <th>Environment Variables</th>
+              <th>Validation Command</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Wager System</td>
+              <td>FIRE22_API_URL, FIRE22_TOKEN, JWT_SECRET</td>
+              <td>test:wager:unit</td>
+              <td>🟡 In Development</td>
+            </tr>
+            <tr>
+              <td>Financial Validation</td>
+              <td>STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET</td>
+              <td>test:wager:financial</td>
+              <td>🟡 In Development</td>
+            </tr>
+            <tr>
+              <td>Security Testing</td>
+              <td>ADMIN_PASSWORD, CRON_SECRET</td>
+              <td>test:wager:security</td>
+              <td>🟡 In Development</td>
+            </tr>
+            <tr>
+              <td>Middleware</td>
+              <td>NODE_ENV, LOG_LEVEL, CACHE_TTL</td>
+              <td>test:middleware:*</td>
+              <td>🟡 In Development</td>
+            </tr>
+            <tr>
+              <td>Environment Switch</td>
+              <td>config.environment, config.envFiles</td>
+              <td>bun pm pkg set</td>
+              <td>🟢 Ready</td>
+            </tr>
+          </tbody>
+        </div>
+
+        <div class="callout">
+          <strong>🔗 Complete Integration:</strong>
+          Your environment management system now supports the full production testing workflow from
+          <a href="packages.html#production-testing-checklist" style="color: #fdbb2d">packages.html</a>
+          !
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Integration Testing</h2>
+        <p>Comprehensive testing of the entire environment system:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Run full integration test</span>
+<span class="code-function">bun run env:integration</span>
+
+<span class="code-comment"># Tests performed:</span>
+<span class="code-comment"># • Environment loading</span>
+<span class="code-comment"># • Configuration validation</span>
+<span class="code-comment"># • Environment detection</span>
+<span class="code-comment"># • File system access</span>
+<span class="code-comment"># • CLI functionality</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🎯 Live Integration Demo</h2>
+        <p>See the package.json integration in action:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Run the integration demo</span>
+<span class="code-function">bun run env:demo</span>
+
+<span class="code-comment"># What the demo shows:</span>
+<span class="code-comment"># • Current environment configuration</span>
+<span class="code-comment"># • Available CLI commands</span>
+<span class="code-comment"># • Supported environments</span>
+<span class="code-comment"># • Validation rules</span>
+<span class="code-comment"># • Example bun pm pkg commands</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>🚀 Perfect for Onboarding:</strong>
+          Use
+          <code>bun run env:demo</code>
+          to show new developers how everything works together!
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📋 Example .env Files for Fire22 Dashboard</h2>
+
+        <div class="example">
+          <div class="example-item">
+            <h3>.env.development</h3>
+            <div class="code-block">
+              <pre>
+# Fire22 Dashboard Development Environment
+NODE_ENV=development
+BUN_CONFIG_VERBOSE_FETCH=1
+BUN_CONFIG_MAX_HTTP_REQUESTS=128
+
+# Authentication
+JWT_SECRET=dev_jwt_secret_change_in_production_local
+ADMIN_PASSWORD=admin123
+
+# Payment Gateway (Stripe)
+STRIPE_SECRET_KEY=sk_test_dev_stripe_key_local
+STRIPE_WEBHOOK_SECRET=whsec_dev_webhook_secret_local
+
+# Communication Services
+SENDGRID_API_KEY=dev_sendgrid_key_local
+TWILIO_ACCOUNT_SID=dev_twilio_sid_local
+TWILIO_AUTH_TOKEN=dev_twilio_token_local
+
+# System Configuration
+CRON_SECRET=dev_cron_secret_local
+
+# Bot Configuration
+BOT_TOKEN=your_telegram_bot_token_here
+CASHIER_BOT_TOKEN=your_cashier_bot_token_here
+
+# Fire22 Integration
+FIRE22_API_URL=https://api.fire22.com
+FIRE22_TOKEN=dev_fire22_token_local
+
+# Hub Connection Configuration (see src/config/hub-connection.ts)
+HUB_URL=http://localhost:3001
+HUB_API_KEY=dev_hub_key_local
+HUB_TIMEOUT=10000
+HUB_RETRIES=3
+HUB_ENABLE_HEALTH_CHECK=true
+FIRE22_WEBHOOK_SECRET=dev_webhook_secret_local
+
+# Security Team Integration (Development)
+SECURITY_TEAM_ID=SEC_TEAM_DEV_001
+SECURITY_TEAM_TOKEN=dev_security_token_64_chars_min_local
+SECURITY_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+SECURITY_CHAT_ID=-1001234567890
+SECURITY_ESCALATION_CHAT_ID=-1001234567891
+INCIDENT_WEBHOOK_URL=https://incidents-dev.fire22.com/webhook
+INCIDENT_API_KEY=dev_incident_api_key_64_chars_min_local
+SECURITY_MONITOR_URL=https://security-dev.fire22.com/api
+SECURITY_MONITOR_KEY=dev_monitor_key_64_chars_min_local
+SECURITY_ALERT_LEVEL=MEDIUM
+SECURITY_RESPONSE_TIMEOUT=300</pre
+              >
+            </div>
+          </div>
+
+          <div class="example-item">
+            <h3>.env.production</h3>
+
+            <div class="code-block">
+              <pre>
+# Fire22 Dashboard Production Environment
+NODE_ENV=production
+BUN_CONFIG_VERBOSE_FETCH=0
+BUN_CONFIG_MAX_HTTP_REQUESTS=256
+
+# Authentication
+JWT_SECRET=your_super_secure_production_secret
+ADMIN_PASSWORD=your_secure_admin_password
+
+# Payment Gateway (Stripe)
+STRIPE_SECRET_KEY=sk_live_your_production_key
+STRIPE_WEBHOOK_SECRET=whsec_your_production_webhook
+
+# Communication Services
+SENDGRID_API_KEY=your_production_sendgrid_key
+TWILIO_ACCOUNT_SID=your_production_twilio_sid
+TWILIO_AUTH_TOKEN=your_production_twilio_token
+
+# System Configuration
+CRON_SECRET=your_production_cron_secret
+
+# Bot Configuration
+BOT_TOKEN=your_production_bot_token
+CASHIER_BOT_TOKEN=your_production_cashier_token
+
+# Fire22 Integration
+FIRE22_API_URL=https://api.fire22.com
+FIRE22_TOKEN=your_production_fire22_token
+FIRE22_WEBHOOK_SECRET=your_production_webhook_secret
+
+# Hub Connection Configuration (see src/config/hub-connection.ts)
+HUB_URL=https://hub.fire22.com
+HUB_API_KEY=your_production_hub_key
+HUB_TIMEOUT=15000
+HUB_RETRIES=5
+HUB_ENABLE_HEALTH_CHECK=true
+
+# Security Team Integration (Production)
+SECURITY_TEAM_ID=SEC_TEAM_PROD_001
+SECURITY_TEAM_TOKEN=your_super_secure_production_security_token_64_chars_min
+SECURITY_BOT_TOKEN=your_production_security_bot_token
+SECURITY_CHAT_ID=your_production_security_chat_id
+SECURITY_ESCALATION_CHAT_ID=your_production_escalation_chat_id
+INCIDENT_WEBHOOK_URL=https://incidents.fire22.com/webhook
+INCIDENT_API_KEY=your_production_incident_api_key_64_chars_min
+SECURITY_MONITOR_URL=https://security.fire22.com/api
+SECURITY_MONITOR_KEY=your_production_monitor_key_64_chars_min
+SECURITY_ALERT_LEVEL=HIGH
+SECURITY_RESPONSE_TIMEOUT=180</pre
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💻 Reading Environment Variables</h2>
+        <p>Bun provides multiple ways to access environment variables:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment">// Traditional Node.js way</span>
+<span class="code-keyword">const</span> apiKey = process.env.FIRE22_API_KEY;
+
+<span class="code-comment">// Bun-specific way</span>
+<span class="code-keyword">const</span> apiKey = Bun.env.FIRE22_API_KEY;
+
+<span class="code-comment">// Also available via import.meta.env</span>
+<span class="code-keyword">const</span> apiKey = import.meta.env.FIRE22_API_KEY;
+
+<span class="code-comment">// Using our utility functions</span>
+<span class="code-keyword">import</span> { getEnvVar, getEnvVarOptional } <span class="code-keyword">from</span> './src/env';
+<span class="code-keyword">const</span> apiKey = getEnvVar('FIRE22_API_KEY');
+<span class="code-keyword">const</span> optionalKey = getEnvVarOptional('OPTIONAL_KEY');</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 TypeScript Support</h2>
+        <p>For TypeScript projects, you can declare your environment variables for type safety:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment">// Already implemented in src/index.ts</span>
+<span class="code-keyword">declare</span> <span class="code-keyword">module</span> "bun" {
+  <span class="code-keyword">interface</span> Env {
+    <span class="code-keyword">readonly</span> DB: D1Database;
+    <span class="code-keyword">readonly</span> BOT_TOKEN?: string;
+    <span class="code-keyword">readonly</span> CASHIER_BOT_TOKEN?: string;
+    <span class="code-keyword">readonly</span> FIRE22_API_URL?: string;
+    <span class="code-keyword">readonly</span> FIRE22_TOKEN?: string;
+    <span class="code-keyword">readonly</span> FIRE22_WEBHOOK_SECRET?: string;
+    <span class="code-keyword">readonly</span> JWT_SECRET: string;
+    <span class="code-keyword">readonly</span> ADMIN_PASSWORD: string;
+    <span class="code-keyword">readonly</span> STRIPE_SECRET_KEY: string;
+    <span class="code-keyword">readonly</span> STRIPE_WEBHOOK_SECRET: string;
+    <span class="code-keyword">readonly</span> SENDGRID_API_KEY: string;
+    <span class="code-keyword">readonly</span> TWILIO_ACCOUNT_SID: string;
+    <span class="code-keyword">readonly</span> TWILIO_AUTH_TOKEN: string;
+    <span class="code-keyword">readonly</span> CRON_SECRET: string;
+    
+    <span class="code-comment">// Security Team Integration</span>
+    <span class="code-keyword">readonly</span> SECURITY_TEAM_ID: string;
+    <span class="code-keyword">readonly</span> SECURITY_TEAM_TOKEN: string;
+    <span class="code-keyword">readonly</span> SECURITY_BOT_TOKEN: string;
+    <span class="code-keyword">readonly</span> SECURITY_CHAT_ID: string;
+    <span class="code-keyword">readonly</span> SECURITY_ESCALATION_CHAT_ID?: string;
+    <span class="code-keyword">readonly</span> INCIDENT_WEBHOOK_URL?: string;
+    <span class="code-keyword">readonly</span> INCIDENT_API_KEY?: string;
+    <span class="code-keyword">readonly</span> SECURITY_MONITOR_URL?: string;
+    <span class="code-keyword">readonly</span> SECURITY_MONITOR_KEY?: string;
+    <span class="code-keyword">readonly</span> SECURITY_ALERT_LEVEL?: string;
+    <span class="code-keyword">readonly</span> SECURITY_RESPONSE_TIMEOUT?: string;
+  }
+}</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>⚙️ Practical Implementation for Fire22 Dashboard</h2>
+        <p>Here's how you can use environment variables in your dashboard:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment">// src/config.ts - Already implemented!</span>
+<span class="code-keyword">import</span> { getConfig } <span class="code-keyword">from</span> './config';
+
+<span class="code-keyword">const</span> config = getConfig();
+
+<span class="code-comment">// Fire22 API Integration Examples</span>
+<span class="code-keyword">const</span> fire22Api = {
+  <span class="code-comment">// Get agents list</span>
+  async getAgents() {
+    <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(`${config.fire22.apiUrl}/agents`, {
+      headers: {
+        'Authorization': `Bearer ${config.fire22.token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    <span class="code-keyword">return</span> response.json();
+  },
+  
+  <span class="code-comment">// Verify webhook signature</span>
+  verifyWebhook(body: string, signature: string): boolean {
+    <span class="code-keyword">const</span> expectedSignature = crypto
+      .createHmac('sha256', config.fire22.webhookSecret)
+      .update(body)
+      .digest('hex');
+    <span class="code-keyword">return</span> crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+  }
+};
+
+<span class="code-comment">// Usage in your application</span>
+<span class="code-keyword">const</span> stripeKey = config.stripe.secretKey;
+<span class="code-keyword">const</span> jwtSecret = config.auth.jwtSecret;
+<span class="code-keyword">const</span> isDev = config.system.nodeEnv === 'development';</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 Security Team & Telegram Alert Best Practices</h2>
+        <p>
+          Follow these best practices for secure and efficient security team integration and Telegram alert channels:
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Security Team Integration Best Practices</span>
+<span class="code-keyword">class</span> SecurityTeamManager {
+  <span class="code-keyword">private</span> teamId: string;
+  <span class="code-keyword">private</span> token: string;
+  <span class="code-keyword">private</span> alertLevel: <span class="code-string">'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'</span>;
+  
+  <span class="code-keyword">constructor</span>(config: SecurityTeamConfig) {
+    <span class="code-keyword">this</span>.teamId = config.teamId;
+    <span class="code-keyword">this</span>.token = config.token;
+    <span class="code-keyword">this</span>.alertLevel = config.defaultAlertLevel;
+  }
+  
+  <span class="code-keyword">async</span> sendAlert(message: string, level: AlertLevel = <span class="code-keyword">this</span>.alertLevel) {
+    <span class="code-keyword">const</span> alert = {
+      teamId: <span class="code-keyword">this</span>.teamId,
+      message,
+      level,
+      timestamp: <span class="code-keyword">new</span> Date().toISOString(),
+      source: <span class="code-string">'fire22-dashboard'</span>
+    };
+    
+    <span class="code-keyword">await</span> <span class="code-keyword">this</span>.sendToSecurityTeam(alert);
+    <span class="code-keyword">await</span> <span class="code-keyword">this</span>.sendToTelegram(alert);
+  }
+  
+  <span class="code-keyword">private</span> <span class="code-keyword">async</span> sendToSecurityTeam(alert: SecurityAlert) {
+    <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(process.env.SECURITY_MONITOR_URL, {
+      method: <span class="code-string">'POST'</span>,
+      headers: {
+        <span class="code-string">'Authorization'</span>: <span class="code-string">`Bearer ${process.env.SECURITY_MONITOR_KEY}`</span>,
+        <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span>
+      },
+      body: JSON.stringify(alert)
+    });
+    
+    <span class="code-keyword">if</span> (!response.ok) {
+      <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(`Security team alert failed: ${response.status}`);
+    }
+  }
+  
+  <span class="code-keyword">private</span> <span class="code-keyword">async</span> sendToTelegram(alert: SecurityAlert) {
+    <span class="code-keyword">const</span> botToken = process.env.SECURITY_BOT_TOKEN;
+    <span class="code-keyword">const</span> chatId = process.env.SECURITY_CHAT_ID;
+    
+    <span class="code-keyword">const</span> message = <span class="code-keyword">this</span>.formatTelegramMessage(alert);
+    
+    <span class="code-keyword">await</span> fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: <span class="code-string">'POST'</span>,
+      headers: { <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span> },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: <span class="code-string">'HTML'</span>
+      })
+    });
+  }
+  
+  <span class="code-keyword">private</span> formatTelegramMessage(alert: SecurityAlert): string {
+    <span class="code-keyword">const</span> emoji = <span class="code-keyword">this</span>.getAlertEmoji(alert.level);
+    <span class="code-keyword">return</span> `${emoji} <b>Security Alert: ${alert.level}</b>\n\n` +
+      `${alert.message}\n\n` +
+      `<i>Source: ${alert.source}</i>\n` +
+      `<i>Time: ${alert.timestamp}</i>`;
+  }
+  
+  <span class="code-keyword">private</span> getAlertEmoji(level: AlertLevel): string {
+    <span class="code-keyword">switch</span> (level) {
+      <span class="code-keyword">case</span> <span class="code-string">'LOW'</span>: <span class="code-keyword">return</span> <span class="code-string">'🔵'</span>;
+      <span class="code-keyword">case</span> <span class="code-string">'MEDIUM'</span>: <span class="code-keyword">return</span> <span class="code-string">'🟡'</span>;
+      <span class="code-keyword">case</span> <span class="code-string">'HIGH'</span>: <span class="code-keyword">return</span> <span class="code-string">'🟠'</span>;
+      <span class="code-keyword">case</span> <span class="code-string">'CRITICAL'</span>: <span class="code-keyword">return</span> <span class="code-string">'🔴'</span>;
+      <span class="code-keyword">default</span>: <span class="code-keyword">return</span> <span class="code-string">'⚪'</span>;
+    }
+  }
+}</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🔒 Security First:</strong>
+          Always encrypt sensitive data in transit and at rest. Use HTTPS for all API communications and implement
+          proper authentication.
+        </div>
+
+        <div class="callout">
+          <strong>📱 Telegram Best Practices:</strong>
+          Use HTML formatting for better readability, implement rate limiting to avoid spam, and always verify bot token
+          validity.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔥 Fire22 API Best Practices</h2>
+        <p>Follow these best practices for secure and efficient Fire22 API integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Rate Limiting Implementation</span>
+<span class="code-keyword">class</span> Fire22RateLimiter {
+  <span class="code-keyword">private</span> requests = <span class="code-keyword">new</span> Map&lt;string, number[]&gt;();
+  <span class="code-keyword">private</span> maxRequests = 1000;
+  <span class="code-keyword">private</span> windowMs = 60 * 1000; // 1 minute
+  
+  async checkLimit(identifier: string): Promise&lt;boolean&gt; {
+    <span class="code-keyword">const</span> now = Date.now();
+    <span class="code-keyword">const</span> userRequests = <span class="code-keyword">this</span>.requests.get(identifier) || [];
+    
+    <span class="code-keyword">// Remove expired requests</span>
+    <span class="code-keyword">const</span> validRequests = userRequests.filter(time => now - time &lt; <span class="code-keyword">this</span>.windowMs);
+    
+    <span class="code-keyword">if</span> (validRequests.length >= <span class="code-keyword">this</span>.maxRequests) {
+      <span class="code-keyword">return</span> false; // Rate limit exceeded
+    }
+    
+    validRequests.push(now);
+    <span class="code-keyword">this</span>.requests.set(identifier, validRequests);
+    <span class="code-keyword">return</span> true;
+  }
+}
+
+<span class="code-comment"># Error Handling</span>
+<span class="code-keyword">async</span> <span class="code-function">handleFire22Request</span>(url: string, options: RequestInit) {
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(url, options);
+    
+    <span class="code-keyword">if</span> (response.status === 429) {
+      <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error('Rate limit exceeded. Please retry later.');
+    }
+    
+    <span class="code-keyword">if</span> (!response.ok) {
+      <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(`Fire22 API error: ${response.status} ${response.statusText}`);
+    }
+    
+    <span class="code-keyword">return</span> response.json();
+  } <span class="code-keyword">catch</span> (error) {
+    console.error('Fire22 API request failed:', error);
+    <span class="code-keyword">throw</span> error;
+  }
+}</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🔄 Retry Logic:</strong>
+          Implement exponential backoff for failed requests and rate limit handling.
+        </div>
+
+        <div class="callout">
+          <strong>📊 Monitoring:</strong>
+          Track API usage, response times, and error rates for operational insights.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 Security Team & Telegram Alert Environment Variables</h2>
+        <p>Complete environment variable configuration for security team integration and Telegram alert channels:</p>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+              <th>Required</th>
+              <th>Example</th>
+              <th>Security Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SECURITY_TEAM_ID</td>
+              <td>Unique identifier for security team</td>
+              <td>✅</td>
+              <td>SEC_TEAM_001</td>
+              <td>🔒 High</td>
+            </tr>
+            <tr>
+              <td>SECURITY_TEAM_TOKEN</td>
+              <td>Authentication token for security team API</td>
+              <td>✅</td>
+              <td>sec_token_64_chars_min</td>
+              <td>🔒 Critical</td>
+            </tr>
+            <tr>
+              <td>SECURITY_BOT_TOKEN</td>
+              <td>Telegram bot token for security alerts</td>
+              <td>✅</td>
+              <td>123456789:ABCdefGHIjklMNOpqrsTUVwxyz</td>
+              <td>🔒 Critical</td>
+            </tr>
+            <tr>
+              <td>SECURITY_CHAT_ID</td>
+              <td>Telegram chat ID for security notifications</td>
+              <td>✅</td>
+              <td>-1001234567890</td>
+              <td>🔒 High</td>
+            </tr>
+            <tr>
+              <td>SECURITY_ESCALATION_CHAT_ID</td>
+              <td>Telegram chat ID for escalation alerts</td>
+              <td>🟡</td>
+              <td>-1001234567891</td>
+              <td>🔒 High</td>
+            </tr>
+            <tr>
+              <td>INCIDENT_WEBHOOK_URL</td>
+              <td>Webhook URL for incident reporting</td>
+              <td>🟡</td>
+              <td>https://incidents.fire22.com/webhook</td>
+              <td>🔒 High</td>
+            </tr>
+            <tr>
+              <td>INCIDENT_API_KEY</td>
+              <td>API key for incident management system</td>
+              <td>🟡</td>
+              <td>inc_api_key_64_chars_min</td>
+              <td>🔒 Critical</td>
+            </tr>
+            <tr>
+              <td>SECURITY_MONITOR_URL</td>
+              <td>URL for security monitoring dashboard</td>
+              <td>🟡</td>
+              <td>https://security.fire22.com/api</td>
+              <td>🔒 Medium</td>
+            </tr>
+            <tr>
+              <td>SECURITY_MONITOR_KEY</td>
+              <td>API key for security monitoring</td>
+              <td>🟡</td>
+              <td>monitor_key_64_chars_min</td>
+              <td>🔒 High</td>
+            </tr>
+            <tr>
+              <td>SECURITY_ALERT_LEVEL</td>
+              <td>Default security alert level (LOW/MEDIUM/HIGH/CRITICAL)</td>
+              <td>🟡</td>
+              <td>MEDIUM</td>
+              <td>🔒 Medium</td>
+            </tr>
+            <tr>
+              <td>SECURITY_RESPONSE_TIMEOUT</td>
+              <td>Timeout for security team response (seconds)</td>
+              <td>🟡</td>
+              <td>300</td>
+              <td>🔒 Low</td>
+            </tr>
+          </tbody>
+        </div>
+
+        <div class="callout">
+          <strong>🔒 Security Levels:</strong>
+          Critical variables should never be exposed in logs or error messages. High security variables require
+          encryption at rest.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔍 Security Team Configuration Validation</h2>
+        <p>Your system includes comprehensive security team configuration validation:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Built-in validation in src/security-team-config.ts</span>
+<span class="code-keyword">import</span> { validateSecurityTeamConfig, getSecurityTeamStatus, testSecurityTeamConnectivity } <span class="code-keyword">from</span> './security-team-config';
+
+<span class="code-comment"># Validate configuration</span>
+<span class="code-keyword">const</span> validation = validateSecurityTeamConfig();
+<span class="code-keyword">if</span> (validation.errors.length > 0) {
+  console.error('Security team configuration errors:', validation.errors);
+}
+
+<span class="code-comment"># Get configuration status</span>
+<span class="code-keyword">const</span> status = getSecurityTeamStatus();
+console.log('Security team configured:', status.configured);
+console.log('Team ID:', status.teamId);
+console.log('Telegram alerts:', status.telegramAlerts);
+console.log('Incident management:', status.incidentManagement);
+
+<span class="code-comment"># Test connectivity</span>
+<span class="code-keyword">const</span> connectivity = <span class="code-keyword">await</span> testSecurityTeamConnectivity();
+console.log('Team API reachable:', connectivity.reachable);
+console.log('Authentication:', connectivity.authenticated);
+console.log('Telegram bot:', connectivity.telegramBot);
+console.log('Alert channels:', connectivity.alertChannels);</pre>
+        </div>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Validation Check</th>
+              <th>Description</th>
+              <th>Action Required</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Security Team ID</td>
+              <td>Must be unique identifier format</td>
+              <td>Use SEC_TEAM_XXX format</td>
+            </tr>
+            <tr>
+              <td>Security Team Token</td>
+              <td>Minimum 64 characters</td>
+              <td>Generate strong token</td>
+            </tr>
+            <tr>
+              <td>Telegram Bot Token</td>
+              <td>Valid bot token format</td>
+              <td>Verify with @BotFather</td>
+            </tr>
+            <tr>
+              <td>Chat ID Format</td>
+              <td>Must be valid Telegram chat ID</td>
+              <td>Use negative numbers for groups</td>
+            </tr>
+            <tr>
+              <td>Webhook URLs</td>
+              <td>Must be valid HTTPS URLs</td>
+              <td>Use HTTPS for production</td>
+            </tr>
+            <tr>
+              <td>API Keys</td>
+              <td>Minimum 64 characters</td>
+              <td>Generate strong keys</td>
+            </tr>
+            <tr>
+              <td>Alert Levels</td>
+              <td>Must be valid enum values</td>
+              <td>Use LOW/MEDIUM/HIGH/CRITICAL</td>
+            </tr>
+            <tr>
+              <td>Response Timeout</td>
+              <td>Must be positive integer</td>
+              <td>Use reasonable timeout values</td>
+            </tr>
+          </tbody>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔍 Fire22 Configuration Validation</h2>
+        <p>Your system includes comprehensive Fire22 configuration validation:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Built-in validation in src/fire22-config.ts</span>
+<span class="code-keyword">import</span> { validateFire22Config, getFire22Status, testFire22Connectivity } <span class="code-keyword">from</span> './fire22-config';
+
+<span class="code-comment"># Validate configuration</span>
+<span class="code-keyword">const</span> validation = validateFire22Config();
+<span class="code-keyword">if</span> (validation.errors.length > 0) {
+  console.error('Fire22 configuration errors:', validation.errors);
+}
+
+<span class="code-comment"># Get configuration status</span>
+<span class="code-keyword">const</span> status = getFire22Status();
+console.log('Fire22 configured:', status.configured);
+console.log('API URL:', status.apiUrl);
+console.log('Rate limit:', `${status.current}/${status.max} requests`);
+
+<span class="code-comment"># Test connectivity</span>
+<span class="code-keyword">const</span> connectivity = <span class="code-keyword">await</span> testFire22Connectivity();
+console.log('API reachable:', connectivity.reachable);
+console.log('Authentication:', connectivity.authenticated);</pre>
+        </div>
+
+        <div class="env-table">
+          <thead>
+            <tr>
+              <th>Validation Check</th>
+              <th>Description</th>
+              <th>Action Required</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>API URL Format</td>
+              <td>Must start with https:// for production</td>
+              <td>Use HTTPS URLs</td>
+            </tr>
+            <tr>
+              <td>Token Length</td>
+              <td>Minimum 32 characters</td>
+              <td>Generate strong token</td>
+            </tr>
+            <tr>
+              <td>Webhook Secret</td>
+              <td>Minimum 32 characters</td>
+              <td>Generate strong secret</td>
+            </tr>
+            <tr>
+              <td>Rate Limit</td>
+              <td>Minimum 100 requests/minute</td>
+              <td>Increase if needed</td>
+            </tr>
+            <tr>
+              <td>Timeout</td>
+              <td>Minimum 30 seconds</td>
+              <td>Increase for slow connections</td>
+            </tr>
+          </tbody>
+        </div>
+
+        <div class="card">
+          <h2>🚀 Bun-Specific Environment Variables</h2>
+          <p>Bun recognizes these special environment variables to configure its behavior:</p>
+
+          <table class="env-table">
+            <thead>
+              <tr>
+                <th>Variable</th>
+                <th>Description</th>
+                <th>Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>NODE_TLS_REJECT_UNAUTHORIZED</td>
+                <td>Set to "0" to disable SSL certificate validation (for testing)</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>BUN_CONFIG_VERBOSE_FETCH</td>
+                <td>Set to "curl" or "1" to log fetch request details</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>BUN_CONFIG_MAX_HTTP_REQUESTS</td>
+                <td>Control maximum concurrent HTTP requests</td>
+                <td>256</td>
+              </tr>
+              <tr>
+                <td>BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD</td>
+                <td>Set to "true" to prevent terminal clearing on reload</td>
+                <td>false</td>
+              </tr>
+              <tr>
+                <td>DO_NOT_TRACK</td>
+                <td>Set to "1" to disable crash reporting and telemetry</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>🔄 Complete Environment Management Workflow</h2>
+          <p>Here's a complete workflow for managing environments using the integrated tools:</p>
+
+          <div class="code-block">
+            <pre><span class="code-comment"># 1. Setup new environment</span>
+<span class="code-function">bun run env:setup</span>                    <span class="code-comment"># Interactive setup wizard</span>
+<span class="code-function">bun pm pkg set config.environment="staging"</span>  <span class="code-comment"># Update current environment</span>
+
+<span class="code-comment"># 2. Validate configuration</span>
+<span class="code-function">bun run env:validate</span>                <span class="code-comment"># Check all required variables</span>
+<span class="code-function">bun run env:audit</span>                    <span class="code-comment"># Security audit</span>
+<span class="code-function">bun run env:performance</span>             <span class="code-comment"># Performance check</span>
+
+<span class="code-comment"># 3. Backup and sync</span>
+<span class="code-function">bun run env:backup</span>                   <span class="code-comment"># Create backup</span>
+<span class="code-function">bun run env:sync</span>                     <span class="code-comment"># Sync with other environments</span>
+
+<span class="code-comment"># 4. Monitor and maintain</span>
+<span class="code-function">bun run env:monitor</span>                  <span class="code-comment"># Real-time monitoring</span>
+<span class="code-function">bun run env:check</span>                    <span class="code-comment"># Regular health checks</span>
+
+<span class="code-comment"># 5. Update package.json configuration</span>
+<span class="code-function">bun pm pkg set config.envFiles.staging=".env.staging.$(date +%Y%m%d)"</span>
+<span class="code-function">bun pm pkg set metadata.environment.lastUpdated="$(date -u +%Y-%m-%dT%H:%M:%SZ)"</span>
+
+<span class="code-comment"># 6. Export for team sharing</span>
+<span class="code-function">bun run env:export --format=json</span>    <span class="code-comment"># Export to JSON</span>
+<span class="code-function">bun run env:export --format=dotenv</span>  <span class="code-comment"># Export to .env format</span></pre>
+          </div>
+
+          <div class="callout">
+            <strong>Workflow Tip:</strong>
+            Use
+            <code>bun run env:integration</code>
+            to test the entire workflow before deploying!
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🔍 Troubleshooting</h2>
+          <p>Common issues and solutions:</p>
+
+          <div class="cli-commands">
+            <div class="cli-command">
+              <strong>Environment variables not loading?</strong>
+              <br />
+              <code>bun run env:check</code>
+              - Check file loading status
+            </div>
+
+            <div class="cli-command">
+              <strong>Configuration validation failing?</strong>
+              <br />
+
+              <code>bun run env:validate</code>
+              - See detailed error messages
+            </div>
+
+            <div class="cli-command">
+              <strong>TypeScript errors?</strong>
+              <br />
+
+              <code>bun install @types/bun</code>
+              - Install Bun types
+            </div>
+
+            <div class="cli-command">
+              <strong>Debug environment variables?</strong>
+              <br />
+
+              <code>bun --print process.env</code>
+              - Print all environment variables
+            </div>
+          </div>
+        </div>
+
+        <div class="benefits">
+          <div class="benefit-card">
+            <div class="benefit-icon">🔒</div>
+            <h3>Security</h3>
+            <p>Keep secrets out of your codebase with proper environment variable management.</p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">⚙️</div>
+            <h3>Configuration</h3>
+            <p>Easily manage different configurations for development, testing, and production.</p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">🚀</div>
+            <h3>Performance</h3>
+            <p>Bun's built-in environment variable handling is fast and requires no additional dependencies.</p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">🛠️</div>
+            <h3>Developer Experience</h3>
+            <p>CLI tools and TypeScript support make development smooth and error-free.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🎯 Fire22 Integration Status</h2>
+          <p>Your Fire22 API integration is fully implemented and ready for production:</p>
+
+          <div class="benefits">
+            <div class="benefit-card">
+              <div class="benefit-icon">✅</div>
+              <h3>Configuration</h3>
+              <p>Environment variables properly configured and validated</p>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-icon">🔒</div>
+              <h3>Security</h3>
+              <p>Webhook signature verification and secure token handling</p>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-icon">⚡</div>
+              <h3>Performance</h3>
+              <p>Rate limiting and caching for optimal API usage</p>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-icon">🧪</div>
+              <h3>Testing</h3>
+              <p>Comprehensive validation and testing tools</p>
+            </div>
+          </div>
+
+          <div class="callout">
+            <strong>🚀 Ready to Use:</strong>
+            Your Fire22 integration includes all the features from your specification: Bearer token authentication, rate
+            limiting (1000 req/min), webhook support with signature verification, and comprehensive error handling.
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="footer-brand">
+            <div class="footer-logo">🔥</div>
+            <div class="footer-company">Fire22</div>
+            <div class="footer-tagline">Igniting Digital Innovation</div>
+          </div>
+
+          <div class="footer-links">
+            <a href="packages.html" class="footer-link">📦 Packages</a>
+            <a href="environment-variables.html" class="footer-link">🌍 Environment</a>
+            <a href="api-packages.html" class="footer-link">🔌 API</a>
+            <a href="fire22-dashboard-config.html" class="footer-link">⚙️ Config</a>
+            <a href="@packages.html" class="footer-link">🧪 Testing</a>
+          </div>
+
+          <div class="footer-divider"></div>
+
+          <div class="footer-copyright">
+            <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+            <p>Built with ❤️ for secure and scalable development</p>
+            <p><small>Bun Environment Variables Management | Fire22 Dashboard Best Practices</small></p>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        // Simple client-side interactivity
+        document.addEventListener('DOMContentLoaded', function () {
+          // Add animation to table rows
+          const tableRows = document.querySelectorAll('tr');
+          tableRows.forEach((row, index) => {
+            row.style.opacity = '0';
+            row.style.transition = `opacity 0.5s ease ${index * 0.1}s`;
+            setTimeout(() => {
+              row.style.opacity = '1';
+            }, 100);
+          });
+
+          // Add hover effect to code blocks
+
+          const codeBlocks = document.querySelectorAll('.code-block');
+          codeBlocks.forEach(block => {
+            block.addEventListener('mouseenter', () => {
+              block.style.transform = 'translateY(-5px)';
+              block.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.4)';
+            });
+
+            block.addEventListener('mouseleave', () => {
+              block.style.transform = 'translateY(0)';
+              block.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+            });
+          });
+
+          // Add click-to-copy functionality for CLI commands
+          const cliCommands = document.querySelectorAll('.cli-command code');
+          cliCommands.forEach(code => {
+            code.style.cursor = 'pointer';
+            code.title = 'Click to copy';
+
+            code.addEventListener('click', async () => {
+              try {
+                await navigator.clipboard.writeText(code.textContent);
+                const originalText = code.textContent;
+                code.textContent = 'Copied!';
+                code.style.color = '#4CAF50';
+
+                setTimeout(() => {
+                  code.textContent = originalText;
+                  code.style.color = '';
+                }, 2000);
+              } catch (err) {
+                console.log('Failed to copy:', err);
+              }
+            });
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

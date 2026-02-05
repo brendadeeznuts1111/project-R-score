@@ -1,0 +1,846 @@
+{
+  "distribution_info": {
+    "date": "2025-08-28",
+    "deadline": "2025-08-29",
+    "total_team_leads": 15,
+    "script_version": "1.0.0"
+  },
+  "response_status": {
+    "amanda_garcia": {
+      "team_lead": {
+        "id": "amanda_garcia",
+        "name": "Amanda Garcia",
+        "department": "Technology",
+        "role": "Lead Developer",
+        "email": "amanda.garcia@fire22.com",
+        "manager": "Chris Brown",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": true,
+        "timestamp": "2025-08-28T20:28:11.376Z",
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "david_chen": {
+      "team_lead": {
+        "id": "david_chen",
+        "name": "David Chen",
+        "department": "Security",
+        "role": "Vulnerability Assessment Lead",
+        "email": "david.chen@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": true,
+        "timestamp": "2025-08-28T20:28:11.376Z",
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "elena_rodriguez": {
+      "team_lead": {
+        "id": "elena_rodriguez",
+        "name": "Elena Rodriguez",
+        "department": "Security",
+        "role": "Compliance & Privacy Officer",
+        "email": "elena.rodriguez@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "marcus_johnson": {
+      "team_lead": {
+        "id": "marcus_johnson",
+        "name": "Marcus Johnson",
+        "department": "Security",
+        "role": "Access Control Specialist",
+        "email": "marcus.johnson@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "sofia_andersson": {
+      "team_lead": {
+        "id": "sofia_andersson",
+        "name": "Sofia Andersson",
+        "department": "Security",
+        "role": "Session Management Engineer",
+        "email": "sofia.andersson@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "nina_kowalski": {
+      "team_lead": {
+        "id": "nina_kowalski",
+        "name": "Nina Kowalski",
+        "department": "Security",
+        "role": "Incident Response Coordinator",
+        "email": "nina.kowalski@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "alex_kim": {
+      "team_lead": {
+        "id": "alex_kim",
+        "name": "Alex Kim",
+        "department": "Security",
+        "role": "Cryptography Engineer",
+        "email": "alex.kim@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "sarah_johnson_finance": {
+      "team_lead": {
+        "id": "sarah_johnson_finance",
+        "name": "Sarah Johnson",
+        "department": "Finance",
+        "role": "Senior Financial Analyst",
+        "email": "sarah.johnson@fire22.com",
+        "manager": "Michael Chen",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "mike_chen": {
+      "team_lead": {
+        "id": "mike_chen",
+        "name": "Mike Chen",
+        "department": "Finance",
+        "role": "Treasury Manager",
+        "email": "mike.chen@fire22.com",
+        "manager": "Michael Chen",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "kevin_thompson": {
+      "team_lead": {
+        "id": "kevin_thompson",
+        "name": "Kevin Thompson",
+        "department": "Marketing",
+        "role": "Digital Marketing Lead",
+        "email": "kevin.thompson@fire22.com",
+        "manager": "Sarah Johnson",
+        "security_level": "level_2",
+        "priority": "medium"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "jennifer_lee": {
+      "team_lead": {
+        "id": "jennifer_lee",
+        "name": "Jennifer Lee",
+        "department": "Operations",
+        "role": "Operations Manager",
+        "email": "jennifer.lee@fire22.com",
+        "manager": "David Martinez",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "t_williams": {
+      "team_lead": {
+        "id": "t_williams",
+        "name": "T. Williams",
+        "department": "Customer Support",
+        "role": "Senior Support Specialist",
+        "email": "t.williams@fire22.com",
+        "manager": "Jessica Martinez",
+        "security_level": "level_2",
+        "priority": "medium"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "james_mitchell": {
+      "team_lead": {
+        "id": "james_mitchell",
+        "name": "James Mitchell",
+        "department": "Sportsbook",
+        "role": "Live Betting Lead",
+        "email": "james.mitchell@fire22.com",
+        "manager": "Marcus Rodriguez",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "alex_brown": {
+      "team_lead": {
+        "id": "alex_brown",
+        "name": "Alex Brown",
+        "department": "Sportsbook",
+        "role": "Head Oddsmaker",
+        "email": "alex.brown@fire22.com",
+        "manager": "Marcus Rodriguez",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    },
+    "peter_smith": {
+      "team_lead": {
+        "id": "peter_smith",
+        "name": "Peter Smith",
+        "department": "Sportsbook",
+        "role": "Risk Manager",
+        "email": "peter.smith@fire22.com",
+        "manager": "Marcus Rodriguez",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "status": "pending",
+      "acknowledgment": {
+        "received": false,
+        "timestamp": null,
+        "within_deadline": null
+      },
+      "credential_setup": {
+        "gpg_configured": false,
+        "ssh_configured": false,
+        "api_tested": false,
+        "database_verified": false,
+        "timestamp": null
+      },
+      "mfa_setup": {
+        "totp_configured": false,
+        "yubikey_registered": false,
+        "backup_codes_saved": false,
+        "timestamp": null
+      },
+      "final_confirmation": {
+        "form_submitted": false,
+        "verification_completed": false,
+        "timestamp": null
+      },
+      "escalation_level": 0,
+      "last_contact": null,
+      "issues_reported": []
+    }
+  },
+  "escalation_alerts": [
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "elena_rodriguez",
+        "name": "Elena Rodriguez",
+        "department": "Security",
+        "role": "Compliance & Privacy Officer",
+        "email": "elena.rodriguez@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Sarah Mitchell",
+      "priority": "high"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "marcus_johnson",
+        "name": "Marcus Johnson",
+        "department": "Security",
+        "role": "Access Control Specialist",
+        "email": "marcus.johnson@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Sarah Mitchell",
+      "priority": "critical"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "sofia_andersson",
+        "name": "Sofia Andersson",
+        "department": "Security",
+        "role": "Session Management Engineer",
+        "email": "sofia.andersson@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Sarah Mitchell",
+      "priority": "high"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "nina_kowalski",
+        "name": "Nina Kowalski",
+        "department": "Security",
+        "role": "Incident Response Coordinator",
+        "email": "nina.kowalski@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Sarah Mitchell",
+      "priority": "critical"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "alex_kim",
+        "name": "Alex Kim",
+        "department": "Security",
+        "role": "Cryptography Engineer",
+        "email": "alex.kim@fire22.com",
+        "manager": "Sarah Mitchell",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Sarah Mitchell",
+      "priority": "critical"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "sarah_johnson_finance",
+        "name": "Sarah Johnson",
+        "department": "Finance",
+        "role": "Senior Financial Analyst",
+        "email": "sarah.johnson@fire22.com",
+        "manager": "Michael Chen",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Michael Chen",
+      "priority": "high"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "mike_chen",
+        "name": "Mike Chen",
+        "department": "Finance",
+        "role": "Treasury Manager",
+        "email": "mike.chen@fire22.com",
+        "manager": "Michael Chen",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Michael Chen",
+      "priority": "high"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "kevin_thompson",
+        "name": "Kevin Thompson",
+        "department": "Marketing",
+        "role": "Digital Marketing Lead",
+        "email": "kevin.thompson@fire22.com",
+        "manager": "Sarah Johnson",
+        "security_level": "level_2",
+        "priority": "medium"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Sarah Johnson",
+      "priority": "medium"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "jennifer_lee",
+        "name": "Jennifer Lee",
+        "department": "Operations",
+        "role": "Operations Manager",
+        "email": "jennifer.lee@fire22.com",
+        "manager": "David Martinez",
+        "security_level": "level_3",
+        "priority": "high"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "David Martinez",
+      "priority": "high"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "t_williams",
+        "name": "T. Williams",
+        "department": "Customer Support",
+        "role": "Senior Support Specialist",
+        "email": "t.williams@fire22.com",
+        "manager": "Jessica Martinez",
+        "security_level": "level_2",
+        "priority": "medium"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Jessica Martinez",
+      "priority": "medium"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "james_mitchell",
+        "name": "James Mitchell",
+        "department": "Sportsbook",
+        "role": "Live Betting Lead",
+        "email": "james.mitchell@fire22.com",
+        "manager": "Marcus Rodriguez",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Marcus Rodriguez",
+      "priority": "critical"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "alex_brown",
+        "name": "Alex Brown",
+        "department": "Sportsbook",
+        "role": "Head Oddsmaker",
+        "email": "alex.brown@fire22.com",
+        "manager": "Marcus Rodriguez",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Marcus Rodriguez",
+      "priority": "critical"
+    },
+    {
+      "type": "manager_notification",
+      "level": 1,
+      "team_lead": {
+        "id": "peter_smith",
+        "name": "Peter Smith",
+        "department": "Sportsbook",
+        "role": "Risk Manager",
+        "email": "peter.smith@fire22.com",
+        "manager": "Marcus Rodriguez",
+        "security_level": "level_4",
+        "priority": "critical"
+      },
+      "action_required": "Manager contact for initial acknowledgment",
+      "escalation_to": "Marcus Rodriguez",
+      "priority": "critical"
+    }
+  ],
+  "compliance_metrics": {
+    "acknowledgment_rate": 0,
+    "setup_completion_rate": 0,
+    "final_confirmation_rate": 0,
+    "overall_compliance_rate": 0
+  },
+  "timeline_tracking": {
+    "4_hours": {
+      "target": "initial_acknowledgment",
+      "completed": 0,
+      "overdue": 0
+    },
+    "12_hours": {
+      "target": "credential_setup",
+      "completed": 0,
+      "overdue": 0
+    },
+    "16_hours": {
+      "target": "mfa_configuration",
+      "completed": 0,
+      "overdue": 0
+    },
+    "24_hours": {
+      "target": "final_confirmation",
+      "completed": 0,
+      "overdue": 0
+    }
+  }
+}

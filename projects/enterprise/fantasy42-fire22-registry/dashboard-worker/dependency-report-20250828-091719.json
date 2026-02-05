@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-28T14:17:19Z",
+  "root_version": "1.0.0-rc",
+  "workspace_count": 30,
+  "outdated": {
+    "command": "bun outdated",
+    "packages": [
+      {
+        "name": "prism-react-renderer",
+        "current": "2.3.0",
+        "update": "2.3.0",
+        "latest": "2.4.1",
+        "workspace": "dashboard-worker"
+      }
+    ]
+  }
+}

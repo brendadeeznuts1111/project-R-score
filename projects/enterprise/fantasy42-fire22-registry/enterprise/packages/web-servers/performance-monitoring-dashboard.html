@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📊 Performance Monitoring Dashboard - Fire22</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: white;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .metric-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #333;
+        transition: transform 0.2s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .metric-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #667eea;
+      }
+
+      .metric-status {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .status-good {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status-warning {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-critical {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .metric-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .metric-trend {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+      }
+
+      .trend-up {
+        color: #28a745;
+      }
+      .trend-down {
+        color: #dc3545;
+      }
+      .trend-neutral {
+        color: #6c757d;
+      }
+
+      .metric-details {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.4;
+      }
+
+      .module-performance {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .module-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .module-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+      }
+
+      .module-filter {
+        display: flex;
+        gap: 10px;
+      }
+
+      .filter-btn {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 20px;
+        background: #f8f9fa;
+        color: #333;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.2s ease;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .module-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        border-left: 4px solid #667eea;
+        transition: all 0.2s ease;
+      }
+
+      .module-card:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .module-name {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .module-metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        font-size: 0.9rem;
+      }
+
+      .metric-item {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .metric-label {
+        color: #666;
+      }
+      .metric-value {
+        font-weight: 500;
+      }
+
+      .performance-timeline {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .timeline-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+      }
+
+      .time-range {
+        display: flex;
+        gap: 10px;
+      }
+
+      .time-btn {
+        padding: 8px 15px;
+        border: 1px solid #dee2e6;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      .time-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
+      .timeline-chart {
+        height: 300px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        align-items: end;
+        justify-content: space-around;
+        padding: 20px;
+      }
+
+      .chart-bar {
+        width: 30px;
+        background: linear-gradient(to top, #667eea, #764ba2);
+        border-radius: 5px 5px 0 0;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .chart-bar:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+      }
+
+      .chart-label {
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        color: #666;
+        white-space: nowrap;
+      }
+
+      .chart-value {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: #333;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2px 6px;
+        border-radius: 10px;
+      }
+
+      .alerts-panel {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .alerts-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .alerts-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+      }
+
+      .alert-count {
+        background: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+      }
+
+      .alert-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .alert-item {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        border-left: 4px solid #dc3545;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .alert-info {
+        flex: 1;
+      }
+
+      .alert-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .alert-description {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .alert-action {
+        padding: 8px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      .optimization-recommendations {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        color: #333;
+      }
+
+      .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .recommendation-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        border-left: 4px solid #28a745;
+      }
+
+      .recommendation-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .recommendation-description {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.4;
+        margin-bottom: 15px;
+      }
+
+      .recommendation-impact {
+        font-size: 0.8rem;
+        color: #28a745;
+        font-weight: 500;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-grid,
+        .module-grid,
+        .recommendations-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metric-header,
+        .module-header,
+        .timeline-header,
+        .alerts-header {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .time-range,
+        .module-filter {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .timeline-chart {
+          height: 250px;
+          padding: 15px;
+        }
+
+        .chart-bar {
+          width: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>📊 Performance Monitoring Dashboard</h1>
+        <p>Granular Performance Insights for Fire22 Modular Architecture</p>
+      </div>
+
+      <!-- Key Metrics -->
+      <div class="dashboard-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-title">⚡ Response Time</div>
+            <div class="metric-status status-good">Good</div>
+          </div>
+          <div class="metric-value">45ms</div>
+          <div class="metric-trend trend-down">↓ 12% from last week</div>
+          <div class="metric-details">Average API response time across all endpoints. Target: <50ms</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-title">🔍 Profiling Precision</div>
+            <div class="metric-status status-good">Excellent</div>
+          </div>
+          <div class="metric-value">100%</div>
+          <div class="metric-trend trend-up">↑ From impossible to precise</div>
+          <div class="metric-details">Ability to pinpoint exact functions causing performance issues</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-title">🎯 Module Isolation</div>
+            <div class="metric-status status-good">Optimal</div>
+          </div>
+          <div class="metric-value">95%</div>
+          <div class="metric-trend trend-neutral">Stable performance</div>
+          <div class="metric-details">Performance issues contained within individual modules</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-title">📈 Optimization Speed</div>
+            <div class="metric-status status-good">Fast</div>
+          </div>
+          <div class="metric-value">2hrs</div>
+          <div class="metric-trend trend-down">↓ From 3 days</div>
+          <div class="metric-details">Time from hotspot identification to optimization completion</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-title">🔥 Active Hotspots</div>
+            <div class="metric-status status-warning">2</div>
+          </div>
+          <div class="metric-value">2</div>
+          <div class="metric-trend trend-neutral">Monitoring</div>
+          <div class="metric-details">Currently identified performance bottlenecks requiring attention</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-title">🏗️ Architecture Score</div>
+            <div class="metric-status status-good">Excellent</div>
+          </div>
+          <div class="metric-value">98%</div>
+          <div class="metric-trend trend-up">↑ Improved modularity</div>
+          <div class="metric-details">Overall architecture performance and maintainability score</div>
+        </div>
+      </div>
+
+      <!-- Module Performance -->
+      <div class="module-performance">
+        <div class="module-header">
+          <div class="module-title">🏗️ Module Performance Overview</div>
+          <div class="module-filter">
+            <button class="filter-btn active" onclick="filterModules('all')">All</button>
+            <button class="filter-btn" onclick="filterModules('controllers')">Controllers</button>
+            <button class="filter-btn" onclick="filterModules('services')">Services</button>
+            <button class="filter-btn" onclick="filterModules('utils')">Utils</button>
+          </div>
+        </div>
+
+        <div class="module-grid">
+          <div class="module-card" data-category="controllers">
+            <div class="module-name">🎮 Settlement Controller</div>
+            <div class="module-metrics">
+              <div class="metric-item">
+                <span class="metric-label">Response Time:</span>
+                <span class="metric-value">23ms</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Throughput:</span>
+                <span class="metric-value">1,240 req/s</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Error Rate:</span>
+                <span class="metric-value">0.1%</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Memory Usage:</span>
+                <span class="metric-value">45MB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-card" data-category="controllers">
+            <div class="module-name">⚖️ Adjustment Controller</div>
+            <div class="module-metrics">
+              <div class="metric-item">
+                <span class="metric-label">Response Time:</span>
+                <span class="metric-value">31ms</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Throughput:</span>
+                <span class="metric-value">890 req/s</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Error Rate:</span>
+                <span class="metric-value">0.2%</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Memory Usage:</span>
+                <span class="metric-value">52MB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-card" data-category="controllers">
+            <div class="module-name">💰 Balance Controller</div>
+            <div class="module-metrics">
+              <div class="metric-item">
+                <span class="metric-label">Response Time:</span>
+                <span class="metric-value">18ms</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Throughput:</span>
+                <span class="metric-value">2,100 req/s</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Error Rate:</span>
+                <span class="metric-value">0.05%</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Memory Usage:</span>
+                <span class="metric-value">38MB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-card" data-category="services">
+            <div class="module-name">💸 Finance Validation</div>
+            <div class="module-metrics">
+              <div class="metric-item">
+                <span class="metric-label">Response Time:</span>
+                <span class="metric-value">12ms</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Throughput:</span>
+                <span class="metric-value">5,200 req/s</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Error Rate:</span>
+                <span class="metric-value">0.02%</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Memory Usage:</span>
+                <span class="metric-value">28MB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-card" data-category="services">
+            <div class="module-name">⚽ Sports Events</div>
+            <div class="module-metrics">
+              <div class="metric-item">
+                <span class="metric-label">Response Time:</span>
+                <span class="metric-value">45ms</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Throughput:</span>
+                <span class="metric-value">680 req/s</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Error Rate:</span>
+                <span class="metric-value">0.3%</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Memory Usage:</span>
+                <span class="metric-value">67MB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-card" data-category="services">
+            <div class="module-name">🤖 Telegram Bot</div>
+            <div class="module-metrics">
+              <div class="metric-item">
+                <span class="metric-label">Response Time:</span>
+                <span class="metric-value">89ms</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Throughput:</span>
+                <span class="metric-value">340 req/s</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Error Rate:</span>
+                <span class="metric-value">1.2%</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Memory Usage:</span>
+                <span class="metric-value">94MB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Timeline -->
+      <div class="performance-timeline">
+        <div class="timeline-header">
+          <div class="timeline-title">📈 Performance Timeline</div>
+          <div class="time-range">
+            <button class="time-btn active" onclick="setTimeRange('1h')">1H</button>
+            <button class="time-btn" onclick="setTimeRange('24h')">24H</button>
+            <button class="time-btn" onclick="setTimeRange('7d')">7D</button>
+            <button class="time-btn" onclick="setTimeRange('30d')">30D</button>
+          </div>
+        </div>
+
+        <div class="timeline-chart">
+          <div class="chart-bar" style="height: 40%" data-value="42">
+            <div class="chart-value">42ms</div>
+            <div class="chart-label">00:00</div>
+          </div>
+          <div class="chart-bar" style="height: 35%" data-value="38">
+            <div class="chart-value">38ms</div>
+            <div class="chart-label">04:00</div>
+          </div>
+          <div class="chart-bar" style="height: 45%" data-value="48">
+            <div class="chart-value">48ms</div>
+            <div class="chart-label">08:00</div>
+          </div>
+          <div class="chart-bar" style="height: 60%" data-value="65">
+            <div class="chart-value">65ms</div>
+            <div class="chart-label">12:00</div>
+          </div>
+          <div class="chart-bar" style="height: 55%" data-value="59">
+            <div class="chart-value">59ms</div>
+            <div class="chart-label">16:00</div>
+          </div>
+          <div class="chart-bar" style="height: 50%" data-value="54">
+            <div class="chart-value">54ms</div>
+            <div class="chart-label">20:00</div>
+          </div>
+          <div class="chart-bar" style="height: 45%" data-value="48">
+            <div class="chart-value">48ms</div>
+            <div class="chart-label">Now</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Alerts -->
+      <div class="alerts-panel">
+        <div class="alerts-header">
+          <div class="alerts-title">🚨 Active Performance Alerts</div>
+          <div class="alert-count">2</div>
+        </div>
+
+        <div class="alert-list">
+          <div class="alert-item">
+            <div class="alert-info">
+              <div class="alert-title">Telegram Bot Response Time Spike</div>
+              <div class="alert-description">
+                telegram/multilingual-telegram-bot.ts response time increased by 45% in the last hour
+              </div>
+            </div>
+            <button class="alert-action" onclick="investigateAlert('telegram-bot')">Investigate</button>
+          </div>
+
+          <div class="alert-item">
+            <div class="alert-info">
+              <div class="alert-title">Sports Events Memory Usage High</div>
+              <div class="alert-description">
+                src/sports/events/event-management.ts memory usage at 85% of threshold
+              </div>
+            </div>
+            <button class="alert-action" onclick="investigateAlert('sports-events')">Investigate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optimization Recommendations -->
+      <div class="optimization-recommendations">
+        <h2 style="text-align: center; margin-bottom: 30px; color: #333">🎯 Optimization Recommendations</h2>
+
+        <div class="recommendations-grid">
+          <div class="recommendation-card">
+            <div class="recommendation-title">🔄 Database Query Optimization</div>
+            <div class="recommendation-description">
+              Replace sequential database queries in settlement-controller.ts with optimized batch queries to reduce
+              response time by ~30%
+            </div>
+            <div class="recommendation-impact">Expected Impact: -30% response time, +50% throughput</div>
+          </div>
+
+          <div class="recommendation-card">
+            <div class="recommendation-title">💾 Response Caching</div>
+            <div class="recommendation-description">
+              Implement Redis caching for frequently accessed customer balance data in balance-controller.ts
+            </div>
+            <div class="recommendation-impact">Expected Impact: -60% database load, -25% response time</div>
+          </div>
+
+          <div class="recommendation-card">
+            <div class="recommendation-title">📦 Batch Processing</div>
+            <div class="recommendation-description">
+              Convert individual Telegram message sends to batch processing in telegram-bot.ts
+            </div>
+            <div class="recommendation-impact">Expected Impact: -40% API calls, -35% response time</div>
+          </div>
+
+          <div class="recommendation-card">
+            <div class="recommendation-title">⚡ Lazy Loading</div>
+            <div class="recommendation-description">
+              Implement lazy loading for sports event data in event-management.ts to reduce initial load time
+            </div>
+            <div class="recommendation-impact">Expected Impact: -50% initial load time, -30% memory usage</div>
+          </div>
+
+          <div class="recommendation-card">
+            <div class="recommendation-title">🔍 Query Optimization</div>
+            <div class="recommendation-description">
+              Add database indexes for frequently queried fields in financial operations
+            </div>
+            <div class="recommendation-impact">Expected Impact: -70% query time, +200% throughput</div>
+          </div>
+
+          <div class="recommendation-card">
+            <div class="recommendation-title">📊 Memory Pool Optimization</div>
+            <div class="recommendation-description">
+              Implement object pooling for frequently created validation objects
+            </div>
+            <div class="recommendation-impact">Expected Impact: -40% memory allocation, -20% GC pressure</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Module filtering functionality
+      function filterModules(category) {
+        const cards = document.querySelectorAll('.module-card');
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        // Update button states
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Filter cards
+        cards.forEach(card => {
+          if (category === 'all' || card.dataset.category === category) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      // Time range functionality
+      function setTimeRange(range) {
+        const buttons = document.querySelectorAll('.time-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // In a real implementation, this would update the chart data
+        console.log(`Time range changed to: ${range}`);
+      }
+
+      // Alert investigation
+      function investigateAlert(alertType) {
+        const moduleMap = {
+          'telegram-bot': 'src/telegram/multilingual-telegram-bot.ts',
+          'sports-events': 'src/sports/events/event-management.ts',
+        };
+
+        const filePath = moduleMap[alertType];
+        console.log(`Investigating: ${filePath}`);
+
+        // In a real implementation, this would open the file in an editor
+        // or navigate to a detailed profiling view
+      }
+
+      // Simulate real-time updates
+      setInterval(() => {
+        // Update metric values slightly
+        const metrics = document.querySelectorAll('.metric-value');
+        metrics.forEach(metric => {
+          const currentValue = parseInt(metric.textContent);
+          const variation = (Math.random() - 0.5) * 4; // +/- 2
+          const newValue = Math.max(0, currentValue + variation);
+          metric.textContent =
+            Math.round(newValue) +
+            (metric.textContent.includes('ms')
+              ? 'ms'
+              : metric.textContent.includes('%')
+                ? '%'
+                : metric.textContent.includes('MB')
+                  ? 'MB'
+                  : '');
+        });
+      }, 5000);
+    </script>
+  </body>
+</html>

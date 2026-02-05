@@ -1,0 +1,94 @@
+# Git hooks configuration for Fire22 Dashboard Worker
+# https://github.com/evilmartians/lefthook
+
+# Run before commits
+pre-commit:
+  parallel: true
+  commands:
+    # Code quality checks
+    format-check:
+      glob: '*.{ts,tsx,js,jsx,json,md}'
+      run: bun run format:check
+      stage_fixed: true
+
+    lint:
+      glob: '*.{ts,tsx,js,jsx}'
+      run: bun run lint
+      stage_fixed: true
+
+    typecheck:
+      glob: '*.{ts,tsx}'
+      run: bun run typecheck
+
+    # Security checks
+    secrets-check:
+      run: |
+        if grep -r "password\|secret\|token\|api.*key" --include="*.ts" --include="*.js" src/; then
+          echo "❌ Potential credential leak detected!"
+          echo "🔐 Use Bun.secrets for credential storage"
+          exit 1
+        fi
+
+    # Test critical paths
+    test-quick:
+      run: bun run test:quick
+
+# Run before pushes
+pre-push:
+  commands:
+    # Full test suite
+    test-all:
+      run: bun test
+
+    # Build verification
+    build-check:
+      run: bun run build:quick
+
+    # Security audit
+    security-audit:
+      run: bun audit --audit-level=high --prod
+
+    # Performance regression check
+    benchmark-critical:
+      run: bun run benchmark --critical-only
+
+# Run after commits (optional)
+post-commit:
+  commands:
+    # Update workspace status
+    workspace-sync:
+      run: fire22-workspace sync --quiet
+
+# Custom commands for specific scenarios
+commands:
+  # Comprehensive quality check
+  quality-gate:
+    run: |
+      echo "🚀 Running Fire22 quality gate..."
+      bun run quality:check &&
+      bun test &&
+      bun run security:audit &&
+      bun run build:quick &&
+      echo "✅ Quality gate passed!"
+
+  # Security-focused validation
+  security-check:
+    run: |
+      echo "🔐 Running security validation..."
+      bun audit --audit-level=high --prod &&
+      bun run security:scanner-test &&
+      echo "🛡️ Security validation passed!"
+
+# Skip hooks for specific scenarios
+skip_output:
+  - meta
+  - summary
+
+# Output configuration
+output:
+  - execution_out
+  - execution_info
+  - skips
+
+# Parallel execution settings
+parallel: true

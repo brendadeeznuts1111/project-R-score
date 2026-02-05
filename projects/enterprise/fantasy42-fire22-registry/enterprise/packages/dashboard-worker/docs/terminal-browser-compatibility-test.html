@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Terminal UI - Browser Compatibility Test Suite</title>
+    <link rel="stylesheet" href="terminal-framework.css" />
+    <link rel="stylesheet" href="terminal-components.css" />
+    <style>
+      /* Test-specific styles */
+      .test-section {
+        margin-bottom: var(--space-8);
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        position: relative;
+      }
+
+      .test-section::before {
+        content: '╭─ Test Section ──────────────────────────────────────────────────╮';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: var(--font-size-sm);
+        text-align: center;
+      }
+
+      .test-section::after {
+        content: '╰─────────────────────────────────────────────────────────────────╯';
+        position: absolute;
+        bottom: -1px;
+        left: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: var(--font-size-sm);
+        text-align: center;
+      }
+
+      .test-content {
+        padding: var(--space-8) var(--space-6) var(--space-6);
+      }
+
+      .test-result {
+        display: inline-block;
+        padding: var(--space-2) var(--space-4);
+        margin: var(--space-2);
+        font-family: var(--font-mono);
+        font-weight: bold;
+        border-radius: var(--border-radius-sm);
+      }
+
+      .test-pass {
+        background: var(--success);
+        color: var(--primary);
+      }
+
+      .test-fail {
+        background: var(--danger);
+        color: var(--primary);
+      }
+
+      .test-warning {
+        background: var(--warning);
+        color: var(--primary);
+      }
+
+      .character-test {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: var(--space-3);
+        margin: var(--space-4) 0;
+      }
+
+      .character-test-item {
+        text-align: center;
+        padding: var(--space-3);
+        background: var(--tertiary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        font-family: var(--font-mono);
+        font-size: var(--font-size-2xl);
+      }
+
+      .browser-info {
+        background: rgba(88, 166, 255, 0.1);
+        border: var(--border-width) var(--border-style) var(--accent);
+        padding: var(--space-4);
+        margin-bottom: var(--space-6);
+        font-family: var(--font-mono);
+      }
+
+      .performance-meter {
+        width: 100%;
+        height: 20px;
+        background: var(--tertiary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        margin: var(--space-2) 0;
+        overflow: hidden;
+      }
+
+      .performance-bar {
+        height: 100%;
+        transition: width 1s ease;
+        background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+      }
+
+      .css-support-table {
+        width: 100%;
+        margin: var(--space-4) 0;
+      }
+
+      .test-controls {
+        display: flex;
+        gap: var(--space-3);
+        margin-bottom: var(--space-6);
+        flex-wrap: wrap;
+      }
+
+      .fallback-warning {
+        background: rgba(255, 193, 7, 0.1);
+        border: var(--border-width) var(--border-style) var(--warning);
+        padding: var(--space-4);
+        margin: var(--space-4) 0;
+        font-family: var(--font-mono);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="terminal-container">
+      <header class="terminal-header">
+        <h1 class="terminal-title">
+          <span class="terminal-logo">🔥</span>
+          Fire22 Terminal UI Compatibility Test Suite
+        </h1>
+        <p class="terminal-subtitle">Cross-browser compatibility testing for terminal components</p>
+      </header>
+
+      <!-- Browser Detection -->
+      <div class="browser-info">
+        <h3 style="color: var(--accent); margin-bottom: var(--space-3)">Browser Information</h3>
+        <div id="browser-details"></div>
+      </div>
+
+      <!-- Test Controls -->
+      <div class="test-controls">
+        <button class="terminal-btn terminal-btn--primary" onclick="runAllTests()">
+          <span class="terminal-btn__icon">🚀</span>
+          <span class="terminal-btn__text">Run All Tests</span>
+        </button>
+        <button class="terminal-btn terminal-btn--secondary" onclick="toggleFallbacks()">
+          <span class="terminal-btn__text">Toggle Fallbacks</span>
+        </button>
+        <button class="terminal-btn terminal-btn--success" onclick="exportResults()">
+          <span class="terminal-btn__text">Export Results</span>
+        </button>
+      </div>
+
+      <!-- Box Drawing Characters Test -->
+      <div class="test-section">
+        <div class="test-content">
+          <h3 style="color: var(--fire); margin-bottom: var(--space-4)">Box Drawing Characters Test</h3>
+          <p style="margin-bottom: var(--space-4)">
+            Testing rendering of terminal box-drawing characters across fonts:
+          </p>
+
+          <div class="character-test">
+            <div class="character-test-item">
+              <div>╭</div>
+              <small>Top Left</small>
+            </div>
+            <div class="character-test-item">
+              <div>╮</div>
+              <small>Top Right</small>
+            </div>
+            <div class="character-test-item">
+              <div>╰</div>
+              <small>Bottom Left</small>
+            </div>
+            <div class="character-test-item">
+              <div>╯</div>
+              <small>Bottom Right</small>
+            </div>
+            <div class="character-test-item">
+              <div>├</div>
+              <small>Left Junction</small>
+            </div>
+            <div class="character-test-item">
+              <div>─</div>
+              <small>Horizontal</small>
+            </div>
+            <div class="character-test-item">
+              <div>┤</div>
+              <small>Right Junction</small>
+            </div>
+            <div class="character-test-item">
+              <div>│</div>
+              <small>Vertical</small>
+            </div>
+          </div>
+
+          <div id="character-test-result" class="test-result"></div>
+        </div>
+      </div>
+
+      <!-- CSS Custom Properties Test -->
+      <div class="test-section">
+        <div class="test-content">
+          <h3 style="color: var(--fire); margin-bottom: var(--space-4)">CSS Custom Properties Support</h3>
+
+          <table class="terminal-table__table css-support-table">
+            <thead>
+              <tr class="terminal-table__row terminal-table__row--header">
+                <th class="terminal-table__cell">Property</th>
+                <th class="terminal-table__cell">Value</th>
+                <th class="terminal-table__cell">Status</th>
+              </tr>
+            </thead>
+            <tbody id="css-properties-test">
+              <!-- Test results will be populated here -->
+            </tbody>
+          </table>
+
+          <div id="css-test-result" class="test-result"></div>
+        </div>
+      </div>
+
+      <!-- Font Rendering Test -->
+      <div class="test-section">
+        <div class="test-content">
+          <h3 style="color: var(--fire); margin-bottom: var(--space-4)">Monospace Font Rendering Test</h3>
+
+          <div style="margin: var(--space-4) 0">
+            <h4 style="color: var(--accent); margin-bottom: var(--space-3)">Font Stack Test:</h4>
+            <div
+              style="
+                font-family: var(--font-mono);
+                font-size: var(--font-size-lg);
+                line-height: 1.5;
+                background: var(--tertiary);
+                padding: var(--space-4);
+              "
+            >
+              ╭─────────────────────────────────╮
+              <br />
+              │ Terminal Font Rendering Test │
+              <br />
+              │ Checking character alignment: │
+              <br />
+              │ ├─ Monospace spacing: OK │
+              <br />
+              │ ├─ Box drawing: ╭╮╰╯├─┤│ │
+              <br />
+              │ ╰─ Consistent width test ──────── │
+              <br />
+              ╰─────────────────────────────────╯
+            </div>
+
+            <div id="font-test-result" class="test-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Animation Performance Test -->
+      <div class="test-section">
+        <div class="test-content">
+          <h3 style="color: var(--fire); margin-bottom: var(--space-4)">Animation Performance Test</h3>
+
+          <div style="margin: var(--space-4) 0">
+            <h4 style="color: var(--accent)">Frame Rate Performance:</h4>
+            <div class="performance-meter">
+              <div id="performance-bar" class="performance-bar" style="width: 0%"></div>
+            </div>
+            <div id="performance-stats" style="font-family: var(--font-mono); margin-top: var(--space-3)"></div>
+
+            <div style="display: flex; gap: var(--space-4); margin: var(--space-4) 0">
+              <div class="terminal-logo terminal-flame">🔥</div>
+              <div class="terminal-badge terminal-badge--success terminal-pulse">Pulsing Badge</div>
+              <div style="width: 50px; height: 20px; background: var(--accent)" class="terminal-shimmer"></div>
+            </div>
+
+            <div id="animation-test-result" class="test-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JavaScript Functionality Test -->
+      <div class="test-section">
+        <div class="test-content">
+          <h3 style="color: var(--fire); margin-bottom: var(--space-4)">JavaScript Functionality Test</h3>
+
+          <div style="margin: var(--space-4) 0">
+            <div class="terminal-metrics">
+              <div class="terminal-metric" id="test-metric">
+                <div class="terminal-metric__value" id="test-metric-value">100</div>
+                <div class="terminal-metric__label">Test Metric</div>
+                <div class="terminal-metric__trend terminal-metric__trend--stable">→ Testing</div>
+              </div>
+            </div>
+
+            <div class="terminal-progress" style="margin: var(--space-4) 0">
+              <div class="terminal-progress__header">
+                <span class="terminal-progress__label">Test Progress</span>
+                <span class="terminal-progress__value" id="test-progress-value">0%</span>
+              </div>
+              <div class="terminal-progress__bar">
+                <div class="terminal-progress__fill" id="test-progress-fill"></div>
+              </div>
+            </div>
+
+            <button class="terminal-btn terminal-btn--primary" onclick="testJavaScriptComponents()">
+              <span class="terminal-btn__text">Test JS Components</span>
+            </button>
+
+            <div id="javascript-test-result" class="test-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Responsive Design Test -->
+      <div class="test-section">
+        <div class="test-content">
+          <h3 style="color: var(--fire); margin-bottom: var(--space-4)">Responsive Design Test</h3>
+
+          <div style="margin: var(--space-4) 0">
+            <p style="margin-bottom: var(--space-3)">
+              Current viewport:
+              <span id="viewport-info"></span>
+            </p>
+
+            <div class="terminal-grid">
+              <div class="terminal-card terminal-card--compact">
+                <h4 style="color: var(--accent)">Mobile Test</h4>
+                <p>This should stack on mobile</p>
+              </div>
+              <div class="terminal-card terminal-card--compact">
+                <h4 style="color: var(--accent)">Desktop Test</h4>
+                <p>This should be side-by-side on desktop</p>
+              </div>
+            </div>
+
+            <div id="responsive-test-result" class="test-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Test Results -->
+      <div class="test-section">
+        <div class="test-content">
+          <h3 style="color: var(--fire); margin-bottom: var(--space-4)">Overall Compatibility Results</h3>
+
+          <div id="overall-results" style="font-family: var(--font-mono)"></div>
+
+          <div id="recommendations" class="fallback-warning" style="display: none">
+            <h4 style="color: var(--warning); margin-bottom: var(--space-3)">⚠️ Recommendations</h4>
+            <ul id="recommendation-list" style="margin-left: var(--space-6)"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal Footer -->
+    <footer class="terminal-footer">
+      <div class="footer-decoration">╭────────────────────────────────────────────────────────────────────────╮</div>
+
+      <div class="footer-content">
+        <div class="footer-main">
+          <div class="footer-logo">🔥</div>
+          <h2 class="footer-title">Fire22 Terminal UI Compatibility Test Suite</h2>
+          <p class="footer-tagline">Ensuring cross-browser compatibility for terminal components</p>
+        </div>
+
+        <div class="footer-features">
+          <div class="features-header">├─── Test Coverage ───┤</div>
+          <div class="features-grid">
+            <div class="footer-feature">├─ 🎨 Box Drawing Characters</div>
+            <div class="footer-feature">├─ 📱 Responsive Design</div>
+            <div class="footer-feature">├─ ⚡ Animation Performance</div>
+            <div class="footer-feature">├─ 🔤 Font Rendering</div>
+            <div class="footer-feature">├─ 🎛️ JavaScript API</div>
+            <div class="footer-feature">╰─ 📊 CSS Properties</div>
+          </div>
+        </div>
+
+        <div class="footer-status">
+          ├───────────────────────────────────────────────────────────────────────┤ │ Status:
+          <span id="test-status">● Ready</span>
+          | Browser:
+          <span id="detected-browser">Unknown</span>
+          | Tests:
+          <span id="test-count">0/6</span>
+          │ ├───────────────────────────────────────────────────────────────────────┤
+        </div>
+
+        <div class="footer-copyright">
+          <p>© 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Terminal UI Compatibility Testing Suite v1.0.0</p>
+        </div>
+      </div>
+
+      <div class="footer-decoration">╰────────────────────────────────────────────────────────────────────────╯</div>
+    </footer>
+
+    <script src="terminal-components.js"></script>
+    <script>
+      // Browser Compatibility Test Suite
+      class TerminalCompatibilityTest {
+        constructor() {
+          this.testResults = {};
+          this.browserInfo = this.detectBrowser();
+          this.initialize();
+        }
+
+        initialize() {
+          this.displayBrowserInfo();
+          this.updateViewportInfo();
+          window.addEventListener('resize', () => this.updateViewportInfo());
+        }
+
+        detectBrowser() {
+          const ua = navigator.userAgent;
+          const browsers = {
+            chrome: /Chrome\/(\d+)/.exec(ua),
+            firefox: /Firefox\/(\d+)/.exec(ua),
+            safari: /Version\/(\d+).*Safari/.exec(ua),
+            edge: /Edg\/(\d+)/.exec(ua),
+          };
+
+          for (const [name, match] of Object.entries(browsers)) {
+            if (match) {
+              return { name, version: match[1] };
+            }
+          }
+          return { name: 'unknown', version: 'unknown' };
+        }
+
+        displayBrowserInfo() {
+          const browserDetails = document.getElementById('browser-details');
+          const detectedBrowser = document.getElementById('detected-browser');
+
+          const info = `
+                    Browser: ${this.browserInfo.name} ${this.browserInfo.version}<br>
+                    User Agent: ${navigator.userAgent}<br>
+                    Platform: ${navigator.platform}<br>
+                    Screen: ${screen.width}x${screen.height}<br>
+                    Viewport: ${window.innerWidth}x${window.innerHeight}<br>
+                    Pixel Ratio: ${window.devicePixelRatio}
+                `;
+
+          browserDetails.innerHTML = info;
+          detectedBrowser.textContent = `${this.browserInfo.name} ${this.browserInfo.version}`;
+        }
+
+        updateViewportInfo() {
+          const viewportInfo = document.getElementById('viewport-info');
+          if (viewportInfo) {
+            viewportInfo.textContent = `${window.innerWidth}x${window.innerHeight}`;
+          }
+        }
+
+        testBoxDrawingCharacters() {
+          console.log('Testing box drawing characters...');
+
+          // Test if box drawing characters render with consistent width
+          const testElement = document.createElement('div');
+          testElement.style.fontFamily = 'var(--font-mono)';
+          testElement.style.position = 'absolute';
+          testElement.style.visibility = 'hidden';
+          testElement.innerHTML = '─────────────────────────────────';
+          document.body.appendChild(testElement);
+
+          const lineWidth = testElement.offsetWidth;
+          testElement.innerHTML = 'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM';
+          const charWidth = testElement.offsetWidth;
+
+          document.body.removeChild(testElement);
+
+          const isMonospace = Math.abs(lineWidth - charWidth) < 10;
+
+          this.testResults.boxDrawing = {
+            passed: isMonospace,
+            message: isMonospace
+              ? 'Box drawing characters render correctly'
+              : 'Box drawing character alignment issues detected',
+          };
+
+          this.updateTestResult('character-test-result', this.testResults.boxDrawing);
+        }
+
+        testCSSProperties() {
+          console.log('Testing CSS custom properties...');
+
+          const properties = [
+            '--primary',
+            '--secondary',
+            '--tertiary',
+            '--accent',
+            '--fire',
+            '--text',
+            '--text-secondary',
+            '--font-mono',
+            '--space-4',
+          ];
+
+          const testElement = document.createElement('div');
+          document.body.appendChild(testElement);
+
+          let passedCount = 0;
+          const tbody = document.getElementById('css-properties-test');
+          tbody.innerHTML = '';
+
+          properties.forEach(prop => {
+            const computedStyle = getComputedStyle(testElement);
+            const value = computedStyle.getPropertyValue(prop);
+            const passed = value && value.trim() !== '';
+
+            if (passed) passedCount++;
+
+            const row = tbody.insertRow();
+            row.className = 'terminal-table__row';
+            row.innerHTML = `
+                        <td class="terminal-table__cell">${prop}</td>
+                        <td class="terminal-table__cell">${value || 'undefined'}</td>
+                        <td class="terminal-table__cell">
+                            <span class="terminal-badge terminal-badge--${passed ? 'success' : 'danger'}">
+                                ${passed ? 'PASS' : 'FAIL'}
+                            </span>
+                        </td>
+                    `;
+          });
+
+          document.body.removeChild(testElement);
+
+          this.testResults.cssProperties = {
+            passed: passedCount === properties.length,
+            message: `${passedCount}/${properties.length} CSS properties supported`,
+          };
+
+          this.updateTestResult('css-test-result', this.testResults.cssProperties);
+        }
+
+        testFontRendering() {
+          console.log('Testing font rendering...');
+
+          // Test monospace font consistency
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const fontSize = '16px';
+          const fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--font-mono');
+
+          ctx.font = `${fontSize} ${fontFamily}`;
+
+          const testChars = ['M', 'i', 'l', '1', '│', '─'];
+          const widths = testChars.map(char => ctx.measureText(char).width);
+          const consistentWidth = widths.every(width => Math.abs(width - widths[0]) < 1);
+
+          this.testResults.fontRendering = {
+            passed: consistentWidth,
+            message: consistentWidth
+              ? 'Monospace font rendering is consistent'
+              : 'Font rendering inconsistencies detected',
+          };
+
+          this.updateTestResult('font-test-result', this.testResults.fontRendering);
+        }
+
+        testAnimationPerformance() {
+          console.log('Testing animation performance...');
+
+          let frameCount = 0;
+          let startTime = performance.now();
+          const testDuration = 2000; // 2 seconds
+
+          const testFrame = () => {
+            frameCount++;
+            const currentTime = performance.now();
+            const elapsed = currentTime - startTime;
+
+            if (elapsed < testDuration) {
+              requestAnimationFrame(testFrame);
+
+              // Update progress bar
+              const progress = (elapsed / testDuration) * 100;
+              const performanceBar = document.getElementById('performance-bar');
+              if (performanceBar) {
+                performanceBar.style.width = `${progress}%`;
+              }
+            } else {
+              const fps = (frameCount / elapsed) * 1000;
+
+              document.getElementById('performance-stats').innerHTML = `
+                            Frames: ${frameCount}<br>
+                            Duration: ${elapsed.toFixed(0)}ms<br>
+                            Average FPS: ${fps.toFixed(1)}<br>
+                            Performance: ${fps > 50 ? 'Excellent' : fps > 30 ? 'Good' : 'Poor'}
+                        `;
+
+              this.testResults.animationPerformance = {
+                passed: fps > 30,
+                message: `Animation performance: ${fps.toFixed(1)} FPS`,
+              };
+
+              this.updateTestResult('animation-test-result', this.testResults.animationPerformance);
+            }
+          };
+
+          requestAnimationFrame(testFrame);
+        }
+
+        testJavaScriptComponents() {
+          console.log('Testing JavaScript components...');
+
+          try {
+            // Test if terminal components are available
+            const hasTerminalComponents = typeof window.terminalComponents !== 'undefined';
+
+            if (hasTerminalComponents) {
+              // Test progress bar update
+              const progressFill = document.getElementById('test-progress-fill');
+              const progressValue = document.getElementById('test-progress-value');
+
+              let progress = 0;
+              const updateProgress = setInterval(() => {
+                progress += 10;
+                if (progressFill && progressValue) {
+                  progressFill.style.width = `${progress}%`;
+                  progressValue.textContent = `${progress}%`;
+                }
+
+                if (progress >= 100) {
+                  clearInterval(updateProgress);
+
+                  // Test metric update
+                  const metricValue = document.getElementById('test-metric-value');
+                  if (metricValue) {
+                    let value = 100;
+                    const updateMetric = setInterval(() => {
+                      value += Math.floor(Math.random() * 20) - 10;
+                      metricValue.textContent = value;
+
+                      if (value < 90) {
+                        clearInterval(updateMetric);
+                      }
+                    }, 200);
+                  }
+                }
+              }, 100);
+            }
+
+            this.testResults.javascript = {
+              passed: hasTerminalComponents,
+              message: hasTerminalComponents
+                ? 'JavaScript components working correctly'
+                : 'JavaScript components not available',
+            };
+          } catch (error) {
+            this.testResults.javascript = {
+              passed: false,
+              message: `JavaScript error: ${error.message}`,
+            };
+          }
+
+          this.updateTestResult('javascript-test-result', this.testResults.javascript);
+        }
+
+        testResponsiveDesign() {
+          console.log('Testing responsive design...');
+
+          const breakpoints = {
+            mobile: window.innerWidth < 768,
+            tablet: window.innerWidth >= 768 && window.innerWidth < 1024,
+            desktop: window.innerWidth >= 1024,
+          };
+
+          const currentBreakpoint = Object.keys(breakpoints).find(bp => breakpoints[bp]);
+
+          // Test grid behavior
+          const gridElement = document.querySelector('.terminal-grid');
+          const computedStyle = getComputedStyle(gridElement);
+          const gridColumns = computedStyle.getPropertyValue('grid-template-columns');
+
+          const expectedBehavior =
+            currentBreakpoint === 'mobile'
+              ? gridColumns.includes('1fr') && !gridColumns.includes('repeat')
+              : gridColumns.includes('repeat') || gridColumns.split(' ').length > 1;
+
+          this.testResults.responsive = {
+            passed: expectedBehavior,
+            message: `Responsive design working for ${currentBreakpoint} viewport`,
+          };
+
+          this.updateTestResult('responsive-test-result', this.testResults.responsive);
+        }
+
+        updateTestResult(elementId, result) {
+          const element = document.getElementById(elementId);
+          if (element) {
+            element.className = `test-result test-${result.passed ? 'pass' : 'fail'}`;
+            element.textContent = `${result.passed ? '✅ PASS' : '❌ FAIL'}: ${result.message}`;
+          }
+        }
+
+        runAllTests() {
+          console.log('Running all compatibility tests...');
+          document.getElementById('test-status').textContent = '🔄 Running Tests';
+
+          // Run tests with delays to allow for visual feedback
+          setTimeout(() => this.testBoxDrawingCharacters(), 100);
+          setTimeout(() => this.testCSSProperties(), 300);
+          setTimeout(() => this.testFontRendering(), 500);
+          setTimeout(() => this.testAnimationPerformance(), 700);
+          setTimeout(() => this.testResponsiveDesign(), 900);
+          setTimeout(() => this.testJavaScriptComponents(), 1100);
+          setTimeout(() => this.generateOverallResults(), 3000);
+        }
+
+        generateOverallResults() {
+          const totalTests = Object.keys(this.testResults).length;
+          const passedTests = Object.values(this.testResults).filter(result => result.passed).length;
+          const overallScore = (passedTests / totalTests) * 100;
+
+          const overallResults = document.getElementById('overall-results');
+          const testStatus = document.getElementById('test-status');
+          const testCount = document.getElementById('test-count');
+
+          let compatibilityLevel = 'Poor';
+          let statusIcon = '❌';
+          let recommendations = [];
+
+          if (overallScore >= 90) {
+            compatibilityLevel = 'Excellent';
+            statusIcon = '✅';
+          } else if (overallScore >= 70) {
+            compatibilityLevel = 'Good';
+            statusIcon = '⚠️';
+          } else if (overallScore >= 50) {
+            compatibilityLevel = 'Fair';
+            statusIcon = '⚠️';
+          }
+
+          // Generate recommendations
+          if (!this.testResults.boxDrawing?.passed) {
+            recommendations.push('Consider implementing fallback fonts for box drawing characters');
+          }
+          if (!this.testResults.cssProperties?.passed) {
+            recommendations.push('Add CSS custom property polyfills for older browsers');
+          }
+          if (!this.testResults.animationPerformance?.passed) {
+            recommendations.push('Reduce animation complexity or add performance optimizations');
+          }
+          if (!this.testResults.fontRendering?.passed) {
+            recommendations.push('Review monospace font stack and add better fallbacks');
+          }
+
+          overallResults.innerHTML = `
+                    <h4 style="color: var(--accent); margin-bottom: var(--space-3);">Compatibility Score: ${overallScore.toFixed(0)}%</h4>
+                    <div style="margin-bottom: var(--space-4);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                            <span>Compatibility Level:</span>
+                            <span style="color: ${overallScore >= 70 ? 'var(--success)' : 'var(--warning)'};">${compatibilityLevel}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                            <span>Tests Passed:</span>
+                            <span>${passedTests}/${totalTests}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Browser:</span>
+                            <span>${this.browserInfo.name} ${this.browserInfo.version}</span>
+                        </div>
+                    </div>
+                `;
+
+          testStatus.innerHTML = `${statusIcon} Tests Complete`;
+          testCount.textContent = `${passedTests}/${totalTests}`;
+
+          if (recommendations.length > 0) {
+            const recommendationDiv = document.getElementById('recommendations');
+            const recommendationList = document.getElementById('recommendation-list');
+
+            recommendationList.innerHTML = recommendations
+              .map(rec => `<li style="margin-bottom: var(--space-2);">${rec}</li>`)
+              .join('');
+
+            recommendationDiv.style.display = 'block';
+          }
+        }
+
+        exportResults() {
+          const results = {
+            browser: this.browserInfo,
+            timestamp: new Date().toISOString(),
+            viewport: `${window.innerWidth}x${window.innerHeight}`,
+            tests: this.testResults,
+            userAgent: navigator.userAgent,
+          };
+
+          const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `fire22-terminal-compatibility-${this.browserInfo.name}-${Date.now()}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          if (window.terminalComponents) {
+            window.terminalComponents.notify('Test results exported successfully!', 'success');
+          }
+        }
+      }
+
+      // Initialize test suite
+      const compatibilityTest = new TerminalCompatibilityTest();
+
+      // Global functions for UI
+      function runAllTests() {
+        compatibilityTest.runAllTests();
+      }
+
+      function testJavaScriptComponents() {
+        compatibilityTest.testJavaScriptComponents();
+      }
+
+      function toggleFallbacks() {
+        // This would toggle fallback mode in a real implementation
+        console.log('Fallback mode toggled');
+        if (window.terminalComponents) {
+          window.terminalComponents.notify('Fallback mode toggled (demo)', 'info');
+        }
+      }
+
+      function exportResults() {
+        compatibilityTest.exportResults();
+      }
+
+      // Auto-run tests on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          console.log('🔥 Fire22 Terminal UI Compatibility Test Suite loaded');
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

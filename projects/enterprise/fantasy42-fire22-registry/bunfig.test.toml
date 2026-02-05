@@ -1,0 +1,30 @@
+[test]
+# Test configuration for Fantasy42-Fire22 Registry
+
+# Test environment setup
+env.NODE_ENV = "test"
+env.DATABASE_URL = ":memory:"
+env.FIRE22_ENV = "development"
+env.FIRE22_SECURITY_LEVEL = "standard"
+
+# Test coverage settings
+[test.coverage]
+enabled = true
+reporter = ["text", "lcov", "html"]
+include = ["src/**/*.ts", "lib/**/*.ts", "config.ts"]
+exclude = ["**/node_modules/**", "**/dist/**", "**/*.test.ts"]
+
+# Test timeout settings
+[test.timeout]
+default = 5000
+long = 30000
+
+# Test globals
+[test.globals]
+expect = true
+describe = true
+it = true
+beforeEach = true
+afterEach = true
+beforeAll = true
+afterAll = true

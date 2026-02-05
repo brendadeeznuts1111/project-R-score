@@ -1,0 +1,64 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0e7ff;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.3)"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+
+  <!-- Decorative elements -->
+  <circle cx="200" cy="150" r="80" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="1000" cy="480" r="120" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="1100" cy="200" r="60" fill="rgba(255,255,255,0.08)"/>
+
+  <!-- Architecture icon -->
+  <g transform="translate(100, 100)">
+    <rect x="0" y="0" width="60" height="40" rx="8" fill="rgba(255,255,255,0.9)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+    <rect x="10" y="10" width="16" height="20" rx="2" fill="rgba(255,255,255,0.7)"/>
+    <rect x="34" y="10" width="16" height="20" rx="2" fill="rgba(255,255,255,0.7)"/>
+    <rect x="22" y="8" width="16" height="4" rx="2" fill="rgba(255,255,255,0.6)"/>
+    <text x="30" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="rgba(255,255,255,0.8)">🏗️</text>
+  </g>
+
+  <!-- Main title -->
+  <text x="600" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="url(#textGradient)" filter="url(#shadow)">
+    Crystal Clear Architecture
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="rgba(255,255,255,0.9)">
+    Enterprise Domain-Driven Design
+  </text>
+
+  <!-- Key features -->
+  <g transform="translate(600, 320)">
+    <text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="rgba(255,255,255,0.8)">
+      🚀 70-80% Performance Boost • 📊 25+ Health Endpoints
+    </text>
+    <text x="0" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="rgba(255,255,255,0.8)">
+      🏛️ 5 Core Domains • ⚡ Real-Time Analytics
+    </text>
+  </g>
+
+  <!-- Technology stack -->
+  <g transform="translate(600, 400)">
+    <text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="rgba(255,255,255,0.7)">
+      TypeScript • Bun Runtime • Cloudflare Workers • PostgreSQL
+    </text>
+  </g>
+
+  <!-- Bottom branding -->
+  <text x="600" y="580" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="rgba(255,255,255,0.6)">
+    Crystal Clear Engineering Team • Enterprise Software Architecture
+  </text>
+</svg>

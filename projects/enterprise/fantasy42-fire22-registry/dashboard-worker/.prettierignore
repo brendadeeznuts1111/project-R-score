@@ -1,0 +1,3 @@
+# Exclude archived legacy files with complex syntax issues
+archive/cleanup/outdated/
+archive/old-core/

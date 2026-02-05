@@ -1,0 +1,121 @@
+# 🔥 Fantasy42-Fire22 Dashboard Worker License
+
+**Version 5.1.0 | Enterprise Edition | Pure Bun Ecosystem**
+
+---
+
+## MIT License
+
+Copyright (c) 2025 Fantasy42-Fire22 Registry Enterprise
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## 🔥 Enterprise Features License
+
+### **Pure Bun Ecosystem Commitment**
+
+This Dashboard Worker software is designed for the **Pure Bun Ecosystem** and leverages
+Bun's native capabilities including:
+
+- **Native SQLite Database** (`bun:sqlite`)
+- **Native HTTP Server** (`bun:serve`)
+- **Native File System** (`bun:fs`)
+- **Native Package Manager** (`bun pm`)
+- **Native Runtime Optimizations**
+
+### **Enterprise-Specific Terms**
+
+#### **1. Commercial Use Rights**
+- ✅ **Permitted**: Commercial deployment and monetization
+- ✅ **Permitted**: Integration with enterprise dashboard systems
+- ✅ **Permitted**: White-labeling and rebranding
+- ✅ **Permitted**: Redistribution as part of larger products
+
+#### **2. Compliance & Security**
+- 🔒 **Required**: All deployments must maintain security standards
+- 📊 **Required**: Dashboard analytics collection (opt-out available)
+- 🛡️ **Required**: Regular security updates and patches
+- 📋 **Required**: Compliance with applicable data regulations
+
+#### **3. Support & Maintenance**
+- 🆘 **Community Support**: GitHub Issues & Discussions
+- 🚀 **Enterprise Support**: Available for premium deployments
+- 📚 **Documentation**: Comprehensive guides and API references
+- 🔄 **Updates**: Regular releases with security patches
+
+#### **4. Attribution Requirements**
+- 📄 **Required**: Include license notice in all distributions
+- 🌟 **Required**: Attribution in about pages and documentation
+- 🔗 **Required**: Link to project repository in public deployments
+
+#### **5. Modification & Distribution**
+- 🔧 **Permitted**: Private modifications for internal use
+- 📦 **Permitted**: Distribution of modified versions (with license)
+- 🚫 **Prohibited**: Removal of security features without replacement
+- 🚫 **Prohibited**: Distribution without compliance verification
+
+---
+
+## 📊 Dashboard-Specific Licenses
+
+### **Real-time Analytics License**
+For dashboard analytics and real-time data processing:
+
+- **Data Privacy**: Must comply with GDPR and privacy regulations
+- **Real-time Processing**: Must maintain sub-second response times
+- **Audit Trail**: Must maintain comprehensive access logs
+- **Data Security**: Must implement end-to-end encryption
+
+### **Enterprise Dashboard License**
+For enterprise dashboard and monitoring deployments:
+
+- **Access Control**: Must implement role-based access control
+- **Performance Monitoring**: Must maintain system health metrics
+- **Alert Management**: Must support automated alerting systems
+- **Scalability**: Must support horizontal scaling requirements
+
+---
+
+## 📞 Contact & Support
+
+- **📧 Email**: enterprise@fire22.com
+- **🐙 GitHub**: https://github.com/fantasy42-fire22/registry
+- **📖 Documentation**: https://docs.fire22.com/dashboard
+- **🆘 Enterprise Support**: https://enterprise.fire22.com/support
+
+---
+
+## 🔄 License Updates
+
+This license may be updated periodically to reflect:
+- Security improvements and requirements
+- Regulatory compliance changes
+- Enterprise feature enhancements
+- Dashboard functionality updates
+- Community feedback and improvements
+
+**Last Updated**: January 2025
+**License Version**: Enterprise 5.1.0
+**Pure Bun Ecosystem**: ✅ Compliant
+
+---
+
+**Built with ❤️ using Pure Bun Ecosystem**

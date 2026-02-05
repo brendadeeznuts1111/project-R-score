@@ -1,0 +1,22 @@
+# Netlify redirects file for Crystal Clear Architecture
+
+# 404 handling
+/*    /crystal-clear-architecture/404.html   404
+
+# SEO-friendly redirects
+/docs              /crystal-clear-architecture/docs/index.html          301
+/documentation     /crystal-clear-architecture/docs/index.html          301
+/api              /crystal-clear-architecture/docs/index.html           301
+/architecture     /crystal-clear-architecture/docs/index.html           301
+
+# Feature-specific redirects
+/domain-driven-design     /crystal-clear-architecture/docs/domains.html      301
+/performance             /crystal-clear-architecture/docs/performance.html   301
+/communication           /crystal-clear-architecture/docs/communication.html 301
+/analytics               /crystal-clear-architecture/analytics/index.html    301
+
+# Common variations
+/ddd                    /crystal-clear-architecture/docs/domains.html      301
+/enterprise-architecture /crystal-clear-architecture/docs/index.html       301
+/health-checks          /crystal-clear-architecture/docs/index.html         301
+/dashboard              /crystal-clear-architecture/docs/index.html         301

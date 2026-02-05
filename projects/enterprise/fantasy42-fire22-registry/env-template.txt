@@ -1,0 +1,138 @@
+# =============================================================================
+# 🔥 FIRE22 DASHBOARD WORKER - ENVIRONMENT CONFIGURATION
+# =============================================================================
+# 
+# This file contains all required environment variables for the Fire22 system
+# Copy this file to .env for local development
+# Use wrangler secret put for production deployment
+
+# =============================================================================
+# 🔐 AUTHENTICATION LAYER (REQUIRED)
+# =============================================================================
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+ADMIN_PASSWORD=your-admin-password-change-in-production
+
+# =============================================================================
+# 💳 PAYMENT GATEWAY LAYER (REQUIRED)
+# =============================================================================
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret_here
+
+# =============================================================================
+# 📧 COMMUNICATION SERVICES LAYER (REQUIRED)
+# =============================================================================
+SENDGRID_API_KEY=SG.your_sendgrid_api_key_here
+TWILIO_ACCOUNT_SID=AC_your_twilio_account_sid_here
+TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
+
+# =============================================================================
+# ⚙️ SYSTEM CONFIGURATION LAYER (REQUIRED)
+# =============================================================================
+CRON_SECRET=your_cron_secret_key_here
+
+# =============================================================================
+# 🤖 BOT CONFIGURATION LAYER (OPTIONAL)
+# =============================================================================
+BOT_TOKEN=your_telegram_bot_token_here
+CASHIER_BOT_TOKEN=your_cashier_bot_token_here
+
+# =============================================================================
+# 🔥 FIRE22 INTEGRATION LAYER (OPTIONAL)
+# =============================================================================
+FIRE22_API_URL=https://api.fire22.ag
+FIRE22_TOKEN=your_fire22_api_token_here
+FIRE22_WEBHOOK_SECRET=your_fire22_webhook_secret_here
+
+# =============================================================================
+# 🗄️ DATABASE LAYER (OPTIONAL)
+# =============================================================================
+DATABASE_NAME=fire22-dashboard
+DATABASE_ID=35756984-dfe1-4914-b92e-511bdc8a194f
+
+# =============================================================================
+# 🌍 DEVELOPMENT SETTINGS LAYER (OPTIONAL)
+# =============================================================================
+NODE_ENV=development
+BUN_CONFIG_VERBOSE_FETCH=false
+BUN_CONFIG_MAX_HTTP_REQUESTS=256
+
+# =============================================================================
+# 📱 TELEGRAM INTEGRATION LAYER (OPTIONAL)
+# =============================================================================
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+TELEGRAM_WEBHOOK_URL=https://your-domain.com/telegram/webhook
+TELEGRAM_WEBHOOK_SECRET=your_webhook_secret
+TELEGRAM_CASHIER_GROUP_ID=your_cashier_group_id
+TELEGRAM_P2P_QUEUE_GROUP_ID=your_p2p_queue_group_id
+TELEGRAM_TRANSACTION_CHANNEL_ID=your_transaction_channel_id
+TELEGRAM_SUPPORT_GROUP_ID=your_support_group_id
+
+# =============================================================================
+# 🔄 QUEUE SYSTEM CONFIGURATION (OPTIONAL)
+# =============================================================================
+QUEUE_MAX_RETRIES=3
+QUEUE_MATCH_TIMEOUT=300000
+QUEUE_CLEANUP_INTERVAL=3600000
+
+# =============================================================================
+# 🔒 SECURITY CONFIGURATION (OPTIONAL)
+# =============================================================================
+ENCRYPTION_KEY=your_32_character_encryption_key_here
+SESSION_TIMEOUT=3600000
+SUSPICIOUS_ACTIVITY_THRESHOLD=10
+
+# =============================================================================
+# ⚡ PERFORMANCE CONFIGURATION (OPTIONAL)
+# =============================================================================
+TRANSLATION_CACHE_SIZE=1000
+TRANSLATION_CACHE_TTL=3600000
+RATE_LIMIT_COMMANDS=20
+RATE_LIMIT_MESSAGES=10
+
+# =============================================================================
+# 🚀 FEATURE FLAGS (OPTIONAL)
+# =============================================================================
+ENABLE_MULTILINGUAL=true
+ENABLE_P2P_MATCHING=true
+ENABLE_DEPARTMENT_WORKFLOWS=true
+ENABLE_NOTIFICATIONS=true
+ENABLE_METRICS=true
+
+# =============================================================================
+# 📊 MONITORING & ANALYTICS (OPTIONAL)
+# =============================================================================
+LOG_LEVEL=info
+SENTRY_DSN=your_sentry_dsn_here
+ANALYTICS_API_KEY=your_analytics_api_key_here
+HEALTH_CHECK_INTERVAL=30000
+
+# =============================================================================
+# ☁️ CLOUDFLARE WORKERS CONFIGURATION (PRODUCTION)
+# =============================================================================
+CF_ZONE_ID=your_cloudflare_zone_id_here
+CF_API_TOKEN=your_cloudflare_api_token_here
+
+# =============================================================================
+# 🗄️ CLOUDFLARE STORAGE (PRODUCTION)
+# =============================================================================
+# R2 Storage Configuration
+R2_ENDPOINT=your_r2_endpoint_here
+R2_ACCESS_KEY_ID=your_r2_access_key_id_here
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key_here
+R2_REGION=auto
+R2_BUCKET=your_r2_bucket_name_here
+
+# =============================================================================
+# 🔐 DEMO MODE (DEVELOPMENT ONLY)
+# =============================================================================
+DEMO_MODE=false
+DEMO_API_KEY=demo_key_for_testing_only
+
+# =============================================================================
+# 📝 NOTES
+# =============================================================================
+# 1. Replace all "your_*_here" values with actual credentials
+# 2. For production, use wrangler secret put for sensitive values
+# 3. Keep this file out of version control (.gitignore)
+# 4. Use .env.local for local development overrides
+# 5. Validate environment with: bun run env:validate

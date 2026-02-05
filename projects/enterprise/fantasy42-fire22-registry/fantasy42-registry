@@ -1,0 +1,4 @@
+#!/bin/bash
+# Fantasy42-Fire22 Standalone Registry
+echo "🚀 Starting Fantasy42-Fire22 Standalone Registry..."
+exec bun run ./bin/standalone-executable.js "$@"

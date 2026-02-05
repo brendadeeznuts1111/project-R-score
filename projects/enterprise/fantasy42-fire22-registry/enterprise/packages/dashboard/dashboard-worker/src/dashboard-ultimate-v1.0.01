@@ -1,0 +1,1756 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FantDev Ultimate Trading Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Advanced Theme System with 15+ Themes */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #3b82f6;
+        }
+        
+        [data-theme="midnight"] {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #151a2e;
+            --text-primary: #e2e8f0;
+            --text-secondary: #8b95a7;
+            --accent: #6366f1;
+        }
+        
+        [data-theme="forest"] {
+            --bg-primary: #0d1f13;
+            --bg-secondary: #1a3823;
+            --text-primary: #e6f4ea;
+            --text-secondary: #a8d5ba;
+            --accent: #22c55e;
+        }
+        
+        [data-theme="ocean"] {
+            --bg-primary: #0c1e2e;
+            --bg-secondary: #1a3447;
+            --text-primary: #e0f2fe;
+            --text-secondary: #7dd3fc;
+            --accent: #0ea5e9;
+        }
+        
+        [data-theme="sunset"] {
+            --bg-primary: #2d1810;
+            --bg-secondary: #4a2617;
+            --text-primary: #fed7aa;
+            --text-secondary: #fb923c;
+            --accent: #ea580c;
+        }
+        
+        [data-theme="neon"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ff00ff;
+            --text-secondary: #00ffff;
+            --accent: #ffff00;
+        }
+        
+        [data-theme="matrix"] {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --text-primary: #00ff00;
+            --text-secondary: #008f00;
+            --accent: #00ff00;
+        }
+        
+        body {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .neon-glow {
+            box-shadow: 0 0 20px var(--accent);
+        }
+        
+        .gradient-border {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+            padding: 1px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        /* Advanced grid system */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .widget-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .widget-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Live indicator */
+        .live-indicator::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Advanced tooltips */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body x-data="ultimateDashboard()" x-init="init()" :data-theme="theme">
+    
+    <!-- Advanced Header -->
+    <header class="glass-morphism sticky top-0 z-50 border-b border-gray-700">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="gradient-border rounded-lg p-2">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">FantDev Ultimate</h1>
+                        <p class="text-xs text-secondary" x-text="'Connected: ' + connectedUsers + ' users'"></p>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <div class="relative w-full">
+                        <input type="text" 
+                               x-model="searchQuery"
+                               @input="performSearch"
+                               placeholder="Search players, transactions, groups..."
+                               class="w-full px-4 py-2 pl-10 bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <!-- Right Controls -->
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Switcher -->
+                    <select x-model="theme" @change="saveTheme()"
+                            class="bg-gray-800 text-sm px-3 py-1 rounded-lg">
+                        <option value="dark">🌙 Dark</option>
+                        <option value="light">☀️ Light</option>
+                        <option value="midnight">🌌 Midnight</option>
+                        <option value="forest">🌲 Forest</option>
+                        <option value="ocean">🌊 Ocean</option>
+                        <option value="sunset">🌅 Sunset</option>
+                        <option value="neon">💜 Neon</option>
+                        <option value="matrix">💻 Matrix</option>
+                    </select>
+                    
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button @click="showNotifications = !showNotifications" 
+                                class="relative p-2 hover:bg-gray-700 rounded-lg">
+                            <i class="fas fa-bell"></i>
+                            <span x-show="unreadNotifications > 0" 
+                                  class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                                  x-text="unreadNotifications"></span>
+                        </button>
+                    </div>
+                    
+                    <!-- User Profile -->
+                    <button class="flex items-center space-x-2 hover:bg-gray-700 rounded-lg px-3 py-2">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff" 
+                             class="w-8 h-8 rounded-full">
+                        <span class="text-sm">Admin</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation -->
+    <nav class="bg-gray-900 border-b border-gray-700">
+        <div class="container mx-auto px-4">
+            <div class="flex space-x-1 overflow-x-auto py-2">
+                <template x-for="tab in tabs" :key="tab.id">
+                    <button @click="activeTab = tab.id"
+                            :class="activeTab === tab.id ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800'"
+                            class="px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all">
+                        <i :class="tab.icon" class="mr-2"></i>
+                        <span x-text="tab.name"></span>
+                        <span x-show="tab.badge" 
+                              class="ml-2 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full"
+                              x-text="tab.badge"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Quick Actions Bar -->
+    <div class="bg-gray-800 py-2 px-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex space-x-2">
+                <button @click="quickAction('refresh')" 
+                        class="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
+                    <i class="fas fa-sync-alt mr-1"></i>Refresh
+                </button>
+                <button @click="quickAction('export')" 
+                        class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+                    <i class="fas fa-download mr-1"></i>Export
+                </button>
+                <button @click="quickAction('broadcast')" 
+                        class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                    <i class="fas fa-bullhorn mr-1"></i>Broadcast
+                </button>
+            </div>
+            
+            <!-- Live Stats Ticker -->
+            <div class="flex items-center space-x-4 text-sm">
+                <span class="text-green-400">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    BTC: $<span x-text="livePrices.btc"></span>
+                </span>
+                <span class="text-blue-400">
+                    <i class="fas fa-users mr-1"></i>
+                    Online: <span x-text="onlineUsers"></span>
+                </span>
+                <span class="text-yellow-400">
+                    <i class="fas fa-chart-line mr-1"></i>
+                    Volume: $<span x-text="formatNumber(dailyVolume)"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 py-6">
+        
+        <!-- Dashboard Overview -->
+        <div x-show="activeTab === 'overview'" class="space-y-6">
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="widget-card hover-scale">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Total Revenue</span>
+                        <i class="fas fa-dollar-sign text-green-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold">$<span x-text="formatNumber(kpis.revenue)"></span></div>
+                    <div class="text-sm text-green-400 mt-2">
+                        <i class="fas fa-arrow-up"></i> +12.5% from last month
+                    </div>
+                </div>
+                
+                <div class="widget-card hover-scale">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Active Players</span>
+                        <i class="fas fa-users text-blue-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold" x-text="formatNumber(kpis.activePlayers)"></div>
+                    <div class="text-sm text-blue-400 mt-2">
+                        <i class="fas fa-arrow-up"></i> +234 new today
+                    </div>
+                </div>
+                
+                <div class="widget-card hover-scale">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Win Rate</span>
+                        <i class="fas fa-percentage text-purple-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold"><span x-text="kpis.winRate"></span>%</div>
+                    <div class="text-sm text-purple-400 mt-2">
+                        <i class="fas fa-arrow-up"></i> +2.3% improvement
+                    </div>
+                </div>
+                
+                <div class="widget-card hover-scale">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Pending Actions</span>
+                        <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold" x-text="kpis.pendingActions"></div>
+                    <div class="text-sm text-yellow-400 mt-2">
+                        Requires attention
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Revenue Chart -->
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Revenue Trend</h3>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- User Activity Heatmap -->
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Activity Heatmap</h3>
+                    <div id="heatmapChart" class="chart-container"></div>
+                </div>
+            </div>
+
+            <!-- Live Activity Feed -->
+            <div class="widget-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">Live Activity Feed</h3>
+                    <span class="live-indicator relative pl-3 text-sm text-green-400">Live</span>
+                </div>
+                <div class="space-y-3 max-h-96 overflow-y-auto">
+                    <template x-for="activity in activities" :key="activity.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg slide-in">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
+                                    <i :class="activity.icon" class="text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium" x-text="activity.user"></p>
+                                    <p class="text-sm text-gray-400" x-text="activity.action"></p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-500" x-text="activity.time"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players Management -->
+        <div x-show="activeTab === 'players'" class="space-y-6">
+            <!-- Advanced Filters -->
+            <div class="widget-card">
+                <div class="flex flex-wrap gap-3">
+                    <select class="px-3 py-2 bg-gray-800 rounded-lg">
+                        <option>All Players</option>
+                        <option>VIP Players</option>
+                        <option>New Players</option>
+                        <option>At Risk</option>
+                    </select>
+                    <input type="date" class="px-3 py-2 bg-gray-800 rounded-lg">
+                    <input type="text" placeholder="Search by name..." class="px-3 py-2 bg-gray-800 rounded-lg flex-1">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-filter mr-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Players Data Table -->
+            <div class="widget-card overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 px-4">
+                                <input type="checkbox" class="rounded">
+                            </th>
+                            <th class="text-left py-3 px-4">Player</th>
+                            <th class="text-left py-3 px-4">Status</th>
+                            <th class="text-right py-3 px-4">Balance</th>
+                            <th class="text-right py-3 px-4">Win Rate</th>
+                            <th class="text-left py-3 px-4">Risk Level</th>
+                            <th class="text-left py-3 px-4">Last Active</th>
+                            <th class="text-center py-3 px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="player in players" :key="player.id">
+                            <tr class="border-b border-gray-800 hover:bg-gray-800">
+                                <td class="py-3 px-4">
+                                    <input type="checkbox" class="rounded">
+                                </td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center space-x-3">
+                                        <img :src="'https://ui-avatars.com/api/?name=' + player.name + '&background=random'" 
+                                             class="w-10 h-10 rounded-full">
+                                        <div>
+                                            <p class="font-medium" x-text="player.name"></p>
+                                            <p class="text-sm text-gray-400" x-text="player.email"></p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="px-2 py-1 rounded-full text-xs"
+                                          :class="{
+                                              'bg-green-600 text-white': player.status === 'active',
+                                              'bg-yellow-600 text-white': player.status === 'pending',
+                                              'bg-red-600 text-white': player.status === 'suspended'
+                                          }"
+                                          x-text="player.status"></span>
+                                </td>
+                                <td class="py-3 px-4 text-right font-medium">
+                                    $<span x-text="formatNumber(player.balance)"></span>
+                                </td>
+                                <td class="py-3 px-4 text-right">
+                                    <span x-text="player.winRate"></span>%
+                                </td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-20 bg-gray-700 rounded-full h-2">
+                                            <div class="h-2 rounded-full"
+                                                 :class="{
+                                                     'bg-green-500': player.riskLevel < 30,
+                                                     'bg-yellow-500': player.riskLevel >= 30 && player.riskLevel < 70,
+                                                     'bg-red-500': player.riskLevel >= 70
+                                                 }"
+                                                 :style="'width: ' + player.riskLevel + '%'"></div>
+                                        </div>
+                                        <span class="text-sm" x-text="player.riskLevel + '%'"></span>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 text-sm text-gray-400" x-text="player.lastActive"></td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <button class="p-1 hover:bg-gray-700 rounded tooltip" data-tooltip="View Details">
+                                            <i class="fas fa-eye text-blue-400"></i>
+                                        </button>
+                                        <button class="p-1 hover:bg-gray-700 rounded tooltip" data-tooltip="Edit Player">
+                                            <i class="fas fa-edit text-green-400"></i>
+                                        </button>
+                                        <button class="p-1 hover:bg-gray-700 rounded tooltip" data-tooltip="Send Message">
+                                            <i class="fas fa-envelope text-purple-400"></i>
+                                        </button>
+                                        <button class="p-1 hover:bg-gray-700 rounded tooltip" data-tooltip="Block Player">
+                                            <i class="fas fa-ban text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-400">
+                    Showing <span x-text="(currentPage - 1) * itemsPerPage + 1"></span> to 
+                    <span x-text="Math.min(currentPage * itemsPerPage, totalPlayers)"></span> of 
+                    <span x-text="totalPlayers"></span> players
+                </div>
+                <div class="flex space-x-2">
+                    <button @click="previousPage" :disabled="currentPage === 1"
+                            class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50">
+                        Previous
+                    </button>
+                    <template x-for="page in totalPages" :key="page">
+                        <button @click="currentPage = page"
+                                :class="currentPage === page ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'"
+                                class="px-3 py-1 rounded"
+                                x-text="page"></button>
+                    </template>
+                    <button @click="nextPage" :disabled="currentPage === totalPages"
+                            class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 disabled:opacity-50">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Management -->
+        <div x-show="activeTab === 'transactions'" class="space-y-6">
+            <!-- Transaction Filters -->
+            <div class="widget-card">
+                <div class="flex flex-wrap gap-3">
+                    <select class="px-3 py-2 bg-gray-800 rounded-lg">
+                        <option>All Transactions</option>
+                        <option>Deposits</option>
+                        <option>Withdrawals</option>
+                        <option>Bets</option>
+                        <option>Winnings</option>
+                    </select>
+                    <input type="date" class="px-3 py-2 bg-gray-800 rounded-lg">
+                    <input type="text" placeholder="Search by customer ID..." class="px-3 py-2 bg-gray-800 rounded-lg flex-1">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-filter mr-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Transactions Data Table -->
+            <div class="widget-card overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 px-4">Transaction ID</th>
+                            <th class="text-left py-3 px-4">Customer</th>
+                            <th class="text-left py-3 px-4">Type</th>
+                            <th class="text-right py-3 px-4">Amount</th>
+                            <th class="text-left py-3 px-4">Status</th>
+                            <th class="text-left py-3 px-4">Date</th>
+                            <th class="text-center py-3 px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="transaction in transactions" :key="transaction.id">
+                            <tr class="border-b border-gray-800 hover:bg-gray-800">
+                                <td class="py-3 px-4 font-mono text-sm" x-text="transaction.id"></td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center space-x-3">
+                                        <img :src="'https://ui-avatars.com/api/?name=' + transaction.customerName + '&background=random'" 
+                                             class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="font-medium" x-text="transaction.customerId"></p>
+                                            <p class="text-sm text-gray-400" x-text="transaction.customerName"></p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="px-2 py-1 rounded-full text-xs"
+                                          :class="{
+                                              'bg-green-600 text-white': transaction.type === 'deposit',
+                                              'bg-red-600 text-white': transaction.type === 'withdrawal',
+                                              'bg-blue-600 text-white': transaction.type === 'bet',
+                                              'bg-purple-600 text-white': transaction.type === 'win'
+                                          }"
+                                          x-text="transaction.type"></span>
+                                </td>
+                                <td class="py-3 px-4 text-right font-medium"
+                                    :class="transaction.amount > 0 ? 'text-green-400' : 'text-red-400'">
+                                    $<span x-text="formatNumber(Math.abs(transaction.amount))"></span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="px-2 py-1 rounded-full text-xs"
+                                          :class="{
+                                              'bg-green-600 text-white': transaction.status === 'completed',
+                                              'bg-yellow-600 text-white': transaction.status === 'pending',
+                                              'bg-red-600 text-white': transaction.status === 'failed'
+                                          }"
+                                          x-text="transaction.status"></span>
+                                </td>
+                                <td class="py-3 px-4 text-sm text-gray-400" x-text="transaction.date"></td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <button class="p-1 hover:bg-gray-700 rounded tooltip" data-tooltip="View Details">
+                                            <i class="fas fa-eye text-blue-400"></i>
+                                        </button>
+                                        <button class="p-1 hover:bg-gray-700 rounded tooltip" data-tooltip="Process">
+                                            <i class="fas fa-cog text-green-400"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Crypto Trading -->
+        <div x-show="activeTab === 'crypto'" class="space-y-6">
+            <!-- Crypto Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">BTC Price</span>
+                        <i class="fab fa-bitcoin text-orange-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold">$<span x-text="cryptoPrices.btc"></span></div>
+                    <div class="text-sm" :class="cryptoChanges.btc >= 0 ? 'text-green-400' : 'text-red-400'">
+                        <i :class="cryptoChanges.btc >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                        <span x-text="cryptoChanges.btc + '%'"></span>
+                    </div>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">ETH Price</span>
+                        <i class="fab fa-ethereum text-blue-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold">$<span x-text="cryptoPrices.eth"></span></div>
+                    <div class="text-sm" :class="cryptoChanges.eth >= 0 ? 'text-green-400' : 'text-red-400'">
+                        <i :class="cryptoChanges.eth >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                        <span x-text="cryptoChanges.eth + '%'"></span>
+                    </div>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">24h Volume</span>
+                        <i class="fas fa-chart-line text-purple-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold">$<span x-text="formatNumber(cryptoStats.volume24h)"></span></div>
+                    <div class="text-sm text-green-400">
+                        <i class="fas fa-arrow-up"></i> +12.5%
+                    </div>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Active Traders</span>
+                        <i class="fas fa-users text-green-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold" x-text="cryptoStats.activeTraders"></div>
+                    <div class="text-sm text-blue-400">Online now</div>
+                </div>
+            </div>
+
+            <!-- Crypto Chart -->
+            <div class="widget-card">
+                <h3 class="text-lg font-semibold mb-4">Bitcoin Price Chart</h3>
+                <div id="cryptoChart" class="chart-container"></div>
+            </div>
+        </div>
+
+        <!-- Sports Betting -->
+        <div x-show="activeTab === 'sports'" class="space-y-6">
+            <!-- Sports Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Live Matches</h3>
+                    <div class="space-y-3">
+                        <template x-for="match in liveMatches" :key="match.id">
+                            <div class="p-3 bg-gray-800 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-medium" x-text="match.teams"></span>
+                                    <span class="live-indicator relative pl-3 text-xs text-green-400">LIVE</span>
+                                </div>
+                                <div class="text-sm text-gray-400" x-text="match.league"></div>
+                                <div class="flex justify-between mt-2 text-sm">
+                                    <span x-text="match.score"></span>
+                                    <span x-text="match.time"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Popular Bets</h3>
+                    <div class="space-y-3">
+                        <template x-for="bet in popularBets" :key="bet.id">
+                            <div class="p-3 bg-gray-800 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-medium" x-text="bet.event"></span>
+                                    <span class="text-sm text-yellow-400" x-text="bet.odds"></span>
+                                </div>
+                                <div class="text-sm text-gray-400" x-text="bet.market"></div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    $<span x-text="formatNumber(bet.amount)"></span> wagered
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Sports Revenue</h3>
+                    <div id="sportsChart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Affiliates Management -->
+        <div x-show="activeTab === 'affiliates'" class="space-y-6">
+            <!-- Affiliates Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Total Affiliates</span>
+                        <i class="fas fa-users text-blue-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold" x-text="affiliateStats.total"></div>
+                    <div class="text-sm text-blue-400 mt-2">
+                        <i class="fas fa-arrow-up"></i> +15 new this month
+                    </div>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Commission Paid</span>
+                        <i class="fas fa-dollar-sign text-green-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold">$<span x-text="formatNumber(affiliateStats.commissionPaid)"></span></div>
+                    <div class="text-sm text-green-400 mt-2">
+                        This month
+                    </div>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Referred Players</span>
+                        <i class="fas fa-user-plus text-purple-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold" x-text="affiliateStats.referredPlayers"></div>
+                    <div class="text-sm text-purple-400 mt-2">
+                        Active players
+                    </div>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-400">Conversion Rate</span>
+                        <i class="fas fa-percentage text-yellow-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold"><span x-text="affiliateStats.conversionRate"></span>%</div>
+                    <div class="text-sm text-yellow-400 mt-2">
+                        Above average
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Affiliates -->
+            <div class="widget-card">
+                <h3 class="text-lg font-semibold mb-4">Top Performing Affiliates</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-700">
+                                <th class="text-left py-3 px-4">Affiliate</th>
+                                <th class="text-right py-3 px-4">Referrals</th>
+                                <th class="text-right py-3 px-4">Revenue</th>
+                                <th class="text-right py-3 px-4">Commission</th>
+                                <th class="text-left py-3 px-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="affiliate in topAffiliates" :key="affiliate.id">
+                                <tr class="border-b border-gray-800 hover:bg-gray-800">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-3">
+                                            <img :src="'https://ui-avatars.com/api/?name=' + affiliate.name + '&background=random'" 
+                                                 class="w-8 h-8 rounded-full">
+                                            <div>
+                                                <p class="font-medium" x-text="affiliate.name"></p>
+                                                <p class="text-sm text-gray-400" x-text="affiliate.code"></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4 text-right" x-text="affiliate.referrals"></td>
+                                    <td class="py-3 px-4 text-right font-medium">$<span x-text="formatNumber(affiliate.revenue)"></span></td>
+                                    <td class="py-3 px-4 text-right font-medium text-green-400">$<span x-text="formatNumber(affiliate.commission)"></span></td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 rounded-full text-xs bg-green-600 text-white"
+                                              x-text="affiliate.status"></span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bot Management -->
+        <div x-show="activeTab === 'bot'" class="space-y-6">
+            <!-- Bot Status -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Bot Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span>Telegram Bot</span>
+                            <span class="px-2 py-1 rounded-full text-xs"
+                                  :class="botStatus.telegram ? 'bg-green-600 text-white' : 'bg-red-600 text-white'"
+                                  x-text="botStatus.telegram ? 'Online' : 'Offline'"></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Trading Bot</span>
+                            <span class="px-2 py-1 rounded-full text-xs"
+                                  :class="botStatus.trading ? 'bg-green-600 text-white' : 'bg-red-600 text-white'"
+                                  x-text="botStatus.trading ? 'Active' : 'Inactive'"></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>API Service</span>
+                            <span class="px-2 py-1 rounded-full text-xs"
+                                  :class="botStatus.api ? 'bg-green-600 text-white' : 'bg-red-600 text-white'"
+                                  x-text="botStatus.api ? 'Running' : 'Stopped'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Bot Performance</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Messages Processed</span>
+                                <span x-text="botPerformance.messagesProcessed"></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" :style="'width: ' + Math.min(botPerformance.messagesProcessed / 1000 * 100, 100) + '%'"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Response Time</span>
+                                <span x-text="botPerformance.responseTime + 'ms'"></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" :style="'width: ' + Math.max(0, 100 - botPerformance.responseTime / 10) + '%'"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Error Rate</span>
+                                <span x-text="botPerformance.errorRate + '%'"></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-red-500 h-2 rounded-full" :style="'width: ' + botPerformance.errorRate + '%'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Bot Controls</h3>
+                    <div class="space-y-3">
+                        <button @click="toggleBot('telegram')" 
+                                :class="botStatus.telegram ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+                                class="w-full px-4 py-2 text-white rounded-lg">
+                            <i class="fas fa-power-off mr-2"></i>
+                            <span x-text="botStatus.telegram ? 'Stop Telegram Bot' : 'Start Telegram Bot'"></span>
+                        </button>
+                        <button @click="toggleBot('trading')" 
+                                :class="botStatus.trading ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+                                class="w-full px-4 py-2 text-white rounded-lg">
+                            <i class="fas fa-robot mr-2"></i>
+                            <span x-text="botStatus.trading ? 'Stop Trading Bot' : 'Start Trading Bot'"></span>
+                        </button>
+                        <button @click="restartBot()" 
+                                class="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+                            <i class="fas fa-redo mr-2"></i>Restart All Services
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bot Logs -->
+            <div class="widget-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">Recent Bot Activity</h3>
+                    <button @click="clearLogs()" class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">
+                        Clear Logs
+                    </button>
+                </div>
+                <div class="space-y-2 max-h-96 overflow-y-auto font-mono text-sm">
+                    <template x-for="log in botLogs" :key="log.id">
+                        <div class="p-2 bg-gray-800 rounded"
+                             :class="{
+                                 'border-l-4 border-green-500': log.level === 'info',
+                                 'border-l-4 border-yellow-500': log.level === 'warning',
+                                 'border-l-4 border-red-500': log.level === 'error'
+                             }">
+                            <span class="text-gray-400" x-text="log.time"></span>
+                            <span class="ml-2" :class="{
+                                'text-green-400': log.level === 'info',
+                                'text-yellow-400': log.level === 'warning',
+                                'text-red-400': log.level === 'error'
+                            }" x-text="log.message"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Analytics -->
+        <div x-show="activeTab === 'analytics'" class="space-y-6">
+            <!-- Performance Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">System Performance</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>CPU Usage</span>
+                                <span x-text="performance.cpu + '%'"></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" :style="'width: ' + performance.cpu + '%'"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Memory</span>
+                                <span x-text="performance.memory + '%'"></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" :style="'width: ' + performance.memory + '%'"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Network</span>
+                                <span x-text="performance.network + ' Mbps'"></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" :style="'width: ' + Math.min(performance.network, 100) + '%'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversion Funnel -->
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Conversion Funnel</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-2 bg-blue-600 bg-opacity-20 rounded">
+                            <span>Visitors</span>
+                            <span class="font-bold">100%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-blue-600 bg-opacity-30 rounded" style="width: 80%">
+                            <span>Registered</span>
+                            <span class="font-bold">80%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-blue-600 bg-opacity-40 rounded" style="width: 60%">
+                            <span>Deposited</span>
+                            <span class="font-bold">60%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-blue-600 bg-opacity-60 rounded" style="width: 45%">
+                            <span>Active</span>
+                            <span class="font-bold">45%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Performers -->
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Top Performers</h3>
+                    <div class="space-y-3">
+                        <template x-for="performer in topPerformers" :key="performer.id">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <img :src="'https://ui-avatars.com/api/?name=' + performer.name" 
+                                         class="w-8 h-8 rounded-full">
+                                    <span x-text="performer.name"></span>
+                                </div>
+                                <span class="text-green-400 font-bold">+$<span x-text="formatNumber(performer.profit)"></span></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Analytics Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Profit Distribution</h3>
+                    <div id="profitChart" class="chart-container"></div>
+                </div>
+                
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">User Demographics</h3>
+                    <div id="demographicsChart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings & Configuration -->
+        <div x-show="activeTab === 'settings'" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Platform Settings -->
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Platform Settings</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm mb-2">Maintenance Mode</label>
+                            <button @click="toggleMaintenance"
+                                    :class="maintenanceMode ? 'bg-red-600' : 'bg-gray-600'"
+                                    class="relative inline-flex h-6 w-11 items-center rounded-full">
+                                <span :class="maintenanceMode ? 'translate-x-6' : 'translate-x-1'"
+                                      class="inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
+                            </button>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Max Daily Withdrawal</label>
+                            <input type="number" x-model="settings.maxWithdrawal" 
+                                   class="w-full px-3 py-2 bg-gray-800 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Commission Rate (%)</label>
+                            <input type="number" x-model="settings.commissionRate" 
+                                   class="w-full px-3 py-2 bg-gray-800 rounded-lg">
+                        </div>
+                        <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Save Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">Security</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm mb-2">Two-Factor Authentication</label>
+                            <button class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                Enable 2FA
+                            </button>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Session Timeout (minutes)</label>
+                            <input type="number" value="30" class="w-full px-3 py-2 bg-gray-800 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">IP Whitelist</label>
+                            <textarea class="w-full px-3 py-2 bg-gray-800 rounded-lg h-24" 
+                                      placeholder="Enter IP addresses (one per line)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Configuration -->
+                <div class="widget-card">
+                    <h3 class="text-lg font-semibold mb-4">API Configuration</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm mb-2">API Key</label>
+                            <div class="flex space-x-2">
+                                <input type="text" value="sk_live_..." readonly 
+                                       class="flex-1 px-3 py-2 bg-gray-800 rounded-lg">
+                                <button class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Webhook URL</label>
+                            <input type="url" placeholder="https://..." 
+                                   class="w-full px-3 py-2 bg-gray-800 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Rate Limit (req/min)</label>
+                            <input type="number" value="100" class="w-full px-3 py-2 bg-gray-800 rounded-lg">
+                        </div>
+                        <button class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                            Regenerate API Key
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 py-6 border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between text-sm text-gray-400">
+                <div>© 2024 FantDev Trading Platform. All rights reserved.</div>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <span>Server Status: <span class="text-green-400">Online</span></span>
+                    <span>Version: 2.0.0</span>
+                    <span>Last Update: <span x-text="lastUpdate"></span></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Dropdown -->
+    <div x-show="showNotifications" 
+         x-transition
+         @click.away="showNotifications = false"
+         class="absolute top-16 right-4 w-80 bg-gray-800 rounded-lg shadow-xl z-50">
+        <div class="p-4 border-b border-gray-700">
+            <h3 class="font-semibold">Notifications</h3>
+        </div>
+        <div class="max-h-96 overflow-y-auto">
+            <template x-for="notification in notifications" :key="notification.id">
+                <div class="p-4 border-b border-gray-700 hover:bg-gray-700 cursor-pointer">
+                    <div class="flex items-start space-x-3">
+                        <i :class="notification.icon" class="mt-1"
+                           :style="'color: ' + notification.color"></i>
+                        <div class="flex-1">
+                            <p class="font-medium" x-text="notification.title"></p>
+                            <p class="text-sm text-gray-400" x-text="notification.message"></p>
+                            <p class="text-xs text-gray-500 mt-1" x-text="notification.time"></p>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script>
+        function ultimateDashboard() {
+            return {
+                theme: localStorage.getItem('theme') || 'dark',
+                activeTab: 'overview',
+                searchQuery: '',
+                showNotifications: false,
+                unreadNotifications: 3,
+                connectedUsers: 1247,
+                onlineUsers: 342,
+                dailyVolume: 2567890,
+                maintenanceMode: false,
+                currentPage: 1,
+                itemsPerPage: 10,
+                totalPlayers: 2525,
+                
+                tabs: [
+                    { id: 'overview', name: 'Overview', icon: 'fas fa-home', badge: null },
+                    { id: 'players', name: 'Players', icon: 'fas fa-users', badge: '2.5K' },
+                    { id: 'transactions', name: 'Transactions', icon: 'fas fa-exchange-alt', badge: '47' },
+                    { id: 'analytics', name: 'Analytics', icon: 'fas fa-chart-bar', badge: null },
+                    { id: 'crypto', name: 'Crypto', icon: 'fab fa-bitcoin', badge: null },
+                    { id: 'sports', name: 'Sports', icon: 'fas fa-football-ball', badge: '12' },
+                    { id: 'affiliates', name: 'Affiliates', icon: 'fas fa-handshake', badge: null },
+                    { id: 'bot', name: 'Bot', icon: 'fas fa-robot', badge: null },
+                    { id: 'settings', name: 'Settings', icon: 'fas fa-cog', badge: null }
+                ],
+                
+                kpis: {
+                    revenue: 456789,
+                    activePlayers: 1234,
+                    winRate: 67.8,
+                    pendingActions: 23
+                },
+                
+                livePrices: {
+                    btc: '42,567',
+                    eth: '2,234'
+                },
+                
+                performance: {
+                    cpu: 45,
+                    memory: 62,
+                    network: 78
+                },
+                
+                settings: {
+                    maxWithdrawal: 10000,
+                    commissionRate: 2.5
+                },
+                
+                activities: [],
+                players: [],
+                notifications: [],
+                topPerformers: [],
+                transactions: [],
+                cryptoPrices: { btc: '42,567', eth: '2,234' },
+                cryptoChanges: { btc: 2.5, eth: -1.2 },
+                cryptoStats: { volume24h: 1250000000, activeTraders: 15420 },
+                liveMatches: [],
+                popularBets: [],
+                affiliateStats: { total: 156, commissionPaid: 45600, referredPlayers: 892, conversionRate: 12.5 },
+                topAffiliates: [],
+                botStatus: { telegram: true, trading: false, api: true },
+                botPerformance: { messagesProcessed: 847, responseTime: 45, errorRate: 0.2 },
+                botLogs: [],
+                
+                lastUpdate: new Date().toLocaleTimeString(),
+                databaseLoaded: false,
+                loading: false,
+                error: null,
+                
+                get totalPages() {
+                    return Math.ceil(this.totalPlayers / this.itemsPerPage);
+                },
+                
+                async init() {
+                    this.loadData();
+                    this.startRealTimeUpdates();
+                    this.initCharts();
+                },
+                
+                async loadData() {
+                    this.loading = true;
+                    try {
+                        // Try to load real data from database
+                        await this.loadDatabaseData();
+                        
+                        // Fallback to sample data if database fails
+                        if (!this.databaseLoaded) {
+                            this.generateSampleData();
+                        }
+                    } catch (error) {
+                        console.error('Failed to load data:', error);
+                        this.error = 'Failed to load data. Using sample data.';
+                        this.generateSampleData();
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async loadDatabaseData() {
+                    try {
+                        // Load real data from API endpoints
+                        const [playersRes, transactionsRes, activitiesRes] = await Promise.all([
+                            fetch('/api/players').then(r => r.json()).catch(() => null),
+                            fetch('/api/transactions').then(r => r.json()).catch(() => null),
+                            fetch('/api/activities').then(r => r.json()).catch(() => null)
+                        ]);
+
+                        if (playersRes && playersRes.data) {
+                            this.players = playersRes.data;
+                            this.totalPlayers = playersRes.total || this.players.length;
+                        }
+
+                        if (transactionsRes && transactionsRes.data) {
+                            this.transactions = transactionsRes.data;
+                        }
+
+                        if (activitiesRes && activitiesRes.data) {
+                            this.activities = activitiesRes.data;
+                        }
+
+                        // Load KPIs
+                        const kpisRes = await fetch('/api/kpis').then(r => r.json()).catch(() => null);
+                        if (kpisRes && kpisRes.data) {
+                            this.kpis = kpisRes.data;
+                        }
+
+                        this.databaseLoaded = true;
+                    } catch (error) {
+                        console.warn('Database loading failed, using sample data:', error);
+                        this.databaseLoaded = false;
+                    }
+                },
+
+                generateSampleData() {
+                    this.generateActivities();
+                    this.generatePlayers();
+                    this.generateNotifications();
+                    this.generateTopPerformers();
+                    this.generateTransactions();
+                    this.generateCryptoData();
+                    this.generateSportsData();
+                    this.generateAffiliateData();
+                    this.generateBotData();
+                },
+                
+                initCharts() {
+                    // Initialize Chart.js charts
+                    setTimeout(() => {
+                        this.createRevenueChart();
+                        this.createHeatmapChart();
+                        this.createProfitChart();
+                        this.createDemographicsChart();
+                        this.createCryptoChart();
+                        this.createSportsChart();
+                    }, 100);
+                },
+                
+                createCryptoChart() {
+                    const element = document.getElementById('cryptoChart');
+                    if (element && typeof ApexCharts !== 'undefined') {
+                        const options = {
+                            series: [{
+                                name: 'BTC Price',
+                                data: [42000, 42500, 42300, 42800, 43200, 42900, 43500]
+                            }],
+                            chart: {
+                                type: 'line',
+                                height: 300,
+                                toolbar: { show: false }
+                            },
+                            colors: ['#f59e0b'],
+                            stroke: {
+                                curve: 'smooth'
+                            },
+                            xaxis: {
+                                categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00']
+                            }
+                        };
+                        
+                        const chart = new ApexCharts(element, options);
+                        chart.render();
+                    }
+                },
+                
+                createSportsChart() {
+                    const element = document.getElementById('sportsChart');
+                    if (element && typeof ApexCharts !== 'undefined') {
+                        const options = {
+                            series: [65, 28, 7],
+                            chart: {
+                                type: 'donut',
+                                height: 300
+                            },
+                            labels: ['Sports Betting', 'Live Casino', 'Other'],
+                            colors: ['#3b82f6', '#22c55e', '#eab308']
+                        };
+                        
+                        const chart = new ApexCharts(element, options);
+                        chart.render();
+                    }
+                },
+                
+                startRealTimeUpdates() {
+                    // Update live data every 5 seconds
+                    setInterval(() => {
+                        this.updateLiveData();
+                        this.lastUpdate = new Date().toLocaleTimeString();
+                    }, 5000);
+                    
+                    // Update activities every 3 seconds
+                    setInterval(() => {
+                        this.generateNewActivity();
+                    }, 3000);
+                },
+                
+                updateLiveData() {
+                    // Simulate live price updates
+                    this.livePrices.btc = (42000 + Math.random() * 1000).toFixed(0).toLocaleString();
+                    this.livePrices.eth = (2200 + Math.random() * 100).toFixed(0).toLocaleString();
+                    
+                    // Update online users
+                    this.onlineUsers = Math.floor(300 + Math.random() * 100);
+                    this.connectedUsers = Math.floor(1200 + Math.random() * 100);
+                    
+                    // Update volume
+                    this.dailyVolume = Math.floor(2500000 + Math.random() * 100000);
+                    
+                    // Update performance metrics
+                    this.performance.cpu = Math.floor(40 + Math.random() * 30);
+                    this.performance.memory = Math.floor(50 + Math.random() * 30);
+                    this.performance.network = Math.floor(60 + Math.random() * 40);
+                },
+                
+                generateActivities() {
+                    const actions = [
+                        { icon: 'fas fa-user-plus', user: 'John Doe', action: 'New registration', time: '2 min ago' },
+                        { icon: 'fas fa-dollar-sign', user: 'Alice Smith', action: 'Deposited $500', time: '5 min ago' },
+                        { icon: 'fas fa-trophy', user: 'Bob Johnson', action: 'Won $1,200', time: '8 min ago' },
+                        { icon: 'fas fa-exchange-alt', user: 'Emma Wilson', action: 'Withdrew $300', time: '12 min ago' },
+                        { icon: 'fas fa-chart-line', user: 'System', action: 'Daily backup completed', time: '15 min ago' }
+                    ];
+                    
+                    this.activities = actions.map((a, i) => ({ ...a, id: i }));
+                },
+                
+                generateNewActivity() {
+                    const actions = [
+                        'placed a bet',
+                        'deposited funds',
+                        'withdrew earnings',
+                        'joined VIP program',
+                        'completed verification'
+                    ];
+                    
+                    const newActivity = {
+                        id: Date.now(),
+                        icon: 'fas fa-circle',
+                        user: 'User#' + Math.floor(Math.random() * 9999),
+                        action: actions[Math.floor(Math.random() * actions.length)],
+                        time: 'just now'
+                    };
+                    
+                    this.activities.unshift(newActivity);
+                    if (this.activities.length > 10) {
+                        this.activities.pop();
+                    }
+                },
+                
+                generatePlayers() {
+                    this.players = Array.from({ length: 10 }, (_, i) => ({
+                        id: i + 1,
+                        name: ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Brown', 'Charlie Wilson'][i % 5] + ' ' + (i + 1),
+                        email: 'user' + (i + 1) + '@example.com',
+                        status: ['active', 'pending', 'suspended'][Math.floor(Math.random() * 3)],
+                        balance: Math.floor(Math.random() * 50000),
+                        winRate: Math.floor(40 + Math.random() * 40),
+                        riskLevel: Math.floor(Math.random() * 100),
+                        lastActive: Math.floor(Math.random() * 24) + ' hours ago'
+                    }));
+                },
+                
+                generateNotifications() {
+                    this.notifications = [
+                        {
+                            id: 1,
+                            icon: 'fas fa-exclamation-triangle',
+                            color: '#eab308',
+                            title: 'High Risk Alert',
+                            message: 'Player John Doe exceeded risk threshold',
+                            time: '5 minutes ago'
+                        },
+                        {
+                            id: 2,
+                            icon: 'fas fa-check-circle',
+                            color: '#22c55e',
+                            title: 'Withdrawal Processed',
+                            message: '$5,000 withdrawal completed successfully',
+                            time: '1 hour ago'
+                        },
+                        {
+                            id: 3,
+                            icon: 'fas fa-info-circle',
+                            color: '#3b82f6',
+                            title: 'System Update',
+                            message: 'Platform will undergo maintenance at 2 AM',
+                            time: '2 hours ago'
+                        }
+                    ];
+                },
+                
+                generateTopPerformers() {
+                    this.topPerformers = [
+                        { id: 1, name: 'Alex Chen', profit: 12500 },
+                        { id: 2, name: 'Sarah Davis', profit: 9800 },
+                        { id: 3, name: 'Mike Johnson', profit: 7600 },
+                        { id: 4, name: 'Emily White', profit: 5400 },
+                        { id: 5, name: 'David Lee', profit: 4200 }
+                    ];
+                },
+                
+                createRevenueChart() {
+                    const ctx = document.getElementById('revenueChart');
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                                datasets: [{
+                                    label: 'Revenue',
+                                    data: [30000, 35000, 32000, 40000, 45000, 48000],
+                                    borderColor: '#3b82f6',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                scales: {
+                                    y: { 
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                                    },
+                                    x: {
+                                        grid: { display: false }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                },
+                
+                createHeatmapChart() {
+                    const element = document.getElementById('heatmapChart');
+                    if (element && typeof ApexCharts !== 'undefined') {
+                        const options = {
+                            series: this.generateHeatmapData(),
+                            chart: {
+                                height: 300,
+                                type: 'heatmap',
+                                toolbar: { show: false }
+                            },
+                            colors: ['#3b82f6'],
+                            dataLabels: { enabled: false },
+                            xaxis: {
+                                type: 'category',
+                                categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                            }
+                        };
+                        
+                        const chart = new ApexCharts(element, options);
+                        chart.render();
+                    }
+                },
+                
+                createProfitChart() {
+                    const element = document.getElementById('profitChart');
+                    if (element && typeof ApexCharts !== 'undefined') {
+                        const options = {
+                            series: [44, 55, 13, 43, 22],
+                            chart: {
+                                type: 'donut',
+                                height: 300
+                            },
+                            labels: ['Slots', 'Table Games', 'Sports', 'Live Casino', 'Other'],
+                            colors: ['#3b82f6', '#22c55e', '#eab308', '#ef4444', '#8b5cf6']
+                        };
+                        
+                        const chart = new ApexCharts(element, options);
+                        chart.render();
+                    }
+                },
+                
+                createDemographicsChart() {
+                    const element = document.getElementById('demographicsChart');
+                    if (element && typeof ApexCharts !== 'undefined') {
+                        const options = {
+                            series: [{
+                                name: 'Users',
+                                data: [400, 430, 448, 470, 540, 580, 690]
+                            }],
+                            chart: {
+                                type: 'bar',
+                                height: 300,
+                                toolbar: { show: false }
+                            },
+                            colors: ['#8b5cf6'],
+                            xaxis: {
+                                categories: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+                            }
+                        };
+                        
+                        const chart = new ApexCharts(element, options);
+                        chart.render();
+                    }
+                },
+                
+                generateHeatmapData() {
+                    const series = [];
+                    const hours = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'];
+                    
+                    hours.forEach(hour => {
+                        const data = [];
+                        for (let i = 0; i < 7; i++) {
+                            data.push({
+                                x: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
+                                y: Math.floor(Math.random() * 100)
+                            });
+                        }
+                        series.push({ name: hour, data });
+                    });
+                    
+                    return series;
+                },
+                
+                formatNumber(num) {
+                    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+                    return num.toLocaleString();
+                },
+                
+                saveTheme() {
+                    localStorage.setItem('theme', this.theme);
+                },
+                
+                performSearch() {
+                    console.log('Searching for:', this.searchQuery);
+                },
+                
+                quickAction(action) {
+                    switch(action) {
+                        case 'refresh':
+                            this.loadData();
+                            break;
+                        case 'export':
+                            this.exportData();
+                            break;
+                        case 'broadcast':
+                            alert('Broadcast message feature');
+                            break;
+                    }
+                },
+                
+                exportData() {
+                    const data = {
+                        players: this.players,
+                        activities: this.activities,
+                        kpis: this.kpis,
+                        exportDate: new Date().toISOString()
+                    };
+                    
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `dashboard-export-${Date.now()}.json`;
+                    a.click();
+                },
+                
+                toggleMaintenance() {
+                    this.maintenanceMode = !this.maintenanceMode;
+                },
+                
+                previousPage() {
+                    if (this.currentPage > 1) this.currentPage--;
+                },
+                
+                nextPage() {
+                    if (this.currentPage < this.totalPages) this.currentPage++;
+                },
+
+                // Generate data for all tabs
+                generateTransactions() {
+                    this.transactions = Array.from({ length: 15 }, (_, i) => ({
+                        id: 'TXN' + Math.floor(Math.random() * 1000000),
+                        customerId: 'CUST' + Math.floor(Math.random() * 10000),
+                        customerName: ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Brown'][i % 4],
+                        type: ['deposit', 'withdrawal', 'bet', 'win'][Math.floor(Math.random() * 4)],
+                        amount: Math.floor(Math.random() * 10000) * (Math.random() > 0.5 ? 1 : -1),
+                        status: ['completed', 'pending', 'failed'][Math.floor(Math.random() * 3)],
+                        date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
+                    }));
+                },
+
+                generateCryptoData() {
+                    this.cryptoPrices = {
+                        btc: (42000 + Math.random() * 5000).toFixed(0),
+                        eth: (2200 + Math.random() * 500).toFixed(0)
+                    };
+                    this.cryptoChanges = {
+                        btc: (Math.random() * 10 - 5).toFixed(1),
+                        eth: (Math.random() * 10 - 5).toFixed(1)
+                    };
+                    this.cryptoStats = {
+                        volume24h: Math.floor(Math.random() * 2000000000),
+                        activeTraders: Math.floor(Math.random() * 20000)
+                    };
+                },
+
+                generateSportsData() {
+                    this.liveMatches = [
+                        { id: 1, teams: 'Lakers vs Warriors', league: 'NBA', score: '98-95', time: 'Q4 2:34' },
+                        { id: 2, teams: 'Man Utd vs Liverpool', league: 'EPL', score: '1-1', time: '67\'' },
+                        { id: 3, teams: 'Yankees vs Red Sox', league: 'MLB', score: '5-3', time: '8th' }
+                    ];
+
+                    this.popularBets = [
+                        { id: 1, event: 'Lakers vs Warriors', market: 'Moneyline', odds: '+150', amount: 25000 },
+                        { id: 2, event: 'Man Utd vs Liverpool', market: 'Over 2.5', odds: '-110', amount: 18000 },
+                        { id: 3, event: 'Yankees vs Red Sox', market: 'Run Line', odds: '+120', amount: 15000 }
+                    ];
+                },
+
+                generateAffiliateData() {
+                    this.topAffiliates = [
+                        { id: 1, name: 'AffiliatePro', code: 'AFF001', referrals: 245, revenue: 125000, commission: 12500, status: 'active' },
+                        { id: 2, name: 'BonusKing', code: 'AFF002', referrals: 189, revenue: 98000, commission: 9800, status: 'active' },
+                        { id: 3, name: 'CasinoExpert', code: 'AFF003', referrals: 156, revenue: 76000, commission: 7600, status: 'active' },
+                        { id: 4, name: 'SportsGuru', code: 'AFF004', referrals: 134, revenue: 54000, commission: 5400, status: 'pending' },
+                        { id: 5, name: 'PokerMaster', code: 'AFF005', referrals: 98, revenue: 42000, commission: 4200, status: 'active' }
+                    ];
+                },
+
+                generateBotData() {
+                    this.botLogs = [
+                        { id: 1, time: new Date().toLocaleTimeString(), level: 'info', message: 'Telegram bot started successfully' },
+                        { id: 2, time: new Date(Date.now() - 30000).toLocaleTimeString(), level: 'info', message: 'Processed 15 user messages' },
+                        { id: 3, time: new Date(Date.now() - 60000).toLocaleTimeString(), level: 'warning', message: 'High API response time detected' },
+                        { id: 4, time: new Date(Date.now() - 90000).toLocaleTimeString(), level: 'info', message: 'Trading algorithm updated' },
+                        { id: 5, time: new Date(Date.now() - 120000).toLocaleTimeString(), level: 'error', message: 'Failed to connect to exchange API' }
+                    ];
+                },
+
+                // Bot control methods
+                toggleBot(botType) {
+                    this.botStatus[botType] = !this.botStatus[botType];
+                    this.addBotLog(`${botType} bot ${this.botStatus[botType] ? 'started' : 'stopped'}`, 'info');
+                },
+
+                restartBot() {
+                    this.addBotLog('Restarting all bot services...', 'info');
+                    setTimeout(() => {
+                        this.botStatus.telegram = true;
+                        this.botStatus.trading = true;
+                        this.botStatus.api = true;
+                        this.addBotLog('All bot services restarted successfully', 'info');
+                    }, 2000);
+                },
+
+                clearLogs() {
+                    this.botLogs = [];
+                    this.addBotLog('Bot logs cleared', 'info');
+                },
+
+                addBotLog(message, level = 'info') {
+                    this.botLogs.unshift({
+                        id: Date.now(),
+                        time: new Date().toLocaleTimeString(),
+                        level: level,
+                        message: message
+                    });
+                    
+                    if (this.botLogs.length > 50) {
+                        this.botLogs.pop();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

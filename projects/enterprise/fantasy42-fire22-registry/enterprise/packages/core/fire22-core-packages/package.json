@@ -1,0 +1,83 @@
+{
+  "name": "fire22-core-packages",
+  "version": "1.0.0",
+  "description": "Core Fire22 packages for shared functionality",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "author": {
+    "name": "Fire22 Development Team",
+    "email": "dev@fire22.com",
+    "url": "https://fire22.com",
+    "role": "lead-developer"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "fire22-core-packages"
+  },
+  "scripts": {
+    "build": "bun run build:all",
+    "build:all": "bun run --recursive build",
+    "build:packages": "for pkg in packages/*; do cd $pkg && bun run build && cd ../..; done",
+    "test": "bun run test:all",
+    "test:all": "bun run --recursive test",
+    "test:coverage": "bun test --coverage",
+    "test:watch": "bun test --watch",
+    "publish": "bun run publish:all",
+    "publish:all": "bun run scripts/workspace-publisher.ts --registry npm",
+    "publish:dry": "bun run publish:all --dry-run",
+    "dev": "bun run --recursive dev",
+    "clean": "rm -rf packages/*/dist packages/*/node_modules",
+    "install:all": "bun install && bun run --recursive install",
+    "version:bump": "bun run scripts/version-manager.ts bump",
+    "version:patch": "bun run scripts/version-manager.ts bump --strategy patch",
+    "version:minor": "bun run scripts/version-manager.ts bump --strategy minor",
+    "version:major": "bun run scripts/version-manager.ts bump --strategy major",
+    "lint": "bun run --recursive lint",
+    "lint:fix": "bun run --recursive lint:fix",
+    "format": "bun run --recursive format",
+    "link": "bun link",
+    "unlink": "bun unlink",
+    "graph": "bun run --recursive graph"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "5.9.2",
+    "prettier": "^3.1.1",
+    "eslint": "^8.56.0"
+  },
+  "workspaceMeta": {
+    "domain": "core",
+    "packages": [
+      "@fire22/middleware",
+      "@fire22/core",
+      "@fire22/env-manager"
+    ],
+    "registry": "npm",
+    "dependencies": [],
+    "createdAt": "2025-08-27T05:43:39.318Z",
+    "orchestrator": {
+      "version": "1.0.0",
+      "source": "Fire22 Workspace Orchestrator"
+    }
+  },
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "fire22",
+    "core",
+    "workspace",
+    "monorepo",
+    "middleware",
+    "core",
+    "env-manager"
+  ]
+}

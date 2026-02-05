@@ -1,0 +1,169 @@
+/**
+ * Main CSS Entry Point
+ * Fire22 Dashboard Styles - Optimized for Bun's CSS Bundler
+ * 
+ * This file uses @import to combine all CSS modules.
+ * Bun will bundle these into a single optimized CSS file.
+ */
+
+/* ===========================
+   Base Styles - Foundation
+   =========================== */
+@import './base/reset.css';
+@import './base/variables.css';
+@import './base/typography.css';
+
+/* ===========================
+   Component Styles
+   =========================== */
+@import './components/dashboard.css';
+@import './components/cards.css';
+@import './components/tables.css';
+@import './components/forms.css';
+@import './components/buttons.css';
+@import './components/modals.css';
+
+/* ===========================
+   Theme Styles
+   =========================== */
+@import './themes/fire22.css';
+@import './themes/dark.css';
+
+/* ===========================
+   Framework Styles
+   =========================== */
+@import './framework.css';
+
+/* ===========================
+   Staging Review Base Styles
+   =========================== */
+@import './staging-review-base.css';
+
+/* ===========================
+   Global Overrides
+   =========================== */
+
+/* Apply default theme */
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-gradient-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* Smooth scrolling for the entire app */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styles */
+::selection {
+  background: rgba(253, 187, 45, 0.3);
+  color: var(--text-primary);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-gradient-card);
+  border-radius: var(--radius-lg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--fire22-primary), var(--fire22-secondary));
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--bg-gradient-card);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--fire22-secondary), var(--fire22-primary));
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--fire22-primary) var(--bg-gradient-card);
+}
+
+/* Focus Visible - Accessibility */
+*:focus-visible {
+  outline: 2px solid var(--fire22-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --border-primary: #ffffff;
+    --border-secondary: #e0e0e0;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===========================
+   Performance Optimizations
+   =========================== */
+
+/* GPU Acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Optimize large lists */
+.virtual-scroll {
+  contain: strict;
+  content-visibility: auto;
+}
+
+/* ===========================
+   Development Helpers
+   =========================== */
+
+/* Debug mode - uncomment to enable */
+/* 
+.debug * {
+  outline: 1px solid rgba(255, 0, 0, 0.1);
+}
+
+.debug [data-debug]::after {
+  content: attr(data-debug);
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: red;
+  color: white;
+  padding: 2px 4px;
+  font-size: 10px;
+  z-index: 9999;
+}
+*/

@@ -1,0 +1,242 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement for Fire22 Dashboard Worker
+title: '✨ [FEATURE]: '
+labels: ['enhancement', 'needs-review']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🔥 Fire22 Dashboard Worker - Feature Request
+
+        Thank you for suggesting a new feature! Your ideas help make Fire22 Dashboard Worker better for everyone.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: '📋 Pre-Request Checklist'
+      description: "Please confirm you've completed these steps before submitting"
+      options:
+        - label: "I have searched existing issues to ensure this feature hasn't been requested"
+          required: true
+        - label: 'I have checked the roadmap to see if this is already planned'
+          required: true
+        - label: "This feature aligns with Fire22 Dashboard Worker's goals"
+          required: true
+
+  - type: dropdown
+    id: feature_type
+    attributes:
+      label: '🎯 Feature Type'
+      description: 'What type of feature are you requesting?'
+      options:
+        - '🔌 API Enhancement - New endpoints or API improvements'
+        - '📊 Dashboard Feature - UI/UX improvements or new visualizations'
+        - '⚽ Sports Betting - Betting management or analytics features'
+        - '📱 Integration - New service integrations or webhooks'
+        - '🏗️ Build System - Development tooling or build improvements'
+        - '🔄 Workflow - Process automation or orchestration'
+        - '🔒 Security - Authentication, authorization, or security features'
+        - '⚡ Performance - Speed, efficiency, or optimization improvements'
+        - '📚 Documentation - Guides, examples, or documentation improvements'
+        - '🛠️ Developer Experience - Tools, debugging, or development aids'
+        - '❓ Other - Something else entirely'
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: workspace_target
+    attributes:
+      label: '🏢 Target Workspace'
+      description: 'Which workspace would this feature primarily affect?'
+      options:
+        - '🔌 API Client (@fire22-api-client)'
+        - '📊 Core Dashboard (@fire22-core-dashboard)'
+        - '⚽ Sports Betting (@fire22-sports-betting)'
+        - '📱 Telegram Integration (@fire22-telegram-integration)'
+        - '🏗️ Build System (@fire22-build-system)'
+        - '🔄 Pattern System (@fire22-pattern-system)'
+        - '🔒 Security Registry (@fire22-security-registry)'
+        - '🌐 Main Application (src/)'
+        - '📜 Scripts & Automation'
+        - '🗄️ Database & Schemas'
+        - '⚙️ Configuration'
+        - '📚 Documentation'
+        - '🤝 Cross-workspace feature'
+      default: 12
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: '📈 Priority Level'
+      description: 'How important is this feature?'
+      options:
+        - '🔴 Critical - Essential for core functionality'
+        - '🟠 High - Significantly improves user experience'
+        - '🟡 Medium - Nice to have enhancement'
+        - '🟢 Low - Minor improvement or convenience'
+      default: 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature_summary
+    attributes:
+      label: '💡 Feature Summary'
+      description: "Provide a clear and concise summary of the feature you're requesting"
+      placeholder: 'A brief, compelling summary of what this feature would do...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem_statement
+    attributes:
+      label: '❓ Problem Statement'
+      description: 'What problem does this feature solve? What pain point are you experiencing?'
+      placeholder: "Describe the problem or limitation you're facing..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: '💭 Proposed Solution'
+      description: 'Describe your ideal solution for this problem'
+      placeholder: 'How would you like this feature to work? What would the user experience be like?'
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: '🎯 Use Cases'
+      description: 'Provide specific examples of how this feature would be used'
+      placeholder: |
+        1. As a [user type], I want to [action] so that I can [benefit]
+        2. When [situation], I need to [action] to achieve [goal]
+        3. [Specific scenario where this feature would be helpful]
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: '✅ Acceptance Criteria'
+      description: 'What would need to be implemented for this feature to be considered complete?'
+      placeholder: |
+        - [ ] Feature does X
+        - [ ] User can Y
+        - [ ] System handles Z
+        - [ ] Performance meets requirement A
+        - [ ] Documentation updated
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: '🔄 Alternative Solutions'
+      description: 'Have you considered any alternative approaches or workarounds?'
+      placeholder: "Describe any other solutions you've considered..."
+
+  - type: textarea
+    id: technical_considerations
+    attributes:
+      label: '🔧 Technical Considerations'
+      description: 'Any technical aspects, constraints, or implementation ideas to consider?'
+      placeholder: |
+        - Database changes needed
+        - API modifications required
+        - Performance considerations
+        - Security implications
+        - Integration requirements
+
+  - type: checkboxes
+    id: implementation_willingness
+    attributes:
+      label: '🤝 Implementation'
+      description: 'Would you be willing to help implement this feature?'
+      options:
+        - label: "I'd be willing to submit a PR for this feature"
+          required: false
+        - label: 'I can help with testing and validation'
+          required: false
+        - label: 'I can provide domain expertise and guidance'
+          required: false
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: '⏰ Timeline'
+      description: "What's your preferred timeline for this feature?"
+      options:
+        - '🚀 ASAP - Blocking current work'
+        - '📅 Next Release - Would like it in the upcoming release'
+        - '🗓️ This Quarter - Would be great to have soon'
+        - '📆 Eventually - Nice to have when possible'
+      default: 3
+
+  - type: textarea
+    id: mockups_examples
+    attributes:
+      label: '🎨 Mockups/Examples'
+      description: 'Include any mockups, screenshots, or examples that help illustrate your idea'
+      placeholder: 'Link to mockups, paste ASCII diagrams, or describe visual elements...'
+
+  - type: textarea
+    id: impact_analysis
+    attributes:
+      label: '📊 Expected Impact'
+      description: 'Who would benefit from this feature and how?'
+      placeholder: |
+        - Target users: [who would use this]
+        - Benefits: [what value it provides]
+        - Metrics: [how success would be measured]
+        - Usage estimate: [how often it would be used]
+
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: '🔗 Compatibility Considerations'
+      description: 'Compatibility and integration considerations'
+      options:
+        - label: 'This feature should work with existing Fire22 integrations'
+          required: false
+        - label: 'This feature needs to be compatible with all platforms (Windows/Linux/macOS/Docker)'
+          required: false
+        - label: 'This feature should integrate with the workspace system'
+          required: false
+        - label: 'This feature has potential breaking changes'
+          required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: '📝 Additional Context'
+      description: 'Add any other relevant information, links, or context'
+      placeholder: |
+        - Links to related issues or discussions
+        - References to similar features in other tools
+        - Additional research or background information
+        - Community feedback or requests
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ### 🚀 What Happens Next?
+
+        1. **Triage**: Our team will review and label your request
+        2. **Discussion**: Community discussion and refinement
+        3. **Planning**: If approved, we'll add it to our roadmap
+        4. **Implementation**: Development and testing
+        5. **Release**: Feature delivered in a future release!
+
+        **Want to contribute?** We love community contributions! Check out our [Contributing Guide](../CONTRIBUTING.md) to get started.
+
+        **Questions?** Join the discussion or reach out to [engineering@fire22.com](mailto:engineering@fire22.com)

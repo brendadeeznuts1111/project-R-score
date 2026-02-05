@@ -1,0 +1,114 @@
+# Enterprise Secrets and Sensitive Data
+# ====================================
+
+# Secrets and sensitive configuration
+**/*.secrets
+**/*.key
+**/*.pem
+**/*.crt
+**/private-keys/
+**/certificates/
+
+# Environment variables with sensitive data
+**/config/production.env
+**/config/staging.env
+**/secrets/*.env
+**/enterprise/secrets/*.env
+
+# Benchmarking data (contains performance metrics)
+**/benchmarking/results/
+**/benchmarking/private/
+**/enterprise/benchmarking/sensitive/
+
+# Security scanning results
+**/security/scans/
+**/security/reports/
+**/compliance/audit-logs/
+
+# Performance monitoring data
+**/monitoring/logs/
+**/performance/metrics/
+**/analytics/sensitive/
+
+# Database files and backups
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/backups/
+**/database/dumps/
+
+# CI/CD secrets and tokens
+**/workflows/secrets/
+**/ci-cd/tokens/
+**/infrastructure/secrets/
+
+# Private enterprise documentation
+**/docs-private/sensitive/
+**/enterprise/docs-private/internal/
+
+# Cloud credentials and keys
+**/.aws/
+**/.gcp/
+**/.azure/
+**/cloud-credentials/
+
+# API keys and tokens
+**/api-keys/
+**/tokens/
+**/credentials/
+
+# Logs and temporary files
+**/logs/
+**/*.log
+**/tmp/
+**/.tmp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Bun
+.bun/
+bun.lock
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Test results
+test-results/
+playwright-report/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+# Local development
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

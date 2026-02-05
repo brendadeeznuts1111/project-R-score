@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📊 Fire22 Performance Monitor - Enhanced</title>
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-dark: #2563eb;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #0f172a;
+        --card-bg: rgba(30, 41, 59, 0.9);
+        --border-color: rgba(59, 130, 246, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: #e2e8f0;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .dashboard {
+        max-width: 1800px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px 30px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .header-info h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      .header-stats {
+        display: flex;
+        gap: 30px;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .header-stat-label {
+        font-size: 12px;
+        color: #94a3b8;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        background: var(--card-bg);
+        padding: 8px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+      }
+
+      .tab {
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .tab.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .tab:hover:not(.active) {
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .metrics-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .metric-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .metric-card.critical {
+        border-color: var(--danger);
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), var(--card-bg));
+      }
+
+      .metric-card.warning {
+        border-color: var(--warning);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), var(--card-bg));
+      }
+
+      .metric-card.success {
+        border-color: var(--success);
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), var(--card-bg));
+      }
+
+      .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+      }
+
+      .metric-info {
+        flex: 1;
+      }
+
+      .metric-title {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 5px;
+      }
+
+      .metric-value {
+        font-size: 28px;
+        font-weight: bold;
+        line-height: 1;
+      }
+
+      .metric-change {
+        font-size: 12px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .trend-up {
+        color: var(--success);
+      }
+
+      .trend-down {
+        color: var(--danger);
+      }
+
+      .metric-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(59, 130, 246, 0.1);
+        font-size: 20px;
+      }
+
+      .metric-sparkline {
+        height: 40px;
+        margin-top: 10px;
+      }
+
+      .detailed-section {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 25px;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .performance-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .performance-table th {
+        text-align: left;
+        padding: 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #94a3b8;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(59, 130, 246, 0.1);
+      }
+
+      .performance-table td {
+        padding: 12px;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.05);
+      }
+
+      .performance-table tr:hover {
+        background: rgba(59, 130, 246, 0.05);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .status-healthy {
+        background: rgba(34, 197, 94, 0.2);
+        color: var(--success);
+      }
+
+      .status-warning {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+      }
+
+      .status-critical {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+      }
+
+      .progress-bar {
+        width: 100px;
+        height: 6px;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+        border-radius: 3px;
+        transition: width 0.3s ease;
+      }
+
+      .alert-box {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--danger);
+        border-radius: 12px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .alert-icon {
+        font-size: 24px;
+      }
+
+      .alert-content {
+        flex: 1;
+      }
+
+      .alert-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .alert-desc {
+        font-size: 14px;
+        color: #cbd5e1;
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .chart-container {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        border: 1px solid var(--border-color);
+      }
+
+      .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .chart-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .chart-options {
+        display: flex;
+        gap: 10px;
+      }
+
+      .chart-option {
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+      }
+
+      .chart-option.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .live-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--success);
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.2);
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn-secondary {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(59, 130, 246, 0.2);
+      }
+
+      .endpoint-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+
+      .endpoint-card {
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid rgba(59, 130, 246, 0.1);
+      }
+
+      .endpoint-name {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .endpoint-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #94a3b8;
+      }
+
+      .resource-meter {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
+
+      .resource-label {
+        font-size: 13px;
+        width: 80px;
+      }
+
+      .resource-bar {
+        flex: 1;
+        height: 20px;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .resource-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.5s ease;
+      }
+
+      .resource-fill.low {
+        background: linear-gradient(90deg, var(--success), #10b981);
+      }
+
+      .resource-fill.medium {
+        background: linear-gradient(90deg, var(--warning), #f59e0b);
+      }
+
+      .resource-fill.high {
+        background: linear-gradient(90deg, var(--danger), #dc2626);
+      }
+
+      .resource-value {
+        font-size: 13px;
+        font-weight: 600;
+        min-width: 60px;
+        text-align: right;
+      }
+
+      @media (max-width: 768px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .header {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .header-stats {
+          width: 100%;
+          justify-content: space-around;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="header">
+        <div class="header-left">
+          <div class="logo">📊</div>
+          <div class="header-info">
+            <h1>Fire22 Performance Monitor</h1>
+            <div class="live-indicator">
+              <div class="live-dot"></div>
+              <span>Live monitoring active</span>
+            </div>
+          </div>
+        </div>
+        <div class="header-stats">
+          <div class="header-stat">
+            <div class="header-stat-value" id="totalRequests">127.4K</div>
+            <div class="header-stat-label">Total Requests</div>
+          </div>
+          <div class="header-stat">
+            <div class="header-stat-value" id="avgResponse">42ms</div>
+            <div class="header-stat-label">Avg Response</div>
+          </div>
+          <div class="header-stat">
+            <div class="header-stat-value" id="uptime">99.98%</div>
+            <div class="header-stat-label">Uptime</div>
+          </div>
+          <div class="header-stat">
+            <div class="header-stat-value" id="activeUsers">2,643</div>
+            <div class="header-stat-label">Active Users</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('overview')">Overview</div>
+        <div class="tab" onclick="switchTab('api')">API Performance</div>
+        <div class="tab" onclick="switchTab('database')">Database</div>
+        <div class="tab" onclick="switchTab('resources')">Resources</div>
+        <div class="tab" onclick="switchTab('errors')">Errors & Alerts</div>
+        <div class="tab" onclick="switchTab('network')">Network</div>
+      </div>
+
+      <!-- Overview Tab -->
+      <div id="overview" class="tab-content active">
+        <div class="metrics-overview">
+          <div class="metric-card success">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">DNS Resolution</div>
+                <div class="metric-value">0.8ms</div>
+                <div class="metric-change trend-up">
+                  <span>↑</span>
+                  <span>15% faster</span>
+                </div>
+              </div>
+              <div class="metric-icon">⚡</div>
+            </div>
+            <canvas class="metric-sparkline" id="dnsSparkline"></canvas>
+          </div>
+
+          <div class="metric-card success">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">Cache Hit Rate</div>
+                <div class="metric-value">98.7%</div>
+                <div class="metric-change trend-up">
+                  <span>↑</span>
+                  <span>2.3% improved</span>
+                </div>
+              </div>
+              <div class="metric-icon">💾</div>
+            </div>
+            <canvas class="metric-sparkline" id="cacheSparkline"></canvas>
+          </div>
+
+          <div class="metric-card warning">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">API Response Time</div>
+                <div class="metric-value">52ms</div>
+                <div class="metric-change trend-down">
+                  <span>↓</span>
+                  <span>8ms slower</span>
+                </div>
+              </div>
+              <div class="metric-icon">📡</div>
+            </div>
+            <canvas class="metric-sparkline" id="apiSparkline"></canvas>
+          </div>
+
+          <div class="metric-card success">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">Memory Usage</div>
+                <div class="metric-value">186MB</div>
+                <div class="metric-change trend-up">
+                  <span>↑</span>
+                  <span>72% capacity</span>
+                </div>
+              </div>
+              <div class="metric-icon">🧮</div>
+            </div>
+            <canvas class="metric-sparkline" id="memorySparkline"></canvas>
+          </div>
+
+          <div class="metric-card success">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">Database Connections</div>
+                <div class="metric-value">14/20</div>
+                <div class="metric-change">
+                  <span>70% utilized</span>
+                </div>
+              </div>
+              <div class="metric-icon">🔗</div>
+            </div>
+            <canvas class="metric-sparkline" id="dbSparkline"></canvas>
+          </div>
+
+          <div class="metric-card critical">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">Error Rate</div>
+                <div class="metric-value">0.23%</div>
+                <div class="metric-change trend-down">
+                  <span>↑</span>
+                  <span>Above threshold</span>
+                </div>
+              </div>
+              <div class="metric-icon">⚠️</div>
+            </div>
+            <canvas class="metric-sparkline" id="errorSparkline"></canvas>
+          </div>
+
+          <div class="metric-card success">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">CPU Usage</div>
+                <div class="metric-value">34%</div>
+                <div class="metric-change trend-up">
+                  <span>↓</span>
+                  <span>Normal load</span>
+                </div>
+              </div>
+              <div class="metric-icon">💻</div>
+            </div>
+            <canvas class="metric-sparkline" id="cpuSparkline"></canvas>
+          </div>
+
+          <div class="metric-card success">
+            <div class="metric-header">
+              <div class="metric-info">
+                <div class="metric-title">Requests/Min</div>
+                <div class="metric-value">2,148</div>
+                <div class="metric-change trend-up">
+                  <span>↑</span>
+                  <span>Peak traffic</span>
+                </div>
+              </div>
+              <div class="metric-icon">📈</div>
+            </div>
+            <canvas class="metric-sparkline" id="rpmSparkline"></canvas>
+          </div>
+        </div>
+
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>🔥</span>
+              <span>Service Health Status</span>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-secondary" onclick="exportMetrics()">Export</button>
+              <button class="btn btn-primary" onclick="refreshAll()">Refresh All</button>
+            </div>
+          </div>
+          <table class="performance-table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Status</th>
+                <th>Response Time</th>
+                <th>Throughput</th>
+                <th>Error Rate</th>
+                <th>Uptime</th>
+                <th>Health Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Fire22 Main API</strong></td>
+                <td><span class="status-badge status-healthy">Healthy</span></td>
+                <td>12ms</td>
+                <td>1.2K req/s</td>
+                <td>0.01%</td>
+                <td>99.99%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 98%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Customer API</strong></td>
+                <td><span class="status-badge status-healthy">Healthy</span></td>
+                <td>28ms</td>
+                <td>845 req/s</td>
+                <td>0.02%</td>
+                <td>99.97%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 95%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Database (D1)</strong></td>
+                <td><span class="status-badge status-healthy">Healthy</span></td>
+                <td>8ms</td>
+                <td>2.5K ops/s</td>
+                <td>0.00%</td>
+                <td>100%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Cache Layer (R2)</strong></td>
+                <td><span class="status-badge status-healthy">Healthy</span></td>
+                <td>2ms</td>
+                <td>5.2K ops/s</td>
+                <td>0.00%</td>
+                <td>100%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Telegram Bot</strong></td>
+                <td><span class="status-badge status-warning">Warning</span></td>
+                <td>125ms</td>
+                <td>324 msg/s</td>
+                <td>0.15%</td>
+                <td>99.85%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      style="width: 85%; background: linear-gradient(90deg, #f59e0b, #d97706)"
+                    ></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>WebSocket Server</strong></td>
+                <td><span class="status-badge status-healthy">Healthy</span></td>
+                <td>5ms</td>
+                <td>892 conn</td>
+                <td>0.03%</td>
+                <td>99.95%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 94%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>CDN (Cloudflare)</strong></td>
+                <td><span class="status-badge status-healthy">Healthy</span></td>
+                <td>1ms</td>
+                <td>12K req/s</td>
+                <td>0.00%</td>
+                <td>100%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Auth Service</strong></td>
+                <td><span class="status-badge status-critical">Critical</span></td>
+                <td>245ms</td>
+                <td>124 req/s</td>
+                <td>1.2%</td>
+                <td>98.5%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      style="width: 65%; background: linear-gradient(90deg, #ef4444, #dc2626)"
+                    ></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- API Performance Tab -->
+      <div id="api" class="tab-content">
+        <div class="alert-box">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-content">
+            <div class="alert-title">High Latency Detected</div>
+            <div class="alert-desc">Auth Service experiencing 245ms average response time (threshold: 100ms)</div>
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-primary" onclick="investigateIssue()">Investigate</button>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title">Response Time Distribution</div>
+              <div class="chart-options">
+                <div class="chart-option active">1H</div>
+                <div class="chart-option">6H</div>
+                <div class="chart-option">24H</div>
+                <div class="chart-option">7D</div>
+              </div>
+            </div>
+            <canvas id="responseTimeChart" height="200"></canvas>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title">Request Volume</div>
+              <div class="chart-options">
+                <div class="chart-option active">Real-time</div>
+                <div class="chart-option">Aggregate</div>
+              </div>
+            </div>
+            <canvas id="requestVolumeChart" height="200"></canvas>
+          </div>
+        </div>
+
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>🎯</span>
+              <span>Top API Endpoints</span>
+            </div>
+          </div>
+          <div class="endpoint-grid">
+            <div class="endpoint-card">
+              <div class="endpoint-name">GET /api/customers</div>
+              <div class="endpoint-stats">
+                <span>Calls: 45.2K</span>
+                <span>Avg: 28ms</span>
+                <span>P99: 125ms</span>
+              </div>
+            </div>
+            <div class="endpoint-card">
+              <div class="endpoint-name">POST /api/manager/getLiveWagers</div>
+              <div class="endpoint-stats">
+                <span>Calls: 38.7K</span>
+                <span>Avg: 42ms</span>
+                <span>P99: 189ms</span>
+              </div>
+            </div>
+            <div class="endpoint-card">
+              <div class="endpoint-name">GET /api/agents/hierarchy</div>
+              <div class="endpoint-stats">
+                <span>Calls: 22.1K</span>
+                <span>Avg: 15ms</span>
+                <span>P99: 67ms</span>
+              </div>
+            </div>
+            <div class="endpoint-card">
+              <div class="endpoint-name">POST /api/fire22/sync-customers</div>
+              <div class="endpoint-stats">
+                <span>Calls: 18.4K</span>
+                <span>Avg: 156ms</span>
+                <span>P99: 412ms</span>
+              </div>
+            </div>
+            <div class="endpoint-card">
+              <div class="endpoint-name">GET /api/fire22/dns-stats</div>
+              <div class="endpoint-stats">
+                <span>Calls: 15.8K</span>
+                <span>Avg: 3ms</span>
+                <span>P99: 12ms</span>
+              </div>
+            </div>
+            <div class="endpoint-card">
+              <div class="endpoint-name">GET /health</div>
+              <div class="endpoint-stats">
+                <span>Calls: 124.5K</span>
+                <span>Avg: 1ms</span>
+                <span>P99: 5ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Database Tab -->
+      <div id="database" class="tab-content">
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>🗄️</span>
+              <span>Database Performance</span>
+            </div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Connections</div>
+            <div class="resource-bar">
+              <div class="resource-fill medium" style="width: 70%"></div>
+            </div>
+            <div class="resource-value">14/20</div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Query Cache</div>
+            <div class="resource-bar">
+              <div class="resource-fill low" style="width: 98%"></div>
+            </div>
+            <div class="resource-value">98%</div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Lock Wait</div>
+            <div class="resource-bar">
+              <div class="resource-fill low" style="width: 5%"></div>
+            </div>
+            <div class="resource-value">0.5ms</div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Buffer Pool</div>
+            <div class="resource-bar">
+              <div class="resource-fill medium" style="width: 82%"></div>
+            </div>
+            <div class="resource-value">82%</div>
+          </div>
+        </div>
+
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>⚡</span>
+              <span>Slow Queries</span>
+            </div>
+          </div>
+          <table class="performance-table">
+            <thead>
+              <tr>
+                <th>Query</th>
+                <th>Execution Time</th>
+                <th>Frequency</th>
+                <th>Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>SELECT * FROM users WHERE...</code></td>
+                <td>245ms</td>
+                <td>1.2K/hour</td>
+                <td><span class="status-badge status-critical">High</span></td>
+              </tr>
+              <tr>
+                <td><code>UPDATE transactions SET...</code></td>
+                <td>189ms</td>
+                <td>856/hour</td>
+                <td><span class="status-badge status-warning">Medium</span></td>
+              </tr>
+              <tr>
+                <td><code>SELECT COUNT(*) FROM wagers...</code></td>
+                <td>156ms</td>
+                <td>2.4K/hour</td>
+                <td><span class="status-badge status-warning">Medium</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Resources Tab -->
+      <div id="resources" class="tab-content">
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>💻</span>
+              <span>System Resources</span>
+            </div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">CPU Usage</div>
+            <div class="resource-bar">
+              <div class="resource-fill low" style="width: 34%"></div>
+            </div>
+            <div class="resource-value">34%</div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Memory</div>
+            <div class="resource-bar">
+              <div class="resource-fill medium" style="width: 72%"></div>
+            </div>
+            <div class="resource-value">186/256MB</div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Disk I/O</div>
+            <div class="resource-bar">
+              <div class="resource-fill low" style="width: 28%"></div>
+            </div>
+            <div class="resource-value">28MB/s</div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Network</div>
+            <div class="resource-bar">
+              <div class="resource-fill low" style="width: 45%"></div>
+            </div>
+            <div class="resource-value">45Mbps</div>
+          </div>
+          <div class="resource-meter">
+            <div class="resource-label">Thread Pool</div>
+            <div class="resource-bar">
+              <div class="resource-fill medium" style="width: 65%"></div>
+            </div>
+            <div class="resource-value">65/100</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Errors Tab -->
+      <div id="errors" class="tab-content">
+        <div class="alert-box">
+          <div class="alert-icon">🔴</div>
+          <div class="alert-content">
+            <div class="alert-title">3 Critical Errors in Last Hour</div>
+            <div class="alert-desc">Auth service timeout errors affecting user login flow</div>
+          </div>
+        </div>
+
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>📝</span>
+              <span>Recent Errors</span>
+            </div>
+          </div>
+          <table class="performance-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Service</th>
+                <th>Error Type</th>
+                <th>Message</th>
+                <th>Count</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2 min ago</td>
+                <td>Auth Service</td>
+                <td><span class="status-badge status-critical">Timeout</span></td>
+                <td>Connection timeout after 5000ms</td>
+                <td>12</td>
+                <td><button class="btn btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td>8 min ago</td>
+                <td>Database</td>
+                <td><span class="status-badge status-warning">Lock</span></td>
+                <td>Table lock wait timeout exceeded</td>
+                <td>3</td>
+                <td><button class="btn btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td>15 min ago</td>
+                <td>API Gateway</td>
+                <td><span class="status-badge status-warning">Rate Limit</span></td>
+                <td>Rate limit exceeded for IP 192.168.1.x</td>
+                <td>45</td>
+                <td><button class="btn btn-secondary">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Network Tab -->
+      <div id="network" class="tab-content">
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>🌐</span>
+              <span>Network Performance</span>
+            </div>
+          </div>
+          <table class="performance-table">
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>Latency</th>
+                <th>Packet Loss</th>
+                <th>Bandwidth</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>US-East</td>
+                <td>12ms</td>
+                <td>0.00%</td>
+                <td>892 Mbps</td>
+                <td><span class="status-badge status-healthy">Optimal</span></td>
+              </tr>
+              <tr>
+                <td>US-West</td>
+                <td>28ms</td>
+                <td>0.01%</td>
+                <td>756 Mbps</td>
+                <td><span class="status-badge status-healthy">Optimal</span></td>
+              </tr>
+              <tr>
+                <td>EU-Central</td>
+                <td>45ms</td>
+                <td>0.02%</td>
+                <td>623 Mbps</td>
+                <td><span class="status-badge status-healthy">Good</span></td>
+              </tr>
+              <tr>
+                <td>Asia-Pacific</td>
+                <td>125ms</td>
+                <td>0.15%</td>
+                <td>412 Mbps</td>
+                <td><span class="status-badge status-warning">Degraded</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detailed-section">
+          <div class="section-header">
+            <div class="section-title">
+              <span>🔒</span>
+              <span>DNS Performance</span>
+            </div>
+          </div>
+          <table class="performance-table">
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>Resolution Time</th>
+                <th>Cache Status</th>
+                <th>TTL</th>
+                <th>Requests</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>fire22.ag</td>
+                <td>0.8ms</td>
+                <td><span class="status-badge status-healthy">Cached</span></td>
+                <td>30s</td>
+                <td>45.2K</td>
+              </tr>
+              <tr>
+                <td>api.fire22.ag</td>
+                <td>0.9ms</td>
+                <td><span class="status-badge status-healthy">Cached</span></td>
+                <td>30s</td>
+                <td>38.7K</td>
+              </tr>
+              <tr>
+                <td>cloud.fire22.ag</td>
+                <td>1.2ms</td>
+                <td><span class="status-badge status-healthy">Cached</span></td>
+                <td>30s</td>
+                <td>22.1K</td>
+              </tr>
+              <tr>
+                <td>api.cloudflare.com</td>
+                <td>0.5ms</td>
+                <td><span class="status-badge status-healthy">Cached</span></td>
+                <td>60s</td>
+                <td>124.5K</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Tab switching
+      function switchTab(tabName) {
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+
+        event.target.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+      }
+
+      // Draw sparkline charts
+      function drawSparkline(canvasId, data, color) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = (canvas.width = canvas.offsetWidth);
+        const height = (canvas.height = 40);
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        const step = width / (data.length - 1);
+        const max = Math.max(...data);
+        const min = Math.min(...data);
+        const range = max - min || 1;
+
+        data.forEach((value, index) => {
+          const x = index * step;
+          const y = height - ((value - min) / range) * height * 0.8 - height * 0.1;
+
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+
+        ctx.stroke();
+
+        // Fill gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, color + '30');
+        gradient.addColorStop(1, color + '00');
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+
+      // Initialize sparklines
+      function initSparklines() {
+        const dnsData = Array.from({ length: 20 }, () => 0.5 + Math.random() * 1);
+        const cacheData = Array.from({ length: 20 }, () => 95 + Math.random() * 5);
+        const apiData = Array.from({ length: 20 }, () => 30 + Math.random() * 40);
+        const memoryData = Array.from({ length: 20 }, () => 150 + Math.random() * 50);
+        const dbData = Array.from({ length: 20 }, () => 10 + Math.random() * 10);
+        const errorData = Array.from({ length: 20 }, () => Math.random() * 0.5);
+        const cpuData = Array.from({ length: 20 }, () => 20 + Math.random() * 30);
+        const rpmData = Array.from({ length: 20 }, () => 1800 + Math.random() * 600);
+
+        drawSparkline('dnsSparkline', dnsData, '#22c55e');
+        drawSparkline('cacheSparkline', cacheData, '#22c55e');
+        drawSparkline('apiSparkline', apiData, '#f59e0b');
+        drawSparkline('memorySparkline', memoryData, '#22c55e');
+        drawSparkline('dbSparkline', dbData, '#22c55e');
+        drawSparkline('errorSparkline', errorData, '#ef4444');
+        drawSparkline('cpuSparkline', cpuData, '#22c55e');
+        drawSparkline('rpmSparkline', rpmData, '#22c55e');
+      }
+
+      // Action functions
+      function refreshAll() {
+        console.log('Refreshing all metrics...');
+        initSparklines();
+        updateLiveMetrics();
+      }
+
+      function exportMetrics() {
+        console.log('Exporting metrics...');
+      }
+
+      function investigateIssue() {
+        console.log('Investigating auth service issue...');
+      }
+
+      // Update live metrics
+      async function updateLiveMetrics() {
+        try {
+          const response = await fetch('/api/bottlenecks/metrics');
+          const data = await response.json();
+
+          if (data.success) {
+            // Update header stats
+            document.getElementById('avgResponse').textContent = data.metrics.api.averageResponseTime + 'ms';
+
+            // Update metric cards
+            document.querySelector('.metric-card:nth-child(1) .metric-value').textContent =
+              data.metrics.dns.averageResponseTime + 'ms';
+            document.querySelector('.metric-card:nth-child(2) .metric-value').textContent =
+              (
+                (data.metrics.dns.cacheHits / (data.metrics.dns.cacheHits + data.metrics.dns.cacheMisses)) *
+                100
+              ).toFixed(1) + '%';
+            document.querySelector('.metric-card:nth-child(4) .metric-value').textContent =
+              data.metrics.memory.used + 'MB';
+            document.querySelector('.metric-card:nth-child(5) .metric-value').textContent =
+              data.metrics.database.connected + '/' + data.metrics.database.total;
+          }
+        } catch (error) {
+          console.error('Failed to update metrics:', error);
+        }
+      }
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        initSparklines();
+        updateLiveMetrics();
+
+        // Auto-refresh every 5 seconds
+        setInterval(() => {
+          updateLiveMetrics();
+          initSparklines();
+        }, 5000);
+      });
+    </script>
+  </body>
+</html>

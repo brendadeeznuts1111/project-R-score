@@ -1,0 +1,68 @@
+# Domain Integration Configuration
+# YAML config with domain-specific settings
+
+database:
+  sqlite: 'sqlite://domain-data.sqlite'
+  encryption: true
+  backup:
+    enabled: true
+    interval: '24h'
+
+server:
+  host: 'localhost'
+  port: 3000
+  cors:
+    enabled: true
+    origins: ['http://localhost:3000', 'http://localhost:3001']
+  rateLimit:
+    enabled: true
+    requestsPerMinute: 100
+
+secrets:
+  apiKey: 'demo-api-key-replace-in-production'
+  dbEncryptionKey: 'demo-db-key-replace-in-production'
+  jwtSecret: 'demo-jwt-secret-replace-in-production'
+
+features:
+  enableCaching: true
+  enableMetrics: true
+  enableAuditLog: true
+  enableNotifications: false
+
+domains:
+  collections:
+    enabled: true
+    maxTransactionAmount: 10000
+    supportedCurrencies: ['USD', 'EUR', 'GBP']
+
+  financial:
+    enabled: true
+    reporting:
+      frequency: 'daily'
+      retention: '7years'
+    compliance:
+      pciDss: true
+      aml: true
+      kyc: true
+
+  fantasy:
+    enabled: true
+    maxBetAmount: 5000
+    supportedSports: ['football', 'basketball', 'baseball', 'soccer']
+    oddsFormat: 'decimal'
+
+logging:
+  level: 'info'
+  format: 'json'
+  outputs:
+    - 'console'
+    - 'file'
+
+monitoring:
+  enabled: true
+  metrics:
+    enabled: true
+    interval: '30s'
+  healthChecks:
+    enabled: true
+    interval: '60s'

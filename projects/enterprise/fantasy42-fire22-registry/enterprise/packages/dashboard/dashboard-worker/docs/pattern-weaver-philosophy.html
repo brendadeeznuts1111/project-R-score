@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pattern Weaver Philosophy - From Tool to Culture</title>
+    <style>
+      :root {
+        /* Water/Cloudflare Blues & Cyans */
+        --water-deep: #003d7a;
+        --water-ocean: #0051a5;
+        --water-sea: #0078d4;
+        --water-sky: #40a9ff;
+        --water-light: #69c0ff;
+        --water-mist: #91d5ff;
+        --water-foam: #bae7ff;
+        --water-spray: #e6f7ff;
+
+        --cyan-deep: #006d75;
+        --cyan-ocean: #008b94;
+        --cyan-sea: #00acc1;
+        --cyan-light: #26c6da;
+        --cyan-mist: #4dd0e1;
+        --cyan-foam: #80deea;
+
+        --bg-dark: #0a0e1a;
+        --bg-medium: #0f172a;
+        --bg-light: #1e293b;
+
+        --text-primary: #e0f7fa;
+        --text-secondary: #b2ebf2;
+        --text-muted: #80deea;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Fira Code', 'SF Mono', monospace;
+        background: linear-gradient(135deg, var(--bg-dark) 0%, var(--water-deep) 100%);
+        min-height: 100vh;
+        color: var(--text-primary);
+        overflow-x: hidden;
+      }
+
+      /* Header with Philosophy Quote */
+      .philosophy-header {
+        text-align: center;
+        padding: 2rem;
+        background: rgba(0, 81, 165, 0.1);
+        border-bottom: 1px solid var(--water-sea);
+      }
+
+      .philosophy-quote {
+        font-size: 1.2rem;
+        color: var(--cyan-light);
+        line-height: 1.8;
+        max-width: 800px;
+        margin: 0 auto;
+        font-style: italic;
+      }
+
+      .philosophy-quote span {
+        display: block;
+        margin: 0.5rem 0;
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+      }
+
+      .philosophy-quote span:nth-child(1) {
+        animation-delay: 0.5s;
+      }
+      .philosophy-quote span:nth-child(2) {
+        animation-delay: 1s;
+      }
+      .philosophy-quote span:nth-child(3) {
+        animation-delay: 1.5s;
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Evolution Stages */
+      .evolution-container {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      .evolution-stage {
+        flex: 1;
+        background: rgba(0, 81, 165, 0.1);
+        border: 1px solid var(--water-sea);
+        border-radius: 8px;
+        padding: 1.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .evolution-stage:hover {
+        background: rgba(0, 81, 165, 0.2);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(0, 172, 193, 0.3);
+      }
+
+      .stage-header {
+        color: var(--cyan-light);
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .stage-number {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, var(--water-sea), var(--cyan-sea));
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        font-weight: bold;
+      }
+
+      /* Pattern Visualization */
+      .pattern-canvas {
+        width: 100%;
+        height: 500px;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid var(--water-sea);
+        border-radius: 8px;
+        margin: 2rem 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pattern-node {
+        position: absolute;
+        width: 120px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--water-ocean), var(--cyan-ocean));
+        border: 2px solid var(--cyan-light);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+        font-size: 0.85rem;
+      }
+
+      .pattern-node:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(38, 198, 218, 0.6);
+        z-index: 20;
+      }
+
+      .pattern-node.active {
+        background: linear-gradient(135deg, var(--water-sky), var(--cyan-light));
+        box-shadow: 0 0 30px rgba(38, 198, 218, 0.8);
+      }
+
+      .pattern-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .pattern-name {
+        font-size: 0.75rem;
+        font-weight: bold;
+      }
+
+      /* Connection Lines */
+      .connection {
+        position: absolute;
+        background: linear-gradient(90deg, transparent, var(--cyan-light), transparent);
+        height: 2px;
+        transform-origin: left center;
+        z-index: 1;
+        opacity: 0.3;
+        transition: opacity 0.3s ease;
+      }
+
+      .connection.active {
+        opacity: 1;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* Friend highlighting */
+      .pattern-node.friend-highlight {
+        background: linear-gradient(135deg, var(--cyan-light), var(--water-light));
+        box-shadow: 0 0 40px rgba(38, 198, 218, 1);
+        animation: friendPulse 0.8s ease-in-out infinite;
+      }
+
+      @keyframes friendPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 30px rgba(38, 198, 218, 0.8);
+        }
+        50% {
+          transform: scale(1.15);
+          box-shadow: 0 0 50px rgba(38, 198, 218, 1);
+        }
+      }
+
+      /* Ripple effect */
+      .ripple-effect {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--cyan-light);
+        border-radius: 50%;
+        animation: ripple 1s ease-out;
+        pointer-events: none;
+        z-index: 50;
+      }
+
+      @keyframes ripple {
+        0% {
+          width: 20px;
+          height: 20px;
+          opacity: 1;
+        }
+        100% {
+          width: 200px;
+          height: 200px;
+          opacity: 0;
+          transform: translate(-90px, -90px);
+        }
+      }
+
+      /* Strong pulse for deep connections */
+      .connection.pulse-strong {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--cyan-light),
+          var(--water-light),
+          var(--cyan-light),
+          transparent
+        );
+        height: 4px;
+        opacity: 1;
+        animation: strongPulse 2s ease-in-out;
+      }
+
+      @keyframes strongPulse {
+        0% {
+          opacity: 0;
+          filter: brightness(1);
+        }
+        50% {
+          opacity: 1;
+          filter: brightness(1.5);
+          box-shadow: 0 0 20px var(--cyan-light);
+        }
+        100% {
+          opacity: 0.3;
+          filter: brightness(1);
+        }
+      }
+
+      /* Terminal Interface */
+      .terminal-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+      }
+
+      .terminal {
+        background: rgba(15, 23, 42, 0.98);
+        border: 1px solid var(--water-sea);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .terminal-header {
+        background: linear-gradient(90deg, var(--water-ocean), var(--cyan-ocean));
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: white;
+      }
+
+      .terminal-body {
+        padding: 1rem;
+        min-height: 300px;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      .terminal-output {
+        font-family: monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .terminal-input-line {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: var(--bg-light);
+        border-top: 1px solid var(--water-sea);
+      }
+
+      .terminal-prompt {
+        color: var(--cyan-light);
+        margin-right: 0.5rem;
+      }
+
+      .terminal-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        outline: none;
+        font-family: inherit;
+        font-size: 0.9rem;
+      }
+
+      /* Command Output Styles */
+      .cmd-line {
+        margin: 0.25rem 0;
+      }
+
+      .cmd-box {
+        color: var(--cyan-light);
+        display: inline-block;
+        margin: 0.5rem 0;
+      }
+
+      .cmd-success {
+        color: #27c93f;
+      }
+      .cmd-error {
+        color: #ff5f56;
+      }
+      .cmd-info {
+        color: var(--water-light);
+      }
+      .cmd-warning {
+        color: #ffbd2e;
+      }
+
+      /* Info Panel */
+      .info-panel {
+        position: fixed;
+        right: 2rem;
+        bottom: 2rem;
+        width: 300px;
+        background: rgba(0, 81, 165, 0.95);
+        border: 1px solid var(--cyan-light);
+        border-radius: 8px;
+        padding: 1rem;
+        z-index: 100;
+        transition: all 0.3s ease;
+      }
+
+      .info-title {
+        color: var(--cyan-light);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      .info-content {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: var(--text-secondary);
+      }
+
+      /* Pattern Details */
+      .pattern-details {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--water-sea);
+      }
+
+      .pattern-feature {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.25rem 0;
+        font-size: 0.8rem;
+      }
+
+      .feature-icon {
+        color: var(--cyan-light);
+      }
+
+      /* Controls */
+      .controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        padding: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 0.5rem 1.5rem;
+        background: linear-gradient(135deg, var(--water-sea), var(--cyan-sea));
+        border: 1px solid var(--cyan-light);
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        font-size: 0.875rem;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 172, 193, 0.3);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .evolution-container {
+          flex-direction: column;
+        }
+
+        .pattern-canvas {
+          height: 400px;
+        }
+
+        .info-panel {
+          position: static;
+          width: 100%;
+          margin: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Philosophy Header -->
+    <div class="philosophy-header">
+      <div class="philosophy-quote">
+        <span>╭─ "We began by designing a command-line tool to manage risk.</span>
+        <span>├─ We evolved it into a control plane to manage an enterprise.</span>
+        <span>╰─ We have ended by defining a philosophy to guide a culture."</span>
+      </div>
+    </div>
+
+    <!-- Evolution Stages -->
+    <div class="evolution-container">
+      <div class="evolution-stage" data-stage="tool">
+        <div class="stage-header">
+          <span class="stage-number">1</span>
+          <span>The Tool: Managing Risk</span>
+        </div>
+        <div class="stage-content">
+          <div class="cmd-box">
+            ╭─────────────────────────╮ │ Command-Line Interface │ │ • Risk Assessment │ │ • Security Patterns │ │ •
+            Performance Timing │ ╰─────────────────────────╯
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.85rem">Patterns: SECURE, TIMING, TABULAR</p>
+        </div>
+      </div>
+
+      <div class="evolution-stage" data-stage="control">
+        <div class="stage-header">
+          <span class="stage-number">2</span>
+          <span>The Control Plane: Managing Enterprise</span>
+        </div>
+        <div class="stage-content">
+          <div class="cmd-box">
+            ╭─────────────────────────╮ │ Orchestration Layer │ │ • API Management │ │ • Workspace Control │ │ • Build &
+            Deploy │ ╰─────────────────────────╯
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.85rem">Patterns: BUILDER, VERSIONER, SHELL, LOADER</p>
+        </div>
+      </div>
+
+      <div class="evolution-stage" data-stage="philosophy">
+        <div class="stage-header">
+          <span class="stage-number">3</span>
+          <span>The Philosophy: Guiding Culture</span>
+        </div>
+        <div class="stage-content">
+          <div class="cmd-box">
+            ╭─────────────────────────╮ │ Pattern Weaver System │ │ • Deep Connections │ │ • Auto-Weaving │ │ • Cultural
+            Alignment │ ╰─────────────────────────╯
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.85rem">All 13 Patterns in Harmony</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pattern Visualization Canvas -->
+    <div style="max-width: 1600px; margin: 0 auto; padding: 0 2rem">
+      <h2 style="text-align: center; color: var(--cyan-light); margin-bottom: 1rem">
+        Pattern Weaver: Deep Connections
+      </h2>
+      <div class="pattern-canvas" id="patternCanvas"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn" onclick="weaver.showStage('tool')">Show Tool Stage</button>
+      <button class="btn" onclick="weaver.showStage('control')">Show Control Plane</button>
+      <button class="btn" onclick="weaver.showStage('philosophy')">Show Philosophy</button>
+      <button class="btn" onclick="weaver.animateConnections()">Animate Weaving</button>
+      <button class="btn" onclick="weaver.showAllConnections()">Show All Friends</button>
+    </div>
+
+    <!-- Terminal Interface -->
+    <div class="terminal-container">
+      <div class="terminal">
+        <div class="terminal-header">╭─ PATTERN WEAVER TERMINAL ─────────────────────────────────────╮</div>
+        <div class="terminal-body">
+          <div class="terminal-output" id="terminalOutput"></div>
+        </div>
+        <div class="terminal-input-line">
+          <span class="terminal-prompt">╭─▶</span>
+          <input
+            type="text"
+            class="terminal-input"
+            id="terminalInput"
+            placeholder="Try: connect, weave, show patterns, risk, deploy, philosophy"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel" id="infoPanel">
+      <div class="info-title">Pattern Information</div>
+      <div class="info-content" id="infoContent">Hover over patterns to see their connections and features.</div>
+    </div>
+
+    <script>
+      // Pattern Weaver System
+      class PatternWeaver {
+        constructor() {
+          this.patterns = {
+            LOADER: {
+              icon: '📦',
+              name: 'LOADER',
+              description: 'File loading and transformation',
+              features: ['loaders', 'import attributes'],
+              position: { x: 150, y: 100 },
+              friends: ['TABULAR', 'STYLER', 'FILESYSTEM'],
+            },
+            STYLER: {
+              icon: '🎨',
+              name: 'STYLER',
+              description: 'CSS processing and modules',
+              features: ['CSS bundler', 'CSS modules'],
+              position: { x: 350, y: 80 },
+              friends: ['LOADER', 'BUILDER'],
+            },
+            TABULAR: {
+              icon: '📊',
+              name: 'TABULAR',
+              description: 'Structured data display',
+              features: ['Bun.inspect.table()', 'formatting'],
+              position: { x: 550, y: 100 },
+              friends: ['LOADER', 'TIMING', 'STREAM'],
+            },
+            SECURE: {
+              icon: '🔐',
+              name: 'SECURE',
+              description: 'Credential and secret management',
+              features: ['Bun.secrets', 'encryption'],
+              position: { x: 750, y: 120 },
+              friends: ['VERSIONER', 'SHELL'],
+            },
+            TIMING: {
+              icon: '⏱️',
+              name: 'TIMING',
+              description: 'Performance measurement',
+              features: ['Bun.nanoseconds()', 'benchmarking'],
+              position: { x: 950, y: 100 },
+              friends: ['TABULAR', 'BUILDER', 'SHELL'],
+            },
+            BUILDER: {
+              icon: '🔨',
+              name: 'BUILDER',
+              description: 'Compilation and bundling',
+              features: ['Bun.build()', 'executables'],
+              position: { x: 150, y: 250 },
+              friends: ['VERSIONER', 'SHELL', 'TIMING'],
+            },
+            VERSIONER: {
+              icon: '🔀',
+              name: 'VERSIONER',
+              description: 'Semantic versioning',
+              features: ['Bun.semver', 'version management'],
+              position: { x: 350, y: 270 },
+              friends: ['BUILDER', 'SECURE'],
+            },
+            SHELL: {
+              icon: '🐚',
+              name: 'SHELL',
+              description: 'Execute shell commands',
+              features: ['Bun.$', 'command execution'],
+              position: { x: 550, y: 250 },
+              friends: ['BUILDER', 'BUNX', 'TIMING'],
+            },
+            BUNX: {
+              icon: '📦',
+              name: 'BUNX',
+              description: 'Execute packages',
+              features: ['bunx', 'package execution'],
+              position: { x: 750, y: 270 },
+              friends: ['SHELL', 'INTERACTIVE'],
+            },
+            INTERACTIVE: {
+              icon: '🎯',
+              name: 'INTERACTIVE',
+              description: 'Interactive CLI',
+              features: ['console AsyncIterable', 'prompts'],
+              position: { x: 950, y: 250 },
+              friends: ['BUNX', 'STREAM'],
+            },
+            STREAM: {
+              icon: '🌊',
+              name: 'STREAM',
+              description: 'Stream processing',
+              features: ['Bun.stdin', 'chunk processing'],
+              position: { x: 150, y: 400 },
+              friends: ['FILESYSTEM', 'INTERACTIVE', 'TABULAR'],
+            },
+            FILESYSTEM: {
+              icon: '📁',
+              name: 'FILESYSTEM',
+              description: 'File system operations',
+              features: ['Bun.file()', 'file operations'],
+              position: { x: 450, y: 380 },
+              friends: ['LOADER', 'STREAM', 'UTILITIES'],
+            },
+            UTILITIES: {
+              icon: '🔧',
+              name: 'UTILITIES',
+              description: 'Utility functions',
+              features: ['Bun.stringWidth()', 'Bun.deepEquals()'],
+              position: { x: 750, y: 400 },
+              friends: ['FILESYSTEM', 'STREAM'],
+            },
+          };
+
+          this.canvas = document.getElementById('patternCanvas');
+          this.output = document.getElementById('terminalOutput');
+          this.commandHistory = [];
+          this.historyIndex = -1;
+          this.currentStage = 'philosophy';
+
+          this.init();
+        }
+
+        init() {
+          this.renderPatterns();
+          this.setupTerminal();
+          this.showWelcome();
+          this.animateConnections();
+        }
+
+        renderPatterns() {
+          // Clear canvas
+          this.canvas.innerHTML = '';
+
+          // Render connections first (behind nodes)
+          Object.entries(this.patterns).forEach(([key, pattern]) => {
+            pattern.friends.forEach(friendKey => {
+              if (this.patterns[friendKey]) {
+                this.renderConnection(pattern, this.patterns[friendKey]);
+              }
+            });
+          });
+
+          // Render pattern nodes
+          Object.entries(this.patterns).forEach(([key, pattern]) => {
+            const node = document.createElement('div');
+            node.className = 'pattern-node';
+            node.id = `pattern-${key}`;
+            node.style.left = pattern.position.x + 'px';
+            node.style.top = pattern.position.y + 'px';
+            node.innerHTML = `
+                        <div class="pattern-icon">${pattern.icon}</div>
+                        <div class="pattern-name">${pattern.name}</div>
+                    `;
+
+            // Add hover and click events
+            node.addEventListener('mouseenter', () => {
+              this.showPatternInfo(pattern);
+              this.highlightFriends(key);
+            });
+            node.addEventListener('mouseleave', () => {
+              this.hidePatternInfo();
+              this.unhighlightFriends();
+            });
+            node.addEventListener('click', () => {
+              this.activatePattern(key);
+              this.deepWeavePattern(key);
+            });
+
+            this.canvas.appendChild(node);
+          });
+        }
+
+        renderConnection(pattern1, pattern2) {
+          const connection = document.createElement('div');
+          connection.className = 'connection';
+
+          // Calculate connection line position and angle
+          const dx = pattern2.position.x - pattern1.position.x;
+          const dy = pattern2.position.y - pattern1.position.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+          connection.style.left = pattern1.position.x + 60 + 'px';
+          connection.style.top = pattern1.position.y + 30 + 'px';
+          connection.style.width = distance + 'px';
+          connection.style.transform = `rotate(${angle}deg)`;
+          connection.dataset.from = pattern1.name;
+          connection.dataset.to = pattern2.name;
+
+          this.canvas.appendChild(connection);
+        }
+
+        showPatternInfo(pattern) {
+          const infoContent = document.getElementById('infoContent');
+          infoContent.innerHTML = `
+                    <strong>${pattern.icon} ${pattern.name}</strong><br>
+                    ${pattern.description}
+                    <div class="pattern-details">
+                        <strong>Features:</strong><br>
+                        ${pattern.features
+                          .map(
+                            f => `
+                            <div class="pattern-feature">
+                                <span class="feature-icon">•</span>
+                                <span>${f}</span>
+                            </div>
+                        `
+                          )
+                          .join('')}
+                        <strong style="margin-top: 0.5rem; display: block;">Friends:</strong><br>
+                        ${pattern.friends
+                          .map(
+                            f => `
+                            <div class="pattern-feature">
+                                <span class="feature-icon">${this.patterns[f]?.icon || '•'}</span>
+                                <span>${f}</span>
+                            </div>
+                        `
+                          )
+                          .join('')}
+                    </div>
+                `;
+
+          // Highlight connections
+          document.querySelectorAll('.connection').forEach(conn => {
+            if (conn.dataset.from === pattern.name || conn.dataset.to === pattern.name) {
+              conn.classList.add('active');
+            }
+          });
+        }
+
+        hidePatternInfo() {
+          document.getElementById('infoContent').innerHTML =
+            'Hover over patterns to see their connections and features.';
+          document.querySelectorAll('.connection').forEach(conn => {
+            conn.classList.remove('active');
+          });
+        }
+
+        highlightFriends(patternKey) {
+          const pattern = this.patterns[patternKey];
+          if (!pattern) return;
+
+          // Highlight friend patterns
+          pattern.friends.forEach(friendKey => {
+            const friendNode = document.getElementById(`pattern-${friendKey}`);
+            if (friendNode) {
+              friendNode.classList.add('friend-highlight');
+            }
+          });
+        }
+
+        unhighlightFriends() {
+          document.querySelectorAll('.pattern-node').forEach(node => {
+            node.classList.remove('friend-highlight');
+          });
+        }
+
+        deepWeavePattern(key) {
+          const pattern = this.patterns[key];
+          if (!pattern) return;
+
+          // Create ripple effect
+          this.createRippleEffect(pattern.position);
+
+          // Animate all friend connections
+          pattern.friends.forEach((friendKey, index) => {
+            setTimeout(() => {
+              const friend = this.patterns[friendKey];
+              if (friend) {
+                this.animateConnection(pattern, friend);
+                this.createRippleEffect(friend.position);
+              }
+            }, index * 200);
+          });
+
+          // Update terminal with deep weave info
+          this.print(`╭─ Deep Weaving: ${pattern.icon} ${pattern.name}`);
+          this.print(`├─ Connecting to ${pattern.friends.length} friend patterns`);
+          pattern.friends.forEach(friendKey => {
+            const friend = this.patterns[friendKey];
+            if (friend) {
+              this.print(`│  ├─ ${friend.icon} ${friend.name}: ${friend.description}`);
+            }
+          });
+          this.print(`╰─ Weaving complete - patterns deeply connected`);
+        }
+
+        createRippleEffect(position) {
+          const ripple = document.createElement('div');
+          ripple.className = 'ripple-effect';
+          ripple.style.left = position.x + 60 + 'px';
+          ripple.style.top = position.y + 30 + 'px';
+          this.canvas.appendChild(ripple);
+
+          setTimeout(() => ripple.remove(), 1000);
+        }
+
+        animateConnection(pattern1, pattern2) {
+          const connection = Array.from(this.canvas.querySelectorAll('.connection')).find(
+            conn =>
+              (conn.dataset.from === pattern1.name && conn.dataset.to === pattern2.name) ||
+              (conn.dataset.from === pattern2.name && conn.dataset.to === pattern1.name)
+          );
+
+          if (connection) {
+            connection.classList.add('pulse-strong');
+            setTimeout(() => connection.classList.remove('pulse-strong'), 2000);
+          }
+        }
+
+        activatePattern(key) {
+          const node = document.getElementById(`pattern-${key}`);
+          node.classList.toggle('active');
+
+          const pattern = this.patterns[key];
+          this.print(`╭─ Activated Pattern: ${pattern.icon} ${pattern.name}`);
+          this.print(`├─ ${pattern.description}`);
+          this.print(`╰─ Friends: ${pattern.friends.join(', ')}`);
+        }
+
+        showStage(stage) {
+          this.currentStage = stage;
+
+          // Hide all patterns first
+          document.querySelectorAll('.pattern-node').forEach(node => {
+            node.style.opacity = '0.2';
+          });
+
+          let relevantPatterns = [];
+          let message = '';
+
+          switch (stage) {
+            case 'tool':
+              relevantPatterns = ['SECURE', 'TIMING', 'TABULAR'];
+              message = 'Stage 1: The Tool - Managing Risk with Security, Timing, and Data Display';
+              break;
+            case 'control':
+              relevantPatterns = ['BUILDER', 'VERSIONER', 'SHELL', 'LOADER'];
+              message = 'Stage 2: Control Plane - Enterprise Management through Build, Version, and Orchestration';
+              break;
+            case 'philosophy':
+              relevantPatterns = Object.keys(this.patterns);
+              message = 'Stage 3: Philosophy - All Patterns Working in Harmony to Guide Culture';
+              break;
+          }
+
+          // Highlight relevant patterns
+          relevantPatterns.forEach(key => {
+            const node = document.getElementById(`pattern-${key}`);
+            if (node) {
+              node.style.opacity = '1';
+              node.classList.add('active');
+            }
+          });
+
+          this.print(`\n╭─────────────────────────────────────────╮`);
+          this.print(`│ ${message.padEnd(39)} │`);
+          this.print(`╰─────────────────────────────────────────╯`);
+        }
+
+        animateConnections() {
+          let delay = 0;
+          document.querySelectorAll('.connection').forEach(conn => {
+            setTimeout(() => {
+              conn.classList.add('active');
+              setTimeout(() => conn.classList.remove('active'), 2000);
+            }, delay);
+            delay += 100;
+          });
+
+          this.print('├─ Weaving patterns together...');
+          this.print('╰─ Connections animated - patterns are picking up friends!');
+        }
+
+        showAllConnections() {
+          document.querySelectorAll('.connection').forEach(conn => {
+            conn.classList.add('active');
+          });
+
+          this.print('╭─ All Pattern Connections Revealed');
+          this.print('├─ The deep weaving is complete');
+          this.print('╰─ Every pattern has found its friends');
+        }
+
+        setupTerminal() {
+          const input = document.getElementById('terminalInput');
+
+          input.addEventListener('keydown', e => {
+            switch (e.key) {
+              case 'Enter':
+                this.executeCommand(input.value);
+                this.commandHistory.push(input.value);
+                this.historyIndex = this.commandHistory.length;
+                input.value = '';
+                break;
+              case 'ArrowUp':
+                e.preventDefault();
+                if (this.historyIndex > 0) {
+                  this.historyIndex--;
+                  input.value = this.commandHistory[this.historyIndex];
+                }
+                break;
+              case 'ArrowDown':
+                e.preventDefault();
+                if (this.historyIndex < this.commandHistory.length - 1) {
+                  this.historyIndex++;
+                  input.value = this.commandHistory[this.historyIndex];
+                } else {
+                  this.historyIndex = this.commandHistory.length;
+                  input.value = '';
+                }
+                break;
+            }
+          });
+        }
+
+        executeCommand(command) {
+          if (!command) return;
+
+          this.print(`\n╭─▶ ${command}`, 'cmd-info');
+
+          const [cmd, ...args] = command.toLowerCase().split(' ');
+
+          switch (cmd) {
+            case 'help':
+              this.showHelp();
+              break;
+            case 'connect':
+              this.connectPatterns(args);
+              break;
+            case 'weave':
+              this.weaveDeep();
+              break;
+            case 'show':
+              if (args[0] === 'patterns') {
+                this.showPatterns();
+              } else if (args[0] === 'evolution') {
+                this.showEvolution();
+              }
+              break;
+            case 'risk':
+              this.showStage('tool');
+              break;
+            case 'deploy':
+              this.showStage('control');
+              break;
+            case 'philosophy':
+              this.showStage('philosophy');
+              break;
+            case 'clear':
+              this.output.innerHTML = '';
+              break;
+            case 'friends':
+              this.showFriends(args[0]);
+              break;
+            case 'matrix':
+              this.showPatternMatrix();
+              break;
+            case 'evolve':
+              this.showEvolutionAnimation();
+              break;
+            case 'deep':
+              this.deepDive(args[0]);
+              break;
+            default:
+              this.print(`├─ Unknown command: ${cmd}`, 'cmd-error');
+              this.print(`╰─ Type 'help' for available commands`);
+          }
+        }
+
+        showHelp() {
+          const helpText = `
+╭─ Available Commands ─────────────────────────────╮
+│ help       - Show this help message             │
+│ connect    - Connect two patterns               │
+│ weave      - Start deep weaving process         │
+│ show patterns - Display all patterns            │
+│ show evolution - Show evolution stages          │
+│ risk       - Show risk management stage         │
+│ deploy     - Show control plane stage           │
+│ philosophy - Show complete philosophy           │
+│ friends [pattern] - Show pattern's friends      │
+│ matrix     - Display pattern connection matrix  │
+│ evolve     - Animate evolution journey          │
+│ deep [pattern] - Deep dive into a pattern      │
+│ clear      - Clear terminal                     │
+╰──────────────────────────────────────────────────╯`;
+          this.print(helpText);
+        }
+
+        showPatterns() {
+          this.print('\n╭─ All Patterns in the Weaver System ─────────────╮');
+          Object.entries(this.patterns).forEach(([key, pattern]) => {
+            this.print(`│ ${pattern.icon} ${key.padEnd(12)} - ${pattern.description.substring(0, 25)}...`);
+          });
+          this.print('╰──────────────────────────────────────────────────╯');
+        }
+
+        connectPatterns(args) {
+          if (args.length < 2) {
+            this.print('├─ Usage: connect [pattern1] [pattern2]', 'cmd-warning');
+            return;
+          }
+
+          const p1 = args[0].toUpperCase();
+          const p2 = args[1].toUpperCase();
+
+          if (this.patterns[p1] && this.patterns[p2]) {
+            this.patterns[p1].friends.push(p2);
+            this.patterns[p2].friends.push(p1);
+            this.renderPatterns();
+            this.print(`├─ Connected ${p1} ←→ ${p2}`, 'cmd-success');
+            this.print(`╰─ Patterns are now friends!`);
+          } else {
+            this.print(`├─ Pattern not found`, 'cmd-error');
+          }
+        }
+
+        weaveDeep() {
+          this.print('\n╭─ DEEP WEAVING INITIATED ─────────────────────────╮');
+          this.print('│ Stage 1: Tool Phase                             │');
+          this.print('│   Activating SECURE, TIMING, TABULAR...         │');
+          setTimeout(() => {
+            this.print('│ Stage 2: Control Plane Phase                    │');
+            this.print('│   Integrating BUILDER, VERSIONER, SHELL...      │');
+          }, 1000);
+          setTimeout(() => {
+            this.print('│ Stage 3: Philosophy Phase                       │');
+            this.print('│   All patterns now connected in harmony...      │');
+            this.print('╰──────────────────────────────────────────────────╯');
+            this.showAllConnections();
+          }, 2000);
+        }
+
+        showFriends(patternName) {
+          const key = patternName?.toUpperCase();
+          if (!key || !this.patterns[key]) {
+            this.print('├─ Usage: friends [pattern]', 'cmd-warning');
+            return;
+          }
+
+          const pattern = this.patterns[key];
+          this.print(`\n╭─ Friends of ${pattern.icon} ${key} ───────────────────╮`);
+          pattern.friends.forEach(friend => {
+            const f = this.patterns[friend];
+            if (f) {
+              this.print(`│ ${f.icon} ${friend.padEnd(12)} - ${f.description.substring(0, 25)}...`);
+            }
+          });
+          this.print('╰──────────────────────────────────────────────────╯');
+        }
+
+        showWelcome() {
+          const welcome = `
+╭─────────────────────────────────────────────────────────╮
+│           PATTERN WEAVER PHILOSOPHY SYSTEM              │
+│                                                         │
+│  "We began by designing a command-line tool to         │
+│   manage risk. We evolved it into a control plane      │
+│   to manage an enterprise. We have ended by defining   │
+│   a philosophy to guide a culture."                    │
+│                                                         │
+│  Type 'help' for available commands                    │
+╰─────────────────────────────────────────────────────────╯`;
+          this.print(welcome);
+        }
+
+        showEvolution() {
+          this.print('\n╭─ Pattern Evolution Journey ──────────────────────╮');
+          this.print('│                                                  │');
+          this.print('│  Stage 1: TOOL (Risk Management)                │');
+          this.print('│    ├─ SECURE: Credential management             │');
+          this.print('│    ├─ TIMING: Performance measurement           │');
+          this.print('│    ╰─ TABULAR: Data display                    │');
+          this.print('│                                                  │');
+          this.print('│  Stage 2: CONTROL PLANE (Enterprise)            │');
+          this.print('│    ├─ BUILDER: Compilation & bundling           │');
+          this.print('│    ├─ VERSIONER: Release management            │');
+          this.print('│    ├─ SHELL: Automation & scripting            │');
+          this.print('│    ╰─ LOADER: Configuration management         │');
+          this.print('│                                                  │');
+          this.print('│  Stage 3: PHILOSOPHY (Culture)                  │');
+          this.print('│    All 13 patterns working in harmony:          │');
+          this.print('│    Creating a unified development philosophy    │');
+          this.print('│                                                  │');
+          this.print('╰──────────────────────────────────────────────────╯');
+        }
+
+        showPatternMatrix() {
+          this.print('\n╭─ Pattern Connection Matrix ──────────────────────╮');
+
+          // Create connection matrix
+          const matrix = [];
+          const patternKeys = Object.keys(this.patterns);
+
+          patternKeys.forEach(key1 => {
+            const pattern1 = this.patterns[key1];
+            const row = patternKeys.map(key2 => {
+              if (key1 === key2) return '●';
+              return pattern1.friends.includes(key2) ? '✓' : '·';
+            });
+            matrix.push(`│ ${key1.padEnd(12)} ${row.join(' ')} │`);
+          });
+
+          // Print header
+          this.print(`│ ${''.padEnd(12)} ${patternKeys.map(k => k[0]).join(' ')} │`);
+          this.print('│ ' + '─'.repeat(48) + ' │');
+
+          // Print matrix
+          matrix.forEach(row => this.print(row));
+
+          this.print('╰──────────────────────────────────────────────────╯');
+          this.print('  Legend: ● = self, ✓ = connected, · = not connected');
+        }
+
+        showEvolutionAnimation() {
+          this.print('\n╭─ EVOLUTION ANIMATION ────────────────────────────╮');
+          this.print('│ Starting evolution from Tool to Philosophy...    │');
+
+          // Stage 1: Tool
+          setTimeout(() => {
+            this.showStage('tool');
+            this.print('│ ▶ Stage 1: Tool - Risk Management Activated     │');
+          }, 500);
+
+          // Stage 2: Control Plane
+          setTimeout(() => {
+            this.showStage('control');
+            this.print('│ ▶ Stage 2: Control Plane - Enterprise Ready     │');
+          }, 2000);
+
+          // Stage 3: Philosophy
+          setTimeout(() => {
+            this.showStage('philosophy');
+            this.print('│ ▶ Stage 3: Philosophy - Culture Defined         │');
+            this.print('╰──────────────────────────────────────────────────╯');
+            this.showAllConnections();
+          }, 3500);
+        }
+
+        deepDive(patternName) {
+          const key = patternName?.toUpperCase();
+
+          if (!key || !this.patterns[key]) {
+            this.print('├─ Usage: deep [pattern]', 'cmd-warning');
+            this.print('╰─ Example: deep SECURE');
+            return;
+          }
+
+          const pattern = this.patterns[key];
+
+          // Activate and highlight the pattern
+          const node = document.getElementById(`pattern-${key}`);
+          if (node) {
+            node.classList.add('active');
+            node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+
+          // Deep weave animation
+          this.deepWeavePattern(key);
+
+          this.print(`\n╭─ DEEP DIVE: ${pattern.icon} ${key} ──────────────╮`);
+          this.print(`│                                                  │`);
+          this.print(`│ Description: ${pattern.description.padEnd(35)} │`);
+          this.print(`│                                                  │`);
+          this.print(`│ Features:                                        │`);
+          pattern.features.forEach(feature => {
+            this.print(`│   • ${feature.padEnd(43)} │`);
+          });
+          this.print(`│                                                  │`);
+          this.print(`│ Friend Patterns (${pattern.friends.length}):                         │`);
+          pattern.friends.forEach(friendKey => {
+            const friend = this.patterns[friendKey];
+            if (friend) {
+              this.print(`│   ${friend.icon} ${friendKey.padEnd(12)} → ${friend.description.substring(0, 25)}... │`);
+            }
+          });
+          this.print(`│                                                  │`);
+          this.print(`│ Evolution:                                       │`);
+
+          // Determine which stage this pattern belongs to
+          const toolPatterns = ['SECURE', 'TIMING', 'TABULAR'];
+          const controlPatterns = ['BUILDER', 'VERSIONER', 'SHELL', 'LOADER'];
+
+          if (toolPatterns.includes(key)) {
+            this.print(`│   Part of Stage 1: Tool (Risk Management)       │`);
+          } else if (controlPatterns.includes(key)) {
+            this.print(`│   Part of Stage 2: Control Plane                │`);
+          } else {
+            this.print(`│   Part of Stage 3: Philosophy (All Patterns)    │`);
+          }
+
+          this.print(`╰──────────────────────────────────────────────────╯`);
+        }
+
+        print(text, className = '') {
+          const line = document.createElement('div');
+          line.className = `cmd-line ${className}`;
+          line.textContent = text;
+          this.output.appendChild(line);
+          this.output.scrollTop = this.output.scrollHeight;
+        }
+      }
+
+      // Initialize the Pattern Weaver
+      const weaver = new PatternWeaver();
+    </script>
+  </body>
+</html>

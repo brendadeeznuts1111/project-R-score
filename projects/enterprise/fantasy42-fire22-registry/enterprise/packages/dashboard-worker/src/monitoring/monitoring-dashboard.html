@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Monitoring Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      .metric-card {
+        transition: all 0.3s ease;
+      }
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+      .status-healthy {
+        color: #10b981;
+      }
+      .status-degraded {
+        color: #f59e0b;
+      }
+      .status-unhealthy {
+        color: #ef4444;
+      }
+      .chart-container {
+        position: relative;
+        height: 300px;
+      }
+      .loading {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="min-h-screen">
+      <!-- Header -->
+      <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center py-4">
+            <div class="flex items-center">
+              <svg class="h-8 w-8 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"
+                ></path>
+              </svg>
+              <h1 class="text-2xl font-bold text-gray-900">Fire22 Monitoring Dashboard</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+              <span id="lastUpdate" class="text-sm text-gray-500">Last updated: Never</span>
+              <button
+                id="refreshBtn"
+                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- System Overview -->
+        <section class="mb-8">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">System Overview</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- System Health -->
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">System Health</p>
+                  <p id="systemHealth" class="text-2xl font-bold text-gray-900 mt-1">Loading...</p>
+                </div>
+                <div id="systemHealthIcon" class="text-3xl loading">🔄</div>
+              </div>
+            </div>
+
+            <!-- Active Requests -->
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Active Requests</p>
+                  <p id="activeRequests" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+                </div>
+                <div class="text-3xl">📊</div>
+              </div>
+            </div>
+
+            <!-- Avg Response Time -->
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Avg Response Time</p>
+                  <p id="avgResponseTime" class="text-2xl font-bold text-gray-900 mt-1">0ms</p>
+                </div>
+                <div class="text-3xl">⚡</div>
+              </div>
+            </div>
+
+            <!-- Request Rate -->
+            <div class="metric-card bg-white rounded-lg shadow p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Request Rate</p>
+                  <p id="requestRate" class="text-2xl font-bold text-gray-900 mt-1">0/s</p>
+                </div>
+                <div class="text-3xl">📈</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Response Time Chart -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Response Time (Last 60s)</h3>
+            <div class="chart-container">
+              <canvas id="responseTimeChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Request Rate Chart -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Request Rate (Last 60s)</h3>
+            <div class="chart-container">
+              <canvas id="requestRateChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Component Health -->
+        <section class="mb-8">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Component Health</h2>
+          <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Component
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Last Checked
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Message
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="componentHealthTable" class="bg-white divide-y divide-gray-200">
+                <tr>
+                  <td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading component health...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Security Events -->
+        <section class="mb-8">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Security Events</h2>
+          <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Timestamp
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Severity
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Details
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="securityEventsTable" class="bg-white divide-y divide-gray-200">
+                <tr>
+                  <td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading security events...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- System Metrics -->
+        <section>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">System Metrics</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- CPU Usage -->
+            <div class="bg-white rounded-lg shadow p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">CPU Usage</h3>
+              <div class="chart-container">
+                <canvas id="cpuChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Memory Usage -->
+            <div class="bg-white rounded-lg shadow p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Memory Usage</h3>
+              <div class="chart-container">
+                <canvas id="memoryChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Active Connections -->
+            <div class="bg-white rounded-lg shadow p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Active Connections</h3>
+              <div class="chart-container">
+                <canvas id="connectionsChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      // Global variables
+      let charts = {};
+      let refreshInterval;
+
+      // Initialize dashboard
+      document.addEventListener('DOMContentLoaded', function () {
+        initializeCharts();
+        loadDashboardData();
+        setupEventListeners();
+        startAutoRefresh();
+      });
+
+      // Initialize Chart.js charts
+      function initializeCharts() {
+        // Response Time Chart
+        const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+        charts.responseTime = new Chart(responseTimeCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: 'Response Time (ms)',
+                data: [],
+                borderColor: 'rgb(239, 68, 68)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+
+        // Request Rate Chart
+        const requestRateCtx = document.getElementById('requestRateChart').getContext('2d');
+        charts.requestRate = new Chart(requestRateCtx, {
+          type: 'bar',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: 'Requests per Second',
+                data: [],
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: 'rgb(59, 130, 246)',
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+
+        // CPU Usage Chart
+        const cpuCtx = document.getElementById('cpuChart').getContext('2d');
+        charts.cpu = new Chart(cpuCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Used', 'Available'],
+            datasets: [
+              {
+                data: [0, 100],
+                backgroundColor: ['rgb(239, 68, 68)', 'rgb(229, 231, 235)'],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+
+        // Memory Usage Chart
+        const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+        charts.memory = new Chart(memoryCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Used', 'Available'],
+            datasets: [
+              {
+                data: [0, 100],
+                backgroundColor: ['rgb(245, 158, 11)', 'rgb(229, 231, 235)'],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+
+        // Active Connections Chart
+        const connectionsCtx = document.getElementById('connectionsChart').getContext('2d');
+        charts.connections = new Chart(connectionsCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: 'Active Connections',
+                data: [],
+                borderColor: 'rgb(16, 185, 129)',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      // Load dashboard data
+      async function loadDashboardData() {
+        try {
+          const [health, metrics, securityEvents] = await Promise.all([
+            fetchHealthData(),
+            fetchMetricsData(),
+            fetchSecurityEvents(),
+          ]);
+
+          updateSystemHealth(health);
+          updateMetrics(metrics);
+          updateSecurityEvents(securityEvents);
+          updateLastUpdateTime();
+        } catch (error) {
+          console.error('Error loading dashboard data:', error);
+          showError('Failed to load dashboard data');
+        }
+      }
+
+      // Fetch health data
+      async function fetchHealthData() {
+        const response = await fetch('/health');
+        if (!response.ok) {
+          throw new Error('Failed to fetch health data');
+        }
+        return response.json();
+      }
+
+      // Fetch metrics data
+      async function fetchMetricsData() {
+        const response = await fetch('/metrics');
+        if (!response.ok) {
+          throw new Error('Failed to fetch metrics data');
+        }
+        return response.json();
+      }
+
+      // Fetch security events
+      async function fetchSecurityEvents() {
+        const response = await fetch('/security-events');
+        if (!response.ok) {
+          throw new Error('Failed to fetch security events');
+        }
+        return response.json();
+      }
+
+      // Update system health display
+      function updateSystemHealth(health) {
+        const healthElement = document.getElementById('systemHealth');
+        const iconElement = document.getElementById('systemHealthIcon');
+
+        healthElement.textContent = health.status.toUpperCase();
+
+        const statusClass = `status-${health.status}`;
+        healthElement.className = `text-2xl font-bold mt-1 ${statusClass}`;
+
+        const statusIcons = {
+          healthy: '✅',
+          degraded: '⚠️',
+          unhealthy: '❌',
+        };
+
+        iconElement.textContent = statusIcons[health.status] || '❓';
+        iconElement.className = `text-3xl ${statusClass}`;
+
+        // Update component health table
+        updateComponentHealthTable(health.components);
+      }
+
+      // Update component health table
+      function updateComponentHealthTable(components) {
+        const tableBody = document.getElementById('componentHealthTable');
+        tableBody.innerHTML = '';
+
+        for (const [component, health] of Object.entries(components)) {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${component}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full status-${health.status}">
+                            ${health.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTimestamp(health.lastChecked)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${health.message || '-'}</td>
+                `;
+          tableBody.appendChild(row);
+        }
+      }
+
+      // Update metrics display
+      function updateMetrics(metrics) {
+        // Update active requests
+        document.getElementById('activeRequests').textContent = metrics.activeConnections || 0;
+
+        // Update average response time
+        const avgResponseTime = metrics.responseTime || 0;
+        document.getElementById('avgResponseTime').textContent = `${avgResponseTime}ms`;
+
+        // Update request rate
+        const requestRate = metrics.requestRate || 0;
+        document.getElementById('requestRate').textContent = `${requestRate}/s`;
+
+        // Update charts
+        updateCharts(metrics);
+      }
+
+      // Update charts with new data
+      function updateCharts(metrics) {
+        const now = new Date().toLocaleTimeString();
+
+        // Update response time chart
+        if (charts.responseTime.data.labels.length > 20) {
+          charts.responseTime.data.labels.shift();
+          charts.responseTime.data.datasets[0].data.shift();
+        }
+        charts.responseTime.data.labels.push(now);
+        charts.responseTime.data.datasets[0].data.push(metrics.responseTime || 0);
+        charts.responseTime.update();
+
+        // Update request rate chart
+        if (charts.requestRate.data.labels.length > 20) {
+          charts.requestRate.data.labels.shift();
+          charts.requestRate.data.datasets[0].data.shift();
+        }
+        charts.requestRate.data.labels.push(now);
+        charts.requestRate.data.datasets[0].data.push(metrics.requestRate || 0);
+        charts.requestRate.update();
+
+        // Update CPU chart
+        charts.cpu.data.datasets[0].data = [metrics.cpuUsage || 0, 100 - (metrics.cpuUsage || 0)];
+        charts.cpu.update();
+
+        // Update memory chart
+        charts.memory.data.datasets[0].data = [metrics.memoryUsage || 0, 100 - (metrics.memoryUsage || 0)];
+        charts.memory.update();
+
+        // Update connections chart
+        if (charts.connections.data.labels.length > 20) {
+          charts.connections.data.labels.shift();
+          charts.connections.data.datasets[0].data.shift();
+        }
+        charts.connections.data.labels.push(now);
+        charts.connections.data.datasets[0].data.push(metrics.activeConnections || 0);
+        charts.connections.update();
+      }
+
+      // Update security events table
+      function updateSecurityEvents(events) {
+        const tableBody = document.getElementById('securityEventsTable');
+        tableBody.innerHTML = '';
+
+        if (events.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No security events</td></tr>';
+          return;
+        }
+
+        events.slice(0, 10).forEach(event => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTimestamp(event.timestamp)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${event.type}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full severity-${event.severity}">
+                            ${event.severity.toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${JSON.stringify(event.details)}</td>
+                `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Update last update time
+      function updateLastUpdateTime() {
+        const now = new Date();
+        document.getElementById('lastUpdate').textContent = `Last updated: ${now.toLocaleTimeString()}`;
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        document.getElementById('refreshBtn').addEventListener('click', loadDashboardData);
+      }
+
+      // Start auto refresh
+      function startAutoRefresh() {
+        refreshInterval = setInterval(loadDashboardData, 30000); // Refresh every 30 seconds
+      }
+
+      // Stop auto refresh
+      function stopAutoRefresh() {
+        if (refreshInterval) {
+          clearInterval(refreshInterval);
+        }
+      }
+
+      // Format timestamp
+      function formatTimestamp(timestamp) {
+        return new Date(timestamp).toLocaleString();
+      }
+
+      // Show error message
+      function showError(message) {
+        // Create a toast notification
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-md shadow-lg z-50';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.remove();
+        }, 5000);
+      }
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', function () {
+        stopAutoRefresh();
+      });
+    </script>
+  </body>
+</html>

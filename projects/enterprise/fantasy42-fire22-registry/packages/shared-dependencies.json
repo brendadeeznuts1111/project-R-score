@@ -1,0 +1,75 @@
+{
+  "name": "@fire22-registry/shared-dependencies",
+  "version": "1.0.0",
+  "description": "Shared dependency configuration for Fantasy42-Fire22 Registry",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.0",
+    "semver": "^7.7.2",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "@types/bun": "^1.2.21",
+    "@types/node": "^24.3.0",
+    "@types/pg": "^8.10.9",
+    "@types/uuid": "^9.0.7",
+    "wrangler": "^3.22.0"
+  },
+  "optionalDependencies": {
+    // Using Bun's native SQLite - no external dependencies needed
+    // "better-sqlite3": "^9.4.3", // Removed - using bun:sqlite instead
+    "drizzle-orm": "^0.44.5"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "resolutions": {
+    "@types/node": "^24.3.0"
+  },
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "deps:install": "bun install",
+    "deps:update": "bun update",
+    "deps:audit": "bunx audit",
+    "deps:check": "bunx depcheck",
+    "deps:clean": "bunx rimraf node_modules && bun install",
+    "deps:tree": "bunx npm ls --depth=0",
+    "deps:security": "bunx audit --audit-level high",
+    "deps:optimize": "bun run scripts/dependency-optimizer.ts optimize",
+    "deps:health": "bun run scripts/dependency-optimizer.ts health",
+    "deps:report": "bun run scripts/dependency-optimizer.ts report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry.git"
+  },
+  "keywords": [
+    "fantasy42",
+    "fire22",
+    "package-registry",
+    "enterprise",
+    "security",
+    "compliance",
+    "sports-betting",
+    "typescript",
+    "bun",
+    "monorepo"
+  ],
+  "author": "Fire22 Enterprise",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/issues"
+  },
+  "homepage": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry#readme",
+  "fantasy42": {
+    "registry": true,
+    "compliance": ["GDPR", "PCI", "AML", "KYC"],
+    "security": "enterprise",
+    "platforms": ["linux", "macos", "windows", "cloudflare"]
+  }
+}

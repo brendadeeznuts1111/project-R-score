@@ -1,0 +1,970 @@
+{
+  "departments": {
+    "finance": {
+      "name": "Finance Department",
+      "domain": "@finance.fire22",
+      "email": "finance@fire22.com",
+      "slack": "#finance",
+      "color": "#10b981",
+      "members": [
+        {
+          "id": "john-smith",
+          "name": "John Smith",
+          "role": "Finance Director",
+          "email": "john.smith@finance.fire22",
+          "slack": "@john.smith",
+          "phone": "+1-555-0101",
+          "status": "available",
+          "avatar": "JS",
+          "quickActions": ["schedule", "email", "slack", "call"]
+        },
+        {
+          "id": "sarah-johnson",
+          "name": "Sarah Johnson",
+          "role": "Senior Analyst",
+          "email": "sarah.johnson@finance.fire22",
+          "slack": "@sarah.johnson",
+          "phone": "+1-555-0102",
+          "status": "busy",
+          "avatar": "SJ",
+          "quickActions": ["email", "slack"]
+        },
+        {
+          "id": "mike-chen",
+          "name": "Mike Chen",
+          "role": "Treasury Manager",
+          "email": "mike.chen@finance.fire22",
+          "slack": "@mike.chen",
+          "phone": "+1-555-0103",
+          "status": "available",
+          "avatar": "MC",
+          "quickActions": ["schedule", "email", "slack", "call"]
+        },
+        {
+          "id": "anna-lee",
+          "name": "Anna Lee",
+          "role": "Financial Analyst",
+          "email": "anna.lee@finance.fire22",
+          "slack": "@anna.lee",
+          "phone": "+1-555-0104",
+          "status": "available",
+          "avatar": "AL",
+          "quickActions": ["email", "slack", "schedule", "analytics"]
+        }
+      ]
+    },
+    "support": {
+      "name": "Customer Support",
+      "domain": "@support.fire22",
+      "email": "support@fire22.com",
+      "slack": "#support",
+      "color": "#3b82f6",
+      "members": [
+        {
+          "id": "emily-davis",
+          "name": "Emily Davis",
+          "role": "Support Manager",
+          "email": "emily.davis@support.fire22",
+          "slack": "@emily.davis",
+          "phone": "+1-555-0201",
+          "status": "available",
+          "avatar": "ED",
+          "quickActions": ["schedule", "email", "slack", "call", "ticket"]
+        },
+        {
+          "id": "alex-wilson",
+          "name": "Alex Wilson",
+          "role": "Senior Support Agent",
+          "email": "alex.wilson@support.fire22",
+          "slack": "@alex.wilson",
+          "phone": "+1-555-0202",
+          "status": "on-call",
+          "avatar": "AW",
+          "quickActions": ["email", "slack", "ticket"]
+        },
+        {
+          "id": "natalie-brown",
+          "name": "Natalie Brown",
+          "role": "Support Specialist",
+          "email": "natalie.brown@support.fire22",
+          "slack": "@natalie.brown",
+          "phone": "+1-555-0203",
+          "status": "available",
+          "avatar": "NB",
+          "quickActions": ["email", "slack", "ticket", "call"]
+        }
+      ]
+    },
+    "compliance": {
+      "name": "Compliance Department",
+      "domain": "@compliance.fire22",
+      "email": "compliance@fire22.com",
+      "slack": "#compliance",
+      "color": "#8b5cf6",
+      "members": [
+        {
+          "id": "lisa-anderson",
+          "name": "Lisa Anderson",
+          "role": "Compliance Officer",
+          "email": "lisa.anderson@compliance.fire22",
+          "slack": "@lisa.anderson",
+          "phone": "+1-555-0301",
+          "status": "available",
+          "avatar": "LA",
+          "quickActions": ["schedule", "email", "slack", "secure-message"]
+        },
+        {
+          "id": "robert-taylor",
+          "name": "Robert Taylor",
+          "role": "Legal Advisor",
+          "email": "robert.taylor@compliance.fire22",
+          "slack": "@robert.taylor",
+          "phone": "+1-555-0302",
+          "status": "in-meeting",
+          "avatar": "RT",
+          "quickActions": ["schedule", "email", "secure-message"]
+        }
+      ]
+    },
+    "operations": {
+      "name": "Operations Department",
+      "domain": "@operations.fire22",
+      "email": "operations@fire22.com",
+      "slack": "#operations",
+      "color": "#f59e0b",
+      "members": [
+        {
+          "id": "david-martinez",
+          "name": "David Martinez",
+          "role": "Operations Director",
+          "email": "david.martinez@operations.fire22",
+          "slack": "@david.martinez",
+          "phone": "+1-555-0401",
+          "status": "available",
+          "avatar": "DM",
+          "quickActions": ["schedule", "email", "slack", "call", "task"]
+        },
+        {
+          "id": "jennifer-lee",
+          "name": "Jennifer Lee",
+          "role": "Operations Manager",
+          "email": "jennifer.lee@operations.fire22",
+          "slack": "@jennifer.lee",
+          "phone": "+1-555-0402",
+          "status": "available",
+          "avatar": "JL",
+          "quickActions": ["email", "slack", "task"]
+        }
+      ]
+    },
+    "technology": {
+      "name": "Technology Department",
+      "domain": "@tech.fire22",
+      "email": "tech@fire22.com",
+      "slack": "#technology",
+      "color": "#06b6d4",
+      "members": [
+        {
+          "id": "chris-brown",
+          "name": "Chris Brown",
+          "role": "CTO",
+          "email": "chris.brown@tech.fire22",
+          "slack": "@chris.brown",
+          "phone": "+1-555-0501",
+          "status": "coding",
+          "avatar": "CB",
+          "quickActions": ["schedule", "email", "slack", "github", "jira"]
+        },
+        {
+          "id": "amanda-garcia",
+          "name": "Amanda Garcia",
+          "role": "Lead Developer",
+          "email": "amanda.garcia@tech.fire22",
+          "slack": "@amanda.garcia",
+          "phone": "+1-555-0502",
+          "status": "available",
+          "avatar": "AG",
+          "quickActions": ["email", "slack", "github", "code-review"]
+        },
+        {
+          "id": "danny-kim",
+          "name": "Danny Kim",
+          "role": "Full Stack Developer",
+          "email": "danny.kim@tech.fire22",
+          "slack": "@danny.kim",
+          "phone": "+1-555-0503",
+          "status": "coding",
+          "avatar": "DK",
+          "quickActions": ["email", "slack", "github", "code-review"]
+        },
+        {
+          "id": "sophia-zhang",
+          "name": "Sophia Zhang",
+          "role": "DevOps Engineer",
+          "email": "sophia.zhang@tech.fire22",
+          "slack": "@sophia.zhang",
+          "phone": "+1-555-0504",
+          "status": "available",
+          "avatar": "SZ",
+          "quickActions": ["email", "slack", "github", "ops-review"]
+        }
+      ]
+    },
+    "marketing": {
+      "name": "Marketing Department",
+      "domain": "@marketing.fire22",
+      "email": "marketing@fire22.com",
+      "slack": "#marketing",
+      "color": "#ef4444",
+      "members": [
+        {
+          "id": "michelle-rodriguez",
+          "name": "Michelle Rodriguez",
+          "role": "Marketing Director",
+          "email": "michelle.rodriguez@marketing.fire22",
+          "slack": "@michelle.rodriguez",
+          "phone": "+1-555-0601",
+          "status": "available",
+          "avatar": "MR",
+          "quickActions": ["schedule", "email", "slack", "campaign", "analytics"]
+        },
+        {
+          "id": "kevin-thompson",
+          "name": "Kevin Thompson",
+          "role": "Digital Marketing Lead",
+          "email": "kevin.thompson@marketing.fire22",
+          "slack": "@kevin.thompson",
+          "phone": "+1-555-0602",
+          "status": "creative-work",
+          "avatar": "KT",
+          "quickActions": ["email", "slack", "campaign", "social"]
+        }
+      ]
+    },
+    "management": {
+      "name": "Management",
+      "domain": "@exec.fire22",
+      "email": "exec@fire22.com",
+      "slack": "#executive",
+      "color": "#6b7280",
+      "members": [
+        {
+          "id": "william-harris",
+          "name": "William Harris",
+          "role": "CEO",
+          "email": "william.harris@exec.fire22",
+          "slack": "@william.harris",
+          "phone": "+1-555-0001",
+          "status": "available",
+          "avatar": "WH",
+          "priority": "executive",
+          "quickActions": ["schedule", "email", "urgent-call", "board-meeting"]
+        },
+        {
+          "id": "patricia-clark",
+          "name": "Patricia Clark",
+          "role": "COO",
+          "email": "patricia.clark@exec.fire22",
+          "slack": "@patricia.clark",
+          "phone": "+1-555-0002",
+          "status": "strategic-planning",
+          "avatar": "PC",
+          "priority": "executive",
+          "quickActions": ["schedule", "email", "urgent-call", "ops-review"]
+        }
+      ]
+    },
+    "communications": {
+      "name": "Communications Department",
+      "domain": "@communications.fire22",
+      "email": "communications@fire22.com",
+      "slack": "#communications",
+      "color": "#6366f1",
+      "members": [
+        {
+          "id": "sarah-martinez",
+          "name": "Sarah Martinez",
+          "role": "Communications Director",
+          "email": "sarah.martinez@communications.fire22",
+          "slack": "@sarah.martinez",
+          "phone": "+1-555-0701",
+          "status": "available",
+          "avatar": "SM",
+          "quickActions": [
+            "schedule",
+            "email",
+            "slack",
+            "call",
+            "announcement",
+            "approval",
+            "telegram-channels",
+            "telegram-broadcast"
+          ]
+        },
+        {
+          "id": "alex-chen",
+          "name": "Alex Chen",
+          "role": "Internal Communications Manager",
+          "email": "alex.chen@communications.fire22",
+          "slack": "@alex.chen",
+          "phone": "+1-555-0702",
+          "status": "available",
+          "avatar": "AC",
+          "quickActions": [
+            "email",
+            "slack",
+            "schedule",
+            "department-update",
+            "telegram-bots",
+            "telegram-analytics"
+          ]
+        },
+        {
+          "id": "maria-rodriguez",
+          "name": "Maria Rodriguez",
+          "role": "Communications Coordinator",
+          "email": "maria.rodriguez@communications.fire22",
+          "slack": "@maria.rodriguez",
+          "phone": "+1-555-0703",
+          "status": "available",
+          "avatar": "MR",
+          "quickActions": ["email", "slack", "template", "metrics", "telegram-shortlinks"]
+        }
+      ]
+    },
+    "contributors": {
+      "name": "Team Contributors",
+      "domain": "@team.fire22",
+      "email": "team@fire22.com",
+      "slack": "#team-contributors",
+      "color": "#40e0d0",
+      "members": [
+        {
+          "id": "jane-smith",
+          "name": "Jane Smith",
+          "role": "Senior Contributor",
+          "email": "jane.smith@team.fire22",
+          "slack": "@jane.smith",
+          "phone": "+1-555-0801",
+          "status": "available",
+          "avatar": "JS",
+          "quickActions": ["schedule", "email", "slack", "call", "task"]
+        },
+        {
+          "id": "michael-davis",
+          "name": "Michael Davis",
+          "role": "Technical Contributor",
+          "email": "michael.davis@team.fire22",
+          "slack": "@michael.davis",
+          "phone": "+1-555-0802",
+          "status": "coding",
+          "avatar": "MD",
+          "quickActions": ["email", "slack", "github", "code-review"]
+        },
+        {
+          "id": "rachel-wilson",
+          "name": "Rachel Wilson",
+          "role": "QA Contributor",
+          "email": "rachel.wilson@team.fire22",
+          "slack": "@rachel.wilson",
+          "phone": "+1-555-0803",
+          "status": "available",
+          "avatar": "RW",
+          "quickActions": ["email", "slack", "task", "ticket"]
+        },
+        {
+          "id": "james-taylor",
+          "name": "James Taylor",
+          "role": "DevOps Contributor",
+          "email": "james.taylor@team.fire22",
+          "slack": "@james.taylor",
+          "phone": "+1-555-0804",
+          "status": "available",
+          "avatar": "JT",
+          "quickActions": ["email", "slack", "github", "ops-review"]
+        }
+      ]
+    },
+    "design": {
+      "name": "Design Team",
+      "domain": "@design.fire22",
+      "email": "design@fire22.com",
+      "slack": "#design",
+      "color": "#ec4899",
+      "members": [
+        {
+          "id": "isabella-martinez",
+          "name": "Isabella Martinez",
+          "role": "Design Director",
+          "email": "isabella.martinez@design.fire22",
+          "slack": "@isabella.martinez",
+          "phone": "+1-555-0901",
+          "status": "available",
+          "avatar": "IM",
+          "quickActions": [
+            "schedule",
+            "email",
+            "slack",
+            "portfolio",
+            "figma",
+            "widget-library",
+            "design-tokens"
+          ]
+        },
+        {
+          "id": "ethan-cooper",
+          "name": "Ethan Cooper",
+          "role": "UI/UX Designer",
+          "email": "ethan.cooper@design.fire22",
+          "slack": "@ethan.cooper",
+          "phone": "+1-555-0902",
+          "status": "creative-work",
+          "avatar": "EC",
+          "quickActions": ["email", "slack", "portfolio", "figma", "ui-mockups", "card-components"]
+        },
+        {
+          "id": "maya-patel",
+          "name": "Maya Patel",
+          "role": "Visual Designer",
+          "email": "maya.patel@design.fire22",
+          "slack": "@maya.patel",
+          "phone": "+1-555-0903",
+          "status": "available",
+          "avatar": "MP",
+          "quickActions": ["email", "slack", "portfolio", "figma", "ui-mockups", "card-components"]
+        }
+      ]
+    },
+    "vip-management": {
+      "name": "VIP Management",
+      "domain": "@vip.fire22",
+      "email": "vip@fire22.com",
+      "slack": "#vip-management",
+      "color": "#ffd700",
+      "members": [
+        {
+          "id": "vinny2times",
+          "name": "Vinny2times",
+          "role": "Head of VIP Management",
+          "email": "vinny2times@vip.fire22",
+          "slack": "@vinny2times",
+          "phone": "+1-555-0950",
+          "status": "available",
+          "avatar": "V2",
+          "priority": "vip-executive",
+          "quickActions": [
+            "schedule",
+            "email",
+            "slack",
+            "call",
+            "vip-escalation",
+            "high-roller-review"
+          ]
+        }
+      ]
+    },
+    "hr": {
+      "name": "Human Resources",
+      "domain": "@hr.fire22",
+      "email": "hr@fire22.com",
+      "slack": "#human-resources",
+      "color": "#8b5a87",
+      "members": [
+        {
+          "id": "jennifer-adams",
+          "name": "Jennifer Adams",
+          "role": "HR Director",
+          "email": "jennifer.adams@hr.fire22",
+          "slack": "@jennifer.adams",
+          "phone": "+1-555-1001",
+          "status": "available",
+          "avatar": "JA",
+          "priority": "department-head",
+          "quickActions": [
+            "schedule",
+            "email",
+            "slack",
+            "call",
+            "directory-update",
+            "employee-records",
+            "team-directory-audit"
+          ]
+        },
+        {
+          "id": "marcus-rivera",
+          "name": "Marcus Rivera",
+          "role": "HR Coordinator",
+          "email": "marcus.rivera@hr.fire22",
+          "slack": "@marcus.rivera",
+          "phone": "+1-555-1002",
+          "status": "available",
+          "avatar": "MR",
+          "quickActions": ["email", "slack", "schedule", "directory-update", "onboarding"]
+        }
+      ]
+    },
+    "maintenance": {
+      "name": "Maintenance & Operations",
+      "domain": "@maintenance.fire22",
+      "email": "maintenance@fire22.com",
+      "slack": "#maintenance",
+      "color": "#6c757d",
+      "members": [
+        {
+          "id": "carlos-santos",
+          "name": "Carlos Santos",
+          "role": "Maintenance Supervisor",
+          "email": "carlos.santos@maintenance.fire22",
+          "slack": "@carlos.santos",
+          "phone": "+1-555-1101",
+          "status": "on-call",
+          "avatar": "CS",
+          "quickActions": [
+            "call",
+            "email",
+            "slack",
+            "system-maintenance",
+            "infrastructure-check",
+            "directory-upkeep"
+          ]
+        },
+        {
+          "id": "diane-foster",
+          "name": "Diane Foster",
+          "role": "Systems Maintenance Specialist",
+          "email": "diane.foster@maintenance.fire22",
+          "slack": "@diane.foster",
+          "phone": "+1-555-1102",
+          "status": "available",
+          "avatar": "DF",
+          "quickActions": [
+            "email",
+            "slack",
+            "system-maintenance",
+            "data-cleanup",
+            "directory-validation"
+          ]
+        }
+      ]
+    },
+    "product-management": {
+      "name": "Product Management",
+      "domain": "@product.fire22",
+      "email": "product@fire22.com",
+      "slack": "#product-management",
+      "color": "#f97316",
+      "members": [
+        {
+          "id": "alexandra-kim",
+          "name": "Alexandra Kim",
+          "role": "Chief Product Officer",
+          "email": "alexandra.kim@product.fire22",
+          "slack": "@alexandra.kim",
+          "phone": "+1-555-1201",
+          "status": "available",
+          "avatar": "AK",
+          "priority": "executive",
+          "quickActions": [
+            "schedule",
+            "email",
+            "slack",
+            "call",
+            "roadmap",
+            "product-review",
+            "feature-planning"
+          ]
+        },
+        {
+          "id": "daniel-wong",
+          "name": "Daniel Wong",
+          "role": "Senior Product Manager",
+          "email": "daniel.wong@product.fire22",
+          "slack": "@daniel.wong",
+          "phone": "+1-555-1202",
+          "status": "strategic-planning",
+          "avatar": "DW",
+          "quickActions": [
+            "email",
+            "slack",
+            "schedule",
+            "roadmap",
+            "feature-planning",
+            "user-research"
+          ]
+        },
+        {
+          "id": "samantha-rivera",
+          "name": "Samantha Rivera",
+          "role": "Product Owner - Sports Betting",
+          "email": "samantha.rivera@product.fire22",
+          "slack": "@samantha.rivera",
+          "phone": "+1-555-1203",
+          "status": "available",
+          "avatar": "SR",
+          "quickActions": [
+            "email",
+            "slack",
+            "task",
+            "feature-planning",
+            "user-stories",
+            "backlog-management"
+          ]
+        },
+        {
+          "id": "ryan-thompson",
+          "name": "Ryan Thompson",
+          "role": "Product Analyst",
+          "email": "ryan.thompson@product.fire22",
+          "slack": "@ryan.thompson",
+          "phone": "+1-555-1204",
+          "status": "available",
+          "avatar": "RT",
+          "quickActions": ["email", "slack", "analytics", "user-research", "data-analysis"]
+        }
+      ]
+    },
+    "onboarding": {
+      "name": "Onboarding Team",
+      "domain": "@onboarding.fire22",
+      "email": "onboarding@fire22.com",
+      "slack": "#onboarding",
+      "color": "#10b981",
+      "members": [
+        {
+          "id": "natasha-cooper",
+          "name": "Natasha Cooper",
+          "role": "Onboarding Director",
+          "email": "natasha.cooper@onboarding.fire22",
+          "slack": "@natasha.cooper",
+          "phone": "+1-555-1301",
+          "status": "available",
+          "avatar": "NC",
+          "priority": "department-head",
+          "quickActions": [
+            "schedule",
+            "email",
+            "slack",
+            "call",
+            "onboarding-flow",
+            "employee-setup",
+            "training-modules"
+          ]
+        },
+        {
+          "id": "luis-martinez",
+          "name": "Luis Martinez",
+          "role": "Employee Onboarding Specialist",
+          "email": "luis.martinez@onboarding.fire22",
+          "slack": "@luis.martinez",
+          "phone": "+1-555-1302",
+          "status": "available",
+          "avatar": "LM",
+          "quickActions": ["email", "slack", "onboarding-flow", "training-modules", "documentation"]
+        },
+        {
+          "id": "karen-adams",
+          "name": "Karen Adams",
+          "role": "Training Coordinator",
+          "email": "karen.adams@onboarding.fire22",
+          "slack": "@karen.adams",
+          "phone": "+1-555-1303",
+          "status": "available",
+          "avatar": "KA",
+          "quickActions": [
+            "email",
+            "slack",
+            "training-modules",
+            "skill-assessment",
+            "progress-tracking"
+          ]
+        },
+        {
+          "id": "troy-williams",
+          "name": "Troy Williams",
+          "role": "System Integration Specialist",
+          "email": "troy.williams@onboarding.fire22",
+          "slack": "@troy.williams",
+          "phone": "+1-555-1304",
+          "status": "available",
+          "avatar": "TW",
+          "quickActions": [
+            "email",
+            "slack",
+            "system-setup",
+            "access-management",
+            "tool-integration"
+          ]
+        }
+      ]
+    },
+    "water-system": {
+      "name": "Water System Operations",
+      "domain": "@water-system.fire22",
+      "email": "water-system@fire22.com",
+      "slack": "#water-system",
+      "color": "#0ea5e9",
+      "members": [
+        {
+          "id": "aqua-manager",
+          "name": "Aqua Manager",
+          "role": "Water System Operations Manager",
+          "email": "aqua.manager@water-system.fire22",
+          "slack": "@aqua.manager",
+          "phone": "+1-555-1401",
+          "status": "available",
+          "avatar": "AM",
+          "priority": "department-head",
+          "quickActions": [
+            "schedule",
+            "email",
+            "slack",
+            "call",
+            "system-maintenance",
+            "infrastructure-check",
+            "metrics"
+          ]
+        },
+        {
+          "id": "flow-specialist",
+          "name": "Flow Specialist",
+          "role": "Water Flow Monitoring Specialist",
+          "email": "flow.specialist@water-system.fire22",
+          "slack": "@flow.specialist",
+          "phone": "+1-555-1402",
+          "status": "available",
+          "avatar": "FS",
+          "quickActions": [
+            "email",
+            "slack",
+            "metrics",
+            "system-maintenance",
+            "infrastructure-check"
+          ]
+        },
+        {
+          "id": "pressure-engineer",
+          "name": "Pressure Engineer",
+          "role": "Water Pressure Systems Engineer",
+          "email": "pressure.engineer@water-system.fire22",
+          "slack": "@pressure.engineer",
+          "phone": "+1-555-1403",
+          "status": "available",
+          "avatar": "PE",
+          "quickActions": [
+            "email",
+            "slack",
+            "system-maintenance",
+            "infrastructure-check",
+            "metrics"
+          ]
+        },
+        {
+          "id": "temp-analyst",
+          "name": "Temperature Analyst",
+          "role": "Water Temperature Monitoring Analyst",
+          "email": "temp.analyst@water-system.fire22",
+          "slack": "@temp.analyst",
+          "phone": "+1-555-1404",
+          "status": "available",
+          "avatar": "TA",
+          "quickActions": ["email", "slack", "metrics", "data-analysis", "system-maintenance"]
+        }
+      ]
+    }
+  },
+  "communicationChannels": {
+    "email": {
+      "server": "mail.fire22.com",
+      "domains": [
+        "@fire22.com",
+        "@finance.fire22",
+        "@support.fire22",
+        "@compliance.fire22",
+        "@operations.fire22",
+        "@tech.fire22",
+        "@marketing.fire22",
+        "@exec.fire22",
+        "@team.fire22",
+        "@design.fire22",
+        "@communications.fire22",
+        "@vip.fire22",
+        "@hr.fire22",
+        "@maintenance.fire22",
+        "@product.fire22",
+        "@onboarding.fire22",
+        "@water-system.fire22"
+      ],
+      "groups": {
+        "all": "all@fire22.com",
+        "department-heads": "heads@fire22.com",
+        "emergency": "emergency@fire22.com",
+        "announcements": "announcements@fire22.com"
+      }
+    },
+    "slack": {
+      "workspace": "fire22.slack.com",
+      "channels": {
+        "general": "#general",
+        "announcements": "#announcements",
+        "random": "#random",
+        "help": "#help",
+        "emergencies": "#emergencies"
+      }
+    },
+    "telegram": {
+      "workspace": "@fire22support",
+      "channels": {
+        "main": "@fire22_support",
+        "finance": "@fire22_finance_support",
+        "support": "@fire22_customer_support",
+        "compliance": "@fire22_compliance",
+        "operations": "@fire22_operations",
+        "technology": "@fire22_tech_support",
+        "marketing": "@fire22_marketing",
+        "management": "@fire22_executive",
+        "communications": "@fire22_communications",
+        "contributors": "@fire22_team",
+        "design": "@fire22_design",
+        "vip-management": "@fire22_vip",
+        "hr": "@fire22_hr",
+        "maintenance": "@fire22_maintenance",
+        "product-management": "@fire22_product",
+        "onboarding": "@fire22_onboarding",
+        "water-system": "@fire22_water_system",
+        "general": "@fire22_general",
+        "announcements": "@fire22_news",
+        "help": "@fire22_help",
+        "emergencies": "@fire22_emergency",
+        "escalation": "@fire22_escalation"
+      },
+      "bots": {
+        "main": "@Fire22SupportBot",
+        "multilingual": "@Fire22MultiBot"
+      }
+    },
+    "statusCodes": {
+      "available": { "icon": "🟢", "message": "Available" },
+      "busy": { "icon": "🔴", "message": "Busy - Email preferred" },
+      "in-meeting": { "icon": "🟡", "message": "In Meeting" },
+      "on-call": { "icon": "📞", "message": "On Call" },
+      "coding": { "icon": "💻", "message": "Deep Work - Slack preferred" },
+      "creative-work": { "icon": "🎨", "message": "Creative Work" },
+      "strategic-planning": { "icon": "🎯", "message": "Strategic Planning" },
+      "offline": { "icon": "⚫", "message": "Offline" },
+      "vacation": { "icon": "🏖️", "message": "On Vacation" },
+      "recruiting": { "icon": "🔍", "message": "Position Open" }
+    },
+    "quickActions": {
+      "email": { "icon": "✉️", "action": "mailto:{email}" },
+      "slack": { "icon": "💬", "action": "slack://user?team=fire22&id={slack_id}" },
+      "telegram": { "icon": "📱", "action": "https://t.me/{telegram_channel}" },
+      "telegram-dm": { "icon": "💬", "action": "https://t.me/{username}" },
+      "call": { "icon": "📞", "action": "tel:{phone}" },
+      "schedule": { "icon": "📅", "action": "https://calendar.fire22.com/schedule/{id}" },
+      "ticket": { "icon": "🎫", "action": "https://tickets.fire22.com/assign/{id}" },
+      "task": { "icon": "✅", "action": "https://tasks.fire22.com/assign/{id}" },
+      "github": { "icon": "🐙", "action": "https://github.com/fire22/{username}" },
+      "jira": { "icon": "📋", "action": "https://fire22.atlassian.net/assignee/{id}" },
+      "campaign": { "icon": "📢", "action": "https://campaigns.fire22.com/collaborate/{id}" },
+      "analytics": { "icon": "📊", "action": "https://analytics.fire22.com/share/{id}" },
+      "social": { "icon": "🌐", "action": "https://social.fire22.com/collaborate/{id}" },
+      "secure-message": { "icon": "🔐", "action": "https://secure.fire22.com/message/{id}" },
+      "urgent-call": { "icon": "🚨", "action": "tel:{phone}?urgent=true" },
+      "board-meeting": { "icon": "🏛️", "action": "https://board.fire22.com/schedule/{id}" },
+      "ops-review": { "icon": "📈", "action": "https://ops.fire22.com/review/{id}" },
+      "code-review": {
+        "icon": "👀",
+        "action": "https://github.com/fire22/pulls/review-requested/{username}"
+      },
+      "portfolio": { "icon": "🎨", "action": "https://portfolio.fire22.com/{id}" },
+      "figma": { "icon": "🎯", "action": "https://figma.com/team/fire22/{id}" },
+      "announcement": {
+        "icon": "📢",
+        "action": "https://communications.fire22.com/announcement/{id}"
+      },
+      "approval": { "icon": "✅", "action": "https://communications.fire22.com/approval/{id}" },
+      "department-update": {
+        "icon": "📝",
+        "action": "https://communications.fire22.com/department-update/{id}"
+      },
+      "template": { "icon": "📄", "action": "https://communications.fire22.com/template/{id}" },
+      "metrics": { "icon": "📊", "action": "https://communications.fire22.com/metrics/{id}" },
+      "vip-escalation": {
+        "icon": "👑",
+        "action": "https://vinny2times.fire22.workers.dev/escalation/{id}"
+      },
+      "high-roller-review": {
+        "icon": "💎",
+        "action": "https://vinny2times.fire22.workers.dev/high-roller-review/{id}"
+      },
+      "widget-library": { "icon": "🧩", "action": "https://widgets.fire22.com/library/{id}" },
+      "card-components": { "icon": "🃏", "action": "https://components.fire22.com/cards/{id}" },
+      "css-framework": { "icon": "🎨", "action": "https://css.fire22.com/framework/{id}" },
+      "design-tokens": { "icon": "🎯", "action": "https://tokens.fire22.com/design-system/{id}" },
+      "ui-mockups": { "icon": "📱", "action": "https://mockups.fire22.com/ui/{id}" },
+      "telegram-channels": { "icon": "📢", "action": "https://t.me/fire22_admin/channels/{id}" },
+      "telegram-bots": { "icon": "🤖", "action": "https://telegram.fire22.com/bots/manage/{id}" },
+      "telegram-shortlinks": { "icon": "🔗", "action": "https://t.me/fire22.ag/{id}" },
+      "telegram-analytics": {
+        "icon": "📊",
+        "action": "https://telegram.fire22.com/analytics/{id}"
+      },
+      "telegram-broadcast": {
+        "icon": "📻",
+        "action": "https://telegram.fire22.com/broadcast/{id}"
+      },
+      "directory-update": { "icon": "📝", "action": "https://hr.fire22.com/directory/update/{id}" },
+      "employee-records": { "icon": "👥", "action": "https://hr.fire22.com/records/{id}" },
+      "team-directory-audit": {
+        "icon": "🔍",
+        "action": "https://hr.fire22.com/directory/audit/{id}"
+      },
+      "onboarding": { "icon": "🚀", "action": "https://hr.fire22.com/onboarding/{id}" },
+      "system-maintenance": {
+        "icon": "🔧",
+        "action": "https://maintenance.fire22.com/systems/{id}"
+      },
+      "infrastructure-check": {
+        "icon": "🏗️",
+        "action": "https://maintenance.fire22.com/infrastructure/{id}"
+      },
+      "directory-upkeep": {
+        "icon": "🗂️",
+        "action": "https://maintenance.fire22.com/directory/upkeep/{id}"
+      },
+      "data-cleanup": {
+        "icon": "🧹",
+        "action": "https://maintenance.fire22.com/data-cleanup/{id}"
+      },
+      "directory-validation": {
+        "icon": "✅",
+        "action": "https://maintenance.fire22.com/directory/validate/{id}"
+      },
+      "roadmap": { "icon": "🗺️", "action": "https://product.fire22.com/roadmap/{id}" },
+      "product-review": { "icon": "📋", "action": "https://product.fire22.com/review/{id}" },
+      "feature-planning": {
+        "icon": "🎯",
+        "action": "https://product.fire22.com/features/plan/{id}"
+      },
+      "user-research": { "icon": "👥", "action": "https://product.fire22.com/research/{id}" },
+      "user-stories": { "icon": "📖", "action": "https://product.fire22.com/stories/{id}" },
+      "backlog-management": { "icon": "📋", "action": "https://product.fire22.com/backlog/{id}" },
+      "data-analysis": { "icon": "📊", "action": "https://product.fire22.com/analytics/{id}" },
+      "onboarding-flow": { "icon": "🚀", "action": "https://onboarding.fire22.com/flow/{id}" },
+      "employee-setup": { "icon": "👤", "action": "https://onboarding.fire22.com/setup/{id}" },
+      "training-modules": { "icon": "🎓", "action": "https://onboarding.fire22.com/training/{id}" },
+      "skill-assessment": {
+        "icon": "📝",
+        "action": "https://onboarding.fire22.com/assessment/{id}"
+      },
+      "progress-tracking": {
+        "icon": "📈",
+        "action": "https://onboarding.fire22.com/progress/{id}"
+      },
+      "system-setup": { "icon": "⚙️", "action": "https://onboarding.fire22.com/systems/{id}" },
+      "access-management": { "icon": "🔑", "action": "https://onboarding.fire22.com/access/{id}" },
+      "tool-integration": { "icon": "🔧", "action": "https://onboarding.fire22.com/tools/{id}" },
+      "documentation": { "icon": "📚", "action": "https://onboarding.fire22.com/docs/{id}" }
+    }
+  }
+}

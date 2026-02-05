@@ -1,0 +1,17 @@
+{
+  "name": "fire22-core-packages",
+  "domain": "core",
+  "registry": "npm",
+  "packages": [
+    "@fire22/core",
+    "@fire22/env-manager",
+    "@fire22/middleware",
+    "@fire22/testing-framework"
+  ],
+  "dependencies": [],
+  "orchestrator": {
+    "version": "1.0.0",
+    "created": "2025-08-27T05:43:39.319Z",
+    "lastUpdated": "2025-08-27T05:43:39.319Z"
+  }
+}

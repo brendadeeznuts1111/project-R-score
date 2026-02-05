@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Aesthetic - Cloudflare Design System</title>
+    <style>
+      /* Water/Cloudflare Color Palette */
+      :root {
+        /* Primary Blues */
+        --water-deep: #003d7a;
+        --water-ocean: #0051a5;
+        --water-sea: #0078d4;
+        --water-sky: #40a9ff;
+        --water-light: #69c0ff;
+        --water-mist: #91d5ff;
+        --water-foam: #bae7ff;
+        --water-spray: #e6f7ff;
+
+        /* Cyan Accents */
+        --cyan-deep: #006d75;
+        --cyan-ocean: #008b94;
+        --cyan-sea: #00acc1;
+        --cyan-light: #26c6da;
+        --cyan-mist: #4dd0e1;
+        --cyan-foam: #80deea;
+        --cyan-spray: #b2ebf2;
+        --cyan-ice: #e0f7fa;
+
+        /* Neutral Waters */
+        --slate-900: #0f172a;
+        --slate-800: #1e293b;
+        --slate-700: #334155;
+        --slate-600: #475569;
+        --slate-500: #64748b;
+        --slate-400: #94a3b8;
+        --slate-300: #cbd5e1;
+        --slate-200: #e2e8f0;
+        --slate-100: #f1f5f9;
+        --slate-50: #f8fafc;
+
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        --space-3xl: 4rem;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+        background: linear-gradient(180deg, var(--slate-900) 0%, var(--water-deep) 50%, var(--cyan-deep) 100%);
+        min-height: 100vh;
+        color: var(--slate-100);
+        position: relative;
+        overflow-x: hidden;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* Animated Water Background */
+      .water-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.3;
+      }
+
+      .wave {
+        position: absolute;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--water-sky), transparent, var(--cyan-light), transparent);
+        animation: wave 15s linear infinite;
+      }
+
+      .wave:nth-child(2) {
+        animation-delay: -5s;
+        opacity: 0.5;
+        animation-duration: 20s;
+      }
+
+      .wave:nth-child(3) {
+        animation-delay: -10s;
+        opacity: 0.3;
+        animation-duration: 25s;
+      }
+
+      @keyframes wave {
+        0% {
+          transform: translateX(-50%);
+        }
+        100% {
+          transform: translateX(0%);
+        }
+      }
+
+      /* Container */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--space-xl);
+      }
+
+      /* Terminal-style Box Components */
+      .terminal-box {
+        background: linear-gradient(135deg, rgba(0, 61, 122, 0.95), rgba(0, 109, 117, 0.95));
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--water-light);
+        border-radius: 8px;
+        padding: var(--space-lg);
+        margin-bottom: var(--space-xl);
+        box-shadow:
+          0 10px 40px rgba(0, 120, 212, 0.2),
+          inset 0 1px 0 rgba(105, 192, 255, 0.2);
+        position: relative;
+      }
+
+      .terminal-box::before {
+        content: '╭────────────────────────────────────────╮';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        color: var(--cyan-light);
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .terminal-box::after {
+        content: '╰────────────────────────────────────────╯';
+        position: absolute;
+        bottom: -8px;
+        left: -1px;
+        right: -1px;
+        color: var(--cyan-light);
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: var(--space-3xl);
+        position: relative;
+      }
+
+      .logo-container {
+        display: inline-block;
+        padding: var(--space-md) var(--space-xl);
+        background: linear-gradient(135deg, var(--water-ocean), var(--cyan-ocean));
+        border-radius: 100px;
+        margin-bottom: var(--space-lg);
+        box-shadow:
+          0 10px 30px rgba(0, 120, 212, 0.3),
+          inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 300;
+        letter-spacing: -1px;
+        background: linear-gradient(90deg, var(--water-light), var(--cyan-light), var(--water-mist), var(--cyan-mist));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 3s ease-in-out infinite;
+      }
+
+      @keyframes shimmer {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .subtitle {
+        font-size: 1.125rem;
+        color: var(--water-mist);
+        margin-top: var(--space-sm);
+        font-weight: 300;
+      }
+
+      /* Navigation Tabs */
+      .nav-tabs {
+        display: flex;
+        gap: 1px;
+        background: rgba(0, 120, 212, 0.1);
+        padding: 4px;
+        border-radius: 8px;
+        margin-bottom: var(--space-2xl);
+        border: 1px solid var(--water-sea);
+      }
+
+      .nav-tab {
+        flex: 1;
+        padding: var(--space-sm) var(--space-lg);
+        background: transparent;
+        border: none;
+        color: var(--water-light);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        font-weight: 500;
+        position: relative;
+        border-radius: 6px;
+      }
+
+      .nav-tab:hover {
+        background: rgba(64, 169, 255, 0.1);
+        color: var(--cyan-light);
+      }
+
+      .nav-tab.active {
+        background: linear-gradient(135deg, var(--water-sea), var(--cyan-sea));
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+      }
+
+      /* Feature Grid */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-lg);
+        margin-bottom: var(--space-2xl);
+      }
+
+      .feature-card {
+        background: linear-gradient(135deg, rgba(0, 81, 165, 0.9), rgba(0, 139, 148, 0.9));
+        border: 1px solid var(--water-sky);
+        border-radius: 12px;
+        padding: var(--space-xl);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--cyan-light), transparent);
+        animation: scan 3s linear infinite;
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          0 20px 40px rgba(0, 172, 193, 0.3),
+          inset 0 0 20px rgba(77, 208, 225, 0.1);
+        border-color: var(--cyan-light);
+      }
+
+      .feature-icon {
+        display: inline-block;
+        padding: var(--space-sm) var(--space-md);
+        background: linear-gradient(135deg, var(--water-sky), var(--cyan-light));
+        border-radius: 8px;
+        font-size: 1.5rem;
+        margin-bottom: var(--space-md);
+      }
+
+      .feature-title {
+        font-size: 1.25rem;
+        color: var(--cyan-light);
+        margin-bottom: var(--space-sm);
+        font-weight: 400;
+      }
+
+      .feature-description {
+        color: var(--water-foam);
+        line-height: 1.6;
+        font-size: 0.875rem;
+      }
+
+      /* Code Display */
+      .code-display {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid var(--water-sea);
+        border-radius: 8px;
+        padding: var(--space-lg);
+        margin: var(--space-xl) 0;
+        font-family: 'Fira Code', 'SF Mono', monospace;
+        font-size: 0.875rem;
+        position: relative;
+        overflow-x: auto;
+      }
+
+      .code-display::before {
+        content: '╭─ TERMINAL ─────────────────────────────╮';
+        position: absolute;
+        top: -10px;
+        left: 0;
+        color: var(--cyan-light);
+        font-size: 12px;
+        background: rgba(15, 23, 42, 0.95);
+        padding: 0 var(--space-sm);
+      }
+
+      .code-line {
+        margin: var(--space-xs) 0;
+        color: var(--water-foam);
+      }
+
+      .code-prompt {
+        color: var(--cyan-light);
+        margin-right: var(--space-sm);
+      }
+
+      .code-command {
+        color: var(--water-light);
+      }
+
+      .code-output {
+        color: var(--water-mist);
+        margin-left: var(--space-xl);
+      }
+
+      /* Status Cards */
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-md);
+        margin: var(--space-xl) 0;
+      }
+
+      .status-card {
+        background: linear-gradient(135deg, rgba(0, 120, 212, 0.2), rgba(38, 198, 218, 0.2));
+        border: 1px solid var(--water-sky);
+        border-radius: 8px;
+        padding: var(--space-md);
+        text-align: center;
+        position: relative;
+      }
+
+      .status-value {
+        font-size: 2rem;
+        font-weight: 300;
+        color: var(--cyan-light);
+        display: block;
+        margin-bottom: var(--space-xs);
+      }
+
+      .status-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--water-mist);
+      }
+
+      /* Buttons */
+      .btn {
+        padding: var(--space-sm) var(--space-xl);
+        background: linear-gradient(135deg, var(--water-sea), var(--cyan-sea));
+        border: 1px solid var(--water-light);
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.875rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        transform: translate(-50%, -50%);
+        transition:
+          width 0.6s,
+          height 0.6s;
+      }
+
+      .btn:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 172, 193, 0.3);
+        border-color: var(--cyan-light);
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--water-sky);
+        color: var(--water-light);
+      }
+
+      .btn-outline:hover {
+        background: rgba(0, 120, 212, 0.1);
+        border-color: var(--cyan-light);
+        color: var(--cyan-light);
+      }
+
+      /* Flow Diagram */
+      .flow-diagram {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: var(--space-2xl) 0;
+        padding: var(--space-xl);
+        background: rgba(0, 81, 165, 0.1);
+        border-radius: 12px;
+        border: 1px solid var(--water-sea);
+      }
+
+      .flow-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+      }
+
+      .flow-step:not(:last-child)::after {
+        content: '─────╮';
+        position: absolute;
+        right: -40px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--water-sky);
+        font-family: monospace;
+      }
+
+      .flow-icon {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        background: linear-gradient(135deg, var(--water-ocean), var(--cyan-ocean));
+        border-radius: 50%;
+        font-size: 1.5rem;
+        margin-bottom: var(--space-sm);
+        box-shadow: 0 5px 15px rgba(0, 120, 212, 0.3);
+      }
+
+      .flow-label {
+        color: var(--water-mist);
+        font-size: 0.875rem;
+      }
+
+      /* Animated Metrics */
+      .metric-display {
+        font-family: 'Fira Code', monospace;
+        font-size: 3rem;
+        color: var(--cyan-light);
+        text-align: center;
+        margin: var(--space-xl) 0;
+        position: relative;
+      }
+
+      .metric-display::before {
+        content: '├─ ';
+        position: absolute;
+        left: 20%;
+        color: var(--water-sky);
+      }
+
+      .metric-display::after {
+        content: ' ─┤';
+        position: absolute;
+        right: 20%;
+        color: var(--water-sky);
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: var(--space-2xl) 0;
+        color: var(--water-mist);
+        border-top: 1px solid var(--water-ocean);
+        margin-top: var(--space-3xl);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .flow-diagram {
+          flex-direction: column;
+          gap: var(--space-xl);
+        }
+
+        .flow-step:not(:last-child)::after {
+          content: '│';
+          right: auto;
+          top: auto;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+
+      /* Loading Animation */
+      @keyframes pulse-water {
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(0, 172, 193, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 40px rgba(0, 172, 193, 0.8);
+        }
+      }
+
+      .pulse {
+        animation: pulse-water 2s ease-in-out infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Animated Water Background -->
+    <div class="water-background">
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-container">
+          <span style="font-size: 2rem">☁️</span>
+        </div>
+        <h1>Cloudflare Waters</h1>
+        <p class="subtitle">Flowing Infrastructure · Seamless Performance</p>
+      </header>
+
+      <!-- Navigation -->
+      <nav class="nav-tabs">
+        <button class="nav-tab active">Dashboard</button>
+        <button class="nav-tab">Analytics</button>
+        <button class="nav-tab">Workers</button>
+        <button class="nav-tab">DNS</button>
+        <button class="nav-tab">Security</button>
+      </nav>
+
+      <!-- Terminal Display -->
+      <div class="code-display">
+        <div class="code-line">
+          <span class="code-prompt">╭─▶</span>
+          <span class="code-command">cf status --region global</span>
+        </div>
+        <div class="code-line code-output">├─ Network: Operational</div>
+        <div class="code-line code-output">├─ Workers: 192 locations active</div>
+        <div class="code-line code-output">├─ Latency: &lt;50ms globally</div>
+        <div class="code-line code-output">╰─ Status: All systems operational</div>
+      </div>
+
+      <!-- Status Grid -->
+      <div class="status-grid">
+        <div class="status-card pulse">
+          <span class="status-value">99.99%</span>
+          <span class="status-label">Uptime</span>
+        </div>
+        <div class="status-card">
+          <span class="status-value">192</span>
+          <span class="status-label">Edge Locations</span>
+        </div>
+        <div class="status-card">
+          <span class="status-value">&lt;50ms</span>
+          <span class="status-label">Global Latency</span>
+        </div>
+        <div class="status-card">
+          <span class="status-value">10M+</span>
+          <span class="status-label">Requests/sec</span>
+        </div>
+      </div>
+
+      <!-- Feature Grid -->
+      <section class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🌊</div>
+          <h3 class="feature-title">Stream Processing</h3>
+          <p class="feature-description">Real-time data flow with sub-millisecond latency across our global network.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔷</div>
+          <h3 class="feature-title">Crystal Cache</h3>
+          <p class="feature-description">Intelligent caching layer that adapts to traffic patterns automatically.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3 class="feature-title">Ocean Network</h3>
+          <p class="feature-description">Distributed infrastructure spanning continents like digital ocean currents.</p>
+        </div>
+      </section>
+
+      <!-- Flow Diagram -->
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-icon">📡</div>
+          <div class="flow-label">Request</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">🔄</div>
+          <div class="flow-label">Process</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">⚡</div>
+          <div class="flow-label">Cache</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">✅</div>
+          <div class="flow-label">Deliver</div>
+        </div>
+      </div>
+
+      <!-- Metric Display -->
+      <div class="metric-display">12.7ms</div>
+      <p style="text-align: center; color: var(--water-mist); margin-top: -1rem">Average Response Time</p>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 3rem">
+        <button class="btn">Deploy to Edge</button>
+        <button class="btn btn-outline">View Analytics</button>
+      </div>
+
+      <!-- Terminal Box -->
+      <div class="terminal-box" style="margin-top: 3rem">
+        <h3 style="color: var(--cyan-light); margin-bottom: 1rem">System Overview</h3>
+        <p style="color: var(--water-foam); line-height: 1.8">
+          The Cloudflare Waters infrastructure operates like a vast digital ocean, with data flowing seamlessly through
+          our network of 192+ edge locations. Each request ripples through our system, optimized and accelerated at
+          every point.
+        </p>
+        <div style="margin-top: 1.5rem; font-family: monospace; color: var(--water-mist)">
+          <div>╭─ Performance Metrics ────────────────╮</div>
+          <div>│ Cache Hit Ratio: 94.7% │</div>
+          <div>│ Bandwidth Saved: 2.4 PB/day │</div>
+          <div>│ Threats Blocked: 72M/hour │</div>
+          <div>╰──────────────────────────────────────╯</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer>
+        <p>Cloudflare Waters · Flowing at the Speed of Light</p>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.8">
+          ╭─────────────────────────────────────╮
+          <br />
+          │ Built with Water Aesthetics v2.0 │
+          <br />
+          ╰─────────────────────────────────────╯
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      // Tab switching
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+
+      // Animated metric counter
+      function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = timestamp => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          obj.innerHTML = (progress * (end - start) + start).toFixed(1) + 'ms';
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          }
+        };
+        window.requestAnimationFrame(step);
+      }
+
+      const metricDisplay = document.querySelector('.metric-display');
+      animateValue(metricDisplay, 50, 12.7, 2000);
+
+      // Ripple effect on buttons
+      document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('click', function (e) {
+          const ripple = document.createElement('div');
+          ripple.classList.add('ripple');
+          this.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 600);
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "audit-level": "moderate",
+  "production": true,
+  "audit-level-override": {
+    "moderate": "high",
+    "high": "critical"
+  },
+  "ignore-dev-dependencies": false,
+  "ignore-optional-dependencies": false,
+  "ignore-peer-dependencies": true,
+  "max-depth": 3,
+  "retry-count": 3,
+  "timeout": 30000,
+  "registry": "https://registry.npmjs.org",
+  "proxy": null,
+  "https-proxy": null,
+  "strict-ssl": true,
+  "cert": null,
+  "key": null,
+  "ca": null,
+  "exclude": ["node_modules/**", ".git/**", "dist/**", "build/**"],
+  "include": ["package.json", "bun.lockb", "yarn.lock", "package-lock.json"]
+}

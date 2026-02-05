@@ -1,0 +1,84 @@
+{
+  "name": "@fire22/middleware",
+  "version": "1.0.3",
+  "description": "Fire22 Middleware System - Request handling, error formatting, and performance monitoring",
+  "main": "src/index.ts",
+  "type": "module",
+  "sideEffects": [
+    "./src/index.ts"
+  ],
+  "author": {
+    "name": "Fire22 Development Team",
+    "email": "dev@fire22.com",
+    "url": "https://fire22.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/middleware"
+  },
+  "scripts": {
+    "test:middleware:request-body": "bun test --test-name-pattern='middleware.*request'",
+    "test:middleware:error-format": "bun test --test-name-pattern='middleware.*error'",
+    "test:middleware:performance": "bun test --test-name-pattern='middleware.*performance'",
+    "test:middleware:smoke": "bun test --test-name-pattern='middleware.*smoke'",
+    "test:middleware:all": "bun run test:middleware:request-body && bun run test:middleware:error-format && bun run test:middleware:performance",
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "dev": "bun --watch src/index.ts",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "keywords": [
+    "fire22",
+    "middleware",
+    "request-handling",
+    "error-formatting",
+    "performance-monitoring",
+    "validation"
+  ],
+  "config": {
+    "middleware": {
+      "requestTimeout": 30000,
+      "maxBodySize": "10mb",
+      "rateLimit": {
+        "windowMs": 900000,
+        "max": 100
+      }
+    },
+    "error": {
+      "includeStack": false,
+      "logLevel": "error",
+      "format": "json"
+    },
+    "performance": {
+      "enableMetrics": true,
+      "samplingRate": 0.1
+    }
+  },
+  "metadata": {
+    "component": "middleware",
+    "responsibilities": [
+      "Request body handling and validation",
+      "Error formatting and logging",
+      "Performance monitoring and metrics",
+      "Rate limiting and security",
+      "Request/response transformation"
+    ],
+    "testing": {
+      "request-body": "Request validation and processing",
+      "error-format": "Error handling and formatting",
+      "performance": "Performance monitoring and metrics",
+      "smoke": "Quick middleware health checks"
+    }
+  }
+}

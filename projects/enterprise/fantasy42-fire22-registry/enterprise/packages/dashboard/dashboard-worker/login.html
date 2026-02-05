@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Dashboard - Login</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .login-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .logo h1 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .logo p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      input[type='text'],
+      input[type='password'] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e1e5e9;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      input[type='text']:focus,
+      input[type='password']:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .login-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .login-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .error {
+        background: #fee;
+        color: #c33;
+        padding: 0.75rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #c33;
+      }
+
+      .success {
+        background: #efe;
+        color: #3c3;
+        padding: 0.75rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #3c3;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .spinner {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #667eea;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 0.5rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .demo-credentials {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: #666;
+      }
+
+      .demo-credentials strong {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo">
+        <h1>🔥 Fire22</h1>
+        <p>Dashboard Management System</p>
+      </div>
+
+      <div class="demo-credentials">
+        <strong>Demo Credentials:</strong>
+        <br />
+        Username:
+        <code>admin</code>
+        <br />
+        Password:
+        <code>Fire22Admin2025!</code>
+      </div>
+
+      <div id="message"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          Authenticating...
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const loginForm = document.getElementById('loginForm');
+      const loginBtn = document.getElementById('loginBtn');
+      const loading = document.getElementById('loading');
+      const message = document.getElementById('message');
+
+      function showMessage(text, type = 'error') {
+        message.innerHTML = `<div class="${type}">${text}</div>`;
+      }
+
+      function clearMessage() {
+        message.innerHTML = '';
+      }
+
+      loginForm.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (!username || !password) {
+          showMessage('Please enter both username and password');
+          return;
+        }
+
+        // Show loading state
+        loginBtn.disabled = true;
+        loading.style.display = 'block';
+        clearMessage();
+
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Store token
+            localStorage.setItem('fire22_token', data.token);
+            localStorage.setItem('fire22_user', JSON.stringify(data.user));
+
+            showMessage('Login successful! Redirecting...', 'success');
+
+            // Redirect to dashboard
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 1000);
+          } else {
+            showMessage(data.error || 'Login failed');
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          showMessage('Network error. Please try again.');
+        } finally {
+          loginBtn.disabled = false;
+          loading.style.display = 'none';
+        }
+      });
+
+      // Check if already logged in
+      const token = localStorage.getItem('fire22_token');
+      if (token) {
+        // Verify token is still valid
+        fetch('/api/auth/verify', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.href = '/dashboard';
+            }
+          })
+          .catch(() => {
+            // Token invalid, remove it
+            localStorage.removeItem('fire22_token');
+            localStorage.removeItem('fire22_user');
+          });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,305 @@
+# 🔥 Fire22 Dashboard Worker - Code Ownership Matrix
+# 
+# This file defines who should review changes to different parts of the codebase.
+# Each line is a file pattern followed by one or more owners.
+# 
+# More information: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# =============================================================================
+# 🎯 DEFAULT OWNERSHIP - Engineering Team for all changes
+# =============================================================================
+* @fire22/engineering
+
+# =============================================================================
+# 🏢 WORKSPACE-SPECIFIC OWNERSHIP
+# =============================================================================
+
+# API Client Workspace - Backend Team + Engineering Team
+workspaces/@fire22-api-client/ @fire22/backend @fire22/engineering
+
+# Core Dashboard Workspace - Frontend Team + UI/UX Team
+workspaces/@fire22-core-dashboard/ @fire22/frontend @fire22/ui-ux
+
+# Sports Betting Workspace - Business Team + Backend Team  
+workspaces/@fire22-sports-betting/ @fire22/business @fire22/backend
+
+# Telegram Integration Workspace - Integration Team + Backend Team
+workspaces/@fire22-telegram-integration/ @fire22/integration @fire22/backend
+
+# Build System Workspace - DevOps Team + Engineering Team
+workspaces/@fire22-build-system/ @fire22/devops @fire22/engineering
+
+# Pattern System Workspace - Engineering Team (core system)
+workspaces/@fire22-pattern-system/ @fire22/engineering
+
+# Security Registry Workspace - Security Team + DevOps Team
+workspaces/@fire22-security-registry/ @fire22/security @fire22/devops
+
+# =============================================================================
+# 🔧 CORE APPLICATION OWNERSHIP
+# =============================================================================
+
+# Main source code - Engineering Team + Backend Team
+src/ @fire22/engineering @fire22/backend
+
+# API Controllers - Backend Team + relevant domain experts
+src/api/controllers/admin.controller.ts @fire22/backend @fire22/engineering
+src/api/controllers/auth.controller.ts @fire22/security @fire22/backend  
+src/api/controllers/customer.controller.ts @fire22/backend @fire22/business
+src/api/controllers/financial.controller.ts @fire22/backend @fire22/business @fire22/security
+src/api/controllers/health.controller.ts @fire22/devops @fire22/backend
+src/api/controllers/manager.controller.ts @fire22/backend @fire22/business
+
+# API Middleware - Security Team + Backend Team
+src/api/middleware/ @fire22/security @fire22/backend
+
+# Business Logic - Business Team + Backend Team
+src/business-management.ts @fire22/business @fire22/backend
+src/sports-betting-management.ts @fire22/business @fire22/backend
+src/live-casino-management.ts @fire22/business @fire22/backend
+
+# Integration Components - Integration Team
+src/fire22-api.ts @fire22/integration @fire22/backend
+src/telegram-bot.ts @fire22/integration @fire22/backend
+src/p2p-queue-api.ts @fire22/integration @fire22/backend
+
+# =============================================================================
+# 📜 SCRIPTS & AUTOMATION
+# =============================================================================
+
+# Build Scripts - DevOps Team + Engineering Team
+scripts/build-*.ts @fire22/devops @fire22/engineering
+scripts/enhanced-executable-builder.ts @fire22/devops @fire22/engineering
+scripts/workspace-orchestrator.ts @fire22/devops @fire22/engineering
+
+# Security Scripts - Security Team
+scripts/security-*.ts @fire22/security
+scripts/secure-env-manager.ts @fire22/security @fire22/devops
+
+# Performance Scripts - Engineering Team
+scripts/performance-*.ts @fire22/engineering
+scripts/workspace-performance-profiler.ts @fire22/engineering @fire22/devops
+
+# Testing Scripts - QA Team + Engineering Team  
+scripts/*test*.ts @fire22/qa @fire22/engineering
+scripts/edge-case-test-runner.ts @fire22/qa @fire22/engineering
+
+# Environment Management - DevOps Team + Security Team
+scripts/env-manager.ts @fire22/devops @fire22/security
+
+# Release & Publishing - DevOps Team + Engineering Team
+scripts/multi-registry-publisher.ts @fire22/devops @fire22/engineering
+scripts/release-workflow.ts @fire22/devops @fire22/engineering
+scripts/version-*.ts @fire22/devops @fire22/engineering
+
+# =============================================================================
+# 🗄️ DATABASE & SCHEMAS
+# =============================================================================
+
+# Database Schemas - Backend Team + Business Team
+*.sql @fire22/backend @fire22/business
+
+# Critical Security Schemas - Security Team required
+auth-schema.sql @fire22/security @fire22/backend
+matrix-health-schema.sql @fire22/security @fire22/backend @fire22/devops
+
+# Fire22 Integration Schemas - Integration Team + Backend Team
+import-real-fire22-customers.sql @fire22/integration @fire22/backend
+fire22-enhanced-schema.sql @fire22/integration @fire22/backend
+
+# =============================================================================
+# ⚙️ CONFIGURATION FILES
+# =============================================================================
+
+# Package Management - DevOps Team + Engineering Team
+package.json @fire22/devops @fire22/engineering
+bun.lock @fire22/devops @fire22/engineering
+workspace-config.json @fire22/devops @fire22/engineering
+
+# Build Configuration - DevOps Team
+build.ts @fire22/devops @fire22/engineering
+build.config.ts @fire22/devops @fire22/engineering
+tsconfig.json @fire22/devops @fire22/engineering
+bunfig.toml @fire22/devops @fire22/engineering
+
+# Cloudflare Workers - DevOps Team + Backend Team
+wrangler.toml @fire22/devops @fire22/backend
+server.js @fire22/backend @fire22/devops
+
+# Security Configuration - Security Team required
+bunfig-security-demo.toml @fire22/security @fire22/devops
+production-secrets-template.txt @fire22/security @fire22/devops
+
+# =============================================================================
+# 🧪 TESTING & QUALITY
+# =============================================================================
+
+# Test Files - QA Team + relevant domain experts
+test/ @fire22/qa @fire22/engineering
+bench/ @fire22/qa @fire22/engineering @fire22/devops
+
+# Test Configuration
+*test*.ts @fire22/qa @fire22/engineering
+*test*.js @fire22/qa @fire22/engineering
+
+# =============================================================================
+# 📚 DOCUMENTATION
+# =============================================================================
+
+# Core Documentation - Technical Writer + Engineering Team
+README.md @fire22/technical-writing @fire22/engineering
+PROJECT-OVERVIEW.md @fire22/technical-writing @fire22/engineering
+
+# API Documentation - Backend Team + Technical Writer
+FIRE22-*.md @fire22/integration @fire22/backend @fire22/technical-writing
+ENDPOINT-*.md @fire22/backend @fire22/technical-writing
+
+# Security Documentation - Security Team + Technical Writer
+SECURITY-*.md @fire22/security @fire22/technical-writing
+API-SECURITY-GUIDE.md @fire22/security @fire22/backend @fire22/technical-writing
+
+# Build Documentation - DevOps Team + Technical Writer
+ENHANCED-BUILD-DOCUMENTATION.md @fire22/devops @fire22/technical-writing
+BUILD-*.md @fire22/devops @fire22/technical-writing
+
+# Workspace Documentation - Engineering Team + Technical Writer  
+WORKSPACE-*.md @fire22/engineering @fire22/technical-writing
+DEVELOPER-*.md @fire22/engineering @fire22/technical-writing
+
+# HTML Documentation - Frontend Team + Technical Writer
+docs/ @fire22/frontend @fire22/technical-writing @fire22/ui-ux
+
+# =============================================================================
+# 🏢 DEPARTMENT PAGES & TEAM CONTRIBUTORS
+# =============================================================================
+#
+# ⚠️  REVIEW WORKFLOW & GOVERNANCE POLICY
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Department leads are the primary owners and are responsible for the first
+# review of all changes within their domain.
+#
+# All merges additionally require a final review for overarching company
+# standards, security, and governance. This is enforced via branch protection
+# rules and is not configured here in CODEOWNERS.
+#
+# Standard Process:
+# 1. Team Lead: Reviews & approves for domain quality and readiness.
+# 2. Final Review: Automated check for compliance and standards.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Department Index & Overview Pages - Management Team
+src/departments/ @MichaelJones
+src/departments/index.html @MichaelJones
+
+# Individual Department Pages with Department Leads
+# Frontend Engineering - Daniel Kim (Junior Lead)
+src/departments/frontend.html @DanielKim
+
+# Backend Engineering - Michael Jones (Backend Lead)
+src/departments/backend.html @MichaelJones
+
+# Design & UX - David Lee (UX/UI Lead)
+src/departments/design.html @DavidLee
+
+# DevOps & Infrastructure - Sarah Chen (DevOps Lead)
+src/departments/devops.html @SarahChen
+src/departments/technology.html @SarahChen
+
+# Data & Visualization - Emily White (Data Lead)
+src/departments/data.html @EmilyWhite
+
+# Documentation - Rachel Green (Documentation Lead)
+src/departments/documentation.html @RachelGreen
+
+# Communications - Alex Rodriguez (Communications Lead)
+src/departments/communications.html @AlexRodriguez
+
+# Marketing - Maria Santos (Marketing Lead)
+src/departments/marketing.html @MariaSantos
+
+# Management Department - Michael Jones (Senior Lead)
+src/departments/management.html @MichaelJones
+
+# Finance Department - Michael Jones (Operations)
+src/departments/finance.html @MichaelJones
+
+# Customer Support Department - Alex Rodriguez (Support Lead)
+src/departments/customer-support.html @AlexRodriguez
+
+# Compliance Department - Sarah Chen (Security/Compliance Lead)
+src/departments/compliance.html @SarahChen
+
+# Operations Department - Michael Jones & Sarah Chen (Co-leads)
+src/departments/operations.html @MichaelJones @SarahChen
+
+# Team Contributors Page - All Department Leads
+src/departments/team-contributors.html @MichaelJones @SarahChen @DavidLee @EmilyWhite @AlexRodriguez
+
+# Department Template - Engineering Team
+src/departments/_department-template.html @MichaelJones @SarahChen
+
+# Telegram Department Integration - Taylor Johnson (Telegram Lead)
+src/departments/telegram-*.html @TaylorJohnson @ChrisPark
+src/telegram/ @TaylorJohnson @ChrisPark
+
+# Cashier & Financial Department - Michael Jones (Finance Lead)
+src/departments/cashier-*.html @MichaelJones
+src/api/controllers/financial.controller.ts @MichaelJones @fire22/security
+
+# AI & System Architecture - Engineering Team
+src/departments/ai-*.html @MichaelJones @SarahChen
+
+# =============================================================================
+# 🔒 SECURITY-CRITICAL FILES
+# =============================================================================
+
+# Authentication & Authorization - Security Team required for all changes
+src/api/middleware/auth.middleware.ts @fire22/security @fire22/backend
+src/api/middleware/authorize.middleware.ts @fire22/security @fire22/backend
+src/api/controllers/auth.controller.ts @fire22/security @fire22/backend
+
+# Financial & Payment Systems - Security Team + Business Team + Backend Team
+src/api/controllers/financial.controller.ts @fire22/security @fire22/business @fire22/backend
+scripts/payment-*.ts @fire22/security @fire22/business @fire22/backend
+
+# Environment & Secrets - Security Team + DevOps Team (both required)
+.env* @fire22/security @fire22/devops
+scripts/secure-env-manager.ts @fire22/security @fire22/devops
+production-secrets-template.txt @fire22/security @fire22/devops
+
+# Security Scanning & Auditing - Security Team
+scripts/security-scanner-demo.ts @fire22/security
+workspaces/@fire22-security-registry/ @fire22/security @fire22/devops
+
+# =============================================================================
+# 🚀 DEPLOYMENT & INFRASTRUCTURE
+# =============================================================================
+
+# GitHub Actions - DevOps Team + Engineering Team
+.github/ @fire22/devops @fire22/engineering
+
+# Cloudflare Workers Deployment - DevOps Team + Backend Team
+wrangler*.toml @fire22/devops @fire22/backend
+
+# Docker & Containerization - DevOps Team
+Dockerfile @fire22/devops
+docker-compose*.yml @fire22/devops
+
+# =============================================================================
+# 📦 RELEASE MANAGEMENT  
+# =============================================================================
+
+# Version Control - DevOps Team + Engineering Team
+CHANGELOG.md @fire22/devops @fire22/engineering
+releases/ @fire22/devops @fire22/engineering
+
+# Package Publishing - DevOps Team
+scripts/multi-registry-publisher.ts @fire22/devops @fire22/engineering
+
+# =============================================================================
+# 🎯 EMERGENCY OVERRIDES
+# =============================================================================
+
+# Critical System Files - Require multiple team approval
+package.json @fire22/devops @fire22/engineering @fire22/security
+src/index.ts @fire22/engineering @fire22/backend @fire22/security

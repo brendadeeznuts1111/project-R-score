@@ -1,0 +1,67 @@
+[
+  {
+    "repository": "docs-worker",
+    "timestamp": "2025-08-30T15:31:50.195Z",
+    "overallScore": 29,
+    "categories": {
+      "architectural": {
+        "score": 20,
+        "totalChecks": 5,
+        "passedChecks": 1,
+        "failedChecks": 4,
+        "criticalIssues": 0
+      },
+      "tooling": {
+        "score": 66.66666666666666,
+        "totalChecks": 3,
+        "passedChecks": 2,
+        "failedChecks": 1,
+        "criticalIssues": 0
+      },
+      "operational": {
+        "score": 0,
+        "totalChecks": 3,
+        "passedChecks": 0,
+        "failedChecks": 3,
+        "criticalIssues": 0
+      },
+      "security": {
+        "score": 33.33333333333333,
+        "totalChecks": 3,
+        "passedChecks": 1,
+        "failedChecks": 2,
+        "criticalIssues": 0
+      }
+    },
+    "violations": [
+      {
+        "severity": "LOW",
+        "category": "architectural",
+        "rule": "domain-boundaries",
+        "description": "Package name does not reflect domain boundaries",
+        "file": "package.json",
+        "remediation": "Use domain-aligned naming convention (e.g., @fire22/betting-engine)"
+      },
+      {
+        "severity": "HIGH",
+        "category": "operational",
+        "rule": "ci-cd-automation",
+        "description": "No CI/CD pipeline configuration found",
+        "remediation": "Add GitHub Actions or equivalent CI/CD pipeline"
+      },
+      {
+        "severity": "CRITICAL",
+        "category": "security",
+        "rule": "security-scanning",
+        "description": "No CI/CD pipeline found - cannot verify security scanning",
+        "remediation": "Implement CI/CD pipeline with security scanning"
+      }
+    ],
+    "recommendations": [
+      "🚨 CRITICAL: Security compliance is below 80%. Immediate remediation required.",
+      "🏗️ ARCHITECTURAL: Consider implementing event-driven patterns and domain boundaries.",
+      "⚙️ OPERATIONAL: Enhance CI/CD automation and monitoring capabilities.",
+      "🔴 CRITICAL VIOLATIONS: Address all critical playbook violations immediately."
+    ]
+  }
+]

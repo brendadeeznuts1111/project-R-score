@@ -1,0 +1,467 @@
+<!doctype html>
+<!-- Fire22 Language Switcher Component -->
+<div id="fire22-language-switcher" class="language-switcher-container">
+  <div class="dropdown">
+    <button
+      class="dropdown-toggle"
+      id="languageButton"
+      type="button"
+      aria-expanded="false"
+      data-language="L-407"
+      data-context="button"
+    >
+      <span class="language-icon">🌐</span>
+      <span class="language-name" id="currentLanguageName">English</span>
+      <span class="dropdown-arrow">▼</span>
+    </button>
+
+    <ul class="dropdown-menu" id="languageMenu" role="menu">
+      <li role="menuitem">
+        <button class="dropdown-item" onclick="handleLanguageSwitch('en')" data-lang="en">
+          <span class="flag">🇺🇸</span>
+          <span class="language-label">English</span>
+        </button>
+      </li>
+      <li role="menuitem">
+        <button class="dropdown-item" onclick="handleLanguageSwitch('es')" data-lang="es">
+          <span class="flag">🇪🇸</span>
+          <span class="language-label">Español</span>
+        </button>
+      </li>
+      <li role="menuitem">
+        <button class="dropdown-item" onclick="handleLanguageSwitch('pt')" data-lang="pt">
+          <span class="flag">🇧🇷</span>
+          <span class="language-label">Português</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Language Loading Status -->
+  <div id="languageStatus" class="language-status" style="display: none">
+    <span class="status-icon">⏳</span>
+    <span class="status-text" data-language="L-449">Loading...</span>
+  </div>
+</div>
+
+<style>
+  /* Fire22 Language Switcher Styles */
+  .language-switcher-container {
+    position: relative;
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 107, 53, 0.3);
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 140px;
+  }
+
+  .dropdown-toggle:hover {
+    background: rgba(255, 107, 53, 0.1);
+    border-color: rgba(255, 107, 53, 0.6);
+    transform: translateY(-1px);
+  }
+
+  .dropdown-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.3);
+  }
+
+  .language-icon {
+    font-size: 16px;
+  }
+
+  .language-name {
+    flex: 1;
+    text-align: left;
+  }
+
+  .dropdown-arrow {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+  }
+
+  .dropdown-toggle[aria-expanded='true'] .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1a1a2e;
+    border: 1px solid rgba(255, 107, 53, 0.3);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .dropdown-item:hover {
+    background: rgba(255, 107, 53, 0.1);
+  }
+
+  .dropdown-item:focus {
+    outline: none;
+    background: rgba(255, 107, 53, 0.2);
+  }
+
+  .dropdown-item.active {
+    background: rgba(255, 107, 53, 0.2);
+    font-weight: 600;
+  }
+
+  .flag {
+    font-size: 16px;
+  }
+
+  .language-label {
+    flex: 1;
+  }
+
+  .language-status {
+    position: absolute;
+    top: 50%;
+    right: -150px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(88, 166, 255, 0.1);
+    border: 1px solid rgba(88, 166, 255, 0.3);
+    border-radius: 4px;
+    color: #58a6ff;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .status-icon {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .language-switcher-container {
+      width: 100%;
+    }
+
+    .dropdown-toggle {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .language-status {
+      position: static;
+      transform: none;
+      margin-top: 8px;
+      justify-content: center;
+    }
+  }
+
+  /* Dark Theme Support */
+  @media (prefers-color-scheme: dark) {
+    .dropdown-menu {
+      background: #0d1117;
+      border-color: rgba(255, 107, 53, 0.2);
+    }
+
+    .dropdown-item {
+      color: #f0f6fc;
+    }
+  }
+
+  /* High Contrast Support */
+  @media (prefers-contrast: high) {
+    .dropdown-toggle {
+      border-width: 2px;
+    }
+
+    .dropdown-menu {
+      border-width: 2px;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+      background: rgba(255, 107, 53, 0.3);
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Fire22 Language Switcher Controller
+   */
+  class LanguageSwitcher {
+    constructor() {
+      this.dropdown = document.getElementById('languageButton');
+      this.menu = document.getElementById('languageMenu');
+      this.currentLanguageName = document.getElementById('currentLanguageName');
+      this.languageStatus = document.getElementById('languageStatus');
+
+      this.languageNames = {
+        en: 'English',
+        es: 'Español',
+        pt: 'Português',
+      };
+
+      this.init();
+    }
+
+    init() {
+      this.setupEventListeners();
+      this.updateCurrentLanguage();
+      this.setupKeyboardNavigation();
+
+      // Listen for language change events
+      window.addEventListener('fire22:languageChanged', event => {
+        this.handleLanguageChanged(event.detail);
+      });
+
+      window.addEventListener('fire22:languagesLoaded', event => {
+        this.handleLanguagesLoaded(event.detail);
+      });
+    }
+
+    setupEventListeners() {
+      // Toggle dropdown
+      this.dropdown.addEventListener('click', e => {
+        e.preventDefault();
+        this.toggleDropdown();
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', e => {
+        if (!this.dropdown.contains(e.target) && !this.menu.contains(e.target)) {
+          this.closeDropdown();
+        }
+      });
+
+      // Close dropdown on Escape key
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          this.closeDropdown();
+        }
+      });
+    }
+
+    setupKeyboardNavigation() {
+      this.dropdown.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.openDropdown();
+          this.focusFirstMenuItem();
+        }
+      });
+
+      this.menu.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          this.focusNextMenuItem();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          this.focusPreviousMenuItem();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.target.click();
+        }
+      });
+    }
+
+    toggleDropdown() {
+      const isOpen = this.dropdown.getAttribute('aria-expanded') === 'true';
+      if (isOpen) {
+        this.closeDropdown();
+      } else {
+        this.openDropdown();
+      }
+    }
+
+    openDropdown() {
+      this.dropdown.setAttribute('aria-expanded', 'true');
+      this.menu.classList.add('show');
+      this.updateActiveMenuItem();
+    }
+
+    closeDropdown() {
+      this.dropdown.setAttribute('aria-expanded', 'false');
+      this.menu.classList.remove('show');
+      this.dropdown.focus();
+    }
+
+    focusFirstMenuItem() {
+      const firstItem = this.menu.querySelector('.dropdown-item');
+      if (firstItem) firstItem.focus();
+    }
+
+    focusNextMenuItem() {
+      const items = this.menu.querySelectorAll('.dropdown-item');
+      const currentIndex = Array.from(items).indexOf(document.activeElement);
+      const nextIndex = (currentIndex + 1) % items.length;
+      items[nextIndex].focus();
+    }
+
+    focusPreviousMenuItem() {
+      const items = this.menu.querySelectorAll('.dropdown-item');
+      const currentIndex = Array.from(items).indexOf(document.activeElement);
+      const previousIndex = currentIndex === 0 ? items.length - 1 : currentIndex - 1;
+      items[previousIndex].focus();
+    }
+
+    updateCurrentLanguage() {
+      const currentLang = window.Fire22Language?.getCurrentLanguage() || 'en';
+      const languageName = this.languageNames[currentLang] || 'English';
+      this.currentLanguageName.textContent = languageName;
+      this.updateActiveMenuItem();
+    }
+
+    updateActiveMenuItem() {
+      const currentLang = window.Fire22Language?.getCurrentLanguage() || 'en';
+      const items = this.menu.querySelectorAll('.dropdown-item');
+
+      items.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('data-lang') === currentLang) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    showStatus(message, type = 'info') {
+      const statusText = this.languageStatus.querySelector('.status-text');
+      const statusIcon = this.languageStatus.querySelector('.status-icon');
+
+      statusText.textContent = message;
+
+      // Update icon based on type
+      switch (type) {
+        case 'loading':
+          statusIcon.textContent = '⏳';
+          break;
+        case 'success':
+          statusIcon.textContent = '✅';
+          break;
+        case 'error':
+          statusIcon.textContent = '❌';
+          break;
+        default:
+          statusIcon.textContent = 'ℹ️';
+      }
+
+      this.languageStatus.style.display = 'flex';
+
+      // Auto-hide after 3 seconds
+      setTimeout(() => {
+        this.languageStatus.style.display = 'none';
+      }, 3000);
+    }
+
+    handleLanguageChanged(detail) {
+      const { currentLanguage, previousLanguage } = detail;
+      this.updateCurrentLanguage();
+      this.closeDropdown();
+
+      this.showStatus(`Switched to ${this.languageNames[currentLanguage]}`, 'success');
+
+      console.log(`🌐 Language Switcher: ${previousLanguage} → ${currentLanguage}`);
+    }
+
+    handleLanguagesLoaded(detail) {
+      console.log('🌐 Language Switcher: Languages loaded', detail);
+      this.updateCurrentLanguage();
+    }
+  }
+
+  // Global function for handling language switches
+  function handleLanguageSwitch(languageCode) {
+    const switcher = window.languageSwitcher;
+
+    if (!window.Fire22Language) {
+      console.error('❌ Fire22 Language Manager not initialized');
+      switcher?.showStatus('Language system not ready', 'error');
+      return;
+    }
+
+    switcher?.showStatus('Switching language...', 'loading');
+
+    // Use the global switchLanguage function
+    window
+      .switchLanguage(languageCode)
+      .then(() => {
+        console.log(`🌐 Successfully switched to: ${languageCode}`);
+      })
+      .catch(error => {
+        console.error('❌ Failed to switch language:', error);
+        switcher?.showStatus('Failed to switch language', 'error');
+      });
+  }
+
+  // Initialize language switcher when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    window.languageSwitcher = new LanguageSwitcher();
+  });
+
+  // Initialize language switcher if DOM is already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      window.languageSwitcher = new LanguageSwitcher();
+    });
+  } else {
+    window.languageSwitcher = new LanguageSwitcher();
+  }
+</script>

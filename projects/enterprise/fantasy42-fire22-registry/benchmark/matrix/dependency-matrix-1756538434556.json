@@ -1,0 +1,54 @@
+{
+  "timestamp": "2025-08-30T07:20:34.556Z",
+  "registry": "fantasy42-fire22-registry",
+  "packages": {
+    "@fire22/security-audit": {
+      "version": "1.0.0",
+      "dependencies": {
+        "exact": {
+          "bun": "[EXACT] >=1.0.0"
+        },
+        "ranges": {
+          "@types/node": "[EXACT] ^20.0.0 -> 20.0.0",
+          "typescript": "[EXACT] ^5.0.0 -> 5.0.0",
+          "eslint": "[EXACT] ^8.0.0 -> 8.0.0"
+        },
+        "total": 4,
+        "exactCount": 1,
+        "rangeCount": 3
+      }
+    },
+    "@fire22/benchmark-orchestrator": {
+      "version": "1.0.0",
+      "dependencies": {
+        "exact": {
+          "bun": "[EXACT] >=1.0.0"
+        },
+        "ranges": {
+          "@types/node": "[EXACT] ^20.0.0 -> 20.0.0",
+          "typescript": "[EXACT] ^5.0.0 -> 5.0.0",
+          "eslint": "[EXACT] ^8.0.0 -> 8.0.0"
+        },
+        "total": 4,
+        "exactCount": 1,
+        "rangeCount": 3
+      }
+    },
+    "@fire22/compliance-checker": {
+      "version": "1.0.0",
+      "dependencies": {
+        "exact": {
+          "bun": "[EXACT] >=1.0.0"
+        },
+        "ranges": {
+          "@types/node": "[EXACT] ^20.0.0 -> 20.0.0",
+          "typescript": "[EXACT] ^5.0.0 -> 5.0.0",
+          "eslint": "[EXACT] ^8.0.0 -> 8.0.0"
+        },
+        "total": 4,
+        "exactCount": 1,
+        "rangeCount": 3
+      }
+    }
+  }
+}

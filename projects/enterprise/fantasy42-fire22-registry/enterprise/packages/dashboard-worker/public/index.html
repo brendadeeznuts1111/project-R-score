@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Dashboard - Dark Mode Enabled</title>
+    <!-- Consolidated CSS with Dark Mode Support -->
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>🔥 Fire22 Dashboard</h1>
+        <p>Consolidated CSS with Dark Mode Support</p>
+      </header>
+
+      <main class="main-content">
+        <div class="card">
+          <h2>Dark Mode Features</h2>
+          <ul>
+            <li>✅ Automatic system preference detection</li>
+            <li>✅ Manual theme toggle (top-right corner)</li>
+            <li>✅ Keyboard shortcut: Ctrl/Cmd + Shift + L</li>
+            <li>✅ Theme persistence with localStorage</li>
+            <li>✅ Smooth transitions between themes</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>CSS Architecture</h2>
+          <p>
+            All styles are now consolidated in
+            <code>/css/styles.css</code>
+            which includes:
+          </p>
+          <ul>
+            <li>Base styles and resets</li>
+            <li>CSS variables for theming</li>
+            <li>Component styles (buttons, cards, tables, forms)</li>
+            <li>Fire22 brand theme</li>
+            <li>Dark mode overrides</li>
+            <li>Extracted inline styles from 33 HTML files</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Test Components</h2>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0">
+            <button class="btn-primary">Primary Button</button>
+            <button class="btn-secondary">Secondary Button</button>
+            <button class="btn" disabled>Disabled</button>
+          </div>
+
+          <table class="table" style="width: 100%; margin-top: 1rem">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dark Mode</td>
+                <td>✅ Active</td>
+              </tr>
+              <tr>
+                <td>CSS Consolidation</td>
+                <td>✅ Complete</td>
+              </tr>
+              <tr>
+                <td>Bun Bundling</td>
+                <td>✅ Configured</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="background: var(--fire22-gradient); color: white">
+          <h2>Fire22 Brand Gradient</h2>
+          <p>This card uses the Fire22 brand gradient that adapts to dark mode.</p>
+        </div>
+      </main>
+
+      <footer style="text-align: center; padding: 2rem; color: var(--text-muted)">
+        <p>
+          Fire22 Dashboard - Powered by Bun | CSS:
+          <code>/css/styles.css</code>
+          (324KB consolidated)
+        </p>
+      </footer>
+    </div>
+
+    <!-- Theme Toggle Component -->
+    <script src="/src/js/theme-toggle.js"></script>
+  </body>
+</html>

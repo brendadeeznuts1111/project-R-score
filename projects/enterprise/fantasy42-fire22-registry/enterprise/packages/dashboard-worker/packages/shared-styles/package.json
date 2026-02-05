@@ -1,0 +1,27 @@
+{
+  "name": "@fire22/shared-styles",
+  "version": "1.0.0",
+  "description": "Shared CSS styles for Fire22 packages with Bun CSS bundling",
+  "main": "index.css",
+  "style": "highlight.css",
+  "files": [
+    "*.css"
+  ],
+  "keywords": [
+    "css",
+    "styles",
+    "fire22",
+    "bun",
+    "bundling"
+  ],
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/shared-styles"
+  }
+}

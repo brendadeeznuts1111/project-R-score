@@ -1,0 +1,300 @@
+# 🔥 Fantasy42-Fire22 Enterprise CI/CD Pipeline
+# Consolidated and optimized for domain-driven development
+
+name: 🚀 Enterprise CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, enterprise, staging]
+  pull_request:
+    branches: [main, develop, enterprise, staging]
+  release:
+    types: [published]
+
+env:
+  BUN_VERSION: '1.0.0'
+  NODE_ENV: test
+  REGISTRY_URL: 'https://registry.npmjs.org'
+
+jobs:
+  # 🔍 Domain Detection & Analysis
+  domain-analysis:
+    name: 🔍 Domain Analysis
+    runs-on: ubuntu-latest
+    outputs:
+      domain: ${{ steps.detect.outputs.domain }}
+      package_type: ${{ steps.detect.outputs.package_type }}
+      security_level: ${{ steps.detect.outputs.security_level }}
+      changed_domains: ${{ steps.detect.outputs.changed_domains }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changes and domains
+        id: detect
+        run: |
+          echo "🔍 Analyzing repository changes..."
+
+          # Get changed files
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD~1)
+          fi
+
+          # Detect domains from changed files
+          DOMAINS=$(echo "$CHANGED_FILES" | grep -E '^src/domains/|^enterprise/packages/' | sed -E 's|^src/domains/([^/]+).*|\1|' | sed -E 's|^enterprise/packages/([^/]+).*|\1|' | sort | uniq)
+
+          if [ -z "$DOMAINS" ]; then
+            DOMAINS="core"  # Default to core if no specific domain detected
+          fi
+
+          echo "domains=$DOMAINS" >> $GITHUB_OUTPUT
+          echo "changed_domains=$DOMAINS" >> $GITHUB_OUTPUT
+
+          # Determine package type
+          if echo "$CHANGED_FILES" | grep -q "^enterprise/packages/"; then
+            echo "package_type=enterprise" >> $GITHUB_OUTPUT
+          else
+            echo "package_type=ddd" >> $GITHUB_OUTPUT
+          fi
+
+          # Set security level based on domains
+          HIGH_SECURITY_DOMAINS="security compliance finance betting"
+          MEDIUM_SECURITY_DOMAINS="users communication content"
+
+          SECURITY_LEVEL="standard"
+          for domain in $DOMAINS; do
+            if echo "$HIGH_SECURITY_DOMAINS" | grep -q "$domain"; then
+              SECURITY_LEVEL="high"
+              break
+            elif echo "$MEDIUM_SECURITY_DOMAINS" | grep -q "$domain"; then
+              SECURITY_LEVEL="medium"
+            fi
+          done
+
+          echo "security_level=$SECURITY_LEVEL" >> $GITHUB_OUTPUT
+
+  # 🧪 Testing & Quality Assurance
+  testing:
+    name: 🧪 Testing & QA
+    runs-on: ubuntu-latest
+    needs: domain-analysis
+    strategy:
+      matrix:
+        domain: ${{ fromJSON(needs.domain-analysis.outputs.changed_domains || '["core"]') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun
+          key: bun-${{ runner.os }}-${{ hashFiles('**/bun.lock', '**/package.json') }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Domain-specific unit tests
+        run: |
+          DOMAIN="${{ matrix.domain }}"
+          echo "🧪 Running unit tests for $DOMAIN domain"
+          if [ -d "src/domains/$DOMAIN" ]; then
+            bun run test:domain $DOMAIN
+          elif [ -d "enterprise/packages/$DOMAIN" ]; then
+            bun run test:package $DOMAIN
+          else
+            bun run test:core
+          fi
+
+      - name: Code quality checks
+        run: |
+          echo "🔍 Running code quality checks"
+          bun run lint
+          bun run type-check
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results-${{ matrix.domain }}
+          path: |
+            coverage/
+            test-results/
+          retention-days: 7
+
+  # 🔐 Security & Compliance
+  security:
+    name: 🔐 Security & Compliance
+    runs-on: ubuntu-latest
+    needs: [domain-analysis, testing]
+    if: needs.domain-analysis.outputs.security_level != 'standard'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Security audit
+        run: |
+          echo "🔐 Running security audit"
+          bun run audit
+
+      - name: CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+        if: needs.domain-analysis.outputs.security_level == 'high'
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v3
+        if: needs.domain-analysis.outputs.security_level != 'standard'
+
+      - name: Compliance checks
+        run: |
+          echo "📋 Running compliance checks"
+          bun run compliance:check
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: security-reports/
+          retention-days: 30
+
+  # 🏗️ Build & Package
+  build:
+    name: 🏗️ Build & Package
+    runs-on: ubuntu-latest
+    needs: [domain-analysis, testing, security]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build application
+        run: |
+          echo "🏗️ Building application"
+          bun run build
+
+      - name: Create packages
+        run: |
+          echo "📦 Creating packages"
+          bun run pack:production
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            fantasy42-fire22-registry-*.tgz
+            packages/**/*.tgz
+          retention-days: 30
+
+  # 🚀 Deployment
+  deploy:
+    name: 🚀 Deployment
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: Deploy to staging
+        run: |
+          echo "🎭 Deploying to staging"
+          bun run deploy:staging
+
+      - name: Smoke tests
+        run: |
+          echo "🚬 Running smoke tests"
+          bun run test:smoke
+
+      - name: Deploy to production
+        run: |
+          echo "🎯 Deploying to production"
+          bun run deploy:production
+
+      - name: Post-deployment verification
+        run: |
+          echo "✅ Verifying deployment"
+          bun run deploy:verify
+
+  # 📊 Performance Monitoring
+  performance:
+    name: 📊 Performance Monitoring
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Performance analysis
+        run: |
+          echo "📈 Running performance analysis"
+          bun run performance:analyze
+
+      - name: Upload performance metrics
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-metrics-${{ github.sha }}
+          path: performance-metrics/
+          retention-days: 90
+
+  # 📚 Documentation
+  docs:
+    name: 📚 Documentation
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Install Jekyll
+        run: gem install jekyll bundler
+
+      - name: Build documentation
+        working-directory: docs
+        run: |
+          bundle install
+          bundle exec jekyll build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_site
+          cname: docs.apexodds.net

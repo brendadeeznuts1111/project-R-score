@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telegram Bot Integration - Fire22 Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      h3 {
+        font-size: 1.4rem;
+        margin: 15px 0;
+        color: #b21f1f;
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: 'Fira Code', monospace;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .code-keyword {
+        color: #569cd6;
+      }
+
+      .code-function {
+        color: #dcdcaa;
+      }
+
+      .code-parameter {
+        color: #9cdcfe;
+      }
+
+      .code-string {
+        color: #ce9178;
+      }
+
+      .code-comment {
+        color: #6a9955;
+      }
+
+      .api-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .api-table th,
+      .api-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .api-table th {
+        background: rgba(0, 0, 0, 0.3);
+        font-weight: 600;
+        color: #fdbb2d;
+      }
+
+      .api-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .callout {
+        background: rgba(253, 187, 45, 0.1);
+        border-left: 4px solid #fdbb2d;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .warning {
+        background: rgba(178, 31, 31, 0.1);
+        border-left: 4px solid #b21f1f;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: rgba(76, 175, 80, 0.1);
+        border-left: 4px solid #4caf50;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .api-integration {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .api-details {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+
+      .api-details strong {
+        color: #fdbb2d;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .status-beta {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+      }
+
+      /* Enhanced Branding Styles */
+      .brand-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 0;
+        border-bottom: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        font-size: 3rem;
+        animation: flame-flicker 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+        }
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .company-name {
+        font-size: 2.5rem;
+        margin: 0;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .company-tagline {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        letter-spacing: 1px;
+      }
+
+      .brand-nav {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.1);
+        border-color: rgba(253, 187, 45, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .nav-link.active {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.15);
+        border-color: #fdbb2d;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .page-header h2 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Enhanced Footer Branding */
+      .footer {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 50px;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .footer-brand {
+        margin-bottom: 20px;
+      }
+
+      .footer-logo {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .footer-company {
+        font-size: 1.5rem;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      .footer-tagline {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-link:hover {
+        color: #fdbb2d;
+      }
+
+      .footer-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+      }
+
+      .footer-copyright {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Branding */
+      @media (max-width: 768px) {
+        .brand-header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .brand-nav {
+          justify-content: center;
+        }
+
+        .nav-link {
+          font-size: 0.9rem;
+          padding: 8px 12px;
+        }
+
+        .company-name {
+          font-size: 2rem;
+        }
+
+        .logo-icon {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* Enhanced animations and interactions */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand-header">
+          <div class="brand-logo">
+            <div class="logo-icon">🔥</div>
+            <div class="logo-text">
+              <h1 class="company-name">Fire22</h1>
+              <span class="company-tagline">Igniting Digital Innovation</span>
+            </div>
+          </div>
+          <div class="brand-nav">
+            <a href="packages.html" class="nav-link">📦 Packages</a>
+            <a href="environment-variables.html" class="nav-link">🌍 Environment</a>
+            <a href="api-integrations-index.html" class="nav-link">🔌 API</a>
+            <a href="fire22-dashboard-config.html" class="nav-link">⚙️ Config</a>
+            <a href="@packages.html" class="nav-link">🧪 Testing</a>
+          </div>
+        </div>
+        <div class="page-header">
+          <h2>Telegram Bot Integration</h2>
+          <p class="subtitle">Real-time user notifications and support via Telegram</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h2>🚀 Quick Start</h2>
+        <p>Get started with Telegram Bot integration in just a few steps:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># 1. Install Telegram Bot SDK</span>
+<span class="code-function">bun add node-telegram-bot-api</span>
+
+<span class="code-comment"># 2. Set environment variables</span>
+<span class="code-function">bun run env:set BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz</span>
+
+<span class="code-comment"># 3. Test bot functionality</span>
+<span class="code-function">bun run env:integration</span>
+
+<span class="code-comment"># 4. Open Telegram Bot</span>
+<span class="code-function">bun run env:docs</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🤖 Telegram Bot Integration</h2>
+        <p>User notifications and support via Telegram:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            Bot Token
+          </div>
+          <div class="api-details">
+            <strong>Rate Limit:</strong>
+            30 messages/second
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            Messages, Inline Keyboards, Webhooks
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (updates and commands)
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">BOT_TOKEN</span>=<span class="code-string">123456789:ABCdefGHIjklMNOpqrsTUVwxyz</span>
+<span class="code-keyword">CASHIER_BOT_TOKEN</span>=<span class="code-string">987654321:ZYXwvuTSRqpONMlkjIHGfedCBA</span>
+
+<span class="code-comment"># Bot Message Example</span>
+<span class="code-keyword">const</span> telegram = <span class="code-keyword">require</span>(<span class="code-string">'node-telegram-bot-api'</span>);
+<span class="code-keyword">const</span> bot = <span class="code-keyword">new</span> telegram(config.telegram.botToken);
+
+<span class="code-comment"># Send notification</span>
+<span class="code-keyword">await</span> bot.sendMessage(chatId, <span class="code-string">'🚨 Fire22 Dashboard Alert: New transaction detected!'</span>, {
+  reply_markup: {
+    inline_keyboard: [[
+      { text: <span class="code-string">'View Dashboard'</span>, url: <span class="code-string">'https://dashboard.fire22.com'</span> },
+      { text: <span class="code-string">'Dismiss'</span>, callback_data: <span class="code-string">'dismiss_alert'</span> }
+    ]]
+  }
+});</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Best Practice:</strong>
+          Use inline keyboards for interactive responses and webhooks for real-time updates.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔑 Core Integration: `telegram_id` Field</h2>
+        <p>
+          The heart of your Telegram integration is the
+          <code>telegram_id</code>
+          field in your user system:
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># User Schema with Telegram Integration</span>
+<span class="code-keyword">interface</span> User {
+  id: number;
+  name: string;
+  email: string;
+  telegram_id?: number | null;  <span class="code-comment">// ← Core Telegram field!</span>
+  fire22_account_id: string;
+  created_at: Date;
+}
+
+<span class="code-comment"># Database Schema</span>
+<span class="code-keyword">CREATE</span> <span class="code-keyword">TABLE</span> users (
+  id <span class="code-keyword">INTEGER</span> <span class="code-keyword">PRIMARY</span> <span class="code-keyword">KEY</span>,
+  name <span class="code-keyword">TEXT</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>,
+  email <span class="code-keyword">TEXT</span> <span class="code-keyword">UNIQUE</span>,
+  telegram_id <span class="code-keyword">INTEGER</span> <span class="code-keyword">UNIQUE</span>,  <span class="code-comment">// Telegram integration</span>
+  fire22_account_id <span class="code-keyword">TEXT</span>,
+  created_at <span class="code-keyword">TIMESTAMP</span> <span class="code-keyword">DEFAULT</span> <span class="code-keyword">CURRENT_TIMESTAMP</span>
+);</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🔑 Key Integration:</strong>
+          The
+          <code>telegram_id</code>
+          field links your Fire22 Dashboard users to their Telegram accounts, enabling real-time notifications and bot
+          interactions.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📱 User Registration & Linking</h2>
+        <p>How users connect their Telegram accounts to your dashboard:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Bot Start Command - User Registration</span>
+bot.onText(/\/start/, <span class="code-keyword">async</span> (msg) => {
+  <span class="code-keyword">const</span> telegramId = msg.from.id;
+  <span class="code-keyword">const</span> username = msg.from.username;
+  
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">// Check if user exists</span>
+    <span class="code-keyword">const</span> existingUser = <span class="code-keyword">await</span> db.get(
+      <span class="code-string">'SELECT * FROM users WHERE telegram_id = ?'</span>, 
+      [telegramId]
+    );
+    
+    <span class="code-keyword">if</span> (!existingUser) {
+      <span class="code-keyword">// New user - create account</span>
+      <span class="code-keyword">await</span> db.run(<span class="code-string">`
+        INSERT INTO users (name, telegram_id, telegram_username) 
+        VALUES (?, ?, ?)
+      `</span>, [username, telegramId, username]);
+      
+      bot.sendMessage(telegramId, 
+        <span class="code-string">'🎉 Welcome to Fire22 Dashboard! Your account has been created.'</span>);
+    } <span class="code-keyword">else</span> {
+      bot.sendMessage(telegramId, 
+        <span class="code-string">'👋 Welcome back! Use /dashboard to access your account.'</span>);
+    }
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Registration error:'</span>, error);
+    bot.sendMessage(telegramId, <span class="code-string">'❌ Registration failed. Please try again.'</span>);
+  }
+});
+
+<span class="code-comment"># Link Existing Account</span>
+bot.onText(/\/link (.+)/, <span class="code-keyword">async</span> (msg, match) => {
+  <span class="code-keyword">const</span> telegramId = msg.from.id;
+  <span class="code-keyword">const</span> email = match[1];
+  
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">await</span> db.run(<span class="code-string">`
+      UPDATE users 
+      SET telegram_id = ?, telegram_linked_at = CURRENT_TIMESTAMP
+      WHERE email = ?
+    `</span>, [telegramId, email]);
+    
+    bot.sendMessage(telegramId, <span class="code-string">'✅ Account linked successfully!'</span>);
+  } <span class="code-keyword">catch</span> (error) {
+    bot.sendMessage(telegramId, <span class="code-string">'❌ Failed to link account. Please check your email.'</span>);
+  }
+});</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🚨 Real-time Notifications</h2>
+        <p>
+          Send instant alerts to users via their
+          <code>telegram_id</code>
+          :
+        </p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Transaction Notifications</span>
+<span class="code-keyword">const</span> notifyTransaction = <span class="code-keyword">async</span> (userId: number, transaction: any) => {
+  <span class="code-keyword">const</span> user = <span class="code-keyword">await</span> db.get(
+    <span class="code-string">'SELECT telegram_id FROM users WHERE id = ?'</span>, 
+    [userId]
+  );
+  
+  <span class="code-keyword">if</span> (user?.telegram_id) {
+    <span class="code-keyword">const</span> message = <span class="code-string">`🚨 New Transaction!\nAmount: $${transaction.amount}\nType: ${transaction.type}\nTime: ${new Date().toLocaleString()}`</span>;
+    
+    <span class="code-keyword">await</span> bot.sendMessage(user.telegram_id, message, {
+      reply_markup: {
+        inline_keyboard: [[
+          { text: <span class="code-string">'View Dashboard'</span>, url: <span class="code-string">'https://dashboard.fire22.com'</span> },
+          { text: <span class="code-string">'Dismiss'</span>, callback_data: <span class="code-string">'dismiss'</span> }
+        ]]
+      }
+    });
+  }
+};
+
+<span class="code-comment"># System Alerts</span>
+<span class="code-keyword">const</span> sendSystemAlert = <span class="code-keyword">async</span> (alertType: string, message: string) => {
+  <span class="code-keyword">const</span> users = <span class="code-keyword">await</span> db.all(<span class="code-string">'SELECT telegram_id FROM users WHERE telegram_id IS NOT NULL'</span>);
+  
+  <span class="code-keyword">for</span> (<span class="code-keyword">const</span> user of users) {
+    <span class="code-keyword">try</span> {
+      <span class="code-keyword">await</span> bot.sendMessage(user.telegram_id, 
+        <span class="code-string">`⚠️ ${alertType}\n\n${message}`</span>);
+    } <span class="code-keyword">catch</span> (error) {
+      console.error(<span class="code-string">`Failed to send alert to ${user.telegram_id}:`</span>, error);
+    }
+  }
+};</pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 Security & Validation</h2>
+        <p>Secure your Telegram integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Telegram ID Validation</span>
+<span class="code-keyword">const</span> validateTelegramId = (telegramId: number): boolean => {
+  <span class="code-keyword">const</span> idString = telegramId.toString();
+  <span class="code-keyword">return</span> idString.length >= 9 && idString.length <= 10 && 
+         /^\d+$/.test(idString);
+};
+
+<span class="code-comment"># Access Control</span>
+<span class="code-keyword">const</span> getUserData = <span class="code-keyword">async</span> (requestedUserId: number, telegramId: number) => {
+  <span class="code-keyword">const</span> user = <span class="code-keyword">await</span> db.get(<span class="code-string">`
+    SELECT * FROM users 
+    WHERE id = ? AND telegram_id = ?
+  `</span>, [requestedUserId, telegramId]);
+  
+  <span class="code-keyword">if</span> (!user) {
+    <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'Access denied: User not found or unauthorized'</span>);
+  }
+  
+  <span class="code-keyword">return</span> user;
+};</pre>
+        </div>
+
+        <div class="warning">
+          <strong>⚠️ Security:</strong>
+          Always validate telegram_id and implement proper access control to prevent unauthorized data access.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>👥 Group Management & Support Teams</h2>
+        <p>Organize users into support groups and manage team workflows:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Group Management Schema</span>
+<span class="code-keyword">CREATE</span> <span class="code-keyword">TABLE</span> support_groups (
+  id <span class="code-keyword">INTEGER</span> <span class="code-keyword">PRIMARY</span> <span class="code-keyword">KEY</span>,
+  name <span class="code-keyword">TEXT</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>,
+  description <span class="code-keyword">TEXT</span>,
+  telegram_group_id <span class="code-keyword">TEXT</span> <span class="code-keyword">UNIQUE</span>,
+  service_level <span class="code-keyword">TEXT</span> <span class="code-keyword">DEFAULT</span> <span class="code-string">'standard'</span>,
+  created_at <span class="code-keyword">TIMESTAMP</span> <span class="code-keyword">DEFAULT</span> <span class="code-keyword">CURRENT_TIMESTAMP</span>
+);
+
+<span class="code-keyword">CREATE</span> <span class="code-keyword">TABLE</span> user_groups (
+  user_id <span class="code-keyword">INTEGER</span>,
+  group_id <span class="code-keyword">INTEGER</span>,
+  role <span class="code-keyword">TEXT</span> <span class="code-keyword">DEFAULT</span> <span class="code-string">'member'</span>, <span class="code-comment">-- member, moderator, admin</span>
+  joined_at <span class="code-keyword">TIMESTAMP</span> <span class="code-keyword">DEFAULT</span> <span class="code-keyword">CURRENT_TIMESTAMP</span>,
+  <span class="code-keyword">FOREIGN</span> <span class="code-keyword">KEY</span>(user_id) <span class="code-keyword">REFERENCES</span> users(id),
+  <span class="code-keyword">FOREIGN</span> <span class="code-keyword">KEY</span>(group_id) <span class="code-keyword">REFERENCES</span> support_groups(id)
+);</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Group Creation & Management</span>
+<span class="code-keyword">const</span> createSupportGroup = <span class="code-keyword">async</span> (groupData: any) => {
+  <span class="code-keyword">const</span> { name, description, telegramGroupId, serviceLevel } = groupData;
+  
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> db.run(<span class="code-string">`
+      INSERT INTO support_groups (name, description, telegram_group_id, service_level)
+      VALUES (?, ?, ?, ?)
+    `</span>, [name, description, telegramGroupId, serviceLevel]);
+    
+    <span class="code-comment">// Create Telegram group if it doesn't exist</span>
+    <span class="code-keyword">await</span> bot.createChatInviteLink(telegramGroupId);
+    
+    <span class="code-keyword">return</span> { success: <span class="code-keyword">true</span>, groupId: result.lastID };
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Failed to create support group:'</span>, error);
+    <span class="code-keyword">return</span> { success: <span class="code-keyword">false</span>, error: error.message };
+  }
+};
+
+<span class="code-comment"># Add User to Group</span>
+<span class="code-keyword">const</span> addUserToGroup = <span class="code-keyword">async</span> (userId: number, groupId: number, role: string = <span class="code-string">'member'</span>) => {
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> user = <span class="code-keyword">await</span> db.get(<span class="code-keyword">'SELECT telegram_id FROM users WHERE id = ?'</span>, [userId]);
+    <span class="code-keyword">const</span> group = <span class="code-keyword">await</span> db.get(<span class="code-keyword">'SELECT telegram_group_id FROM support_groups WHERE id = ?'</span>, [groupId]);
+    
+    <span class="code-keyword">if</span> (user?.telegram_id && group?.telegram_group_id) {
+      <span class="code-keyword">await</span> db.run(<span class="code-string">`
+        INSERT OR REPLACE INTO user_groups (user_id, group_id, role)
+        VALUES (?, ?, ?)
+      `</span>, [userId, groupId, role]);
+      
+      <span class="code-comment">// Send welcome message to group</span>
+      <span class="code-keyword">await</span> bot.sendMessage(group.telegram_group_id, 
+        <span class="code-string">`👋 New member joined: @${user.telegram_username || 'User'}`</span>);
+      
+      <span class="code-keyword">return</span> { success: <span class="code-keyword">true</span> };
+    }
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Failed to add user to group:'</span>, error);
+    <span class="code-keyword">return</span> { success: <span class="code-keyword">false</span>, error: error.message };
+  }
+};</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Group-Based Notifications</span>
+<span class="code-keyword">const</span> sendGroupNotification = <span class="code-keyword">async</span> (groupId: number, message: string, priority: string = <span class="code-string">'normal'</span>) => {
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> group = <span class="code-keyword">await</span> db.get(<span class="code-keyword">'SELECT telegram_group_id FROM support_groups WHERE id = ?'</span>, [groupId]);
+    
+    <span class="code-keyword">if</span> (group?.telegram_group_id) {
+      <span class="code-keyword">const</span> priorityEmoji = priority === <span class="code-string">'high'</span> ? <span class="code-string">'🚨'</span> : priority === <span class="code-string">'urgent'</span> ? <span class="code-string">'🔥'</span> : <span class="code-string">'📢'</span>;
+      
+      <span class="code-keyword">await</span> bot.sendMessage(group.telegram_group_id, 
+        <span class="code-string">`${priorityEmoji} ${message}`</span>, {
+        parse_mode: <span class="code-string">'HTML'</span>,
+        reply_markup: {
+          inline_keyboard: [[
+            { text: <span class="code-string">'Acknowledge'</span>, callback_data: <span class="code-string">`ack_${groupId}`</span> },
+            { text: <span class="code-string">'Escalate'</span>, callback_data: <span class="code-string">`escalate_${groupId}`</span> }
+          ]]
+        }
+      });
+    }
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Failed to send group notification:'</span>, error);
+  }
+};</pre>
+        </div>
+
+        <div class="callout">
+          <strong>👥 Group Features:</strong>
+          Support groups enable team collaboration, role-based access control, and targeted notifications for different
+          service levels.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🎯 Customer Service Levels & Priority Management</h2>
+        <p>Implement tiered customer service with automated escalation and SLA management:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Service Level Configuration</span>
+<span class="code-keyword">CREATE</span> <span class="code-keyword">TABLE</span> service_levels (
+  id <span class="code-keyword">INTEGER</span> <span class="code-keyword">PRIMARY</span> <span class="code-keyword">KEY</span>,
+  name <span class="code-keyword">TEXT</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>, <span class="code-comment">-- basic, premium, vip, enterprise</span>
+  response_time_minutes <span class="code-keyword">INTEGER</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>,
+  escalation_time_minutes <span class="code-keyword">INTEGER</span>,
+  auto_escalate <span class="code-keyword">BOOLEAN</span> <span class="code-keyword">DEFAULT</span> <span class="code-keyword">true</span>,
+  priority_score <span class="code-keyword">INTEGER</span> <span class="code-keyword">DEFAULT</span> 1,
+  created_at <span class="code-keyword">TIMESTAMP</span> <span class="code-keyword">DEFAULT</span> <span class="code-keyword">CURRENT_TIMESTAMP</span>
+);
+
+<span class="code-keyword">CREATE</span> <span class="code-keyword">TABLE</span> support_tickets (
+  id <span class="code-keyword">INTEGER</span> <span class="code-keyword">PRIMARY</span> <span class="code-keyword">KEY</span>,
+  user_id <span class="code-keyword">INTEGER</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>,
+  group_id <span class="code-keyword">INTEGER</span>,
+  service_level <span class="code-keyword">TEXT</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>,
+  priority <span class="code-keyword">TEXT</span> <span class="code-keyword">DEFAULT</span> <span class="code-string">'normal'</span>,
+  status <span class="code-keyword">TEXT</span> <span class="code-keyword">DEFAULT</span> <span class="code-string">'open'</span>,
+  subject <span class="code-keyword">TEXT</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>,
+  message <span class="code-keyword">TEXT</span> <span class="code-keyword">NOT</span> <span class="code-keyword">NULL</span>,
+  created_at <span class="code-keyword">TIMESTAMP</span> <span class="code-keyword">DEFAULT</span> <span class="code-keyword">CURRENT_TIMESTAMP</span>,
+  first_response_at <span class="code-keyword">TIMESTAMP</span>,
+  resolved_at <span class="code-keyword">TIMESTAMP</span>,
+  <span class="code-keyword">FOREIGN</span> <span class="code-keyword">KEY</span>(user_id) <span class="code-keyword">REFERENCES</span> users(id),
+  <span class="code-keyword">FOREIGN</span> <span class="code-keyword">KEY</span>(group_id) <span class="code-keyword">REFERENCES</span> support_groups(id)
+);</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Service Level Management</span>
+<span class="code-keyword">const</span> serviceLevels = {
+  basic: { responseTime: 240, escalationTime: 480, priority: 1 },      <span class="code-comment">// 4h response, 8h escalation</span>
+  premium: { responseTime: 120, escalationTime: 240, priority: 2 },    <span class="code-comment">// 2h response, 4h escalation</span>
+  vip: { responseTime: 60, escalationTime: 120, priority: 3 },         <span class="code-comment">// 1h response, 2h escalation</span>
+  enterprise: { responseTime: 30, escalationTime: 60, priority: 4 }    <span class="code-comment">// 30m response, 1h escalation</span>
+};
+
+<span class="code-comment"># Create Support Ticket with Priority</span>
+<span class="code-keyword">const</span> createSupportTicket = <span class="code-keyword">async</span> (ticketData: any) => {
+  <span class="code-keyword">const</span> { userId, subject, message, serviceLevel = <span class="code-string">'basic'</span> } = ticketData;
+  
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> level = serviceLevels[serviceLevel];
+    <span class="code-keyword">const</span> priority = level.priority >= 3 ? <span class="code-string">'high'</span> : <span class="code-string">'normal'</span>;
+    
+    <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> db.run(<span class="code-string">`
+      INSERT INTO support_tickets (user_id, service_level, priority, subject, message)
+      VALUES (?, ?, ?, ?, ?)
+    `</span>, [userId, serviceLevel, priority, subject, message]);
+    
+    <span class="code-keyword">const</span> ticketId = result.lastID;
+    
+    <span class="code-keyword">// Send immediate notification to appropriate support group</span>
+    <span class="code-keyword">await</span> notifySupportTeam(ticketId, serviceLevel, priority);
+    
+    <span class="code-keyword">// Schedule escalation check</span>
+    setTimeout(() => checkTicketEscalation(ticketId), level.escalationTime * 60 * 1000);
+    
+    <span class="code-keyword">return</span> { success: <span class="code-keyword">true</span>, ticketId };
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Failed to create support ticket:'</span>, error);
+    <span class="code-keyword">return</span> { success: <span class="code-keyword">false</span>, error: error.message };
+  }
+};</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Automated Escalation System</span>
+<span class="code-keyword">const</span> checkTicketEscalation = <span class="code-keyword">async</span> (ticketId: number) => {
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> ticket = <span class="code-keyword">await</span> db.get(<span class="code-string">`
+      SELECT t.*, u.telegram_id, u.name 
+      FROM support_tickets t 
+      JOIN users u ON t.user_id = u.id 
+      WHERE t.id = ? AND t.status = 'open'
+    `</span>, [ticketId]);
+    
+    <span class="code-keyword">if</span> (!ticket) <span class="code-keyword">return</span>;
+    
+    <span class="code-keyword">const</span> level = serviceLevels[ticket.service_level];
+    <span class="code-keyword">const</span> timeSinceCreation = Date.now() - <span class="code-keyword">new</span> Date(ticket.created_at).getTime();
+    <span class="code-keyword">const</span> responseTimeMs = level.responseTime * 60 * 1000;
+    
+    <span class="code-keyword">if</span> (timeSinceCreation > responseTimeMs && !ticket.first_response_at) {
+      <span class="code-keyword">// Escalate ticket</span>
+      <span class="code-keyword">await</span> escalateTicket(ticketId, ticket);
+      
+      <span class="code-keyword">// Send urgent notification to support team</span>
+      <span class="code-keyword">await</span> sendEscalationAlert(ticket);
+      
+      <span class="code-keyword">// Notify user about escalation</span>
+      <span class="code-keyword">if</span> (ticket.telegram_id) {
+        <span class="code-keyword">await</span> bot.sendMessage(ticket.telegram_id, 
+          <span class="code-string">`🚨 Your support ticket has been escalated due to response time.\nTicket: ${ticket.subject}\nWe apologize for the delay and are working on it.`</span>);
+      }
+    }
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Escalation check failed:'</span>, error);
+  }
+};
+
+<span class="code-keyword">const</span> escalateTicket = <span class="code-keyword">async</span> (ticketId: number, ticket: any) => {
+  <span class="code-keyword">await</span> db.run(<span class="code-string">`
+    UPDATE support_tickets 
+    SET priority = 'urgent', status = 'escalated'
+    WHERE id = ?
+  `</span>, [ticketId]);
+  
+  <span class="code-comment">// Find appropriate escalation group</span>
+  <span class="code-keyword">const</span> escalationGroup = <span class="code-keyword">await</span> db.get(<span class="code-string">`
+    SELECT * FROM support_groups 
+    WHERE service_level = ? AND name LIKE '%escalation%'
+    LIMIT 1
+  `</span>, [ticket.service_level]);
+  
+  <span class="code-keyword">if</span> (escalationGroup) {
+    <span class="code-keyword">await</span> db.run(<span class="code-string">`
+      UPDATE support_tickets SET group_id = ? WHERE id = ?
+    `</span>, [escalationGroup.id, ticketId]);
+  }
+};</pre>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># SLA Monitoring & Reporting</span>
+<span class="code-keyword">const</span> generateSLAReport = <span class="code-keyword">async</span> (timeframe: string = <span class="code-string">'month'</span>) => {
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> report = <span class="code-keyword">await</span> db.all(<span class="code-string">`
+      SELECT 
+        service_level,
+        COUNT(*) as total_tickets,
+        AVG(CASE WHEN first_response_at IS NOT NULL 
+          THEN (julianday(first_response_at) - julianday(created_at)) * 1440 
+          ELSE NULL END) as avg_response_time_minutes,
+        COUNT(CASE WHEN status = 'resolved' THEN 1 END) as resolved_tickets,
+        COUNT(CASE WHEN status = 'escalated' THEN 1 END) as escalated_tickets
+      FROM support_tickets 
+      WHERE created_at >= datetime('now', '-1 ${timeframe}')
+      GROUP BY service_level
+      ORDER BY service_level
+    `</span>);
+    
+    <span class="code-keyword">return</span> report.map(level => ({
+      ...level,
+      sla_compliance: calculateSLACompliance(level),
+      response_time_grade: gradeResponseTime(level.avg_response_time_minutes)
+    }));
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'SLA report generation failed:'</span>, error);
+    <span class="code-keyword">return</span> [];
+  }
+};
+
+<span class="code-keyword">const</span> calculateSLACompliance = (level: any) => {
+  <span class="code-keyword">const</span> target = serviceLevels[level.service_level]?.responseTime || 240;
+  <span class="code-keyword">const</span> actual = level.avg_response_time_minutes || 0;
+  <span class="code-keyword">return</span> actual <= target ? <span class="code-string">'✅ Compliant'</span> : <span class="code-string">'❌ Non-compliant'</span>;
+};</pre>
+        </div>
+
+        <div class="success">
+          <strong>🎯 Service Levels:</strong>
+          Automated escalation, SLA monitoring, and priority management ensure customers receive appropriate support
+          based on their service tier.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Testing & Validation</h2>
+        <p>Test your Telegram integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Test Telegram ID handling</span>
+<span class="code-keyword">describe</span>(<span class="code-string">'Telegram Integration'</span>, () => {
+  <span class="code-keyword">it</span>(<span class="code-string">'should validate Telegram ID format'</span>, () => {
+    expect(validateTelegramId(123456789)).toBe(<span class="code-keyword">true</span>);
+    expect(validateTelegramId(123)).toBe(<span class="code-keyword">false</span>); <span class="code-comment">// Too short</span>
+    expect(validateTelegramId(12345678901)).toBe(<span class="code-keyword">false</span>); <span class="code-comment">// Too long</span>
+  });
+  
+  <span class="code-keyword">it</span>(<span class="code-string">'should link Telegram account to user'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> linkTelegramAccount(<span class="code-string">'user@example.com'</span>, 123456789);
+    expect(result.success).toBe(<span class="code-keyword">true</span>);
+  });
+});</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🧪 Test Commands:</strong>
+          Use
+          <code>bun run env:integration</code>
+          for comprehensive Telegram testing.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📚 Related Documentation</h2>
+        <p>Explore other aspects of your Fire22 Dashboard:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>🌍 Environment Management:</strong>
+            <a href="environment-variables.html" style="color: #fdbb2d">Environment Variables Guide</a>
+          </div>
+          <div class="api-details">
+            <strong>📦 Package Management:</strong>
+            <a href="packages.html" style="color: #fdbb2d">Package Management Guide</a>
+          </div>
+          <div class="api-details">
+            <strong>🔌 All API Integrations:</strong>
+            <a href="api-integrations-index.html" style="color: #fdbb2d">API Integrations Index</a>
+          </div>
+          <div class="api-details">
+            <strong>🎯 Live Demo:</strong>
+            <a href="#" style="color: #fdbb2d">See bot interactions in action</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-brand">
+          <div class="footer-logo">🔥</div>
+          <div class="footer-company">Fire22</div>
+          <div class="footer-tagline">Igniting Digital Innovation</div>
+        </div>
+
+        <div class="footer-links">
+          <a href="packages.html" class="footer-link">📦 Packages</a>
+          <a href="environment-variables.html" class="footer-link">🌍 Environment</a>
+          <a href="api-integrations-index.html" class="footer-link">🔌 API</a>
+          <a href="fire22-dashboard-config.html" class="footer-link">⚙️ Config</a>
+          <a href="@packages.html" class="footer-link">🧪 Testing</a>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-copyright">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Built with ❤️ for real-time user engagement and notifications</p>
+          <p><small>Telegram Bot Integration | Fire22 Dashboard Best Practices</small></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Enhanced client-side interactivity
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add animation to table rows
+        const tableRows = document.querySelectorAll('tr');
+        tableRows.forEach((row, index) => {
+          row.style.opacity = '0';
+          row.style.transition = `opacity 0.5s ease ${index * 0.1}s`;
+          setTimeout(() => {
+            row.style.opacity = '1';
+          }, 100);
+        });
+
+        // Enhanced code block functionality (hover effects + click-to-copy)
+
+        const codeBlocks = document.querySelectorAll('.code-block');
+        codeBlocks.forEach(block => {
+          // Hover effects
+          block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-5px)';
+            block.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.4)';
+          });
+
+          block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+          });
+
+          // Click-to-copy functionality for code content
+          const codeContent = block.querySelector('pre');
+          if (codeContent) {
+            codeContent.style.cursor = 'pointer';
+            codeContent.title = 'Click to copy';
+
+            codeContent.addEventListener('click', async () => {
+              try {
+                await navigator.clipboard.writeText(codeContent.textContent);
+                const originalText = codeContent.textContent;
+                codeContent.textContent = 'Copied!';
+                codeContent.style.color = '#4CAF50';
+
+                setTimeout(() => {
+                  codeContent.textContent = originalText;
+                  codeContent.style.color = '';
+                }, 2000);
+              } catch (err) {
+                console.log('Failed to copy:', err);
+              }
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

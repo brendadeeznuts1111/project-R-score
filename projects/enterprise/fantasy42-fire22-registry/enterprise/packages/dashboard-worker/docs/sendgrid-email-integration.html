@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SendGrid Email Integration - Fire22 Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      h3 {
+        font-size: 1.4rem;
+        margin: 15px 0;
+        color: #b21f1f;
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: 'Fira Code', monospace;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .code-keyword {
+        color: #569cd6;
+      }
+
+      .code-function {
+        color: #dcdcaa;
+      }
+
+      .code-parameter {
+        color: #9cdcfe;
+      }
+
+      .code-string {
+        color: #ce9178;
+      }
+
+      .code-comment {
+        color: #6a9955;
+      }
+
+      .api-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .api-table th,
+      .api-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .api-table th {
+        background: rgba(0, 0, 0, 0.3);
+        font-weight: 600;
+        color: #fdbb2d;
+      }
+
+      .api-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .callout {
+        background: rgba(253, 187, 45, 0.1);
+        border-left: 4px solid #fdbb2d;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .warning {
+        background: rgba(178, 31, 31, 0.1);
+        border-left: 4px solid #b21f1f;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: rgba(76, 175, 80, 0.1);
+        border-left: 4px solid #4caf50;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .api-integration {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .api-details {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+
+      .api-details strong {
+        color: #fdbb2d;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .status-beta {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+      }
+
+      /* Enhanced Branding Styles */
+      .brand-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 0;
+        border-bottom: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        font-size: 3rem;
+        animation: flame-flicker 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+        }
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .company-name {
+        font-size: 2.5rem;
+        margin: 0;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .company-tagline {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        letter-spacing: 1px;
+      }
+
+      .brand-nav {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.1);
+        border-color: rgba(253, 187, 45, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .nav-link.active {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.15);
+        border-color: #fdbb2d;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .page-header h2 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Enhanced Footer Branding */
+      .footer {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 50px;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .footer-brand {
+        margin-bottom: 20px;
+      }
+
+      .footer-logo {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .footer-company {
+        font-size: 1.5rem;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      .footer-tagline {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-link:hover {
+        color: #fdbb2d;
+      }
+
+      .footer-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+      }
+
+      .footer-copyright {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Branding */
+      @media (max-width: 768px) {
+        .brand-header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .brand-nav {
+          justify-content: center;
+        }
+
+        .nav-link {
+          font-size: 0.9rem;
+          padding: 8px 12px;
+        }
+
+        .company-name {
+          font-size: 2rem;
+        }
+
+        .logo-icon {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* Enhanced animations and interactions */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand-header">
+          <div class="brand-logo">
+            <div class="logo-icon">🔥</div>
+            <div class="logo-text">
+              <h1 class="company-name">Fire22</h1>
+              <span class="company-tagline">Igniting Digital Innovation</span>
+            </div>
+          </div>
+          <div class="brand-nav">
+            <a href="packages.html" class="nav-link">📦 Packages</a>
+            <a href="environment-variables.html" class="nav-link">🌍 Environment</a>
+            <a href="api-integrations-index.html" class="nav-link">🔌 API</a>
+            <a href="fire22-dashboard-config.html" class="nav-link">⚙️ Config</a>
+            <a href="@packages.html" class="nav-link">🧪 Testing</a>
+          </div>
+        </div>
+        <div class="page-header">
+          <h2>SendGrid Email Integration</h2>
+          <p class="subtitle">Reliable email delivery for notifications and marketing</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h2>🚀 Quick Start</h2>
+        <p>Get started with SendGrid email integration in just a few steps:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># 1. Install SendGrid SDK</span>
+<span class="code-function">bun add @sendgrid/mail</span>
+
+<span class="code-comment"># 2. Set environment variables</span>
+<span class="code-function">bun run env:set SENDGRID_API_KEY=SG.your_api_key_here</span>
+
+<span class="code-comment"># 3. Test email functionality</span>
+<span class="code-function">bun run env:integration</span>
+
+<span class="code-comment"># 4. Open SendGrid dashboard</span>
+<span class="code-function">bun run env:docs</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📧 SendGrid Email Integration</h2>
+        <p>Reliable email delivery for notifications and marketing:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            API Key
+          </div>
+          <div class="api-details">
+            <strong>Rate Limit:</strong>
+            100 emails/second (free tier)
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            Templates, Dynamic Content, Analytics
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (delivery tracking)
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">SENDGRID_API_KEY</span>=<span class="code-string">SG.your_api_key_here</span>
+<span class="code-keyword">SENDGRID_FROM_EMAIL</span>=<span class="code-string">noreply@fire22.com</span>
+<span class="code-keyword">SENDGRID_FROM_NAME</span>=<span class="code-string">Fire22 Dashboard</span>
+
+<span class="code-comment"># Email Sending Example</span>
+<span class="code-keyword">const</span> sgMail = <span class="code-keyword">require</span>(<span class="code-string">'@sendgrid/mail'</span>);
+sgMail.setApiKey(config.sendgrid.apiKey);
+
+<span class="code-keyword">const</span> msg = {
+  to: <span class="code-string">'user@example.com'</span>,
+  from: <span class="code-string">'noreply@fire22.com'</span>,
+  subject: <span class="code-string">'Welcome to Fire22 Dashboard'</span>,
+  templateId: <span class="code-string">'d-welcome-template-id'</span>,
+  dynamicTemplateData: {
+    userName: <span class="code-string">'John Doe'</span>,
+    dashboardUrl: <span class="code-string">'https://dashboard.fire22.com'</span>
+  }
+};
+
+<span class="code-keyword">await</span> sgMail.send(msg);</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Best Practice:</strong>
+          Use SendGrid templates for consistent branding and dynamic content for personalization.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📧 Email Templates</h2>
+        <p>Pre-built email templates for common use cases:</p>
+
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Template Type</th>
+              <th>Purpose</th>
+              <th>Dynamic Fields</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Welcome Email</strong></td>
+              <td>New user onboarding</td>
+              <td>userName, dashboardUrl, activationLink</td>
+              <td><span class="status-badge status-beta">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>Password Reset</strong></td>
+              <td>Account security</td>
+              <td>resetLink, expiryTime, userName</td>
+              <td><span class="status-badge status-beta">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>Payment Confirmation</strong></td>
+              <td>Transaction receipts</td>
+              <td>amount, transactionId, date, items</td>
+              <td><span class="status-badge status-beta">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>System Alerts</strong></td>
+              <td>Monitoring notifications</td>
+              <td>alertType, severity, message, timestamp</td>
+              <td><span class="status-badge status-beta">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>🔧 Template Management</h2>
+        <p>Create and manage email templates programmatically:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Create Dynamic Template</span>
+<span class="code-keyword">const</span> createTemplate = <span class="code-keyword">async</span> (templateData) => {
+  <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> sgMail.request({
+    method: <span class="code-string">'POST'</span>,
+    url: <span class="code-string">'/v3/templates'</span>,
+    body: {
+      name: templateData.name,
+      generation: <span class="code-string">'dynamic'</span>,
+      versions: [{
+        name: <span class="code-string">'version_1'</span>,
+        subject: templateData.subject,
+        html_content: templateData.htmlContent,
+        plain_content: templateData.plainContent
+      }]
+    }
+  });
+  
+  <span class="code-keyword">return</span> response.body;
+};
+
+<span class="code-comment"># Send with Template</span>
+<span class="code-keyword">const</span> sendTemplateEmail = <span class="code-keyword">async</span> (to, templateId, data) => {
+  <span class="code-keyword">const</span> msg = {
+    to,
+    from: config.sendgrid.fromEmail,
+    templateId,
+    dynamicTemplateData: data
+  };
+  
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> sgMail.send(msg);
+    console.log(<span class="code-string">'Email sent successfully'</span>, result);
+    <span class="code-keyword">return</span> result;
+  } <span class="code-keyword">catch</span> (error) {
+    console.error(<span class="code-string">'Email sending failed'</span>, error);
+    <span class="code-keyword">throw</span> error;
+  }
+};</pre>
+        </div>
+
+        <div class="callout">
+          <strong>📧 Template Tips:</strong>
+          Use dynamic templates for personalized content and maintain consistent branding across all emails.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📊 Email Analytics & Tracking</h2>
+        <p>Monitor email performance and delivery metrics:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Get Email Statistics</span>
+<span class="code-keyword">const</span> getEmailStats = <span class="code-keyword">async</span> (startDate, endDate) => {
+  <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> sgMail.request({
+    method: <span class="code-string">'GET'</span>,
+    url: <span class="code-string">'/v3/stats'</span>,
+    qs: {
+      start_date: startDate,
+      end_date: endDate,
+      aggregated_by: <span class="code-string">'day'</span>
+    }
+  });
+  
+  <span class="code-keyword">return</span> response.body;
+};
+
+<span class="code-comment"># Track Email Events</span>
+<span class="code-keyword">const</span> setupWebhook = <span class="code-string">'/webhook/sendgrid'</span>;
+<span class="code-keyword">const</span> handleWebhook = (req, res) => {
+  <span class="code-keyword">const</span> events = req.body;
+  
+  events.forEach(event => {
+    <span class="code-keyword">switch</span> (event.event) {
+      <span class="code-keyword">case</span> <span class="code-string">'delivered'</span>:
+        console.log(<span class="code-string">`Email delivered: ${event.email}`</span>);
+        <span class="code-keyword">break</span>;
+      <span class="code-keyword">case</span> <span class="code-string">'opened'</span>:
+        console.log(<span class="code-string">`Email opened: ${event.email}`</span>);
+        <span class="code-keyword">break</span>;
+      <span class="code-keyword">case</span> <span class="code-string">'clicked'</span>:
+        console.log(<span class="code-string">`Link clicked: ${event.email}`</span>);
+        <span class="code-keyword">break</span>;
+      <span class="code-keyword">case</span> <span class="code-string">'bounced'</span>:
+        console.log(<span class="code-string">`Email bounced: ${event.email}`</span>);
+        <span class="code-keyword">break</span>;
+    }
+  });
+  
+  res.sendStatus(200);
+};</pre>
+        </div>
+
+        <div class="success">
+          <strong>📊 Analytics:</strong>
+          Track delivery rates, open rates, click-through rates, and bounce rates for email optimization.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔒 Security & Best Practices</h2>
+        <p>Secure your SendGrid integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># API Key Security</span>
+<span class="code-keyword">const</span> validateApiKey = (apiKey) => {
+  <span class="code-keyword">if</span> (!apiKey || !apiKey.startsWith(<span class="code-string">'SG.'</span>)) {
+    <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'Invalid SendGrid API key format'</span>);
+  }
+  
+  <span class="code-keyword">if</span> (apiKey.length < 50) {
+    <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'API key too short'</span>);
+  }
+  
+  <span class="code-keyword">return</span> <span class="code-keyword">true</span>;
+};
+
+<span class="code-comment"># Rate Limiting</span>
+<span class="code-keyword">class</span> SendGridRateLimiter {
+  <span class="code-keyword">constructor</span>(maxEmailsPerSecond = 100) {
+    <span class="code-keyword">this</span>.maxEmailsPerSecond = maxEmailsPerSecond;
+    <span class="code-keyword">this</span>.emailQueue = [];
+    <span class="code-keyword">this</span>.lastSent = 0;
+  }
+  
+  <span class="code-keyword">async</span> sendEmail(emailData) {
+    <span class="code-keyword">const</span> now = Date.now();
+    <span class="code-keyword">const</span> timeSinceLastSent = now - <span class="code-keyword">this</span>.lastSent;
+    
+    <span class="code-keyword">if</span> (timeSinceLastSent < (1000 / <span class="code-keyword">this</span>.maxEmailsPerSecond)) {
+      <span class="code-keyword">await</span> <span class="code-keyword">new</span> Promise(resolve => 
+        setTimeout(resolve, (1000 / <span class="code-keyword">this</span>.maxEmailsPerSecond) - timeSinceLastSent)
+      );
+    }
+    
+    <span class="code-keyword">this</span>.lastSent = Date.now();
+    <span class="code-keyword">return</span> <span class="code-keyword">await</span> sgMail.send(emailData);
+  }
+}</pre>
+        </div>
+
+        <div class="warning">
+          <strong>⚠️ Important:</strong>
+          Never expose your SendGrid API key in client-side code. Always use server-side email sending.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Testing & Validation</h2>
+        <p>Test your SendGrid integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Test Email Sending</span>
+<span class="code-keyword">describe</span>(<span class="code-string">'SendGrid Integration'</span>, () => {
+  <span class="code-keyword">it</span>(<span class="code-string">'should send email successfully'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> testEmail = {
+      to: <span class="code-string">'test@example.com'</span>,
+      from: <span class="code-string">'noreply@fire22.com'</span>,
+      subject: <span class="code-string">'Test Email'</span>,
+      text: <span class="code-string">'This is a test email'</span>
+    };
+    
+    <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> sgMail.send(testEmail);
+    expect(result[0].statusCode).toBe(202);
+  });
+  
+  <span class="code-keyword">it</span>(<span class="code-string">'should handle template emails'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> templateEmail = {
+      to: <span class="code-string">'user@example.com'</span>,
+      from: <span class="code-string">'noreply@fire22.com'</span>,
+      templateId: <span class="code-string">'d-welcome-template-id'</span>,
+      dynamicTemplateData: {
+        userName: <span class="code-string">'Test User'</span>
+      }
+    };
+    
+    <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> sgMail.send(templateEmail);
+    expect(result[0].statusCode).toBe(202);
+  });
+});
+
+<span class="code-comment"># Test Webhook Handling</span>
+<span class="code-keyword">describe</span>(<span class="code-string">'SendGrid Webhooks'</span>, () => {
+  <span class="code-keyword">it</span>(<span class="code-string">'should process delivery events'</span>, () => {
+    <span class="code-keyword">const</span> mockEvent = {
+      event: <span class="code-string">'delivered'</span>,
+      email: <span class="code-string">'test@example.com'</span>,
+      timestamp: Date.now()
+    };
+    
+    <span class="code-keyword">const</span> result = processWebhookEvent(mockEvent);
+    expect(result.processed).toBe(<span class="code-keyword">true</span>);
+  });
+});</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🧪 Test Commands:</strong>
+          Use
+          <code>bun run env:integration</code>
+          for comprehensive SendGrid testing.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📚 Related Documentation</h2>
+        <p>Explore other aspects of your Fire22 Dashboard:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>🌍 Environment Management:</strong>
+            <a href="environment-variables.html" style="color: #fdbb2d">Environment Variables Guide</a>
+          </div>
+          <div class="api-details">
+            <strong>📦 Package Management:</strong>
+            <a href="packages.html" style="color: #fdbb2d">Package Management Guide</a>
+          </div>
+          <div class="api-details">
+            <strong>🔌 All API Integrations:</strong>
+            <a href="api-integrations-index.html" style="color: #fdbb2d">API Integrations Index</a>
+          </div>
+          <div class="api-details">
+            <strong>🎯 Live Demo:</strong>
+            <a href="#" style="color: #fdbb2d">See email flow in action</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-brand">
+          <div class="footer-logo">🔥</div>
+          <div class="footer-company">Fire22</div>
+          <div class="footer-tagline">Igniting Digital Innovation</div>
+        </div>
+
+        <div class="footer-links">
+          <a href="packages.html" class="footer-link">📦 Packages</a>
+          <a href="environment-variables.html" class="footer-link">🌍 Environment</a>
+          <a href="api-integrations-index.html" class="footer-link">🔌 API</a>
+          <a href="fire22-dashboard-config.html" class="footer-link">⚙️ Config</a>
+          <a href="@packages.html" class="footer-link">🧪 Testing</a>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-copyright">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Built with ❤️ for reliable and scalable email delivery</p>
+          <p><small>SendGrid Email Integration | Fire22 Dashboard Best Practices</small></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Enhanced client-side interactivity
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add animation to table rows
+        const tableRows = document.querySelectorAll('tr');
+        tableRows.forEach((row, index) => {
+          row.style.opacity = '0';
+          row.style.transition = `opacity 0.5s ease ${index * 0.1}s`;
+          setTimeout(() => {
+            row.style.opacity = '1';
+          }, 100);
+        });
+
+        // Enhanced code block functionality (hover effects + click-to-copy)
+        const codeBlocks = document.querySelectorAll('.code-block');
+        codeBlocks.forEach(block => {
+          // Hover effects
+          block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-5px)';
+            block.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.4)';
+          });
+
+          block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+          });
+
+          // Click-to-copy functionality for code content
+          const codeContent = block.querySelector('pre');
+          if (codeContent) {
+            codeContent.style.cursor = 'pointer';
+            codeContent.title = 'Click to copy';
+
+            codeContent.addEventListener('click', async () => {
+              try {
+                await navigator.clipboard.writeText(codeContent.textContent);
+                const originalText = codeContent.textContent;
+                codeContent.textContent = 'Copied!';
+                codeContent.style.color = '#4CAF50';
+
+                setTimeout(() => {
+                  codeContent.textContent = originalText;
+                  codeContent.style.color = '';
+                }, 2000);
+              } catch (err) {
+                console.log('Failed to copy:', err);
+              }
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "name": "@fire22-registry/core-security",
+  "version": "3.1.0",
+  "description": "Core security package for Fantasy42-Fire22 Registry",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./user-agents": "./src/user-agents.ts",
+    "./secure-client": "./src/secure-client.ts",
+    "./fraud-detection": "./fraud-detection/src/config.ts"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist",
+    "build:fraud": "bun run ./fraud-detection/build.ts",
+    "build:demo": "bun run build-demo.js",
+    "test": "bun test",
+    "lint": "bun run eslint src --ext .ts",
+    "link": "bun link"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "lodash": "^4.17.21",
+    "semver": "^7.7.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "@types/uuid": "^9.0.7"
+  },
+  "keywords": [
+    "fantasy42",
+    "fire22",
+    "security",
+    "compliance",
+    "fraud-detection",
+    "user-agent",
+    "typescript",
+    "bun"
+  ],
+  "author": "Fire22 Enterprise",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry.git",
+    "directory": "packages/core-security"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "fantasy42": {
+    "category": "core-security",
+    "compliance": [
+      "GDPR",
+      "PCI",
+      "AML"
+    ],
+    "security": "enterprise"
+  }
+}

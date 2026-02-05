@@ -1,0 +1,107 @@
+{
+  "name": "@fire22/language-keys",
+  "version": "1.0.0",
+  "description": "Fire22 Language Keys System - Authentic multilingual support for Fire22 workspaces",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target browser",
+    "build:node": "bun build src/index.ts --outdir dist --target node",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "dev": "bun --watch src/index.ts"
+  },
+  "keywords": [
+    "fire22",
+    "language",
+    "i18n",
+    "l10n",
+    "multilingual",
+    "spanish",
+    "portuguese",
+    "gambling",
+    "betting",
+    "casino"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-language-keys"
+  },
+  "author": "Fire22 Development Team",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {},
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://registry.fire22.internal"
+  },
+  "fire22": {
+    "workspace": "@fire22-language-keys",
+    "category": "core",
+    "integrations": [
+      "telegram",
+      "api",
+      "dashboard",
+      "sports-betting"
+    ],
+    "languages": [
+      "en",
+      "es",
+      "pt"
+    ],
+    "lKeys": [
+      "L-12",
+      "L-15",
+      "L-16",
+      "L-69",
+      "L-85",
+      "L-152",
+      "L-187",
+      "L-202",
+      "L-206",
+      "L-214",
+      "L-281",
+      "L-287",
+      "L-407",
+      "L-426",
+      "L-449",
+      "L-451",
+      "L-475",
+      "L-526",
+      "L-603",
+      "L-627",
+      "L-628",
+      "L-792",
+      "L-849",
+      "L-868",
+      "L-869",
+      "L-871",
+      "L-880",
+      "L-881",
+      "L-882",
+      "L-883",
+      "L-884",
+      "L-885",
+      "L-886",
+      "L-887",
+      "L-888",
+      "L-889",
+      "L-890",
+      "L-891",
+      "L-892",
+      "L-893",
+      "L-894",
+      "L-895",
+      "L-896",
+      "L-1351",
+      "L-1390"
+    ]
+  }
+}

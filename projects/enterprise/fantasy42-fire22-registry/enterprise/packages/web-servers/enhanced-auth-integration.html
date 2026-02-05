@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enhanced JWT Authentication Integration</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        width: 100%;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .header h1 {
+        color: #333;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .tabs {
+        display: flex;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 2rem;
+      }
+
+      .tab {
+        padding: 1rem 2rem;
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-size: 1rem;
+        color: #666;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .tab.active {
+        color: #667eea;
+        border-bottom-color: #667eea;
+      }
+
+      .tab:hover {
+        color: #667eea;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        margin-right: 1rem;
+      }
+
+      .btn:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .status {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-weight: 500;
+      }
+
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .status.info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+
+      .user-info {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+
+      .user-info h3 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .user-info p {
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+
+      .security-status {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .security-item {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .security-item h4 {
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .security-item p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .log-container {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 0.9rem;
+      }
+
+      .log-entry {
+        margin-bottom: 0.5rem;
+        padding: 0.25rem;
+        border-radius: 4px;
+      }
+
+      .log-entry.success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .log-entry.error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .log-entry.info {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .code-block {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+
+      .feature-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+      }
+
+      .feature-card h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .feature-card p {
+        color: #666;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔐 Enhanced JWT Authentication</h1>
+        <p>Production-ready security implementation with advanced features</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('login')">Login</button>
+        <button class="tab" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="tab" onclick="switchTab('security')">Security Status</button>
+        <button class="tab" onclick="switchTab('features')">Features</button>
+      </div>
+
+      <!-- Login Tab -->
+      <div id="login-tab" class="tab-content active">
+        <div id="login-status" class="status info">Please log in to access the enhanced authentication system.</div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required placeholder="Enter your username" value="admin" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              placeholder="Enter your password"
+              value="admin123"
+            />
+          </div>
+          <button type="submit" class="btn" id="login-btn">Login</button>
+          <button type="button" class="btn btn-secondary" onclick="testTokenRefresh()">Refresh Token</button>
+        </form>
+
+        <div class="code-block">
+          <strong>Example Login:</strong>
+          <br />
+          Username: admin
+          <br />
+          Password: admin123
+          <br />
+          Username: user
+          <br />
+          Password: user123
+        </div>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div id="dashboard-tab" class="tab-content">
+        <div id="dashboard-status" class="status info">Welcome to the authentication dashboard.</div>
+
+        <div id="user-info" class="user-info hidden">
+          <h3>User Information</h3>
+          <p>
+            <strong>ID:</strong>
+            <span id="user-id"></span>
+          </p>
+          <p>
+            <strong>Username:</strong>
+            <span id="user-username"></span>
+          </p>
+          <p>
+            <strong>Role:</strong>
+            <span id="user-role"></span>
+          </p>
+          <p>
+            <strong>Created:</strong>
+            <span id="user-created"></span>
+          </p>
+          <p>
+            <strong>Last Login:</strong>
+            <span id="user-last-login"></span>
+          </p>
+          <p>
+            <strong>MFA Enabled:</strong>
+            <span id="user-mfa"></span>
+          </p>
+        </div>
+
+        <div style="margin-top: 1rem">
+          <button class="btn" onclick="loadUserInfo()">Refresh User Info</button>
+          <button class="btn" onclick="testProtectedRoute()">Test Protected Route</button>
+          <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="log-container">
+          <h4>Activity Log</h4>
+          <div id="activity-log"></div>
+        </div>
+      </div>
+
+      <!-- Security Status Tab -->
+      <div id="security-tab" class="tab-content">
+        <h3>Security Status</h3>
+        <div class="security-status" id="security-status">
+          <div class="security-item">
+            <h4>CSRF Token</h4>
+            <p id="csrf-status">Not initialized</p>
+          </div>
+          <div class="security-item">
+            <h4>Rate Limit</h4>
+            <p id="rate-limit-status">Not initialized</p>
+          </div>
+          <div class="security-item">
+            <h4>Cache Size</h4>
+            <p id="cache-status">Not initialized</p>
+          </div>
+          <div class="security-item">
+            <h4>Token Status</h4>
+            <p id="token-status">Not initialized</p>
+          </div>
+        </div>
+
+        <button class="btn" onclick="updateSecurityStatus()">Refresh Status</button>
+        <button class="btn btn-secondary" onclick="clearSecurityData()">Clear Security Data</button>
+      </div>
+
+      <!-- Features Tab -->
+      <div id="features-tab" class="tab-content">
+        <h3>Security Features Implemented</h3>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🔐 JWT Authentication</h3>
+            <p>Secure JSON Web Token implementation with proper signing, verification, and expiration handling.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>🛡️ CSRF Protection</h3>
+            <p>Cross-Site Request Forgery protection with dynamically generated tokens.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>⚡ Rate Limiting</h3>
+            <p>Client-side rate limiting to prevent abuse and brute force attacks.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>🔒 Input Validation</h3>
+            <p>Comprehensive input validation and sanitization to prevent XSS attacks.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>💾 Secure Storage</h3>
+            <p>Secure token storage using sessionStorage with automatic cleanup.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>🚀 Performance Caching</h3>
+            <p>Intelligent caching system for improved performance and reduced API calls.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>📋 Audit Logging</h3>
+            <p>Comprehensive audit logging for security monitoring and compliance.</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>🔄 Token Refresh</h3>
+            <p>Automatic token refresh mechanism with proper error handling.</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <strong>Integration Example:</strong>
+          <br />
+          <pre>
+// Initialize security manager
+const securityManager = new SecurityManager();
+
+// Make secure API calls
+const response = await securityManager.secureFetch('/api/v1/protected', {
+    method: 'GET'
+});
+
+// Login with enhanced security
+await securityManager.login('username', 'password');
+
+// Check authentication status
+if (securityManager.isAuthenticated()) {
+    // User is authenticated
+}</pre
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Include the security manager -->
+    <script src="security-manager.js"></script>
+
+    <script>
+      let securityManager;
+      let currentConfig;
+
+      // Initialize the application
+      document.addEventListener('DOMContentLoaded', () => {
+        initializeApp();
+      });
+
+      function initializeApp() {
+        // Initialize security manager with environment-specific config
+        securityManager = new SecurityManager();
+        currentConfig = window.currentConfig;
+
+        // Update endpoints based on environment
+        document.getElementById('login-status').innerHTML =
+          `Environment: ${window.location.hostname === 'localhost' ? 'Development' : 'Production'}<br>
+                 API Base URL: ${currentConfig.API_BASE_URL}`;
+
+        // Add security headers to all requests
+        const originalFetch = window.fetch;
+        window.fetch = function (...args) {
+          const [url, options = {}] = args;
+
+          if (!securityManager.rateLimiter.canMakeRequest()) {
+            throw new Error('Rate limit exceeded');
+          }
+
+          options.headers = {
+            ...options.headers,
+            'X-CSRF-Token': securityManager.csrfToken,
+            'X-API-Version': 'v1',
+            'User-Agent': 'JWT-Auth-Demo/2.1.0',
+          };
+
+          return originalFetch.apply(this, args);
+        };
+
+        // Setup form handler
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+
+        // Check if already authenticated
+        if (securityManager.isAuthenticated()) {
+          showDashboard();
+        }
+
+        logActivity('Application initialized', 'info');
+      }
+
+      function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+
+        // Remove active class from all tab buttons
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+
+        // Add active class to clicked tab button
+        event.target.classList.add('active');
+
+        // Update security status when switching to security tab
+        if (tabName === 'security') {
+          updateSecurityStatus();
+        }
+      }
+
+      async function handleLogin(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const loginBtn = document.getElementById('login-btn');
+        const statusDiv = document.getElementById('login-status');
+
+        // Show loading state
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = 'Logging in...<span class="loading"></span>';
+        statusDiv.className = 'status info';
+        statusDiv.textContent = 'Attempting to login...';
+
+        try {
+          const result = await securityManager.login(username, password);
+
+          statusDiv.className = 'status success';
+          statusDiv.textContent = `Login successful! Welcome, ${result.user.username}`;
+
+          logActivity(`User ${username} logged in successfully`, 'success');
+
+          // Show dashboard after successful login
+          setTimeout(() => {
+            showDashboard();
+          }, 1000);
+        } catch (error) {
+          statusDiv.className = 'status error';
+          statusDiv.textContent = `Login failed: ${error.message}`;
+          logActivity(`Login failed for ${username}: ${error.message}`, 'error');
+        } finally {
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = 'Login';
+        }
+      }
+
+      function showDashboard() {
+        switchTab('dashboard');
+        loadUserInfo();
+        document.getElementById('dashboard-status').className = 'status success';
+        document.getElementById('dashboard-status').textContent = 'Welcome to your dashboard!';
+      }
+
+      async function loadUserInfo() {
+        try {
+          const userInfo = await securityManager.getUserInfo();
+
+          document.getElementById('user-info').classList.remove('hidden');
+          document.getElementById('user-id').textContent = userInfo.id;
+          document.getElementById('user-username').textContent = userInfo.username;
+          document.getElementById('user-role').textContent = userInfo.role;
+          document.getElementById('user-created').textContent = new Date(userInfo.created_at).toLocaleString();
+          document.getElementById('user-last-login').textContent = userInfo.last_login
+            ? new Date(userInfo.last_login).toLocaleString()
+            : 'Never';
+          document.getElementById('user-mfa').textContent = userInfo.mfa_enabled ? 'Yes' : 'No';
+
+          logActivity('User information loaded', 'success');
+        } catch (error) {
+          document.getElementById('dashboard-status').className = 'status error';
+          document.getElementById('dashboard-status').textContent = `Failed to load user info: ${error.message}`;
+          logActivity(`Failed to load user info: ${error.message}`, 'error');
+        }
+      }
+
+      async function testProtectedRoute() {
+        try {
+          const response = await securityManager.secureFetch(`${currentConfig.API_BASE_URL}/protected`);
+          const data = await response.json();
+
+          if (response.ok) {
+            document.getElementById('dashboard-status').className = 'status success';
+            document.getElementById('dashboard-status').textContent =
+              `Protected route access successful! User: ${data.user.username}`;
+            logActivity('Protected route accessed successfully', 'success');
+          } else {
+            throw new Error(data.error || 'Access denied');
+          }
+        } catch (error) {
+          document.getElementById('dashboard-status').className = 'status error';
+          document.getElementById('dashboard-status').textContent = `Protected route access failed: ${error.message}`;
+          logActivity(`Protected route access failed: ${error.message}`, 'error');
+        }
+      }
+
+      async function testTokenRefresh() {
+        try {
+          const newToken = await securityManager.refreshToken();
+          document.getElementById('login-status').className = 'status success';
+          document.getElementById('login-status').textContent = 'Token refreshed successfully!';
+          logActivity('Token refreshed successfully', 'success');
+        } catch (error) {
+          document.getElementById('login-status').className = 'status error';
+          document.getElementById('login-status').textContent = `Token refresh failed: ${error.message}`;
+          logActivity(`Token refresh failed: ${error.message}`, 'error');
+        }
+      }
+
+      async function logout() {
+        try {
+          await securityManager.logout();
+          document.getElementById('dashboard-status').className = 'status info';
+          document.getElementById('dashboard-status').textContent = 'Logged out successfully';
+          document.getElementById('user-info').classList.add('hidden');
+          logActivity('User logged out', 'info');
+
+          // Switch to login tab
+          switchTab('login');
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+      }
+
+      function updateSecurityStatus() {
+        const status = securityManager.getSecurityStatus();
+
+        document.getElementById('csrf-status').textContent = status.csrfToken
+          ? `Active (${status.csrfToken.substring(0, 16)}...)`
+          : 'Not active';
+
+        document.getElementById('rate-limit-status').textContent = `${status.rateLimitRemaining} requests remaining`;
+
+        document.getElementById('cache-status').textContent = `${status.cacheSize} items cached`;
+
+        document.getElementById('token-status').textContent = status.hasToken
+          ? status.tokenValid
+            ? 'Valid'
+            : 'Expired'
+          : 'No token';
+
+        logActivity('Security status updated', 'info');
+      }
+
+      function clearSecurityData() {
+        securityManager.tokenStorage.clearToken();
+        securityManager.cacheManager.clear();
+        securityManager.rateLimiter.reset();
+
+        document.getElementById('security-status').innerHTML = `
+                <div class="security-item">
+                    <h4>CSRF Token</h4>
+                    <p>Not initialized</p>
+                </div>
+                <div class="security-item">
+                    <h4>Rate Limit</h4>
+                    <p>Not initialized</p>
+                </div>
+                <div class="security-item">
+                    <h4>Cache Size</h4>
+                    <p>Not initialized</p>
+                </div>
+                <div class="security-item">
+                    <h4>Token Status</h4>
+                    <p>Not initialized</p>
+                </div>
+            `;
+
+        logActivity('Security data cleared', 'info');
+      }
+
+      function logActivity(message, type = 'info') {
+        const logContainer = document.getElementById('activity-log');
+        const timestamp = new Date().toLocaleTimeString();
+
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry ${type}`;
+        logEntry.textContent = `[${timestamp}] ${message}`;
+
+        logContainer.appendChild(logEntry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+
+        // Keep only last 50 log entries
+        while (logContainer.children.length > 50) {
+          logContainer.removeChild(logContainer.firstChild);
+        }
+      }
+    </script>
+  </body>
+</html>

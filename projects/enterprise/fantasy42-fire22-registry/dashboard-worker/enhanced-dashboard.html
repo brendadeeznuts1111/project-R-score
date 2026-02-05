@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Enhanced Dashboard</title>
+    <meta
+      name="description"
+      content="Advanced Fire22 Dashboard with real-time analytics, agent management, and Fantasy402 integration"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        color: #e2e8f0;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .navbar {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1rem 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .navbar-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar-logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ffd700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .navbar-nav {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-link {
+        color: #e2e8f0;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s;
+        font-weight: 500;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background: rgba(255, 215, 0, 0.2);
+        color: #ffd700;
+      }
+
+      .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 100px 2rem 40px;
+      }
+
+      .dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 3rem 0;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .dashboard-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffd700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+      }
+
+      .dashboard-header p {
+        font-size: 1.2rem;
+        color: #cbd5e1;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 215, 0, 0.4);
+      }
+
+      .stat-card:hover::before {
+        opacity: 1;
+      }
+
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ffd700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+      }
+
+      .stat-label {
+        font-size: 1rem;
+        color: #cbd5e1;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      .stat-change {
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .stat-change.positive {
+        color: #10b981;
+      }
+
+      .stat-change.negative {
+        color: #ef4444;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .main-content {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .sidebar-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar-card h3 {
+        color: #ffd700;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .agent-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      .agent-table th,
+      .agent-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .agent-table th {
+        color: #ffd700;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .agent-table td {
+        color: #e2e8f0;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .status-active {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+      }
+
+      .status-inactive {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+        color: #1a1a2e;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 215, 0, 0.4);
+      }
+
+      .chart-placeholder {
+        height: 300px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        margin: 1rem 0;
+      }
+
+      .chart-placeholder span {
+        color: #94a3b8;
+        font-size: 1.1rem;
+      }
+
+      .health-indicators {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .health-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .health-item.healthy {
+        border-left: 4px solid #10b981;
+      }
+
+      .health-item.warning {
+        border-left: 4px solid #f59e0b;
+      }
+
+      .health-item.error {
+        border-left: 4px solid #ef4444;
+      }
+
+      .health-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+
+      .health-label {
+        font-size: 0.9rem;
+        color: #94a3b8;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 2rem 0;
+        color: #94a3b8;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 3rem;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .stat-card,
+      .sidebar-card {
+        animation: fadeInUp 0.6s ease-out both;
+      }
+
+      .stat-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .stat-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .stat-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .navbar-nav {
+          display: none;
+        }
+
+        .dashboard-container {
+          padding: 80px 1rem 40px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="navbar-content">
+        <a href="/" class="navbar-logo">🔥 Fire22 Dashboard</a>
+        <nav class="navbar-nav">
+          <a href="/" class="nav-link active">Dashboard</a>
+          <a href="/agents" class="nav-link">Agents</a>
+          <a href="/analytics" class="nav-link">Analytics</a>
+          <a href="/settings" class="nav-link">Settings</a>
+        </nav>
+      </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+      <!-- Header -->
+      <header class="dashboard-header">
+        <h1>🔥 Fire22 Enhanced Dashboard</h1>
+        <p>Advanced agent management, real-time analytics, and Fantasy402 integration</p>
+      </header>
+
+      <!-- Key Statistics -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-icon">👥</span>
+          <div class="stat-value" id="total-agents">0</div>
+          <div class="stat-label">Total Agents</div>
+          <div class="stat-change positive">↗️ +12% this month</div>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-icon">✅</span>
+          <div class="stat-value" id="active-agents">0</div>
+          <div class="stat-label">Active Agents</div>
+          <div class="stat-change positive">↗️ +8% this month</div>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-icon">🎯</span>
+          <div class="stat-value" id="pending-wagers">0</div>
+          <div class="stat-label">Pending Wagers</div>
+          <div class="stat-change">→ Stable</div>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-icon">💰</span>
+          <div class="stat-value" id="pending-amount">$0</div>
+          <div class="stat-label">Pending Amount</div>
+          <div class="stat-change positive">↗️ +15% this month</div>
+        </div>
+      </section>
+
+      <!-- Main Content Grid -->
+      <div class="dashboard-grid">
+        <!-- Main Content -->
+        <div class="main-content">
+          <h2 style="color: #ffd700; margin-bottom: 2rem; font-size: 1.8rem">📊 Agent Overview</h2>
+
+          <!-- Agent Management Table -->
+          <div style="overflow-x: auto">
+            <table class="agent-table">
+              <thead>
+                <tr>
+                  <th>Agent ID</th>
+                  <th>Master Agent</th>
+                  <th>Status</th>
+                  <th>Place Bet</th>
+                  <th>Internet Rate (%)</th>
+                  <th>Casino Rate (%)</th>
+                  <th>Last Updated</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="agent-table-body">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 3rem; color: #94a3b8">
+                    <div style="font-size: 1.2rem; margin-bottom: 1rem">🔄 Loading agent data...</div>
+                    <div style="font-size: 0.9rem">Please wait while we fetch the latest information</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn btn-primary" onclick="refreshAgents()">🔄 Refresh Data</button>
+            <button class="btn btn-secondary" onclick="exportAgents()">📤 Export Agents</button>
+            <button class="btn btn-secondary" onclick="showAnalytics()">📊 View Analytics</button>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- System Health -->
+          <div class="sidebar-card">
+            <h3>🩺 System Health</h3>
+            <div class="health-indicators">
+              <div class="health-item healthy">
+                <div class="health-value" id="api-health">✅</div>
+                <div class="health-label">API Status</div>
+              </div>
+              <div class="health-item healthy">
+                <div class="health-value" id="db-health">✅</div>
+                <div class="health-label">Database</div>
+              </div>
+              <div class="health-item warning">
+                <div class="health-value" id="fantasy-health">⚠️</div>
+                <div class="health-label">Fantasy402</div>
+              </div>
+              <div class="health-item healthy">
+                <div class="health-value" id="websocket-health">✅</div>
+                <div class="health-label">Real-time</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="sidebar-card">
+            <h3>⚡ Quick Actions</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem">
+              <button class="btn btn-secondary" onclick="addNewAgent()">➕ Add Agent</button>
+              <button class="btn btn-secondary" onclick="viewCommissionReport()">📋 Commission Report</button>
+              <button class="btn btn-secondary" onclick="systemBackup()">💾 System Backup</button>
+              <button class="btn btn-secondary" onclick="viewLogs()">📝 View Logs</button>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="sidebar-card">
+            <h3>📈 Recent Activity</h3>
+            <div id="recent-activity" style="color: #94a3b8; font-size: 0.9rem">
+              <div style="margin-bottom: 0.5rem">• Agent BLAKEPPH updated rates</div>
+              <div style="margin-bottom: 0.5rem">• New agent TEST001 registered</div>
+              <div style="margin-bottom: 0.5rem">• Commission payout processed</div>
+              <div>• System health check completed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <section style="margin-bottom: 3rem">
+        <h2 style="color: #ffd700; margin-bottom: 2rem; font-size: 1.8rem">📊 Analytics Overview</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem">
+          <div class="sidebar-card">
+            <h3>📈 Agent Performance</h3>
+            <div class="chart-placeholder">
+              <span>Interactive chart will load here</span>
+            </div>
+          </div>
+          <div class="sidebar-card">
+            <h3>💰 Revenue Trends</h3>
+            <div class="chart-placeholder">
+              <span>Revenue analytics chart</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2025 Fire22 Dashboard - Enterprise Agent Management System</p>
+    </footer>
+
+    <script>
+      // Enhanced Dashboard JavaScript
+      class EnhancedDashboard {
+        constructor() {
+          this.agents = [];
+          this.stats = {
+            totalAgents: 0,
+            activeAgents: 0,
+            pendingWagers: 0,
+            pendingAmount: 0,
+          };
+          this.initialize();
+        }
+
+        async initialize() {
+          console.log('🔥 Initializing Enhanced Fire22 Dashboard...');
+          await this.loadDashboardData();
+          this.setupRealTimeUpdates();
+          this.setupEventListeners();
+        }
+
+        async loadDashboardData() {
+          try {
+            // Simulate loading agent data
+            await this.loadAgentData();
+            await this.loadSystemStats();
+            this.updateUI();
+            console.log('✅ Dashboard data loaded successfully');
+          } catch (error) {
+            console.error('❌ Failed to load dashboard data:', error);
+            this.showError('Failed to load dashboard data');
+          }
+        }
+
+        async loadAgentData() {
+          // Simulate API call to load agents
+          this.agents = [
+            {
+              id: 'BLAKEPPH',
+              masterAgent: 'BLAKEPPH',
+              status: 'Active',
+              canPlaceBet: true,
+              internetRate: 5.0,
+              casinoRate: 3.0,
+              lastUpdated: '2025-08-29T10:30:00Z',
+            },
+            {
+              id: 'TEST001',
+              masterAgent: 'BLAKEPPH',
+              status: 'Active',
+              canPlaceBet: true,
+              internetRate: 3.0,
+              casinoRate: 2.0,
+              lastUpdated: '2025-08-29T09:15:00Z',
+            },
+            {
+              id: 'DEMO002',
+              masterAgent: 'BLAKEPPH',
+              status: 'Inactive',
+              canPlaceBet: false,
+              internetRate: 4.0,
+              casinoRate: 2.5,
+              lastUpdated: '2025-08-28T16:45:00Z',
+            },
+          ];
+
+          // Update stats
+          this.stats.totalAgents = this.agents.length;
+          this.stats.activeAgents = this.agents.filter(a => a.status === 'Active').length;
+        }
+
+        async loadSystemStats() {
+          // Simulate loading system statistics
+          this.stats.pendingWagers = Math.floor(Math.random() * 50) + 10;
+          this.stats.pendingAmount = Math.floor(Math.random() * 10000) + 5000;
+        }
+
+        updateUI() {
+          // Update statistics cards
+          document.getElementById('total-agents').textContent = this.stats.totalAgents.toLocaleString();
+          document.getElementById('active-agents').textContent = this.stats.activeAgents.toLocaleString();
+          document.getElementById('pending-wagers').textContent = this.stats.pendingWagers.toLocaleString();
+          document.getElementById('pending-amount').textContent = '$' + this.stats.pendingAmount.toLocaleString();
+
+          // Update agent table
+          this.updateAgentTable();
+        }
+
+        updateAgentTable() {
+          const tbody = document.getElementById('agent-table-body');
+          if (!tbody) return;
+
+          tbody.innerHTML = this.agents
+            .map(
+              agent => `
+                    <tr>
+                        <td style="font-weight: 600; color: #ffd700;">${agent.id}</td>
+                        <td>${agent.masterAgent}</td>
+                        <td>
+                            <span class="status-badge ${agent.status === 'Active' ? 'status-active' : 'status-inactive'}">
+                                ${agent.status}
+                            </span>
+                        </td>
+                        <td>${agent.canPlaceBet ? '✅' : '❌'}</td>
+                        <td>${agent.internetRate.toFixed(1)}%</td>
+                        <td>${agent.casinoRate.toFixed(1)}%</td>
+                        <td>${new Date(agent.lastUpdated).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editAgent('${agent.id}')" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+                                ✏️ Edit
+                            </button>
+                        </td>
+                    </tr>
+                `
+            )
+            .join('');
+        }
+
+        setupRealTimeUpdates() {
+          // Simulate real-time updates
+          setInterval(() => {
+            this.simulateRealTimeUpdate();
+          }, 5000);
+        }
+
+        simulateRealTimeUpdate() {
+          // Randomly update some stats
+          if (Math.random() > 0.7) {
+            this.stats.pendingWagers += Math.floor(Math.random() * 3) - 1;
+            this.stats.pendingWagers = Math.max(0, this.stats.pendingWagers);
+            document.getElementById('pending-wagers').textContent = this.stats.pendingWagers.toLocaleString();
+          }
+        }
+
+        setupEventListeners() {
+          // Add any event listeners here
+        }
+
+        showError(message) {
+          console.error(message);
+          // Could show a toast notification here
+        }
+      }
+
+      // Global functions for button actions
+      function refreshAgents() {
+        if (window.dashboard) {
+          window.dashboard.loadDashboardData();
+        }
+      }
+
+      function exportAgents() {
+        const data = window.dashboard?.agents || [];
+        const csv = [
+          ['Agent ID', 'Master Agent', 'Status', 'Can Place Bet', 'Internet Rate', 'Casino Rate', 'Last Updated'],
+          ...data.map(agent => [
+            agent.id,
+            agent.masterAgent,
+            agent.status,
+            agent.canPlaceBet,
+            agent.internetRate,
+            agent.casinoRate,
+            agent.lastUpdated,
+          ]),
+        ]
+          .map(row => row.join(','))
+          .join('\n');
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'agents-export.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function showAnalytics() {
+        alert('Analytics view coming soon! 📊');
+      }
+
+      function addNewAgent() {
+        alert('Add new agent functionality coming soon! ➕');
+      }
+
+      function viewCommissionReport() {
+        alert('Commission report view coming soon! 📋');
+      }
+
+      function systemBackup() {
+        alert('System backup initiated! 💾');
+      }
+
+      function viewLogs() {
+        alert('System logs view coming soon! 📝');
+      }
+
+      function editAgent(agentId) {
+        alert(`Edit agent ${agentId} functionality coming soon! ✏️`);
+      }
+
+      // Initialize dashboard when DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        window.dashboard = new EnhancedDashboard();
+        console.log('🔥 Enhanced Fire22 Dashboard loaded successfully!');
+      });
+    </script>
+  </body>
+</html>

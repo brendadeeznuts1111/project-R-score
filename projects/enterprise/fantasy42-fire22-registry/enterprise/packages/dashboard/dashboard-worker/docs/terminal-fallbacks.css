@@ -1,0 +1,534 @@
+/**
+ * 🔥 Fire22 Terminal Components - Browser Fallbacks
+ * Fallback styles and polyfills for older browsers and unsupported features
+ * 
+ * @version 1.0.0
+ * @author Fire22 Development Team
+ * @requires terminal-framework.css, terminal-components.css
+ */
+
+/* ============================================================================
+   CSS CUSTOM PROPERTIES FALLBACKS (IE11 and older browsers)
+   ========================================================================== */
+
+.terminal-fallback {
+  /* Color fallbacks */
+  --primary-fallback: #0d1117;
+  --secondary-fallback: #161b22;
+  --tertiary-fallback: #21262d;
+  --accent-fallback: #58a6ff;
+  --fire-fallback: #ff6b35;
+  --success-fallback: #39ff14;
+  --warning-fallback: #ffd700;
+  --danger-fallback: #ff4444;
+  --text-fallback: #f0f6fc;
+  --text-secondary-fallback: #8b949e;
+  --font-mono-fallback: 'Courier New', monospace;
+}
+
+/* Fallback for browsers that don't support CSS custom properties */
+.no-css-variables .terminal-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  color: #f0f6fc;
+}
+
+.no-css-variables .terminal-btn--primary {
+  background: transparent;
+  border: 1px solid #ff6b35;
+  color: #ff6b35;
+}
+
+.no-css-variables .terminal-btn--primary:hover {
+  background: #ff6b35;
+  color: #0d1117;
+}
+
+.no-css-variables .terminal-header {
+  background: #161b22;
+  border: 1px solid #58a6ff;
+}
+
+.no-css-variables .terminal-title {
+  color: #ff6b35;
+  font-family: 'Courier New', monospace;
+}
+
+/* ============================================================================
+   BOX DRAWING CHARACTER FALLBACKS
+   ========================================================================== */
+
+/* ASCII fallbacks for box drawing characters */
+.no-box-drawing .terminal-header::before {
+  content: '+--------------------------------------------------------------------+';
+}
+
+.no-box-drawing .terminal-header::after {
+  content: '+--------------------------------------------------------------------+';
+}
+
+.no-box-drawing .terminal-card::before {
+  content: '+';
+}
+
+.no-box-drawing .terminal-card::after {
+  content: '+';
+}
+
+.no-box-drawing .terminal-btn::before {
+  content: '[';
+}
+
+.no-box-drawing .terminal-btn::after {
+  content: ']';
+}
+
+.no-box-drawing .terminal-nav__section {
+  white-space: normal;
+}
+
+.no-box-drawing .terminal-nav__section:before {
+  content: '[ ';
+}
+
+.no-box-drawing .terminal-nav__section:after {
+  content: ' ]';
+}
+
+.no-box-drawing .footer-decoration {
+  content: '+--------------------------------------------------------------------+';
+}
+
+/* Alternative styling when box drawing is not supported */
+.no-box-drawing .terminal-card {
+  border-radius: 4px;
+}
+
+.no-box-drawing .terminal-btn {
+  border-radius: 4px;
+}
+
+.no-box-drawing .terminal-header {
+  border-radius: 8px;
+}
+
+/* ============================================================================
+   FONT RENDERING FALLBACKS
+   ========================================================================== */
+
+/* Safe font stack for monospace */
+.terminal-font-fallback {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', 'Menlo',
+    'Consolas', 'DejaVu Sans Mono', 'Liberation Mono', 'Courier New', monospace !important;
+}
+
+/* Apply fallback font to all terminal elements */
+.no-custom-fonts .terminal-header,
+.no-custom-fonts .terminal-card,
+.no-custom-fonts .terminal-btn,
+.no-custom-fonts .terminal-form__input,
+.no-custom-fonts .terminal-table {
+  font-family: 'Courier New', monospace;
+}
+
+/* ============================================================================
+   ANIMATION FALLBACKS (REDUCED MOTION / PERFORMANCE)
+   ========================================================================== */
+
+/* Disable animations for better performance */
+.no-animations *,
+.no-animations *:before,
+.no-animations *:after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Static styles for components that rely on animations */
+.no-animations .terminal-status-dot--active {
+  background: #39ff14;
+  box-shadow: 0 0 4px #39ff14;
+}
+
+.no-animations .terminal-status-dot--warning {
+  background: #ffd700;
+  box-shadow: 0 0 4px #ffd700;
+}
+
+.no-animations .terminal-status-dot--error {
+  background: #ff4444;
+  box-shadow: 0 0 4px #ff4444;
+}
+
+.no-animations .terminal-title {
+  text-shadow: 0 0 8px #ff6b35;
+}
+
+/* ============================================================================
+   FLEXBOX FALLBACKS (IE10 and older)
+   ========================================================================== */
+
+.no-flexbox .terminal-header {
+  text-align: center;
+}
+
+.no-flexbox .terminal-card__header {
+  display: block;
+}
+
+.no-flexbox .terminal-card__title {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.no-flexbox .terminal-btn {
+  display: inline-block;
+  margin: 4px;
+}
+
+.no-flexbox .terminal-metrics {
+  /* Float-based layout fallback */
+}
+
+.no-flexbox .terminal-metric {
+  float: left;
+  width: 30%;
+  margin: 1.66%;
+}
+
+.no-flexbox .terminal-metrics:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+/* ============================================================================
+   GRID FALLBACKS (Older browsers)
+   ========================================================================== */
+
+.no-grid .terminal-grid {
+  display: block;
+}
+
+.no-grid .terminal-grid__item {
+  display: inline-block;
+  width: 48%;
+  margin: 1%;
+  vertical-align: top;
+}
+
+.no-grid .terminal-metrics {
+  display: block;
+}
+
+.no-grid .terminal-metric {
+  display: inline-block;
+  width: 30%;
+  margin: 1.66%;
+  vertical-align: top;
+}
+
+/* ============================================================================
+   JAVASCRIPT DISABLED FALLBACKS
+   ========================================================================== */
+
+.no-js .terminal-progress__fill {
+  width: 50%;
+  background: #58a6ff;
+}
+
+.no-js .terminal-metric__value:after {
+  content: ' (Static)';
+  font-size: 0.8em;
+  color: #8b949e;
+}
+
+.no-js .terminal-status-dot {
+  background: #58a6ff;
+}
+
+/* ============================================================================
+   MOBILE SAFARI SPECIFIC FIXES
+   ========================================================================== */
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .terminal-btn {
+    -webkit-appearance: none;
+  }
+
+  .terminal-form__input,
+  .terminal-form__select,
+  .terminal-form__textarea {
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+}
+
+/* ============================================================================
+   INTERNET EXPLORER SPECIFIC FIXES
+   ========================================================================== */
+
+/* IE11 flexbox fixes */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .terminal-flex {
+    display: -ms-flexbox;
+    -ms-flex-align: center;
+    -ms-flex-pack: center;
+  }
+
+  .terminal-flex--between {
+    -ms-flex-pack: justify;
+  }
+
+  .terminal-grid {
+    display: -ms-grid;
+  }
+}
+
+/* ============================================================================
+   FIREFOX SPECIFIC FIXES
+   ========================================================================== */
+
+@-moz-document url-prefix() {
+  .terminal-form__select {
+    background-image: none;
+  }
+
+  .terminal-btn {
+    -moz-user-select: none;
+  }
+}
+
+/* ============================================================================
+   HIGH CONTRAST MODE ENHANCEMENTS
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+  .terminal-card,
+  .terminal-btn,
+  .terminal-header {
+    border-width: 2px;
+    border-style: solid;
+  }
+
+  .terminal-card::before,
+  .terminal-card::after,
+  .terminal-header::before,
+  .terminal-header::after {
+    display: none;
+  }
+
+  .terminal-title {
+    text-shadow: none;
+  }
+
+  .terminal-status-dot {
+    border: 2px solid currentColor;
+  }
+}
+
+/* ============================================================================
+   PRINT MEDIA FALLBACKS
+   ========================================================================== */
+
+@media print {
+  .no-print,
+  .terminal-btn,
+  .terminal-nav {
+    display: none !important;
+  }
+
+  .terminal-card,
+  .terminal-header {
+    border: 1px solid #000 !important;
+    background: transparent !important;
+    color: #000 !important;
+  }
+
+  .terminal-card::before,
+  .terminal-card::after,
+  .terminal-header::before,
+  .terminal-header::after {
+    display: none !important;
+  }
+
+  .terminal-title {
+    color: #000 !important;
+    text-shadow: none !important;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ========================================================================== */
+
+/* Enhanced focus indicators */
+.terminal-btn:focus,
+.terminal-form__input:focus,
+.terminal-form__select:focus {
+  outline: 2px solid #58a6ff;
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================================
+   UTILITY CLASSES FOR FALLBACK SCENARIOS
+   ========================================================================== */
+
+.terminal-fallback-border {
+  border: 1px solid #30363d;
+  border-radius: 4px;
+}
+
+.terminal-fallback-bg {
+  background: #161b22;
+}
+
+.terminal-fallback-text {
+  color: #f0f6fc;
+  font-family: 'Courier New', monospace;
+}
+
+.terminal-fallback-primary {
+  background: #ff6b35;
+  color: #0d1117;
+}
+
+.terminal-fallback-secondary {
+  background: #58a6ff;
+  color: #0d1117;
+}
+
+/* ============================================================================
+   PROGRESSIVE ENHANCEMENT CLASSES
+   ========================================================================== */
+
+/* These classes are added by JavaScript based on feature detection */
+.has-css-variables .terminal-fallback-colors {
+  /* Use CSS custom properties when supported */
+  background: var(--secondary);
+  color: var(--text);
+  border-color: var(--border-color);
+}
+
+.has-flexbox .terminal-fallback-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.has-grid .terminal-fallback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.has-box-drawing .terminal-fallback-decorations::before {
+  content: '╭';
+}
+
+.has-box-drawing .terminal-fallback-decorations::after {
+  content: '╯';
+}
+
+/* ============================================================================
+   BROWSER-SPECIFIC WORKAROUNDS
+   ========================================================================== */
+
+/* Chrome specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .terminal-card {
+      /* Fallback for browsers without backdrop-filter support */
+      background: rgba(22, 27, 34, 0.95);
+    }
+  }
+}
+
+/* Edge legacy fixes */
+@supports (-ms-ime-align: auto) {
+  .terminal-grid {
+    display: -ms-grid;
+    -ms-grid-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* ============================================================================
+   PERFORMANCE OPTIMIZATION FALLBACKS
+   ========================================================================== */
+
+/* Reduce complexity on lower-end devices */
+@media (max-width: 768px) and (max-resolution: 150dpi) {
+  .terminal-card::before,
+  .terminal-card::after,
+  .terminal-header::before,
+  .terminal-header::after {
+    display: none;
+  }
+
+  .terminal-title {
+    text-shadow: none;
+  }
+
+  .terminal-btn {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   ERROR RECOVERY STYLES
+   ========================================================================== */
+
+/* Generic fallback when all else fails */
+.terminal-emergency-fallback {
+  font-family: Arial, sans-serif !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #cccccc !important;
+  padding: 16px !important;
+  margin: 8px !important;
+}
+
+.terminal-emergency-fallback * {
+  font-family: inherit !important;
+  color: inherit !important;
+}
+
+.terminal-emergency-fallback .terminal-btn {
+  background: #007bff !important;
+  color: #ffffff !important;
+  border: 1px solid #007bff !important;
+  padding: 8px 16px !important;
+  cursor: pointer;
+}
+
+/* ============================================================================
+   CONDITIONAL LOADING INDICATORS
+   ========================================================================== */
+
+/* Show when CSS is loading or failed */
+.terminal-css-loading::before {
+  content: 'Loading Terminal Styles...';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 4px;
+  z-index: 9999;
+  font-family: monospace;
+}

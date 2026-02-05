@@ -1,0 +1,18 @@
+graph TD
+    pattern_system[@fire22-pattern-system<br/>v3.0.8]
+    style pattern_system fill:#f9f,stroke:#333,stroke-width:4px
+    api_client[@fire22-api-client<br/>v3.0.8]
+    style api_client fill:#f9f,stroke:#333,stroke-width:4px
+    core_dashboard[@fire22-core-dashboard<br/>v3.0.8]
+    style core_dashboard fill:#f9f,stroke:#333,stroke-width:4px
+    sports_betting[@fire22-sports-betting<br/>v3.0.8]
+    style sports_betting fill:#f9f,stroke:#333,stroke-width:4px
+    telegram_integration[@fire22-telegram-integration<br/>v3.0.8]
+    style telegram_integration fill:#f9f,stroke:#333,stroke-width:4px
+    build_system[@fire22-build-system<br/>v3.0.8]
+    style build_system fill:#f9f,stroke:#333,stroke-width:4px
+    core_dashboard --> pattern_system
+    core_dashboard --> api_client
+    sports_betting --> api_client
+    sports_betting --> core_dashboard
+    telegram_integration --> api_client

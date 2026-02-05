@@ -1,0 +1,42 @@
+{
+  "name": "catalog-demo",
+  "version": "1.0.0",
+  "description": "Demonstration of Bun catalogs functionality",
+  "workspaces": {
+    "catalog": {
+      "axios": "^1.6.0",
+      "lodash": "^4.17.21",
+      "chalk": "^5.3.0"
+    },
+    "catalogs": {
+      "testing": {
+        "jest": "^29.7.0",
+        "supertest": "^6.3.3"
+      },
+      "build": {
+        "webpack": "^5.89.0",
+        "typescript": "^5.3.0"
+      }
+    }
+  },
+  "dependencies": {
+    "axios": "catalog:",
+    "lodash": "catalog:",
+    "chalk": "catalog:"
+  },
+  "devDependencies": {
+    "jest": "catalog:testing",
+    "supertest": "catalog:testing",
+    "webpack": "catalog:build",
+    "typescript": "catalog:build"
+  },
+  "scripts": {
+    "audit": "bun audit",
+    "audit:ci": "bun audit --format json",
+    "security:scan": "bunx --package @fire22-registry/security-scanner scan .",
+    "test": "jest",
+    "build": "webpack --mode production",
+    "lint": "echo 'Linting not configured'",
+    "playbook:check": "bun run ../../scripts/playbook-auditor.ts --repo . --output console"
+  }
+}

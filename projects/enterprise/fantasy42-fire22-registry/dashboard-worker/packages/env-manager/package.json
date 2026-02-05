@@ -1,0 +1,113 @@
+{
+  "name": "@fire22/env-manager",
+  "version": "1.0.3",
+  "description": "Fire22 Environment Manager - Configuration validation, security auditing, and environment switching",
+  "main": "src/index.ts",
+  "type": "module",
+  "sideEffects": [
+    "./src/index.ts"
+  ],
+  "author": {
+    "name": "Fire22 Development Team",
+    "email": "dev@fire22.com",
+    "url": "https://fire22.com"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://fire22-security-registry.nolarose1968-806.workers.dev/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/env-manager"
+  },
+  "scripts": {
+    "env:validate": "bun run scripts/env-manager.ts validate",
+    "env:check": "bun run scripts/env-manager.ts check",
+    "env:list": "bun run scripts/env-manager.ts list",
+    "env:audit": "bun run scripts/env-manager.ts audit",
+    "env:performance": "bun run scripts/env-manager.ts performance",
+    "env:integration": "bun run scripts/env-manager.ts integration",
+    "env:setup": "bun run scripts/env-manager.ts setup",
+    "env:generate": "bun run scripts/env-manager.ts generate",
+    "env:backup": "bun run scripts/env-manager.ts backup",
+    "env:restore": "bun run scripts/env-manager.ts restore",
+    "env:diff": "bun run scripts/env-manager.ts diff",
+    "env:sync": "bun run scripts/env-manager.ts sync",
+    "env:monitor": "bun run scripts/env-manager.ts monitor",
+    "env:export": "bun run scripts/env-manager.ts export",
+    "env:import": "bun run scripts/env-manager.ts import",
+    "env:demo": "bun run scripts/env-manager.ts demo",
+    "env:help": "bun run scripts/env-manager.ts help",
+    "env:all": "bun run env:validate && bun run env:audit && bun run env:performance",
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "dev": "bun --watch src/index.ts",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "keywords": [
+    "fire22",
+    "environment",
+    "configuration",
+    "validation",
+    "security",
+    "auditing",
+    "management"
+  ],
+  "config": {
+    "environment": {
+      "supportedEnvironments": [
+        "development",
+        "staging",
+        "production",
+        "test",
+        "demo",
+        "canary"
+      ],
+      "validationRules": {
+        "secrets": "Minimum 32 characters",
+        "urls": "Must be valid HTTPS URLs",
+        "emails": "Must be valid email format",
+        "ports": "Must be between 1024 and 65535"
+      }
+    },
+    "security": {
+      "auditLevel": "strict",
+      "checkWeakSecrets": true,
+      "checkDefaultValues": true,
+      "checkExposedPatterns": true
+    },
+    "performance": {
+      "enableMetrics": true,
+      "samplingRate": 0.1,
+      "timeout": 5000
+    }
+  },
+  "metadata": {
+    "component": "env-manager",
+    "responsibilities": [
+      "Environment variable validation",
+      "Configuration management",
+      "Security auditing",
+      "Performance monitoring",
+      "Environment switching",
+      "Backup and restore"
+    ],
+    "testing": {
+      "validate": "Environment variable validation",
+      "audit": "Security and configuration auditing",
+      "performance": "Performance monitoring and metrics",
+      "integration": "Complete environment integration testing"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "@fire22/build-system",
+  "version": "3.0.9",
+  "description": "Build automation, benchmarking, and tooling",
+  "type": "module",
+  "main": "scripts/workspace-orchestrator.ts",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm",
+    "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
+    "build:cloudflare": "bun build src/index.ts --outdir dist/cloudflare --target bun --format esm --minify",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "lint": "bunx eslint src/",
+    "typecheck": "bunx tsc --noEmit",
+    "install:isolated": "bun install --linker isolated",
+    "install:linked": "bun install --linker isolated",
+    "install:standalone": "bun install --linker isolated --frozen-lockfile",
+    "deploy:linked": "wrangler deploy --config wrangler.linked.toml",
+    "deploy:standalone": "wrangler deploy --config wrangler.standalone.toml"
+  },
+  "dependencies": {
+    "mitata": "^1.0.0",
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "fire22": {
+    "workspace": "build-system",
+    "isolation": {
+      "standalone": true,
+      "linked": true,
+      "separateTests": true,
+      "independentDeploy": true
+    },
+    "include": [
+      "scripts/",
+      "bench/",
+      "build.ts",
+      "build.config.ts",
+      "tsconfig.json",
+      "bunfig.toml"
+    ],
+    "exclude": [
+      "scripts/workspace-cli.ts"
+    ],
+    "bunIsolated": true
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "tag": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-build-system"
+  }
+}

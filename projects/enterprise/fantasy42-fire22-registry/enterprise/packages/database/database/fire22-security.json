@@ -1,0 +1,45 @@
+{
+  "version": "1.0.0",
+  "created": "2025-08-28T22:05:00.352Z",
+  "tables": {
+    "departments": {
+      "columns": ["id", "name", "email", "securityTier", "status"],
+      "data": [
+        {
+          "id": "exec",
+          "name": "Executive Management",
+          "email": "exec@fire22.com",
+          "securityTier": "TIER_1_MAXIMUM",
+          "status": "ACKNOWLEDGED"
+        },
+        {
+          "id": "finance",
+          "name": "Finance Department",
+          "email": "finance@fire22.com",
+          "securityTier": "TIER_1_MAXIMUM",
+          "status": "ACKNOWLEDGED"
+        },
+        {
+          "id": "compliance",
+          "name": "Compliance & Legal",
+          "email": "compliance@fire22.com",
+          "securityTier": "TIER_1_MAXIMUM",
+          "status": "ACKNOWLEDGED"
+        }
+      ]
+    },
+    "security_events": {
+      "columns": ["id", "timestamp", "event_type", "department", "severity", "description"],
+      "data": [
+        {
+          "id": 1,
+          "timestamp": "2025-08-28T22:05:00.352Z",
+          "event_type": "DEPLOYMENT",
+          "department": "ALL",
+          "severity": "INFO",
+          "description": "Cloudflare Durable Objects deployment initiated"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔗 Fire22 Link Verification Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        color: #ff6b35;
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        color: #9ca3af;
+      }
+
+      .verification-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .link-card {
+        background: rgba(10, 14, 39, 0.8);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .link-card:hover {
+        border-color: rgba(64, 224, 208, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .link-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .link-title {
+        font-size: 16px;
+        color: #e0e6ed;
+        font-weight: bold;
+      }
+
+      .link-status {
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .status-checking {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+      }
+
+      .status-working {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+      }
+
+      .status-broken {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      .link-path {
+        font-size: 11px;
+        color: #6b7280;
+        margin-bottom: 10px;
+        word-break: break-all;
+      }
+
+      .link-description {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 15px;
+      }
+
+      .link-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 11px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-test {
+        background: linear-gradient(135deg, #374151, #4b5563);
+        color: white;
+      }
+
+      .btn-open {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .stats {
+        background: rgba(10, 14, 39, 0.9);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 20px;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #40e0d0;
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: #9ca3af;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🔗 Fire22 Link Verification Dashboard</h1>
+      <p>Testing all implementation links in the CSS highlight system showcase</p>
+    </div>
+
+    <div class="stats">
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-value" id="totalLinks">0</div>
+          <div class="stat-label">Total Links</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="workingLinks">0</div>
+          <div class="stat-label">Working</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="brokenLinks">0</div>
+          <div class="stat-label">Broken</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="checkingLinks">0</div>
+          <div class="stat-label">Checking</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verification-grid" id="linksGrid"></div>
+
+    <script>
+      const implementationLinks = [
+        {
+          title: 'Main Dashboard',
+          path: './src/dashboard.html',
+          description: 'Comprehensive package, system, and user status overview',
+          instances: 47,
+          teamMembers: ['Brenda Williams', 'David Lee'],
+        },
+        {
+          title: 'Hub Connection',
+          path: './src/config/hub-connection.ts',
+          description: 'Status highlighting for API connectivity and real-time sync operations',
+          instances: 23,
+          teamMembers: ['Brenda Williams', 'Sarah Chen'],
+        },
+        {
+          title: 'Package Grid API',
+          path: './src/api/package-review-grid.ts',
+          description: 'Visual status indicators for package approval workflow and lifecycle',
+          instances: 89,
+          teamMembers: ['Claude Assistant', 'Michael Jones'],
+        },
+        {
+          title: 'Performance Monitor',
+          path: './src/staging-reviews/performance-monitor-enhanced.html',
+          description: 'Alert states and system health visualization for critical metrics',
+          instances: 156,
+          teamMembers: ['Claude Assistant', 'Emily White'],
+        },
+        {
+          title: 'Documentation',
+          path: './packages/shared-styles/README.md',
+          description: 'Centralized knowledge base for all highlight system aspects',
+          instances: 1,
+          teamMembers: ['Claude Assistant', 'Rachel Green'],
+        },
+        {
+          title: 'Visual Configurator',
+          path: './packages/shared-styles/tools/visual-configurator.html',
+          description: 'Interactive tool for exploring and customizing highlight styles',
+          instances: 1,
+          teamMembers: ['Claude Assistant', 'Daniel Kim'],
+        },
+        {
+          title: 'Team Contributors',
+          path: './src/departments/team-contributors.html',
+          description: 'Department overview with modal card widgets and error boundaries',
+          instances: 1,
+          teamMembers: ['Claude Assistant', 'All Team Members'],
+        },
+        {
+          title: 'CSS Showcase',
+          path: './packages/@fire22/grid-ui/fire22-highlight-system-showcase.html',
+          description: 'Complete highlight system demonstration with live team member links',
+          instances: 1,
+          teamMembers: ['Claude Assistant', 'All Team Members'],
+        },
+        {
+          title: 'Migration Guide',
+          path: './packages/shared-styles/MIGRATION-GUIDE.md',
+          description: 'Step-by-step guide for implementing the Fire22 CSS system',
+          instances: 1,
+          teamMembers: ['Claude Assistant', 'Rachel Green'],
+        },
+        {
+          title: 'Staging Review',
+          path: './src/staging-review.html',
+          description: 'Fire22 staging review dashboard with package approval workflow',
+          instances: 47,
+          teamMembers: ['Brenda Williams', 'David Lee'],
+        },
+      ];
+
+      let stats = {
+        total: implementationLinks.length,
+        working: 0,
+        broken: 0,
+        checking: implementationLinks.length,
+      };
+
+      function updateStats() {
+        document.getElementById('totalLinks').textContent = stats.total;
+        document.getElementById('workingLinks').textContent = stats.working;
+        document.getElementById('brokenLinks').textContent = stats.broken;
+        document.getElementById('checkingLinks').textContent = stats.checking;
+      }
+
+      function createLinkCard(link, index) {
+        return `
+                <div class="link-card" id="card-${index}">
+                    <div class="link-header">
+                        <div class="link-title">${link.title}</div>
+                        <div class="link-status status-checking" id="status-${index}">Checking...</div>
+                    </div>
+                    <div class="link-path">${link.path}</div>
+                    <div class="link-description">${link.description}</div>
+                    <div class="link-description">
+                        <strong>${link.instances} instances</strong> • 
+                        Team: ${link.teamMembers.join(', ')}
+                    </div>
+                    <div class="link-actions">
+                        <button class="btn btn-test" onclick="testLink('${link.path}', ${index})">
+                            🔍 Test Link
+                        </button>
+                        <a href="${link.path}" target="_blank" class="btn btn-open">
+                            🚀 Open File
+                        </a>
+                    </div>
+                </div>
+            `;
+      }
+
+      async function testLink(path, index) {
+        const statusElement = document.getElementById(`status-${index}`);
+        statusElement.textContent = 'Testing...';
+        statusElement.className = 'link-status status-checking';
+
+        try {
+          // Try to fetch the file
+          const response = await fetch(path, { method: 'HEAD' });
+
+          if (response.ok) {
+            statusElement.textContent = '✅ Working';
+            statusElement.className = 'link-status status-working';
+            stats.working++;
+          } else {
+            statusElement.textContent = `❌ ${response.status}`;
+            statusElement.className = 'link-status status-broken';
+            stats.broken++;
+          }
+        } catch (error) {
+          statusElement.textContent = '❌ Error';
+          statusElement.className = 'link-status status-broken';
+          stats.broken++;
+          console.error(`Failed to test ${path}:`, error);
+        }
+
+        stats.checking--;
+        updateStats();
+      }
+
+      async function testAllLinks() {
+        console.log('🔗 Testing all implementation links...');
+
+        for (let i = 0; i < implementationLinks.length; i++) {
+          const link = implementationLinks[i];
+
+          // Add delay to avoid overwhelming the browser
+          setTimeout(() => {
+            testLink(link.path, i);
+          }, i * 200);
+        }
+      }
+
+      // Initialize the page
+      document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('linksGrid');
+
+        // Create all link cards
+        implementationLinks.forEach((link, index) => {
+          grid.innerHTML += createLinkCard(link, index);
+        });
+
+        updateStats();
+
+        // Start testing all links after a short delay
+        setTimeout(testAllLinks, 1000);
+
+        console.log('🔧 Link verification dashboard loaded');
+        console.log(`📊 Testing ${implementationLinks.length} implementation links`);
+      });
+
+      // Global test function for manual testing
+      window.testAllLinks = testAllLinks;
+    </script>
+  </body>
+</html>

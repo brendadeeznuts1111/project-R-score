@@ -1,0 +1,101 @@
+{
+  "name": "@fire22/bench",
+  "version": "1.0.0",
+  "description": "Comprehensive benchmarking suite for Fire22 dashboard",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "bench": "bun run index.ts",
+    "bench:suite": "bun run benchmark-suite.ts",
+    "bench:memory": "bun run memory-profiler.ts",
+    "bench:micro": "bun run micro-benchmarks.ts",
+    "bench:load": "bun run load-testing.ts",
+    "bench:ci": "bun run ci-benchmarks.ts",
+    "bench:report": "bun run benchmark-reporter.ts",
+    "bench:format": "bun run benchmark-formatter.ts",
+    "bench:all": "bun run bench",
+    "install:prod": "bun run scripts/install-manager.ts production",
+    "install:ci": "bun run scripts/install-manager.ts ci",
+    "install:minimal": "bun run scripts/install-manager.ts minimal",
+    "install:secure": "bun run scripts/install-manager.ts secure",
+    "install:fast": "bun run scripts/install-manager.ts fast",
+    "install:options": "bun run scripts/install-manager.ts options",
+    "install:workspaces": "bun run scripts/install-manager.ts workspaces",
+    "update:interactive": "bun update --interactive",
+    "update:latest": "bun update --latest",
+    "publish:dry": "bun publish --dry-run",
+    "publish:beta": "bun publish --tag beta",
+    "pack": "bun pm pack",
+    "preinstall": "echo '🚀 Installing Fire22 Benchmarking Suite...'",
+    "postinstall": "echo '✅ Benchmarking Suite installed successfully!'",
+    "preprepare": "mkdir -p results",
+    "prepare": "echo 'Benchmark suite prepared'",
+    "prepublishOnly": "bun run bench:ci",
+    "prepack": "bun run bench:report",
+    "postpack": "echo '📦 Package packed successfully!'",
+    "postpublish": "echo '🎉 Package published successfully!'"
+  },
+  "keywords": [
+    "benchmark",
+    "performance",
+    "testing",
+    "bun",
+    "fire22"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.0"
+  },
+  "optionalDependencies": {
+    "mitata": "^1.0.0",
+    "bombardier": "*",
+    "oha": "*"
+  },
+  "trustedDependencies": [
+    "mitata"
+  ],
+  "workspaces": [],
+  "overrides": {},
+  "resolutions": {},
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "bun": {
+    "install": {
+      "frozen-lockfile": false,
+      "production": false,
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "concurrent-scripts": 4
+    }
+  },
+  "config": {
+    "thresholds": {
+      "regression": 10,
+      "improvement": 10,
+      "memory": 20
+    },
+    "ci": {
+      "baseline": ".benchmark-baseline.json",
+      "maxHistory": 100
+    },
+    "reports": {
+      "formats": [
+        "json",
+        "markdown",
+        "html",
+        "csv"
+      ],
+      "outputDir": "./results"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/bench"
+  }
+}

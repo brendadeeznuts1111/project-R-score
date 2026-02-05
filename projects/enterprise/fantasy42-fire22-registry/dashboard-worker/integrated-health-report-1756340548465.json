@@ -1,0 +1,230 @@
+{
+  "timestamp": "2025-08-28T00:22:28.465Z",
+  "overallHealth": "healthy",
+  "overallScore": 88,
+  "components": [
+    {
+      "component": "API Services",
+      "status": "healthy",
+      "score": 100,
+      "message": "All API endpoints responding (20ms)",
+      "details": [
+        "Health endpoint: OK",
+        "Manager endpoints: OK",
+        "Customer endpoints: OK",
+        "Financial endpoints: OK"
+      ],
+      "lastChecked": "2025-08-28T00:22:28.403Z",
+      "responseTime": 19.676416999999997
+    },
+    {
+      "component": "Database",
+      "status": "healthy",
+      "score": 100,
+      "message": "Database is accessible and responsive",
+      "details": ["SQLite database: OK", "Query execution: OK", "Connection handling: OK"],
+      "lastChecked": "2025-08-28T00:22:28.399Z",
+      "responseTime": 9.160249999999998
+    },
+    {
+      "component": "Performance",
+      "status": "healthy",
+      "score": 85,
+      "message": "Performance metrics within excellent range",
+      "details": ["Performance monitoring completed"],
+      "lastChecked": "2025-08-28T00:22:28.404Z",
+      "responseTime": 12.391458
+    },
+    {
+      "component": "Code Quality",
+      "status": "warning",
+      "score": 95,
+      "message": "QA score: 95% (7/10 checks passed)",
+      "details": ["Passed: 7 checks", "Failed: 0 checks", "Warnings: 1 checks", "Duration: 0.0s"],
+      "lastChecked": "2025-08-28T00:22:28.429Z",
+      "responseTime": 37.387
+    },
+    {
+      "component": "Security",
+      "status": "warning",
+      "score": 75,
+      "message": "Security scan completed (1 issues found)",
+      "details": [
+        "Dependency vulnerabilities: Checked",
+        "Hardcoded secrets: Scanned",
+        "File permissions: Validated",
+        "Issues found: 1"
+      ],
+      "lastChecked": "2025-08-28T00:22:28.461Z",
+      "responseTime": 68.184334
+    },
+    {
+      "component": "Infrastructure",
+      "status": "healthy",
+      "score": 100,
+      "message": "System resources optimal",
+      "details": [
+        "Memory usage: 0MB (12%)",
+        "CPU time: 0.03s",
+        "Platform: darwin",
+        "Architecture: arm64",
+        "Node version: v24.3.0",
+        "Bun version: 1.2.21"
+      ],
+      "lastChecked": "2025-08-28T00:22:28.395Z",
+      "responseTime": 1.0406669999999991
+    },
+    {
+      "component": "Workspace",
+      "status": "warning",
+      "score": 67,
+      "message": "4/6 workspaces healthy",
+      "details": [
+        "Healthy workspaces: 4",
+        "Warning workspaces: 2",
+        "Error workspaces: 0",
+        "Total workspaces: 6"
+      ],
+      "lastChecked": "2025-08-28T00:22:28.396Z",
+      "responseTime": 1.2632079999999988
+    },
+    {
+      "component": "Dependencies",
+      "status": "warning",
+      "score": 80,
+      "message": "10 dependencies managed",
+      "details": [
+        "Production dependencies: 7",
+        "Development dependencies: 3",
+        "Lock file: Missing",
+        "Package manager: Bun 1.2.21"
+      ],
+      "lastChecked": "2025-08-28T00:22:28.397Z",
+      "responseTime": 0.06562500000000426
+    }
+  ],
+  "dryRunValidations": [
+    {
+      "operation": "Deployment",
+      "success": true,
+      "wouldSucceed": true,
+      "changes": {
+        "files": [],
+        "configurations": ["wrangler.toml", ".env"],
+        "dependencies": [],
+        "services": ["Cloudflare Workers"]
+      },
+      "risks": {
+        "level": "low",
+        "factors": [
+          "Production deployment without staging validation",
+          "Configuration changes not tested",
+          "No rollback verification"
+        ]
+      },
+      "rollbackPlan": [
+        "Keep previous deployment version tagged",
+        "Verify rollback procedure",
+        "Monitor health metrics post-deployment"
+      ],
+      "estimatedDuration": 180,
+      "prerequisites": ["All tests passing", "Build successful", "Environment variables configured"]
+    },
+    {
+      "operation": "Configuration",
+      "success": true,
+      "wouldSucceed": true,
+      "changes": {
+        "files": ["package.json", "tsconfig.json", "wrangler.toml", ".env.example"],
+        "configurations": ["package.json", "tsconfig.json", "wrangler.toml", ".env.example"],
+        "dependencies": [],
+        "services": []
+      },
+      "risks": {
+        "level": "low",
+        "factors": ["Configuration changes are reversible"]
+      },
+      "rollbackPlan": [
+        "Backup current configurations",
+        "Test configuration changes in development",
+        "Validate all services restart successfully"
+      ],
+      "estimatedDuration": 60,
+      "prerequisites": [
+        "Backup existing configuration",
+        "Validate syntax of new configuration",
+        "Test in development environment"
+      ]
+    },
+    {
+      "operation": "Database Migration",
+      "success": true,
+      "wouldSucceed": true,
+      "changes": {
+        "files": ["dashboard.db"],
+        "configurations": [],
+        "dependencies": [],
+        "services": ["SQLite Database"]
+      },
+      "risks": {
+        "level": "medium",
+        "factors": [
+          "Data integrity risk",
+          "Potential data loss if migration fails",
+          "Downtime during migration"
+        ]
+      },
+      "rollbackPlan": [
+        "Create full database backup",
+        "Test migration on copy",
+        "Prepare rollback scripts",
+        "Verify data integrity post-migration"
+      ],
+      "estimatedDuration": 120,
+      "prerequisites": [
+        "Database backup completed",
+        "Migration scripts tested",
+        "Rollback procedure validated"
+      ]
+    },
+    {
+      "operation": "Dependency Update",
+      "success": true,
+      "wouldSucceed": true,
+      "changes": {
+        "files": ["package.json", "bun.lockb"],
+        "configurations": ["package.json"],
+        "dependencies": ["To be determined by bun outdated"],
+        "services": []
+      },
+      "risks": {
+        "level": "medium",
+        "factors": ["Breaking changes in new versions", "Compatibility issues", "Build failures"]
+      },
+      "rollbackPlan": [
+        "Backup current package.json and lockfile",
+        "Test with updated dependencies",
+        "Revert to previous versions if needed"
+      ],
+      "estimatedDuration": 300,
+      "prerequisites": [
+        "Review dependency changelogs",
+        "Run tests with updated dependencies",
+        "Check for breaking changes"
+      ]
+    }
+  ],
+  "recommendations": [
+    "⚠️ WARNING: Review Code Quality - QA score: 95% (7/10 checks passed)",
+    "⚠️ WARNING: Review Security - Security scan completed (1 issues found)",
+    "⚠️ WARNING: Review Workspace - 4/6 workspaces healthy",
+    "⚠️ WARNING: Review Dependencies - 10 dependencies managed"
+  ],
+  "alerts": [],
+  "trends": {
+    "healthImproving": true,
+    "averageResponseTime": 18.646119875,
+    "errorRate": 0,
+    "uptime": 0.107304958
+  }
+}

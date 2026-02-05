@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Documentation Hub - Complete System Reference</title>
+    <link rel="stylesheet" href="terminal-framework.css" />
+    <link rel="stylesheet" href="terminal-components.css" />
+    <style>
+      /* Documentation Hub Specific Styles */
+      body {
+        background: var(--bg-gradient);
+        color: var(--text);
+      }
+
+      .search-container {
+        margin: var(--space-8) 0;
+        text-align: center;
+      }
+
+      .search-box {
+        width: 100%;
+        max-width: 600px;
+        padding: var(--space-4) var(--space-6);
+        font-size: var(--font-size-lg);
+        background: var(--tertiary);
+        border: var(--border-width) var(--border-style) var(--fire);
+        color: var(--text);
+        outline: none;
+        transition: all var(--transition-base);
+        font-family: var(--font-mono);
+      }
+
+      .search-box:focus {
+        border-color: var(--fire);
+        box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        background: var(--secondary);
+      }
+
+      .search-box::placeholder {
+        color: var(--text-secondary);
+      }
+
+      .version-info {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-6);
+        flex-wrap: wrap;
+        margin-top: var(--space-5);
+      }
+
+      .version-badge {
+        background: rgba(255, 107, 53, 0.1);
+        padding: var(--space-2) var(--space-4);
+        border: var(--border-width) var(--border-style) var(--fire);
+        font-weight: 600;
+        font-family: var(--font-mono);
+        color: var(--fire);
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .category-card {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        padding: var(--space-6);
+        transition: all var(--transition-base);
+        position: relative;
+      }
+
+      .category-card::before {
+        content: '╭';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .category-card::after {
+        content: '╯';
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .category-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--fire);
+        box-shadow: var(--shadow-glow-fire);
+      }
+
+      .category-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        margin-bottom: var(--space-5);
+        padding-bottom: var(--space-3);
+        border-bottom: var(--border-width) var(--border-style) var(--border-color);
+      }
+
+      .category-icon {
+        font-size: var(--font-size-4xl);
+      }
+
+      .category-title {
+        font-size: var(--font-size-2xl);
+        font-weight: 600;
+        color: var(--fire);
+        font-family: var(--font-mono);
+      }
+
+      .category-description {
+        margin-bottom: var(--space-5);
+        color: var(--text-secondary);
+        line-height: 1.6;
+        font-family: var(--font-mono);
+      }
+
+      .package-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .package-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3) var(--space-4);
+        background: var(--tertiary);
+        border-left: 3px solid transparent;
+        transition: all var(--transition-base);
+      }
+
+      .package-item:hover {
+        background: rgba(255, 107, 53, 0.1);
+        border-left-color: var(--fire);
+        transform: translateX(5px);
+      }
+
+      .package-name {
+        font-weight: 500;
+        color: var(--text);
+        font-family: var(--font-mono);
+      }
+
+      .package-status {
+        padding: var(--space-1) var(--space-3);
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-family: var(--font-mono);
+      }
+
+      .status-active {
+        background: var(--success);
+        color: var(--primary);
+      }
+
+      .status-beta {
+        background: var(--warning);
+        color: var(--primary);
+      }
+
+      .status-development {
+        background: var(--info);
+        color: var(--primary);
+      }
+
+      .quick-actions {
+        margin: var(--space-8) 0;
+      }
+
+      .quick-actions h2 {
+        text-align: center;
+        color: var(--fire);
+        font-size: var(--font-size-3xl);
+        margin-bottom: var(--space-6);
+        font-family: var(--font-mono);
+        animation: flame-flicker 2s ease-in-out infinite;
+      }
+
+      .action-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-5);
+        margin-top: var(--space-5);
+      }
+
+      .action-card {
+        background: var(--secondary);
+        border: var(--border-width) var(--border-style) var(--border-color);
+        padding: var(--space-6);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        text-align: center;
+        position: relative;
+      }
+
+      .action-card::before {
+        content: '├─';
+        position: absolute;
+        top: var(--space-3);
+        left: -8px;
+        color: var(--accent);
+      }
+
+      .action-card:hover {
+        background: rgba(88, 166, 255, 0.1);
+        transform: translateY(-5px);
+        border-color: var(--accent);
+        box-shadow: var(--shadow-glow);
+      }
+
+      .action-icon {
+        font-size: var(--font-size-5xl);
+        margin-bottom: var(--space-4);
+        display: block;
+      }
+
+      .action-title {
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: var(--space-2);
+        font-family: var(--font-mono);
+      }
+
+      .action-description {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        line-height: 1.4;
+        font-family: var(--font-mono);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .version-info {
+          flex-direction: column;
+          gap: var(--space-3);
+        }
+
+        .search-box {
+          padding: var(--space-3) var(--space-4);
+        }
+      }
+
+      /* Staging Review Styles */
+      .staging-quick-access {
+        margin-bottom: var(--space-6);
+      }
+
+      .staging-main-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        padding: var(--space-5);
+        background: rgba(255, 107, 53, 0.1);
+        border: var(--border-width) var(--border-style) var(--fire);
+        text-decoration: none;
+        color: var(--text);
+        transition: all var(--transition-base);
+        margin-bottom: var(--space-5);
+      }
+
+      .staging-main-link:hover {
+        background: rgba(255, 107, 53, 0.2);
+        transform: translateX(10px);
+        border-color: var(--fire);
+      }
+
+      .link-icon {
+        font-size: 1.5em;
+      }
+
+      .link-text {
+        font-weight: 600;
+        font-size: var(--font-size-lg);
+      }
+
+      .link-desc {
+        color: var(--text-secondary);
+        font-size: var(--font-size-sm);
+        margin-left: auto;
+      }
+
+      .package-reviews-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-5);
+      }
+
+      .review-category {
+        background: var(--tertiary);
+        padding: var(--space-4);
+        border: var(--border-width) var(--border-style) var(--border-color);
+      }
+
+      .review-category h4 {
+        color: var(--fire);
+        margin-bottom: var(--space-3);
+        font-family: var(--font-mono);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .review-links {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .review-links a {
+        color: var(--accent);
+        text-decoration: none;
+        padding: var(--space-2) var(--space-3);
+        background: rgba(64, 224, 208, 0.05);
+        border-left: 2px solid transparent;
+        font-family: var(--font-mono);
+        font-size: var(--font-size-sm);
+        transition: all var(--transition-base);
+      }
+
+      .review-links a:hover {
+        background: rgba(64, 224, 208, 0.1);
+        border-left-color: var(--accent);
+        transform: translateX(5px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">🔥</div>
+        <h1 class="title">Fire22 Documentation Hub</h1>
+        <p class="subtitle">Complete System Reference & Package Documentation</p>
+        <p>Your central hub for all Fire22 Dashboard documentation, packages, and features</p>
+
+        <div class="version-info">
+          <div class="version-badge">🚀 Version: 3.0.8</div>
+          <div class="version-badge">📦 Packages: 15 Fire22 Workspaces</div>
+          <div class="version-badge">🎬 Staging Reviews: Available</div>
+          <div class="version-badge">⚡ Bun Runtime: 1.2.21</div>
+          <div class="version-badge">🔧 Build Status: Ready</div>
+        </div>
+      </div>
+
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-box"
+          id="searchBox"
+          placeholder="🔍 Search packages, documentation, features, or commands..."
+        />
+      </div>
+
+      <!-- Staging Review Quick Access -->
+      <div class="terminal-section">
+        <div class="terminal-header">
+          <div class="terminal-title">
+            <span class="terminal-icon">🎬</span>
+            <h2>Fire22 Package Staging Reviews</h2>
+          </div>
+          <div class="terminal-indicators">
+            <div class="indicator green">✅</div>
+            <div class="indicator yellow">⏳</div>
+            <div class="indicator red">❌</div>
+          </div>
+        </div>
+        <div class="terminal-content">
+          <div class="staging-quick-access">
+            <div class="quick-links">
+              <a href="../src/staging-review.html" class="staging-main-link">
+                <span class="link-icon">🎬</span>
+                <span class="link-text">Main Staging Dashboard</span>
+                <span class="link-desc">Complete staging review system</span>
+              </a>
+            </div>
+            <div class="package-reviews-grid">
+              <div class="review-category">
+                <h4>🤖 Telegram System</h4>
+                <div class="review-links">
+                  <a href="../src/staging-reviews/telegram-bot-review.html">@fire22/telegram-bot</a>
+                  <a href="../src/staging-reviews/queue-system-review.html">@fire22/queue-system</a>
+                  <a href="../src/staging-reviews/multilingual-review.html">@fire22/multilingual</a>
+                </div>
+              </div>
+              <div class="review-category">
+                <h4>🏗️ Infrastructure</h4>
+                <div class="review-links">
+                  <a href="../src/staging-reviews/core-dashboard-review.html">@fire22/core-dashboard</a>
+                  <a href="../src/staging-reviews/api-client-review.html">@fire22/api-client</a>
+                  <a href="../src/staging-reviews/pattern-system-review.html">@fire22/pattern-system</a>
+                </div>
+              </div>
+              <div class="review-category">
+                <h4>🎯 Specialized</h4>
+                <div class="review-links">
+                  <a href="../src/staging-reviews/sports-betting-review.html">@fire22/sports-betting</a>
+                  <a href="../src/staging-reviews/security-registry-review.html">@fire22/security-registry</a>
+                  <a href="../src/staging-reviews/telegram-benchmarks-review.html">@fire22/benchmarks</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <!-- Core System -->
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-icon">🚀</span>
+            <h2 class="category-title">Core System</h2>
+          </div>
+          <p class="category-description">Essential system components and core functionality</p>
+          <div class="package-list">
+            <div class="package-item">
+              <span class="package-name">Dashboard Worker</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Fire22 API Integration</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Live Casino Management</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Permissions Matrix</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Package Management -->
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-icon">📦</span>
+            <h2 class="category-title">Package Management</h2>
+          </div>
+          <p class="category-description">Modular packages and dependency management</p>
+          <div class="package-list">
+            <div class="package-item">
+              <span class="package-name">Middleware Package</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Testing Framework</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Wager System</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Environment Manager</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Version Management -->
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-icon">🔧</span>
+            <h2 class="category-title">Version Management</h2>
+          </div>
+          <p class="category-description">Build automation and version control system</p>
+          <div class="package-list">
+            <div class="package-item">
+              <span class="package-name">Version Manager</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Build System</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Changelog Generator</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Release Notes</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testing & Health -->
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-icon">🧪</span>
+            <h2 class="category-title">Testing & Health</h2>
+          </div>
+          <p class="category-description">Comprehensive testing suite and health monitoring</p>
+          <div class="package-list">
+            <div class="package-item">
+              <span class="package-name">Test Checklist</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Health Endpoints</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Permissions Health</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Matrix Debug</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security & Integration -->
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-icon">🔒</span>
+            <h2 class="category-title">Security & Integration</h2>
+          </div>
+          <p class="category-description">Security features and external integrations</p>
+          <div class="package-list">
+            <div class="package-item">
+              <span class="package-name">Security Team</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Telegram Alerts</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Customer Config</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Dry Run System</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bun Features -->
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-icon">⚡</span>
+            <h2 class="category-title">Bun Runtime Features</h2>
+          </div>
+          <p class="category-description">Latest Bun v1.2.21 features and optimizations</p>
+          <div class="package-list">
+            <div class="package-item">
+              <span class="package-name">Custom User-Agent</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">PostMessage Optimization</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Package Version Control</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+            <div class="package-item">
+              <span class="package-name">Performance Monitoring</span>
+              <span class="package-status status-active">Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h2>🚀 Quick Actions</h2>
+        <div class="action-grid">
+          <div class="action-card" onclick="openDocumentation('packages')">
+            <span class="action-icon">📦</span>
+            <div class="action-title">Package Management</div>
+            <div class="action-description">View and manage all system packages</div>
+          </div>
+
+          <div class="action-card" onclick="openDocumentation('testing')">
+            <span class="action-icon">🧪</span>
+            <div class="action-title">Testing Suite</div>
+            <div class="action-description">Run comprehensive system tests</div>
+          </div>
+
+          <div class="action-card" onclick="openDocumentation('versioning')">
+            <span class="action-icon">🔧</span>
+            <div class="action-title">Version Control</div>
+            <div class="action-description">Manage versions and builds</div>
+          </div>
+
+          <div class="action-card" onclick="openDocumentation('api')">
+            <span class="action-icon">🔌</span>
+            <div class="action-title">API Documentation</div>
+            <div class="action-description">Complete API reference guide</div>
+          </div>
+
+          <div class="action-card" onclick="openDocumentation('environment')">
+            <span class="action-icon">🌍</span>
+            <div class="action-title">Environment Setup</div>
+            <div class="action-description">Configure system environment</div>
+          </div>
+
+          <div class="action-card" onclick="openDocumentation('bun-features')">
+            <span class="action-icon">⚡</span>
+            <div class="action-title">Bun Features</div>
+            <div class="action-description">Latest runtime capabilities</div>
+          </div>
+
+          <div class="action-card" onclick="openDocumentation('cloudflare-analytics')">
+            <span class="action-icon">🟠</span>
+            <div class="action-title">Cloudflare Analytics</div>
+            <div class="action-description">Enhanced Workers, KV, R2, D1 monitoring</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-links">
+          <a href="packages.html" class="footer-link">📦 Packages</a>
+          <a href="environment-variables.html" class="footer-link">🌍 Environment</a>
+          <a href="api-packages.html" class="footer-link">🔌 API</a>
+          <a href="@packages.html" class="footer-link">🧪 Testing</a>
+          <a href="fire22-dashboard-config.html" class="footer-link">⚙️ Config</a>
+          <a href="api-integrations-index.html" class="footer-link">🔗 Integrations</a>
+        </div>
+
+        <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+        <p><small>Documentation Hub | Complete System Reference | Version 3.0.8</small></p>
+      </div>
+    </div>
+
+    <script>
+      // Search functionality
+      const searchBox = document.getElementById('searchBox');
+      const categoryCards = document.querySelectorAll('.category-card');
+      const packageItems = document.querySelectorAll('.package-item');
+
+      searchBox.addEventListener('input', e => {
+        const query = e.target.value.toLowerCase();
+
+        categoryCards.forEach(card => {
+          const title = card.querySelector('.category-title').textContent.toLowerCase();
+          const description = card.querySelector('.category-description').textContent.toLowerCase();
+          const packages = card.querySelectorAll('.package-item');
+
+          let hasMatch = title.includes(query) || description.includes(query);
+
+          packages.forEach(pkg => {
+            const pkgName = pkg.querySelector('.package-name').textContent.toLowerCase();
+            if (pkgName.includes(query)) {
+              hasMatch = true;
+              pkg.style.background = 'rgba(253, 187, 45, 0.2)';
+              pkg.style.borderLeftColor = '#fdbb2d';
+            } else {
+              pkg.style.background = '';
+              pkg.style.borderLeftColor = '';
+            }
+          });
+
+          if (hasMatch) {
+            card.style.display = 'block';
+            card.style.opacity = '1';
+          } else {
+            card.style.style.opacity = '0.3';
+          }
+        });
+      });
+
+      // Documentation navigation
+      function openDocumentation(type) {
+        const docs = {
+          packages: 'packages.html',
+          testing: '@packages.html',
+          versioning: 'packages.html#version-management',
+          api: 'api-packages.html',
+          environment: 'environment-variables.html',
+          'bun-features': 'bun-features-explorer.html',
+          'cloudflare-analytics': 'cloudflare-enhanced-analytics.html',
+        };
+
+        if (docs[type]) {
+          window.open(docs[type], '_blank');
+        }
+      }
+
+      // Add hover effects
+      document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'translateY(0) scale(1)';
+        });
+      });
+
+      // Initialize with animation
+      document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.category-card, .action-card');
+        cards.forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+
+          setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, index * 100);
+        });
+      });
+    </script>
+  </body>
+</html>

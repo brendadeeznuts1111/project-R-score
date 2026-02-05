@@ -1,0 +1,7 @@
+# Cloudflare Pages Redirects
+/deps /dependency-analysis.html 200
+/dependency-analysis /dependency-analysis.html 200
+/analysis /dependency-analysis.html 200
+
+# API redirects for compatibility
+/api/deps /dependency-analysis.html 200

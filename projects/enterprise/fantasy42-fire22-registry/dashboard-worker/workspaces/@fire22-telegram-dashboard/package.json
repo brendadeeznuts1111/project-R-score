@@ -1,0 +1,69 @@
+{
+  "name": "@fire22/telegram-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard integration for Fire22 Telegram system with real-time SSE",
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-telegram-dashboard"
+  },
+  "keywords": [
+    "dashboard",
+    "telegram",
+    "sse",
+    "realtime",
+    "metrics",
+    "widgets",
+    "fire22"
+  ],
+  "engines": {
+    "bun": ">=1.2.21"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "dev:dashboard": "bun run src/telegram-dashboard-integration.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm",
+    "build:cloudflare": "bun build src/index.ts --outdir dist/cloudflare --target bun --format esm --minify",
+    "test": "bun test",
+    "test:sse": "bun test tests/sse/",
+    "test:widgets": "bun test tests/widgets/",
+    "benchmark": "bun run tests/benchmarks/dashboard-performance.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "@fire22/telegram-workflows": "workspace:*",
+    "@fire22/queue-system": "workspace:*",
+    "@fire22/multilingual": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "fire22": {
+    "workspace": "telegram-dashboard",
+    "isolation": {
+      "standalone": true,
+      "linked": true
+    },
+    "include": [
+      "src/telegram-dashboard-integration.ts",
+      "src/widgets/",
+      "src/sse/",
+      "src/metrics/"
+    ],
+    "features": {
+      "sse": true,
+      "realtime": true,
+      "widgets": true
+    }
+  }
+}

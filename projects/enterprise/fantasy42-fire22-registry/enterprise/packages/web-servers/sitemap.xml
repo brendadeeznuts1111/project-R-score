@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Main Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/index.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Documentation Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/docs/index.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/docs/communication.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/docs/domains.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/docs/performance.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Analytics Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/analytics/index.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/analytics/performance-dashboard.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/analytics/performance-test-dashboard.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Demo and Interactive Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/demo.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/manager.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Performance Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/performance-dashboard.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/performance-monitoring-dashboard.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/performance-profiling-guide.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Navigation and Integration Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/navigational-developer-guide.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/enhanced-auth-integration.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/language-telegram-integration-map.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Dashboard Worker Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/dashboard-worker/src/dashboard.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/dashboard-worker/src/enhanced-dashboard.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/dashboard-worker/src/unified-dashboard.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Department Pages -->
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/dashboard-worker/src/departments/index.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/dashboard-worker/src/departments/technology-department.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/dashboard-worker/src/departments/operations-department.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://nolarose1968-pixel.github.io/crystal-clear-architecture/dashboard-worker/src/departments/security-department.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

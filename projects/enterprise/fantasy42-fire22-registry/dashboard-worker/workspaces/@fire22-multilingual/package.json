@@ -1,0 +1,63 @@
+{
+  "name": "@fire22/multilingual",
+  "version": "1.3.0",
+  "description": "Fire22 multilingual system with 77 language codes across EN/ES/PT/FR",
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-multilingual"
+  },
+  "keywords": [
+    "i18n",
+    "translation",
+    "multilingual",
+    "localization",
+    "fire22",
+    "telegram"
+  ],
+  "engines": {
+    "bun": ">=1.2.21"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm",
+    "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
+    "test": "bun test",
+    "test:translations": "bun test tests/translations/",
+    "test:telegram": "bun test tests/telegram/",
+    "benchmark": "bun run tests/benchmarks/translation-performance.ts",
+    "benchmark:cache": "bun run tests/benchmarks/cache-performance.ts",
+    "demo": "bun run src/demo/language-demo.ts",
+    "validate": "bun run scripts/validate-translations.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "@fire22/language-keys": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "fire22": {
+    "workspace": "multilingual",
+    "isolation": {
+      "standalone": true,
+      "linked": true
+    },
+    "include": [
+      "src/multilingual-telegram-bot.ts",
+      "src/fire22-language-utils.ts",
+      "src/i18n/fire22-language-codes.json",
+      "src/i18n/translations/"
+    ]
+  }
+}

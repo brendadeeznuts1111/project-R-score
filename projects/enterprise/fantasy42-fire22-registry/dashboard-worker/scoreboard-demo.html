@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏆 Fire22 Live Scoreboard Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .scoreboard-trigger {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
+      }
+      .scoreboard-trigger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      }
+      .game-preview {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+      }
+      .game-preview:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+      .live-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #10b981;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      .feature-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+      }
+      .feature-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-3 mb-4">
+            <div class="live-indicator"></div>
+            <h1 class="text-4xl font-bold text-gray-800">Fire22 Live Scoreboard</h1>
+          </div>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Real-time sports scoreboard with live game tracking, AI insights, betting integration, and professional
+            Excel export capabilities
+          </p>
+        </div>
+
+        <!-- Main Trigger -->
+        <div class="text-center mb-8">
+          <div
+            class="header-score-title"
+            style="
+              background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 20px 40px;
+              border-radius: 12px;
+              display: inline-block;
+              cursor: pointer;
+              box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            "
+            onclick="openScoreboard()"
+          >
+            <span style="font-size: 28px; font-weight: bold">🏆 Scoreboard</span>
+            <span
+              class="not-trigger"
+              data-action="close-scores"
+              style="
+                margin-left: 20px;
+                background: rgba(255, 255, 255, 0.2);
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+              "
+            >
+              Demo Mode
+            </span>
+          </div>
+        </div>
+
+        <!-- Live Games Preview -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 class="text-2xl font-semibold mb-6 text-gray-800">🔥 Live Games Preview</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- NFL Game -->
+            <div class="game-preview rounded-lg p-4">
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">NFL</span>
+                <span class="text-xs text-green-600 font-medium flex items-center gap-1">
+                  <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  LIVE
+                </span>
+              </div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-semibold text-gray-800">Chiefs</span>
+                <span class="text-2xl font-bold text-gray-900">24</span>
+              </div>
+              <div class="text-center text-sm text-gray-500 mb-2">4th • 2:15</div>
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-gray-800">49ers</span>
+                <span class="text-2xl font-bold text-gray-900">17</span>
+              </div>
+              <div class="mt-3 text-xs text-gray-600">
+                <div>Spread: -3.5</div>
+                <div>Total: 47.5</div>
+              </div>
+            </div>
+
+            <!-- NBA Game -->
+            <div class="game-preview rounded-lg p-4">
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-xs font-medium text-orange-600 bg-orange-100 px-2 py-1 rounded">NBA</span>
+                <span class="text-xs text-green-600 font-medium flex items-center gap-1">
+                  <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  LIVE
+                </span>
+              </div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-semibold text-gray-800">Lakers</span>
+                <span class="text-2xl font-bold text-gray-900">98</span>
+              </div>
+              <div class="text-center text-sm text-gray-500 mb-2">4th • 4:23</div>
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-gray-800">Warriors</span>
+                <span class="text-2xl font-bold text-gray-900">102</span>
+              </div>
+              <div class="mt-3 text-xs text-gray-600">
+                <div>Spread: +2.5</div>
+                <div>Total: 228.5</div>
+              </div>
+            </div>
+
+            <!-- MLB Game -->
+            <div class="game-preview rounded-lg p-4">
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">MLB</span>
+                <span class="text-xs text-yellow-600 font-medium">Scheduled</span>
+              </div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-semibold text-gray-800">Dodgers</span>
+                <span class="text-2xl font-bold text-gray-400">0</span>
+              </div>
+              <div class="text-center text-sm text-gray-500 mb-2">7:05 PM ET</div>
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-gray-800">Giants</span>
+                <span class="text-2xl font-bold text-gray-400">0</span>
+              </div>
+              <div class="mt-3 text-xs text-gray-600">
+                <div>Spread: -1.5</div>
+                <div>Total: 7.5</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-6">
+            <p class="text-gray-600 mb-4">Click the scoreboard button above to see the full interactive experience</p>
+            <div class="flex justify-center gap-4 text-sm text-gray-500">
+              <span>🎮 Real-time updates</span>
+              <span>🤖 AI predictions</span>
+              <span>💰 Betting integration</span>
+              <span>📊 Excel export</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Core Features -->
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">⚡ Core Features</h2>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <div class="text-green-600 text-xl">📺</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Live Game Tracking</h3>
+                  <p class="text-gray-600">Real-time score updates, period tracking, and game status monitoring</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="text-blue-600 text-xl">🎯</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Interactive Interface</h3>
+                  <p class="text-gray-600">Click games for detailed views, filter by sport/league, search teams</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="text-purple-600 text-xl">📊</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Betting Integration</h3>
+                  <p class="text-gray-600">Live odds display, betting opportunities, and quick bet access</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="text-orange-600 text-xl">🤖</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">AI Insights</h3>
+                  <p class="text-gray-600">Game predictions, significant play tracking, and analytics</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Technical Features -->
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">🛠️ Technical Features</h2>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <div class="text-green-600 text-xl">📱</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Mobile Optimized</h3>
+                  <p class="text-gray-600">Responsive design with touch interactions and mobile notifications</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="text-blue-600 text-xl">🔄</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Auto-Refresh</h3>
+                  <p class="text-gray-600">Configurable refresh intervals with manual refresh options</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="text-purple-600 text-xl">💾</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Data Export</h3>
+                  <p class="text-gray-600">Professional Excel export with multiple worksheets and formatting</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="text-orange-600 text-xl">🎛️</div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Event-Driven</h3>
+                  <p class="text-gray-600">Real-time event system with notifications and callbacks</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 class="text-2xl font-semibold mb-6 text-gray-800">⌨️ Keyboard Shortcuts</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-3">Scoreboard Controls</h3>
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span>Toggle Scoreboard:</span>
+                  <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Ctrl + S</kbd>
+                </div>
+                <div class="flex justify-between">
+                  <span>Close Scoreboard:</span>
+                  <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Esc</kbd>
+                </div>
+                <div class="flex justify-between">
+                  <span>Refresh Data:</span>
+                  <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Ctrl + R</kbd>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-3">Navigation</h3>
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span>Next Game:</span>
+                  <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">↓</kbd>
+                </div>
+                <div class="flex justify-between">
+                  <span>Previous Game:</span>
+                  <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">↑</kbd>
+                </div>
+                <div class="flex justify-between">
+                  <span>Select Game:</span>
+                  <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Enter</kbd>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Integration Info -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+          <div class="flex items-start gap-4">
+            <div class="text-4xl">🔗</div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-800 mb-2">Seamless Integration</h3>
+              <p class="text-gray-600 mb-4">
+                The scoreboard system integrates perfectly with your existing HTML elements. Simply add the
+                <code class="bg-gray-100 px-2 py-1 rounded text-sm">data-action="close-scores"</code>
+                attribute to close buttons and the scoreboard will handle the rest.
+              </p>
+              <div class="bg-white p-4 rounded-lg border border-gray-200">
+                <pre class="text-sm text-gray-800"><code>&lt;div class="header-score-title"&gt;
+    &lt;span data-language="L-1034"&gt;Scoreboard&lt;/span&gt;
+    &lt;span data-action="close-scores" data-language="L-137"&gt;Close&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scoreboard Integration Script -->
+    <script type="module">
+      import { Fire22Scoreboard } from './src/components/scoreboard-integration.ts';
+
+      // Global function for HTML onclick
+      window.openScoreboard = async function () {
+        const scoreboard = Fire22Scoreboard.getInstance();
+        await scoreboard.showScoreboard();
+      };
+
+      // Initialize scoreboard on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🏆 Fire22 Scoreboard Demo initialized');
+
+        // Add click handler to scoreboard title
+        const scoreboardTitle = document.querySelector('.header-score-title');
+        if (scoreboardTitle) {
+          scoreboardTitle.addEventListener('click', event => {
+            if (!event.target.closest('[data-action="close-scores"]')) {
+              openScoreboard();
+            }
+          });
+        }
+
+        // Add keyboard shortcuts hint
+        const hintDiv = document.createElement('div');
+        hintDiv.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow-lg';
+        hintDiv.innerHTML = '💡 Press <kbd>Ctrl+S</kbd> to open scoreboard';
+        document.body.appendChild(hintDiv);
+
+        // Auto-hide hint after 5 seconds
+        setTimeout(() => {
+          if (hintDiv.parentNode) {
+            hintDiv.parentNode.removeChild(hintDiv);
+          }
+        }, 5000);
+
+        // Add some interactive elements
+        const gameCards = document.querySelectorAll('.game-preview');
+        gameCards.forEach(card => {
+          card.addEventListener('click', () => {
+            openScoreboard();
+          });
+          card.style.cursor = 'pointer';
+          card.title = 'Click to open full scoreboard';
+        });
+      });
+
+      // Demo data updates (simulate live updates)
+      setInterval(() => {
+        const liveIndicators = document.querySelectorAll('.game-preview .bg-green-500');
+        liveIndicators.forEach(indicator => {
+          // Randomly update scores for demo
+          if (Math.random() > 0.8) {
+            const scoreElements = indicator.closest('.game-preview').querySelectorAll('.text-2xl');
+            const homeScore = scoreElements[0];
+            const awayScore = scoreElements[1];
+
+            if (Math.random() > 0.5 && homeScore) {
+              const currentScore = parseInt(homeScore.textContent || '0');
+              homeScore.textContent = (currentScore + Math.floor(Math.random() * 3)).toString();
+            } else if (awayScore) {
+              const currentScore = parseInt(awayScore.textContent || '0');
+              awayScore.textContent = (currentScore + Math.floor(Math.random() * 3)).toString();
+            }
+          }
+        });
+      }, 5000); // Update every 5 seconds
+    </script>
+  </body>
+</html>

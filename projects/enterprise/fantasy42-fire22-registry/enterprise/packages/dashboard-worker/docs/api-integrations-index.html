@@ -1,0 +1,2318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Integrations Index - Fire22 Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .scroll-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 1000;
+      }
+
+      .scroll-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        width: 0%;
+        transition: width 0.1s ease;
+      }
+
+      .brand-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 0;
+        border-bottom: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        font-size: 3rem;
+        animation: flame-flicker 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+        }
+      }
+
+      .company-name {
+        font-size: 2.5rem;
+        margin: 0;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .company-tagline {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        letter-spacing: 1px;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.1);
+        border-color: rgba(253, 187, 45, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .page-header h1 {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        border-color: rgba(253, 187, 45, 0.2);
+      }
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      h3 {
+        font-size: 1.4rem;
+        margin: 15px 0;
+        color: #b21f1f;
+      }
+
+      .integration-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 25px;
+      }
+
+      .integration-card {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid rgba(253, 187, 45, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+
+      .integration-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(253, 187, 45, 0.15), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .integration-card:hover::before {
+        left: 100%;
+      }
+
+      .integration-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(253, 187, 45, 0.4);
+        box-shadow: 0 20px 40px rgba(253, 187, 45, 0.2);
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+      }
+
+      .integration-card:active {
+        transform: translateY(-4px) scale(1.01);
+      }
+
+      .integration-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: block;
+        transition: all 0.3s ease;
+        filter: drop-shadow(0 4px 8px rgba(253, 187, 45, 0.3));
+      }
+
+      .integration-card:hover .integration-icon {
+        transform: scale(1.1) rotate(5deg);
+        filter: drop-shadow(0 8px 16px rgba(253, 187, 45, 0.5));
+      }
+
+      .integration-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: 1px;
+      }
+
+      .integration-description {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 15px;
+        line-height: 1.5;
+      }
+
+      .integration-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+
+      .status-active {
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.4);
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .status-beta {
+        background: linear-gradient(135deg, rgba(253, 187, 45, 0.2), rgba(253, 187, 45, 0.1));
+        color: #fdbb2d;
+        border: 1px solid rgba(253, 187, 45, 0.4);
+        box-shadow: 0 2px 8px rgba(253, 187, 45, 0.2);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .status-coming {
+        background: linear-gradient(135deg, rgba(178, 31, 31, 0.2), rgba(178, 31, 31, 0.1));
+        color: #b21f1f;
+        border: 1px solid rgba(178, 31, 31, 0.4);
+        box-shadow: 0 2px 8px rgba(178, 31, 31, 0.2);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .integration-links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .integration-link {
+        color: #fdbb2d;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(253, 187, 45, 0.3);
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+        position: relative;
+        overflow: hidden;
+        background: rgba(253, 187, 45, 0.05);
+      }
+
+      .integration-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(253, 187, 45, 0.1), transparent);
+        transition: left 0.3s ease;
+      }
+
+      .integration-link:hover::before {
+        left: 100%;
+      }
+
+      .integration-link:hover {
+        background: rgba(253, 187, 45, 0.15);
+        border-color: #fdbb2d;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(253, 187, 45, 0.3);
+      }
+
+      .integration-link:active {
+        transform: translateY(0);
+      }
+
+      .search-highlight {
+        background-color: #fdbb2d;
+        color: #1a2a6c;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: bold;
+      }
+
+      /* Enhanced Search Styling */
+      .search-container {
+        margin: 30px 0;
+        position: relative;
+      }
+
+      .search-box {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(253, 187, 45, 0.3);
+        border-radius: 25px;
+        color: white;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      #searchInput::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      #searchInput:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #fdbb2d;
+        box-shadow: 0 0 25px rgba(253, 187, 45, 0.4);
+      }
+
+      .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(26, 42, 108, 0.95);
+        border: 1px solid rgba(253, 187, 45, 0.3);
+        border-radius: 15px;
+        margin-top: 10px;
+        max-height: 500px;
+        overflow-y: auto;
+        z-index: 1000;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        display: none;
+      }
+
+      .search-result-item {
+        padding: 15px 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+      }
+
+      .search-result-item:last-child {
+        border-bottom: none;
+      }
+
+      .search-result-item:hover {
+        background: rgba(253, 187, 45, 0.1);
+        transform: translateX(5px);
+      }
+
+      .search-result-item.search-result-selected {
+        background: rgba(253, 187, 45, 0.2);
+        border-left: 4px solid #fdbb2d;
+      }
+
+      .search-result-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+      }
+
+      .search-result-description {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        line-height: 1.4;
+      }
+
+      .search-result-category {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .search-category {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .search-category:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .search-category-header {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .search-no-results {
+        padding: 30px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .search-no-results-icon {
+        font-size: 4rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+      }
+
+      .search-no-results-text {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .search-no-results-suggestions {
+        margin-top: 20px;
+      }
+
+      .search-no-results-suggestions > div:first-child {
+        margin-bottom: 10px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .search-suggestions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .search-suggestion {
+        background: rgba(253, 187, 45, 0.1);
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: #fdbb2d;
+        border: 1px solid rgba(253, 187, 45, 0.3);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .search-suggestion:hover {
+        background: rgba(253, 187, 45, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(253, 187, 45, 0.2);
+      }
+
+      /* Quick Actions Styling */
+      .quick-actions {
+        margin: 40px 0;
+      }
+
+      .action-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .action-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(253, 187, 45, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .action-card:hover::before {
+        left: 100%;
+      }
+
+      .action-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-5px);
+        border-color: rgba(253, 187, 45, 0.4);
+        box-shadow: 0 15px 35px rgba(253, 187, 45, 0.2);
+      }
+
+      .action-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .action-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #fdbb2d;
+        margin-bottom: 10px;
+      }
+
+      .action-description {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        line-height: 1.4;
+      }
+
+      .back-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #fdbb2d, #b21f1f);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 1000;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .back-to-top:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      .footer {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 50px;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .footer-brand {
+        margin-bottom: 20px;
+      }
+
+      .footer-logo {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .footer-company {
+        font-size: 1.5rem;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      .footer-tagline {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-link:hover {
+        color: #fdbb2d;
+      }
+
+      .footer-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+      }
+
+      .footer-copyright {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+      }
+
+      .footer-version-info {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .version-current,
+      .version-last-updated {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .version-label,
+      .update-label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .version-number {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fdbb2d;
+      }
+
+      .update-time {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .footer-links .versioning-link {
+        position: relative;
+      }
+
+      .footer-links .versioning-link::after {
+        content: '🚀';
+        position: absolute;
+        top: -8px;
+        right: -15px;
+        font-size: 0.7rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .footer-links .versioning-link:hover::after {
+        opacity: 1;
+      }
+
+      @media (max-width: 768px) {
+        .brand-header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .company-name {
+          font-size: 2rem;
+        }
+
+        .logo-icon {
+          font-size: 2.5rem;
+        }
+
+        .page-header h1 {
+          font-size: 2.2rem;
+        }
+
+        .integration-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Enhanced Navigation & Cross-References */
+      .versioning-link {
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .versioning-link::after {
+        content: '🚀';
+        position: absolute;
+        top: -5px;
+        right: -15px;
+        font-size: 0.8rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .versioning-link:hover::after {
+        opacity: 1;
+      }
+
+      .versioning-link:hover {
+        color: #fdbb2d !important;
+        text-shadow: 0 0 10px rgba(253, 187, 45, 0.5);
+      }
+
+      /* Enhanced Integration Cards */
+      .integration-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .integration-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(253, 187, 45, 0.1), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .integration-card:hover::before {
+        left: 100%;
+      }
+
+      .integration-links {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .integration-link {
+        color: #fdbb2d;
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        background: rgba(253, 187, 45, 0.1);
+        border: 1px solid rgba(253, 187, 45, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .integration-link:hover {
+        background: rgba(253, 187, 45, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(253, 187, 45, 0.2);
+      }
+
+      /* Enhanced Status Badges */
+      .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 10px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+      }
+
+      .status-active {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+      }
+
+      .status-active:hover {
+        background: rgba(76, 175, 80, 0.3);
+        transform: scale(1.05);
+      }
+
+      .status-beta {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+      }
+
+      .status-development {
+        background: rgba(33, 150, 243, 0.2);
+        color: #2196f3;
+        border: 1px solid rgba(33, 150, 243, 0.3);
+      }
+
+      /* Enhanced Card Styling */
+      .card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .card h2 {
+        position: relative;
+        display: inline-block;
+      }
+
+      .card h2::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #fdbb2d, transparent);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .card:hover h2::after {
+        transform: scaleX(1);
+      }
+
+      /* Versioning System Styling */
+      .versioning-overview {
+        margin-top: 20px;
+      }
+
+      .versioning-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .stat-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-3px);
+        border-color: rgba(253, 187, 45, 0.4);
+      }
+
+      .stat-number {
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fdbb2d;
+        margin-bottom: 10px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .versioning-features h3 {
+        color: #fdbb2d;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .feature-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .feature-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-3px);
+        border-color: rgba(253, 187, 45, 0.4);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .feature-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #fdbb2d;
+        margin-bottom: 10px;
+      }
+
+      .feature-description {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        line-height: 1.4;
+      }
+
+      .versioning-commands h3 {
+        color: #fdbb2d;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+      }
+
+      .commands-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .command-category {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(253, 187, 45, 0.1);
+      }
+
+      .command-category h4 {
+        color: #fdbb2d;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+      .command-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .command-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .command-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(5px);
+      }
+
+      .command-item code {
+        background: rgba(253, 187, 45, 0.1);
+        color: #fdbb2d;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+      }
+
+      .command-desc {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        text-align: right;
+        max-width: 120px;
+      }
+
+      .versioning-integration h3 {
+        color: #fdbb2d;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+      }
+
+      .versioning-integration .integration-links {
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .versioning-integration .integration-link {
+        font-size: 0.9rem;
+        padding: 8px 15px;
+      }
+
+      .performance-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+      }
+
+      /* 🆕 NEW: Bun Runtime Versioning Styles */
+      .bun-runtime-overview {
+        margin-top: 20px;
+      }
+
+      .runtime-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .capabilities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+      }
+
+      .capability-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid rgba(253, 187, 45, 0.2);
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .capability-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(253, 187, 45, 0.15);
+      }
+
+      .capability-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        display: block;
+        color: #fdbb2d;
+      }
+
+      .capability-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #fdbb2d;
+      }
+
+      .capability-description {
+        font-size: 0.95rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+
+      .bun-integration {
+        margin: 30px 0;
+        padding: 25px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        border-left: 4px solid #fdbb2d;
+      }
+
+      .bun-commands {
+        margin: 30px 0;
+      }
+
+      .performance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .performance-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid rgba(253, 187, 45, 0.15);
+        transition: all 0.3s ease;
+      }
+
+      .performance-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        display: block;
+        color: #fdbb2d;
+      }
+
+      .performance-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #fdbb2d;
+      }
+
+      .performance-description {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scroll-indicator">
+      <div class="scroll-progress"></div>
+    </div>
+
+    <div class="container">
+      <header>
+        <div class="brand-header">
+          <div class="brand-logo">
+            <div class="logo-icon">🔥</div>
+            <div class="logo-text">
+              <h1 class="company-name">Fire22</h1>
+              <span class="company-tagline">Igniting Digital Innovation</span>
+            </div>
+          </div>
+          <div class="brand-nav">
+            <a href="packages.html" class="nav-link">📦 Packages</a>
+            <a href="environment-variables.html" class="nav-link">🌍 Environment</a>
+            <a href="fire22-api-integration.html" class="nav-link">🔌 API</a>
+            <a href="fire22-dashboard-config.html" class="nav-link">⚙️ Config</a>
+            <a href="@packages.html" class="nav-link">🧪 Testing</a>
+          </div>
+        </div>
+        <div class="page-header">
+          <h1>🔌 API Integrations Index</h1>
+          <p class="subtitle">Complete overview of all API integrations and external services</p>
+          <p>Navigate through our comprehensive ecosystem of sportsbook platform integrations</p>
+        </div>
+      </header>
+
+      <div class="search-container">
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search API integrations, versioning, packages, and more..."
+          />
+          <div class="search-results" id="searchResults"></div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="action-grid">
+          <div class="action-card" onclick="showVersionDialog()">
+            <span class="action-icon">🚀</span>
+            <div class="action-title">Version Management</div>
+            <div class="action-description">Manage package versions and build automation</div>
+          </div>
+
+          <div class="action-card" onclick="showBuildStatus()">
+            <span class="action-icon">🔧</span>
+            <div class="action-title">Build System</div>
+            <div class="action-description">View build status and deployment information</div>
+          </div>
+
+          <div class="action-card" onclick="showPackageVersions()">
+            <span class="action-icon">📦</span>
+            <div class="action-title">Package Versions</div>
+            <div class="action-description">Check modular package version status</div>
+          </div>
+
+          <div class="action-card" onclick="showVersionHistory()">
+            <span class="action-icon">📚</span>
+            <div class="action-title">Version History</div>
+            <div class="action-description">View complete version change history</div>
+          </div>
+
+          <!-- 🆕 NEW: Bun Runtime Versioning Quick Action -->
+          <div class="action-card" onclick="showBunRuntimeInfo()">
+            <span class="action-icon">⚡</span>
+            <div class="action-title">Bun Runtime</div>
+            <div class="action-description">Bun version, capabilities, and performance</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🚀 Core Platform Integrations</h2>
+        <p>Primary integrations that power your Fire22 Dashboard:</p>
+
+        <div class="integration-grid">
+          <div class="integration-card">
+            <span class="integration-icon">🔥</span>
+            <div class="integration-title">Fire22 Sportsbook API</div>
+            <div class="integration-description">
+              Core sportsbook platform integration for customer data, wagers, and financial transactions.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="fire22-api-integration.html" class="integration-link">📖 Documentation</a>
+              <a href="fire22-dashboard-config.html" class="integration-link">⚙️ Configuration</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">💳</span>
+            <div class="integration-title">Stripe Payment Processing</div>
+            <div class="integration-description">
+              Secure payment gateway for deposits, withdrawals, and financial transactions.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="#" class="integration-link">📖 Documentation</a>
+              <a href="#" class="integration-link">⚙️ Configuration</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">🌐</span>
+            <div class="integration-title">Cloudflare Workers</div>
+            <div class="integration-description">
+              Serverless deployment platform for your dashboard and API services.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="environment-variables.html" class="integration-link">🌍 Environment</a>
+              <a href="packages.html" class="integration-link">📦 Packages</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔧 Development & Testing Integrations</h2>
+        <p>Tools and services for development, testing, and quality assurance:</p>
+
+        <div class="integration-grid">
+          <div class="integration-card">
+            <span class="integration-icon">🧪</span>
+            <div class="integration-title">Testing Framework</div>
+            <div class="integration-description">
+              Comprehensive testing suite with unit, integration, and end-to-end tests.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="@packages.html" class="integration-link">📖 Testing Guide</a>
+              <a href="environment-variables.html" class="integration-link">🧪 Test Commands</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">📦</span>
+            <div class="integration-title">Package Management</div>
+            <div class="integration-description">
+              Advanced package management with environment-specific configurations.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="packages.html" class="integration-link">📖 Package Guide</a>
+              <a href="environment-variables.html" class="integration-link">🌍 Environment</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">🔍</span>
+            <div class="integration-title">Environment Management</div>
+            <div class="integration-description">
+              Comprehensive environment variable management and validation system.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="environment-variables.html" class="integration-link">📖 Environment Guide</a>
+              <a href="fire22-dashboard-config.html" class="integration-link">⚙️ Configuration</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔗 Data & Analytics Integrations</h2>
+        <p>Services for data processing, analytics, and business intelligence:</p>
+
+        <div class="integration-grid">
+          <div class="integration-card">
+            <span class="integration-icon">📊</span>
+            <div class="integration-title">Financial Analytics</div>
+            <div class="integration-description">
+              Real-time financial metrics, wager analysis, and profit/loss tracking.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="fire22-api-integration.html" class="integration-link">💰 Financial Flow</a>
+              <a href="fire22-api-integration.html" class="integration-link">📊 Analytics</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">🔄</span>
+            <div class="integration-title">Webhook System</div>
+            <div class="integration-description">Secure webhook endpoints for real-time data synchronization.</div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="fire22-api-integration.html" class="integration-link">🔌 Webhooks</a>
+              <a href="fire22-api-integration.html" class="integration-link">🔐 Security</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">🎯</span>
+            <div class="integration-title">Wager Management</div>
+            <div class="integration-description">Complete wager processing system with real-time balance updates.</div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="fire22-api-integration.html" class="integration-link">🎯 Wager System</a>
+              <a href="fire22-api-integration.html" class="integration-link">💰 Balance Flow</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🚀 Deployment & Infrastructure</h2>
+        <p>Infrastructure and deployment management integrations:</p>
+
+        <div class="integration-grid">
+          <div class="integration-card">
+            <span class="integration-icon">☁️</span>
+            <div class="integration-title">Cloudflare D1 Database</div>
+            <div class="integration-description">
+              Serverless SQLite database for data persistence and real-time queries.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="environment-variables.html" class="integration-link">🌍 Environment</a>
+              <a href="fire22-dashboard-config.html" class="integration-link">⚙️ Configuration</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">🔐</span>
+            <div class="integration-title">Authentication System</div>
+            <div class="integration-description">
+              JWT-based authentication with role-based access control and security.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="fire22-api-integration.html" class="integration-link">🔐 Security</a>
+              <a href="fire22-dashboard-config.html" class="integration-link">⚙️ Configuration</a>
+            </div>
+          </div>
+
+          <div class="integration-card">
+            <span class="integration-icon">📱</span>
+            <div class="integration-title">Mobile API</div>
+            <div class="integration-description">
+              RESTful API endpoints for mobile applications and third-party integrations.
+            </div>
+            <div class="integration-status status-active">Active</div>
+            <div class="integration-links">
+              <a href="fire22-api-integration.html" class="integration-link">📱 Mobile API</a>
+              <a href="fire22-api-integration.html" class="integration-link">🔌 Endpoints</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🆕 NEW: Comprehensive Versioning System Integration -->
+      <div class="card" id="versioning-system">
+        <h2>🚀 Version Management & Build System</h2>
+        <p>Comprehensive version control and build automation system integrated with your Fire22 Dashboard:</p>
+
+        <div class="versioning-overview">
+          <div class="versioning-stats">
+            <div class="stat-item">
+              <span class="stat-number">3.0.7</span>
+              <span class="stat-label">Current Version</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">4</span>
+              <span class="stat-label">Modular Packages</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">8</span>
+              <span class="stat-label">Version Commands</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">100%</span>
+              <span class="stat-label">Bun Native</span>
+            </div>
+          </div>
+
+          <div class="versioning-features">
+            <h3>🎯 Key Features</h3>
+            <div class="features-grid">
+              <div class="feature-item">
+                <span class="feature-icon">📦</span>
+                <div class="feature-title">Package Management</div>
+                <div class="feature-description">Advanced package management with bun pm pkg integration</div>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">⚡</span>
+                <div class="feature-title">Build Automation</div>
+                <div class="feature-description">Automated build process with multiple profiles</div>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">🔍</span>
+                <div class="feature-title">Version Tracking</div>
+                <div class="feature-description">Complete version history and changelog management</div>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">🚀</span>
+                <div class="feature-title">Deployment</div>
+                <div class="feature-description">Environment-specific deployment and rollback</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="versioning-commands">
+            <h3>⚡ Version Management Commands</h3>
+            <div class="commands-grid">
+              <div class="command-category">
+                <h4>🔄 Basic Versioning</h4>
+                <div class="command-list">
+                  <div class="command-item">
+                    <code>bun run version:patch</code>
+                    <span class="command-desc">Increment patch version</span>
+                  </div>
+                  <div class="command-item">
+                    <code>bun run version:minor</code>
+                    <span class="command-desc">Increment minor version</span>
+                  </div>
+                  <div class="command-item">
+                    <code>bun run version:major</code>
+                    <span class="command-desc">Increment major version</span>
+                  </div>
+                  <div class="command-item">
+                    <code>bun run version:prerelease</code>
+                    <span class="command-desc">Create prerelease version</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="command-category">
+                <h4>🔍 Advanced Management</h4>
+                <div class="command-list">
+                  <div class="command-item">
+                    <code>bun run version:status</code>
+                    <span class="command-desc">Check version status</span>
+                  </div>
+                  <div class="command-item">
+                    <code>bun run version:bump</code>
+                    <span class="command-desc">Smart version bumping</span>
+                  </div>
+                  <div class="command-item">
+                    <code>bun run version:validate</code>
+                    <span class="command-desc">Validate version format</span>
+                  </div>
+                  <div class="command-item">
+                    <code>bun run version:release-notes</code>
+                    <span class="command-desc">Generate release notes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="versioning-integration">
+            <h3>🔗 Cross-References & Navigation</h3>
+            <div class="integration-links">
+              <a href="packages.html#version-management" class="integration-link versioning-link">
+                📦 Package Management
+              </a>
+              <a href="BUILD-SYSTEM.md" class="integration-link versioning-link">⚡ Build System</a>
+              <a href="ENDPOINT-MATRIX.md" class="integration-link">🔍 Endpoint Matrix</a>
+              <a href="payment-types-examples.md" class="integration-link">💳 Payment System</a>
+              <a href="withdrawal-system.md" class="integration-link">💰 Withdrawal System</a>
+              <a href="MONITORING-WORKFLOW.md" class="integration-link">🏥 Monitoring</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🆕 NEW: Bun Runtime Versioning Integration -->
+      <div class="card" id="bun-runtime-versioning">
+        <h2>🚀 Bun Runtime Versioning & Integration</h2>
+        <p>Comprehensive Bun runtime versioning integrated with your Fire22 Dashboard versioning system:</p>
+
+        <div class="bun-runtime-overview">
+          <div class="runtime-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="bunVersion">Loading...</span>
+              <span class="stat-label">Bun Runtime Version</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="bunRevision">Loading...</span>
+              <span class="stat-label">Git Revision</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="entryPoint">Loading...</span>
+              <span class="stat-label">Entry Point</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="runtimeStatus">Active</span>
+              <span class="stat-label">Runtime Status</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bun-capabilities">
+          <h3>🔧 Bun Runtime Capabilities</h3>
+          <div class="capabilities-grid">
+            <div class="capability-card">
+              <span class="capability-icon">📦</span>
+              <div class="capability-title">Version Information</div>
+              <div class="capability-description">Access Bun runtime version and build information</div>
+
+              <div class="code-block">
+                <pre><span class="code-comment">// Get Bun runtime version</span>
+<span class="code-keyword">const</span> bunVersion = <span class="code-function">Bun.version</span>;
+<span class="code-comment">// => "1.0.29"</span>
+
+<span class="code-comment">// Get git commit hash</span>
+<span class="code-keyword">const</span> gitRevision = <span class="code-function">Bun.revision</span>;
+<span class="code-comment">// => "f02561530fda1ee9396f51c8bc99b38716e38296"</span>
+
+<span class="code-comment">// Get entry point path</span>
+<span class="code-keyword">const</span> entryPoint = <span class="code-function">Bun.main</span>;
+<span class="code-comment">// => "/path/to/your/script.ts"</span></pre>
+              </div>
+            </div>
+
+            <div class="capability-card">
+              <span class="capability-icon">⚡</span>
+              <div class="capability-title">Performance & Timing</div>
+              <div class="capability-description">High-precision timing and performance measurement</div>
+              <div class="code-block">
+                <pre><span class="code-comment">// High-precision timing</span>
+<span class="code-keyword">const</span> startTime = <span class="code-function">Bun.nanoseconds</span>();
+<span class="code-comment">// ... your code ...</span>
+<span class="code-keyword">const</span> duration = <span class="code-function">Bun.nanoseconds</span>() - startTime;
+
+<span class="code-comment">// Async sleep</span>
+<span class="code-keyword">await</span> <span class="code-function">Bun.sleep</span>(1000); <span class="code-comment">// 1 second</span>
+<span class="code-keyword">await</span> <span class="code-function">Bun.sleep</span>(<span class="code-keyword">new</span> Date(Date.now() + 1000));</pre>
+              </div>
+            </div>
+
+            <div class="capability-card">
+              <span class="capability-icon">🔍</span>
+              <div class="capability-title">Inspection & Debugging</div>
+              <div class="capability-description">Advanced object inspection and debugging tools</div>
+
+              <div class="code-block">
+                <pre><span class="code-comment">// Object inspection</span>
+<span class="code-keyword">const</span> obj = { foo: <span class="code-string">"bar"</span> };
+<span class="code-keyword">const</span> inspected = <span class="code-function">Bun.inspect</span>(obj);
+
+<span class="code-comment">// Table formatting</span>
+<span class="code-keyword">const</span> table = <span class="code-function">Bun.inspect.table</span>([
+  { name: <span class="code-string">"Alice"</span>, age: 30 },
+  { name: <span class="code-string">"Bob"</span>, age: 25 }
+]);</pre>
+              </div>
+            </div>
+
+            <div class="capability-card">
+              <span class="capability-icon">🗜️</span>
+              <div class="capability-title">Compression & Encoding</div>
+              <div class="capability-description">Built-in compression and encoding utilities</div>
+              <div class="code-block">
+                <pre><span class="code-comment">// GZIP compression</span>
+<span class="code-keyword">const</span> data = Buffer.from(<span class="code-string">"Hello World"</span>.repeat(100));
+<span class="code-keyword">const</span> compressed = <span class="code-function">Bun.gzipSync</span>(data);
+<span class="code-keyword">const</span> decompressed = <span class="code-function">Bun.gunzipSync</span>(compressed);
+
+<span class="code-comment">// DEFLATE compression</span>
+<span class="code-keyword">const</span> deflated = <span class="code-function">Bun.deflateSync</span>(data);
+<span class="code-keyword">const</span> inflated = <span class="code-function">Bun.inflateSync</span>(deflated);</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bun-integration">
+          <h3>🔗 Integration with Versioning System</h3>
+          <p>Bun runtime information is automatically integrated with your versioning system:</p>
+
+          <div class="code-block">
+            <pre><span class="code-comment">// Enhanced version information includes Bun runtime</span>
+<span class="code-keyword">const</span> versionInfo = {
+  <span class="code-string">"application"</span>: {
+    <span class="code-string">"version"</span>: <span class="code-string">"3.0.7"</span>,
+    <span class="code-string">"buildNumber"</span>: 42,
+    <span class="code-string">"buildDate"</span>: <span class="code-string">"2025-01-26T23:55:00.000Z"</span>
+  },
+  <span class="code-string">"runtime"</span>: {
+    <span class="code-string">"bunVersion"</span>: <span class="code-function">Bun.version</span>,
+    <span class="code-string">"gitRevision"</span>: <span class="code-function">Bun.revision</span>,
+    <span class="code-string">"entryPoint"</span>: <span class="code-function">Bun.main</span>,
+    <span class="code-string">"platform"</span>: <span class="code-function">process.platform</span>,
+    <span class="code-string">"architecture"</span>: <span class="code-function">process.arch</span>
+  },
+  <span class="code-string">"environment"</span>: {
+    <span class="code-string">"nodeEnv"</span>: <span class="code-function">process.env.NODE_ENV</span>,
+    <span class="code-string">"timestamp"</span>: <span class="code-keyword">new</span> Date().toISOString()
+  }
+};</pre>
+          </div>
+
+          <div class="callout">
+            <strong>🚀 Enhanced Versioning:</strong>
+            Your versioning system now includes both application and runtime information for complete visibility.
+          </div>
+        </div>
+
+        <div class="bun-commands">
+          <h3>⚡ Bun Versioning Commands</h3>
+          <p>New commands to access Bun runtime versioning information:</p>
+
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Purpose</th>
+                <th>Output</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>bun run version:bun</code></td>
+                <td>Get Bun runtime version information</td>
+                <td>Bun version, revision, entry point</td>
+                <td><span class="status-badge status-active">Active</span></td>
+              </tr>
+              <tr>
+                <td><code>bun run version:runtime</code></td>
+                <td>Get complete runtime environment info</td>
+                <td>Bun + Node.js + system information</td>
+                <td><span class="status-badge status-active">Active</span></td>
+              </tr>
+              <tr>
+                <td><code>bun run version:full</code></td>
+                <td>Get complete version information</td>
+                <td>Application + Runtime + Environment</td>
+                <td><span class="status-badge status-active">Active</span></td>
+              </tr>
+              <tr>
+                <td><code>bun run version:compare</code></td>
+                <td>Compare versions across environments</td>
+                <td>Version differences and compatibility</td>
+                <td><span class="status-badge status-active">Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="code-block">
+            <pre><span class="code-comment"># Get Bun runtime version</span>
+<span class="code-function">bun run version:bun</span>
+
+<span class="code-comment"># Output includes:</span>
+{
+  <span class="code-string">"bunVersion"</span>: <span class="code-string">"1.0.29"</span>,
+  <span class="code-string">"gitRevision"</span>: <span class="code-string">"f02561530fda1ee9396f51c8bc99b38716e38296"</span>,
+  <span class="code-string">"entryPoint"</span>: <span class="code-string">"/path/to/your/script.ts"</span>,
+  <span class="code-string">"platform"</span>: <span class="code-string">"darwin"</span>,
+  <span class="code-string">"architecture"</span>: <span class="code-string">"arm64"</span>
+}
+
+<span class="code-comment"># Get complete version information</span>
+<span class="code-function">bun run version:full</span>
+
+<span class="code-comment"># Output includes application + runtime + environment</span>
+{
+  <span class="code-string">"application"</span>: { ... },
+  <span class="code-string">"runtime"</span>: { ... },
+  <span class="code-string">"environment"</span>: { ... },
+  <span class="code-string">"compatibility"</span>: { ... }
+}</pre>
+          </div>
+        </div>
+
+        <div class="bun-performance">
+          <h3>📊 Performance & Monitoring</h3>
+          <p>Bun runtime performance monitoring integrated with your dashboard:</p>
+
+          <div class="performance-grid">
+            <div class="performance-item">
+              <span class="performance-icon">⏱️</span>
+              <div class="performance-title">High-Precision Timing</div>
+              <div class="performance-description">Nanosecond-precision timing for performance measurement</div>
+            </div>
+
+            <div class="performance-item">
+              <span class="performance-icon">📈</span>
+              <div class="performance-title">Memory Usage</div>
+              <div class="performance-description">Real-time memory usage and optimization insights</div>
+            </div>
+
+            <div class="performance-item">
+              <span class="performance-icon">🚀</span>
+              <div class="performance-title">Stream Processing</div>
+              <div class="performance-description">Efficient stream handling and conversion utilities</div>
+            </div>
+
+            <div class="performance-item">
+              <span class="performance-icon">🔍</span>
+              <div class="performance-title">Debug Information</div>
+              <div class="performance-description">Advanced debugging and inspection capabilities</div>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <pre><span class="code-comment"># Performance monitoring example</span>
+<span class="code-keyword">const</span> startTime = <span class="code-function">Bun.nanoseconds</span>();
+
+<span class="code-comment">// Your operation here</span>
+<span class="code-keyword">await</span> processData();
+
+<span class="code-keyword">const</span> duration = <span class="code-function">Bun.nanoseconds</span>() - startTime;
+<span class="code-keyword">const</span> durationMs = duration / 1_000_000; <span class="code-comment">// Convert to milliseconds</span>
+
+console.log(<span class="code-string">`Operation completed in ${durationMs.toFixed(2)}ms`</span>);
+
+<span class="code-comment"># Stream processing example</span>
+<span class="code-keyword">const</span> stream = (await fetch(<span class="code-string">"https://api.example.com/data"</span>)).body;
+<span class="code-keyword">const</span> data = <span class="code-keyword">await</span> <span class="code-function">Bun.readableStreamToJSON</span>(stream);</pre>
+          </div>
+        </div>
+      </div>
+
+      <button class="back-to-top" id="backToTop" title="Back to top">↑</button>
+
+      <div class="footer">
+        <div class="footer-brand">
+          <div class="footer-logo">🔥</div>
+          <div class="footer-company">Fire22</div>
+          <div class="footer-tagline">Igniting Digital Innovation</div>
+        </div>
+
+        <div class="footer-version-info">
+          <div class="version-current">
+            <span class="version-label">Current Version:</span>
+            <span class="version-number">3.0.7</span>
+          </div>
+          <div class="version-last-updated">
+            <span class="update-label">Last Updated:</span>
+            <span class="update-time">2025-01-26</span>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="packages.html" class="footer-link">📦 Packages</a>
+          <a href="environment-variables.html" class="footer-link">🌍 Environment</a>
+          <a href="fire22-api-integration.html" class="footer-link">🔌 API</a>
+          <a href="fire22-dashboard-config.html" class="footer-link">⚙️ Config</a>
+          <a href="@packages.html" class="footer-link">🧪 Testing</a>
+          <a href="BUILD-SYSTEM.md" class="footer-link versioning-link">🚀 Build System</a>
+          <a href="ENDPOINT-MATRIX.md" class="footer-link">🔍 Endpoints</a>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-copyright">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Built with ❤️ for secure and scalable API development</p>
+          <p><small>API Integrations Index | Enhanced Search & Versioning System | Fire22 Dashboard</small></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        if (searchInput && searchResults) {
+          const searchData = [
+            // 🔥 Core API Integrations
+            {
+              title: 'Fire22 Sportsbook API',
+              description: 'Core sportsbook platform integration',
+              section: 'fire22-api-integration.html',
+              category: 'api',
+            },
+            {
+              title: 'Stripe Payment Processing',
+              description: 'Secure payment gateway integration',
+              section: '#',
+              category: 'payment',
+            },
+            {
+              title: 'Cloudflare Workers',
+              description: 'Serverless deployment platform',
+              section: 'environment-variables.html',
+              category: 'infrastructure',
+            },
+
+            // 📦 Package & Version Management
+            {
+              title: 'Package Management',
+              description: 'Advanced package management system',
+              section: 'packages.html',
+              category: 'versioning',
+            },
+            {
+              title: 'Version Management System',
+              description: 'Comprehensive version control and build integration',
+              section: 'packages.html',
+              category: 'versioning',
+            },
+            {
+              title: 'Build Automation System',
+              description: 'Automated build process with multiple profiles',
+              section: 'BUILD-SYSTEM.md',
+              category: 'versioning',
+            },
+
+            // 🚀 NEW: Bun Runtime Versioning
+            {
+              title: 'Bun Runtime Versioning',
+              description: 'Bun runtime version and build information',
+              section: '#bun-runtime-versioning',
+              category: 'runtime',
+            },
+            {
+              title: 'Bun Runtime Capabilities',
+              description: 'Performance, timing, inspection, and compression utilities',
+              section: '#bun-runtime-versioning',
+              category: 'runtime',
+            },
+            {
+              title: 'Bun Version Commands',
+              description: 'Bun runtime versioning commands and tools',
+              section: '#bun-runtime-versioning',
+              category: 'runtime',
+            },
+            {
+              title: 'Bun Performance Monitoring',
+              description: 'High-precision timing and performance measurement',
+              section: '#bun-runtime-versioning',
+              category: 'runtime',
+            },
+
+            // 🌍 Environment & Configuration
+            {
+              title: 'Environment Management',
+              description: 'Environment variables and configuration management',
+              section: 'environment-variables.html',
+              category: 'environment',
+            },
+            {
+              title: 'Configuration Management',
+              description: 'Dashboard configuration and settings',
+              section: 'fire22-dashboard-config.html',
+              category: 'environment',
+            },
+
+            // 🧪 Testing & Health
+            {
+              title: 'Testing Framework',
+              description: 'Comprehensive testing suite and validation',
+              section: '@packages.html',
+              category: 'testing',
+            },
+            {
+              title: 'Health Monitoring',
+              description: 'System health checks and monitoring endpoints',
+              section: '@packages.html',
+              category: 'testing',
+            },
+            {
+              title: 'Permissions Matrix Debug',
+              description: 'Debug and monitoring system for permissions',
+              section: '@packages.html',
+              category: 'testing',
+            },
+
+            // 🔌 API Endpoints
+            {
+              title: 'API Endpoints',
+              description: 'RESTful API endpoints and integrations',
+              section: 'fire22-api-integration.html',
+              category: 'api',
+            },
+            {
+              title: 'Webhook System',
+              description: 'Secure webhook endpoints for data synchronization',
+              section: 'fire22-api-integration.html',
+              category: 'api',
+            },
+            {
+              title: 'Authentication System',
+              description: 'JWT-based authentication and security',
+              section: 'fire22-api-integration.html',
+              category: 'security',
+            },
+
+            // 💰 Financial & Business
+            {
+              title: 'Financial Flow System',
+              description: 'Real-time financial metrics and analytics',
+              section: 'fire22-api-integration.html',
+              category: 'business',
+            },
+            {
+              title: 'Wager Management',
+              description: 'Complete wager processing system',
+              section: 'fire22-api-integration.html',
+              category: 'business',
+            },
+            {
+              title: 'Customer Management',
+              description: 'Customer data and configuration management',
+              section: 'fire22-api-integration.html',
+              category: 'business',
+            },
+          ];
+
+          searchInput.addEventListener('input', e => {
+            const query = e.target.value.toLowerCase();
+
+            if (query.length < 2) {
+              searchResults.style.display = 'none';
+              return;
+            }
+
+            const matches = searchData.filter(
+              item =>
+                item.title.toLowerCase().includes(query) ||
+                item.description.toLowerCase().includes(query) ||
+                item.category.toLowerCase().includes(query)
+            );
+
+            if (matches.length > 0) {
+              // Group matches by category for better organization
+              const groupedMatches = matches.reduce((groups, item) => {
+                const category = item.category;
+                if (!groups[category]) {
+                  groups[category] = [];
+                }
+                groups[category].push(item);
+                return groups;
+              }, {});
+
+              searchResults.innerHTML = Object.entries(groupedMatches)
+                .map(
+                  ([category, items]) => `
+                            <div class="search-category">
+                                <div class="search-category-header">${getCategoryIcon(category)} ${getCategoryName(category)}</div>
+                                ${items
+                                  .map(
+                                    item => `
+                                    <div class="search-result-item" data-section="${item.section}">
+                                        <div class="search-result-title">${highlightQuery(item.title, query)}</div>
+                                        <div class="search-result-description">${highlightQuery(item.description, query)}</div>
+                                        <div class="search-result-category">${item.category}</div>
+                                    </div>
+                                `
+                                  )
+                                  .join('')}
+                            </div>
+                        `
+                )
+                .join('');
+
+              searchResults.style.display = 'block';
+
+              // Add click handlers to search results
+              searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', () => {
+                  const sectionId = item.dataset.section;
+                  if (sectionId !== '#') {
+                    if (sectionId.startsWith('#')) {
+                      // Scroll to section within current page
+                      const targetElement = document.querySelector(sectionId);
+                      if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      // Navigate to external page
+                      window.location.href = sectionId;
+                    }
+                  }
+                  searchResults.style.display = 'none';
+                  searchInput.value = '';
+                });
+              });
+            } else {
+              searchResults.innerHTML = `
+                            <div class="search-no-results">
+                                <div class="search-no-results-icon">🔍</div>
+                                <div class="search-no-results-text">No results found for "${query}"</div>
+                                <div class="search-no-results-suggestions">
+                                    <div>Try searching for:</div>
+                                    <div class="search-suggestions">
+                                        <span class="search-suggestion">versioning</span>
+                                        <span class="search-suggestion">packages</span>
+                                        <span class="search-suggestion">api</span>
+                                        <span class="search-suggestion">testing</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+              searchResults.style.display = 'block';
+            }
+          });
+
+          // Hide search results when clicking outside
+          document.addEventListener('click', e => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+              searchResults.style.display = 'none';
+            }
+          });
+
+          // Enhanced search input interactions
+          searchInput.addEventListener('focus', () => {
+            searchInput.style.transform = 'scale(1.02)';
+            searchInput.style.boxShadow = '0 0 25px rgba(253, 187, 45, 0.4)';
+            searchInput.style.borderColor = '#fdbb2d';
+          });
+
+          searchInput.addEventListener('blur', () => {
+            searchInput.style.transform = 'scale(1)';
+            searchInput.style.boxShadow = '0 0 15px rgba(253, 187, 45, 0.2)';
+            searchInput.style.borderColor = 'rgba(253, 187, 45, 0.3)';
+          });
+
+          // Keyboard navigation for search results
+          searchInput.addEventListener('keydown', e => {
+            const visibleResults = searchResults.querySelectorAll('.search-result-item');
+            if (visibleResults.length === 0) return;
+
+            let currentIndex = Array.from(visibleResults).findIndex(item =>
+              item.classList.contains('search-result-selected')
+            );
+
+            switch (e.key) {
+              case 'ArrowDown':
+                e.preventDefault();
+                if (currentIndex < visibleResults.length - 1) {
+                  if (currentIndex >= 0) {
+                    visibleResults[currentIndex].classList.remove('search-result-selected');
+                  }
+                  visibleResults[currentIndex + 1].classList.add('search-result-selected');
+                }
+                break;
+              case 'ArrowUp':
+                e.preventDefault();
+                if (currentIndex > 0) {
+                  visibleResults[currentIndex].classList.remove('search-result-selected');
+                  visibleResults[currentIndex - 1].classList.add('search-result-selected');
+                }
+                break;
+              case 'Enter':
+                e.preventDefault();
+                const selectedResult = searchResults.querySelector('.search-result-selected');
+                if (selectedResult) {
+                  selectedResult.click();
+                }
+                break;
+              case 'Escape':
+                searchResults.style.display = 'none';
+                searchInput.blur();
+                break;
+            }
+          });
+
+          // Helper functions for search enhancement
+          function getCategoryIcon(category) {
+            const icons = {
+              api: '🔌',
+              versioning: '🚀',
+              packages: '📦',
+              testing: '🧪',
+              environment: '🌍',
+              payment: '💳',
+              infrastructure: '☁️',
+              analytics: '📊',
+              business: '💼',
+              security: '🔒',
+              integration: '🔗',
+              guide: '📖',
+              monitoring: '🏥',
+              debug: '🔍',
+              runtime: '⚡',
+            };
+            return icons[category] || '📋';
+          }
+
+          function getCategoryName(category) {
+            const names = {
+              api: 'API Integrations',
+              versioning: 'Version Management',
+              packages: 'Package System',
+              testing: 'Testing & QA',
+              environment: 'Environment',
+              payment: 'Payment Systems',
+              infrastructure: 'Infrastructure',
+              analytics: 'Analytics',
+              business: 'Business Features',
+              security: 'Security',
+              integration: 'Integrations',
+              guide: 'Guides',
+              monitoring: 'Monitoring',
+              debug: 'Debug Tools',
+              runtime: 'Runtime & Performance',
+            };
+            return names[category] || category;
+          }
+
+          function highlightQuery(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+          }
+        }
+
+        // Quick Action Functions
+        function showVersionDialog() {
+          // Navigate to version management section
+          window.location.href = 'packages.html#version-management';
+        }
+
+        function showBuildStatus() {
+          // Navigate to build system documentation
+          window.location.href = 'BUILD-SYSTEM.md';
+        }
+
+        function showPackageVersions() {
+          // Navigate to package versions section
+          window.location.href = 'packages.html#package-versions';
+        }
+
+        function showVersionHistory() {
+          // Navigate to version history section
+          window.location.href = 'packages.html#version-history';
+        }
+
+        // 🆕 NEW: Bun Runtime Quick Action
+        function showBunRuntimeInfo() {
+          // Scroll to Bun runtime versioning section
+          const bunSection = document.getElementById('bun-runtime-versioning');
+          if (bunSection) {
+            bunSection.scrollIntoView({ behavior: 'smooth' });
+
+            // Add highlight effect
+            bunSection.style.boxShadow = '0 0 30px rgba(253, 187, 45, 0.4)';
+            setTimeout(() => {
+              bunSection.style.boxShadow = '';
+            }, 2000);
+          }
+        }
+
+        // 🆕 NEW: Bun Runtime Versioning Integration
+        function updateBunRuntimeInfo() {
+          // Simulate Bun runtime information (in real implementation, this would come from actual Bun APIs)
+          const bunInfo = {
+            version: '1.0.29',
+            revision: 'f02561530fda1ee9396f51c8bc99b38716e38296',
+            entryPoint: '/dashboard-worker/src/index.ts',
+            status: 'Active',
+          };
+
+          // Update the display elements
+          const bunVersionEl = document.getElementById('bunVersion');
+          const bunRevisionEl = document.getElementById('bunRevision');
+          const entryPointEl = document.getElementById('entryPoint');
+          const runtimeStatusEl = document.getElementById('runtimeStatus');
+
+          if (bunVersionEl) bunVersionEl.textContent = bunInfo.version;
+          if (bunRevisionEl) bunRevisionEl.textContent = bunInfo.revision.substring(0, 8) + '...';
+          if (entryPointEl) entryPointEl.textContent = bunInfo.entryPoint.split('/').pop() || 'index.ts';
+          if (runtimeStatusEl) runtimeStatusEl.textContent = bunInfo.status;
+
+          // Add animation to the stats
+          const statItems = document.querySelectorAll('.runtime-stats .stat-item');
+          statItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              item.style.transition = 'all 0.6s ease';
+              item.style.opacity = '1';
+              item.style.transform = 'translateY(0)';
+            }, index * 200);
+          });
+        }
+
+        // Initialize Bun runtime information
+        updateBunRuntimeInfo();
+
+        // Add hover effects to capability cards
+        const capabilityCards = document.querySelectorAll('.capability-card');
+        capabilityCards.forEach(card => {
+          card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-5px) scale(1.02)';
+          });
+
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0) scale(1)';
+          });
+        });
+
+        // Add click-to-copy for code blocks in Bun section
+        const bunCodeBlocks = document.querySelectorAll('#bun-runtime-versioning .code-block pre');
+        bunCodeBlocks.forEach(code => {
+          code.style.cursor = 'pointer';
+          code.title = 'Click to copy';
+
+          code.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(code.textContent);
+              const originalText = code.textContent;
+              code.textContent = 'Copied!';
+              code.style.color = '#4CAF50';
+
+              setTimeout(() => {
+                code.textContent = originalText;
+                code.style.color = '';
+              }, 2000);
+            } catch (err) {
+              console.log('Failed to copy:', err);
+            }
+          });
+        });
+
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        if (backToTopButton) {
+          window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+              backToTopButton.classList.add('visible');
+            } else {
+              backToTopButton.classList.remove('visible');
+            }
+          });
+
+          backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+
+        // Enhanced card animations with staggered entrance
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+          card.style.transition = `all 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.15}s`;
+
+          setTimeout(
+            () => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            },
+            200 + index * 150
+          );
+        });
+
+        // Integration card hover effects with enhanced animations
+        const integrationCards = document.querySelectorAll('.integration-card');
+        integrationCards.forEach(card => {
+          card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-8px) scale(1.02)';
+            card.style.boxShadow = '0 20px 40px rgba(253, 187, 45, 0.2)';
+          });
+
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0) scale(1)';
+            card.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

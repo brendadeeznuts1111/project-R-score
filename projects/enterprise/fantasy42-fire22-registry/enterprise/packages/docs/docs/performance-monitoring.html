@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🚀 Performance Monitoring Suite - Crystal Clear Architecture</title>
+    <meta
+      name="description"
+      content="Enterprise-grade performance monitoring and load testing suite for Crystal Clear Architecture analytics systems"
+    />
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>"
+    />
+
+    <style>
+      :root {
+        --primary: #2563eb;
+        --secondary: #1e40af;
+        --accent: #06b6d4;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-light: #f9fafb;
+        --bg-white: #ffffff;
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background: var(--bg-light);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        padding: 40px 0;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: var(--border-radius);
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header p {
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .stat-card {
+        background: var(--bg-white);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        text-align: center;
+        border-top: 4px solid var(--primary);
+      }
+
+      .stat-value {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin: 40px 0;
+      }
+
+      .feature-card {
+        background: var(--bg-white);
+        padding: 30px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border-left: 4px solid var(--accent);
+        transition: var(--transition);
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -3px rgb(0 0 0 / 0.1);
+      }
+
+      .feature-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .feature-title {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+      }
+
+      .feature-description {
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+      }
+
+      .feature-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .feature-list li {
+        padding: 5px 0;
+        color: var(--text-secondary);
+        position: relative;
+        padding-left: 20px;
+      }
+
+      .feature-list li:before {
+        content: '✓';
+        color: var(--success);
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+      }
+
+      .cta-section {
+        text-align: center;
+        padding: 40px 0;
+        background: var(--bg-white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin: 40px 0;
+      }
+
+      .cta-title {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+      }
+
+      .cta-description {
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .cta-button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .cta-button.primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .cta-button.secondary {
+        background: var(--bg-light);
+        color: var(--text-primary);
+        border: 1px solid #e5e7eb;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px -3px rgb(0 0 0 / 0.1);
+      }
+
+      .scenarios-section {
+        margin: 40px 0;
+      }
+
+      .section-title {
+        font-size: 2em;
+        text-align: center;
+        margin-bottom: 30px;
+        color: var(--text-primary);
+      }
+
+      .scenarios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .scenario-card {
+        background: var(--bg-white);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border-top: 4px solid var(--warning);
+      }
+
+      .scenario-icon {
+        font-size: 2em;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .scenario-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+      }
+
+      .scenario-description {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+        margin-bottom: 15px;
+      }
+
+      .scenario-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        font-size: 0.8em;
+      }
+
+      .metric {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .metric-label {
+        color: var(--text-secondary);
+      }
+
+      .metric-value {
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .footer {
+        text-align: center;
+        padding: 30px 0;
+        color: var(--text-secondary);
+        border-top: 1px solid #e5e7eb;
+        margin-top: 40px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .footer-link:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .scenarios-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>🚀 Performance Monitoring Suite</h1>
+        <p>Enterprise-grade performance monitoring and load testing for Crystal Clear Architecture</p>
+
+        <div class="hero-stats">
+          <div class="stat-card">
+            <div class="stat-value">5</div>
+            <div class="stat-label">Test Scenarios</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">25+</div>
+            <div class="stat-label">Performance Metrics</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">99.9%</div>
+            <div class="stat-label">Accuracy Rate</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value"><100ms</div>
+            <div class="stat-label">Response Time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3 class="feature-title">Real-Time Monitoring</h3>
+          <p class="feature-description">
+            Live performance monitoring with real-time metrics and alerts for immediate issue detection.
+          </p>
+          <ul class="feature-list">
+            <li>Response time tracking (avg, P95, P99)</li>
+            <li>Throughput monitoring (req/s)</li>
+            <li>Error rate analysis</li>
+            <li>Memory usage monitoring</li>
+            <li>Automated health checks</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">🧪</span>
+          <h3 class="feature-title">Load Testing Suite</h3>
+          <p class="feature-description">
+            Comprehensive load testing with 5 predefined scenarios for different performance requirements.
+          </p>
+          <ul class="feature-list">
+            <li>Smoke Test (quick validation)</li>
+            <li>Load Test (standard testing)</li>
+            <li>Stress Test (high concurrency)</li>
+            <li>Spike Test (traffic spikes)</li>
+            <li>Endurance Test (long duration)</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">🎯</span>
+          <h3 class="feature-title">Interactive Dashboards</h3>
+          <p class="feature-description">
+            Beautiful, responsive dashboards with live charts and comprehensive performance visualization.
+          </p>
+          <ul class="feature-list">
+            <li>Real-time chart updates</li>
+            <li>Configurable monitoring</li>
+            <li>Historical trend analysis</li>
+            <li>Data export capabilities</li>
+            <li>Mobile-responsive design</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">💡</span>
+          <h3 class="feature-title">AI-Powered Insights</h3>
+          <p class="feature-description">
+            Automated performance recommendations and optimization suggestions based on test results.
+          </p>
+          <ul class="feature-list">
+            <li>Database optimization tips</li>
+            <li>Caching strategy recommendations</li>
+            <li>Load balancing suggestions</li>
+            <li>Resource scaling advice</li>
+            <li>Code optimization guidance</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Test Scenarios -->
+      <div class="scenarios-section">
+        <h2 class="section-title">🧪 Test Scenarios</h2>
+
+        <div class="scenarios-grid">
+          <div class="scenario-card">
+            <span class="scenario-icon">🚭</span>
+            <h3 class="scenario-title">Smoke Test</h3>
+            <p class="scenario-description">Quick validation test to ensure basic functionality works correctly.</p>
+            <div class="scenario-metrics">
+              <div class="metric">
+                <span class="metric-label">Duration:</span>
+                <span class="metric-value">10s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Concurrency:</span>
+                <span class="metric-value">2</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Ramp-up:</span>
+                <span class="metric-value">1s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Use Case:</span>
+                <span class="metric-value">Validation</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <span class="scenario-icon">📈</span>
+            <h3 class="scenario-title">Load Test</h3>
+            <p class="scenario-description">Standard load testing to simulate normal production traffic patterns.</p>
+            <div class="scenario-metrics">
+              <div class="metric">
+                <span class="metric-label">Duration:</span>
+                <span class="metric-value">60s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Concurrency:</span>
+                <span class="metric-value">10</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Ramp-up:</span>
+                <span class="metric-value">5s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Use Case:</span>
+                <span class="metric-value">Production</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <span class="scenario-icon">💪</span>
+            <h3 class="scenario-title">Stress Test</h3>
+            <p class="scenario-description">High-concurrency stress testing to find system breaking points.</p>
+            <div class="scenario-metrics">
+              <div class="metric">
+                <span class="metric-label">Duration:</span>
+                <span class="metric-value">30s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Concurrency:</span>
+                <span class="metric-value">50</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Ramp-up:</span>
+                <span class="metric-value">5s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Use Case:</span>
+                <span class="metric-value">Limits</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <span class="scenario-icon">⚡</span>
+            <h3 class="scenario-title">Spike Test</h3>
+            <p class="scenario-description">Sudden traffic spike simulation to test system resilience.</p>
+            <div class="scenario-metrics">
+              <div class="metric">
+                <span class="metric-label">Duration:</span>
+                <span class="metric-value">60s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Concurrency:</span>
+                <span class="metric-value">5-100</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Ramp-up:</span>
+                <span class="metric-value">1s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Use Case:</span>
+                <span class="metric-value">Spikes</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <span class="scenario-icon">🏃</span>
+            <h3 class="scenario-title">Endurance Test</h3>
+            <p class="scenario-description">
+              Long-duration stability testing for memory leaks and performance degradation.
+            </p>
+            <div class="scenario-metrics">
+              <div class="metric">
+                <span class="metric-label">Duration:</span>
+                <span class="metric-value">5min</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Concurrency:</span>
+                <span class="metric-value">5</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Ramp-up:</span>
+                <span class="metric-value">10s</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Use Case:</span>
+                <span class="metric-value">Stability</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="cta-section">
+        <h2 class="cta-title">🚀 Start Performance Monitoring Today</h2>
+        <p class="cta-description">
+          Access our comprehensive performance monitoring suite to optimize your analytics system performance, identify
+          bottlenecks, and ensure enterprise-grade reliability.
+        </p>
+
+        <div class="cta-buttons">
+          <a
+            href="https://brendadeeznuts1111.github.io/crystal-clear-architecture/analytics/performance-dashboard.html"
+            class="cta-button primary"
+            target="_blank"
+          >
+            📊 Open Performance Monitor
+          </a>
+          <a
+            href="https://brendadeeznuts1111.github.io/crystal-clear-architecture/analytics/performance-test-dashboard.html"
+            class="cta-button primary"
+            target="_blank"
+          >
+            🧪 Open Load Testing Suite
+          </a>
+          <a
+            href="https://github.com/brendadeeznuts1111/crystal-clear-architecture"
+            class="cta-button secondary"
+            target="_blank"
+          >
+            📖 View Documentation
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="footer-links">
+          <a href="https://brendadeeznuts1111.github.io/crystal-clear-architecture/" class="footer-link">🏠 Home</a>
+          <a
+            href="https://brendadeeznuts1111.github.io/crystal-clear-architecture/performance.html"
+            class="footer-link"
+          >
+            ⚡ Performance
+          </a>
+          <a href="https://github.com/brendadeeznuts1111/crystal-clear-architecture" class="footer-link">📚 GitHub</a>
+          <a
+            href="https://brendadeeznuts1111.github.io/crystal-clear-architecture/communication.html"
+            class="footer-link"
+          >
+            💬 Communication
+          </a>
+        </div>
+        <p>
+          &copy; 2024 Crystal Clear Architecture. Built with ❤️ using Domain-Driven Design, TypeScript, and Bun Runtime.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Add some interactive features
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add click tracking for CTA buttons
+        const ctaButtons = document.querySelectorAll('.cta-button');
+        ctaButtons.forEach(button => {
+          button.addEventListener('click', function (e) {
+            const link = this.getAttribute('href');
+            const label = this.textContent.trim();
+
+            // Track the click (you could integrate with analytics here)
+            console.log(`CTA Click: ${label} -> ${link}`);
+
+            // Open in new tab
+            if (this.getAttribute('target') === '_blank') {
+              window.open(link, '_blank');
+              e.preventDefault();
+            }
+          });
+        });
+
+        // Add hover effects for scenario cards
+        const scenarioCards = document.querySelectorAll('.scenario-card');
+        scenarioCards.forEach(card => {
+          card.addEventListener('mouseenter', function () {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 8px 25px -3px rgb(0 0 0 / 0.15)';
+          });
+
+          card.addEventListener('mouseleave', function () {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1)';
+          });
+        });
+
+        console.log('🚀 Performance Monitoring Suite page loaded successfully!');
+      });
+    </script>
+  </body>
+</html>

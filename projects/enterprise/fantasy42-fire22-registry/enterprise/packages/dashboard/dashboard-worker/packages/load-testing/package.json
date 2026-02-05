@@ -1,0 +1,68 @@
+{
+  "name": "@fire22/load-testing",
+  "version": "1.0.3",
+  "description": "High-performance load testing for HTTP endpoints",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "test": "bun test",
+    "load": "bun run src/index.ts",
+    "preinstall": "echo 'Setting up load testing...'",
+    "postinstall": "echo 'Load testing ready!'",
+    "prepare": "bun run build"
+  },
+  "keywords": [
+    "load-testing",
+    "performance",
+    "stress-testing",
+    "http",
+    "websocket"
+  ],
+  "dependencies": {
+    "@fire22/benchmark-formatter": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "optionalDependencies": {
+    "bombardier": "*",
+    "oha": "*"
+  },
+  "trustedDependencies": [],
+  "overrides": {},
+  "resolutions": {},
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "bun": {
+    "install": {
+      "frozen-lockfile": false,
+      "production": false,
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "concurrent-scripts": 4
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/load-testing"
+  }
+}

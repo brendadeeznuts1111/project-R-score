@@ -1,0 +1,64 @@
+{
+  "name": "@fire22/memory-profiler",
+  "version": "1.0.3",
+  "description": "Advanced memory profiling using Bun's JSC module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "test": "bun test",
+    "profile": "bun run src/index.ts",
+    "preinstall": "echo 'Setting up memory profiler...'",
+    "postinstall": "echo 'Memory profiler ready!'",
+    "prepare": "bun run build"
+  },
+  "keywords": [
+    "memory",
+    "profiling",
+    "heap",
+    "bun:jsc",
+    "performance"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "optionalDependencies": {},
+  "trustedDependencies": [],
+  "workspaces": [],
+  "overrides": {},
+  "resolutions": {},
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "bun": {
+    "install": {
+      "frozen-lockfile": false,
+      "production": false,
+      "optional": true,
+      "dev": true,
+      "peer": true,
+      "concurrent-scripts": 2
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/memory-profiler"
+  }
+}

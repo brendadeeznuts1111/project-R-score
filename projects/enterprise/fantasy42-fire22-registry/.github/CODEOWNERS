@@ -1,0 +1,420 @@
+# 🔥 Fantasy42-Fire22 CODEOWNERS
+# Domain-Driven Design Code Ownership by Bounded Context
+# Last Updated: $(date)
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    GLOBAL OWNERSHIP RULES                   ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# 🚨 SPECIAL OPS TEAM ACTIVATION - CEO Vacation Coverage
+# CEO @brendadeeznuts1111 is currently on vacation
+# Special Ops Team providing interim CEO-level approvals
+
+# Special Ops Team Members (Interim CEO Authority)
+# @special-ops-lead - Mission Commander
+# @special-ops-tech - Technical Operations Lead
+# @special-ops-security - Security Operations Lead
+# @special-ops-compliance - Compliance Operations Lead
+
+# Global owners - must approve all changes (Interim CEO Level via Special Ops)
+* @special-ops-lead @special-ops-tech @special-ops-security @special-ops-compliance @nolarose1968-pixel
+
+# Emergency override - CTO can approve critical changes during CEO absence
+# * @nolarose1968-pixel
+
+# License and legal files (Legal Department Head + Special Ops Team)
+LICENSE @special-ops-compliance @special-ops-lead @nolarose1968-pixel
+LICENSE.md @special-ops-compliance @special-ops-lead @nolarose1968-pixel
+*.license @special-ops-compliance @special-ops-lead @nolarose1968-pixel
+
+# Security-sensitive files - require security department head + Special Ops approval
+*.env* lisa-anderson @special-ops-security @special-ops-lead
+bunfig.toml lisa-anderson @special-ops-security @special-ops-tech
+wrangler.toml @special-ops-tech @special-ops-security @nolarose1968-pixel
+package.json @special-ops-tech @special-ops-lead @nolarose1968-pixel
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    DOMAIN OWNERSHIP                         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# 🏗️ CORE DOMAIN - Fundamental business capabilities (CTO + Special Ops Team)
+/src/domains/core/ @special-ops-tech @special-ops-lead @nolarose1968-pixel
+/src/shared/kernel/ @special-ops-tech @special-ops-lead @nolarose1968-pixel
+/src/shared/types/ @special-ops-tech @special-ops-lead @nolarose1968-pixel
+
+# 👥 USERS DOMAIN - User management and authentication (Users Dept - Special Ops oversight)
+/src/domains/users/ @special-ops-lead @special-ops-security @nolarose1968-pixel
+/src/domains/users/auth/ @special-ops-security @special-ops-lead @nolarose1968-pixel
+/src/domains/users/profile/ @special-ops-lead @special-ops-security @nolarose1968-pixel
+/src/domains/users/preferences/ @special-ops-lead @special-ops-security @nolarose1968-pixel
+
+# 🎯 BETTING DOMAIN - Sports betting and wagering (Product Management Dept Head + CEO)
+/src/domains/betting/ samantha-rivera alexandra-kim
+/src/domains/betting/wagers/ samantha-rivera alexandra-kim
+/src/domains/betting/odds/ samantha-rivera alexandra-kim
+/src/domains/betting/markets/ samantha-rivera alexandra-kim
+
+# 🎮 GAMING DOMAIN - Fantasy sports and gaming (Product Management Dept Head + Marketing Dept Head)
+/src/domains/gaming/ samantha-rivera amanda-foster
+/src/domains/gaming/fantasy/ samantha-rivera amanda-foster
+/src/domains/gaming/tournaments/ samantha-rivera amanda-foster
+/src/domains/gaming/leaderboards/ samantha-rivera amanda-foster
+
+# 📊 ANALYTICS DOMAIN - Data analysis and reporting (Marketing Dept Head + Product Management Dept Head)
+/src/domains/analytics/ rachel-green alexandra-kim
+/src/domains/analytics/metrics/ rachel-green alexandra-kim
+/src/domains/analytics/reports/ rachel-green alexandra-kim
+/src/domains/analytics/realtime/ rachel-green alexandra-kim
+
+# 💰 FINANCE DOMAIN - Financial transactions and reporting (Finance Dept Head + CEO)
+/src/domains/finance/ sarah-thompson michael-chen
+/src/domains/finance/transactions/ sarah-thompson michael-chen
+/src/domains/finance/settlements/ sarah-thompson michael-chen
+/src/domains/finance/reports/ sarah-thompson michael-chen
+
+# 💳 PAYMENTS DOMAIN - Payment processing and integration (Finance Dept Head + CEO)
+/src/domains/payments/ sarah-thompson michael-chen
+/src/domains/payments/gateways/ sarah-thompson michael-chen
+/src/domains/payments/wallets/ sarah-thompson michael-chen
+/src/domains/payments/compliance/ sarah-thompson michael-chen
+
+# 🔒 SECURITY DOMAIN - Security and compliance (Security & Compliance Dept Head + CEO)
+/src/domains/security/ lisa-anderson mark-thompson
+/src/domains/security/auth/ lisa-anderson mark-thompson
+/src/domains/security/encryption/ lisa-anderson mark-thompson
+/src/domains/security/audit/ lisa-anderson mark-thompson
+
+# 💬 COMMUNICATION DOMAIN - Messaging and notifications
+/src/domains/communication/ @fire22/communication-team @fire22/users-team
+/src/domains/communication/email/ @fire22/communication-team
+/src/domains/communication/push/ @fire22/communication-team @fire22/mobile-team
+/src/domains/communication/chat/ @fire22/communication-team
+
+# 📝 CONTENT DOMAIN - Content management and delivery
+/src/domains/content/ @fire22/content-team @fire22/marketing-team
+/src/domains/content/articles/ @fire22/content-team
+/src/domains/content/media/ @fire22/content-team @fire22/devops-team
+/src/domains/content/seo/ @fire22/content-team @fire22/marketing-team
+
+# 🎧 CUSTOMER SUPPORT DOMAIN - Support ticket system and live chat (Customer Support Dept Head + CEO)
+/src/domains/customer-support/ mike-johnson amanda-garcia
+/src/domains/customer-support/tickets/ mike-johnson amanda-garcia
+/src/domains/customer-support/chat/ mike-johnson amanda-garcia
+
+# ⚙️ OPERATIONS DOMAIN - Supply chain and warehouse management (Operations Dept Head + CEO)
+/src/domains/operations/ robert-garcia linda-martinez
+/src/domains/operations/supply-chain/ robert-garcia linda-martinez
+/src/domains/operations/warehouse/ robert-garcia linda-martinez
+
+# 👔 MANAGEMENT DOMAIN - Strategic planning and performance review (Management Dept Head + CEO)
+/src/domains/management/ john-smith patricia-johnson
+/src/domains/management/strategy/ john-smith patricia-johnson
+/src/domains/management/performance/ john-smith patricia-johnson
+
+# 👥 TEAM CONTRIBUTORS DOMAIN - Open source contribution tracking (Team Contributors Dept Head + CEO)
+/src/domains/team-contributors/ alex-chen sam-wilson
+/src/domains/team-contributors/contributions/ alex-chen sam-wilson
+/src/domains/team-contributors/automation/ alex-chen sam-wilson
+
+# 🎓 ONBOARDING DOMAIN - Employee onboarding and training (Onboarding Dept Head + CEO)
+/src/domains/onboarding/ natasha-cooper karen-adams
+/src/domains/onboarding/employees/ natasha-cooper karen-adams
+/src/domains/onboarding/training/ natasha-cooper karen-adams
+
+# 🎨 DESIGN DOMAIN - Design system and mobile app UI (Design Dept Head + CEO)
+/src/domains/design/ isabella-martinez ethan-cooper
+/src/domains/design/system/ isabella-martinez ethan-cooper
+/src/domains/design/mobile/ isabella-martinez ethan-cooper
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    APPLICATION LAYER                        ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Application services and use cases
+/src/application/use-cases/ @fire22/backend-team @fire22/architects
+/src/application/commands/ @fire22/backend-team
+/src/application/queries/ @fire22/backend-team
+/src/application/handlers/ @fire22/backend-team @fire22/devops-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    INFRASTRUCTURE LAYER                     ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Database infrastructure
+/src/infrastructure/database/ @fire22/database-team @fire22/devops-team
+/src/infrastructure/database/migrations/ @fire22/database-team
+/src/infrastructure/database/seeds/ @fire22/database-team
+
+# External integrations
+/src/infrastructure/external/ @fire22/integration-team @fire22/devops-team
+/src/infrastructure/external/apis/ @fire22/integration-team
+/src/infrastructure/external/webhooks/ @fire22/integration-team @fire22/security-team
+
+# Storage and messaging
+/src/infrastructure/storage/ @fire22/devops-team @fire22/database-team
+/src/infrastructure/messaging/ @fire22/devops-team @fire22/backend-team
+
+# Cloudflare Workers
+/src/infrastructure/workers/ @fire22/cloud-team @fire22/devops-team
+enterprise/packages/cloudflare/ @fire22/cloud-team @fire22/devops-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    PRESENTATION LAYER                       ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# API layer
+/src/presentation/api/ @fire22/api-team @fire22/backend-team
+/src/presentation/api/routes/ @fire22/api-team
+/src/presentation/api/middleware/ @fire22/api-team @fire22/security-team
+
+# Web interfaces
+/src/presentation/web/ @fire22/frontend-team @fire22/ui-team
+/src/presentation/web/components/ @fire22/frontend-team
+/src/presentation/web/pages/ @fire22/frontend-team @fire22/content-team
+
+# CLI tools
+/src/presentation/cli/ @fire22/devops-team @fire22/tools-team
+scripts/ @fire22/devops-team @fire22/tools-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    SHARED UTILITIES                         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Shared utilities and interfaces
+/src/shared/utils/ @fire22/shared-team @fire22/core-team
+/src/shared/interfaces/ @fire22/shared-team @fire22/architects
+/src/shared/events/ @fire22/shared-team @fire22/backend-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    PACKAGE OWNERSHIP                        ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Core Registry Packages
+packages/benchmark-orchestrator/ @fire22/devops-team @fire22/performance-team @fire22/backend-team
+packages/compliance-checker/ @fire22/compliance-team @fire22/security-team @fire22/legal-team
+packages/security-audit/ @fire22/security-team @fire22/devops-team @fire22/compliance-team
+
+# Enterprise Betting Engine Package (Product Management Dept Head + CEO oversight)
+enterprise/packages/betting/betting-engine/ samantha-rivera alexandra-kim
+enterprise/packages/betting/betting-engine/src/ samantha-rivera alexandra-kim
+enterprise/packages/betting/betting-engine/tests/ samantha-rivera alexandra-kim
+enterprise/packages/betting/betting-engine/examples/ samantha-rivera alexandra-kim
+enterprise/packages/betting/betting-engine/.github/ samantha-rivera alexandra-kim
+enterprise/packages/betting/betting-engine/LICENSE @special-ops-compliance @special-ops-lead @nolarose1968-pixel
+enterprise/packages/betting/betting-engine/README.md samantha-rivera alexandra-kim
+enterprise/packages/betting/betting-engine/package.json samantha-rivera alexandra-kim
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    ENTERPRISE PACKAGES                      ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    MASSIVE ENTERPRISE SYSTEMS              ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Dashboard Worker Enterprise System (1000+ Files) - Special Ops + CTO oversight
+enterprise/packages/dashboard-worker/ @special-ops-lead @special-ops-tech @nolarose1968-pixel
+enterprise/packages/dashboard/ @special-ops-lead @special-ops-tech @nolarose1968-pixel
+
+# Cloudflare Infrastructure System - Technology Dept Head + Special Ops oversight
+enterprise/packages/cloudflare/ david-kim @special-ops-tech @nolarose1968-pixel
+
+# Web Server Systems - Special Ops + CTO oversight
+enterprise/packages/web-servers/ @special-ops-tech @special-ops-lead @nolarose1968-pixel
+
+# Security Monitoring & Logging - Security Dept Head + Special Ops oversight
+enterprise/packages/monitoring/ lisa-anderson @special-ops-security @nolarose1968-pixel
+
+# Telegram Integration Systems - Special Ops + CTO oversight
+enterprise/packages/telegram/ @special-ops-tech @special-ops-lead @nolarose1968-pixel
+
+# RSS/Atom Feed Syndication - Special Ops + CTO oversight
+enterprise/packages/feeds/ @special-ops-tech @special-ops-lead @nolarose1968-pixel
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    ENTERPRISE PACKAGES OWNERSHIP           ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Core Infrastructure & Platform
+enterprise/packages/core/ @fire22/core-team @fire22/architects @fire22/backend-team
+enterprise/packages/config-management/ @fire22/devops-team @fire22/security-team @fire22/infrastructure-team
+enterprise/packages/database/ @fire22/database-team @fire22/devops-team @fire22/backend-team
+enterprise/packages/shared/ @fire22/shared-team @fire22/core-team @fire22/architects
+
+# Financial & Payment Systems
+enterprise/packages/accounting/ @fire22/finance-team @fire22/compliance-team @fire22/audit-team
+enterprise/packages/balance/ @fire22/finance-team @fire22/users-team @fire22/backend-team
+enterprise/packages/finance/ @fire22/finance-team @fire22/compliance-team @fire22/backend-team
+enterprise/packages/financial-reporting/ @fire22/finance-team @fire22/analytics-team @fire22/compliance-team
+enterprise/packages/payment/ @fire22/payments-team @fire22/security-team @fire22/finance-team
+enterprise/packages/settlement/ @fire22/finance-team @fire22/betting-team @fire22/compliance-team
+
+# Betting & Gaming Systems
+enterprise/packages/betting/ @fire22/betting-team @fire22/compliance-team @fire22/risk-team
+enterprise/packages/gaming/ @fire22/gaming-team @fire22/analytics-team @fire22/backend-team
+enterprise/packages/vip/ @fire22/vip-team @fire22/users-team @fire22/betting-team
+
+# User Management & Authentication
+enterprise/packages/user-mgmt/ @fire22/users-team @fire22/security-team @fire22/backend-team
+enterprise/packages/users/ @fire22/users-team @fire22/security-team @fire22/backend-team
+
+# Analytics & Business Intelligence
+enterprise/packages/analytics/ @fire22/analytics-team @fire22/data-team @fire22/business-team
+enterprise/packages/benchmarking/ @fire22/devops-team @fire22/performance-team @fire22/analytics-team
+
+# API & Application Layer
+enterprise/packages/api/ @fire22/api-team @fire22/backend-team @fire22/devops-team
+enterprise/packages/application/ @fire22/backend-team @fire22/architects @fire22/api-team
+enterprise/packages/external/ @fire22/integration-team @fire22/devops-team @fire22/api-team
+
+# Content & Communication
+enterprise/packages/content/ @fire22/content-team @fire22/marketing-team @fire22/frontend-team
+enterprise/packages/communications/ @fire22/communication-team @fire22/users-team @fire22/backend-team
+enterprise/packages/telegram/ @fire22/communication-team @fire22/integration-team @fire22/mobile-team
+enterprise/packages/feeds/ @fire22/content-team @fire22/analytics-team @fire22/backend-team
+
+# Frontend & User Interface
+enterprise/packages/dashboard/ @fire22/frontend-team @fire22/analytics-team @fire22/ui-team
+enterprise/packages/dashboard-worker/ @fire22/frontend-team @fire22/cloud-team @fire22/analytics-team
+enterprise/packages/frontend/ @fire22/frontend-team @fire22/ui-team @fire22/devops-team
+enterprise/packages/mobile/ @fire22/mobile-team @fire22/frontend-team @fire22/ui-team
+enterprise/packages/web-servers/ @fire22/devops-team @fire22/infrastructure-team @fire22/frontend-team
+
+# Security & Compliance
+enterprise/packages/security/ @fire22/security-team @fire22/compliance-team @fire22/audit-team
+enterprise/packages/compliance/ @fire22/compliance-team @fire22/legal-team @fire22/audit-team
+enterprise/packages/secrets/ @fire22/security-team @fire22/devops-team @fire22/backend-team
+enterprise/packages/crypto/ @fire22/security-team @fire22/backend-team @fire22/compliance-team
+
+# Development & Operations
+enterprise/packages/scripts/ @fire22/devops-team @fire22/tools-team @fire22/automation-team
+enterprise/packages/testing/ @fire22/qa-team @fire22/devops-team @fire22/backend-team
+enterprise/packages/health/ @fire22/devops-team @fire22/monitoring-team @fire22/backend-team
+enterprise/packages/maintenance/ @fire22/devops-team @fire22/operations-team @fire22/backend-team
+enterprise/packages/monitoring/ @fire22/monitoring-team @fire22/devops-team @fire22/infrastructure-team
+enterprise/packages/integration/ @fire22/integration-team @fire22/devops-team @fire22/backend-team
+
+# Documentation & Demo
+enterprise/packages/docs/ @fire22/content-team @fire22/technical-writing-team @fire22/documentation-team
+enterprise/packages/demo/ @fire22/demo-team @fire22/marketing-team @fire22/product-team
+enterprise/packages/projects/ @fire22/project-management-team @fire22/product-team @fire22/business-team
+
+# Collections & Utilities
+enterprise/packages/collections/ @fire22/backend-team @fire22/database-team @fire22/devops-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    CONFIGURATION FILES                      ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Global configuration files
+bunfig.toml @fire22/devops-team @fire22/architects
+global-config.fire22 @fire22/devops-team @fire22/architects
+package.json @fire22/devops-team @fire22/security-team
+
+# Environment and secrets
+.env* @fire22/security-team @fire22/devops-team
+secrets.json @fire22/security-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    DOCUMENTATION                           ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Documentation files
+*.md @fire22/content-team @fire22/technical-writing-team
+docs/ @fire22/content-team @fire22/technical-writing-team
+.github/ @fire22/devops-team @fire22/process-team
+
+# Enterprise documentation
+enterprise/docs-private/ @fire22/enterprise-admins @fire22/legal-team
+ENTERPRISE-ENHANCEMENT-*.md @fire22/enterprise-admins @fire22/content-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    CI/CD & WORKFLOWS                        ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# GitHub Actions and workflows (Technology Dept Head + CEO oversight)
+.github/workflows/ david-kim sarah-johnson
+.github/workflows/ci.yml david-kim sarah-johnson
+.github/workflows/security-scan.yml lisa-anderson mark-thompson
+.github/workflows/deploy.yml david-kim sarah-johnson
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    SPECIAL FILES & DIRECTORIES              ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Database and backups
+*.db @fire22/database-team @fire22/security-team
+*.sqlite* @fire22/database-team @fire22/security-team
+backups/ @fire22/database-team @fire22/security-team
+infrastructure/ @fire22/infrastructure-team @fire22/devops-team
+
+# Build artifacts and distributions
+dist/ @fire22/devops-team
+builds/ @fire22/devops-team
+releases/ @fire22/devops-team @fire22/release-team
+
+# Logs and monitoring
+logs/ @fire22/monitoring-team @fire22/devops-team
+coverage/ @fire22/qa-team @fire22/devops-team
+test-results/ @fire22/qa-team @fire22/devops-team
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    TEAM STRUCTURE                           ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Team definitions (for reference - actual teams configured in GitHub)
+# @fire22/enterprise-admins    - Executive oversight
+# @fire22/architects           - System architects
+# @fire22/core-team            - Core domain experts
+# @fire22/security-team        - Security specialists
+# @fire22/devops-team          - DevOps engineers
+# @fire22/cloud-team           - Cloud infrastructure
+# @fire22/backend-team         - Backend developers
+# @fire22/frontend-team        - Frontend developers
+# @fire22/mobile-team          - Mobile developers
+# @fire22/api-team             - API specialists
+# @fire22/database-team        - Database administrators
+# @fire22/analytics-team       - Data analysts
+# @fire22/finance-team         - Financial systems
+# @fire22/payments-team        - Payment systems
+# @fire22/betting-team         - Betting domain
+# @fire22/gaming-team          - Gaming domain
+# @fire22/users-team           - User management
+# @fire22/communication-team   - Communication systems
+# @fire22/content-team         - Content management
+# @fire22/compliance-team      - Compliance officers
+# @fire22/legal-team           - Legal team
+# @fire22/marketing-team       - Marketing team
+# @fire22/qa-team              - Quality assurance
+# @fire22/monitoring-team      - Monitoring specialists
+# @fire22/integration-team     - Integration specialists
+# @fire22/shared-team          - Shared utilities
+# @fire22/tools-team           - Tooling specialists
+# @fire22/demo-team            - Demo specialists
+# @fire22/project-management-team - Project managers
+# @fire22/technical-writing-team - Technical writers
+# @fire22/ui-team              - UI/UX designers
+# @fire22/risk-team            - Risk management
+# @fire22/audit-team           - Audit specialists
+# @fire22/vip-team             - VIP customer support
+# @fire22/process-team         - Process improvement
+# @fire22/release-team         - Release management
+# @fire22/operations-team      - Operations team
+# @fire22/infrastructure-team  - Infrastructure team
+# @fire22/performance-team     - Performance specialists
+# @fire22/business-team        - Business analysts
+
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                    APPROVAL MATRIX                          ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+# Critical changes require multiple approvals:
+# - Security changes: Security + Architecture approval
+# - Infrastructure changes: DevOps + Security approval
+# - Core domain changes: Core + Architecture approval
+# - API changes: API + Security approval
+# - Database changes: Database + DevOps approval
+# - Frontend changes: Frontend + UX approval
+
+# Emergency changes can bypass normal approval process
+# but must be reviewed within 24 hours by appropriate domain owners

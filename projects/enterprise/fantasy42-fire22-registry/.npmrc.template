@@ -1,0 +1,26 @@
+# 🔥 Fantasy42-Fire22 Scoped Registry Configuration
+# Principle of Least Privilege - Scoped Tokens Only
+
+# @fire22 Registry (read permissions)
+@fire22:registry=https://registry.npmjs.org/
+//registry.npmjs.org/:_authToken=${FIRE22_REGISTRY_TOKEN}
+
+# @enterprise Registry (read+write permissions)
+@enterprise:registry=https://registry.fire22.com/
+//registry.fire22.com/:_authToken=${FIRE22_ENTERPRISE_TOKEN}
+
+# @private Registry (read permissions)
+@private:registry=https://private.fire22.com/
+//private.fire22.com/:_authToken=${FIRE22_PRIVATE_TOKEN}
+
+# @sportsbet Registry (read permissions)
+@sportsbet:registry=https://registry.sportsbet.com/
+//registry.sportsbet.com/:_authToken=${SPORTSBET_REGISTRY_TOKEN}
+
+# User Agent Tracking
+# bunx automatically sets: CrystalClearArchitecture/2.0.0
+
+# Security Notes
+# - Never commit actual tokens to version control
+# - Use environment variables for token values
+# - Rotate tokens regularly for security

@@ -1,0 +1,288 @@
+/**
+ * Dashboard Component Styles
+ * Fire22 Dashboard-specific components
+ */
+
+/* Dashboard Container */
+.dashboard {
+  min-height: 100vh;
+  background: var(--bg-gradient-dark);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  background: var(--bg-gradient-card);
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-lg);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+}
+
+.dashboard-header__content {
+  max-width: 1536px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+/* Dashboard Brand */
+.dashboard-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  transition: transform var(--transition-base);
+}
+
+.dashboard-brand:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-brand__icon {
+  font-size: var(--font-size-4xl);
+  animation: flame-flicker 2s ease-in-out infinite alternate;
+}
+
+.dashboard-brand__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-brand__name {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-extrabold);
+  background: var(--fire22-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.05em;
+}
+
+.dashboard-brand__tagline {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-style: italic;
+  letter-spacing: 0.025em;
+}
+
+/* Dashboard Navigation */
+.dashboard-nav {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.dashboard-nav__link {
+  color: var(--text-secondary);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  font-weight: var(--font-medium);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.dashboard-nav__link:hover {
+  color: var(--fire22-primary);
+  background: rgba(253, 187, 45, 0.1);
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* Dashboard Main Content */
+.dashboard-main {
+  flex: 1;
+  padding: var(--space-2xl) var(--space-xl);
+  max-width: 1536px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Dashboard Tabs */
+.dashboard-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-2xl);
+  border-bottom: 1px solid var(--border-primary);
+  padding-bottom: var(--space-xs);
+  overflow-x: auto;
+}
+
+.dashboard-tab {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-weight: var(--font-medium);
+  border: 1px solid transparent;
+  position: relative;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.dashboard-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(253, 187, 45, 0.1), transparent);
+  transition: left var(--transition-base);
+}
+
+.dashboard-tab:hover::before {
+  left: 100%;
+}
+
+.dashboard-tab:hover {
+  background: rgba(253, 187, 45, 0.1);
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+}
+
+.dashboard-tab--active {
+  background: linear-gradient(135deg, rgba(253, 187, 45, 0.2), rgba(178, 31, 31, 0.2));
+  color: var(--fire22-primary);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.dashboard-grid--cols-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.dashboard-grid--cols-3 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.dashboard-grid--cols-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Dashboard Stats */
+.dashboard-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-lg);
+  background: var(--bg-gradient-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-primary);
+}
+
+.dashboard-stat {
+  text-align: center;
+  flex: 1;
+}
+
+.dashboard-stat__label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dashboard-stat__value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-bold);
+  color: var(--fire22-primary);
+}
+
+/* Dashboard Animations */
+@keyframes flame-flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-2deg);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1) rotate(2deg);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-animate-in {
+  animation: slide-up var(--duration-normal) ease-out;
+}
+
+/* Responsive Dashboard */
+@media (max-width: 768px) {
+  .dashboard-header__content {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .dashboard-nav {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dashboard-grid--cols-4 {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+/* Dashboard Loading State */
+.dashboard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--text-secondary);
+}
+
+.dashboard-loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-primary);
+  border-top-color: var(--fire22-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

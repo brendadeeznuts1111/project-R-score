@@ -1,0 +1,40 @@
+# Ultra-Fast Package Registry - Production Docker Image
+FROM oven/bun:latest AS base
+WORKDIR /app
+
+# Install dependencies
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile --production
+
+# Copy source code
+COPY . .
+
+# Build production bundle
+RUN bun run build-production.ts
+
+# Production stage
+FROM oven/bun:latest AS production
+WORKDIR /app
+
+# Copy built application
+COPY --from=base /app/dist ./dist
+COPY --from=base /app/package.json ./
+COPY --from=base /app/src ./src
+
+# Create non-root user
+RUN addgroup --system --gid 1001 bunjs
+RUN adduser --system --uid 1001 registry
+
+# Set permissions
+RUN chown -R registry:bunjs /app
+USER registry
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+# Start production server
+CMD ["bun", "run", "src/production-server.ts"]

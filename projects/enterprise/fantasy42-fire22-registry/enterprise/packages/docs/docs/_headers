@@ -1,0 +1,19 @@
+# Cloudflare Pages Headers for Dependency Analysis
+/dependency-analysis.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=300
+
+# Security headers for analysis reports
+/dependency-analysis-report.md
+  X-Robots-Tag: noindex
+  Content-Type: text/markdown
+
+/security-analysis-report.md
+  X-Robots-Tag: noindex
+  Content-Type: text/markdown
+
+# CORS headers for API endpoints
+/api/*
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization

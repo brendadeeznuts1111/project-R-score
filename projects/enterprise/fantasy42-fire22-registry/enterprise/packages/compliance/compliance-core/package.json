@@ -1,0 +1,53 @@
+{
+  "name": "@fire22-registry/compliance-core",
+  "version": "4.3.0",
+  "description": "Compliance core package for Fantasy42-Fire22 Registry",
+  "main": "src/audit-logger.ts",
+  "types": "src/audit-logger.ts",
+  "exports": {
+    ".": "./src/audit-logger.ts"
+  },
+  "scripts": {
+    "build": "bun build ./src/audit-logger.ts --outdir ./dist",
+    "build:demo": "bun run build-demo.js",
+    "test": "bun test",
+    "link": "bun link"
+  },
+  "dependencies": {
+    "@fire22-registry/core-security": "workspace:*",
+    "semver": "^7.7.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21"
+  },
+  "keywords": [
+    "fantasy42",
+    "fire22",
+    "compliance",
+    "audit",
+    "gdpr",
+    "pci",
+    "aml",
+    "typescript",
+    "bun"
+  ],
+  "author": "Fire22 Enterprise",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry.git",
+    "directory": "packages/compliance-core"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "fantasy42": {
+    "category": "compliance",
+    "compliance": [
+      "GDPR",
+      "PCI",
+      "AML"
+    ],
+    "security": "enterprise"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "fire22/dashboard-worker"
+    }
+  ],
+  "commit": [
+    "@changesets/cli/commit",
+    {
+      "skipCI": "version"
+    }
+  ],
+  "fixed": [
+    [
+      "@fire22/telegram-bot",
+      "@fire22/queue-system",
+      "@fire22/multilingual",
+      "@fire22/telegram-workflows",
+      "@fire22/telegram-dashboard",
+      "@fire22/telegram-benchmarks"
+    ]
+  ],
+  "linked": [["@fire22/pattern-system", "@fire22/api-consolidated"]],
+  "access": "restricted",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "onlyUpdatePeerDependentsWhenOutOfRange": true
+  },
+  "snapshot": {
+    "useCalculatedVersion": true,
+    "prereleaseTemplate": "{tag}-{datetime}"
+  },
+  "privatePackages": {
+    "version": true,
+    "tag": false
+  }
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Operations Department Updates</title>
+    <description>Department updates and announcements</description>
+    <link>https://fire22.com</link>
+    <language>en-us</language>
+    <managingEditor>ops@fire22.com</managingEditor>
+    <webMaster>admin@fire22.com</webMaster>
+    <lastBuildDate>Sat, 30 Aug 2025 15:36:51 GMT</lastBuildDate>
+    <ttl>60</ttl>
+    <atom:link href="https://fire22.com/feeds/operations.rss" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title><![CDATA[Infrastructure Scaling Complete]]></title>
+      <description><![CDATA[Successfully scaled infrastructure to handle 10x traffic]]></description>
+      <link>https://fire22.com/ops/scaling-complete</link>
+      <author>Ops Team</author>
+      <category>infrastructure</category>
+      <pubDate>undefined</pubDate>
+      <guid>https://fire22.com/feeds/operations/operations-1756568211377-9fz6vl5wr</guid>
+    </item>
+  </channel>
+</rss>

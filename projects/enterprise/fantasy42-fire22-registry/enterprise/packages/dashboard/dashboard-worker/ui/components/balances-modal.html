@@ -1,0 +1,1455 @@
+<!-- Balances Modal -->
+<div id="balances-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container large-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-wallet"></i>
+        Customer Balances Management
+      </h3>
+      <button type="button" class="modal-close" onclick="closeBalancesModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Dashboard Overview -->
+      <div class="balances-section">
+        <h4 class="section-title">
+          <i class="fas fa-chart-line"></i>
+          Balance Overview
+        </h4>
+
+        <div class="dashboard-cards">
+          <div class="metric-card">
+            <div class="metric-icon total">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="total-customers">0</div>
+              <div class="metric-label">Total Customers</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon active">
+              <i class="fas fa-user-check"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="active-customers">0</div>
+              <div class="metric-label">Active Customers</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon balance">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="total-balance">$0.00</div>
+              <div class="metric-label">Total Balance</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon available">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value" id="available-balance">$0.00</div>
+              <div class="metric-label">Available Balance</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="balances-section">
+        <h4 class="section-title">
+          <i class="fas fa-bolt"></i>
+          Quick Actions
+        </h4>
+
+        <div class="quick-actions">
+          <button class="btn btn-primary" onclick="showNewBalanceTransaction()">
+            <i class="fas fa-plus"></i>
+            New Transaction
+          </button>
+          <button class="btn btn-secondary" onclick="refreshBalances()">
+            <i class="fas fa-sync"></i>
+            Refresh
+          </button>
+          <button class="btn btn-info" onclick="exportBalances()">
+            <i class="fas fa-download"></i>
+            Export
+          </button>
+          <button class="btn btn-warning" onclick="showBalanceSettings()">
+            <i class="fas fa-cog"></i>
+            Settings
+          </button>
+        </div>
+      </div>
+
+      <!-- Customer Balance Lookup -->
+      <div class="balances-section">
+        <h4 class="section-title">
+          <i class="fas fa-search"></i>
+          Customer Balance Lookup
+        </h4>
+
+        <div class="customer-lookup">
+          <div class="lookup-form">
+            <div class="form-group">
+              <label for="lookup-customer-id">Customer ID:</label>
+              <input
+                type="text"
+                id="lookup-customer-id"
+                placeholder="Enter customer ID..."
+                onkeypress="handleLookupKeyPress(event)"
+              />
+            </div>
+            <button class="btn btn-primary" onclick="lookupCustomerBalance()">
+              <i class="fas fa-search"></i>
+              Lookup
+            </button>
+          </div>
+
+          <div class="customer-balance-display" id="customer-balance-display" style="display: none">
+            <div class="balance-header">
+              <h5 id="customer-name">Customer Name</h5>
+              <span class="customer-id" id="customer-id-display">CUST_001</span>
+            </div>
+
+            <div class="balance-details">
+              <div class="balance-item">
+                <span class="balance-label">Current Balance:</span>
+                <span class="balance-value" id="current-balance">$0.00</span>
+              </div>
+              <div class="balance-item">
+                <span class="balance-label">Available Balance:</span>
+                <span class="balance-value" id="available-balance-display">$0.00</span>
+              </div>
+              <div class="balance-item">
+                <span class="balance-label">Pending Withdrawals:</span>
+                <span class="balance-value pending" id="pending-withdrawals">$0.00</span>
+              </div>
+              <div class="balance-item">
+                <span class="balance-label">Credit Limit:</span>
+                <span class="balance-value" id="credit-limit">$0.00</span>
+              </div>
+            </div>
+
+            <div class="balance-actions">
+              <button class="btn btn-sm btn-success" onclick="showBalanceHistory()">
+                <i class="fas fa-history"></i>
+                View History
+              </button>
+              <button class="btn btn-sm btn-primary" onclick="adjustCustomerBalance()">
+                <i class="fas fa-sliders-h"></i>
+                Adjust Balance
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Customers Balances -->
+      <div class="balances-section">
+        <h4 class="section-title">
+          <i class="fas fa-table"></i>
+          All Customer Balances
+          <span class="customers-count" id="customers-count">(0 customers)</span>
+        </h4>
+
+        <!-- Filters -->
+        <div class="filters-row">
+          <div class="filter-group">
+            <label>Sort By:</label>
+            <select id="sort-by" onchange="loadAllBalances()">
+              <option value="balance">Balance</option>
+              <option value="customerName">Name</option>
+              <option value="lastActivity">Last Activity</option>
+              <option value="vipLevel">VIP Level</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Order:</label>
+            <select id="sort-order" onchange="loadAllBalances()">
+              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Min Balance:</label>
+            <input type="number" id="min-balance" placeholder="0.00" onchange="loadAllBalances()" />
+          </div>
+
+          <div class="filter-group">
+            <label>Max Balance:</label>
+            <input type="number" id="max-balance" placeholder="10000.00" onchange="loadAllBalances()" />
+          </div>
+
+          <button class="btn btn-secondary" onclick="clearBalanceFilters()">
+            <i class="fas fa-eraser"></i>
+            Clear
+          </button>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="balances-table-container">
+          <table class="balances-table" id="balances-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>VIP Level</th>
+                <th>Current Balance</th>
+                <th>Available Balance</th>
+                <th>Pending W/D</th>
+                <th>Last Activity</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="balances-table-body">
+              <!-- Customer rows will be populated here -->
+            </tbody>
+          </table>
+
+          <!-- Loading state -->
+          <div class="loading-spinner" id="balances-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading customer balances...</span>
+          </div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="balances-empty" style="display: none">
+            <i class="fas fa-users"></i>
+            <p>No customer balances found</p>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="balances-pagination" style="display: none">
+          <button class="btn btn-sm" id="prev-page" onclick="loadBalancesPage(currentBalancesPage - 1)">
+            <i class="fas fa-chevron-left"></i>
+            Previous
+          </button>
+          <span id="page-info">Page 1 of 1</span>
+          <button class="btn btn-sm" id="next-page" onclick="loadBalancesPage(currentBalancesPage + 1)">
+            Next
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="balance-info">
+        <span id="last-updated">Last updated: Loading...</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeBalancesModal()">
+          <i class="fas fa-times"></i>
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Balance History Modal -->
+<div id="balance-history-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container medium-modal">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-history"></i>
+        Balance History
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="balance-history-header">
+        <h5 id="history-customer-name">Customer Name</h5>
+        <p id="history-customer-id">Customer ID</p>
+      </div>
+
+      <div class="history-filters">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="history-from-date">From Date:</label>
+            <input type="date" id="history-from-date" onchange="filterBalanceHistory()" />
+          </div>
+          <div class="form-group">
+            <label for="history-to-date">To Date:</label>
+            <input type="date" id="history-to-date" onchange="filterBalanceHistory()" />
+          </div>
+          <button class="btn btn-sm btn-secondary" onclick="clearHistoryFilters()">Clear Filters</button>
+        </div>
+      </div>
+
+      <div class="balance-history-list" id="balance-history-list">
+        <!-- History entries will be populated here -->
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeBalanceHistoryModal()">
+          <i class="fas fa-times"></i>
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" onclick="exportBalanceHistory()">
+          <i class="fas fa-download"></i>
+          Export History
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Balance Adjustment Modal -->
+<div id="balance-adjustment-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container small-modal">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-sliders-h"></i>
+        Adjust Customer Balance
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <div class="current-balance-display">
+        <h5>Current Balance Information</h5>
+        <div class="balance-info">
+          <p>
+            <strong>Customer:</strong>
+            <span id="adj-customer-name">Customer Name</span>
+          </p>
+          <p>
+            <strong>Current Balance:</strong>
+            <span id="adj-current-balance">$0.00</span>
+          </p>
+          <p>
+            <strong>Available Balance:</strong>
+            <span id="adj-available-balance">$0.00</span>
+          </p>
+        </div>
+      </div>
+
+      <form id="balance-adjustment-form">
+        <div class="form-group">
+          <label for="adjustment-amount">Adjustment Amount:</label>
+          <input type="number" id="adjustment-amount" step="0.01" required />
+          <small class="form-hint">Use positive for deposits, negative for withdrawals</small>
+        </div>
+
+        <div class="form-group">
+          <label for="transaction-type">Transaction Type:</label>
+          <select id="transaction-type" required>
+            <option value="">Select Type</option>
+            <option value="deposit">Deposit</option>
+            <option value="withdrawal">Withdrawal</option>
+            <option value="adjustment">Manual Adjustment</option>
+            <option value="bonus">Bonus</option>
+            <option value="fee">Fee</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="adjustment-description">Description:</label>
+          <input type="text" id="adjustment-description" required placeholder="Brief description" />
+        </div>
+
+        <div class="form-group">
+          <label for="adjustment-reference">Reference:</label>
+          <input type="text" id="adjustment-reference" placeholder="Transaction reference" />
+        </div>
+
+        <div class="form-group">
+          <label for="adjustment-processed-by">Processed By:</label>
+          <input type="text" id="adjustment-processed-by" value="Agent" required />
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeBalanceAdjustmentModal()">
+          <i class="fas fa-times"></i>
+          Cancel
+        </button>
+        <button type="button" class="btn btn-success" onclick="processBalanceAdjustment()">
+          <i class="fas fa-check"></i>
+          Process Adjustment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Styles -->
+<style>
+  .large-modal .modal-container {
+    max-width: 1400px;
+    width: 95%;
+  }
+
+  .medium-modal .modal-container {
+    max-width: 800px;
+    width: 90%;
+  }
+
+  .small-modal .modal-container {
+    max-width: 500px;
+    width: 90%;
+  }
+
+  .dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 12px;
+    border: 2px solid var(--border-color, #e0e0e0);
+    transition: all 0.3s ease;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .metric-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    color: white;
+    font-size: 1.2rem;
+  }
+
+  .metric-icon.total {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+  }
+
+  .metric-icon.active {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+  }
+
+  .metric-icon.balance {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+  }
+
+  .metric-icon.available {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+  }
+
+  .metric-content {
+    flex: 1;
+  }
+
+  .metric-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color, #333333);
+    margin-bottom: 4px;
+  }
+
+  .metric-label {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .quick-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .customer-lookup {
+    margin-bottom: 24px;
+  }
+
+  .lookup-form {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: end;
+  }
+
+  .lookup-form .form-group {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .customer-balance-display {
+    background: var(--surface-secondary, #f8f9fa);
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid var(--border-color, #e0e0e0);
+  }
+
+  .balance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .balance-header h5 {
+    margin: 0;
+    color: var(--text-color, #333333);
+  }
+
+  .customer-id {
+    background: var(--primary-color, #007bff);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .balance-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .balance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  .balance-item:last-child {
+    border-bottom: none;
+  }
+
+  .balance-label {
+    font-weight: 500;
+    color: var(--text-color, #333333);
+  }
+
+  .balance-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--success-color, #28a745);
+  }
+
+  .balance-value.pending {
+    color: var(--warning-color, #ffc107);
+  }
+
+  .balance-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .filters-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    flex-wrap: wrap;
+  }
+
+  .filters-row .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 120px;
+  }
+
+  .filters-row label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-color, #333333);
+  }
+
+  .filters-row select,
+  .filters-row input {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+  }
+
+  .balances-table-container {
+    overflow-x: auto;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: white;
+  }
+
+  .balances-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .balances-table th,
+  .balances-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  .balances-table th {
+    background: var(--surface-secondary, #f8f9fa);
+    font-weight: 600;
+    color: var(--text-color, #333333);
+  }
+
+  .balances-table tbody tr:hover {
+    background: var(--surface-secondary, #f8f9fa);
+  }
+
+  .customer-name {
+    font-weight: 600;
+    color: var(--text-color, #333333);
+  }
+
+  .customer-id-cell {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+  }
+
+  .vip-badge {
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .vip-platinum {
+    background: rgba(255, 215, 0, 0.1);
+    color: #b8860b;
+  }
+
+  .vip-gold {
+    background: rgba(255, 215, 0, 0.2);
+    color: #daa520;
+  }
+
+  .vip-silver {
+    background: rgba(192, 192, 192, 0.2);
+    color: #708090;
+  }
+
+  .vip-bronze {
+    background: rgba(205, 127, 50, 0.2);
+    color: #a0522d;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .status-active {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--success-color, #198754);
+  }
+
+  .status-suspended {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color, #dc3545);
+  }
+
+  .customer-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+
+  .customers-count {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    font-weight: normal;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted, #666666);
+  }
+
+  .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  .history-filters {
+    margin-bottom: 20px;
+  }
+
+  .balance-history-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .history-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--surface-secondary, #f8f9fa);
+  }
+
+  .history-entry:last-child {
+    margin-bottom: 0;
+  }
+
+  .history-info {
+    flex: 1;
+  }
+
+  .history-description {
+    font-weight: 500;
+    color: var(--text-color, #333333);
+    margin-bottom: 4px;
+  }
+
+  .history-meta {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+  }
+
+  .history-amount {
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: right;
+    min-width: 100px;
+  }
+
+  .history-amount.positive {
+    color: var(--success-color, #28a745);
+  }
+
+  .history-amount.negative {
+    color: var(--danger-color, #dc3545);
+  }
+
+  .current-balance-display {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 8px;
+  }
+
+  .current-balance-display h5 {
+    margin: 0 0 12px 0;
+    color: var(--text-color, #333333);
+  }
+
+  .balance-info p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+  }
+
+  .form-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted, #666666);
+    margin-top: 4px;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .large-modal .modal-container {
+      width: 98%;
+      margin: 10px;
+    }
+
+    .dashboard-cards {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    .balance-details {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .filters-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filters-row .filter-group {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .filters-row label {
+      min-width: 80px;
+      margin-bottom: 0;
+    }
+
+    .lookup-form {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .lookup-form .form-group {
+      margin-bottom: 0;
+    }
+
+    .balance-actions {
+      flex-direction: column;
+    }
+
+    .balance-actions .btn {
+      width: 100%;
+    }
+
+    .customer-actions {
+      flex-direction: column;
+    }
+
+    .customer-actions .btn {
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .balances-table {
+      font-size: 0.9rem;
+    }
+
+    .balances-table th,
+    .balances-table td {
+      padding: 8px;
+    }
+
+    .quick-actions {
+      flex-direction: column;
+    }
+
+    .quick-actions .btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dashboard-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+      padding: 16px;
+    }
+
+    .metric-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+    }
+
+    .modal-container {
+      margin: 10px;
+      width: calc(100vw - 20px);
+    }
+  }
+</style>
+
+<!-- Balances Modal JavaScript -->
+<script>
+  // Global variables for balances
+  let currentBalancesPage = 1;
+  let balancesSummary = null;
+
+  // Balances Modal Functions
+  function openBalancesModal() {
+    const modal = document.getElementById('balances-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      // Load initial data
+      loadBalancesSummary();
+      loadAllBalances();
+    }
+  }
+
+  function closeBalancesModal() {
+    const modal = document.getElementById('balances-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  }
+
+  function closeBalanceHistoryModal() {
+    const modal = document.getElementById('balance-history-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  function closeBalanceAdjustmentModal() {
+    const modal = document.getElementById('balance-adjustment-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  async function loadBalancesSummary() {
+    try {
+      const response = await fetch('/api/other/balances/summary?page=1&limit=1000', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        balancesSummary = data.data.summary;
+        updateBalancesSummary(data.data.summary);
+      }
+    } catch (error) {
+      console.error('Error loading balances summary:', error);
+      showError('Failed to load balances summary');
+    }
+  }
+
+  function updateBalancesSummary(summary) {
+    document.getElementById('total-customers').textContent = summary.totalCustomers || 0;
+    document.getElementById('active-customers').textContent = summary.activeCustomers || 0;
+    document.getElementById('total-balance').textContent = `$${(summary.totalBalance || 0).toFixed(2)}`;
+    document.getElementById('available-balance').textContent = `$${(summary.totalAvailable || 0).toFixed(2)}`;
+  }
+
+  async function loadAllBalances(page = 1) {
+    const sortBy = document.getElementById('sort-by').value;
+    const sortOrder = document.getElementById('sort-order').value;
+    const minBalance = document.getElementById('min-balance').value;
+    const maxBalance = document.getElementById('max-balance').value;
+
+    const balancesTableBody = document.getElementById('balances-table-body');
+    const loadingSpinner = document.getElementById('balances-loading');
+    const emptyState = document.getElementById('balances-empty');
+    const pagination = document.getElementById('balances-pagination');
+
+    // Show loading
+    loadingSpinner.style.display = 'block';
+    balancesTableBody.style.display = 'none';
+    emptyState.style.display = 'none';
+    pagination.style.display = 'none';
+
+    try {
+      const params = new URLSearchParams();
+      params.append('page', page.toString());
+      params.append('limit', '20');
+      params.append('sortBy', sortBy);
+      params.append('sortOrder', sortOrder);
+
+      if (minBalance) params.append('minBalance', minBalance);
+      if (maxBalance) params.append('maxBalance', maxBalance);
+
+      const response = await fetch(`/api/other/balances/summary?${params}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        currentBalancesPage = page;
+        displayBalancesTable(data.data.customers);
+        updateBalancesPagination(data.data.pagination);
+        updateCustomersCount(data.data.customers.length);
+        updateLastUpdated();
+
+        // Hide loading, show table
+        loadingSpinner.style.display = 'none';
+        balancesTableBody.style.display = '';
+        pagination.style.display = data.data.pagination.totalPages > 1 ? '' : 'none';
+      } else {
+        showBalancesEmpty();
+      }
+    } catch (error) {
+      console.error('Error loading balances:', error);
+      loadingSpinner.style.display = 'none';
+      balancesTableBody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; color: var(--danger-color, #dc3545);">
+          <i class="fas fa-exclamation-triangle"></i>
+          Failed to load balances: ${error.message}
+        </td>
+      </tr>
+    `;
+      balancesTableBody.style.display = '';
+    }
+  }
+
+  function displayBalancesTable(customers) {
+    const tableBody = document.getElementById('balances-table-body');
+
+    if (!customers || customers.length === 0) {
+      showBalancesEmpty();
+      return;
+    }
+
+    tableBody.innerHTML = customers
+      .map(
+        customer => `
+    <tr>
+      <td>
+        <div class="customer-name">${customer.customerName}</div>
+        <div class="customer-id-cell">${customer.customerId}</div>
+      </td>
+      <td>
+        <span class="vip-badge vip-${customer.vipLevel.toLowerCase()}">
+          ${customer.vipLevel}
+        </span>
+      </td>
+      <td>$${customer.currentBalance.toFixed(2)}</td>
+      <td>$${customer.availableBalance.toFixed(2)}</td>
+      <td class="${customer.pendingWithdrawals > 0 ? 'pending' : ''}">
+        $${customer.pendingWithdrawals.toFixed(2)}
+      </td>
+      <td>${new Date(customer.lastActivity).toLocaleDateString()}</td>
+      <td>
+        <span class="status-badge status-${customer.accountStatus}">
+          ${customer.accountStatus}
+        </span>
+      </td>
+      <td>
+        <div class="customer-actions">
+          <button class="btn btn-sm btn-info" onclick="viewCustomerBalance('${customer.customerId}')">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button class="btn btn-sm btn-primary" onclick="adjustCustomerBalance('${customer.customerId}')">
+            <i class="fas fa-sliders-h"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `
+      )
+      .join('');
+  }
+
+  function showBalancesEmpty() {
+    const tableBody = document.getElementById('balances-table-body');
+    const loadingSpinner = document.getElementById('balances-loading');
+    const emptyState = document.getElementById('balances-empty');
+
+    loadingSpinner.style.display = 'none';
+    tableBody.style.display = 'none';
+    emptyState.style.display = 'flex';
+  }
+
+  function updateBalancesPagination(pagination) {
+    const paginationDiv = document.getElementById('balances-pagination');
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+
+    pageInfo.textContent = `Page ${pagination.page} of ${pagination.totalPages}`;
+    prevBtn.disabled = !pagination.hasPrevPage;
+    nextBtn.disabled = !pagination.hasNextPage;
+  }
+
+  function updateCustomersCount(count) {
+    document.getElementById('customers-count').textContent = `(${count} customers)`;
+  }
+
+  function updateLastUpdated() {
+    const now = new Date();
+    document.getElementById('last-updated').textContent = `Last updated: ${now.toLocaleString()}`;
+  }
+
+  function loadBalancesPage(page) {
+    loadAllBalances(page);
+  }
+
+  function clearBalanceFilters() {
+    document.getElementById('sort-by').value = 'balance';
+    document.getElementById('sort-order').value = 'desc';
+    document.getElementById('min-balance').value = '';
+    document.getElementById('max-balance').value = '';
+
+    loadAllBalances(1);
+  }
+
+  function handleLookupKeyPress(event) {
+    if (event.key === 'Enter') {
+      lookupCustomerBalance();
+    }
+  }
+
+  async function lookupCustomerBalance() {
+    const customerId = document.getElementById('lookup-customer-id').value.trim();
+
+    if (!customerId) {
+      showError('Please enter a customer ID');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/other/balances/customer?customerId=${encodeURIComponent(customerId)}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          showError('Customer not found');
+          return;
+        }
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        displayCustomerBalance(data.data);
+      }
+    } catch (error) {
+      console.error('Error looking up customer balance:', error);
+      showError('Failed to lookup customer balance');
+    }
+  }
+
+  function displayCustomerBalance(customerData) {
+    document.getElementById('customer-name').textContent = customerData.customerName;
+    document.getElementById('customer-id-display').textContent = customerData.customerId;
+    document.getElementById('current-balance').textContent = `$${customerData.currentBalance.toFixed(2)}`;
+    document.getElementById('available-balance-display').textContent = `$${customerData.availableBalance.toFixed(2)}`;
+    document.getElementById('pending-withdrawals').textContent = `$${customerData.pendingWithdrawals.toFixed(2)}`;
+    document.getElementById('credit-limit').textContent = `$${customerData.creditLimit.toFixed(2)}`;
+
+    document.getElementById('customer-balance-display').style.display = 'block';
+
+    // Store customer data for other operations
+    window.currentCustomerBalance = customerData;
+  }
+
+  function viewCustomerBalance(customerId) {
+    document.getElementById('lookup-customer-id').value = customerId;
+    lookupCustomerBalance();
+  }
+
+  async function showBalanceHistory() {
+    if (!window.currentCustomerBalance) {
+      showError('Please lookup a customer first');
+      return;
+    }
+
+    const customer = window.currentCustomerBalance;
+
+    document.getElementById('history-customer-name').textContent = customer.customerName;
+    document.getElementById('history-customer-id').textContent = customer.customerId;
+
+    // Set default date range (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    document.getElementById('history-from-date').value = thirtyDaysAgo.toISOString().split('T')[0];
+    document.getElementById('history-to-date').value = new Date().toISOString().split('T')[0];
+
+    await loadBalanceHistory();
+    document.getElementById('balance-history-modal').style.display = 'flex';
+  }
+
+  async function loadBalanceHistory() {
+    if (!window.currentCustomerBalance) return;
+
+    const customerId = window.currentCustomerBalance.customerId;
+    const fromDate = document.getElementById('history-from-date').value;
+    const toDate = document.getElementById('history-to-date').value;
+
+    try {
+      const params = new URLSearchParams();
+      params.append('customerId', customerId);
+      params.append('includeHistory', 'true');
+      if (fromDate) params.append('dateFrom', fromDate);
+      if (toDate) params.append('dateTo', toDate);
+
+      const response = await fetch(`/api/other/balances/customer?${params}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data && data.data.balanceHistory) {
+        displayBalanceHistory(data.data.balanceHistory, data.data.summary);
+      }
+    } catch (error) {
+      console.error('Error loading balance history:', error);
+      showError('Failed to load balance history');
+    }
+  }
+
+  function displayBalanceHistory(history, summary) {
+    const historyList = document.getElementById('balance-history-list');
+
+    if (!history || history.length === 0) {
+      historyList.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--text-muted, #666666);">
+        <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.5;"></i>
+        <div>No balance history found for the selected period</div>
+      </div>
+    `;
+      return;
+    }
+
+    // Add summary at the top
+    let html = `
+    <div class="history-summary" style="margin-bottom: 20px; padding: 16px; background: var(--surface-secondary, #f8f9fa); border-radius: 8px;">
+      <h6 style="margin: 0 0 12px 0; color: var(--text-color, #333333);">Summary</h6>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; font-size: 0.9rem;">
+        <div><strong>Total Deposits:</strong> $${summary.totalDeposits.toFixed(2)}</div>
+        <div><strong>Total Withdrawals:</strong> $${summary.totalWithdrawals.toFixed(2)}</div>
+        <div><strong>Total Bets:</strong> $${summary.totalBets.toFixed(2)}</div>
+        <div><strong>Total Wins:</strong> $${summary.totalWins.toFixed(2)}</div>
+        <div><strong>Net Profit:</strong> <span style="color: ${summary.netProfit >= 0 ? 'var(--success-color, #28a745)' : 'var(--danger-color, #dc3545)'};">$${summary.netProfit.toFixed(2)}</span></div>
+      </div>
+    </div>
+  `;
+
+    // Add history entries
+    html += history
+      .map(
+        entry => `
+    <div class="history-entry">
+      <div class="history-info">
+        <div class="history-description">${entry.description}</div>
+        <div class="history-meta">
+          ${new Date(entry.date).toLocaleString()} • ${entry.transaction}
+        </div>
+      </div>
+      <div class="history-amount ${entry.amount >= 0 ? 'positive' : 'negative'}">
+        ${entry.amount >= 0 ? '+' : ''}$${Math.abs(entry.amount).toFixed(2)}
+      </div>
+    </div>
+  `
+      )
+      .join('');
+
+    historyList.innerHTML = html;
+  }
+
+  function filterBalanceHistory() {
+    loadBalanceHistory();
+  }
+
+  function clearHistoryFilters() {
+    document.getElementById('history-from-date').value = '';
+    document.getElementById('history-to-date').value = '';
+    loadBalanceHistory();
+  }
+
+  function adjustCustomerBalance(customerId = null) {
+    let customer = null;
+
+    if (customerId) {
+      // Find customer from the table
+      // This would need to be implemented to find customer data from the table
+      showError('Please lookup the customer first using the search above');
+      return;
+    } else if (window.currentCustomerBalance) {
+      customer = window.currentCustomerBalance;
+    } else {
+      showError('Please lookup a customer first');
+      return;
+    }
+
+    // Populate adjustment modal
+    document.getElementById('adj-customer-name').textContent = customer.customerName;
+    document.getElementById('adj-current-balance').textContent = `$${customer.currentBalance.toFixed(2)}`;
+    document.getElementById('adj-available-balance').textContent = `$${customer.availableBalance.toFixed(2)}`;
+
+    // Reset form
+    document.getElementById('balance-adjustment-form').reset();
+
+    // Store customer for processing
+    window.adjustmentCustomer = customer;
+
+    document.getElementById('balance-adjustment-modal').style.display = 'flex';
+  }
+
+  async function processBalanceAdjustment() {
+    if (!window.adjustmentCustomer) {
+      showError('Customer information not available');
+      return;
+    }
+
+    const formData = {
+      customerId: window.adjustmentCustomer.customerId,
+      amount: parseFloat(document.getElementById('adjustment-amount').value),
+      transactionType: document.getElementById('transaction-type').value,
+      description: document.getElementById('adjustment-description').value,
+      reference: document.getElementById('adjustment-reference').value,
+      processedBy: document.getElementById('adjustment-processed-by').value,
+    };
+
+    // Validate required fields
+    if (!formData.amount || !formData.transactionType || !formData.description || !formData.processedBy) {
+      showError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/other/balances/update', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        showSuccess(data.message || 'Balance adjustment processed successfully');
+        closeBalanceAdjustmentModal();
+
+        // Refresh data
+        if (window.currentCustomerBalance && window.currentCustomerBalance.customerId === formData.customerId) {
+          lookupCustomerBalance(); // Refresh current customer lookup
+        }
+        loadAllBalances(); // Refresh table
+        loadBalancesSummary(); // Refresh summary
+      } else {
+        throw new Error(data.message || 'Failed to process balance adjustment');
+      }
+    } catch (error) {
+      console.error('Error processing balance adjustment:', error);
+      showError('Failed to process balance adjustment: ' + error.message);
+    }
+  }
+
+  function refreshBalances() {
+    loadBalancesSummary();
+    loadAllBalances();
+  }
+
+  function exportBalances() {
+    // This would export the current balances data to CSV
+    showError('Export functionality coming soon');
+  }
+
+  function exportBalanceHistory() {
+    // This would export the current customer's balance history to CSV
+    showError('Export functionality coming soon');
+  }
+
+  function showNewBalanceTransaction() {
+    showError('New transaction functionality coming soon');
+  }
+
+  function showBulkAdjustmentModal() {
+    showError('Bulk adjustments functionality coming soon');
+  }
+
+  function showBalanceSettings() {
+    showError('Balance settings functionality coming soon');
+  }
+
+  // Helper functions (should be defined elsewhere in your app)
+  function getAuthToken() {
+    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  }
+
+  function showSuccess(message) {
+    console.log('✅ Success:', message);
+    // Implement your success notification system
+    alert('Success: ' + message);
+  }
+
+  function showError(message) {
+    console.error('❌ Error:', message);
+    // Implement your error notification system
+    alert('Error: ' + message);
+  }
+
+  // Export functions for global access
+  window.openBalancesModal = openBalancesModal;
+  window.closeBalancesModal = closeBalancesModal;
+  window.closeBalanceHistoryModal = closeBalanceHistoryModal;
+  window.closeBalanceAdjustmentModal = closeBalanceAdjustmentModal;
+  window.loadAllBalances = loadAllBalances;
+  window.refreshBalances = refreshBalances;
+  window.exportBalances = exportBalances;
+</script>

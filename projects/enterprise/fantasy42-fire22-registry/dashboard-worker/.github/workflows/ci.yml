@@ -1,0 +1,385 @@
+name: 🔥 Fire22 Dashboard CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      run_full_suite:
+        description: 'Run complete test suite including benchmarks'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  BUN_VERSION: '1.2.21'
+  NODE_VERSION: '20'
+
+jobs:
+  # Detect which workspaces have changes
+  detect-changes:
+    name: 📋 Detect Workspace Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api-client: ${{ steps.changes.outputs.api-client }}
+      core-dashboard: ${{ steps.changes.outputs.core-dashboard }}
+      sports-betting: ${{ steps.changes.outputs.sports-betting }}
+      telegram-integration: ${{ steps.changes.outputs.telegram-integration }}
+      build-system: ${{ steps.changes.outputs.build-system }}
+      pattern-system: ${{ steps.changes.outputs.pattern-system }}
+      root-changes: ${{ steps.changes.outputs.root-changes }}
+      docs-changes: ${{ steps.changes.outputs.docs-changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            api-client:
+              - 'workspaces/@fire22-api-client/**'
+            core-dashboard:
+              - 'workspaces/@fire22-core-dashboard/**'
+            sports-betting:
+              - 'workspaces/@fire22-sports-betting/**'
+            telegram-integration:
+              - 'workspaces/@fire22-telegram-integration/**'
+            build-system:
+              - 'workspaces/@fire22-build-system/**'
+            pattern-system:
+              - 'workspaces/@fire22-pattern-system/**'
+            root-changes:
+              - 'package.json'
+              - 'bun.lock'
+              - 'tsconfig.json'
+              - 'src/**'
+              - 'scripts/**'
+            docs-changes:
+              - 'docs/**'
+              - '*.md'
+            rss-feeds:
+              - 'src/feeds/**'
+              - 'scripts/build-feeds*.ts'
+              - 'scripts/deploy-feeds.ts'
+              - 'scripts/validate-feeds.ts'
+
+  # Code quality and linting
+  code-quality:
+    name: 🔍 Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🎨 Format Check
+        run: bun run format:check
+
+      - name: 🔍 Lint Check
+        run: bun run lint
+
+      - name: 📝 TypeScript Check
+        run: bun run typecheck
+
+      - name: ✅ Quality Gate
+        run: bun run quality:check
+
+  # Security scanning
+  security-scan:
+    name: 🔒 Security Scanning
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔐 Security Audit
+        run: bun run security:audit
+
+      - name: 🛡️ Run Security Scanner
+        run: bun run security-demo
+
+      - name: 🔍 Dependency Vulnerability Check
+        run: bun audit
+
+      - name: 📋 Generate Security Report
+        run: |
+          echo "## 🔒 Security Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Security audit completed" >> $GITHUB_STEP_SUMMARY
+          echo "🛡️ Dependency scan completed" >> $GITHUB_STEP_SUMMARY
+
+  # Unit and integration tests
+  test-suite:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    needs: [detect-changes, code-quality]
+    strategy:
+      matrix:
+        workspace:
+          - api-client
+          - core-dashboard
+          - sports-betting
+          - telegram-integration
+          - build-system
+          - pattern-system
+    steps:
+      - uses: actions/checkout@v4
+        if: needs.detect-changes.outputs[matrix.workspace] == 'true' || needs.detect-changes.outputs.root-changes == 'true'
+
+      - uses: oven-sh/setup-bun@v1
+        if: needs.detect-changes.outputs[matrix.workspace] == 'true' || needs.detect-changes.outputs.root-changes == 'true'
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        if: needs.detect-changes.outputs[matrix.workspace] == 'true' || needs.detect-changes.outputs.root-changes == 'true'
+        run: bun install --frozen-lockfile
+
+      - name: 🧪 Run Tests
+        if: needs.detect-changes.outputs[matrix.workspace] == 'true' || needs.detect-changes.outputs.root-changes == 'true'
+        run: |
+          echo "Testing workspace: @fire22-${{ matrix.workspace }}"
+          bun test workspaces/@fire22-${{ matrix.workspace }}/ --coverage
+
+      - name: 🎯 Run Edge Case Tests
+        if: needs.detect-changes.outputs[matrix.workspace] == 'true' || needs.detect-changes.outputs.root-changes == 'true'
+        run: bun run scripts/edge-case-test-runner.ts
+
+  # Build verification across platforms
+  build-verification:
+    name: 🏗️ Build Verification
+    runs-on: ${{ matrix.os }}
+    needs: [detect-changes, code-quality]
+    if: needs.detect-changes.outputs.root-changes == 'true' || needs.detect-changes.outputs.build-system == 'true'
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: macos
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🏗️ Build Standard
+        run: bun run build:standard
+
+      - name: 🚀 Build Enhanced Executables
+        run: bun run scripts/enhanced-executable-builder.ts
+
+      - name: ✅ Verify Build Output
+        shell: bash
+        run: |
+          if [ -d "dist/executables" ]; then
+            echo "✅ Executables built successfully for ${{ matrix.platform }}"
+            ls -la dist/executables/
+          else
+            echo "❌ Build failed - no executables directory found"
+            exit 1
+          fi
+
+      - name: 📦 Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fire22-executables-${{ matrix.platform }}
+          path: dist/executables/
+          retention-days: 7
+
+  # Performance benchmarking
+  performance-benchmarks:
+    name: ⚡ Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-suite]
+    if: needs.detect-changes.outputs.root-changes == 'true' || github.event.inputs.run_full_suite == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: ⚡ Run Benchmark Suite
+        run: bun run bench
+
+      - name: 📊 Performance Report
+        run: |
+          echo "## ⚡ Performance Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          if [ -f "benchmark-results.json" ]; then
+            cat benchmark-results.json >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📈 Upload Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            benchmark-results.json
+            standalone-benchmark-results.json
+          retention-days: 30
+
+  # RSS Feeds Build and Validation
+  rss-feeds:
+    name: 📡 RSS Feeds Build & Deploy
+    runs-on: ubuntu-latest
+    needs: [detect-changes, code-quality]
+    if: needs.detect-changes.outputs.rss-feeds == 'true' || needs.detect-changes.outputs.root-changes == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 📡 Build RSS Feeds Module
+        run: bun run scripts/build-feeds-module.ts
+
+      - name: 🔧 Build RSS Feeds
+        run: bun run feeds:build
+
+      - name: ✅ Validate RSS Feeds
+        run: |
+          # Validate all RSS/Atom feeds
+          for feed in src/feeds/*.xml; do
+            echo "Validating $feed..."
+            xmllint --noout "$feed" || exit 1
+          done
+
+      - name: 🧪 Test RSS Feed Handler
+        run: |
+          bun test src/feeds-handler.ts
+          bun test scripts/build-feeds-module.ts
+
+      - name: 📊 RSS Feed Report
+        run: |
+          echo "## 📡 RSS Feeds Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "### Feed Files Generated:" >> $GITHUB_STEP_SUMMARY
+          ls -la src/feeds/*.xml | awk '{print "- " $9 " (" $5 " bytes)"}' >> $GITHUB_STEP_SUMMARY
+          echo "### Feed Module Size:" >> $GITHUB_STEP_SUMMARY
+          ls -lh src/feeds-content.ts | awk '{print $5}' >> $GITHUB_STEP_SUMMARY
+
+      - name: 📦 Upload RSS Feed Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rss-feeds
+          path: |
+            src/feeds/*.xml
+            src/feeds/*.html
+            src/feeds-content.ts
+          retention-days: 7
+
+  # Workspace orchestration tests
+  workspace-health:
+    name: 🏢 Workspace Health Check
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🏥 Workspace Health Monitor
+        run: bun run scripts/workspace-health-monitor.ts
+
+      - name: 🔍 Workspace Consistency Check
+        run: bun run scripts/workspace-consistency-validator.ts
+
+      - name: 📋 Generate Health Report
+        run: |
+          echo "## 🏢 Workspace Health Status" >> $GITHUB_STEP_SUMMARY
+          if [ -f "workspace-health-report.json" ]; then
+            echo "✅ Health check completed - see workspace-health-report.json" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Documentation verification
+  docs-verification:
+    name: 📚 Documentation Verification
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.docs-changes == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔍 Check Documentation Links
+        run: |
+          echo "📚 Verifying documentation structure..."
+          find docs/ -name "*.md" -o -name "*.html" | head -10
+
+      - name: 🏗️ Build Documentation
+        run: |
+          if [ -f "bun run build:docs" ]; then
+            bun run build:docs
+          fi
+
+  # Final status check
+  ci-success:
+    name: ✅ CI Pipeline Success
+    runs-on: ubuntu-latest
+    needs:
+      - detect-changes
+      - code-quality
+      - security-scan
+      - test-suite
+      - build-verification
+      - workspace-health
+    if: always()
+    steps:
+      - name: 📋 Check Results
+        run: |
+          if [[ "${{ needs.code-quality.result }}" == "success" && \
+                "${{ needs.security-scan.result }}" == "success" && \
+                ("${{ needs.test-suite.result }}" == "success" || "${{ needs.test-suite.result }}" == "skipped") && \
+                ("${{ needs.build-verification.result }}" == "success" || "${{ needs.build-verification.result }}" == "skipped") && \
+                "${{ needs.workspace-health.result }}" == "success" ]]; then
+            echo "🎉 All CI checks passed!"
+            echo "✅ Code quality: ${{ needs.code-quality.result }}"
+            echo "🔒 Security scan: ${{ needs.security-scan.result }}"
+            echo "🧪 Test suite: ${{ needs.test-suite.result }}"
+            echo "🏗️ Build verification: ${{ needs.build-verification.result }}"
+            echo "🏢 Workspace health: ${{ needs.workspace-health.result }}"
+          else
+            echo "❌ Some CI checks failed"
+            exit 1
+          fi

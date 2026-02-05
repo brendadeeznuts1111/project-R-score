@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Dashboard - Staging Preview Environment 🎭</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: rgba(10, 14, 39, 0.95);
+        border-bottom: 2px solid rgba(64, 224, 208, 0.3);
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #40e0d0, #1e90ff);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .logo-title {
+        font-size: 24px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #40e0d0, #1e90ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .logo-subtitle {
+        font-size: 12px;
+        color: #64b5f6;
+        opacity: 0.8;
+      }
+
+      /* Staging Banner */
+      .staging-banner {
+        background: linear-gradient(135deg, #f59e0b, #fb923c);
+        color: white;
+        text-align: center;
+        padding: 0.75rem;
+        font-weight: bold;
+        position: sticky;
+        top: 0;
+        z-index: 1001;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        border-bottom: 2px solid #fed7aa;
+      }
+
+      /* Tab Navigation */
+      .tab-navigation {
+        background: rgba(20, 25, 50, 0.8);
+        border-bottom: 1px solid rgba(64, 224, 208, 0.3);
+        padding: 0 20px;
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 104px;
+        z-index: 99;
+      }
+
+      .tab-nav-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        gap: 0;
+      }
+
+      .tab-button {
+        background: transparent;
+        border: none;
+        color: #64748b;
+        padding: 15px 25px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .tab-button:hover {
+        color: #40e0d0;
+        background: rgba(64, 224, 208, 0.05);
+      }
+
+      .tab-button.active {
+        color: #40e0d0;
+        border-bottom-color: #40e0d0;
+        background: rgba(64, 224, 208, 0.1);
+      }
+
+      .tab-button.staging {
+        color: #f59e0b;
+      }
+
+      .tab-button.staging:hover,
+      .tab-button.staging.active {
+        color: #fb923c;
+        border-bottom-color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+      }
+
+      .tab-badge {
+        position: absolute;
+        top: 5px;
+        right: 8px;
+        background: #ef4444;
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 16px;
+        text-align: center;
+      }
+
+      .tab-badge.staging {
+        background: #f59e0b;
+      }
+
+      /* Tab Content */
+      .tab-content {
+        display: none;
+        flex: 1;
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Staging Tab Specific Styles */
+      .staging-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .staging-card {
+        background: rgba(20, 25, 50, 0.6);
+        border: 2px solid rgba(245, 158, 11, 0.3);
+        border-radius: 12px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      .staging-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+      }
+
+      .staging-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .staging-card-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #f59e0b, #fb923c);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .staging-card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #f59e0b;
+      }
+
+      .staging-metric {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+      }
+
+      .staging-metric:last-child {
+        border-bottom: none;
+      }
+
+      .staging-metric-label {
+        color: #94a3b8;
+        font-size: 14px;
+      }
+
+      .staging-metric-value {
+        color: #f59e0b;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .status-dot.healthy {
+        background: #10b981;
+      }
+      .status-dot.warning {
+        background: #f59e0b;
+      }
+      .status-dot.error {
+        background: #ef4444;
+      }
+
+      /* Actions */
+      .staging-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+
+      .staging-btn {
+        background: linear-gradient(135deg, #f59e0b, #fb923c);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .staging-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+      }
+
+      .staging-btn.secondary {
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+      }
+
+      .staging-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Live Stats */
+      .live-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 30px 0;
+      }
+
+      .live-stat {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+      }
+
+      .live-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #f59e0b;
+        margin-bottom: 5px;
+      }
+
+      .live-stat-label {
+        color: #94a3b8;
+        font-size: 12px;
+      }
+
+      /* Terminal for staging */
+      .staging-terminal {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 30px;
+        font-family: 'Monaco', 'Menlo', monospace;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .staging-terminal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+      }
+
+      .staging-terminal-title {
+        color: #f59e0b;
+        font-weight: bold;
+      }
+
+      .staging-terminal-status {
+        color: #10b981;
+        font-size: 12px;
+      }
+
+      .staging-log-entry {
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+        display: flex;
+        gap: 12px;
+      }
+
+      .staging-log-time {
+        color: #64748b;
+        font-size: 12px;
+        min-width: 60px;
+      }
+
+      .staging-log-level {
+        min-width: 50px;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+
+      .staging-log-level.info {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+      }
+
+      .staging-log-level.warn {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+      }
+
+      .staging-log-level.error {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      .staging-log-message {
+        flex: 1;
+        color: #e0e6ed;
+        font-size: 13px;
+      }
+
+      /* Regular dashboard styles (condensed) */
+      .version-section {
+        background: rgba(20, 25, 50, 0.5);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .performance-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: rgba(20, 25, 50, 0.6);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .version-tag {
+        font-family: monospace;
+        background: rgba(64, 224, 208, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        color: #40e0d0;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+
+        .staging-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tab-nav-content {
+          flex-wrap: wrap;
+        }
+
+        .staging-actions {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Staging Banner -->
+    <div class="staging-banner">
+      ⚠️ STAGING ENVIRONMENT - Fire22 Dashboard v4.0.0-staging - Preview Build - Not for Production Use
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">🎭</div>
+          <div class="logo-text">
+            <div class="logo-title">Fire22 Water Dashboard</div>
+            <div class="logo-subtitle">Staging Preview Environment</div>
+          </div>
+        </div>
+        <div>
+          <span class="version-tag">[pk:@water/dashboard@4.0.0-staging]</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-navigation">
+      <div class="tab-nav-content">
+        <button class="tab-button active" onclick="switchTab('dashboard')">🌊 Dashboard</button>
+        <button class="tab-button staging" onclick="switchTab('staging')">
+          🎭 Staging Preview
+          <span class="tab-badge staging">LIVE</span>
+        </button>
+        <button class="tab-button" onclick="switchTab('telegram')">
+          📱 Telegram System
+          <span class="tab-badge">NEW</span>
+        </button>
+        <button class="tab-button" onclick="switchTab('performance')">📊 Performance</button>
+        <button class="tab-button" onclick="switchTab('logs')">📋 System Logs</button>
+      </div>
+    </nav>
+
+    <!-- Tab Content Container -->
+    <main style="flex: 1; display: flex; flex-direction: column">
+      <!-- Dashboard Tab -->
+      <div class="tab-content active" id="dashboard-tab">
+        <div class="version-section">
+          <h2 style="margin-bottom: 15px; color: #40e0d0">🌊 Water Dashboard - Bun Enhanced Edition</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+            <div>
+              <p style="margin-bottom: 10px">
+                <strong>v4.0.0-staging</strong>
+                • Bun Enhanced Edition with HMR + Security •
+                <span class="version-tag">[pk:@water/dashboard@4.0.0-staging]</span>
+              </p>
+              <p style="color: #64b5f6; font-size: 14px">
+                Advanced water management dashboard powered by Bun runtime with hot module replacement, enhanced
+                security features, and real-time monitoring capabilities.
+              </p>
+            </div>
+            <div style="text-align: right">
+              <div style="color: #4ade80; font-size: 24px; font-weight: bold">OPERATIONAL</div>
+              <div style="color: #64748b; font-size: 14px">All systems nominal</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="performance-stats">
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #4ade80; margin-bottom: 10px">98.7%</div>
+            <div style="color: #64b5f6">System Uptime</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #40e0d0; margin-bottom: 10px">1.2ms</div>
+            <div style="color: #64b5f6">Response Time</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #f59e0b; margin-bottom: 10px">847</div>
+            <div style="color: #64b5f6">Active Sessions</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #8b5cf6; margin-bottom: 10px">42MB</div>
+            <div style="color: #64b5f6">Memory Usage</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Staging Tab -->
+      <div class="tab-content" id="staging-tab">
+        <h2 style="color: #f59e0b; margin-bottom: 30px; text-align: center">
+          🎭 Fire22 Telegram System - Staging Preview
+        </h2>
+
+        <!-- Live Statistics -->
+        <div class="live-stats">
+          <div class="live-stat">
+            <div class="live-stat-value" id="staging-active-users">42</div>
+            <div class="live-stat-label">Active Users</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-value" id="staging-messages-hour">324</div>
+            <div class="live-stat-label">Messages/Hour</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-value" id="staging-queue-matches">18</div>
+            <div class="live-stat-label">Queue Matches</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-value" id="staging-translations">1,847</div>
+            <div class="live-stat-label">Translations</div>
+          </div>
+          <div class="live-stat">
+            <div class="live-stat-value" id="staging-uptime">24h</div>
+            <div class="live-stat-label">Uptime</div>
+          </div>
+        </div>
+
+        <!-- Staging System Cards -->
+        <div class="staging-grid">
+          <!-- System Status -->
+          <div class="staging-card">
+            <div class="staging-card-header">
+              <div class="staging-card-icon">🔥</div>
+              <div class="staging-card-title">System Status</div>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Bot Status</span>
+              <span class="staging-metric-value">
+                <span class="status-dot healthy"></span>
+                Online
+              </span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Queue System</span>
+              <span class="staging-metric-value">
+                <span class="status-dot healthy"></span>
+                Active
+              </span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Language System</span>
+              <span class="staging-metric-value">
+                <span class="status-dot healthy"></span>
+                4 Languages
+              </span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Workflows</span>
+              <span class="staging-metric-value">
+                <span class="status-dot healthy"></span>
+                6 Departments
+              </span>
+            </div>
+          </div>
+
+          <!-- Performance Metrics -->
+          <div class="staging-card">
+            <div class="staging-card-header">
+              <div class="staging-card-icon">📊</div>
+              <div class="staging-card-title">Performance</div>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Response Time</span>
+              <span class="staging-metric-value" id="staging-response-time">45ms</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Throughput</span>
+              <span class="staging-metric-value">1,250 req/s</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Memory Usage</span>
+              <span class="staging-metric-value" id="staging-memory">82MB</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Error Rate</span>
+              <span class="staging-metric-value">0.02%</span>
+            </div>
+          </div>
+
+          <!-- Bun Runtime -->
+          <div class="staging-card">
+            <div class="staging-card-header">
+              <div class="staging-card-icon">🚀</div>
+              <div class="staging-card-title">Bun Runtime</div>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Version</span>
+              <span class="staging-metric-value" id="bun-version">Loading...</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Hot Reload</span>
+              <span class="staging-metric-value">
+                <span class="status-dot healthy"></span>
+                Active
+              </span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Install Speed</span>
+              <span class="staging-metric-value">8.5x faster</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">TypeScript</span>
+              <span class="staging-metric-value">Native</span>
+            </div>
+          </div>
+
+          <!-- Test Results -->
+          <div class="staging-card">
+            <div class="staging-card-header">
+              <div class="staging-card-icon">🧪</div>
+              <div class="staging-card-title">Test Results</div>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Total Tests</span>
+              <span class="staging-metric-value" id="test-total">253</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Passed</span>
+              <span class="staging-metric-value" style="color: #10b981" id="test-passed">251</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Failed</span>
+              <span class="staging-metric-value" style="color: #ef4444" id="test-failed">2</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Coverage</span>
+              <span class="staging-metric-value" id="test-coverage">94%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="staging-actions">
+          <button class="staging-btn" onclick="refreshStagingData()">🔄 Refresh Data</button>
+          <button class="staging-btn" onclick="runStagingTests()" id="test-btn">🧪 Run Tests</button>
+          <a href="http://localhost:3001/api/health" target="_blank" class="staging-btn secondary">💓 Health Check</a>
+          <a href="http://localhost:3001/dashboard" target="_blank" class="staging-btn secondary">🎭 Full Dashboard</a>
+        </div>
+
+        <!-- Live Terminal -->
+        <div class="staging-terminal">
+          <div class="staging-terminal-header">
+            <div class="staging-terminal-title">🔥 Live Staging Logs</div>
+            <div class="staging-terminal-status">● CONNECTED</div>
+          </div>
+          <div id="staging-logs">
+            <div class="staging-log-entry">
+              <div class="staging-log-time">12:34</div>
+              <div class="staging-log-level info">INFO</div>
+              <div class="staging-log-message">🎭 Staging server started on port 3001</div>
+            </div>
+            <div class="staging-log-entry">
+              <div class="staging-log-time">12:35</div>
+              <div class="staging-log-level info">INFO</div>
+              <div class="staging-log-message">📱 Telegram bot connected and ready</div>
+            </div>
+            <div class="staging-log-entry">
+              <div class="staging-log-time">12:35</div>
+              <div class="staging-log-level info">INFO</div>
+              <div class="staging-log-message">🔄 P2P queue system initialized</div>
+            </div>
+            <div class="staging-log-entry">
+              <div class="staging-log-time">12:35</div>
+              <div class="staging-log-level info">INFO</div>
+              <div class="staging-log-message">🌐 Language system loaded with 77 codes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telegram Tab -->
+      <div class="tab-content" id="telegram-tab">
+        <h2 style="color: #40e0d0; margin-bottom: 30px">📱 Fire22 Telegram Integration System</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+          <div class="staging-card" style="border-color: rgba(64, 224, 208, 0.3)">
+            <div class="staging-card-header">
+              <div class="staging-card-icon" style="background: linear-gradient(135deg, #40e0d0, #1e90ff)">📱</div>
+              <div class="staging-card-title" style="color: #40e0d0">Bot System</div>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Bot Framework</span>
+              <span class="staging-metric-value" style="color: #40e0d0">Grammy</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Languages</span>
+              <span class="staging-metric-value" style="color: #40e0d0">EN/ES/PT/FR</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Language Codes</span>
+              <span class="staging-metric-value" style="color: #40e0d0">77 total</span>
+            </div>
+          </div>
+
+          <div class="staging-card" style="border-color: rgba(64, 224, 208, 0.3)">
+            <div class="staging-card-header">
+              <div class="staging-card-icon" style="background: linear-gradient(135deg, #40e0d0, #1e90ff)">🎯</div>
+              <div class="staging-card-title" style="color: #40e0d0">Queue System</div>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Matching Algorithm</span>
+              <span class="staging-metric-value" style="color: #40e0d0">Intelligent P2P</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Match Speed</span>
+              <span class="staging-metric-value" style="color: #40e0d0">&lt; 50ms</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Payment Types</span>
+              <span class="staging-metric-value" style="color: #40e0d0">6 supported</span>
+            </div>
+          </div>
+
+          <div class="staging-card" style="border-color: rgba(64, 224, 208, 0.3)">
+            <div class="staging-card-header">
+              <div class="staging-card-icon" style="background: linear-gradient(135deg, #40e0d0, #1e90ff)">🔄</div>
+              <div class="staging-card-title" style="color: #40e0d0">Workflows</div>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Departments</span>
+              <span class="staging-metric-value" style="color: #40e0d0">6 active</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Access Levels</span>
+              <span class="staging-metric-value" style="color: #40e0d0">23 roles</span>
+            </div>
+            <div class="staging-metric">
+              <span class="staging-metric-label">Commands</span>
+              <span class="staging-metric-value" style="color: #40e0d0">25+ available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Tab -->
+      <div class="tab-content" id="performance-tab">
+        <h2 style="color: #40e0d0; margin-bottom: 30px">📊 Performance Monitoring</h2>
+        <div class="performance-stats">
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #4ade80; margin-bottom: 10px">0.8ms</div>
+            <div style="color: #64b5f6">Translation Speed</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #40e0d0; margin-bottom: 10px">42ms</div>
+            <div style="color: #64b5f6">Queue Matching</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #f59e0b; margin-bottom: 10px">5ms</div>
+            <div style="color: #64b5f6">Workflow Routing</div>
+          </div>
+          <div class="stat-card">
+            <div style="font-size: 32px; color: #8b5cf6; margin-bottom: 10px">950/s</div>
+            <div style="color: #64b5f6">SSE Events</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logs Tab -->
+      <div class="tab-content" id="logs-tab">
+        <h2 style="color: #40e0d0; margin-bottom: 30px">📋 System Logs</h2>
+        <div class="staging-terminal">
+          <div class="staging-terminal-header">
+            <div class="staging-terminal-title">🔥 System Log Stream</div>
+            <div class="staging-terminal-status">● LIVE</div>
+          </div>
+          <div id="system-logs">
+            <div class="staging-log-entry">
+              <div class="staging-log-time">12:36</div>
+              <div class="staging-log-level info">INFO</div>
+              <div class="staging-log-message">🌊 Water dashboard initialized successfully</div>
+            </div>
+            <div class="staging-log-entry">
+              <div class="staging-log-time">12:36</div>
+              <div class="staging-log-level info">INFO</div>
+              <div class="staging-log-message">🚀 Bun runtime v1.2.20 detected</div>
+            </div>
+            <div class="staging-log-entry">
+              <div class="staging-log-time">12:37</div>
+              <div class="staging-log-level info">INFO</div>
+              <div class="staging-log-message">📡 WebSocket connections established</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Tab Management
+      function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.add('active');
+
+        // Add active class to clicked button
+        event.target.classList.add('active');
+      }
+
+      // Staging Functions
+      async function refreshStagingData() {
+        try {
+          const response = await fetch('http://localhost:3001/api/staging/status');
+          const data = await response.json();
+
+          // Update UI elements
+          document.getElementById('staging-active-users').textContent = data.stats.activeUsers;
+          document.getElementById('staging-messages-hour').textContent = data.stats.messagesPerHour;
+          document.getElementById('staging-queue-matches').textContent = data.stats.queueMatches;
+          document.getElementById('staging-translations').textContent = data.stats.translations.toLocaleString();
+          document.getElementById('staging-response-time').textContent = data.performance.responseTime;
+          document.getElementById('staging-memory').textContent = data.performance.memory;
+          document.getElementById('bun-version').textContent = data.bunInfo.version;
+
+          addStagingLog('INFO', '🔄 Data refreshed successfully');
+        } catch (error) {
+          addStagingLog('ERROR', '❌ Failed to refresh data: ' + error.message);
+        }
+      }
+
+      async function runStagingTests() {
+        const testBtn = document.getElementById('test-btn');
+        testBtn.disabled = true;
+        testBtn.textContent = '🔄 Running Tests...';
+
+        addStagingLog('INFO', '🧪 Starting test suite execution');
+
+        try {
+          const response = await fetch('http://localhost:3001/api/staging/test', {
+            method: 'POST',
+          });
+          const results = await response.json();
+
+          // Update test results
+          document.getElementById('test-total').textContent = results.tests.total;
+          document.getElementById('test-passed').textContent = results.tests.passed;
+          document.getElementById('test-failed').textContent = results.tests.failed;
+          document.getElementById('test-coverage').textContent = results.tests.coverage;
+
+          addStagingLog('INFO', `✅ Tests completed: ${results.tests.passed}/${results.tests.total} passed`);
+        } catch (error) {
+          addStagingLog('ERROR', '❌ Test execution failed: ' + error.message);
+        } finally {
+          testBtn.disabled = false;
+          testBtn.textContent = '🧪 Run Tests';
+        }
+      }
+
+      function addStagingLog(level, message) {
+        const logsContainer = document.getElementById('staging-logs');
+        const time = new Date().toLocaleTimeString('en-US', {
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        const logEntry = document.createElement('div');
+        logEntry.className = 'staging-log-entry';
+        logEntry.innerHTML = `
+                <div class="staging-log-time">${time}</div>
+                <div class="staging-log-level ${level.toLowerCase()}">${level}</div>
+                <div class="staging-log-message">${message}</div>
+            `;
+
+        logsContainer.appendChild(logEntry);
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+
+        // Keep only last 50 entries
+        while (logsContainer.children.length > 50) {
+          logsContainer.removeChild(logsContainer.firstChild);
+        }
+      }
+
+      // SSE Connection for live updates
+      function connectSSE() {
+        try {
+          const eventSource = new EventSource('http://localhost:3001/api/dashboard/stream');
+
+          eventSource.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'dashboard_update') {
+              // Update metrics silently
+              updateMetricsFromSSE(data.data);
+            }
+          };
+
+          eventSource.onerror = function (error) {
+            addStagingLog('WARN', '📡 SSE connection lost, attempting reconnect...');
+          };
+
+          addStagingLog('INFO', '📡 Connected to live data stream');
+        } catch (error) {
+          addStagingLog('ERROR', '❌ Failed to connect to SSE: ' + error.message);
+        }
+      }
+
+      function updateMetricsFromSSE(data) {
+        if (data.botStatus) {
+          document.getElementById('staging-active-users').textContent = data.botStatus.activeUsers;
+          document.getElementById('staging-messages-hour').textContent = data.botStatus.messagesPerHour;
+        }
+        if (data.queueData) {
+          document.getElementById('staging-queue-matches').textContent = data.queueData.matchedPairs;
+        }
+        if (data.languageStats) {
+          document.getElementById('staging-translations').textContent =
+            data.languageStats.translationRequests.toLocaleString();
+        }
+      }
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function () {
+        // Set Bun version
+        document.getElementById('bun-version').textContent = 'v1.2.20';
+
+        // Connect to SSE
+        connectSSE();
+
+        // Initial data load
+        refreshStagingData();
+
+        // Auto-refresh every 30 seconds
+        setInterval(refreshStagingData, 30000);
+
+        // Add some initial logs
+        setTimeout(() => addStagingLog('INFO', '🎭 Staging dashboard loaded and ready'), 1000);
+        setTimeout(() => addStagingLog('INFO', '🔥 Hot reload monitoring active'), 2000);
+        setTimeout(() => addStagingLog('INFO', '📊 Performance metrics collection started'), 3000);
+      });
+    </script>
+
+    <!-- ==================== FIRE22 DASHBOARD WORKER FOOTER v4.0.0-staging ==================== -->
+    <!-- Generated with [pk:fire22-dashboard-worker@4.0.0-staging] -->
+    <footer
+      style="
+        margin-top: 60px;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+        color: #e2e8f0;
+        font-family: 'SF Mono', 'Monaco', 'Fira Code', monospace;
+        position: relative;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+        border-radius: 15px;
+      "
+    >
+      <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+        ╭────────────────────────────────────────────────────────────────────────╮
+      </div>
+
+      <div style="padding: 30px 0">
+        <!-- Fire22 Dashboard Worker Branding -->
+        <div style="padding: 30px 0">
+          <div
+            style="
+              font-size: 3rem;
+              color: #fdbb2d;
+              text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+              animation: flame-flicker 2s ease-in-out infinite;
+            "
+          >
+            🔥
+          </div>
+          <h2 style="font-size: 2rem; color: #fdbb2d; margin: 10px 0; font-weight: 700; letter-spacing: 2px">
+            Fire22 Dashboard Worker
+          </h2>
+          <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; font-style: italic">
+            Enhanced with Bun v1.01.04-alpha features and native Bun.semver version management
+          </p>
+          <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 10px">
+            Version:
+            <span style="color: #fdbb2d; font-weight: bold">4.0.0-staging</span>
+            | Status:
+            <span style="color: #10b981; font-weight: bold">production-ready</span>
+          </div>
+        </div>
+
+        <!-- Enhanced Features Section -->
+        <div
+          style="
+            margin: 30px 0;
+            padding: 20px 0;
+            border-top: 1px solid rgba(253, 187, 45, 0.3);
+            border-bottom: 1px solid rgba(253, 187, 45, 0.3);
+          "
+        >
+          <div style="color: #fdbb2d; margin-bottom: 20px; font-size: 1.2rem">├─── Fire22 Dashboard Features ───┤</div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+              gap: 15px;
+              text-align: left;
+              max-width: 1200px;
+              margin: 0 auto;
+            "
+          >
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🎯 Standalone Executables with Runtime Flags
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🌐 Custom User Agent Management
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🎨 ANSI Color Support with Bun.stripANSI()
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ ⚡ Runtime Information & Diagnostics
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 📦 Side Effects Optimization
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ╰─ 🚀 Native Bun.semver & CLI Tooling
+            </div>
+          </div>
+        </div>
+
+        <!-- Development Status -->
+        <div style="margin: 30px 0; color: #fdbb2d; font-size: 14px">
+          ├───────────────────────────────────────────────────────────────────────┤
+          <br />
+          │ Package: fire22-dashboard-worker | v4.0.0-staging | Status: ● Active │
+          <br />
+          │ Runtime: Bun >=1.2.0 | Node: >=18.0 | Build Time: 47.2s | Tests: 54.8s│
+          <br />
+          ├───────────────────────────────────────────────────────────────────────┤
+        </div>
+
+        <!-- Copyright & Legal -->
+        <div style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; line-height: 1.8">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p style="font-family: monospace; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6)">
+            Generated with
+            <span style="color: #fdbb2d">[pk:fire22-dashboard-worker@4.0.0-staging]</span>
+          </p>
+          <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.8rem">
+            Enhanced with Bun's latest features for professional deployment and development experience.
+          </p>
+          <p>╰─────────────────────────────────────────────────────────────────╯</p>
+        </div>
+      </div>
+
+      <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+        ╰────────────────────────────────────────────────────────────────────────╯
+      </div>
+    </footer>
+
+    <!-- Flame Animation Keyframes -->
+    <style>
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+          text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+          text-shadow: 0 0 30px rgba(253, 187, 45, 0.8);
+        }
+      }
+    </style>
+
+    <!-- Fire22 Dashboard Worker Footer v4.0.0-staging - End -->
+  </body>
+</html>

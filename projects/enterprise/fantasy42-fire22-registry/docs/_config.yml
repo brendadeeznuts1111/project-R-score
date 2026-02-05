@@ -1,0 +1,51 @@
+# GitHub Pages Configuration for Fantasy42-Fire22 Registry
+title: 'Fantasy42-Fire22 Enterprise Registry'
+description: 'Enterprise-scale domain architecture and package registry for Fantasy42-Fire22'
+url: 'https://docs.apexodds.net'
+baseurl: ''
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Collections
+collections:
+  domains:
+    output: true
+    permalink: /domains/:name/
+  guides:
+    output: true
+    permalink: /guides/:name/
+  api:
+    output: true
+    permalink: /api/:name/
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - .bundle/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+
+# Include files
+include:
+  - _pages
+
+# Site settings
+repository: brendadeeznuts1111/fantasy42-fire22-registry
+github_username: nolarose1968-pixel
+
+# Custom variables
+enterprise_domains: 35
+active_packages: 15
+total_files: 4000

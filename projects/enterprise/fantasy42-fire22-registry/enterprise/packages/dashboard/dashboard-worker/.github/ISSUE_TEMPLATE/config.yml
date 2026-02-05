@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Fire22 Dashboard Documentation
+    url: https://github.com/brendadeeznuts1111/fire22-dashboard-worker/wiki
+    about: Please check our documentation first for common questions
+  - name: Security Issues
+    url: https://github.com/brendadeeznuts1111/fire22-dashboard-worker/security/policy
+    about: Please report security vulnerabilities privately
+  - name: Community Discussions
+    url: https://github.com/brendadeeznuts1111/fire22-dashboard-worker/discussions
+    about: Ask questions and discuss ideas with the community

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Fire22 Communications Department</title>
+    <description>Security updates and communications for Fire22 communications department</description>
+    <link>https://fire22.com/feeds/communications</link>
+    <lastBuildDate>Thu, 28 Aug 2025 22:05:00 GMT</lastBuildDate>
+    <item>
+      <title>Cloudflare Durable Objects Security Implementation</title>
+      <description>Enterprise-grade email security deployment in progress</description>
+      <pubDate>Thu, 28 Aug 2025 22:05:00 GMT</pubDate>
+      <guid>fire22-security-communications-1756418700349</guid>
+    </item>
+  </channel>
+</rss>

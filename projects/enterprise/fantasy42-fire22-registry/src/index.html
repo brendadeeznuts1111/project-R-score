@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ultra-Fast Package Registry - Fantasy42-Fire22</title>
+    <meta name="description" content="Maximum performance package registry powered by Bun-native optimizations" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --background: #ffffff;
+        --surface: #f8fafc;
+        --text: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .logo {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, var(--primary), var(--success));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .search-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        border: 2px solid var(--border);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .search-button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .search-button:hover {
+        background: var(--primary-dark);
+      }
+
+      .results-section {
+        display: none;
+      }
+
+      .results-section.show {
+        display: block;
+      }
+
+      .package-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .package-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .package-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .package-version {
+        background: var(--success);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.8rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+      }
+
+      .package-description {
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+      }
+
+      .package-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .action-button {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 0.375rem;
+        background: white;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+
+      .action-button:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .publish-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        padding: 2rem;
+      }
+
+      .publish-form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+
+      .form-input {
+        padding: 0.75rem;
+        border: 2px solid var(--border);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .publish-button {
+        background: var(--success);
+        color: white;
+        border: none;
+        padding: 1rem;
+        font-size: 1.1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-weight: bold;
+      }
+
+      .publish-button:hover {
+        background: #059669;
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .tab {
+        padding: 1rem 2rem;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+
+      .tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .status-healthy {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .status-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error);
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .performance-metrics {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .metric {
+        text-align: center;
+      }
+
+      .metric-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: block;
+      }
+
+      .metric-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .logo {
+          font-size: 2rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tabs {
+          flex-direction: column;
+        }
+
+        .tab {
+          border-bottom: none;
+          border-left: 3px solid transparent;
+        }
+
+        .tab.active {
+          border-bottom: none;
+          border-left-color: var(--primary);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="logo">🚀 Fantasy42-Fire22</h1>
+        <p class="subtitle">Ultra-Fast Package Registry - Maximum Performance with Bun-Native Optimizations</p>
+        <div class="status-indicator status-healthy">
+          <span>●</span>
+          <span>System Healthy</span>
+        </div>
+      </header>
+
+      <section class="performance-metrics">
+        <h2>⚡ Performance Metrics</h2>
+        <div class="metrics-grid">
+          <div class="metric">
+            <span class="metric-value" id="requests-served">0</span>
+            <span class="metric-label">Requests Served</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="avg-response-time">0ms</span>
+            <span class="metric-label">Avg Response</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="cache-hit-rate">0%</span>
+            <span class="metric-label">Cache Hit Rate</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="uptime">0s</span>
+            <span class="metric-label">Uptime</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('search')">🔍 Search Packages</div>
+        <div class="tab" onclick="switchTab('publish')">📦 Publish Package</div>
+        <div class="tab" onclick="switchTab('stats')">📊 System Stats</div>
+      </div>
+
+      <div id="search-tab" class="tab-content active">
+        <section class="search-section">
+          <h2>🔍 Search Packages</h2>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search for packages..."
+            onkeypress="handleSearchKeyPress(event)"
+          />
+          <button class="search-button" onclick="performSearch()">
+            <span id="search-button-text">Search</span>
+            <span class="loading" id="search-loading" style="display: none"></span>
+          </button>
+        </section>
+
+        <section class="results-section" id="results-section">
+          <h3>📋 Search Results</h3>
+          <div id="results-container"></div>
+        </section>
+      </div>
+
+      <div id="publish-tab" class="tab-content">
+        <section class="publish-section">
+          <h2>📦 Publish Package</h2>
+          <form class="publish-form" onsubmit="handlePublish(event)">
+            <div class="form-group">
+              <label class="form-label" for="package-name">Package Name *</label>
+              <input type="text" id="package-name" class="form-input" required placeholder="my-package-name" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="package-version">Version *</label>
+              <input type="text" id="package-version" class="form-input" required placeholder="1.0.0" value="1.0.0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="package-description">Description</label>
+              <input
+                type="text"
+                id="package-description"
+                class="form-input"
+                placeholder="A brief description of your package"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="package-author">Author</label>
+              <input type="text" id="package-author" class="form-input" placeholder="Your Name <email@example.com>" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="package-license">License</label>
+              <input type="text" id="package-license" class="form-input" placeholder="MIT" value="MIT" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="package-repository">Repository URL</label>
+              <input
+                type="url"
+                id="package-repository"
+                class="form-input"
+                placeholder="https://github.com/username/repo"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="package-homepage">Homepage</label>
+              <input type="url" id="package-homepage" class="form-input" placeholder="https://mypackage.com" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="package-keywords">Keywords (comma-separated)</label>
+              <input type="text" id="package-keywords" class="form-input" placeholder="javascript, library, utility" />
+            </div>
+
+            <button type="submit" class="publish-button">
+              <span id="publish-button-text">🚀 Publish Package</span>
+              <span class="loading" id="publish-loading" style="display: none"></span>
+            </button>
+          </form>
+        </section>
+      </div>
+
+      <div id="stats-tab" class="tab-content">
+        <section class="search-section">
+          <h2>📊 System Statistics</h2>
+          <div id="stats-container">
+            <p>Loading system statistics...</p>
+          </div>
+          <button class="search-button" onclick="loadSystemStats()" style="margin-top: 1rem">🔄 Refresh Stats</button>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      let currentTab = 'search';
+      let searchTimeout;
+
+      // Tab switching functionality
+      function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        // Show selected tab
+        document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+
+        currentTab = tabName;
+
+        // Load data for specific tabs
+        if (tabName === 'stats') {
+          loadSystemStats();
+        }
+      }
+
+      // Search functionality
+      function handleSearchKeyPress(event) {
+        if (event.key === 'Enter') {
+          performSearch();
+        }
+      }
+
+      async function performSearch() {
+        const query = document.getElementById('search-input').value.trim();
+        if (!query) return;
+
+        const button = document.getElementById('search-button');
+        const buttonText = document.getElementById('search-button-text');
+        const loading = document.getElementById('search-loading');
+        const resultsSection = document.getElementById('results-section');
+        const resultsContainer = document.getElementById('results-container');
+
+        // Show loading state
+        button.disabled = true;
+        buttonText.textContent = 'Searching...';
+        loading.style.display = 'inline-block';
+
+        try {
+          const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+          const data = await response.json();
+
+          // Display results
+          resultsContainer.innerHTML = '';
+
+          if (data.results && data.results.length > 0) {
+            data.results.forEach(pkg => {
+              const card = document.createElement('div');
+              card.className = 'package-card';
+              card.innerHTML = `
+                            <div class="package-name">${pkg.name}</div>
+                            <div class="package-version">${pkg.version}</div>
+                            <div class="package-description">${pkg.description || 'No description available'}</div>
+                            <div class="package-actions">
+                                <a href="/package?name=${pkg.name}&version=${pkg.version}" class="action-button">View Details</a>
+                                <button class="action-button" onclick="installPackage('${pkg.name}', '${pkg.version}')">Install</button>
+                            </div>
+                        `;
+              resultsContainer.appendChild(card);
+            });
+          } else {
+            resultsContainer.innerHTML = '<p>No packages found matching your search.</p>';
+          }
+
+          resultsSection.classList.add('show');
+        } catch (error) {
+          console.error('Search failed:', error);
+          resultsContainer.innerHTML = '<p>Search failed. Please try again.</p>';
+          resultsSection.classList.add('show');
+        } finally {
+          // Reset loading state
+          button.disabled = false;
+          buttonText.textContent = 'Search';
+          loading.style.display = 'none';
+        }
+      }
+
+      // Package publishing functionality
+      async function handlePublish(event) {
+        event.preventDefault();
+
+        const button = document.querySelector('.publish-button');
+        const buttonText = document.getElementById('publish-button-text');
+        const loading = document.getElementById('publish-loading');
+
+        // Show loading state
+        button.disabled = true;
+        buttonText.textContent = 'Publishing...';
+        loading.style.display = 'inline-block';
+
+        try {
+          const packageData = {
+            name: document.getElementById('package-name').value,
+            version: document.getElementById('package-version').value,
+            description: document.getElementById('package-description').value,
+            author: document.getElementById('package-author').value,
+            license: document.getElementById('package-license').value,
+            repository: {
+              url: document.getElementById('package-repository').value,
+            },
+            homepage: document.getElementById('package-homepage').value,
+            keywords: document
+              .getElementById('package-keywords')
+              .value.split(',')
+              .map(k => k.trim())
+              .filter(k => k),
+          };
+
+          const response = await fetch('/package', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(packageData),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            alert(`✅ Package ${result.name}@${result.version} published successfully!`);
+            // Reset form
+            event.target.reset();
+            document.getElementById('package-version').value = '1.0.0';
+            document.getElementById('package-license').value = 'MIT';
+          } else {
+            alert(`❌ Publish failed: ${result.error}`);
+          }
+        } catch (error) {
+          console.error('Publish failed:', error);
+          alert('❌ Publish failed. Please try again.');
+        } finally {
+          // Reset loading state
+          button.disabled = false;
+          buttonText.textContent = '🚀 Publish Package';
+          loading.style.display = 'none';
+        }
+      }
+
+      // Package installation functionality
+      function installPackage(name, version) {
+        const command = `bun add ${name}@${version}`;
+        navigator.clipboard
+          .writeText(command)
+          .then(() => {
+            alert(`📋 Install command copied to clipboard:\n${command}`);
+          })
+          .catch(() => {
+            alert(`📋 Install command:\n${command}`);
+          });
+      }
+
+      // System statistics
+      async function loadSystemStats() {
+        const container = document.getElementById('stats-container');
+
+        try {
+          const response = await fetch('/stats');
+          const stats = await response.json();
+
+          container.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.performance.requests}</div>
+                            <div class="stat-label">Total Requests</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.performance.avgResponseTime.toFixed(1)}ms</div>
+                            <div class="stat-label">Avg Response Time</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.performance.cacheHits}</div>
+                            <div class="stat-label">Cache Hits</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.performance.cacheMisses}</div>
+                            <div class="stat-label">Cache Misses</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.performance.packagesServed}</div>
+                            <div class="stat-label">Packages Served</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.performance.searchesPerformed}</div>
+                            <div class="stat-label">Searches Performed</div>
+                        </div>
+                    </div>
+
+                    <h3>💾 Memory Usage</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">${(stats.memory.heapUsed / 1024 / 1024).toFixed(1)}MB</div>
+                            <div class="stat-label">Heap Used</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${(stats.memory.heapTotal / 1024 / 1024).toFixed(1)}MB</div>
+                            <div class="stat-label">Heap Total</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${(stats.memory.external / 1024 / 1024).toFixed(1)}MB</div>
+                            <div class="stat-label">External</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${(stats.memory.rss / 1024 / 1024).toFixed(1)}MB</div>
+                            <div class="stat-label">RSS</div>
+                        </div>
+                    </div>
+
+                    <h3>🏗️ System Information</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.server.version}</div>
+                            <div class="stat-label">Bun Version</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.server.platform}</div>
+                            <div class="stat-label">Platform</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.server.uptime.toFixed(1)}s</div>
+                            <div class="stat-label">Uptime</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${stats.cache.packages.size}</div>
+                            <div class="stat-label">Packages Cached</div>
+                        </div>
+                    </div>
+                `;
+        } catch (error) {
+          console.error('Failed to load stats:', error);
+          container.innerHTML = '<p>Failed to load system statistics. Please try again.</p>';
+        }
+      }
+
+      // Real-time performance metrics updates
+      async function updatePerformanceMetrics() {
+        try {
+          const response = await fetch('/stats');
+          const stats = await response.json();
+
+          document.getElementById('requests-served').textContent = stats.performance.requests;
+          document.getElementById('avg-response-time').textContent =
+            `${stats.performance.avgResponseTime.toFixed(1)}ms`;
+
+          const cacheHitRate =
+            stats.performance.requests > 0
+              ? ((stats.performance.cacheHits / stats.performance.requests) * 100).toFixed(1)
+              : '0';
+          document.getElementById('cache-hit-rate').textContent = `${cacheHitRate}%`;
+
+          const uptime = stats.server.uptime;
+          const uptimeStr =
+            uptime < 60
+              ? `${uptime.toFixed(0)}s`
+              : uptime < 3600
+                ? `${(uptime / 60).toFixed(1)}m`
+                : `${(uptime / 3600).toFixed(1)}h`;
+          document.getElementById('uptime').textContent = uptimeStr;
+        } catch (error) {
+          console.error('Failed to update metrics:', error);
+        }
+      }
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        // Update metrics every 5 seconds
+        updatePerformanceMetrics();
+        setInterval(updatePerformanceMetrics, 5000);
+
+        // Load initial stats for stats tab
+        loadSystemStats();
+      });
+
+      // WebSocket connection for real-time updates (if available)
+      if (typeof WebSocket !== 'undefined') {
+        try {
+          const ws = new WebSocket(`ws://${window.location.host}`);
+
+          ws.onmessage = event => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'stats-update') {
+              updatePerformanceMetrics();
+            }
+          };
+
+          ws.onopen = () => {
+            console.log('📡 Real-time updates connected');
+          };
+
+          ws.onerror = () => {
+            console.log('📡 Real-time updates unavailable');
+          };
+        } catch (error) {
+          console.log('📡 WebSocket not available');
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,907 @@
+<!-- Transactions Modal -->
+<div id="transactions-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-receipt"></i>
+        <span data-language="L-28">Cashier</span>
+        - Transaction History
+      </h3>
+      <button type="button" class="modal-close" onclick="closeTransactionsModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Balance Overview -->
+      <div class="balance-overview">
+        <div class="balance-card">
+          <div class="balance-icon">
+            <i class="fas fa-piggy-bank"></i>
+          </div>
+          <div class="balance-info">
+            <div class="balance-label">Available Balance</div>
+            <div class="balance-amount" id="available-balance">$1,250.75</div>
+          </div>
+        </div>
+        <div class="balance-card">
+          <div class="balance-icon pending">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="balance-info">
+            <div class="balance-label">Pending</div>
+            <div class="balance-amount" id="pending-balance">$0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="action-btn deposit-btn" onclick="showDepositForm()">
+          <i class="fas fa-plus-circle"></i>
+          <span>Deposit</span>
+        </button>
+        <button class="action-btn withdraw-btn" onclick="showWithdrawalForm()">
+          <i class="fas fa-minus-circle"></i>
+          <span>Withdraw</span>
+        </button>
+        <button class="action-btn transfer-btn" onclick="showTransferForm()">
+          <i class="fas fa-exchange-alt"></i>
+          <span>Transfer</span>
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="transaction-filters">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label for="transaction-type">Type:</label>
+            <select id="transaction-type" onchange="loadTransactions()">
+              <option value="all">All Types</option>
+              <option value="deposit">Deposits</option>
+              <option value="withdrawal">Withdrawals</option>
+              <option value="transfer">Transfers</option>
+              <option value="bonus">Bonuses</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="transaction-status">Status:</label>
+            <select id="transaction-status" onchange="loadTransactions()">
+              <option value="all">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="date-range">Date Range:</label>
+            <select id="date-range" onchange="handleDateRangeChange()">
+              <option value="all">All Time</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="30days">Last 30 Days</option>
+              <option value="90days">Last 90 Days</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="custom-date-range" id="custom-date-range" style="display: none">
+          <div class="date-inputs">
+            <input type="date" id="start-date" onchange="loadTransactions()" />
+            <span>to</span>
+            <input type="date" id="end-date" onchange="loadTransactions()" />
+          </div>
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-secondary" onclick="resetFilters()">
+            <i class="fas fa-undo"></i>
+            Reset
+          </button>
+          <button class="btn btn-primary" onclick="loadTransactions()">
+            <i class="fas fa-search"></i>
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- Transaction Summary -->
+      <div class="transaction-summary" id="transaction-summary">
+        <div class="summary-stat">
+          <span class="stat-label">Total Transactions:</span>
+          <span class="stat-value" id="total-transactions">0</span>
+        </div>
+        <div class="summary-stat">
+          <span class="stat-label">Total Amount:</span>
+          <span class="stat-value" id="total-amount">$0.00</span>
+        </div>
+        <div class="summary-stat">
+          <span class="stat-label">Pending:</span>
+          <span class="stat-value" id="pending-count">0</span>
+        </div>
+        <div class="summary-stat">
+          <span class="stat-label">Avg Amount:</span>
+          <span class="stat-value" id="avg-amount">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Transaction List -->
+      <div class="transaction-list" id="transaction-list">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Loading transactions...</span>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-controls" id="pagination-controls" style="display: none">
+        <button class="btn btn-sm" id="prev-page" onclick="changePage(-1)" disabled>
+          <i class="fas fa-chevron-left"></i>
+          Previous
+        </button>
+        <span class="page-info">
+          Page
+          <span id="current-page">1</span>
+          of
+          <span id="total-pages">1</span>
+        </span>
+        <button class="btn btn-sm" id="next-page" onclick="changePage(1)">
+          Next
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="transaction-info">
+        <span id="last-updated">Last updated: Loading...</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="exportTransactions()">
+          <i class="fas fa-download"></i>
+          Export
+        </button>
+        <button type="button" class="btn btn-primary" onclick="closeTransactionsModal()">
+          <i class="fas fa-times"></i>
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Styles -->
+<style>
+  .balance-overview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .balance-card {
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .balance-card:hover {
+    border-color: var(--primary-color, #007bff);
+    background: var(--surface-color, #ffffff);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .balance-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-color, #007bff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+  }
+
+  .balance-icon.pending {
+    background: var(--warning-color, #ffc107);
+  }
+
+  .balance-info {
+    flex: 1;
+  }
+
+  .balance-label {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    margin-bottom: 4px;
+  }
+
+  .balance-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color, #333333);
+  }
+
+  .quick-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .action-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border: 2px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .action-btn:hover {
+    border-color: var(--primary-color, #007bff);
+    background: var(--surface-secondary, #f8f9fa);
+    transform: translateY(-2px);
+  }
+
+  .deposit-btn:hover {
+    border-color: var(--success-color, #28a745);
+  }
+
+  .withdraw-btn:hover {
+    border-color: var(--danger-color, #dc3545);
+  }
+
+  .transfer-btn:hover {
+    border-color: var(--info-color, #0dcaf0);
+  }
+
+  .transaction-filters {
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  .filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .filter-group label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-color, #333333);
+  }
+
+  .filter-group select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+  }
+
+  .custom-date-range {
+    margin-bottom: 16px;
+  }
+
+  .date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .date-inputs input[type='date'] {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 4px;
+    background: white;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  .transaction-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  .summary-stat {
+    text-align: center;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted, #666666);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-color, #333333);
+  }
+
+  .transaction-list {
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: white;
+    transition: all 0.2s ease;
+  }
+
+  .transaction-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+  }
+
+  .transaction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+  }
+
+  .icon-deposit {
+    background: var(--success-color, #28a745);
+  }
+
+  .icon-withdrawal {
+    background: var(--danger-color, #dc3545);
+  }
+
+  .icon-transfer {
+    background: var(--info-color, #0dcaf0);
+  }
+
+  .icon-bonus {
+    background: var(--warning-color, #ffc107);
+  }
+
+  .transaction-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .transaction-description {
+    font-weight: 500;
+    color: var(--text-color, #333333);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .transaction-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted, #666666);
+  }
+
+  .transaction-amount {
+    text-align: right;
+    min-width: 120px;
+  }
+
+  .amount-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .amount-positive {
+    color: var(--success-color, #28a745);
+  }
+
+  .amount-negative {
+    color: var(--danger-color, #dc3545);
+  }
+
+  .transaction-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .status-completed {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--success-color, #198754);
+  }
+
+  .status-pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color, #ffc107);
+  }
+
+  .status-failed {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color, #dc3545);
+  }
+
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+    padding: 16px;
+  }
+
+  .page-info {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .transaction-info {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--text-muted, #666666);
+  }
+
+  .loading-spinner i {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+
+  .no-transactions {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted, #666666);
+  }
+
+  .no-transactions i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .balance-overview,
+    .filter-row,
+    .transaction-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+      flex-direction: column;
+    }
+
+    .transaction-item {
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .transaction-amount {
+      text-align: center;
+      min-width: auto;
+    }
+
+    .filter-actions {
+      flex-direction: column;
+    }
+
+    .modal-actions {
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .balance-card,
+    .action-btn {
+      padding: 12px;
+    }
+
+    .balance-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+    }
+
+    .balance-amount {
+      font-size: 1.2rem;
+    }
+
+    .transaction-filters {
+      padding: 12px;
+    }
+
+    .modal-body {
+      padding: 16px;
+    }
+  }
+</style>
+
+<!-- Transactions Modal JavaScript -->
+<script>
+  // Global variables for transaction management
+  let currentPage = 1;
+  let currentFilters = {
+    type: 'all',
+    status: 'all',
+    startDate: null,
+    endDate: null,
+  };
+
+  // Transactions Modal Functions
+  function openTransactionsModal() {
+    const modal = document.getElementById('transactions-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      // Reset to first page and load transactions
+      currentPage = 1;
+      loadTransactions();
+    }
+  }
+
+  function closeTransactionsModal() {
+    const modal = document.getElementById('transactions-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  }
+
+  function handleDateRangeChange() {
+    const dateRange = document.getElementById('date-range').value;
+    const customRange = document.getElementById('custom-date-range');
+
+    if (dateRange === 'custom') {
+      customRange.style.display = 'block';
+    } else {
+      customRange.style.display = 'none';
+      // Set predefined date ranges
+      const now = new Date();
+      let startDate = null;
+
+      switch (dateRange) {
+        case '7days':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case '30days':
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case '90days':
+          startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+      }
+
+      currentFilters.startDate = startDate ? startDate.toISOString().split('T')[0] : null;
+      currentFilters.endDate = now.toISOString().split('T')[0];
+    }
+  }
+
+  function resetFilters() {
+    document.getElementById('transaction-type').value = 'all';
+    document.getElementById('transaction-status').value = 'all';
+    document.getElementById('date-range').value = 'all';
+    document.getElementById('custom-date-range').style.display = 'none';
+    document.getElementById('start-date').value = '';
+    document.getElementById('end-date').value = '';
+
+    currentFilters = {
+      type: 'all',
+      status: 'all',
+      startDate: null,
+      endDate: null,
+    };
+
+    currentPage = 1;
+    loadTransactions();
+  }
+
+  async function loadTransactions() {
+    // Update current filters
+    currentFilters.type = document.getElementById('transaction-type').value;
+    currentFilters.status = document.getElementById('transaction-status').value;
+
+    if (document.getElementById('date-range').value === 'custom') {
+      currentFilters.startDate = document.getElementById('start-date').value;
+      currentFilters.endDate = document.getElementById('end-date').value;
+    }
+
+    const transactionList = document.getElementById('transaction-list');
+
+    // Show loading state
+    transactionList.innerHTML = `
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Loading transactions...</span>
+    </div>
+  `;
+
+    try {
+      const params = new URLSearchParams();
+      if (currentFilters.type !== 'all') params.append('type', currentFilters.type);
+      if (currentFilters.status !== 'all') params.append('status', currentFilters.status);
+      if (currentFilters.startDate) params.append('startDate', currentFilters.startDate);
+      if (currentFilters.endDate) params.append('endDate', currentFilters.endDate);
+      params.append('page', currentPage.toString());
+      params.append('limit', '20');
+
+      const response = await fetch(`/api/financial/transactions?${params}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        displayTransactions(data.data);
+        updatePagination(data.data.pagination);
+      } else {
+        showNoTransactions();
+      }
+
+      // Update last updated timestamp
+      updateLastUpdated();
+    } catch (error) {
+      console.error('Error loading transactions:', error);
+      transactionList.innerHTML = `
+      <div class="error-message" style="padding: 20px; text-align: center; color: var(--danger-color, #dc3545);">
+        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 12px;"></i>
+        <div>Failed to load transactions: ${error.message}</div>
+        <button onclick="loadTransactions()" style="margin-top: 12px; padding: 8px 16px; background: var(--primary-color, #007bff); color: white; border: none; border-radius: 4px; cursor: pointer;">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+    `;
+    }
+  }
+
+  function displayTransactions(data) {
+    const transactionList = document.getElementById('transaction-list');
+
+    if (!data.transactions || data.transactions.length === 0) {
+      showNoTransactions();
+      return;
+    }
+
+    // Update summary
+    document.getElementById('total-transactions').textContent = data.summary.totalTransactions;
+    document.getElementById('total-amount').textContent = `$${data.summary.totalAmount.toFixed(2)}`;
+    document.getElementById('pending-count').textContent = data.summary.pendingTransactions;
+    document.getElementById('avg-amount').textContent = `$${data.summary.averageTransactionAmount.toFixed(2)}`;
+
+    // Display transactions
+    transactionList.innerHTML = data.transactions
+      .map(
+        transaction => `
+    <div class="transaction-item">
+      <div class="transaction-icon ${getTransactionIconClass(transaction.type)}">
+        <i class="${getTransactionIcon(transaction.type)}"></i>
+      </div>
+      <div class="transaction-details">
+        <div class="transaction-description">${transaction.description}</div>
+        <div class="transaction-meta">
+          ${transaction.id} • ${new Date(transaction.timestamp).toLocaleDateString()} ${new Date(transaction.timestamp).toLocaleTimeString()}
+        </div>
+      </div>
+      <div class="transaction-amount">
+        <div class="amount-value ${transaction.type === 'withdrawal' || transaction.type === 'transfer' ? 'amount-negative' : 'amount-positive'}">
+          ${transaction.type === 'withdrawal' || transaction.type === 'transfer' ? '-' : '+'}$${transaction.amount.toFixed(2)}
+        </div>
+        <span class="transaction-status status-${transaction.status}">${transaction.status}</span>
+      </div>
+    </div>
+  `
+      )
+      .join('');
+  }
+
+  function showNoTransactions() {
+    const transactionList = document.getElementById('transaction-list');
+    transactionList.innerHTML = `
+    <div class="no-transactions">
+      <i class="fas fa-receipt"></i>
+      <div>No transactions found</div>
+      <small>Try adjusting your filters or check back later</small>
+    </div>
+  `;
+
+    // Hide pagination
+    document.getElementById('pagination-controls').style.display = 'none';
+  }
+
+  function updatePagination(pagination) {
+    const paginationControls = document.getElementById('pagination-controls');
+
+    if (!pagination || pagination.totalPages <= 1) {
+      paginationControls.style.display = 'none';
+      return;
+    }
+
+    paginationControls.style.display = 'flex';
+
+    document.getElementById('current-page').textContent = pagination.page;
+    document.getElementById('total-pages').textContent = pagination.totalPages;
+
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+
+    prevBtn.disabled = !pagination.hasPrevPage;
+    nextBtn.disabled = !pagination.hasNextPage;
+  }
+
+  function changePage(direction) {
+    currentPage += direction;
+    loadTransactions();
+  }
+
+  function getTransactionIcon(type) {
+    const icons = {
+      deposit: 'fas fa-arrow-down',
+      withdrawal: 'fas fa-arrow-up',
+      transfer: 'fas fa-exchange-alt',
+      bonus: 'fas fa-gift',
+    };
+    return icons[type] || 'fas fa-circle';
+  }
+
+  function getTransactionIconClass(type) {
+    const classes = {
+      deposit: 'icon-deposit',
+      withdrawal: 'icon-withdrawal',
+      transfer: 'icon-transfer',
+      bonus: 'icon-bonus',
+    };
+    return classes[type] || 'icon-default';
+  }
+
+  function updateLastUpdated() {
+    const now = new Date();
+    document.getElementById('last-updated').textContent = `Last updated: ${now.toLocaleString()}`;
+  }
+
+  function exportTransactions() {
+    // Create export data
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      filters: currentFilters,
+      system: 'Fire22 Dashboard',
+      version: '2.1',
+    };
+
+    // Create and download file
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fire22-transactions-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showSuccess('Transactions exported successfully');
+  }
+
+  // Placeholder functions for deposit/withdrawal forms
+  function showDepositForm() {
+    showSuccess('Deposit functionality would open here');
+  }
+
+  function showWithdrawalForm() {
+    showSuccess('Withdrawal functionality would open here');
+  }
+
+  function showTransferForm() {
+    showSuccess('Transfer functionality would open here');
+  }
+
+  // Helper functions (should be defined elsewhere in your app)
+  function getAuthToken() {
+    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  }
+
+  function showSuccess(message) {
+    console.log('✅ Success:', message);
+    // Implement your success notification system
+    alert('Success: ' + message);
+  }
+
+  // Close modal when clicking outside
+  document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('transactions-modal');
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+          closeTransactionsModal();
+        }
+      });
+    }
+
+    // Handle escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeTransactionsModal();
+      }
+    });
+  });
+
+  // Export functions for global access
+  window.openTransactionsModal = openTransactionsModal;
+  window.closeTransactionsModal = closeTransactionsModal;
+  window.loadTransactions = loadTransactions;
+</script>

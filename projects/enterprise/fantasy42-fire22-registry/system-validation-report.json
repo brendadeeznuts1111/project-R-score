@@ -1,0 +1,389 @@
+{
+  "timestamp": "2025-08-30T15:28:37.512Z",
+  "summary": {
+    "total": 36,
+    "passed": 22,
+    "failed": 10,
+    "warnings": 3,
+    "info": 1
+  },
+  "results": [
+    {
+      "component": "RSS",
+      "test": "communications RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 670,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "communications ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 615,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "compliance RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 1,
+      "details": {
+        "fileSize": 654,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "compliance ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 599,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "contributors RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 662,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "contributors ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 607,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "design RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 638,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "design ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 583,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "finance RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 214,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "finance ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 587,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "management RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 654,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "management ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 599,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "marketing RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 650,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "marketing ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 595,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "operations RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 1,
+      "details": {
+        "fileSize": 654,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "operations ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 599,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "support RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 214,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "support ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 587,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "technology RSS feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 654,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "RSS",
+      "test": "technology ATOM feed",
+      "status": "PASS",
+      "message": "Feed is properly formatted and accessible",
+      "duration": 0,
+      "details": {
+        "fileSize": 599,
+        "hasItems": true,
+        "xmlDeclaration": true
+      }
+    },
+    {
+      "component": "API",
+      "test": "/health",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 0
+    },
+    {
+      "component": "API",
+      "test": "/api",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 2
+    },
+    {
+      "component": "API",
+      "test": "/api/dashboard/metrics",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 2
+    },
+    {
+      "component": "API",
+      "test": "/api/dashboard/analytics",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 0
+    },
+    {
+      "component": "API",
+      "test": "/api/dashboard/health",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 1
+    },
+    {
+      "component": "API",
+      "test": "/api/dashboard/performance",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 3
+    },
+    {
+      "component": "API",
+      "test": "/api/domain/stats",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 1
+    },
+    {
+      "component": "API",
+      "test": "/api/domain/accounts",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 2
+    },
+    {
+      "component": "API",
+      "test": "/api/domain/bets",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 0
+    },
+    {
+      "component": "API",
+      "test": "/api/domain/config",
+      "status": "FAIL",
+      "message": "HTTP 404: Not Found",
+      "duration": 1
+    },
+    {
+      "component": "Email",
+      "test": "Environment variables",
+      "status": "WARN",
+      "message": "Missing environment variables: SMTP_USER, SMTP_PASS, SLACK_WEBHOOK_URL",
+      "duration": 0
+    },
+    {
+      "component": "Email",
+      "test": "Configuration",
+      "status": "PASS",
+      "message": "Email configuration is properly set up",
+      "duration": 0,
+      "details": {
+        "configFiles": true,
+        "envVars": 0,
+        "missingVars": 3
+      }
+    },
+    {
+      "component": "Email",
+      "test": "Templates",
+      "status": "WARN",
+      "message": "0/3 templates are properly formatted",
+      "duration": 1,
+      "details": {
+        "templatesFound": 3,
+        "templatesValid": 0,
+        "validationRate": 0
+      }
+    },
+    {
+      "component": "Email",
+      "test": "SMTP Connectivity",
+      "status": "WARN",
+      "message": "SMTP credentials not configured - using test mode",
+      "duration": 0,
+      "details": {
+        "host": "smtp.fire22.dev",
+        "port": 587,
+        "authConfigured": false
+      }
+    },
+    {
+      "component": "Integration",
+      "test": "RSS-API Integration",
+      "status": "INFO",
+      "message": "0 RSS feeds accessible via API endpoints",
+      "duration": 12,
+      "details": {
+        "totalFeeds": 10,
+        "accessibleViaAPI": 0
+      }
+    },
+    {
+      "component": "Integration",
+      "test": "Notification System Integration",
+      "status": "PASS",
+      "message": "4/4 notification components accessible",
+      "duration": 0,
+      "details": {
+        "totalComponents": 4,
+        "accessibleComponents": 4
+      }
+    }
+  ],
+  "duration": 2049,
+  "successRate": 61
+}

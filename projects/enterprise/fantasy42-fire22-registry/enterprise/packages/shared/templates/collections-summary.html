@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collections Summary Report</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f8f9fa;
+        color: #2c3e50;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        min-height: 100vh;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+      .header p {
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 30px;
+      }
+      .card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        text-align: center;
+        border-left: 4px solid #27ae60;
+      }
+      .card.success {
+        border-left-color: #27ae60;
+      }
+      .card.warning {
+        border-left-color: #f39c12;
+      }
+      .card.error {
+        border-left-color: #e74c3c;
+      }
+      .card h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+      }
+      .card .value {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .card.success .value {
+        color: #27ae60;
+      }
+      .card.warning .value {
+        color: #f39c12;
+      }
+      .card.error .value {
+        color: #e74c3c;
+      }
+      .card .label {
+        color: #6c757d;
+        font-size: 0.9em;
+      }
+      .transactions-section {
+        padding: 30px;
+      }
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .section-header h2 {
+        color: #2c3e50;
+        font-size: 1.8em;
+      }
+      .export-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+      }
+      .export-btn:hover {
+        background: #2980b9;
+      }
+      .transactions-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .transactions-table th,
+      .transactions-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e9ecef;
+      }
+      .transactions-table th {
+        background: #2c3e50;
+        color: white;
+        font-weight: 600;
+      }
+      .transactions-table tr:hover {
+        background: #f8f9fa;
+      }
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+      .status-completed {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-failed {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .amount {
+        font-weight: bold;
+        color: #27ae60;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px;
+        background: #2c3e50;
+        color: white;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>💳 Collections Summary</h1>
+        <p>Payment Processing & Collection Analytics</p>
+      </div>
+
+      <div class="summary-cards">
+        <div class="card success">
+          <h3>💰 Total Amount</h3>
+          <div class="value">${{totalAmount}}</div>
+          <div class="label">USD Collected</div>
+        </div>
+
+        <div class="card success">
+          <h3>✅ Successful</h3>
+          <div class="value">{{successfulCount}}</div>
+          <div class="label">Transactions</div>
+        </div>
+
+        <div class="card warning">
+          <h3>⏳ Pending</h3>
+          <div class="value">{{pendingCount}}</div>
+          <div class="label">Transactions</div>
+        </div>
+
+        <div class="card error">
+          <h3>❌ Failed</h3>
+          <div class="value">{{failedCount}}</div>
+          <div class="label">Transactions</div>
+        </div>
+      </div>
+
+      <div class="transactions-section">
+        <div class="section-header">
+          <h2>📋 Recent Transactions</h2>
+          <button class="export-btn" onclick="exportToCSV()">📊 Export CSV</button>
+        </div>
+
+        <table class="transactions-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer ID</th>
+              <th>Amount</th>
+              <th>Currency</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- COLLECTIONS_ROWS -->
+            <tr>
+              <td>sample-001</td>
+              <td>cust-123</td>
+              <td class="amount">$150.00</td>
+              <td>USD</td>
+              <td><span class="status-badge status-completed">Completed</span></td>
+              <td>2024-01-15 14:30:00</td>
+            </tr>
+            <!-- /COLLECTIONS_ROWS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <p>Generated by Fire22 Collections System | Generated: {{generatedAt}}</p>
+      </div>
+    </div>
+
+    <script>
+      function exportToCSV() {
+        // Simple CSV export functionality
+        const csv =
+          'ID,Customer,Amount,Currency,Status,Timestamp\nsample-001,cust-123,$150.00,USD,Completed,2024-01-15 14:30:00';
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'collections-export.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    </script>
+  </body>
+</html>

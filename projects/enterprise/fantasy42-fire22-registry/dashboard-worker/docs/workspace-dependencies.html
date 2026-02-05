@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Workspace Dependencies</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #1f2937;
+        margin-bottom: 20px;
+      }
+
+      #graph {
+        width: 100%;
+        height: 600px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f9fafb;
+      }
+
+      .node {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .node:hover {
+        filter: brightness(1.2);
+      }
+
+      .node-label {
+        font-size: 12px;
+        font-weight: 600;
+        fill: #1f2937;
+        pointer-events: none;
+      }
+
+      .edge {
+        fill: none;
+        stroke: #9ca3af;
+        stroke-width: 2px;
+        marker-end: url(#arrowhead);
+      }
+
+      .tooltip {
+        position: absolute;
+        background: #1f2937;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .stat-card {
+        background: #f3f4f6;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #7c3aed;
+      }
+
+      .stat-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎨 Fire22 Workspace Dependencies</h1>
+
+      <div id="graph"></div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value">6</div>
+          <div class="stat-label">Workspaces</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">5</div>
+          <div class="stat-label">Dependencies</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">1</div>
+          <div class="stat-label">Depth Levels</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">120KB</div>
+          <div class="stat-label">Total Size</div>
+        </div>
+      </div>
+
+      <div class="tooltip"></div>
+    </div>
+
+    <script>
+      const nodes = [
+        {
+          id: '@fire22/pattern-system',
+          label: '@fire22-pattern-system',
+          level: 0,
+          size: 20,
+          color: '#10b981',
+          x: 100,
+          y: 100,
+        },
+        { id: '@fire22/api-client', label: '@fire22-api-client', level: 0, size: 20, color: '#10b981', x: 300, y: 100 },
+        {
+          id: '@fire22/core-dashboard',
+          label: '@fire22-core-dashboard',
+          level: 0,
+          size: 20,
+          color: '#10b981',
+          x: 500,
+          y: 100,
+        },
+        {
+          id: '@fire22/sports-betting',
+          label: '@fire22-sports-betting',
+          level: 0,
+          size: 20,
+          color: '#10b981',
+          x: 100,
+          y: 100,
+        },
+        {
+          id: '@fire22/telegram-integration',
+          label: '@fire22-telegram-integration',
+          level: 0,
+          size: 20,
+          color: '#10b981',
+          x: 300,
+          y: 100,
+        },
+        {
+          id: '@fire22/build-system',
+          label: '@fire22-build-system',
+          level: 0,
+          size: 20,
+          color: '#10b981',
+          x: 500,
+          y: 100,
+        },
+      ];
+      const edges = [
+        { source: '@fire22/core-dashboard', target: '@fire22/pattern-system' },
+        { source: '@fire22/core-dashboard', target: '@fire22/api-client' },
+        { source: '@fire22/sports-betting', target: '@fire22/api-client' },
+        { source: '@fire22/sports-betting', target: '@fire22/core-dashboard' },
+        { source: '@fire22/telegram-integration', target: '@fire22/api-client' },
+      ];
+
+      const width = 1140;
+      const height = 600;
+
+      const svg = d3
+        .select('#graph')
+        .append('svg')
+        .attr('width', '100%')
+        .attr('height', height)
+        .attr('viewBox', [0, 0, width, height]);
+
+      // Define arrowhead marker
+      svg
+        .append('defs')
+        .append('marker')
+        .attr('id', 'arrowhead')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 15)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('fill', '#9ca3af');
+
+      // Create force simulation
+      const simulation = d3
+        .forceSimulation(nodes)
+        .force(
+          'link',
+          d3
+            .forceLink(edges)
+            .id(d => d.id)
+            .distance(100)
+        )
+        .force('charge', d3.forceManyBody().strength(-300))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force(
+          'collision',
+          d3.forceCollide().radius(d => d.size + 10)
+        );
+
+      // Draw edges
+      const link = svg.append('g').selectAll('line').data(edges).join('line').attr('class', 'edge');
+
+      // Draw nodes
+      const node = svg.append('g').selectAll('g').data(nodes).join('g').attr('class', 'node').call(drag(simulation));
+
+      node
+        .append('circle')
+        .attr('r', d => d.size)
+        .attr('fill', d => d.color);
+
+      node
+        .append('text')
+        .attr('class', 'node-label')
+        .attr('dy', 4)
+        .attr('text-anchor', 'middle')
+        .text(d => d.label.replace('@fire22-', ''));
+
+      // Tooltip
+      const tooltip = d3.select('.tooltip');
+
+      node
+        .on('mouseover', (event, d) => {
+          tooltip
+            .style('opacity', 1)
+            .html(`<strong>${d.label}</strong><br/>Level: ${d.level}<br/>Size: ${d.size}KB`)
+            .style('left', event.pageX + 10 + 'px')
+            .style('top', event.pageY - 10 + 'px');
+        })
+        .on('mouseout', () => {
+          tooltip.style('opacity', 0);
+        });
+
+      // Update positions on tick
+      simulation.on('tick', () => {
+        link
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+
+      // Drag functionality
+      function drag(simulation) {
+        function dragstarted(event) {
+          if (!event.active) simulation.alphaTarget(0.3).restart();
+          event.subject.fx = event.subject.x;
+          event.subject.fy = event.subject.y;
+        }
+
+        function dragged(event) {
+          event.subject.fx = event.x;
+          event.subject.fy = event.y;
+        }
+
+        function dragended(event) {
+          if (!event.active) simulation.alphaTarget(0);
+          event.subject.fx = null;
+          event.subject.fy = null;
+        }
+
+        return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
+      }
+    </script>
+  </body>
+</html>

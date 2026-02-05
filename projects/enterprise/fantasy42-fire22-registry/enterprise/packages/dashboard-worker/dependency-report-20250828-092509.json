@@ -1,0 +1,206 @@
+{
+  "timestamp": "2025-08-28T14:25:09Z",
+  "root_version": ""1.0.0-rc"",
+  "workspace_count":       30,
+  "outdated": 
+bun outdated v1.2.21-canary.123 (7c45ed97)
+|--------------------------------------------------------------------------------|
+| Package              | Current | Update  | Latest | Workspace                  |
+|----------------------|---------|---------|--------|----------------------------|
+| prism-react-renderer | 2.3.0   | 2.3.0   | 2.4.1  | dashboard-worker           |
+|----------------------|---------|---------|--------|----------------------------|
+| react                | 18.2.0  | 18.2.0  | 19.1.1 | dashboard-worker           |
+|----------------------|---------|---------|--------|----------------------------|
+| react-dom            | 18.2.0  | 18.2.0  | 19.1.1 | dashboard-worker           |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/core               |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/env-manager        |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/validator          |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/middleware         |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/security-core      |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/security-scanner   |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/testing-framework  |
+|----------------------|---------|---------|--------|----------------------------|
+| date-fns             | 3.6.0   | 3.6.0   | 4.1.0  | @fire22/wager-system       |
+|----------------------|---------|---------|--------|----------------------------|
+| drizzle-orm          | 0.29.5  | 0.29.5  | 0.44.5 | @fire22/wager-system       |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/wager-system       |
+|----------------------|---------|---------|--------|----------------------------|
+| itty-router          | 4.2.2   | 4.2.2   | 5.0.22 | @fire22/api-consolidated   |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/api-consolidated   |
+|----------------------|---------|---------|--------|----------------------------|
+| commander            | 12.1.0  | 12.1.0  | 14.0.0 | @fire22/security-registry  |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/security-registry  |
+|----------------------|---------|---------|--------|----------------------------|
+| zod                  | 3.25.76 | 3.25.76 | 4.1.4  | @fire22/telegram-workflows |
+|----------------------|---------|---------|--------|----------------------------|
+| esbuild (optional)   | 0.19.12 | 0.19.12 | 0.25.9 | dashboard-worker           |
+|----------------------|---------|---------|--------|----------------------------|
+| sharp (optional)     | 0.32.6  | 0.32.6  | 0.34.3 | dashboard-worker           |
+|--------------------------------------------------------------------------------|
+,
+  "audit": 
+{}
+,
+  "workspaces": [
+    {
+      "name": "@fire22-api-client",
+      "version": ""3.0.9"",
+      "path": "workspaces/@fire22-api-client"
+    },
+    {
+      "name": "@fire22-api-consolidated",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-api-consolidated"
+    },
+    {
+      "name": "@fire22-build-system",
+      "version": ""3.0.9"",
+      "path": "workspaces/@fire22-build-system"
+    },
+    {
+      "name": "bun",
+      "version": ""1.2.21"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/@types+bun@1.2.21+ae6449338c2aa851/node_modules/@types/bun"
+    },
+    {
+      "name": "node",
+      "version": ""24.3.0"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/@types+node@24.3.0/node_modules/@types/node"
+    },
+    {
+      "name": "react",
+      "version": ""19.1.11"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/@types+react@19.1.11/node_modules/@types/react"
+    },
+    {
+      "name": "bun-types",
+      "version": ""1.2.21"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/bun-types@1.2.21+ae6449338c2aa851/node_modules/bun-types"
+    },
+    {
+      "name": "csstype",
+      "version": ""3.1.3"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/csstype@3.1.3/node_modules/csstype"
+    },
+    {
+      "name": "mitata",
+      "version": ""1.0.34"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/mitata@1.0.34/node_modules/mitata"
+    },
+    {
+      "name": "typescript",
+      "version": ""5.9.2"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/typescript@5.9.2/node_modules/typescript"
+    },
+    {
+      "name": "undici-types",
+      "version": ""7.10.0"",
+      "path": "workspaces/@fire22-build-system/node_modules/.bun/undici-types@7.10.0/node_modules/undici-types"
+    },
+    {
+      "name": "@fire22-core-dashboard",
+      "version": ""3.0.9"",
+      "path": "workspaces/@fire22-core-dashboard"
+    },
+    {
+      "name": "@fire22-language-keys",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-language-keys"
+    },
+    {
+      "name": "@fire22-multilingual",
+      "version": ""1.3.0"",
+      "path": "workspaces/@fire22-multilingual"
+    },
+    {
+      "name": "@fire22-pattern-system",
+      "version": ""3.0.9"",
+      "path": "workspaces/@fire22-pattern-system"
+    },
+    {
+      "name": "bun",
+      "version": ""1.2.21"",
+      "path": "workspaces/@fire22-pattern-system/node_modules/.bun/@types+bun@1.2.21+ae6449338c2aa851/node_modules/@types/bun"
+    },
+    {
+      "name": "node",
+      "version": ""24.3.0"",
+      "path": "workspaces/@fire22-pattern-system/node_modules/.bun/@types+node@24.3.0/node_modules/@types/node"
+    },
+    {
+      "name": "react",
+      "version": ""19.1.11"",
+      "path": "workspaces/@fire22-pattern-system/node_modules/.bun/@types+react@19.1.11/node_modules/@types/react"
+    },
+    {
+      "name": "bun-types",
+      "version": ""1.2.21"",
+      "path": "workspaces/@fire22-pattern-system/node_modules/.bun/bun-types@1.2.21+ae6449338c2aa851/node_modules/bun-types"
+    },
+    {
+      "name": "csstype",
+      "version": ""3.1.3"",
+      "path": "workspaces/@fire22-pattern-system/node_modules/.bun/csstype@3.1.3/node_modules/csstype"
+    },
+    {
+      "name": "typescript",
+      "version": ""5.9.2"",
+      "path": "workspaces/@fire22-pattern-system/node_modules/.bun/typescript@5.9.2/node_modules/typescript"
+    },
+    {
+      "name": "undici-types",
+      "version": ""7.10.0"",
+      "path": "workspaces/@fire22-pattern-system/node_modules/.bun/undici-types@7.10.0/node_modules/undici-types"
+    },
+    {
+      "name": "@fire22-queue-system",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-queue-system"
+    },
+    {
+      "name": "@fire22-security-registry",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-security-registry"
+    },
+    {
+      "name": "@fire22-sports-betting",
+      "version": ""3.0.9"",
+      "path": "workspaces/@fire22-sports-betting"
+    },
+    {
+      "name": "@fire22-telegram-benchmarks",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-telegram-benchmarks"
+    },
+    {
+      "name": "@fire22-telegram-bot",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-telegram-bot"
+    },
+    {
+      "name": "@fire22-telegram-dashboard",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-telegram-dashboard"
+    },
+    {
+      "name": "@fire22-telegram-integration",
+      "version": ""3.0.9"",
+      "path": "workspaces/@fire22-telegram-integration"
+    },
+    {
+      "name": "@fire22-telegram-workflows",
+      "version": ""1.0.0"",
+      "path": "workspaces/@fire22-telegram-workflows"
+    }
+  ]
+}

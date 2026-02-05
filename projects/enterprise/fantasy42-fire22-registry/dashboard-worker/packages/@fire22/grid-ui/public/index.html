@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@fire22/grid-ui - Package Review Grid</title>
+    <meta name="description" content="Fire22 Package Review Grid built with Bun JSX + CSS bundling" />
+    <style>
+      /* Reset and base styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+      }
+
+      /* Loading state */
+      #app:empty::before {
+        content: '🔥 Loading Fire22 Package Grid...';
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-size: 18px;
+        color: #ff6b35;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mount point for JSX -->
+    <div id="app"></div>
+
+    <!-- Bun's dev server will auto-inject HMR and CSS links -->
+    <script type="module" src="../dev.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+name = "sports-betting-standalone"
+compatibility_date = "2024-08-27"
+compatibility_flags = ["nodejs_compat"]
+main = "dist/standalone/index.js"
+[limits]
+cpu_time = 30000
+memory = "256MB"
+
+[bindings]
+D1 = ["betting_db"]
+KV = ["betting_cache"]
+QUEUE = ["betting_events"]
+
+[vars]
+WORKSPACE_MODE = "standalone"
+WORKSPACE_NAME = "@fire22/sports-betting"
+BUILD_TARGET = "production"
+

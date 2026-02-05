@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Design Team Proposal - Visual Overview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      h1 {
+        font-size: clamp(32px, 5vw, 48px);
+        background: linear-gradient(135deg, #40e0d0, #48d1cc, #00ced1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        animation: glow 4s ease-in-out infinite;
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          filter: brightness(1);
+        }
+        50% {
+          filter: brightness(1.2);
+        }
+      }
+
+      .subtitle {
+        font-size: 18px;
+        color: #9ca3af;
+        margin-bottom: 40px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 60px;
+      }
+
+      .stat-card {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+      }
+
+      .stat-number {
+        font-size: 36px;
+        font-weight: bold;
+        color: #40e0d0;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .department-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+      }
+
+      .department-card {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        padding: 25px;
+        backdrop-filter: blur(15px);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--dept-color);
+        transition: height 0.3s ease;
+      }
+
+      .department-card:hover::before {
+        height: 100%;
+        opacity: 0.1;
+      }
+
+      .department-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(64, 224, 208, 0.2);
+        border-color: rgba(64, 224, 208, 0.4);
+      }
+
+      .dept-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .dept-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background: var(--dept-bg);
+        border: 2px solid var(--dept-border);
+      }
+
+      .dept-title h3 {
+        font-size: 18px;
+        color: var(--dept-color);
+        margin-bottom: 4px;
+      }
+
+      .dept-subtitle {
+        font-size: 12px;
+        color: #9ca3af;
+      }
+
+      .team-info {
+        margin-bottom: 20px;
+      }
+
+      .team-member {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+
+      .member-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        background: var(--dept-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .member-name {
+        flex: 1;
+        font-size: 13px;
+      }
+
+      .member-role {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .designer-slot {
+        border: 2px dashed rgba(239, 68, 68, 0.4);
+        background: rgba(239, 68, 68, 0.1);
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .designer-slot-title {
+        color: #ef4444;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+
+      .designer-slot-suggestion {
+        color: #fca5a5;
+        font-size: 12px;
+      }
+
+      .proposal-section {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+      }
+
+      .proposal-section h2 {
+        font-size: 28px;
+        color: #40e0d0;
+        margin-bottom: 30px;
+      }
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+      }
+
+      .benefit-card {
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        border-left: 4px solid #40e0d0;
+      }
+
+      .benefit-icon {
+        font-size: 28px;
+        margin-bottom: 12px;
+      }
+
+      .benefit-title {
+        font-size: 16px;
+        color: #40e0d0;
+        margin-bottom: 8px;
+      }
+
+      .benefit-description {
+        font-size: 13px;
+        color: #9ca3af;
+        line-height: 1.6;
+      }
+
+      .timeline {
+        position: relative;
+        padding-left: 40px;
+      }
+
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #40e0d0, rgba(64, 224, 208, 0.2));
+      }
+
+      .timeline-item {
+        position: relative;
+        margin-bottom: 30px;
+      }
+
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -35px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #40e0d0;
+        border: 3px solid #0a0e27;
+      }
+
+      .timeline-title {
+        font-size: 16px;
+        color: #40e0d0;
+        margin-bottom: 8px;
+      }
+
+      .timeline-description {
+        font-size: 13px;
+        color: #9ca3af;
+      }
+
+      .cta-section {
+        text-align: center;
+        padding: 60px 20px;
+        background: rgba(64, 224, 208, 0.1);
+        border-radius: 20px;
+        border: 2px solid rgba(64, 224, 208, 0.3);
+      }
+
+      .cta-title {
+        font-size: 32px;
+        color: #40e0d0;
+        margin-bottom: 20px;
+      }
+
+      .cta-description {
+        font-size: 16px;
+        color: #9ca3af;
+        margin-bottom: 30px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #40e0d0, #48d1cc);
+        color: #0a0e27;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(64, 224, 208, 0.4);
+      }
+
+      /* Department-specific colors */
+      .finance {
+        --dept-color: #10b981;
+        --dept-bg: rgba(16, 185, 129, 0.2);
+        --dept-border: rgba(16, 185, 129, 0.4);
+      }
+      .support {
+        --dept-color: #3b82f6;
+        --dept-bg: rgba(59, 130, 246, 0.2);
+        --dept-border: rgba(59, 130, 246, 0.4);
+      }
+      .compliance {
+        --dept-color: #8b5cf6;
+        --dept-bg: rgba(139, 92, 246, 0.2);
+        --dept-border: rgba(139, 92, 246, 0.4);
+      }
+      .operations {
+        --dept-color: #f59e0b;
+        --dept-bg: rgba(245, 158, 11, 0.2);
+        --dept-border: rgba(245, 158, 11, 0.4);
+      }
+      .technology {
+        --dept-color: #06b6d4;
+        --dept-bg: rgba(6, 182, 212, 0.2);
+        --dept-border: rgba(6, 182, 212, 0.4);
+      }
+      .marketing {
+        --dept-color: #ef4444;
+        --dept-bg: rgba(239, 68, 68, 0.2);
+        --dept-border: rgba(239, 68, 68, 0.4);
+      }
+      .management {
+        --dept-color: #6b7280;
+        --dept-bg: rgba(107, 114, 128, 0.2);
+        --dept-border: rgba(107, 114, 128, 0.4);
+      }
+      .contributors {
+        --dept-color: #40e0d0;
+        --dept-bg: rgba(64, 224, 208, 0.2);
+        --dept-border: rgba(64, 224, 208, 0.4);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎨 Fire22 Design Team Integration Proposal</h1>
+        <p class="subtitle">Embedding Design Excellence Across Every Department</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-number">8</span>
+          <span class="stat-label">Departments</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">17</span>
+          <span class="stat-label">Current Team Members</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">0</span>
+          <span class="stat-label">Current Designers</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">8</span>
+          <span class="stat-label">Designers Needed</span>
+        </div>
+      </div>
+
+      <div class="proposal-section">
+        <h2>🏢 Current Department Structure</h2>
+        <div class="department-grid">
+          <!-- Finance Department -->
+          <div class="department-card finance">
+            <div class="dept-header">
+              <div class="dept-icon">💰</div>
+              <div class="dept-title">
+                <h3>Finance</h3>
+                <div class="dept-subtitle">Financial Operations</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">JS</div>
+                <div class="member-name">John Smith</div>
+                <div class="member-role">Director</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">SJ</div>
+                <div class="member-name">Sarah Johnson</div>
+                <div class="member-role">Analyst</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">MC</div>
+                <div class="member-name">Mike Chen</div>
+                <div class="member-role">Treasury</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">Financial UX Designer</div>
+            </div>
+          </div>
+
+          <!-- Customer Support Department -->
+          <div class="department-card support">
+            <div class="dept-header">
+              <div class="dept-icon">🎧</div>
+              <div class="dept-title">
+                <h3>Customer Support</h3>
+                <div class="dept-subtitle">24/7 Support Services</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">ED</div>
+                <div class="member-name">Emily Davis</div>
+                <div class="member-role">Manager</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">AW</div>
+                <div class="member-name">Alex Wilson</div>
+                <div class="member-role">Senior Agent</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">Experience Designer</div>
+            </div>
+          </div>
+
+          <!-- Compliance Department -->
+          <div class="department-card compliance">
+            <div class="dept-header">
+              <div class="dept-icon">⚖️</div>
+              <div class="dept-title">
+                <h3>Compliance</h3>
+                <div class="dept-subtitle">Regulatory & Legal</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">LA</div>
+                <div class="member-name">Lisa Anderson</div>
+                <div class="member-role">Officer</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">RT</div>
+                <div class="member-name">Robert Taylor</div>
+                <div class="member-role">Legal Advisor</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">Information Designer</div>
+            </div>
+          </div>
+
+          <!-- Operations Department -->
+          <div class="department-card operations">
+            <div class="dept-header">
+              <div class="dept-icon">⚙️</div>
+              <div class="dept-title">
+                <h3>Operations</h3>
+                <div class="dept-subtitle">Daily Operations</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">DM</div>
+                <div class="member-name">David Martinez</div>
+                <div class="member-role">Director</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">JL</div>
+                <div class="member-name">Jennifer Lee</div>
+                <div class="member-role">Manager</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">Process Designer</div>
+            </div>
+          </div>
+
+          <!-- Technology Department -->
+          <div class="department-card technology">
+            <div class="dept-header">
+              <div class="dept-icon">💻</div>
+              <div class="dept-title">
+                <h3>Technology</h3>
+                <div class="dept-subtitle">IT & Development</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">CB</div>
+                <div class="member-name">Chris Brown</div>
+                <div class="member-role">CTO</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">AG</div>
+                <div class="member-name">Amanda Garcia</div>
+                <div class="member-role">Lead Dev</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">System Designer</div>
+            </div>
+          </div>
+
+          <!-- Marketing Department -->
+          <div class="department-card marketing">
+            <div class="dept-header">
+              <div class="dept-icon">📈</div>
+              <div class="dept-title">
+                <h3>Marketing</h3>
+                <div class="dept-subtitle">Growth & Campaigns</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">MR</div>
+                <div class="member-name">Michelle Rodriguez</div>
+                <div class="member-role">Director</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">KT</div>
+                <div class="member-name">Kevin Thompson</div>
+                <div class="member-role">Digital Lead</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">Brand Designer</div>
+            </div>
+          </div>
+
+          <!-- Management Department -->
+          <div class="department-card management">
+            <div class="dept-header">
+              <div class="dept-icon">👔</div>
+              <div class="dept-title">
+                <h3>Management</h3>
+                <div class="dept-subtitle">Executive Leadership</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">WH</div>
+                <div class="member-name">William Harris</div>
+                <div class="member-role">CEO</div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">PC</div>
+                <div class="member-name">Patricia Clark</div>
+                <div class="member-role">COO</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">Strategic Designer</div>
+            </div>
+          </div>
+
+          <!-- Team Contributors Department -->
+          <div class="department-card contributors">
+            <div class="dept-header">
+              <div class="dept-icon">👥</div>
+              <div class="dept-title">
+                <h3>Team Contributors</h3>
+                <div class="dept-subtitle">Core Team Showcase</div>
+              </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member">
+                <div class="member-avatar">🌟</div>
+                <div class="member-name">Core Team</div>
+                <div class="member-role">Various</div>
+              </div>
+            </div>
+            <div class="designer-slot">
+              <div class="designer-slot-title">🎨 Designer Needed</div>
+              <div class="designer-slot-suggestion">Lead Designer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proposal-section">
+        <h2>💡 Benefits of Embedded Designers</h2>
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon">🎯</div>
+            <div class="benefit-title">Domain Expertise</div>
+            <div class="benefit-description">
+              Designers develop deep understanding of department-specific needs and workflows
+            </div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">⚡</div>
+            <div class="benefit-title">Faster Iteration</div>
+            <div class="benefit-description">
+              Direct collaboration eliminates communication overhead and speeds up design cycles
+            </div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🔗</div>
+            <div class="benefit-title">Consistent Standards</div>
+            <div class="benefit-description">Maintain Fire22 design system while allowing department customization</div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">📊</div>
+            <div class="benefit-title">Better Metrics</div>
+            <div class="benefit-description">Design decisions directly tied to department KPIs and success metrics</div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🤝</div>
+            <div class="benefit-title">Stronger Teams</div>
+            <div class="benefit-description">Design thinking embedded in daily operations and decision making</div>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon">🚀</div>
+            <div class="benefit-title">Innovation</div>
+            <div class="benefit-description">Department-specific innovation while maintaining platform coherence</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proposal-section">
+        <h2>📅 Implementation Timeline</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-title">Week 1: Review & Approval</div>
+            <div class="timeline-description">Review proposal, gather feedback, and get executive approval</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">Week 2: Role Definition</div>
+            <div class="timeline-description">Define specific responsibilities and KPIs for each designer role</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">Week 3-4: Recruitment</div>
+            <div class="timeline-description">
+              Begin designer assignments from existing team or start hiring process
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">Month 2: Onboarding</div>
+            <div class="timeline-description">Integrate designers with their departments and establish workflows</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-title">Month 3: Full Integration</div>
+            <div class="timeline-description">Designers fully embedded and contributing to department objectives</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-section">
+        <h2 class="cta-title">🚀 Let's Build a Design-Driven Organization</h2>
+        <p class="cta-description">
+          This is our opportunity to establish design as a core competency across Fire22. With embedded designers in
+          each department, we can create exceptional experiences that drive business value and user satisfaction.
+        </p>
+        <a href="mailto:design@fire22.com?subject=Design%20Team%20Integration%20Proposal" class="cta-button">
+          Schedule Discussion
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // Add interactive hover effects
+      document.querySelectorAll('.department-card').forEach(card => {
+        card.addEventListener('mouseenter', function () {
+          this.style.transform = 'translateY(-5px) scale(1.02)';
+        });
+
+        card.addEventListener('mouseleave', function () {
+          this.style.transform = 'translateY(0) scale(1)';
+        });
+      });
+
+      // Animate stats on page load
+      window.addEventListener('load', () => {
+        document.querySelectorAll('.stat-number').forEach((stat, index) => {
+          setTimeout(() => {
+            stat.style.animation = 'glow 2s ease-in-out';
+          }, index * 200);
+        });
+      });
+    </script>
+  </body>
+</html>

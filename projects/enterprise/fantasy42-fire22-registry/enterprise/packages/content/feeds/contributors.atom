@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Fire22 Contributors Department</title>
+  <subtitle>Security updates and communications</subtitle>
+  <link href="https://fire22.com/feeds/contributors" />
+  <updated>2025-08-28T22:05:00.349Z</updated>
+  <id>fire22-contributors-feed</id>
+  <entry>
+    <title>Cloudflare Durable Objects Security Implementation</title>
+    <content>Enterprise-grade email security deployment in progress</content>
+    <updated>2025-08-28T22:05:00.349Z</updated>
+    <id>fire22-security-contributors-1756418700349</id>
+  </entry>
+</feed>

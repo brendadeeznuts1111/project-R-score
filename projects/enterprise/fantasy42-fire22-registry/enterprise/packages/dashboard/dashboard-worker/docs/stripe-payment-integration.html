@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stripe Payment Integration - Fire22 Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #fff;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #fdbb2d;
+      }
+
+      h3 {
+        font-size: 1.4rem;
+        margin: 15px 0;
+        color: #b21f1f;
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: 'Fira Code', monospace;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+
+      .code-keyword {
+        color: #569cd6;
+      }
+
+      .code-function {
+        color: #dcdcaa;
+      }
+
+      .code-parameter {
+        color: #9cdcfe;
+      }
+
+      .code-string {
+        color: #ce9178;
+      }
+
+      .code-comment {
+        color: #6a9955;
+      }
+
+      .api-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .api-table th,
+      .api-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .api-table th {
+        background: rgba(0, 0, 0, 0.3);
+        font-weight: 600;
+        color: #fdbb2d;
+      }
+
+      .api-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .callout {
+        background: rgba(253, 187, 45, 0.1);
+        border-left: 4px solid #fdbb2d;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .warning {
+        background: rgba(178, 31, 31, 0.1);
+        border-left: 4px solid #b21f1f;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: rgba(76, 175, 80, 0.1);
+        border-left: 4px solid #4caf50;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .api-integration {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .api-details {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+
+      .api-details strong {
+        color: #fdbb2d;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .status-active {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
+      }
+
+      /* Enhanced Branding Styles */
+      .brand-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 0;
+        border-bottom: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        font-size: 3rem;
+        animation: flame-flicker 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+        }
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .company-name {
+        font-size: 2.5rem;
+        margin: 0;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .company-tagline {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        letter-spacing: 1px;
+      }
+
+      .brand-nav {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.1);
+        border-color: rgba(253, 187, 45, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .nav-link.active {
+        color: #fdbb2d;
+        background: rgba(253, 187, 45, 0.15);
+        border-color: #fdbb2d;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .page-header h2 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Enhanced Footer Branding */
+      .footer {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 50px;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+      }
+
+      .footer-brand {
+        margin-bottom: 20px;
+      }
+
+      .footer-logo {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .footer-company {
+        font-size: 1.5rem;
+        color: #fdbb2d;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      .footer-tagline {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .footer-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-link:hover {
+        color: #fdbb2d;
+      }
+
+      .footer-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
+      }
+
+      .footer-copyright {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Branding */
+      @media (max-width: 768px) {
+        .brand-header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .brand-nav {
+          justify-content: center;
+        }
+
+        .nav-link {
+          font-size: 0.9rem;
+          padding: 8px 12px;
+        }
+
+        .company-name {
+          font-size: 2rem;
+        }
+
+        .logo-icon {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* Enhanced animations and interactions */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand-header">
+          <div class="brand-logo">
+            <div class="logo-icon">🔥</div>
+            <div class="logo-text">
+              <h1 class="company-name">Fire22</h1>
+              <span class="company-tagline">Igniting Digital Innovation</span>
+            </div>
+          </div>
+          <div class="brand-nav">
+            <a href="packages.html" class="nav-link">📦 Packages</a>
+            <a href="environment-variables.html" class="nav-link">🌍 Environment</a>
+            <a href="api-integrations-index.html" class="nav-link">🔌 API</a>
+            <a href="fire22-dashboard-config.html" class="nav-link">⚙️ Config</a>
+            <a href="@packages.html" class="nav-link">🧪 Testing</a>
+          </div>
+        </div>
+        <div class="page-header">
+          <h2>Stripe Payment Integration</h2>
+          <p class="subtitle">Secure payment processing for subscriptions and transactions</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h2>🚀 Quick Start</h2>
+        <p>Get started with Stripe payment integration in just a few steps:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># 1. Install Stripe SDK</span>
+<span class="code-function">bun add stripe</span>
+
+<span class="code-comment"># 2. Set environment variables</span>
+<span class="code-function">bun run env:set STRIPE_SECRET_KEY=sk_test_...</span>
+
+<span class="code-comment"># 3. Test payment processing</span>
+<span class="code-function">bun run env:integration</span>
+
+<span class="code-comment"># 4. Open Stripe dashboard</span>
+<span class="code-function">bun run env:docs</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💳 Stripe Payment Integration</h2>
+        <p>Secure payment processing for subscriptions and transactions:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>Environment:</strong>
+            Test/Production keys
+          </div>
+          <div class="api-details">
+            <strong>Authentication:</strong>
+            Secret Key (Bearer)
+          </div>
+          <div class="api-details">
+            <strong>Webhook Support:</strong>
+            Yes (with signature verification)
+          </div>
+          <div class="api-details">
+            <strong>Features:</strong>
+            Payments, Subscriptions, Refunds, Disputes
+          </div>
+        </div>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Environment Configuration</span>
+<span class="code-keyword">STRIPE_SECRET_KEY</span>=<span class="code-string">sk_test_... or sk_live_...</span>
+<span class="code-keyword">STRIPE_WEBHOOK_SECRET</span>=<span class="code-string">whsec_webhook_secret</span>
+<span class="code-keyword">STRIPE_PUBLISHABLE_KEY</span>=<span class="code-string">pk_test_... or pk_live_...</span>
+
+<span class="code-comment"># Payment Processing Example</span>
+<span class="code-keyword">const</span> stripe = <span class="code-keyword">new</span> Stripe(config.stripe.secretKey);
+
+<span class="code-keyword">const</span> paymentIntent = <span class="code-keyword">await</span> stripe.paymentIntents.create({
+  amount: 2000, <span class="code-comment">// $20.00</span>
+  currency: <span class="code-string">'usd'</span>,
+  metadata: {
+    userId: <span class="code-string">'user_123'</span>,
+    subscriptionId: <span class="code-string">'sub_456'</span>
+  }
+});
+
+<span class="code-comment"># Webhook Verification</span>
+<span class="code-keyword">const</span> event = stripe.webhooks.constructEvent(
+  body, 
+  signature, 
+  config.stripe.webhookSecret
+);</pre>
+        </div>
+
+        <div class="warning">
+          <strong>⚠️ Important:</strong>
+          Never expose your Stripe secret key in client-side code. Always use server-side processing.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💳 Payment Methods</h2>
+        <p>Supported payment methods and their implementation:</p>
+
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Payment Method</th>
+              <th>Type</th>
+              <th>Setup Required</th>
+              <th>Security Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Credit/Debit Cards</strong></td>
+              <td>One-time</td>
+              <td>Stripe Elements</td>
+              <td>PCI DSS Level 1</td>
+            </tr>
+            <tr>
+              <td><strong>Digital Wallets</strong></td>
+              <td>One-time</td>
+              <td>Payment Request API</td>
+              <td>High</td>
+            </tr>
+            <tr>
+              <td><strong>Bank Transfers</strong></td>
+              <td>One-time</td>
+              <td>ACH Direct Debit</td>
+              <td>High</td>
+            </tr>
+            <tr>
+              <td><strong>Subscriptions</strong></td>
+              <td>Recurring</td>
+              <td>Customer + Subscription</td>
+              <td>High</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>🔐 Security & Authentication</h2>
+        <p>Secure your Stripe integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Webhook Signature Verification</span>
+<span class="code-keyword">const</span> verifyWebhook = (body, signature, secret) => {
+  <span class="code-keyword">try</span> {
+    <span class="code-keyword">const</span> event = stripe.webhooks.constructEvent(body, signature, secret);
+    <span class="code-keyword">return</span> event;
+  } <span class="code-keyword">catch</span> (error) {
+    <span class="code-keyword">throw</span> <span class="code-keyword">new</span> Error(<span class="code-string">'Invalid webhook signature'</span>);
+  }
+};
+
+<span class="code-comment"># Customer Authentication</span>
+<span class="code-keyword">const</span> createCustomer = <span class="code-keyword">async</span> (email, metadata) => {
+  <span class="code-keyword">const</span> customer = <span class="code-keyword">await</span> stripe.customers.create({
+    email,
+    metadata,
+    source: <span class="code-string">'tok_visa'</span> <span class="code-comment">// Test token</span>
+  });
+  <span class="code-keyword">return</span> customer;
+};</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🔒 Security:</strong>
+          Always verify webhook signatures and use HTTPS for all communications.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📱 Client-Side Integration</h2>
+        <p>Secure client-side payment collection:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Stripe Elements Setup</span>
+<span class="code-keyword">const</span> stripe = Stripe(config.stripe.publishableKey);
+<span class="code-keyword">const</span> elements = stripe.elements();
+
+<span class="code-comment"># Create card element</span>
+<span class="code-keyword">const</span> card = elements.create(<span class="code-string">'card'</span>, {
+  style: {
+    base: {
+      fontSize: <span class="code-string">'16px'</span>,
+      color: <span class="code-string">'#424770'</span>,
+      <span class="code-string">'::placeholder'</span>: {
+        color: <span class="code-string">'#aab7c4'</span>
+      }
+    }
+  }
+});
+
+<span class="code-comment"># Handle form submission</span>
+<span class="code-keyword">const</span> handleSubmit = <span class="code-keyword">async</span> (event) => {
+  event.preventDefault();
+  
+  <span class="code-keyword">const</span> { error, paymentMethod } = <span class="code-keyword">await</span> stripe.createPaymentMethod({
+    type: <span class="code-string">'card'</span>,
+    card,
+  });
+  
+  <span class="code-keyword">if</span> (error) {
+    console.error(error);
+  } <span class="code-keyword">else</span> {
+    <span class="code-keyword">await</span> processPayment(paymentMethod.id);
+  }
+};</pre>
+        </div>
+
+        <div class="success">
+          <strong>✅ Best Practice:</strong>
+          Use Stripe Elements for secure card collection and never handle raw card data.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🧪 Testing & Validation</h2>
+        <p>Test your Stripe integration:</p>
+
+        <div class="code-block">
+          <pre><span class="code-comment"># Test Payment Flow</span>
+<span class="code-keyword">describe</span>(<span class="code-string">'Stripe Payment Flow'</span>, () => {
+  <span class="code-keyword">it</span>(<span class="code-string">'should process payment successfully'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> payment = <span class="code-keyword">await</span> processPayment(testPaymentData);
+    expect(payment.status).toBe(<span class="code-string">'succeeded'</span>);
+  });
+  
+  <span class="code-keyword">it</span>(<span class="code-string">'should handle payment failures gracefully'</span>, <span class="code-keyword">async</span> () => {
+    <span class="code-keyword">const</span> failedPayment = <span class="code-keyword">await</span> processPayment(failedPaymentData);
+    expect(failedPayment.status).toBe(<span class="code-string">'requires_payment_method'</span>);
+  });
+});
+
+<span class="code-comment"># Test Webhook Handling</span>
+<span class="code-keyword">describe</span>(<span class="code-string">'Stripe Webhooks'</span>, () => {
+  <span class="code-keyword">it</span>(<span class="code-string">'should verify webhook signatures'</span>, () => {
+    <span class="code-keyword">const</span> isValid = verifyWebhook(testBody, testSignature, testSecret);
+    expect(isValid).toBe(<span class="code-keyword">true</span>);
+  });
+});</pre>
+        </div>
+
+        <div class="callout">
+          <strong>🧪 Test Commands:</strong>
+          Use
+          <code>bun run env:integration</code>
+          for comprehensive Stripe testing.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📚 Related Documentation</h2>
+        <p>Explore other aspects of your Fire22 Dashboard:</p>
+
+        <div class="api-integration">
+          <div class="api-details">
+            <strong>🌍 Environment Management:</strong>
+            <a href="environment-variables.html" style="color: #fdbb2d">Environment Variables Guide</a>
+          </div>
+          <div class="api-details">
+            <strong>📦 Package Management:</strong>
+            <a href="packages.html" style="color: #fdbb2d">Package Management Guide</a>
+          </div>
+          <div class="api-details">
+            <strong>🔌 All API Integrations:</strong>
+            <a href="api-integrations-index.html" style="color: #fdbb2d">API Integrations Index</a>
+          </div>
+          <div class="api-details">
+            <strong>🎯 Live Demo:</strong>
+            <a href="#" style="color: #fdbb2d">See payment flow in action</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-brand">
+          <div class="footer-logo">🔥</div>
+          <div class="footer-company">Fire22</div>
+          <div class="footer-tagline">Igniting Digital Innovation</div>
+        </div>
+
+        <div class="footer-links">
+          <a href="packages.html" class="footer-link">📦 Packages</a>
+          <a href="environment-variables.html" class="footer-link">🌍 Environment</a>
+          <a href="api-integrations-index.html" class="footer-link">🔌 API</a>
+          <a href="fire22-dashboard-config.html" class="footer-link">⚙️ Config</a>
+          <a href="@packages.html" class="footer-link">🧪 Testing</a>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-copyright">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p>Built with ❤️ for secure and scalable payment processing</p>
+          <p><small>Stripe Payment Integration | Fire22 Dashboard Best Practices</small></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Enhanced client-side interactivity
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add animation to table rows
+        const tableRows = document.querySelectorAll('tr');
+        tableRows.forEach((row, index) => {
+          row.style.opacity = '0';
+          row.style.transition = `opacity 0.5s ease ${index * 0.1}s`;
+          setTimeout(() => {
+            row.style.opacity = '1';
+          }, 100);
+        });
+
+        // Enhanced code block functionality (hover effects + click-to-copy)
+        const codeBlocks = document.querySelectorAll('.code-block');
+        codeBlocks.forEach(block => {
+          // Hover effects
+          block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-5px)';
+            block.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.4)';
+          });
+
+          block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+          });
+
+          // Click-to-copy functionality for code content
+          const codeContent = block.querySelector('pre');
+          if (codeContent) {
+            codeContent.style.cursor = 'pointer';
+            codeContent.title = 'Click to copy';
+
+            codeContent.addEventListener('click', async () => {
+              try {
+                await navigator.clipboard.writeText(codeContent.textContent);
+                const originalText = codeContent.textContent;
+                codeContent.textContent = 'Copied!';
+                codeContent.style.color = '#4CAF50';
+
+                setTimeout(() => {
+                  codeContent.textContent = originalText;
+                  codeContent.style.color = '';
+                }, 2000);
+              } catch (err) {
+                console.log('Failed to copy:', err);
+              }
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

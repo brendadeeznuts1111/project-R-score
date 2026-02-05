@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+.pnp
+.pnp.js
+
+# Bun
+bun.lockb
+
+# Temporary
+tmp/
+temp/
+
+# Examples and tests excluded from tsconfig
+examples/
+test/
+**/*.test.ts
+**/*.spec.ts
+**/*.test.tsx
+**/*.spec.tsx
+
+# Exclude specific problematic files temporarily
+packages/dashboard/deploy-to-r2.ts

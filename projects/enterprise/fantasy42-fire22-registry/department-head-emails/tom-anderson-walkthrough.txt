@@ -1,0 +1,56 @@
+
+Subject: 🚀 Fire22 Registry Release Flow - Specialist Review Walkthrough
+
+Dear Tom Anderson,
+
+You are receiving this notification as a **Reliability Specialist** in the **Operations Department**.
+
+## 🎯 **Your Specialist Role**
+
+As **System Reliability & Resilience** specialist, you provide deep technical expertise:
+
+- **Domain Expertise**: System Reliability & Resilience validation and review
+- **Technical Review**: Detailed analysis of package compliance
+- **Quality Assurance**: Ensure standards in your specialty area
+- **Documentation**: Provide specialist feedback and recommendations
+
+### **Your Department Context**
+- **Department Head**: Robert Garcia (Chief Operations Officer)
+- **Secondary Validator**: Linda Martinez (DevOps Lead)
+- **Your Colleagues**: Kevin Zhang (Deployment Specialist), Anna Schmidt (Monitoring Specialist)
+- **Focus Area**: DEPLOYMENT, MONITORING, RELIABILITY
+
+## 📋 **Specialist Walkthrough Guide Attached**
+
+The attached guide includes:
+- **REGISTRY-RELEASE-SPECIALIST-WALKTHROUGH.md** - Specialist-focused guide
+- **System Reliability & Resilience** specific validation procedures
+- **Review checklists** and best practices
+- **Reporting templates** for your findings
+
+## ⏰ **Required Actions**
+
+1. **Review specialist guide** (10-15 minutes)
+2. **Identify packages requiring your expertise**
+3. **Prepare review checklists** for your specialty
+4. **Confirm readiness** by replying with "CONFIRMED"
+
+## 📋 **Your Review Focus**
+
+**Specialty**: System Reliability & Resilience
+**Department**: Operations
+**Compliance Areas**: DEPLOYMENT, MONITORING, RELIABILITY
+
+## 📞 **Support**
+
+- **Department Head**: Robert Garcia (robert.garcia@fire22.com)
+- **Secondary Validator**: Linda Martinez (linda.martinez@fire22.com)
+- **Technical Support**: enterprise@fire22.com
+- **Specialist Colleagues**: kevin.zhang@fire22.com, anna.schmidt@fire22.com
+
+---
+
+**Please reply with "CONFIRMED" once ready to begin specialist reviews.**
+
+Best regards,
+Fire22 Enterprise Registry Team

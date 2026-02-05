@@ -1,0 +1,37 @@
+{
+  "name": "fire22-personal-subdomains",
+  "version": "1.0.0",
+  "description": "Personal subdomain infrastructure for Fire22 employees using Cloudflare Workers",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --env production",
+    "deploy:staging": "wrangler deploy --env staging",
+    "test": "bun run scripts/test-deployment.ts",
+    "seed": "bun run scripts/seed-employee-data.ts",
+    "setup": "bun run scripts/deploy-worker.ts",
+    "check": "wrangler tail",
+    "build": "wrangler deploy --dry-run"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.22.4",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "subdomains",
+    "fire22",
+    "employee-directory"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/personal-subdomains"
+  }
+}

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🚀 Fire22 Team Contributors - Launcher</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .launcher {
+        background: rgba(10, 14, 39, 0.8);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        max-width: 600px;
+        backdrop-filter: blur(10px);
+      }
+
+      .launcher h1 {
+        color: #ff6b35;
+        font-size: 32px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .launcher p {
+        color: #9ca3af;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .launcher-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .launcher-button {
+        background: linear-gradient(135deg, #374151, #4b5563);
+        border: 2px solid rgba(64, 224, 208, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        color: #e0e6ed;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: block;
+      }
+
+      .launcher-button:hover {
+        border-color: rgba(64, 224, 208, 0.6);
+        background: linear-gradient(135deg, #4b5563, #6b7280);
+        transform: translateY(-2px);
+      }
+
+      .launcher-button h3 {
+        color: #40e0d0;
+        margin-bottom: 10px;
+      }
+
+      .launcher-button p {
+        font-size: 12px;
+        margin: 0;
+      }
+
+      .status {
+        margin-top: 20px;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        border-left: 4px solid #10b981;
+        text-align: left;
+      }
+
+      .status-title {
+        color: #10b981;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .status-text {
+        font-size: 12px;
+        color: #9ca3af;
+      }
+
+      @media (max-width: 768px) {
+        .launcher-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="launcher">
+      <h1>🏢 Fire22 Team Contributors</h1>
+      <p>Launch the team contributors system with comprehensive error handling and modal card widgets.</p>
+
+      <div class="launcher-grid">
+        <button onclick="openTeamPage()" class="launcher-button">
+          <h3>👥 Team Department Page</h3>
+          <p>Interactive team member cards with modal profiles</p>
+        </button>
+
+        <button onclick="openShowcase()" class="launcher-button">
+          <h3>🎨 CSS Showcase</h3>
+          <p>Fire22 highlight system with team member links</p>
+        </button>
+      </div>
+
+      <div class="status">
+        <div class="status-title">✅ System Status</div>
+        <div class="status-text">Error boundaries active • Modal system ready • Deep linking functional</div>
+      </div>
+    </div>
+
+    <script>
+      function openTeamPage() {
+        try {
+          const teamPagePath = './src/departments/team-contributors.html';
+          console.log(`🚀 Opening team page: ${teamPagePath}`);
+          window.open(teamPagePath, '_blank');
+        } catch (error) {
+          console.error('Failed to open team page:', error);
+          alert('Error opening team page. Please check the file path.');
+        }
+      }
+
+      function openShowcase() {
+        try {
+          const showcasePath = './packages/@fire22/grid-ui/fire22-highlight-system-showcase.html';
+          console.log(`🚀 Opening showcase: ${showcasePath}`);
+          window.open(showcasePath, '_blank');
+        } catch (error) {
+          console.error('Failed to open showcase:', error);
+          alert('Error opening showcase. Please check the file path.');
+        }
+      }
+
+      // Test both file paths on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🔧 Fire22 Team Contributors Launcher loaded');
+        console.log('📁 Available paths:');
+        console.log('  - Team Page: ./src/departments/team-contributors.html');
+        console.log('  - Showcase: ./packages/@fire22/grid-ui/fire22-highlight-system-showcase.html');
+
+        // Check if files are accessible
+        fetch('./src/departments/team-contributors.html', { method: 'HEAD' })
+          .then(response => {
+            if (response.ok) {
+              console.log('✅ Team page is accessible');
+            } else {
+              console.warn('⚠️ Team page may not be accessible');
+            }
+          })
+          .catch(error => {
+            console.warn('⚠️ Could not verify team page accessibility:', error.message);
+          });
+
+        fetch('./packages/@fire22/grid-ui/fire22-highlight-system-showcase.html', { method: 'HEAD' })
+          .then(response => {
+            if (response.ok) {
+              console.log('✅ Showcase is accessible');
+            } else {
+              console.warn('⚠️ Showcase may not be accessible');
+            }
+          })
+          .catch(error => {
+            console.warn('⚠️ Could not verify showcase accessibility:', error.message);
+          });
+      });
+    </script>
+  </body>
+</html>

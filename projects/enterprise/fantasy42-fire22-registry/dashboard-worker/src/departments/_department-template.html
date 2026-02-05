@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢 Fire22 {{DEPARTMENT_NAME}} - Department Overview</title>
+    <style>
+      * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+      }
+
+      body {
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+          background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+          color: #e0e6ed;
+          min-height: 100vh;
+          line-height: 1.6;
+      }
+
+      .header {
+          background: rgba(10, 14, 39, 0.9);
+          border-bottom: 2px solid rgba(64, 224, 208, 0.3);
+          padding: 30px;
+          text-align: center;
+          backdrop-filter: blur(20px);
+          position: sticky;
+          top: 0;
+          z-index: 100;
+      }
+
+      .header h1 {
+          font-size: clamp(28px, 5vw, 42px);
+          background: linear-gradient(135deg, {{DEPT_GRADIENT}});
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin-bottom: 12px;
+          animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+      }
+
+      .header-subtitle {
+          color: #9ca3af;
+          font-size: 16px;
+          margin-bottom: 8px;
+      }
+
+      .header-stats {
+          display: flex;
+          justify-content: center;
+          gap: 30px;
+          margin-top: 20px;
+          flex-wrap: wrap;
+      }
+
+      .header-stat {
+          text-align: center;
+      }
+
+      .header-stat-value {
+          font-size: 24px;
+          font-weight: bold;
+          color: {{DEPT_PRIMARY_COLOR}};
+          display: block;
+      }
+
+      .header-stat-label {
+          font-size: 12px;
+          color: #9ca3af;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+      }
+
+      .container {
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 40px 20px;
+      }
+
+      .breadcrumb {
+          margin-bottom: 30px;
+          padding: 15px 0;
+      }
+
+      .breadcrumb a {
+          color: #9ca3af;
+          text-decoration: none;
+          transition: color 0.2s ease;
+      }
+
+      .breadcrumb a:hover {
+          color: {{DEPT_PRIMARY_COLOR}};
+      }
+
+      .breadcrumb-separator {
+          margin: 0 10px;
+          color: #6b7280;
+      }
+
+      .breadcrumb-current {
+          color: {{DEPT_PRIMARY_COLOR}};
+          font-weight: 600;
+      }
+
+      .department-overview {
+          background: rgba(10, 14, 39, 0.7);
+          border: 2px solid rgba(64, 224, 208, 0.2);
+          border-radius: 20px;
+          padding: 30px;
+          margin-bottom: 40px;
+          backdrop-filter: blur(15px);
+          position: relative;
+          overflow: hidden;
+      }
+
+      .department-overview::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: {{DEPT_GRADIENT}};
+      }
+
+      .overview-header {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          margin-bottom: 25px;
+      }
+
+      .overview-icon {
+          width: 60px;
+          height: 60px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32px;
+          background: {{DEPT_BG_COLOR}};
+          border: 3px solid {{DEPT_BORDER_COLOR}};
+          box-shadow: 0 8px 25px {{DEPT_SHADOW_COLOR}};
+      }
+
+      .overview-title h2 {
+          font-size: 28px;
+          color: {{DEPT_PRIMARY_COLOR}};
+          margin-bottom: 8px;
+      }
+
+      .overview-subtitle {
+          color: #9ca3af;
+          font-size: 14px;
+      }
+
+      .team-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+          gap: 25px;
+          margin-top: 30px;
+      }
+
+      .team-member {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          padding: 20px;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 16px;
+          border: 2px solid rgba(64, 224, 208, 0.2);
+          transition: all 0.3s ease;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+      }
+
+      .team-member::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg,
+              transparent,
+              {{DEPT_HOVER_BG}},
+              transparent
+          );
+          transition: left 0.5s ease;
+      }
+
+      .team-member:hover::before {
+          left: 100%;
+      }
+
+      .team-member:hover {
+          background: rgba(0, 0, 0, 0.4);
+          border-color: {{DEPT_BORDER_COLOR}};
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 10px 30px {{DEPT_SHADOW_COLOR}};
+      }
+
+      .member-avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 18px;
+          color: #fff;
+          background: var(--member-bg, {{DEPT_GRADIENT}});
+          border: 2px solid {{DEPT_BORDER_COLOR}};
+          box-shadow: 0 4px 15px {{DEPT_SHADOW_COLOR}};
+      }
+
+      .member-info {
+          flex: 1;
+      }
+
+      .member-name {
+          font-size: 16px;
+          font-weight: bold;
+          color: #e0e6ed;
+          margin-bottom: 4px;
+      }
+
+      .member-role {
+          font-size: 12px;
+          color: {{DEPT_PRIMARY_COLOR}};
+          margin-bottom: 2px;
+      }
+
+      .member-stats {
+          font-size: 11px;
+          color: #9ca3af;
+      }
+
+      .member-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+      }
+
+      .action-button {
+          padding: 6px 12px;
+          border-radius: 8px;
+          border: 1px solid {{DEPT_BORDER_COLOR}};
+          background: {{DEPT_BG_COLOR}};
+          color: {{DEPT_PRIMARY_COLOR}};
+          font-size: 10px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-decoration: none;
+          text-align: center;
+      }
+
+      .action-button:hover {
+          background: {{DEPT_PRIMARY_COLOR}};
+          color: #0a0e27;
+          transform: translateY(-1px);
+      }
+
+      /* Modal System */
+      .modal {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          backdrop-filter: blur(10px);
+          z-index: 1000;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+          display: flex;
+          opacity: 1;
+          align-items: center;
+          justify-content: center;
+          animation: modalFadeIn 0.3s ease;
+      }
+
+      @keyframes modalFadeIn {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+      }
+
+      .modal-content {
+          background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+          border: 2px solid {{DEPT_BORDER_COLOR}};
+          border-radius: 20px;
+          padding: 30px;
+          max-width: 600px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+      }
+
+      .modal-header {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          margin-bottom: 20px;
+          padding-bottom: 15px;
+          border-bottom: 2px solid {{DEPT_BORDER_COLOR}};
+      }
+
+      .modal-close {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: rgba(239, 68, 68, 0.2);
+          border: 1px solid rgba(239, 68, 68, 0.4);
+          border-radius: 50%;
+          width: 35px;
+          height: 35px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #ef4444;
+          font-size: 16px;
+          transition: all 0.2s ease;
+      }
+
+      .modal-close:hover {
+          background: rgba(239, 68, 68, 0.3);
+          transform: scale(1.1);
+      }
+
+      /* Error Banner System */
+      .error-banner {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9));
+          border: 2px solid rgba(239, 68, 68, 0.5);
+          border-radius: 12px;
+          padding: 15px 20px;
+          color: white;
+          font-size: 14px;
+          z-index: 1001;
+          transform: translateX(400px);
+          transition: transform 0.3s ease;
+          backdrop-filter: blur(10px);
+      }
+
+      .error-banner.visible {
+          transform: translateX(0);
+      }
+
+      .error-banner-close {
+          float: right;
+          margin-left: 15px;
+          cursor: pointer;
+          font-weight: bold;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+          .header-stats {
+              gap: 20px;
+          }
+
+          .team-grid {
+              grid-template-columns: 1fr;
+          }
+
+          .team-member {
+              flex-direction: column;
+              text-align: center;
+          }
+
+          .modal-content {
+              width: 95%;
+              padding: 20px;
+          }
+      }
+
+      /* Department-Specific Color Variables */
+      :root {
+          --dept-primary: {{DEPT_PRIMARY_COLOR}};
+          --dept-gradient: {{DEPT_GRADIENT}};
+          --dept-bg: {{DEPT_BG_COLOR}};
+          --dept-border: {{DEPT_BORDER_COLOR}};
+          --dept-shadow: {{DEPT_SHADOW_COLOR}};
+          --dept-hover: {{DEPT_HOVER_BG}};
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>{{DEPT_ICON}} {{DEPARTMENT_NAME}}</h1>
+      <div class="header-subtitle">{{DEPARTMENT_DESCRIPTION}}</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">{{TOTAL_MEMBERS}}</span>
+          <div class="header-stat-label">Team Members</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">{{ACTIVE_PROJECTS}}</span>
+          <div class="header-stat-label">Active Projects</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">{{COMPLETION_RATE}}</span>
+          <div class="header-stat-label">Success Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../dashboard.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="../departments/">🏢 Departments</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">{{DEPARTMENT_NAME}}</span>
+      </nav>
+
+      <div class="department-overview">
+        <div class="overview-header">
+          <div class="overview-icon">{{DEPT_ICON}}</div>
+          <div class="overview-title">
+            <h2>{{DEPARTMENT_NAME}} Department</h2>
+            <div class="overview-subtitle">{{DEPARTMENT_FULL_DESCRIPTION}}</div>
+          </div>
+        </div>
+
+        <div class="team-grid">{{TEAM_MEMBERS_HTML}}</div>
+      </div>
+    </div>
+
+    <!-- Modal Template -->
+    <div id="memberModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-close" onclick="closeModal()">&times;</div>
+        <div class="modal-header">
+          <div class="member-avatar" id="modalAvatar"></div>
+          <div>
+            <h3 id="modalName"></h3>
+            <div id="modalRole" style="color: var(--dept-primary)"></div>
+          </div>
+        </div>
+        <div id="modalDetails"></div>
+      </div>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="error-banner">
+      <span class="error-banner-close" onclick="hideError()">&times;</span>
+      <div id="errorMessage"></div>
+    </div>
+
+    <script>
+      // Error Codes for Department Pages
+      const ErrorCodes = {
+          TEAM_DATA_NOT_FOUND: 'D001',
+          MODAL_INITIALIZATION_FAILED: 'D002',
+          MEMBER_PROFILE_ERROR: 'D003',
+          NAVIGATION_ERROR: 'D004',
+          DEPARTMENT_CONFIG_ERROR: 'D005'
+      };
+
+      // Department Configuration
+      const departmentConfig = {
+          name: '{{DEPARTMENT_NAME}}',
+          code: '{{DEPT_CODE}}',
+          primaryColor: '{{DEPT_PRIMARY_COLOR}}',
+          members: {{TEAM_MEMBERS_JSON}}
+      };
+
+      // Team member data structure
+      const teamMembers = departmentConfig.members;
+
+      // Modal System
+      function openMemberProfile(memberId) {
+          try {
+              const member = teamMembers.find(m => m.id === memberId);
+              if (!member) {
+                  throw new Error(`Team member not found: ${memberId}`);
+              }
+
+              // Populate modal
+              document.getElementById('modalAvatar').style.background = member.avatarBg;
+              document.getElementById('modalAvatar').textContent = member.avatar;
+              document.getElementById('modalName').textContent = member.name;
+              document.getElementById('modalRole').textContent = member.role;
+              document.getElementById('modalDetails').innerHTML = generateMemberDetails(member);
+
+              // Show modal
+              const modal = document.getElementById('memberModal');
+              modal.classList.add('active');
+              document.body.style.overflow = 'hidden';
+
+              console.log(`✅ Opened profile for ${member.name}`);
+          } catch (error) {
+              console.error('Failed to open member profile:', error);
+              showError(ErrorCodes.MEMBER_PROFILE_ERROR, error.message);
+          }
+      }
+
+      function closeModal() {
+          const modal = document.getElementById('memberModal');
+          modal.classList.remove('active');
+          document.body.style.overflow = 'auto';
+      }
+
+      function generateMemberDetails(member) {
+          return `
+              <div style="margin-bottom: 20px;">
+                  <h4 style="color: var(--dept-primary); margin-bottom: 10px;">📊 Performance Metrics</h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                      <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                          <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.metrics.implementations || 0}</div>
+                          <div style="font-size: 11px; color: #9ca3af;">Implementations</div>
+                      </div>
+                      <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                          <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.metrics.efficiency || '95%'}</div>
+                          <div style="font-size: 11px; color: #9ca3af;">Efficiency</div>
+                      </div>
+                  </div>
+              </div>
+              <div>
+                  <h4 style="color: var(--dept-primary); margin-bottom: 10px;">🎯 Responsibilities</h4>
+                  <ul style="list-style: none; padding: 0;">
+                      ${member.responsibilities.map(resp => `<li style="margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--dept-primary);">• ${resp}</li>`).join('')}
+                  </ul>
+              </div>
+          `;
+      }
+
+      // Error Handling System
+      function showError(code, message) {
+          const banner = document.getElementById('errorBanner');
+          const messageEl = document.getElementById('errorMessage');
+          messageEl.innerHTML = `<strong>Error ${code}:</strong> ${message}`;
+          banner.classList.add('visible');
+
+          setTimeout(() => hideError(), 5000);
+      }
+
+      function hideError() {
+          document.getElementById('errorBanner').classList.remove('visible');
+      }
+
+      // Hash Navigation for Deep Linking
+      function handleHashNavigation() {
+          const hash = window.location.hash.substring(1);
+          if (hash) {
+              const member = teamMembers.find(m => m.id === hash);
+              if (member) {
+                  // Scroll to member and highlight
+                  const element = document.getElementById(hash);
+                  if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      element.style.transform = 'scale(1.05)';
+                      element.style.boxShadow = `0 0 30px ${departmentConfig.primaryColor}40`;
+
+                      // Open modal after scroll
+                      setTimeout(() => {
+                          openMemberProfile(hash);
+                          element.style.transform = '';
+                          element.style.boxShadow = '';
+                      }, 800);
+                  }
+              }
+          }
+      }
+
+      // Event Listeners
+      document.addEventListener('DOMContentLoaded', () => {
+          console.log(`🏢 ${departmentConfig.name} Department page loaded`);
+          console.log(`👥 ${teamMembers.length} team members initialized`);
+
+          // Handle hash navigation for deep linking
+          handleHashNavigation();
+          window.addEventListener('hashchange', handleHashNavigation);
+
+          // ESC key to close modal
+          document.addEventListener('keydown', (e) => {
+              if (e.key === 'Escape') {
+                  closeModal();
+              }
+          });
+      });
+
+      // Click outside modal to close
+      document.getElementById('memberModal').addEventListener('click', (e) => {
+          if (e.target.id === 'memberModal') {
+              closeModal();
+          }
+      });
+    </script>
+  </body>
+</html>

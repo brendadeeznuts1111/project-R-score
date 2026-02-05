@@ -1,0 +1,17 @@
+feat(contributors): implement enhanced commit message system with department attribution
+
+Department: Team Contributors
+Lead: Alex Chen <alex.chen@team.fire22>
+Contributors: Jordan Taylor <jordan.taylor@team.fire22>, Sam Wilson <sam.wilson@team.fire22>
+L-Keys: L-801, L-802, L-803
+
+Features added:
+- Enhanced commit message template generator with Fire22 company emails
+- Git commit-msg hook for validation and enforcement
+- Department-specific attribution with lead and contributors
+- L-Key integration for language key ownership tracking
+- Automated setup script for git hooks installation
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>

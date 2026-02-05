@@ -1,0 +1,80 @@
+# 🔥 Fire22 Dashboard Worker CODEOWNERS
+# Defines package ownership and review requirements
+# Each department maintains ownership of their domain packages
+
+# Domain: Betting - Sportsbook Operations
+/src/packages/betting/              @marcus-rodriguez @linda-chen @robert-taylor
+/src/departments/sportsbook/        @marcus-rodriguez @linda-chen @robert-taylor
+/src/components/betting/            @marcus-rodriguez @linda-chen @robert-taylor
+
+# Domain: Security - Security Department
+/src/packages/security/             @alex-johnson @maria-rodriguez @david-chen
+/src/departments/security/          @alex-johnson @maria-rodriguez @david-chen
+/src/components/security/           @alex-johnson @maria-rodriguez @david-chen
+/src/security-monitoring/           @alex-johnson @maria-rodriguez @david-chen
+/src/compliance-monitoring/         @alex-johnson @maria-rodriguez @david-chen
+
+# Domain: Compliance - Compliance Department
+/src/packages/compliance/           @samantha-chen @robert-martinez @lisa-thompson
+/src/departments/compliance/        @samantha-chen @robert-martinez @lisa-thompson
+/src/components/compliance/         @samantha-chen @robert-martinez @lisa-thompson
+/src/audit-logs/                    @samantha-chen @robert-martinez @lisa-thompson
+/src/compliance-reports/            @samantha-chen @robert-martinez @lisa-thompson
+
+# Domain: Analytics - Analytics Department
+/src/packages/analytics/            @elena-vasquez @marcus-chen @sarah-patel
+/src/departments/analytics/         @elena-vasquez @marcus-chen @sarah-patel
+/src/components/analytics/          @elena-vasquez @marcus-chen @sarah-patel
+/src/analytics-dashboards/          @elena-vasquez @marcus-chen @sarah-patel
+/src/performance-monitoring/        @elena-vasquez @marcus-chen @sarah-patel
+/src/business-intelligence/         @elena-vasquez @marcus-chen @sarah-patel
+
+# Domain: Gaming - Live Casino Operations
+/src/packages/gaming/               @jennifer-wilson
+/src/departments/casino/            @jennifer-wilson
+/src/components/casino/             @jennifer-wilson
+/src/live-streaming/                @jennifer-wilson
+
+# Domain: Technology - Infrastructure
+/src/packages/technology/           @david-park @sarah-martinez @michael-chen
+/src/infrastructure/                @david-park @sarah-martinez @michael-chen
+/src/core/                          @david-park @michael-chen
+/src/shared/                        @david-park @sarah-martinez
+/src/utils/                         @david-park @sarah-martinez
+
+# Domain: Finance - Payment Processing
+/src/packages/finance/              @rachel-thompson @lisa-wong @kevin-patel
+/src/departments/finance/           @rachel-thompson @lisa-wong @kevin-patel
+/src/components/finance/            @rachel-thompson @lisa-wong @kevin-patel
+/src/payment-processing/            @rachel-thompson @lisa-wong @kevin-patel
+
+# Documentation & Wiki
+/wiki/                              @david-park @sarah-martinez
+/wiki/code-ownership/               @david-park @sarah-martinez
+/docs/                              @david-park @sarah-martinez
+
+# CI/CD & Deployment
+/.github/workflows/                 @david-park @michael-chen
+/scripts/                           @david-park @michael-chen
+/infrastructure/ci-cd/              @david-park @michael-chen
+
+# Security & Compliance
+/src/security/                      @david-park @michael-chen
+/src/compliance/                    @rachel-thompson @lisa-wong
+/src/audit/                         @rachel-thompson @lisa-wong
+
+# Testing & Quality Assurance
+/src/tests/                         @david-park @sarah-martinez
+/test-results/                      @david-park @sarah-martinez
+/coverage/                          @david-park @sarah-martinez
+
+# Global Owners (for cross-cutting concerns)
+/package.json                       @david-park @michael-chen
+/bunfig.toml                        @david-park @michael-chen
+/tsconfig.json                      @david-park @michael-chen
+/.npmrc                             @david-park @michael-chen
+
+# Emergency Contacts
+# For urgent security issues: security@apexodds.net
+# For urgent payment issues: rachel.thompson@apexodds.net
+# For urgent technical issues: david.park@apexodds.net

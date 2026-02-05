@@ -1,0 +1,1385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enhanced Player Management Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap DateTimePicker CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
+    />
+
+    <!-- Bootstrap DateRangePicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
+
+    <!-- Pick-a-Date CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/themes/default.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/themes/default.date.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/themes/default.time.css"
+    />
+
+    <!-- Custom Styles -->
+    <style>
+      .player-dashboard {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .dashboard-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+      }
+
+      .card-header-custom {
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px;
+      }
+
+      .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+
+      .balance-display {
+        font-size: 2em;
+        font-weight: bold;
+        color: #28a745;
+      }
+
+      .risk-indicator {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: #e9ecef;
+        overflow: hidden;
+      }
+
+      .risk-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+      }
+
+      .risk-low {
+        background: #28a745;
+      }
+      .risk-medium {
+        background: #ffc107;
+      }
+      .risk-high {
+        background: #fd7e14;
+      }
+      .risk-critical {
+        background: #dc3545;
+      }
+
+      .lottery-game-option {
+        padding: 5px;
+      }
+
+      .peer-match-indicator {
+        position: relative;
+      }
+
+      .peer-match-indicator::after {
+        content: '🤝';
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        font-size: 1.2em;
+      }
+
+      .tooltip-inner {
+        max-width: 300px;
+      }
+
+      .select2-container--default .select2-selection--single {
+        height: 38px;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+      }
+
+      .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px;
+        padding-left: 12px;
+      }
+
+      .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="player-dashboard">
+      <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h2 class="mb-0">
+                  <i class="icon-user mr-2"></i>
+                  Enhanced Player Management Dashboard
+                  <span class="badge badge-light ml-2" id="session-status">Active</span>
+                </h2>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customer-search">Search Customer</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="customer-search"
+                        placeholder="Enter customer ID or name"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="state-select">State</label>
+                      <select class="form-control select2-placeholder" id="state-select"></select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="status-select">Customer Status</label>
+                      <select class="form-control select2-data-array" id="status-select"></select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Info Row -->
+        <div class="row mb-4">
+          <div class="col-lg-8">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="icon-user mr-2"></i>
+                  Customer Information
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5 id="customer-name">Bob Johnson</h5>
+                    <p class="text-muted" id="customer-id">BBB9901</p>
+                    <span class="status-badge bg-success" id="customer-status">Active</span>
+                    <span class="status-badge bg-primary ml-2" id="vip-status">VIP Gold</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <div class="balance-display" id="current-balance">$1,247.50</div>
+                    <small class="text-muted">Available Balance</small>
+                    <br />
+                    <button
+                      class="btn btn-sm btn-outline-info mt-2"
+                      data-toggle="tooltip"
+                      title="View detailed balance breakdown"
+                    >
+                      <i class="icon-eye"></i>
+                      Details
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Risk Indicator -->
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <label>Risk Assessment</label>
+                    <div class="risk-indicator">
+                      <div class="risk-fill risk-low" id="risk-fill" style="width: 15%"></div>
+                    </div>
+                    <small class="text-muted mt-1" id="risk-level">Low Risk (15/100)</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="icon-bar-chart mr-2"></i>
+                  Quick Stats
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row text-center">
+                  <div class="col-6">
+                    <h3 class="text-primary" id="total-transactions">47</h3>
+                    <small class="text-muted">Transactions</small>
+                  </div>
+                  <div class="col-6">
+                    <h3 class="text-success" id="success-rate">96%</h3>
+                    <small class="text-muted">Success Rate</small>
+                  </div>
+                </div>
+                <hr />
+                <div class="row text-center">
+                  <div class="col-6">
+                    <h3 class="text-info" id="peer-groups">3</h3>
+                    <small class="text-muted">Peer Groups</small>
+                  </div>
+                  <div class="col-6">
+                    <h3 class="text-warning" id="active-notes">3</h3>
+                    <small class="text-muted">Active Notes</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction Management -->
+        <div class="row mb-4">
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="icon-credit-card mr-2"></i>
+                  Transaction Management
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="payment-method-select">Payment Method</label>
+                      <select class="form-control select2-icons" id="payment-method-select"></select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="transaction-amount">Amount</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="transaction-amount"
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="transaction-type">Transaction Type</label>
+                      <select class="form-control" id="transaction-type">
+                        <option value="deposit">Deposit</option>
+                        <option value="withdrawal">Withdrawal</option>
+                        <option value="transfer">Transfer</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Payment Details</label>
+                      <input type="text" class="form-control" id="payment-details" placeholder="Username/Account" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="peer-matching-enabled" checked />
+                  <label class="form-check-label" for="peer-matching-enabled">Enable Peer-to-Peer Matching</label>
+                </div>
+
+                <div class="mt-3">
+                  <button class="btn btn-success btn-block" id="process-transaction">
+                    <i class="icon-check mr-2"></i>
+                    Process Transaction
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="icon-calendar mr-2"></i>
+                  Date Range & Filters
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="datetimepicker6">From Date</label>
+                      <div class="input-group date" id="datetimepicker6">
+                        <input type="text" class="form-control" />
+                        <span class="input-group-addon">
+                          <span class="icon-calendar"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="datetimepicker7">To Date</label>
+                      <div class="input-group date" id="datetimepicker7">
+                        <input type="text" class="form-control" />
+                        <span class="input-group-addon">
+                          <span class="icon-calendar"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Date Range Picker</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control daterange" />
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="icon-calendar"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="peer-group-select">Peer Group Filter</label>
+                  <select class="form-control" id="peer-group-select">
+                    <option value="">All Groups</option>
+                    <option value="venmo_users">Venmo Users Club</option>
+                    <option value="high_frequency">High Frequency Traders</option>
+                    <option value="vip_network">VIP Network</option>
+                  </select>
+                </div>
+
+                <div class="mt-3">
+                  <button class="btn btn-primary btn-block" id="apply-filters">
+                    <i class="icon-filter mr-2"></i>
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lottery Management -->
+        <div class="row mb-4">
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="icon-trophy mr-2"></i>
+                  Lottery Management
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="lottery-game-select">Select Game</label>
+                      <select class="form-control" id="lottery-game-select"></select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="lottery-amount">Bet Amount</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="lottery-amount"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="1"
+                        max="100"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Lottery Numbers</label>
+                  <div class="row">
+                    <div class="col-2">
+                      <input type="number" class="form-control" id="num1" min="1" max="49" placeholder="1-49" />
+                    </div>
+                    <div class="col-2">
+                      <input type="number" class="form-control" id="num2" min="1" max="49" placeholder="1-49" />
+                    </div>
+                    <div class="col-2">
+                      <input type="number" class="form-control" id="num3" min="1" max="49" placeholder="1-49" />
+                    </div>
+                    <div class="col-2">
+                      <input type="number" class="form-control" id="num4" min="1" max="49" placeholder="1-49" />
+                    </div>
+                    <div class="col-2">
+                      <input type="number" class="form-control" id="num5" min="1" max="49" placeholder="1-49" />
+                    </div>
+                    <div class="col-2">
+                      <input type="number" class="form-control" id="powerball" min="1" max="26" placeholder="PB" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="auto-pick-numbers" />
+                  <label class="form-check-label" for="auto-pick-numbers">Auto-pick numbers if empty</label>
+                </div>
+
+                <div class="mt-3">
+                  <button class="btn btn-warning btn-block" id="place-lottery-bet">
+                    <i class="icon-trophy mr-2"></i>
+                    Place Lottery Bet
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="icon-users mr-2"></i>
+                  Peer Network Management
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Direct Peers</label>
+                      <div class="h3 text-primary" id="direct-peers-count">12</div>
+                      <small class="text-muted">Trusted connections</small>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Network Strength</label>
+                      <div class="h3 text-success" id="network-strength">87%</div>
+                      <small class="text-muted">Overall health</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="peer-group-action">Peer Group Actions</label>
+                  <select class="form-control" id="peer-group-action">
+                    <option value="">Select Action</option>
+                    <option value="create">Create New Group</option>
+                    <option value="join">Join Existing Group</option>
+                    <option value="leave">Leave Group</option>
+                    <option value="invite">Invite to Group</option>
+                  </select>
+                </div>
+
+                <div class="form-group" id="new-group-name-container" style="display: none">
+                  <label for="new-group-name">Group Name</label>
+                  <input type="text" class="form-control" id="new-group-name" placeholder="Enter group name" />
+                </div>
+
+                <div class="mt-3">
+                  <button class="btn btn-info btn-block" id="execute-peer-action">
+                    <i class="icon-users mr-2"></i>
+                    Execute Action
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Management -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="icon-notebook mr-2"></i>
+                  Player Notes Management
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="note-category">Category</label>
+                      <select class="form-control" id="note-category">
+                        <option value="general">General</option>
+                        <option value="complaint">Complaint</option>
+                        <option value="praise">Praise</option>
+                        <option value="warning">Warning</option>
+                        <option value="suspension">Suspension</option>
+                        <option value="vip">VIP</option>
+                        <option value="risk">Risk</option>
+                        <option value="lottery">Lottery</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="note-content">Note Content</label>
+                      <textarea
+                        class="form-control"
+                        id="note-content"
+                        rows="3"
+                        placeholder="Enter your note here... (max 2000 characters)"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>&nbsp;</label>
+                      <div>
+                        <button class="btn btn-primary btn-block" id="add-note">
+                          <i class="icon-plus mr-2"></i>
+                          Add Note
+                        </button>
+                        <button class="btn btn-secondary btn-block mt-2" id="search-notes">
+                          <i class="icon-search mr-2"></i>
+                          Search Notes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Notes Display Area -->
+                <div id="notes-display" class="mt-3">
+                  <!-- Notes will be dynamically loaded here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <div class="card-body text-center">
+                <button class="btn btn-success btn-lg mr-3" id="save-changes">
+                  <i class="icon-check mr-2"></i>
+                  Save Changes
+                </button>
+                <button class="btn btn-danger btn-lg mr-3" id="end-session">
+                  <i class="icon-power-off mr-2"></i>
+                  End Session
+                </button>
+                <button class="btn btn-info btn-lg mr-3" id="generate-report">
+                  <i class="icon-file-text mr-2"></i>
+                  Generate Report
+                </button>
+                <button class="btn btn-warning btn-lg mr-3" id="open-ip-tracker" data-action="get-ip-tracker">
+                  <i class="fas fa-globe mr-2"></i>
+                  IP Tracker
+                </button>
+                <button
+                  class="btn btn-success btn-lg mr-3"
+                  id="open-transaction-history"
+                  data-action="get-transaction-history"
+                >
+                  <i class="fas fa-history mr-2"></i>
+                  Transaction History
+                </button>
+                <button class="btn btn-primary btn-lg mr-3" id="open-collections" data-action="get-settled-figure">
+                  <i class="fas fa-calendar-check mr-2"></i>
+                  Collections
+                </button>
+                <button
+                  class="btn btn-info btn-lg mr-3"
+                  id="open-sportsbook-lines"
+                  data-action="get-lines"
+                  data-type="sportbook"
+                >
+                  <i class="fas fa-trophy mr-2"></i>
+                  Sportsbook Lines
+                </button>
+                <button class="btn btn-dark btn-lg" id="open-analysis" data-action="get-analysis">
+                  <i class="fas fa-chart-line mr-2"></i>
+                  Analysis
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Transaction Success Modal -->
+    <div class="modal fade" id="transactionSuccessModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Transaction Successful</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="transaction-success-content">
+            <!-- Transaction details will be populated here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lottery Bet Modal -->
+    <div class="modal fade" id="lotteryBetModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Lottery Bet Confirmation</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="lottery-bet-content">
+            <!-- Lottery bet details will be populated here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-success" id="confirm-lottery-bet">Confirm Bet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <!-- Bootstrap DateTimePicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <!-- Bootstrap DateRangePicker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.js"></script>
+
+    <!-- Pick-a-Date JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/picker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/picker.date.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pickadate.js/3.5.6/compressed/picker.time.js"></script>
+
+    <!-- Main Application Script -->
+    <script>
+      // Initialize all UI components when document is ready
+      $(document).ready(function () {
+        initializeUIComponents();
+        initializeEventHandlers();
+        loadInitialData();
+      });
+
+      // Initialize UI Components
+      function initializeUIComponents() {
+        // Basic Select2
+        $('.select2').select2();
+
+        // State Select with placeholder
+        initializeStateSelect();
+
+        // Payment Method Select with icons
+        initializePaymentMethodSelect();
+
+        // Customer Status Select with data array
+        initializeStatusSelect();
+
+        // Lottery Game Select
+        initializeLotteryGameSelect();
+
+        // DateTime Pickers
+        initializeDateTimePickers();
+
+        // Date Range Picker
+        initializeDateRangePicker();
+
+        // Tooltips
+        initializeTooltips();
+
+        console.log('✅ All UI components initialized');
+      }
+
+      // Initialize State Select
+      function initializeStateSelect() {
+        const states = [
+          { id: 'AL', text: 'Alabama' },
+          { id: 'AK', text: 'Alaska' },
+          { id: 'AZ', text: 'Arizona' },
+          { id: 'AR', text: 'Arkansas' },
+          { id: 'CA', text: 'California' },
+          { id: 'CO', text: 'Colorado' },
+          { id: 'CT', text: 'Connecticut' },
+          { id: 'DE', text: 'Delaware' },
+          { id: 'FL', text: 'Florida' },
+          { id: 'GA', text: 'Georgia' },
+          { id: 'HI', text: 'Hawaii' },
+          { id: 'ID', text: 'Idaho' },
+          { id: 'IL', text: 'Illinois' },
+          { id: 'IN', text: 'Indiana' },
+          { id: 'IA', text: 'Iowa' },
+          { id: 'KS', text: 'Kansas' },
+          { id: 'KY', text: 'Kentucky' },
+          { id: 'LA', text: 'Louisiana' },
+          { id: 'ME', text: 'Maine' },
+          { id: 'MD', text: 'Maryland' },
+          { id: 'MA', text: 'Massachusetts' },
+          { id: 'MI', text: 'Michigan' },
+          { id: 'MN', text: 'Minnesota' },
+          { id: 'MS', text: 'Mississippi' },
+          { id: 'MO', text: 'Missouri' },
+          { id: 'MT', text: 'Montana' },
+          { id: 'NE', text: 'Nebraska' },
+          { id: 'NV', text: 'Nevada' },
+          { id: 'NH', text: 'New Hampshire' },
+          { id: 'NJ', text: 'New Jersey' },
+          { id: 'NM', text: 'New Mexico' },
+          { id: 'NY', text: 'New York' },
+          { id: 'NC', text: 'North Carolina' },
+          { id: 'ND', text: 'North Dakota' },
+          { id: 'OH', text: 'Ohio' },
+          { id: 'OK', text: 'Oklahoma' },
+          { id: 'OR', text: 'Oregon' },
+          { id: 'PA', text: 'Pennsylvania' },
+          { id: 'RI', text: 'Rhode Island' },
+          { id: 'SC', text: 'South Carolina' },
+          { id: 'SD', text: 'South Dakota' },
+          { id: 'TN', text: 'Tennessee' },
+          { id: 'TX', text: 'Texas' },
+          { id: 'UT', text: 'Utah' },
+          { id: 'VT', text: 'Vermont' },
+          { id: 'VA', text: 'Virginia' },
+          { id: 'WA', text: 'Washington' },
+          { id: 'WV', text: 'West Virginia' },
+          { id: 'WI', text: 'Wisconsin' },
+          { id: 'WY', text: 'Wyoming' },
+        ];
+
+        $('#state-select').select2({
+          placeholder: 'Select a state',
+          allowClear: true,
+          data: states,
+        });
+      }
+
+      // Initialize Payment Method Select with icons
+      function initializePaymentMethodSelect() {
+        const paymentMethods = [
+          { id: 'venmo', text: 'Venmo', icon: 'venmo' },
+          { id: 'cashapp', text: 'Cash App', icon: 'cashapp' },
+          { id: 'paypal', text: 'PayPal', icon: 'paypal' },
+          { id: 'zelle', text: 'Zelle', icon: 'zelle' },
+          { id: 'bank_transfer', text: 'Bank Transfer', icon: 'bank' },
+          { id: 'wire_transfer', text: 'Wire Transfer', icon: 'wire' },
+          { id: 'crypto', text: 'Cryptocurrency', icon: 'crypto' },
+        ];
+
+        $('#payment-method-select').select2({
+          placeholder: 'Select payment method',
+          allowClear: true,
+          data: paymentMethods,
+          templateResult: formatPaymentMethod,
+          templateSelection: formatPaymentMethod,
+        });
+
+        function formatPaymentMethod(method) {
+          if (!method.id) return method.text;
+
+          const iconMap = {
+            venmo: '💳',
+            cashapp: '💵',
+            paypal: '🅿️',
+            zelle: '🏦',
+            bank_transfer: '🏦',
+            wire_transfer: '💰',
+            crypto: '₿',
+          };
+
+          const icon = iconMap[method.id] || '💳';
+          return `<span>${icon} ${method.text}</span>`;
+        }
+      }
+
+      // Initialize Status Select with data array
+      function initializeStatusSelect() {
+        const statuses = [
+          { id: 'active', text: 'Active' },
+          { id: 'inactive', text: 'Inactive' },
+          { id: 'suspended', text: 'Suspended' },
+          { id: 'locked', text: 'Locked' },
+          { id: 'vip', text: 'VIP' },
+          { id: 'pending', text: 'Pending' },
+        ];
+
+        $('#status-select').select2({
+          placeholder: 'Select customer status',
+          allowClear: true,
+          data: statuses,
+        });
+      }
+
+      // Initialize Lottery Game Select
+      function initializeLotteryGameSelect() {
+        // Mock lottery games - in real implementation, this would come from API
+        const lotteryGames = [
+          { id: 'powerball', text: 'Powerball ($150M Jackpot)' },
+          { id: 'mega_millions', text: 'Mega Millions ($75M Jackpot)' },
+          { id: 'daily_lotto', text: 'Daily Lotto ($500K Jackpot)' },
+          { id: 'instant_win', text: 'Instant Win Scratch Cards' },
+        ];
+
+        $('#lottery-game-select').select2({
+          placeholder: 'Select lottery game',
+          allowClear: true,
+          data: lotteryGames,
+        });
+      }
+
+      // Initialize DateTime Pickers
+      function initializeDateTimePickers() {
+        // From Date
+        $('#datetimepicker6').datetimepicker({
+          format: 'MM/DD/YYYY',
+        });
+
+        // To Date
+        $('#datetimepicker7').datetimepicker({
+          format: 'MM/DD/YYYY',
+          useCurrent: false,
+        });
+
+        // Link the date pickers
+        $('#datetimepicker6').on('dp.change', function (e) {
+          $('#datetimepicker7').data('DateTimePicker').minDate(e.date);
+        });
+
+        $('#datetimepicker7').on('dp.change', function (e) {
+          $('#datetimepicker6').data('DateTimePicker').maxDate(e.date);
+        });
+      }
+
+      // Initialize Date Range Picker
+      function initializeDateRangePicker() {
+        $('.daterange').daterangepicker({
+          autoApply: true,
+          locale: {
+            format: 'MM/DD/YYYY',
+          },
+        });
+      }
+
+      // Initialize Tooltips
+      function initializeTooltips() {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Custom tooltips
+        $('#show-tooltip').tooltip({
+          title: 'Click to show tooltip event',
+          trigger: 'click',
+          placement: 'right',
+        });
+      }
+
+      // Initialize Event Handlers
+      function initializeEventHandlers() {
+        // Transaction processing
+        $('#process-transaction').on('click', handleTransactionProcessing);
+
+        // Lottery bet placement
+        $('#place-lottery-bet').on('click', handleLotteryBetPlacement);
+
+        // Apply filters
+        $('#apply-filters').on('click', handleApplyFilters);
+
+        // Peer group actions
+        $('#peer-group-action').on('change', handlePeerGroupActionChange);
+        $('#execute-peer-action').on('click', handlePeerGroupAction);
+
+        // Notes management
+        $('#add-note').on('click', handleAddNote);
+        $('#search-notes').on('click', handleSearchNotes);
+
+        // Main actions
+        $('#save-changes').on('click', handleSaveChanges);
+        $('#end-session').on('click', handleEndSession);
+        $('#generate-report').on('click', handleGenerateReport);
+        $('#open-ip-tracker').on('click', handleOpenIPTracker);
+        $('#open-transaction-history').on('click', handleOpenTransactionHistory);
+        $('#open-collections').on('click', handleOpenCollections);
+        $('#open-sportsbook-lines').on('click', handleOpenSportsbookLines);
+        $('#open-analysis').on('click', handleOpenAnalysis);
+
+        // Auto-pick lottery numbers
+        $('#auto-pick-numbers').on('change', handleAutoPickNumbers);
+
+        console.log('✅ Event handlers initialized');
+      }
+
+      // Load Initial Data
+      function loadInitialData() {
+        // Load customer data
+        loadCustomerData();
+
+        // Load peer network data
+        loadPeerNetworkData();
+
+        // Load lottery games
+        loadLotteryGames();
+
+        // Load recent notes
+        loadRecentNotes();
+
+        console.log('✅ Initial data loaded');
+      }
+
+      // Event Handler Functions
+      function handleTransactionProcessing() {
+        const paymentMethod = $('#payment-method-select').val();
+        const amount = parseFloat($('#transaction-amount').val());
+        const transactionType = $('#transaction-type').val();
+        const paymentDetails = $('#payment-details').val();
+        const peerMatchingEnabled = $('#peer-matching-enabled').is(':checked');
+
+        if (!paymentMethod || !amount || amount <= 0) {
+          alert('Please fill in all required fields');
+          return;
+        }
+
+        // Show processing modal
+        const modalContent = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="sr-only">Processing...</span>
+                    </div>
+                    <h5>Processing Transaction</h5>
+                    <p class="text-muted">Please wait while we process your ${transactionType}...</p>
+                    <div class="mt-3">
+                        <strong>Amount:</strong> $${amount.toFixed(2)}<br>
+                        <strong>Method:</strong> ${paymentMethod}<br>
+                        <strong>Peer Matching:</strong> ${peerMatchingEnabled ? 'Enabled' : 'Disabled'}
+                    </div>
+                </div>
+            `;
+
+        $('#transaction-success-content').html(modalContent);
+        $('#transactionSuccessModal').modal('show');
+
+        // Simulate processing (in real implementation, this would call the API)
+        setTimeout(() => {
+          const successContent = `
+                    <div class="text-center">
+                        <i class="icon-check-circle text-success" style="font-size: 3em;"></i>
+                        <h5 class="mt-3">Transaction Successful!</h5>
+                        <p class="text-muted">Your ${transactionType} has been processed successfully.</p>
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <strong>Transaction ID:</strong> TXN-${Date.now()}<br>
+                            <strong>Amount:</strong> $${amount.toFixed(2)}<br>
+                            <strong>Method:</strong> ${paymentMethod}<br>
+                            <strong>Status:</strong> <span class="text-success">Completed</span><br>
+                            <strong>Processing Time:</strong> 2.3 seconds
+                        </div>
+                    </div>
+                `;
+
+          $('#transaction-success-content').html(successContent);
+        }, 2000);
+      }
+
+      function handleLotteryBetPlacement() {
+        const game = $('#lottery-game-select').val();
+        const amount = parseFloat($('#lottery-amount').val());
+        const numbers = [$('#num1').val(), $('#num2').val(), $('#num3').val(), $('#num4').val(), $('#num5').val()];
+        const powerball = $('#powerball').val();
+
+        if (!game || !amount || amount <= 0) {
+          alert('Please select a game and enter a valid amount');
+          return;
+        }
+
+        // Auto-pick numbers if empty and enabled
+        if ($('#auto-pick-numbers').is(':checked')) {
+          for (let i = 0; i < 5; i++) {
+            if (!numbers[i]) {
+              numbers[i] = Math.floor(Math.random() * 49) + 1;
+              $(`#num${i + 1}`).val(numbers[i]);
+            }
+          }
+          if (!powerball) {
+            const pb = Math.floor(Math.random() * 26) + 1;
+            $('#powerball').val(pb);
+          }
+        }
+
+        // Validate numbers
+        const validNumbers = numbers.filter(n => n && n >= 1 && n <= 49);
+        const validPB = powerball && powerball >= 1 && powerball <= 26;
+
+        if (validNumbers.length < 5 || !validPB) {
+          alert('Please enter valid lottery numbers (1-49 for main numbers, 1-26 for Powerball)');
+          return;
+        }
+
+        // Show confirmation modal
+        const modalContent = `
+                <div class="text-center mb-3">
+                    <i class="icon-trophy text-warning" style="font-size: 2em;"></i>
+                    <h5>Lottery Bet Confirmation</h5>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Game:</strong> ${game}<br>
+                        <strong>Amount:</strong> $${amount.toFixed(2)}<br>
+                        <strong>Numbers:</strong> ${validNumbers.join(', ')}<br>
+                        <strong>Powerball:</strong> ${powerball}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Current Balance:</strong> $1,247.50<br>
+                        <strong>Balance After:</strong> $${(1247.5 - amount).toFixed(2)}<br>
+                        <strong>Next Draw:</strong> Wednesday 8:00 PM
+                    </div>
+                </div>
+            `;
+
+        $('#lottery-bet-content').html(modalContent);
+        $('#lotteryBetModal').modal('show');
+      }
+
+      function handleApplyFilters() {
+        const fromDate = $('#datetimepicker6 input').val();
+        const toDate = $('#datetimepicker7 input').val();
+        const peerGroup = $('#peer-group-select').val();
+        const dateRange = $('.daterange').val();
+
+        console.log('Applying filters:', {
+          fromDate,
+          toDate,
+          peerGroup,
+          dateRange,
+        });
+
+        // In real implementation, this would filter the displayed data
+        alert('Filters applied successfully! (Data filtering would be implemented here)');
+      }
+
+      function handlePeerGroupActionChange() {
+        const action = $(this).val();
+        const container = $('#new-group-name-container');
+
+        if (action === 'create') {
+          container.show();
+        } else {
+          container.hide();
+        }
+      }
+
+      function handlePeerGroupAction() {
+        const action = $('#peer-group-action').val();
+        const groupName = $('#new-group-name').val();
+
+        if (action === 'create' && !groupName) {
+          alert('Please enter a group name');
+          return;
+        }
+
+        console.log('Executing peer group action:', { action, groupName });
+
+        // In real implementation, this would call the API
+        alert(`Peer group action "${action}" executed successfully!`);
+      }
+
+      function handleAddNote() {
+        const category = $('#note-category').val();
+        const content = $('#note-content').val().trim();
+
+        if (!content) {
+          alert('Please enter note content');
+          return;
+        }
+
+        if (content.length > 2000) {
+          alert('Note content cannot exceed 2000 characters');
+          return;
+        }
+
+        console.log('Adding note:', { category, content });
+
+        // In real implementation, this would call the API
+        const noteHtml = `
+                <div class="alert alert-info mt-2">
+                    <strong>${category.charAt(0).toUpperCase() + category.slice(1)} Note Added:</strong>
+                    <p class="mb-1">${content}</p>
+                    <small class="text-muted">Just now by Support Agent Alpha</small>
+                </div>
+            `;
+
+        $('#notes-display').prepend(noteHtml);
+        $('#note-content').val('');
+      }
+
+      function handleSearchNotes() {
+        const searchTerm = prompt('Enter search term:');
+        if (searchTerm) {
+          console.log('Searching notes for:', searchTerm);
+          alert(`Search functionality would be implemented here for: "${searchTerm}"`);
+        }
+      }
+
+      function handleSaveChanges() {
+        console.log('Saving changes...');
+        alert('Changes saved successfully! (API integration would be implemented here)');
+      }
+
+      function handleEndSession() {
+        if (confirm('Are you sure you want to end this session?')) {
+          console.log('Ending session...');
+          alert('Session ended successfully! (API integration would be implemented here)');
+          $('#session-status').text('Ended').removeClass('badge-light').addClass('badge-secondary');
+        }
+      }
+
+      function handleGenerateReport() {
+        console.log('Generating report...');
+        alert('Report generation started! (This would create a comprehensive PDF report)');
+      }
+
+      function handleOpenIPTracker() {
+        console.log('Opening IP Tracker...');
+
+        // Open IP Tracker in a new window/tab or modal
+        // For now, we'll open it in a new window
+        const ipTrackerWindow = window.open(
+          '/dashboard-worker/ui/templates/ip-tracker-dashboard.html',
+          'ipTracker',
+          'width=1200,height=800,scrollbars=yes,resizable=yes'
+        );
+
+        if (ipTrackerWindow) {
+          ipTrackerWindow.focus();
+        } else {
+          alert('Please allow popups for this site to open the IP Tracker');
+        }
+      }
+
+      function handleOpenTransactionHistory() {
+        console.log('Opening Transaction History...');
+
+        // Open Transaction History in a new window/tab
+        const transactionHistoryWindow = window.open(
+          '/dashboard-worker/ui/templates/transaction-history-dashboard.html',
+          'transactionHistory',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (transactionHistoryWindow) {
+          transactionHistoryWindow.focus();
+        } else {
+          alert('Please allow popups for this site to open the Transaction History');
+        }
+      }
+
+      function handleOpenCollections() {
+        console.log('Opening Collections...');
+
+        // Open Collections in a new window/tab
+        const collectionsWindow = window.open(
+          '/dashboard-worker/ui/templates/collections-dashboard.html',
+          'collections',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (collectionsWindow) {
+          collectionsWindow.focus();
+        } else {
+          alert('Please allow popups for this site to open the Collections');
+        }
+      }
+
+      function handleOpenSportsbookLines() {
+        console.log('Opening Sportsbook Lines...');
+
+        // Open Sportsbook Lines in a new window/tab
+        const sportsbookWindow = window.open(
+          '/dashboard-worker/ui/templates/sportsbook-lines-dashboard.html',
+          'sportsbookLines',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (sportsbookWindow) {
+          sportsbookWindow.focus();
+        } else {
+          alert('Please allow popups for this site to open the Sportsbook Lines');
+        }
+      }
+
+      function handleOpenAnalysis() {
+        console.log('Opening Analysis...');
+
+        // Open Analysis in a new window/tab
+        const analysisWindow = window.open(
+          '/dashboard-worker/ui/templates/analysis-dashboard.html',
+          'analysis',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (analysisWindow) {
+          analysisWindow.focus();
+        } else {
+          alert('Please allow popups for this site to open the Analysis');
+        }
+      }
+
+      function handleAutoPickNumbers() {
+        if ($(this).is(':checked')) {
+          // Auto-fill empty number fields
+          for (let i = 1; i <= 5; i++) {
+            const field = $(`#num${i}`);
+            if (!field.val()) {
+              const randomNum = Math.floor(Math.random() * 49) + 1;
+              field.val(randomNum);
+            }
+          }
+
+          // Auto-fill Powerball if empty
+          const pbField = $('#powerball');
+          if (!pbField.val()) {
+            const randomPB = Math.floor(Math.random() * 26) + 1;
+            pbField.val(randomPB);
+          }
+        }
+      }
+
+      // Data Loading Functions
+      function loadCustomerData() {
+        // Simulate loading customer data
+        console.log('Loading customer data...');
+
+        // Update UI with customer information
+        setTimeout(() => {
+          $('#customer-name').text('Bob Johnson');
+          $('#customer-id').text('BBB9901');
+          $('#current-balance').text('$1,247.50');
+          $('#total-transactions').text('47');
+          $('#success-rate').text('96%');
+          $('#peer-groups').text('3');
+          $('#active-notes').text('3');
+
+          console.log('Customer data loaded');
+        }, 500);
+      }
+
+      function loadPeerNetworkData() {
+        // Simulate loading peer network data
+        console.log('Loading peer network data...');
+
+        setTimeout(() => {
+          $('#direct-peers-count').text('12');
+          $('#network-strength').text('87%');
+
+          console.log('Peer network data loaded');
+        }, 300);
+      }
+
+      function loadLotteryGames() {
+        // Simulate loading lottery games
+        console.log('Loading lottery games...');
+        // Games are already initialized in the select
+      }
+
+      function loadRecentNotes() {
+        // Simulate loading recent notes
+        console.log('Loading recent notes...');
+
+        setTimeout(() => {
+          const notesHtml = `
+                    <div class="alert alert-warning">
+                        <strong>Warning Note:</strong> Lottery limits increased to $500 daily. Monitor spending patterns.
+                        <br><small class="text-muted">10 minutes ago by Support Agent Alpha</small>
+                    </div>
+                    <div class="alert alert-primary">
+                        <strong>VIP Note:</strong> Upgraded to VIP Gold status. Excellent 3-year payment history.
+                        <br><small class="text-muted">2 days ago by Senior Agent Beta</small>
+                    </div>
+                    <div class="alert alert-success">
+                        <strong>Lottery Note:</strong> Recent Powerball win: $150 (3 of 5 + PB). Balance updated.
+                        <br><small class="text-muted">3 days ago by Support Agent Alpha</small>
+                    </div>
+                `;
+
+          $('#notes-display').html(notesHtml);
+          console.log('Recent notes loaded');
+        }, 800);
+      }
+
+      // Utility Functions
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+      }
+
+      function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+
+      // Error Handling
+      function showError(message) {
+        console.error('Error:', message);
+        // In a real implementation, you might show a toast notification or modal
+        alert('Error: ' + message);
+      }
+
+      function showSuccess(message) {
+        console.log('Success:', message);
+        // In a real implementation, you might show a toast notification
+        alert('Success: ' + message);
+      }
+
+      console.log('🎯 Enhanced Player Management Dashboard initialized successfully!');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IP Tracker Dashboard - Security Monitoring</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      .ip-tracker-dashboard {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .dashboard-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+        border: none;
+      }
+
+      .card-header-custom {
+        background: linear-gradient(45deg, #1e3c72, #2a5298);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px;
+        border: none;
+      }
+
+      .ip-status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+
+      .ip-status-safe {
+        background: #28a745;
+        color: white;
+      }
+      .ip-status-suspicious {
+        background: #ffc107;
+        color: black;
+      }
+      .ip-status-high-risk {
+        background: #fd7e14;
+        color: white;
+      }
+      .ip-status-blocked {
+        background: #dc3545;
+        color: white;
+      }
+
+      .ip-card {
+        transition: transform 0.2s ease;
+        cursor: pointer;
+      }
+
+      .ip-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .geo-location {
+        font-size: 0.9em;
+        color: #6c757d;
+      }
+
+      .activity-timeline {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .timeline-item {
+        padding: 10px;
+        border-left: 3px solid #007bff;
+        margin-bottom: 10px;
+        background: #f8f9fa;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .risk-meter {
+        width: 100%;
+        height: 20px;
+        border-radius: 10px;
+        background: #e9ecef;
+        overflow: hidden;
+      }
+
+      .risk-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+      }
+
+      .risk-low {
+        background: #28a745;
+      }
+      .risk-medium {
+        background: #ffc107;
+      }
+      .risk-high {
+        background: #fd7e14;
+      }
+      .risk-critical {
+        background: #dc3545;
+      }
+
+      .security-controls {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+      }
+
+      .control-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .control-toggle:last-child {
+        border-bottom: none;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: '';
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .toggle-slider {
+        background-color: #007bff;
+      }
+
+      input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-number {
+        font-size: 2em;
+        font-weight: bold;
+        color: #007bff;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-size: 0.9em;
+      }
+
+      .ip-search {
+        position: relative;
+      }
+
+      .ip-search input {
+        padding-left: 40px;
+      }
+
+      .ip-search i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .alert-custom {
+        border-radius: 10px;
+        border: none;
+      }
+
+      .map-container {
+        height: 300px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ip-tracker-dashboard">
+      <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h2 class="mb-0">
+                  <i class="fas fa-globe mr-2"></i>
+                  IP Tracker Dashboard
+                  <span class="badge badge-light ml-2" id="system-status">Active</span>
+                </h2>
+                <p class="mb-0 mt-2 opacity-75">Real-time IP monitoring and security analysis</p>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group ip-search">
+                      <label for="ip-search">Search IP Address or Customer ID</label>
+                      <input type="text" class="form-control" id="ip-search" placeholder="192.168.1.1 or CUST001" />
+                      <i class="fas fa-search"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="risk-filter">Risk Level Filter</label>
+                      <select class="form-control" id="risk-filter">
+                        <option value="all">All Risk Levels</option>
+                        <option value="low">Low Risk</option>
+                        <option value="medium">Medium Risk</option>
+                        <option value="high">High Risk</option>
+                        <option value="critical">Critical Risk</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="time-filter">Time Range</label>
+                      <select class="form-control" id="time-filter">
+                        <option value="1h">Last Hour</option>
+                        <option value="24h" selected>Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label>&nbsp;</label>
+                      <button class="btn btn-primary btn-block" id="refresh-data">
+                        <i class="fas fa-sync-alt mr-1"></i>
+                        Refresh
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="stats-grid" id="stats-grid">
+              <!-- Stats will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+          <!-- IP Activity Feed -->
+          <div class="col-lg-8">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="fas fa-shield-alt mr-2"></i>
+                  IP Activity Monitor
+                </h4>
+              </div>
+              <div class="card-body">
+                <div id="ip-activity-container">
+                  <!-- IP activity cards will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Controls & Alerts -->
+          <div class="col-lg-4">
+            <div class="dashboard-card">
+              <div class="card-header-custom">
+                <h4 class="mb-0">
+                  <i class="fas fa-cogs mr-2"></i>
+                  Security Controls
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="security-controls">
+                  <div class="control-toggle">
+                    <div>
+                      <strong>Auto Block Suspicious IPs</strong>
+                      <small class="d-block text-muted">Automatically block IPs with high risk scores</small>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="auto-block" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="control-toggle">
+                    <div>
+                      <strong>Real-time Alerts</strong>
+                      <small class="d-block text-muted">Send notifications for security events</small>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="real-time-alerts" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="control-toggle">
+                    <div>
+                      <strong>Geo-blocking</strong>
+                      <small class="d-block text-muted">Block connections from high-risk countries</small>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="geo-blocking" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="control-toggle">
+                    <div>
+                      <strong>Rate Limiting</strong>
+                      <small class="d-block text-muted">Limit requests per IP address</small>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="rate-limiting" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Security Alerts -->
+                <div class="mt-4">
+                  <h6 class="mb-3">Recent Security Alerts</h6>
+                  <div id="security-alerts">
+                    <!-- Alerts will be populated here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed IP Analysis Modal -->
+        <div class="modal fade" id="ipDetailModal" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  <i class="fas fa-globe mr-2"></i>
+                  IP Address Details
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" id="ip-detail-content">
+                <!-- IP details will be populated here -->
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" id="block-ip-btn">Block IP</button>
+                <button type="button" class="btn btn-success" id="whitelist-ip-btn">Whitelist IP</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- IP Tracker JavaScript -->
+    <script>
+      class IPTrackerDashboard {
+        constructor() {
+          this.ipData = [];
+          this.filteredData = [];
+          this.securitySettings = {
+            autoBlock: true,
+            realTimeAlerts: true,
+            geoBlocking: false,
+            rateLimiting: true,
+          };
+          this.config = {
+            riskThreshold: 70,
+          };
+          this.currentIP = null;
+          this.charts = {};
+
+          this.initializeEventHandlers();
+          this.loadInitialData();
+          this.startRealTimeUpdates();
+        }
+
+        initializeEventHandlers() {
+          // Search functionality
+          $('#ip-search').on('input', e => {
+            this.filterIPData(e.target.value);
+          });
+
+          // Filter controls
+          $('#risk-filter, #time-filter').on('change', () => {
+            this.applyFilters();
+          });
+
+          // Refresh button
+          $('#refresh-data').on('click', () => {
+            this.loadIPData();
+          });
+
+          // Security control toggles
+          $('.toggle-switch input').on('change', e => {
+            const setting = e.target.id;
+            this.securitySettings[setting.replace('-', '')] = e.target.checked;
+            this.saveSecuritySettings();
+          });
+
+          // IP card clicks
+          $(document).on('click', '.ip-card', e => {
+            const ip = $(e.currentTarget).data('ip');
+            this.showIPDetails(ip);
+          });
+
+          // Modal action buttons
+          $('#block-ip-btn').on('click', () => {
+            this.blockCurrentIP();
+          });
+
+          $('#whitelist-ip-btn').on('click', () => {
+            this.whitelistCurrentIP();
+          });
+        }
+
+        async loadInitialData() {
+          this.showLoadingState();
+          await Promise.all([this.loadIPData(), this.loadSecuritySettings(), this.loadStats()]);
+          this.hideLoadingState();
+        }
+
+        async loadIPData() {
+          try {
+            // Try to fetch real data first, fall back to simulated data
+            const response = await this.fetchRealIPData();
+            this.ipData = response.data || response; // Handle different response formats
+            this.applyFilters();
+            this.renderIPActivity();
+          } catch (error) {
+            console.error('Failed to load IP data:', error);
+            // Fall back to simulated data for demo purposes
+            try {
+              const fallbackResponse = await this.simulateIPDataFetch();
+              this.ipData = fallbackResponse.data;
+              this.applyFilters();
+              this.renderIPActivity();
+              this.showError('Using demo data - API integration needed');
+            } catch (fallbackError) {
+              this.showError('Failed to load IP tracking data');
+            }
+          }
+        }
+
+        async fetchRealIPData() {
+          // Use the unified dashboard integration for real data
+          try {
+            const response = await fetch('/api/dashboard/ip-tracker', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.getAuthToken()}`,
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+              return {
+                data: data.data.activeConnections.map(conn => ({
+                  ip: conn.ip,
+                  customerId: conn.customerId,
+                  customerName: conn.customerName,
+                  location: conn.location,
+                  riskScore: conn.riskScore,
+                  riskLevel: this.calculateRiskLevel(conn.riskScore),
+                  lastSeen: conn.lastSeen,
+                  sessionCount: conn.sessionCount,
+                  suspiciousActivities: [],
+                  status: conn.riskScore > this.config.riskThreshold ? 'suspicious' : 'active',
+                })),
+              };
+            } else {
+              throw new Error(data.error || 'Failed to fetch IP data');
+            }
+          } catch (error) {
+            console.error('Error fetching real IP data:', error);
+            // Fall back to simulated data for demo purposes
+            return this.simulateIPDataFetch();
+          }
+        }
+
+        async simulateIPDataFetch() {
+          // Fallback simulation when API is unavailable
+          return new Promise(resolve => {
+            setTimeout(() => {
+              resolve({
+                data: [
+                  {
+                    ip: '192.168.1.100',
+                    customerId: 'BBB9901',
+                    customerName: 'Bob Johnson',
+                    location: {
+                      country: 'US',
+                      region: 'California',
+                      city: 'Los Angeles',
+                      isp: 'Comcast',
+                    },
+                    riskScore: 15,
+                    riskLevel: 'low',
+                    lastSeen: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+                    sessionCount: 47,
+                    suspiciousActivities: [],
+                    status: 'active',
+                  },
+                ],
+              });
+            }, 800);
+          });
+        }
+
+        async fetchRealIPData() {
+          // Real implementation would call the existing API endpoints
+          try {
+            // This would integrate with the existing connection monitor and player management
+            const response = await fetch('/api/security/ip-tracker', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                // Add authentication headers as needed
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to fetch IP tracking data');
+            }
+
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error('Error fetching real IP data:', error);
+            // Fall back to simulated data
+            return this.simulateIPDataFetch();
+          }
+        }
+
+        applyFilters() {
+          const riskFilter = $('#risk-filter').val();
+          const timeFilter = $('#time-filter').val();
+          const searchTerm = $('#ip-search').val().toLowerCase();
+
+          this.filteredData = this.ipData.filter(ip => {
+            // Risk filter
+            if (riskFilter !== 'all' && ip.riskLevel !== riskFilter) return false;
+
+            // Time filter
+            const timeThreshold = this.getTimeThreshold(timeFilter);
+            if (new Date(ip.lastSeen) < timeThreshold) return false;
+
+            // Search filter
+            if (searchTerm) {
+              const matchesIP = ip.ip.toLowerCase().includes(searchTerm);
+              const matchesCustomer =
+                ip.customerId.toLowerCase().includes(searchTerm) || ip.customerName.toLowerCase().includes(searchTerm);
+              if (!matchesIP && !matchesCustomer) return false;
+            }
+
+            return true;
+          });
+
+          this.renderIPActivity();
+        }
+
+        filterIPData(searchTerm) {
+          searchTerm = searchTerm.toLowerCase();
+          if (!searchTerm) {
+            this.filteredData = [...this.ipData];
+          } else {
+            this.filteredData = this.ipData.filter(
+              ip =>
+                ip.ip.toLowerCase().includes(searchTerm) ||
+                ip.customerId.toLowerCase().includes(searchTerm) ||
+                ip.customerName.toLowerCase().includes(searchTerm)
+            );
+          }
+          this.renderIPActivity();
+        }
+
+        renderIPActivity() {
+          const container = $('#ip-activity-container');
+          container.empty();
+
+          if (this.filteredData.length === 0) {
+            container.html(`
+                        <div class="text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No IP addresses found</h5>
+                            <p class="text-muted">Try adjusting your search criteria</p>
+                        </div>
+                    `);
+            return;
+          }
+
+          this.filteredData.forEach(ip => {
+            const riskClass = `ip-status-${ip.riskLevel}`;
+            const riskText = ip.riskLevel.charAt(0).toUpperCase() + ip.riskLevel.slice(1);
+            const lastSeen = this.formatTimeAgo(new Date(ip.lastSeen));
+
+            const ipCard = `
+                        <div class="ip-card mb-3 p-3 border rounded" data-ip="${ip.ip}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h6 class="mb-0 mr-2">${ip.ip}</h6>
+                                        <span class="ip-status-badge ${riskClass}">${riskText} Risk</span>
+                                    </div>
+                                    <p class="mb-1"><strong>${ip.customerName}</strong> (${ip.customerId})</p>
+                                    <p class="geo-location mb-2">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        ${ip.location.city}, ${ip.location.region}, ${ip.location.country}
+                                    </p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock mr-1"></i>Last seen ${lastSeen} |
+                                        <i class="fas fa-sign-in-alt mr-1"></i>${ip.sessionCount} sessions
+                                    </small>
+                                </div>
+                                <div class="text-right">
+                                    <div class="mb-2">
+                                        <small class="text-muted">Risk Score</small>
+                                        <div class="font-weight-bold">${ip.riskScore}/100</div>
+                                    </div>
+                                    <div class="risk-meter">
+                                        <div class="risk-fill risk-${ip.riskLevel}" style="width: ${ip.riskScore}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+            container.append(ipCard);
+          });
+        }
+
+        async loadStats() {
+          // Calculate statistics from IP data
+          const stats = {
+            totalIPs: this.ipData.length,
+            suspiciousIPs: this.ipData.filter(ip => ip.riskLevel === 'high' || ip.riskLevel === 'critical').length,
+            activeSessions: this.ipData.reduce((sum, ip) => sum + ip.sessionCount, 0),
+            blockedIPs: this.ipData.filter(ip => ip.status === 'blocked').length,
+          };
+
+          this.renderStats(stats);
+        }
+
+        renderStats(stats) {
+          const statsGrid = $('#stats-grid');
+          statsGrid.html(`
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.totalIPs}</div>
+                        <div class="stat-label">Total IPs Tracked</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number text-warning">${stats.suspiciousIPs}</div>
+                        <div class="stat-label">Suspicious IPs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number text-info">${stats.activeSessions}</div>
+                        <div class="stat-label">Active Sessions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number text-danger">${stats.blockedIPs}</div>
+                        <div class="stat-label">Blocked IPs</div>
+                    </div>
+                `);
+        }
+
+        showIPDetails(ipAddress) {
+          const ip = this.ipData.find(item => item.ip === ipAddress);
+          if (!ip) return;
+
+          this.currentIP = ip;
+
+          const modalContent = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>IP Information</h6>
+                            <table class="table table-sm">
+                                <tr><td><strong>IP Address:</strong></td><td>${ip.ip}</td></tr>
+                                <tr><td><strong>Customer:</strong></td><td>${ip.customerName} (${ip.customerId})</td></tr>
+                                <tr><td><strong>ISP:</strong></td><td>${ip.location.isp}</td></tr>
+                                <tr><td><strong>Location:</strong></td><td>${ip.location.city}, ${ip.location.region}</td></tr>
+                                <tr><td><strong>Country:</strong></td><td>${ip.location.country}</td></tr>
+                                <tr><td><strong>Risk Score:</strong></td><td>${ip.riskScore}/100</td></tr>
+                                <tr><td><strong>Status:</strong></td><td><span class="ip-status-badge ip-status-${ip.riskLevel}">${ip.riskLevel.toUpperCase()}</span></td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Session Information</h6>
+                            <table class="table table-sm">
+                                <tr><td><strong>Last Seen:</strong></td><td>${this.formatDateTime(new Date(ip.lastSeen))}</td></tr>
+                                <tr><td><strong>Session Count:</strong></td><td>${ip.sessionCount}</td></tr>
+                                <tr><td><strong>Status:</strong></td><td>${ip.status}</td></tr>
+                            </table>
+
+                            <h6 class="mt-3">Risk Assessment</h6>
+                            <div class="risk-meter mb-2">
+                                <div class="risk-fill risk-${ip.riskLevel}" style="width: ${ip.riskScore}%"></div>
+                            </div>
+                            <small class="text-muted">${ip.riskLevel} risk level</small>
+                        </div>
+                    </div>
+
+                    ${
+                      ip.suspiciousActivities.length > 0
+                        ? `
+                        <div class="mt-4">
+                            <h6>Suspicious Activities</h6>
+                            <div class="activity-timeline">
+                                ${ip.suspiciousActivities
+                                  .map(
+                                    activity => `
+                                    <div class="timeline-item">
+                                        <strong>${activity.type}</strong>
+                                        <br><small class="text-muted">${this.formatDateTime(new Date(activity.timestamp))}</small>
+                                        <span class="badge badge-${activity.severity === 'high' ? 'danger' : activity.severity === 'medium' ? 'warning' : 'info'}">${activity.severity}</span>
+                                    </div>
+                                `
+                                  )
+                                  .join('')}
+                            </div>
+                        </div>
+                    `
+                        : ''
+                    }
+                `;
+
+          $('#ip-detail-content').html(modalContent);
+          $('#ipDetailModal').modal('show');
+        }
+
+        blockCurrentIP() {
+          if (!this.currentIP) return;
+
+          if (confirm(`Are you sure you want to block IP ${this.currentIP.ip}?`)) {
+            this.currentIP.status = 'blocked';
+            $('#ipDetailModal').modal('hide');
+            this.showSuccess(`IP ${this.currentIP.ip} has been blocked`);
+            this.renderIPActivity();
+          }
+        }
+
+        whitelistCurrentIP() {
+          if (!this.currentIP) return;
+
+          this.currentIP.status = 'whitelisted';
+          this.currentIP.riskScore = 0;
+          this.currentIP.riskLevel = 'low';
+          $('#ipDetailModal').modal('hide');
+          this.showSuccess(`IP ${this.currentIP.ip} has been whitelisted`);
+          this.renderIPActivity();
+        }
+
+        loadSecuritySettings() {
+          // Load security settings from localStorage or API
+          const saved = localStorage.getItem('ipTrackerSettings');
+          if (saved) {
+            this.securitySettings = { ...this.securitySettings, ...JSON.parse(saved) };
+          }
+
+          // Update UI toggles
+          Object.keys(this.securitySettings).forEach(key => {
+            const input = $(`#${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
+            if (input.length) {
+              input.prop('checked', this.securitySettings[key]);
+            }
+          });
+        }
+
+        saveSecuritySettings() {
+          localStorage.setItem('ipTrackerSettings', JSON.stringify(this.securitySettings));
+        }
+
+        startRealTimeUpdates() {
+          // Update data every 30 seconds
+          setInterval(() => {
+            if (document.visibilityState === 'visible') {
+              this.loadIPData();
+            }
+          }, 30000);
+        }
+
+        getTimeThreshold(timeFilter) {
+          const now = new Date();
+          switch (timeFilter) {
+            case '1h':
+              return new Date(now.getTime() - 1000 * 60 * 60);
+            case '24h':
+              return new Date(now.getTime() - 1000 * 60 * 60 * 24);
+            case '7d':
+              return new Date(now.getTime() - 1000 * 60 * 60 * 24 * 7);
+            case '30d':
+              return new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+            default:
+              return new Date(0);
+          }
+        }
+
+        formatTimeAgo(date) {
+          const now = new Date();
+          const diffMs = now - date;
+          const diffMins = Math.floor(diffMs / (1000 * 60));
+          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+          if (diffMins < 1) return 'just now';
+          if (diffMins < 60) return `${diffMins} minutes ago`;
+          if (diffHours < 24) return `${diffHours} hours ago`;
+          return `${diffDays} days ago`;
+        }
+
+        formatDateTime(date) {
+          return date.toLocaleString();
+        }
+
+        showLoadingState() {
+          $('#refresh-data').prop('disabled', true).html('<span class="loading-spinner mr-1"></span> Loading...');
+        }
+
+        hideLoadingState() {
+          $('#refresh-data').prop('disabled', false).html('<i class="fas fa-sync-alt mr-1"></i> Refresh');
+        }
+
+        showError(message) {
+          // Create a Bootstrap alert
+          const alert = $(`<div class="alert alert-danger alert-custom alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>${message}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span>&times;</span>
+                    </button>
+                </div>`);
+
+          $('.container-fluid').prepend(alert);
+
+          // Auto-dismiss after 5 seconds
+          setTimeout(() => alert.alert('close'), 5000);
+        }
+
+        showSuccess(message) {
+          const alert = $(`<div class="alert alert-success alert-custom alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle mr-2"></i>${message}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span>&times;</span>
+                    </button>
+                </div>`);
+
+          $('.container-fluid').prepend(alert);
+
+          setTimeout(() => alert.alert('close'), 3000);
+        }
+
+        calculateRiskLevel(riskScore) {
+          if (riskScore >= 80) return 'high';
+          if (riskScore >= 50) return 'medium';
+          return 'low';
+        }
+
+        getAuthToken() {
+          return localStorage.getItem('authToken') || sessionStorage.getItem('authToken') || '';
+        }
+      }
+
+      // Initialize the dashboard when the page loads
+      $(document).ready(() => {
+        window.ipTrackerDashboard = new IPTrackerDashboard();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "importHelpers": true,
+    "resolveJsonModule": true,
+
+    // Output configuration
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "removeComments": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    // Strict type checking
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    // Module configuration
+    "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+
+    // Advanced options
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "ignoreDeprecations": "6.0",
+
+    // Path mapping
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["packages/dashboard/src/*"],
+      "@/components/*": ["packages/dashboard/src/components/*"],
+      "@/utils/*": ["packages/dashboard/src/utils/*"],
+      "@/hooks/*": ["packages/dashboard/src/hooks/*"],
+      "@/types/*": ["packages/dashboard/src/types/*"],
+      "@/pages/*": ["packages/dashboard/src/pages/*"],
+      "@/assets/*": ["packages/dashboard/src/assets/*"],
+      "@/test/*": ["packages/dashboard/src/test/*"]
+    }
+  },
+  "include": ["packages/**/*", "scripts/**/*", "*.ts", "*.js"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "examples/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx",
+    ".github/**/*",
+    "docs/**/*"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "Fire22 Registry",
+  "version": "1.0.0",
+  "description": "Cloudflare R2-backed registry for Fire22 dashboards and artifacts",
+  "structure": {
+    "dashboards": {
+      "description": "HTML dashboards and interfaces",
+      "path": "dashboards/",
+      "cacheControl": "public, max-age=3600"
+    },
+    "designs": {
+      "description": "Design artifacts and style guides",
+      "path": "designs/",
+      "cacheControl": "public, max-age=86400"
+    },
+    "docs": {
+      "description": "Documentation and guides",
+      "path": "docs/",
+      "cacheControl": "public, max-age=3600"
+    },
+    "assets": {
+      "description": "Static assets (CSS, JS, images)",
+      "path": "assets/",
+      "cacheControl": "public, max-age=31536000"
+    },
+    "api": {
+      "description": "API documentation and schemas",
+      "path": "api/",
+      "cacheControl": "public, max-age=3600"
+    }
+  },
+  "metadata": {
+    "created": "2025-08-30T08:52:13.396Z",
+    "branding": {
+      "primaryColor": "#2563eb",
+      "secondaryColor": "#64748b",
+      "fontFamily": "SF Mono, Inter, system-ui"
+    },
+    "compliance": {
+      "audited": true,
+      "auditDate": "2025-08-30T08:52:13.396Z",
+      "score": "52%",
+      "criticalIssues": 4
+    }
+  },
+  "endpoints": {
+    "base": "https://registry.fire22.dev",
+    "dashboards": "https://registry.fire22.dev/dashboards/",
+    "designs": "https://registry.fire22.dev/designs/",
+    "docs": "https://registry.fire22.dev/docs/",
+    "api": "https://registry.fire22.dev/api/"
+  },
+  "upload": {
+    "batchSize": 10,
+    "concurrency": 5,
+    "retryAttempts": 3,
+    "timeout": 30000
+  }
+}

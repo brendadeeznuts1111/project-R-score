@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Highlight System - Visual Configurator</title>
+    <link rel="stylesheet" href="../theme-system.css" />
+    <link rel="stylesheet" href="../highlight-enhanced.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      .configurator-container {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        min-height: 100vh;
+      }
+
+      .controls-panel {
+        background: rgba(10, 14, 39, 0.9);
+        border-right: 1px solid rgba(64, 224, 208, 0.2);
+        padding: 20px;
+        overflow-y: auto;
+        backdrop-filter: blur(20px);
+      }
+
+      .preview-area {
+        padding: 30px;
+        overflow-y: auto;
+      }
+
+      .panel-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: rgba(10, 14, 39, 0.6);
+        border: 1px solid rgba(64, 224, 208, 0.1);
+        border-radius: 12px;
+      }
+
+      .section-title {
+        color: #ff6b35;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 0 15px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .control-group {
+        margin-bottom: 15px;
+      }
+
+      .control-label {
+        display: block;
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: bold;
+      }
+
+      .control-input,
+      .control-select {
+        width: 100%;
+        padding: 8px 12px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 6px;
+        color: #e0e6ed;
+        font-size: 12px;
+        font-family: inherit;
+      }
+
+      .control-input:focus,
+      .control-select:focus {
+        outline: none;
+        border-color: #40e0d0;
+        background: rgba(64, 224, 208, 0.15);
+      }
+
+      .control-range {
+        width: 100%;
+        margin: 8px 0;
+      }
+
+      .control-button {
+        width: 100%;
+        padding: 10px;
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .control-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+      }
+
+      .control-button.secondary {
+        background: rgba(64, 224, 208, 0.2);
+        color: #40e0d0;
+      }
+
+      .control-button.secondary:hover {
+        background: rgba(64, 224, 208, 0.3);
+        box-shadow: 0 4px 12px rgba(64, 224, 208, 0.2);
+      }
+
+      .color-preview {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        display: inline-block;
+        margin-left: 10px;
+        vertical-align: middle;
+      }
+
+      .theme-switcher {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 15px;
+      }
+
+      .theme-button {
+        padding: 8px 12px;
+        background: rgba(64, 224, 208, 0.1);
+        border: 1px solid rgba(64, 224, 208, 0.3);
+        border-radius: 6px;
+        color: #40e0d0;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+      }
+
+      .theme-button.active {
+        background: rgba(64, 224, 208, 0.3);
+        border-color: #40e0d0;
+        color: white;
+      }
+
+      .live-code {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 11px;
+        line-height: 1.4;
+        margin-top: 15px;
+        overflow-x: auto;
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .stats-bar {
+        background: rgba(10, 14, 39, 0.8);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #40e0d0;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .wcag-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      .wcag-indicator.pass {
+        background: #22c55e;
+      }
+
+      .wcag-indicator.fail {
+        background: #ef4444;
+      }
+
+      .export-section {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      .export-section .section-title {
+        color: #10b981;
+      }
+
+      @media (max-width: 1024px) {
+        .configurator-container {
+          grid-template-columns: 1fr;
+        }
+
+        .controls-panel {
+          border-right: none;
+          border-bottom: 1px solid rgba(64, 224, 208, 0.2);
+        }
+      }
+    </style>
+  </head>
+  <body data-fire22-debug="false" data-theme="light">
+    <div class="configurator-container">
+      <!-- Controls Panel -->
+      <div class="controls-panel">
+        <h1 style="color: #ff6b35; text-align: center; margin-bottom: 30px; font-size: 20px">
+          🔥 Fire22 Visual Configurator
+        </h1>
+
+        <!-- Theme Controls -->
+        <div class="panel-section">
+          <h3 class="section-title">🎨 Theme System</h3>
+
+          <div class="control-group">
+            <label class="control-label">Active Theme</label>
+            <div class="theme-switcher">
+              <button class="theme-button active" data-theme="light">Light</button>
+              <button class="theme-button" data-theme="dark">Dark</button>
+              <button class="theme-button" data-theme="high-contrast">High Contrast</button>
+              <button class="theme-button" data-theme="high-contrast-dark">HC Dark</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">Debug Mode</label>
+            <button class="control-button secondary" id="toggleDebug">Enable Debug</button>
+          </div>
+        </div>
+
+        <!-- Color Customization -->
+        <div class="panel-section">
+          <h3 class="section-title">🌈 Color Customization</h3>
+
+          <div class="control-group">
+            <label class="control-label">Status Color</label>
+            <select class="control-select" id="statusSelect">
+              <option value="success">Success</option>
+              <option value="warning">Warning</option>
+              <option value="error">Error</option>
+              <option value="info">Info</option>
+              <option value="default">Default</option>
+              <option value="draft">Draft</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">
+              Lightness:
+              <span id="lightnessValue">60%</span>
+            </label>
+            <input type="range" class="control-range" id="lightnessSlider" min="20" max="95" value="60" />
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">
+              Chroma:
+              <span id="chromaValue">0.1</span>
+            </label>
+            <input type="range" class="control-range" id="chromaSlider" min="0" max="40" value="10" step="1" />
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">
+              Hue:
+              <span id="hueValue">120°</span>
+            </label>
+            <input type="range" class="control-range" id="hueSlider" min="0" max="360" value="120" />
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">Preview</label>
+            <div style="display: flex; align-items: center">
+              <code id="colorCode" style="flex: 1; font-size: 11px">oklch(60% 0.1 120)</code>
+              <div class="color-preview" id="colorPreview"></div>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <button class="control-button" id="applyColor">Apply Color</button>
+          </div>
+        </div>
+
+        <!-- Animation Controls -->
+        <div class="panel-section">
+          <h3 class="section-title">✨ Animation Settings</h3>
+
+          <div class="control-group">
+            <label class="control-label">Animation Speed</label>
+            <select class="control-select" id="animationSpeed">
+              <option value="fast">Fast (0.15s)</option>
+              <option value="medium" selected>Medium (0.25s)</option>
+              <option value="slow">Slow (0.4s)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <button class="control-button secondary" id="toggleMotion">Disable Motion</button>
+          </div>
+
+          <div class="control-group">
+            <button class="control-button secondary" id="testAnimations">Test All Animations</button>
+          </div>
+        </div>
+
+        <!-- Export & Code Generation -->
+        <div class="panel-section export-section">
+          <h3 class="section-title">📦 Export & Integration</h3>
+
+          <div class="control-group">
+            <button class="control-button" id="generateCSS">Generate CSS</button>
+          </div>
+
+          <div class="control-group">
+            <button class="control-button" id="generateEnum">Generate TypeScript</button>
+          </div>
+
+          <div class="control-group">
+            <button class="control-button" id="exportConfig">Export Config</button>
+          </div>
+
+          <div class="control-group">
+            <button class="control-button secondary" id="resetDefaults">Reset to Defaults</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Area -->
+      <div class="preview-area">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+          <div class="stat">
+            <span class="stat-value" id="statTheme">Light</span>
+            <span class="stat-label">Active Theme</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statColors">7</span>
+            <span class="stat-label">Status Colors</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statWCAG">7/7</span>
+            <span class="stat-label">WCAG AA</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statBrowser">✅</span>
+            <span class="stat-label">OKLCH Support</span>
+          </div>
+        </div>
+
+        <!-- Status Preview Grid -->
+        <div class="status-grid">
+          <div class="fire22-highlight fire22-package-card" data-status="default">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #3b82f6, #60a5fa);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+              "
+            >
+              📘
+            </div>
+            <div style="flex: 1">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px">Default Status</h4>
+              <p style="margin: 0; font-size: 11px; color: #9ca3af">Neutral blue highlight</p>
+              <div class="wcag-indicator pass" title="WCAG AA Compliant"></div>
+            </div>
+          </div>
+
+          <div class="fire22-highlight fire22-package-card success" data-status="success">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #22c55e, #16a34a);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+              "
+            >
+              ✅
+            </div>
+            <div style="flex: 1">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px">Success Status</h4>
+              <p style="margin: 0; font-size: 11px; color: #9ca3af">Approved packages</p>
+              <div class="wcag-indicator pass" title="WCAG AA Compliant"></div>
+            </div>
+          </div>
+
+          <div class="fire22-highlight fire22-package-card warning" data-status="warning">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+              "
+            >
+              ⚠️
+            </div>
+            <div style="flex: 1">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px">Warning Status</h4>
+              <p style="margin: 0; font-size: 11px; color: #9ca3af">Needs attention</p>
+              <div class="wcag-indicator pass" title="WCAG AA Compliant"></div>
+            </div>
+          </div>
+
+          <div class="fire22-highlight fire22-package-card error" data-status="error">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #ef4444, #dc2626);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+              "
+            >
+              ❌
+            </div>
+            <div style="flex: 1">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px">Error Status</h4>
+              <p style="margin: 0; font-size: 11px; color: #9ca3af">Rejected or failed</p>
+              <div class="wcag-indicator pass" title="WCAG AA Compliant"></div>
+            </div>
+          </div>
+
+          <div class="fire22-highlight fire22-package-card info" data-status="info">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+              "
+            >
+              💡
+            </div>
+            <div style="flex: 1">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px">Info Status</h4>
+              <p style="margin: 0; font-size: 11px; color: #9ca3af">Under review</p>
+              <div class="wcag-indicator pass" title="WCAG AA Compliant"></div>
+            </div>
+          </div>
+
+          <div class="fire22-highlight fire22-package-card draft" data-status="draft">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+              "
+            >
+              📝
+            </div>
+            <div style="flex: 1">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px">Draft Status</h4>
+              <p style="margin: 0; font-size: 11px; color: #9ca3af">Work in progress</p>
+              <div class="wcag-indicator pass" title="WCAG AA Compliant"></div>
+            </div>
+          </div>
+
+          <div class="fire22-highlight fire22-package-card archived" data-status="archived">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #6b7280, #9ca3af);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+              "
+            >
+              📦
+            </div>
+            <div style="flex: 1">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px">Archived Status</h4>
+              <p style="margin: 0; font-size: 11px; color: #9ca3af">Deprecated</p>
+              <div class="wcag-indicator pass" title="WCAG AA Compliant"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Code Output -->
+        <div class="live-code" id="liveCode">
+          <strong>CSS Output:</strong>
+          <br />
+          /* Fire22 Highlight System - Current Configuration */
+          <br />
+          :root {
+          <br />
+          &nbsp;&nbsp;--fire22-color-success: oklch(60% 0.1 120);
+          <br />
+          &nbsp;&nbsp;--fire22-color-warning: oklch(80% 0.15 80);
+          <br />
+          &nbsp;&nbsp;/* ... */
+          <br />
+          }
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { getHighlightColor, oklchToCSS, validateWCAGCompliance } from './color-utils.js';
+
+      // State management
+      let currentTheme = 'light';
+      let debugMode = false;
+      let motionEnabled = true;
+      let currentColors = {
+        success: { lightness: 0.6, chroma: 0.1, hue: 120 },
+        warning: { lightness: 0.8, chroma: 0.15, hue: 80 },
+        error: { lightness: 0.6, chroma: 0.22, hue: 25 },
+        info: { lightness: 0.7, chroma: 0.15, hue: 260 },
+        default: { lightness: 0.7, chroma: 0.15, hue: 240 },
+        draft: { lightness: 0.6, chroma: 0.08, hue: 280 },
+        archived: { lightness: 0.5, chroma: 0.05, hue: 200 },
+      };
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🔥 Fire22 Visual Configurator loaded');
+        console.log('🎨 OKLCH support:', CSS.supports('color', 'oklch(70% 0.15 240)'));
+
+        setupEventListeners();
+        updateStats();
+        updateLiveCode();
+      });
+
+      // Event listeners
+      function setupEventListeners() {
+        // Theme switching
+        document.querySelectorAll('.theme-button').forEach(btn => {
+          btn.addEventListener('click', e => {
+            const theme = e.target.dataset.theme;
+            switchTheme(theme);
+          });
+        });
+
+        // Debug mode
+        document.getElementById('toggleDebug').addEventListener('click', () => {
+          debugMode = !debugMode;
+          document.body.dataset.fire22Debug = debugMode;
+          document.getElementById('toggleDebug').textContent = debugMode ? 'Disable Debug' : 'Enable Debug';
+        });
+
+        // Color controls
+        const statusSelect = document.getElementById('statusSelect');
+        const lightnessSlider = document.getElementById('lightnessSlider');
+        const chromaSlider = document.getElementById('chromaSlider');
+        const hueSlider = document.getElementById('hueSlider');
+
+        statusSelect.addEventListener('change', loadStatusColor);
+        lightnessSlider.addEventListener('input', updateColorPreview);
+        chromaSlider.addEventListener('input', updateColorPreview);
+        hueSlider.addEventListener('input', updateColorPreview);
+
+        document.getElementById('applyColor').addEventListener('click', applyCurrentColor);
+
+        // Animation controls
+        document.getElementById('toggleMotion').addEventListener('click', () => {
+          motionEnabled = !motionEnabled;
+          document.body.style.setProperty('--fire22-motion', motionEnabled ? 'auto' : 'none');
+          document.getElementById('toggleMotion').textContent = motionEnabled ? 'Disable Motion' : 'Enable Motion';
+        });
+
+        // Export buttons
+        document.getElementById('generateCSS').addEventListener('click', generateCSS);
+        document.getElementById('generateEnum').addEventListener('click', generateEnum);
+        document.getElementById('exportConfig').addEventListener('click', exportConfig);
+        document.getElementById('resetDefaults').addEventListener('click', resetDefaults);
+      }
+
+      function switchTheme(theme) {
+        currentTheme = theme;
+        document.body.dataset.theme = theme;
+
+        // Update active theme button
+        document.querySelectorAll('.theme-button').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.theme === theme);
+        });
+
+        updateStats();
+        console.log(`Theme switched to: ${theme}`);
+      }
+
+      function loadStatusColor() {
+        const status = document.getElementById('statusSelect').value;
+        const color = currentColors[status];
+
+        document.getElementById('lightnessSlider').value = color.lightness * 100;
+        document.getElementById('chromaSlider').value = color.chroma * 100;
+        document.getElementById('hueSlider').value = color.hue;
+
+        updateColorPreview();
+      }
+
+      function updateColorPreview() {
+        const lightness = parseFloat(document.getElementById('lightnessSlider').value) / 100;
+        const chroma = parseFloat(document.getElementById('chromaSlider').value) / 100;
+        const hue = parseFloat(document.getElementById('hueSlider').value);
+
+        document.getElementById('lightnessValue').textContent = Math.round(lightness * 100) + '%';
+        document.getElementById('chromaValue').textContent = chroma.toFixed(2);
+        document.getElementById('hueValue').textContent = Math.round(hue) + '°';
+
+        const colorCSS = `oklch(${Math.round(lightness * 100)}% ${chroma.toFixed(2)} ${Math.round(hue)})`;
+        document.getElementById('colorCode').textContent = colorCSS;
+        document.getElementById('colorPreview').style.background = colorCSS;
+      }
+
+      function applyCurrentColor() {
+        const status = document.getElementById('statusSelect').value;
+        const lightness = parseFloat(document.getElementById('lightnessSlider').value) / 100;
+        const chroma = parseFloat(document.getElementById('chromaSlider').value) / 100;
+        const hue = parseFloat(document.getElementById('hueSlider').value);
+
+        currentColors[status] = { lightness, chroma, hue };
+
+        // Apply to CSS custom property
+        const colorCSS = `oklch(${Math.round(lightness * 100)}% ${chroma.toFixed(2)} ${Math.round(hue)})`;
+        document.documentElement.style.setProperty(`--fire22-color-${status}`, colorCSS);
+
+        updateStats();
+        updateLiveCode();
+        console.log(`Applied ${status} color: ${colorCSS}`);
+      }
+
+      function updateStats() {
+        document.getElementById('statTheme').textContent = currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1);
+        document.getElementById('statColors').textContent = Object.keys(currentColors).length;
+        document.getElementById('statBrowser').textContent = CSS.supports('color', 'oklch(70% 0.15 240)') ? '✅' : '❌';
+
+        // Check WCAG compliance (simplified)
+        let wcagCompliant = 0;
+        Object.values(currentColors).forEach(color => {
+          if (color.lightness > 0.3 && color.lightness < 0.9) {
+            wcagCompliant++;
+          }
+        });
+        document.getElementById('statWCAG').textContent = `${wcagCompliant}/${Object.keys(currentColors).length}`;
+      }
+
+      function updateLiveCode() {
+        const cssCode = Object.entries(currentColors)
+          .map(([name, color]) => {
+            const css = `oklch(${Math.round(color.lightness * 100)}% ${color.chroma.toFixed(2)} ${Math.round(color.hue)})`;
+            return `  --fire22-color-${name}: ${css};`;
+          })
+          .join('<br>');
+
+        document.getElementById('liveCode').innerHTML = `
+                <strong>CSS Output:</strong><br>
+                /* Fire22 Highlight System - Current Configuration */<br>
+                :root {<br>
+                ${cssCode}<br>
+                }
+            `;
+      }
+
+      function generateCSS() {
+        let css = '/* Fire22 Generated CSS Variables */\n:root {\n';
+        Object.entries(currentColors).forEach(([name, color]) => {
+          const cssColor = `oklch(${Math.round(color.lightness * 100)}% ${color.chroma.toFixed(2)} ${Math.round(color.hue)})`;
+          css += `  --fire22-color-${name}: ${cssColor};\n`;
+        });
+        css += '}\n';
+
+        // Copy to clipboard and show in new window
+        navigator.clipboard.writeText(css);
+        const newWindow = window.open('', '_blank');
+        newWindow.document.write(`<pre style="font-family: monospace; padding: 20px;">${css}</pre>`);
+        console.log('CSS generated and copied to clipboard');
+      }
+
+      function generateEnum() {
+        const enumCode = `export enum Fire22StatusType {\n${Object.keys(currentColors)
+          .map(name => `  ${name.toUpperCase()} = '${name}'`)
+          .join(',\n')}\n}`;
+
+        navigator.clipboard.writeText(enumCode);
+        const newWindow = window.open('', '_blank');
+        newWindow.document.write(`<pre style="font-family: monospace; padding: 20px;">${enumCode}</pre>`);
+        console.log('TypeScript enum generated and copied to clipboard');
+      }
+
+      function exportConfig() {
+        const config = {
+          version: '1.00.10-ALPHA',
+          theme: currentTheme,
+          colors: currentColors,
+          settings: {
+            debug: debugMode,
+            motion: motionEnabled,
+          },
+        };
+
+        const configJSON = JSON.stringify(config, null, 2);
+        navigator.clipboard.writeText(configJSON);
+
+        // Download as file
+        const blob = new Blob([configJSON], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'fire22-highlight-config.json';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        console.log('Configuration exported and downloaded');
+      }
+
+      function resetDefaults() {
+        currentColors = {
+          success: { lightness: 0.6, chroma: 0.1, hue: 120 },
+          warning: { lightness: 0.8, chroma: 0.15, hue: 80 },
+          error: { lightness: 0.6, chroma: 0.22, hue: 25 },
+          info: { lightness: 0.7, chroma: 0.15, hue: 260 },
+          default: { lightness: 0.7, chroma: 0.15, hue: 240 },
+          draft: { lightness: 0.6, chroma: 0.08, hue: 280 },
+          archived: { lightness: 0.5, chroma: 0.05, hue: 200 },
+        };
+
+        // Reset CSS custom properties
+        Object.keys(currentColors).forEach(status => {
+          document.documentElement.style.removeProperty(`--fire22-color-${status}`);
+        });
+
+        loadStatusColor();
+        updateStats();
+        updateLiveCode();
+        console.log('Reset to default colors');
+      }
+
+      // Initialize color preview
+      loadStatusColor();
+    </script>
+  </body>
+</html>

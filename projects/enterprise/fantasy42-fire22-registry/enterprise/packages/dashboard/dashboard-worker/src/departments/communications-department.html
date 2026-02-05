@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢 Fire22 Communications Department - Coordinating Excellence</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .header {
+        background: rgba(10, 14, 39, 0.9);
+        border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: clamp(28px, 5vw, 42px);
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 30%, #ec4899 60%, #06b6d4 100%);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        color: #9ca3af;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #6366f1;
+        display: block;
+      }
+
+      .header-stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 30px;
+        padding: 15px 0;
+      }
+
+      .breadcrumb a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb a:hover {
+        color: #6366f1;
+      }
+
+      .breadcrumb-separator {
+        margin: 0 10px;
+        color: #6b7280;
+      }
+
+      .breadcrumb-current {
+        color: #6366f1;
+        font-weight: 600;
+      }
+
+      .department-overview {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(99, 102, 241, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-overview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 30%, #ec4899 60%, #06b6d4 100%);
+      }
+
+      .overview-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .overview-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: rgba(99, 102, 241, 0.1);
+        border: 3px solid rgba(99, 102, 241, 0.3);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
+      }
+
+      .overview-title h2 {
+        font-size: 28px;
+        color: #6366f1;
+        margin-bottom: 8px;
+      }
+
+      .overview-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .team-member {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        border: 2px solid rgba(99, 102, 241, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-member::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .team-member:hover::before {
+        left: 100%;
+      }
+
+      .team-member:hover {
+        background: rgba(0, 0, 0, 0.4);
+        border-color: rgba(99, 102, 241, 0.4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+      }
+
+      .member-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: #fff;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        border: 2px solid rgba(99, 102, 241, 0.3);
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+      }
+
+      .member-info {
+        flex: 1;
+      }
+
+      .member-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin-bottom: 4px;
+      }
+
+      .member-role {
+        font-size: 12px;
+        color: #6366f1;
+        margin-bottom: 2px;
+      }
+
+      .member-stats {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .member-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .action-button {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .action-button:hover {
+        background: #6366f1;
+        color: #0a0e27;
+        transform: translateY(-1px);
+      }
+
+      /* Modal System */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+        display: flex;
+        opacity: 1;
+        align-items: center;
+        justify-content: center;
+        animation: modalFadeIn 0.3s ease;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        border: 2px solid rgba(99, 102, 241, 0.3);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #ef4444;
+        font-size: 16px;
+        transition: all 0.2s ease;
+      }
+
+      .modal-close:hover {
+        background: rgba(239, 68, 68, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header-stats {
+          gap: 20px;
+        }
+
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .team-member {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .modal-content {
+          width: 95%;
+          padding: 20px;
+        }
+      }
+
+      /* Department-Specific Color Variables */
+      :root {
+        --dept-primary: #6366f1;
+        --dept-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 30%, #ec4899 60%, #06b6d4 100%);
+        --dept-bg: rgba(99, 102, 241, 0.1);
+        --dept-border: rgba(99, 102, 241, 0.3);
+        --dept-shadow: rgba(99, 102, 241, 0.2);
+        --dept-hover: rgba(99, 102, 241, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>📢 Communications Department</h1>
+      <div class="header-subtitle">Coordinating Excellence Across All Fire22 Operations</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">3</span>
+          <div class="header-stat-label">Team Members</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">7</span>
+          <div class="header-stat-label">Departments Coordinated</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">97%</span>
+          <div class="header-stat-label">Communication Success Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../index.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="./index.html">🏢 Departments</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Communications Department</span>
+      </nav>
+
+      <div class="department-overview">
+        <div class="overview-header">
+          <div class="overview-icon">📢</div>
+          <div class="overview-title">
+            <h2>Communications Department</h2>
+            <div class="overview-subtitle">
+              Central coordination hub for all internal and external communications across Fire22
+            </div>
+          </div>
+        </div>
+
+        <div class="team-grid">
+          <div class="team-member" onclick="openMemberProfile('sarah-martinez')" id="sarah-martinez">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)">SM</div>
+            <div class="member-info">
+              <div class="member-name">Sarah Martinez</div>
+              <div class="member-role">Communications Director</div>
+              <div class="member-stats">142 communications • 97% approval rate • Available</div>
+            </div>
+            <div class="member-actions">
+              <a href="mailto:sarah.martinez@communications.fire22" class="action-button">📧 Email</a>
+              <a href="https://communications.fire22.com/announcement/sarah-martinez" class="action-button">
+                📢 Announcements
+              </a>
+              <a href="https://communications.fire22.com/approval/sarah-martinez" class="action-button">✅ Approval</a>
+            </div>
+          </div>
+
+          <div class="team-member" onclick="openMemberProfile('alex-chen')" id="alex-chen">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)">AC</div>
+            <div class="member-info">
+              <div class="member-name">Alex Chen</div>
+              <div class="member-role">Internal Communications Manager</div>
+              <div class="member-stats">89 department updates • 94% engagement • Available</div>
+            </div>
+            <div class="member-actions">
+              <a href="mailto:alex.chen@communications.fire22" class="action-button">📧 Email</a>
+              <a href="https://communications.fire22.com/department-update/alex-chen" class="action-button">
+                📝 Updates
+              </a>
+              <a href="https://calendar.fire22.com/schedule/alex-chen" class="action-button">📅 Schedule</a>
+            </div>
+          </div>
+
+          <div class="team-member" onclick="openMemberProfile('maria-rodriguez')" id="maria-rodriguez">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ec4899 0%, #06b6d4 100%)">MR</div>
+            <div class="member-info">
+              <div class="member-name">Maria Rodriguez</div>
+              <div class="member-role">Communications Coordinator</div>
+              <div class="member-stats">67 templates created • 96% metrics accuracy • Available</div>
+            </div>
+            <div class="member-actions">
+              <a href="mailto:maria.rodriguez@communications.fire22" class="action-button">📧 Email</a>
+              <a href="https://communications.fire22.com/template/maria-rodriguez" class="action-button">
+                📄 Templates
+              </a>
+              <a href="https://communications.fire22.com/metrics/maria-rodriguez" class="action-button">📊 Metrics</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Template -->
+    <div id="memberModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-close" onclick="closeModal()">&times;</div>
+        <div class="modal-header">
+          <div class="member-avatar" id="modalAvatar"></div>
+          <div>
+            <h3 id="modalName"></h3>
+            <div id="modalRole" style="color: var(--dept-primary)"></div>
+          </div>
+        </div>
+        <div id="modalDetails"></div>
+      </div>
+    </div>
+
+    <script>
+      // Communications Department Configuration
+      const departmentConfig = {
+        name: 'Communications Department',
+        code: 'COMMS',
+        primaryColor: '#6366f1',
+        members: [
+          {
+            id: 'sarah-martinez',
+            name: 'Sarah Martinez',
+            role: 'Communications Director',
+            avatar: 'SM',
+            avatarBg: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            email: 'sarah.martinez@communications.fire22',
+            status: 'available',
+            metrics: {
+              implementations: 142,
+              efficiency: '97%',
+            },
+            responsibilities: [
+              'Lead overall communications strategy and vision',
+              'Coordinate all inter-department communications',
+              'Review and approve department communications',
+              'Manage company-wide announcements and messaging',
+              'Maintain communication standards and templates',
+              'Generate communication metrics reports',
+              'Handle crisis communications and emergency protocols',
+            ],
+            communicationTasks: [
+              'Strategic communications planning and execution',
+              'Executive communications and board reporting',
+              'Crisis communications management',
+              'External stakeholder communications',
+            ],
+          },
+          {
+            id: 'alex-chen',
+            name: 'Alex Chen',
+            role: 'Internal Communications Manager',
+            avatar: 'AC',
+            avatarBg: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+            email: 'alex.chen@communications.fire22',
+            status: 'available',
+            metrics: {
+              implementations: 89,
+              efficiency: '94%',
+            },
+            responsibilities: [
+              'Manage internal communication workflows',
+              'Coordinate department weekly update process',
+              'Facilitate cross-department communication',
+              'Maintain internal communication channels',
+              'Support department heads with communication needs',
+              'Monitor communication engagement metrics',
+            ],
+            communicationTasks: [
+              'Weekly department report consolidation',
+              'Internal communication channel management',
+              'Department coordination and facilitation',
+              'Employee engagement communication',
+            ],
+          },
+          {
+            id: 'maria-rodriguez',
+            name: 'Maria Rodriguez',
+            role: 'Communications Coordinator',
+            avatar: 'MR',
+            avatarBg: 'linear-gradient(135deg, #ec4899 0%, #06b6d4 100%)',
+            email: 'maria.rodriguez@communications.fire22',
+            status: 'available',
+            metrics: {
+              implementations: 67,
+              efficiency: '96%',
+            },
+            responsibilities: [
+              'Create and maintain communication templates',
+              'Generate communication metrics and analytics',
+              'Support announcement distribution process',
+              'Maintain communication documentation',
+              'Coordinate communication tool usage',
+              'Track communication performance indicators',
+            ],
+            communicationTasks: [
+              'Template creation and maintenance',
+              'Metrics tracking and reporting',
+              'Communication tool administration',
+              'Documentation and process improvement',
+            ],
+          },
+        ],
+      };
+
+      const teamMembers = departmentConfig.members;
+
+      // Modal System
+      function openMemberProfile(memberId) {
+        try {
+          const member = teamMembers.find(m => m.id === memberId);
+          if (!member) {
+            throw new Error(`Team member not found: ${memberId}`);
+          }
+
+          // Populate modal
+          document.getElementById('modalAvatar').style.background = member.avatarBg;
+          document.getElementById('modalAvatar').textContent = member.avatar;
+          document.getElementById('modalName').textContent = member.name;
+          document.getElementById('modalRole').textContent = member.role;
+          document.getElementById('modalDetails').innerHTML = generateMemberDetails(member);
+
+          // Show modal
+          const modal = document.getElementById('memberModal');
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+
+          console.log(`✅ Opened profile for ${member.name}`);
+        } catch (error) {
+          console.error('Failed to open member profile:', error);
+        }
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('memberModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+
+      function generateMemberDetails(member) {
+        return `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">📊 Performance Metrics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.metrics.implementations || 0}</div>
+                            <div style="font-size: 11px; color: #9ca3af;">Communications</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.metrics.efficiency || '95%'}</div>
+                            <div style="font-size: 11px; color: #9ca3af;">Success Rate</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.status === 'available' ? '🟢' : '🔴'}</div>
+                            <div style="font-size: 11px; color: #9ca3af;">Status</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">🎯 Key Responsibilities</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${member.responsibilities.map(resp => `<li style="margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--dept-primary);">• ${resp}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">📋 Communication Tasks</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${member.communicationTasks.map(task => `<li style="margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--dept-primary);">• ${task}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <a href="mailto:${member.email}" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: bold;">Contact ${member.name}</a>
+                </div>
+            `;
+      }
+
+      // Event Listeners
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log(`📢 ${departmentConfig.name} page loaded`);
+        console.log(`👥 ${teamMembers.length} team members initialized`);
+
+        // ESC key to close modal
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') {
+            closeModal();
+          }
+        });
+      });
+
+      // Click outside modal to close
+      document.getElementById('memberModal').addEventListener('click', e => {
+        if (e.target.id === 'memberModal') {
+          closeModal();
+        }
+      });
+    </script>
+  </body>
+</html>

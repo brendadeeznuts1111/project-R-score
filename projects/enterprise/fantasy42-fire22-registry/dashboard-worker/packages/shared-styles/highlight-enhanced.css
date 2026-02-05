@@ -1,0 +1,389 @@
+/* Fire22 Enhanced CSS Highlight System v2.0 */
+/* OKLCH Color Space • WCAG AA Compliant • Bun CSS Bundling Ready */
+
+/* ================================================================================================
+   DESIGN TOKENS - All colors use OKLCH for perceptual uniformity and accessibility
+   ================================================================================================ */
+
+:root {
+  /* Brand Colors - Fire22 Identity */
+  --fire22-brand-primary: oklch(70% 0.25 30); /* Fire orange */
+  --fire22-brand-secondary: oklch(65% 0.2 45); /* Warm orange */
+
+  /* Status Colors - WCAG AA Compliant (4.5:1 contrast minimum) */
+  --fire22-status-default: oklch(70% 0.15 240); /* Neutral blue */
+  --fire22-status-success: oklch(65% 0.18 145); /* Success green */
+  --fire22-status-warning: oklch(75% 0.2 85); /* Warning yellow */
+  --fire22-status-error: oklch(60% 0.22 25); /* Error red */
+  --fire22-status-info: oklch(70% 0.15 260); /* Info blue */
+  --fire22-status-draft: oklch(60% 0.08 280); /* Draft purple */
+  --fire22-status-archived: oklch(50% 0.05 200); /* Archived gray */
+
+  /* Highlight Ring Variations */
+  --fire22-highlight-thin: 0 0 0 1px;
+  --fire22-highlight-medium: 0 0 0 2px;
+  --fire22-highlight-thick: 0 0 0 3px;
+  --fire22-highlight-glow: 0 0 0 2px, 0 0 8px 0;
+
+  /* Animation & Timing */
+  --fire22-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --fire22-transition-medium: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --fire22-transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Spacing & Layout */
+  --fire22-border-radius-sm: 6px;
+  --fire22-border-radius-md: 12px;
+  --fire22-border-radius-lg: 16px;
+
+  /* Z-index Management */
+  --fire22-z-highlight: 1;
+  --fire22-z-hover: 2;
+  --fire22-z-active: 3;
+}
+
+/* ================================================================================================
+   DARK MODE OVERRIDES - Enhanced contrast for dark backgrounds
+   ================================================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fire22-status-default: oklch(75% 0.18 240);
+    --fire22-status-success: oklch(70% 0.2 145);
+    --fire22-status-warning: oklch(80% 0.22 85);
+    --fire22-status-error: oklch(65% 0.24 25);
+    --fire22-status-info: oklch(75% 0.18 260);
+    --fire22-status-draft: oklch(65% 0.12 280);
+    --fire22-status-archived: oklch(55% 0.08 200);
+  }
+}
+
+/* ================================================================================================
+   BASE HIGHLIGHT UTILITY CLASSES
+   ================================================================================================ */
+
+.fire22-highlight {
+  position: relative;
+  border-radius: var(--fire22-border-radius-md);
+  transition:
+    box-shadow var(--fire22-transition-medium),
+    transform var(--fire22-transition-medium),
+    background-color var(--fire22-transition-medium);
+  z-index: var(--fire22-z-highlight);
+
+  /* Default highlight ring */
+  box-shadow: var(--fire22-highlight-medium) var(--fire22-status-default);
+}
+
+.fire22-highlight:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--fire22-highlight-glow) var(--fire22-status-default);
+  z-index: var(--fire22-z-hover);
+}
+
+.fire22-highlight:focus-visible {
+  outline: 2px solid var(--fire22-brand-primary);
+  outline-offset: 2px;
+  z-index: var(--fire22-z-active);
+}
+
+/* ================================================================================================
+   STATUS VARIANT CLASSES - Apply semantic meaning through color
+   ================================================================================================ */
+
+/* Success State - Approved packages */
+.fire22-highlight.status-success,
+.fire22-highlight.success {
+  box-shadow: var(--fire22-highlight-medium) var(--fire22-status-success);
+}
+
+.fire22-highlight.status-success:hover,
+.fire22-highlight.success:hover {
+  box-shadow: var(--fire22-highlight-glow) var(--fire22-status-success);
+}
+
+/* Warning State - Needs attention */
+.fire22-highlight.status-warning,
+.fire22-highlight.warning {
+  box-shadow: var(--fire22-highlight-medium) var(--fire22-status-warning);
+}
+
+.fire22-highlight.status-warning:hover,
+.fire22-highlight.warning:hover {
+  box-shadow: var(--fire22-highlight-glow) var(--fire22-status-warning);
+}
+
+/* Error State - Rejected or failed */
+.fire22-highlight.status-error,
+.fire22-highlight.error {
+  box-shadow: var(--fire22-highlight-medium) var(--fire22-status-error);
+}
+
+.fire22-highlight.status-error:hover,
+.fire22-highlight.error:hover {
+  box-shadow: var(--fire22-highlight-glow) var(--fire22-status-error);
+}
+
+/* Info State - Informational or under review */
+.fire22-highlight.status-info,
+.fire22-highlight.info {
+  box-shadow: var(--fire22-highlight-medium) var(--fire22-status-info);
+}
+
+.fire22-highlight.status-info:hover,
+.fire22-highlight.info:hover {
+  box-shadow: var(--fire22-highlight-glow) var(--fire22-status-info);
+}
+
+/* Draft State - Work in progress */
+.fire22-highlight.status-draft,
+.fire22-highlight.draft {
+  box-shadow: var(--fire22-highlight-thin) var(--fire22-status-draft);
+  opacity: 0.8;
+}
+
+.fire22-highlight.status-draft:hover,
+.fire22-highlight.draft:hover {
+  box-shadow: var(--fire22-highlight-medium) var(--fire22-status-draft);
+  opacity: 1;
+}
+
+/* Archived State - Deprecated or inactive */
+.fire22-highlight.status-archived,
+.fire22-highlight.archived {
+  box-shadow: var(--fire22-highlight-thin) var(--fire22-status-archived);
+  opacity: 0.6;
+  filter: grayscale(0.3);
+}
+
+.fire22-highlight.status-archived:hover,
+.fire22-highlight.archived:hover {
+  opacity: 0.8;
+  filter: grayscale(0.1);
+}
+
+/* ================================================================================================
+   SIZE VARIANTS - Different highlight intensities
+   ================================================================================================ */
+
+.fire22-highlight.size-sm {
+  box-shadow: var(--fire22-highlight-thin) var(--fire22-status-default);
+  border-radius: var(--fire22-border-radius-sm);
+}
+
+.fire22-highlight.size-lg {
+  box-shadow: var(--fire22-highlight-thick) var(--fire22-status-default);
+  border-radius: var(--fire22-border-radius-lg);
+}
+
+/* ================================================================================================
+   SPECIAL STATES - Active, loading, pulsing
+   ================================================================================================ */
+
+/* Active State with Animated Glow */
+.fire22-highlight.active::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  padding: 3px;
+  background: linear-gradient(
+    45deg,
+    var(--fire22-brand-primary),
+    var(--fire22-status-success),
+    var(--fire22-brand-secondary),
+    var(--fire22-status-info),
+    var(--fire22-brand-primary)
+  );
+  background-size: 200% 200%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: fire22-rainbow-glow 3s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes fire22-rainbow-glow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.6;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+/* Pulsing State - For loading or pending actions */
+.fire22-highlight.pulsing {
+  animation: fire22-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fire22-pulse {
+  0%,
+  100% {
+    box-shadow: var(--fire22-highlight-medium) var(--fire22-status-default);
+  }
+  50% {
+    box-shadow: var(--fire22-highlight-glow) var(--fire22-status-default);
+  }
+}
+
+/* ================================================================================================
+   PACKAGE CARD SPECIFIC STYLES
+   ================================================================================================ */
+
+.fire22-package-card {
+  background: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(64, 224, 208, 0.15);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  backdrop-filter: blur(10px);
+  transition: all var(--fire22-transition-medium);
+}
+
+.fire22-package-card.fire22-highlight {
+  border-color: transparent;
+}
+
+.fire22-package-card.fire22-highlight:hover {
+  background: rgba(10, 14, 39, 0.8);
+  border-color: rgba(253, 187, 45, 0.2);
+}
+
+/* Package status indicators */
+.fire22-package-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fire22-package-status.approved {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--fire22-status-success);
+  border: 1px solid var(--fire22-status-success);
+}
+
+.fire22-package-status.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--fire22-status-warning);
+  border: 1px solid var(--fire22-status-warning);
+}
+
+.fire22-package-status.rejected {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--fire22-status-error);
+  border: 1px solid var(--fire22-status-error);
+}
+
+.fire22-package-status.draft {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--fire22-status-draft);
+  border: 1px solid var(--fire22-status-draft);
+}
+
+.fire22-package-status.archived {
+  background: rgba(107, 114, 128, 0.15);
+  color: var(--fire22-status-archived);
+  border: 1px solid var(--fire22-status-archived);
+}
+
+/* ================================================================================================
+   RESPONSIVE DESIGN - Mobile-first approach
+   ================================================================================================ */
+
+@media (max-width: 768px) {
+  .fire22-highlight {
+    border-radius: var(--fire22-border-radius-sm);
+  }
+
+  .fire22-highlight:hover {
+    transform: none;
+  }
+
+  .fire22-package-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    .fire22-highlight,
+    .fire22-highlight *,
+    .fire22-highlight::before,
+    .fire22-highlight::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+/* ================================================================================================
+   HIGH CONTRAST MODE - Enhanced accessibility
+   ================================================================================================ */
+
+@media (prefers-contrast: high) {
+  :root {
+    --fire22-status-success: oklch(70% 0.25 145);
+    --fire22-status-warning: oklch(85% 0.25 85);
+    --fire22-status-error: oklch(65% 0.28 25);
+    --fire22-status-info: oklch(75% 0.2 260);
+  }
+
+  .fire22-highlight {
+    box-shadow: var(--fire22-highlight-thick) var(--fire22-status-default);
+  }
+}
+
+/* ================================================================================================
+   UTILITY CLASSES - Quick application helpers
+   ================================================================================================ */
+
+/* Remove highlights completely */
+.fire22-no-highlight {
+  box-shadow: none !important;
+}
+
+.fire22-no-highlight:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Interactive cursor */
+.fire22-highlight[role='button'],
+.fire22-highlight.clickable {
+  cursor: pointer;
+}
+
+/* Focus trap for keyboard navigation */
+.fire22-highlight:focus-within {
+  outline: 2px solid var(--fire22-brand-primary);
+  outline-offset: 1px;
+}
+
+/* ================================================================================================
+   DEVELOPER UTILITIES - Debug and development helpers
+   ================================================================================================ */
+
+/* Debug mode - shows color values */
+[data-fire22-debug='true'] .fire22-highlight::after {
+  content: attr(class);
+  position: absolute;
+  top: -20px;
+  left: 0;
+  font-size: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1000;
+}

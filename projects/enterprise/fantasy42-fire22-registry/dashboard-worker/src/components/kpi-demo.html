@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 KPI Component Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #fdbb2d, #b21f1f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        color: #94a3b8;
+      }
+
+      .section {
+        margin-bottom: 4rem;
+      }
+
+      .section h2 {
+        font-size: 2rem;
+        color: #fdbb2d;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #475569;
+        padding-bottom: 0.5rem;
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .demo-controls {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid #475569;
+      }
+
+      .control-group {
+        margin-bottom: 1rem;
+      }
+
+      .control-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #94a3b8;
+        font-weight: 500;
+      }
+
+      .control-group input,
+      .control-group select {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #475569;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        color: white;
+        width: 100%;
+        max-width: 200px;
+      }
+
+      .control-group input:focus,
+      .control-group select:focus {
+        outline: none;
+        border-color: #fdbb2d;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #fdbb2d, #b21f1f);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(253, 187, 45, 0.3);
+      }
+
+      .code-example {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+      }
+
+      .feature-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .feature-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #475569;
+        display: flex;
+        align-items: center;
+      }
+
+      .feature-list li::before {
+        content: '✅';
+        margin-right: 1rem;
+        color: #10b981;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔥 Fire22 KPI Component</h1>
+        <p>Advanced, reusable KPI components with enhanced styling and functionality</p>
+      </div>
+
+      <!-- Demo Controls -->
+      <div class="demo-controls">
+        <h3>🎛️ Interactive Demo Controls</h3>
+        <div class="control-group">
+          <label for="demoValue">Value:</label>
+          <input type="number" id="demoValue" value="125000" min="0" step="1000" />
+        </div>
+        <div class="control-group">
+          <label for="demoColor">Color:</label>
+          <select id="demoColor">
+            <option value="primary">Primary</option>
+            <option value="secondary">Secondary</option>
+            <option value="success">Success</option>
+            <option value="warning">Warning</option>
+            <option value="danger">Danger</option>
+            <option value="info">Info</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="demoSize">Size:</label>
+          <select id="demoSize">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+        <button class="btn" onclick="updateDemoKPI()">Update Demo KPI</button>
+      </div>
+
+      <!-- Interactive Demo KPI -->
+      <div class="section">
+        <h2>🎯 Interactive Demo KPI</h2>
+        <div id="demoKPI" class="kpi-grid"></div>
+      </div>
+
+      <!-- Pre-built KPI Examples -->
+      <div class="section">
+        <h2>🚀 Pre-built KPI Examples</h2>
+        <div class="kpi-grid" id="prebuiltKPIs"></div>
+      </div>
+
+      <!-- Custom KPI Examples -->
+      <div class="section">
+        <h2>🎨 Custom KPI Examples</h2>
+        <div class="kpi-grid" id="customKPIs"></div>
+      </div>
+
+      <!-- Features -->
+      <div class="section">
+        <h2>✨ Features</h2>
+        <ul class="feature-list">
+          <li>Multiple color themes (primary, secondary, success, warning, danger, info)</li>
+          <li>Size variants (small, medium, large)</li>
+          <li>Value formatting (number, currency, percentage, text)</li>
+          <li>Trend indicators with icons</li>
+          <li>Clickable KPIs with event handling</li>
+          <li>Responsive design with hover effects</li>
+          <li>Easy integration and customization</li>
+          <li>TypeScript support with full type safety</li>
+        </ul>
+      </div>
+
+      <!-- Usage Examples -->
+      <div class="section">
+        <h2>📚 Usage Examples</h2>
+
+        <h3>Basic Usage:</h3>
+        <div class="code-example">
+          import { createKPICard } from './kpi-component.ts'; const kpi = createKPICard({ label: 'Pending Amount',
+          value: 125000, format: 'currency', color: 'warning' }); document.body.appendChild(kpi);
+        </div>
+
+        <h3>Pre-built KPIs:</h3>
+        <div class="code-example">
+          import { createPendingAmountKPI, createTotalAgentsKPI } from './kpi-component.ts'; const pendingAmount =
+          createPendingAmountKPI(125000); const totalAgents = createTotalAgentsKPI(42);
+          document.body.appendChild(pendingAmount); document.body.appendChild(totalAgents);
+        </div>
+
+        <h3>Interactive KPI:</h3>
+        <div class="code-example">
+          import { KPIComponent } from './kpi-component.ts'; const kpi = new KPIComponent({ label: 'Clickable KPI',
+          value: 1000, clickable: true, onClick: () => alert('KPI clicked!') });
+          document.body.appendChild(kpi.render());
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import {
+        KPIComponent,
+        createPendingAmountKPI,
+        createTotalAgentsKPI,
+        createActiveAgentsKPI,
+        createPendingWagersKPI,
+        KPIStyles,
+      } from './kpi-component.ts';
+
+      // Add styles to document
+      const styleSheet = document.createElement('style');
+      styleSheet.textContent = KPIStyles;
+      document.head.appendChild(styleSheet);
+
+      // Initialize demo KPI
+      let demoKPI;
+
+      function initDemoKPI() {
+        const demoContainer = document.getElementById('demoKPI');
+        demoKPI = new KPIComponent({
+          label: 'Demo KPI',
+          value: 125000,
+          format: 'currency',
+          color: 'primary',
+          size: 'medium',
+          icon: '🎯',
+          trend: 'up',
+          trendValue: '+12%',
+        });
+
+        demoContainer.appendChild(demoKPI.render());
+      }
+
+      // Update demo KPI function
+      window.updateDemoKPI = function () {
+        const value = parseFloat(document.getElementById('demoValue').value);
+        const color = document.getElementById('demoColor').value;
+        const size = document.getElementById('demoSize').value;
+
+        demoKPI.update({ value, color, size });
+      };
+
+      // Initialize pre-built KPIs
+      function initPrebuiltKPIs() {
+        const container = document.getElementById('prebuiltKPIs');
+
+        const pendingAmount = createPendingAmountKPI(125000);
+        const totalAgents = createTotalAgentsKPI(42);
+        const activeAgents = createActiveAgentsKPI(38);
+        const pendingWagers = createPendingWagersKPI(156);
+
+        container.appendChild(pendingAmount);
+        container.appendChild(totalAgents);
+        container.appendChild(activeAgents);
+        container.appendChild(pendingWagers);
+      }
+
+      // Initialize custom KPIs
+      function initCustomKPIs() {
+        const container = document.getElementById('customKPIs');
+
+        // Custom KPI with trend
+        const trendKPI = new KPIComponent({
+          label: 'Revenue Growth',
+          value: 23.5,
+          format: 'percentage',
+          color: 'success',
+          icon: '📈',
+          trend: 'up',
+          trendValue: '+5.2%',
+        });
+
+        // Clickable KPI
+        const clickableKPI = new KPIComponent({
+          label: 'Click Me!',
+          value: 'Interactive',
+          color: 'secondary',
+          icon: '🖱️',
+          clickable: true,
+          onClick: () => {
+            alert('KPI clicked! This could open a detailed view or modal.');
+          },
+        });
+
+        // Large KPI
+        const largeKPI = new KPIComponent({
+          label: 'System Status',
+          value: 'Online',
+          color: 'success',
+          icon: '🟢',
+          size: 'large',
+        });
+
+        container.appendChild(trendKPI.render());
+        container.appendChild(clickableKPI.render());
+        container.appendChild(largeKPI.render());
+      }
+
+      // Initialize everything when DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        initDemoKPI();
+        initPrebuiltKPIs();
+        initCustomKPIs();
+      });
+    </script>
+  </body>
+</html>

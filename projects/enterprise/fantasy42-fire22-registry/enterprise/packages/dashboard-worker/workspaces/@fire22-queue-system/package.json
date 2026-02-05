@@ -1,0 +1,75 @@
+{
+  "name": "@fire22/queue-system",
+  "version": "1.0.0",
+  "description": "P2P transaction matching and withdrawal queue management system",
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-queue-system"
+  },
+  "keywords": [
+    "p2p",
+    "queue",
+    "matching",
+    "transactions",
+    "withdrawals",
+    "deposits",
+    "fire22"
+  ],
+  "engines": {
+    "bun": ">=1.2.21"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "bin": {
+    "fire22-queue-system": "./dist/queue-system.js",
+    "fire22-queue": "./dist/queue-system.js",
+    "queue-system": "./dist/queue-system.js"
+  },
+  "sideEffects": [
+    "./src/queue-system.ts",
+    "./schemas/**/*.sql",
+    "**/*.d.ts"
+  ],
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm",
+    "build:bin": "bun build src/queue-system.ts --outdir dist --target bun --format esm --compile --outfile queue-system.js",
+    "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
+    "build:all": "bun run build && bun run build:bin",
+    "test": "bun test",
+    "test:matching": "bun test tests/matching/",
+    "test:integration": "bun test tests/integration/",
+    "benchmark": "bun run tests/benchmarks/queue-performance.ts",
+    "benchmark:matching": "bun run tests/benchmarks/matching-algorithm.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "@fire22/api-client": "3.0.9"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "fire22": {
+    "workspace": "queue-system",
+    "isolation": {
+      "standalone": true,
+      "linked": true
+    },
+    "include": [
+      "src/queue-system.ts",
+      "src/p2p-queue-api.ts",
+      "src/p2p-queue-api-enhanced.ts",
+      "schemas/queue-schema.sql",
+      "schemas/p2p-telegram-schema.sql"
+    ]
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "name": "@fire22-registry/betting-engine",
+  "version": "1.0.0",
+  "description": "Betting Engine Package for Fantasy42-Fire22 Registry - Core sports betting logic and validation",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./odds": "./src/odds/index.ts",
+    "./wagers": "./src/wagers/index.ts",
+    "./validation": "./src/validation/index.ts",
+    "./sports/*": "./src/sports/*.ts",
+    "./types": "./src/types/index.ts"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "build:production": "bun build ./src/index.ts --outdir ./dist --target bun --minify",
+    "build:demo": "bun run build-demo.js",
+    "build:types": "bun run tsc --noEmit",
+    "build:docs": "bun run typedoc --out docs src/index.ts",
+    "build:all": "bun run build && bun run build:types && bun run build:docs",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage --coverage-reporter html --coverage-reporter text",
+    "test:integration": "bun test tests/integration/",
+    "test:performance": "bun test tests/performance/",
+    "test:security": "bun test tests/security/",
+    "test:all": "bun run test && bun run test:integration && bun run test:performance",
+    "lint": "bun run eslint src tests --ext .ts",
+    "lint:fix": "bun run eslint src tests --ext .ts --fix",
+    "format": "bun run prettier --write \"src/**/*.{ts,js}\" \"tests/**/*.{ts,js}\"",
+    "format:check": "bun run prettier --check \"src/**/*.{ts,js}\" \"tests/**/*.{ts,js}\"",
+    "dev": "bun run --hot src/dev-server.ts",
+    "dev:debug": "bun run --inspect src/dev-server.ts",
+    "demo": "bun run src/demo.ts",
+    "link": "bun link",
+    "unlink": "bun unlink",
+    "publish:beta": "bun run build && npm publish --tag beta",
+    "publish:latest": "bun run build && npm publish",
+    "health": "bun run src/health-check.ts",
+    "validate": "bun run lint && bun run format:check && bun run build:types",
+    "prepublishOnly": "bun run validate && bun run test:all",
+    "clean": "rm -rf dist coverage .cache",
+    "clean:all": "bun run clean && rm -rf node_modules bun.lock",
+    "deps:audit": "bun audit",
+    "deps:update": "bun update",
+    "size": "bun run bundle-analyzer src/index.ts"
+  },
+  "dependencies": {
+    "@fire22-registry/core-security": "workspace:*",
+    "@fire22-registry/compliance-core": "workspace:*",
+    "@fire22-registry/analytics-dashboard": "workspace:*",
+    "lodash": "^4.17.21",
+    "moment": "^2.30.1",
+    "semver": "^7.7.2",
+    "uuid": "^9.0.1",
+    "zod": "^3.20.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "@types/uuid": "^9.0.7",
+    "@types/lodash": "^4.14.202",
+    "typescript": "^5.0.0",
+    "prettier": "^3.1.1",
+    "eslint": "^8.56.0"
+  },
+  "keywords": [
+    "fantasy42",
+    "fire22",
+    "betting-engine",
+    "sports-betting",
+    "odds",
+    "wagers",
+    "validation",
+    "nfl",
+    "nba",
+    "mlb",
+    "nhl",
+    "soccer",
+    "tennis",
+    "golf",
+    "typescript",
+    "bun",
+    "enterprise",
+    "compliance",
+    "gambling",
+    "sportsbook",
+    "parlay",
+    "moneyline",
+    "spread",
+    "futures",
+    "props",
+    "live-betting",
+    "risk-management",
+    "fraud-detection",
+    "gdpr",
+    "pci-dss",
+    "aml",
+    "responsible-gambling",
+    "real-time",
+    "scalability",
+    "high-performance"
+  ],
+  "author": {
+    "name": "Fire22 Enterprise",
+    "email": "enterprise@fire22.com",
+    "url": "https://fire22.com"
+  },
+  "license": "MIT",
+  "homepage": "https://fire22.com/betting-engine",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry.git",
+    "directory": "enterprise/packages/betting/betting-engine"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/issues",
+    "email": "support@fire22.com"
+  },
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/fantasy42-fire22"
+  },
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "bin": {
+    "fantasy42-betting": "./dist/cli.js"
+  },
+  "man": [
+    "./man/fantasy42-betting.1"
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "bun run lint && bun run test",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release": {
+    "branches": [
+      "main",
+      "enterprise",
+      {
+        "name": "beta",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  },
+  "fantasy42": {
+    "category": "betting-engine",
+    "compliance": [
+      "GDPR",
+      "PCI",
+      "AML",
+      "Sports Betting Regulations"
+    ],
+    "security": "enterprise",
+    "sports": [
+      "NFL",
+      "NBA",
+      "MLB",
+      "NHL",
+      "Soccer",
+      "Tennis",
+      "Golf"
+    ],
+    "features": [
+      "odds-calculation",
+      "wager-validation",
+      "risk-management",
+      "sports-specific-rules",
+      "live-betting",
+      "parlay-management"
+    ],
+    "performance": {
+      "targetResponseTime": "< 5ms",
+      "concurrentBets": "10,000+",
+      "uptime": "99.99%"
+    },
+    "scalability": {
+      "horizontalScaling": true,
+      "multiTenant": true,
+      "globalDeployment": true
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "types",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js"
+}

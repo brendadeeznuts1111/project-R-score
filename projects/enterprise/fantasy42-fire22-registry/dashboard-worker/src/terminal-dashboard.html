@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Terminal Dashboard - Terminal Terminal Dashboard v4.0.0-staging v4.0.0-staging</title>
+    <style>
+      :root {
+        --bg-primary: #0a0e27;
+        --bg-secondary: #151a3a;
+        --text-primary: #ffffff;
+        --text-secondary: #a8b2d1;
+        --fire-primary: #ff6b35;
+        --fire-accent: #ffa751;
+        --terminal-green: #4ade80;
+        --terminal-amber: #fbbf24;
+        --terminal-red: #ef4444;
+        --border-color: #2a3152;
+        --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        min-height: 100vh;
+        padding: 1rem;
+        overflow-x: auto;
+      }
+
+      .terminal-container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Language Selector */
+      .language-selector {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 0.5rem;
+        z-index: 1000;
+      }
+
+      .language-selector select {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 2px;
+        padding: 0.25rem;
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .language-selector label {
+        color: var(--text-secondary);
+        font-size: 11px;
+        margin-right: 0.5rem;
+      }
+
+      /* Terminal Box Styles */
+      .terminal-box {
+        color: var(--terminal-green);
+        margin-bottom: 1rem;
+        white-space: pre;
+        line-height: 1.3;
+        font-size: 14px;
+        text-shadow: 0 0 3px rgba(74, 222, 128, 0.5);
+      }
+
+      .terminal-box.fire {
+        color: var(--fire-primary);
+        text-shadow: 0 0 5px rgba(255, 107, 53, 0.5);
+      }
+
+      .terminal-box.amber {
+        color: var(--terminal-amber);
+        text-shadow: 0 0 3px rgba(251, 191, 36, 0.5);
+      }
+
+      /* Grid Layout */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 1200px) {
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Interactive Elements */
+      .clickable {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .clickable:hover {
+        color: var(--fire-accent);
+        text-shadow: 0 0 10px currentColor;
+      }
+
+      /* Status Indicators */
+      .status-active {
+        color: var(--terminal-green);
+      }
+      .status-warning {
+        color: var(--terminal-amber);
+      }
+      .status-error {
+        color: var(--terminal-red);
+      }
+
+      /* Animation */
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .blink {
+        animation: blink 1s infinite;
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--fire-primary);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--fire-accent);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+      <label for="language-select">🌐</label>
+      <select id="language-select" onchange="dashboard.changeLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="pt">Português</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
+
+    <div class="terminal-container">
+      <!-- Header -->
+      <div class="terminal-box fire" id="header"></div>
+
+      <!-- Status Bar -->
+      <div class="terminal-box" id="status"></div>
+
+      <!-- Main Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Left Panel -->
+        <div>
+          <div class="terminal-box" id="agents"></div>
+          <div class="terminal-box amber" id="metrics"></div>
+        </div>
+
+        <!-- Center Panel -->
+        <div>
+          <div class="terminal-box" id="buildQueue"></div>
+          <div class="terminal-box" id="activity"></div>
+        </div>
+
+        <!-- Right Panel -->
+        <div>
+          <div class="terminal-box" id="resources"></div>
+          <div class="terminal-box" id="security"></div>
+          <div class="terminal-box water" id="waterSystem"></div>
+        </div>
+      </div>
+
+      <!-- Terminal Output -->
+      <div class="terminal-box" id="terminal"></div>
+
+      <!-- Footer -->
+      <div class="terminal-box" id="footer"></div>
+    </div>
+
+    <script>
+      class TerminalDashboard {
+        constructor() {
+          // L-Key Integration System
+          this.languageKeys = {
+            // Core System L-Keys
+            L_407: 'settings_config', // Settings Configuration
+            L_887: 'status', // Status
+            L_881: 'active', // Active
+            L_882: 'inactive', // Inactive
+            L_883: 'pending', // Pending
+            L_869: 'agent', // Agent
+            L_871: 'player', // Player
+            L_888: 'agent_id', // Agent ID
+            L_889: 'login_id', // Login ID
+
+            // Dashboard L-Keys
+            L_849: 'report_settings', // Report Settings
+            L_1351: 'dashboard_view', // Dashboard View
+            L_449: 'date_today', // Date Today
+            L_451: 'time', // Time
+
+            // Security L-Keys
+            L_1387: 'security_settings', // Security Settings
+            L_1388: 'account_verification', // Account Verification
+            L_1389: 'risk_management', // Risk Management
+            L_1391: 'audit_trail', // Audit Trail
+
+            // System L-Keys
+            L_187: 'balance', // Balance
+            L_426: 'account', // Account
+            L_287: 'transaction', // Transaction
+            L_69: 'amount', // Amount
+            L_202: 'deposit_amount', // Deposit Amount
+          };
+
+          // Multilingual Content System
+          this.translations = {
+            en: {
+              // Header
+              title: '🔥 Fire22 Terminal Dashboard System',
+              version: ' Version 2.0.0 | Build Automation & Agent Management Platform',
+              separator: ' ══════════════════════════════════════════════════════════════════════════════════════════',
+
+              // System Status
+              systemStatus: 'System Status',
+              systemOnline: '● ONLINE',
+              agentsActive: 'Agents: 4 Active',
+              queueStatus: 'Queue: 3',
+              cpuStatus: 'CPU: 45%',
+              memoryStatus: 'Memory: 62%',
+              securityStatus: 'Security: 98',
+
+              // Agent Control
+              agentControl: 'Agent Control',
+              creditLabel: 'Credit:',
+
+              // Metrics
+              metrics: 'Metrics',
+              buildsToday: 'Builds Today:',
+              successRate: 'Success Rate:',
+              avgBuildTime: 'Avg Build Time:',
+              activeDeploys: 'Active Deploys:',
+
+              // Build Queue
+              buildQueue: 'Build Queue',
+              productionBuild: 'Production Build',
+              securityScan: 'Security Scan',
+              testSuite: 'Test Suite',
+
+              // Activity Feed
+              activityFeed: 'Activity Feed',
+              buildStarted: 'Build #156 started by BLAKE',
+              securityCompleted: 'Security scan completed successfully',
+              deploymentRequested: 'Agent SPEN requested deployment',
+              cacheCleared: 'Cache cleared, performance optimized',
+              websocketConnected: 'WebSocket connection established',
+
+              // Resources
+              resources: 'Resources',
+              cpu: 'CPU',
+              memory: 'Memory',
+              disk: 'Disk',
+              network: 'Network',
+
+              // Security
+              security: 'Security',
+              firewall: 'Firewall:',
+              sslTls: 'SSL/TLS:',
+              lastScan: 'Last Scan:',
+              threats: 'Threats:',
+              active: '● Active',
+              valid: '● Valid',
+              detected: '0 Detected',
+              minAgo: 'min ago',
+
+              // Water System
+              waterSystem: 'Water System',
+              waterLevel: 'Water Level:',
+              temperature: 'Temperature:',
+              flowRate: 'Flow Rate:',
+              pressure: 'Pressure:',
+              normal: '● Normal',
+              degrees: '°C',
+              litersPerMin: 'L/min',
+              bar: 'bar',
+
+              // Footer
+              footer: 'Fire22 Terminal Dashboard - System Operational',
+              copyright: '© 2024 Fire22 Development Team',
+            },
+            es: {
+              // Header
+              title: '🔥 Fire22 Terminal Dashboard Sistema',
+              version: ' Versión 2.0.0 | Plataforma de Automatización de Construcción y Gestión de Agentes',
+              separator: ' ══════════════════════════════════════════════════════════════════════════════════════════',
+
+              // System Status
+              systemStatus: 'Estado del Sistema',
+              systemOnline: '● EN LÍNEA',
+              agentsActive: 'Agentes: 4 Activos',
+              queueStatus: 'Cola: 3',
+              cpuStatus: 'CPU: 45%',
+              memoryStatus: 'Memoria: 62%',
+              securityStatus: 'Seguridad: 98',
+
+              // Agent Control
+              agentControl: 'Control de Agentes',
+              creditLabel: 'Crédito:',
+
+              // Metrics
+              metrics: 'Métricas',
+              buildsToday: 'Construcciones Hoy:',
+              successRate: 'Tasa de Éxito:',
+              avgBuildTime: 'Tiempo Promedio:',
+              activeDeploys: 'Despliegues Activos:',
+
+              // Build Queue
+              buildQueue: 'Cola de Construcción',
+              productionBuild: 'Construcción de Producción',
+              securityScan: 'Escaneo de Seguridad',
+              testSuite: 'Suite de Pruebas',
+
+              // Activity Feed
+              activityFeed: 'Actividad',
+              buildStarted: 'Construcción #156 iniciada por BLAKE',
+              securityCompleted: 'Escaneo de seguridad completado',
+              deploymentRequested: 'Agente SPEN solicitó despliegue',
+              cacheCleared: 'Caché limpiado, rendimiento optimizado',
+              websocketConnected: 'Conexión WebSocket establecida',
+
+              // Resources
+              resources: 'Recursos',
+              cpu: 'CPU',
+              memory: 'Memoria',
+              disk: 'Disco',
+              network: 'Red',
+
+              // Security
+              security: 'Seguridad',
+              firewall: 'Cortafuegos:',
+              sslTls: 'SSL/TLS:',
+              lastScan: 'Último Escaneo:',
+              threats: 'Amenazas:',
+              active: '● Activo',
+              valid: '● Válido',
+              detected: '0 Detectadas',
+              minAgo: 'min atrás',
+
+              // Water System
+              waterSystem: 'Sistema de Agua',
+              waterLevel: 'Nivel de Agua:',
+              temperature: 'Temperatura:',
+              flowRate: 'Tasa de Flujo:',
+              pressure: 'Presión:',
+              normal: '● Normal',
+              degrees: '°C',
+              litersPerMin: 'L/min',
+              bar: 'bar',
+
+              // Footer
+              footer: 'Fire22 Terminal Dashboard - Sistema Operativo',
+              copyright: '© 2024 Equipo de Desarrollo Fire22',
+            },
+            pt: {
+              // Header
+              title: '🔥 Fire22 Terminal Dashboard Sistema',
+              version: ' Versão 2.0.0 | Plataforma de Automação de Build e Gerenciamento de Agentes',
+              separator: ' ══════════════════════════════════════════════════════════════════════════════════════════',
+
+              // System Status
+              systemStatus: 'Status do Sistema',
+              systemOnline: '● ONLINE',
+              agentsActive: 'Agentes: 4 Ativos',
+              queueStatus: 'Fila: 3',
+              cpuStatus: 'CPU: 45%',
+              memoryStatus: 'Memória: 62%',
+              securityStatus: 'Segurança: 98',
+
+              // Agent Control
+              agentControl: 'Controle de Agentes',
+              creditLabel: 'Crédito:',
+
+              // Metrics
+              metrics: 'Métricas',
+              buildsToday: 'Builds Hoje:',
+              successRate: 'Taxa de Sucesso:',
+              avgBuildTime: 'Tempo Médio:',
+              activeDeploys: 'Deployments Ativos:',
+
+              // Build Queue
+              buildQueue: 'Fila de Build',
+              productionBuild: 'Build de Produção',
+              securityScan: 'Scan de Segurança',
+              testSuite: 'Suite de Testes',
+
+              // Activity Feed
+              activityFeed: 'Feed de Atividade',
+              buildStarted: 'Build #156 iniciado por BLAKE',
+              securityCompleted: 'Scan de segurança concluído',
+              deploymentRequested: 'Agente SPEN solicitou deployment',
+              cacheCleared: 'Cache limpo, performance otimizada',
+              websocketConnected: 'Conexão WebSocket estabelecida',
+
+              // Resources
+              resources: 'Recursos',
+              cpu: 'CPU',
+              memory: 'Memória',
+              disk: 'Disco',
+              network: 'Rede',
+
+              // Security
+              security: 'Segurança',
+              firewall: 'Firewall:',
+              sslTls: 'SSL/TLS:',
+              lastScan: 'Último Scan:',
+              threats: 'Ameaças:',
+              active: '● Ativo',
+              valid: '● Válido',
+              detected: '0 Detectadas',
+              minAgo: 'min atrás',
+
+              // Water System
+              waterSystem: 'Sistema de Água',
+              waterLevel: 'Nível da Água:',
+              temperature: 'Temperatura:',
+              flowRate: 'Taxa de Fluxo:',
+              pressure: 'Pressão:',
+              normal: '● Normal',
+              degrees: '°C',
+              litersPerMin: 'L/min',
+              bar: 'bar',
+
+              // Footer
+              footer: 'Fire22 Terminal Dashboard - Sistema Operacional',
+              copyright: '© 2024 Equipe de Desenvolvimento Fire22',
+            },
+            fr: {
+              // Header
+              title: '🔥 Fire22 Terminal Dashboard Système',
+              version: " Version 2.0.0 | Plateforme d'Automatisation de Build et de Gestion d'Agents",
+              separator: ' ══════════════════════════════════════════════════════════════════════════════════════════',
+
+              // System Status
+              systemStatus: 'État du Système',
+              systemOnline: '● EN LIGNE',
+              agentsActive: 'Agents: 4 Actifs',
+              queueStatus: 'File: 3',
+              cpuStatus: 'CPU: 45%',
+              memoryStatus: 'Mémoire: 62%',
+              securityStatus: 'Sécurité: 98',
+
+              // Agent Control
+              agentControl: 'Contrôle des Agents',
+              creditLabel: 'Crédit:',
+
+              // Metrics
+              metrics: 'Métriques',
+              buildsToday: "Builds Aujourd'hui:",
+              successRate: 'Taux de Réussite:',
+              avgBuildTime: 'Temps Moyen:',
+              activeDeploys: 'Déploiements Actifs:',
+
+              // Build Queue
+              buildQueue: 'File de Build',
+              productionBuild: 'Build de Production',
+              securityScan: 'Scan de Sécurité',
+              testSuite: 'Suite de Tests',
+
+              // Activity Feed
+              activityFeed: "Flux d'Activité",
+              buildStarted: 'Build #156 démarré par BLAKE',
+              securityCompleted: 'Scan de sécurité terminé',
+              deploymentRequested: 'Agent SPEN a demandé un déploiement',
+              cacheCleared: 'Cache effacé, performance optimisée',
+              websocketConnected: 'Connexion WebSocket établie',
+
+              // Resources
+              resources: 'Ressources',
+              cpu: 'CPU',
+              memory: 'Mémoire',
+              disk: 'Disque',
+              network: 'Réseau',
+
+              // Security
+              security: 'Sécurité',
+              firewall: 'Pare-feu:',
+              sslTls: 'SSL/TLS:',
+              lastScan: 'Dernier Scan:',
+              threats: 'Menaces:',
+              active: '● Actif',
+              valid: '● Valide',
+              detected: '0 Détectées',
+              minAgo: 'min il y a',
+
+              // Water System
+              waterSystem: "Système d'Eau",
+              waterLevel: "Niveau d'Eau:",
+              temperature: 'Température:',
+              flowRate: 'Débit:',
+              pressure: 'Pression:',
+              normal: '● Normal',
+              degrees: '°C',
+              litersPerMin: 'L/min',
+              bar: 'bar',
+
+              // Footer
+              footer: 'Fire22 Terminal Dashboard - Système Opérationnel',
+              copyright: '© 2024 Équipe de Développement Fire22',
+            },
+          };
+
+          this.currentLanguage = 'en';
+          this.chars = {
+            topLeft: '╭',
+            topRight: '╮',
+            bottomLeft: '╰',
+            bottomRight: '╯',
+            horizontal: '─',
+            vertical: '│',
+            connectLeft: '├',
+            connectRight: '┤',
+            connectTop: '┬',
+            connectBottom: '┴',
+          };
+
+          this.agents = [
+            { id: 'BLAKE', status: 'active', credit: 75 },
+            { id: 'DAKO', status: 'active', credit: 80 },
+            { id: 'SCRAM', status: 'warning', credit: 37 },
+            { id: 'SPEN', status: 'active', credit: 92 },
+          ];
+
+          this.buildQueue = [
+            { id: 1, name: 'productionBuild', progress: 75 },
+            { id: 2, name: 'securityScan', progress: 45 },
+            { id: 3, name: 'testSuite', progress: 12 },
+          ];
+
+          this.init();
+          this.startUpdates();
+        }
+
+        // Language Management
+        changeLanguage(lang) {
+          this.currentLanguage = lang;
+          this.refreshAllPanels();
+          console.log(`🌐 Language changed to: ${lang} | L-keys: ${Object.keys(this.languageKeys).join(', ')}`);
+        }
+
+        getText(key) {
+          return this.translations[this.currentLanguage][key] || this.translations.en[key] || key;
+        }
+
+        getLKeyMapping(key) {
+          return this.languageKeys[key] || key;
+        }
+
+        refreshAllPanels() {
+          this.renderHeader();
+          this.renderStatus();
+          this.renderAgents();
+          this.renderMetrics();
+          this.renderBuildQueue();
+          this.renderActivity();
+          this.renderResources();
+          this.renderSecurity();
+          this.renderWaterSystem();
+          this.renderTerminal();
+          this.renderFooter();
+        }
+
+        createBox(width, title, content, centerTitle = true) {
+          let box = [];
+
+          // Top line with title
+          if (title) {
+            const titleStr = ` ${title} `;
+            const totalPadding = width - titleStr.length - 2;
+
+            if (centerTitle) {
+              const leftPad = Math.floor(totalPadding / 2);
+              const rightPad = Math.ceil(totalPadding / 2);
+              box.push(
+                this.chars.topLeft +
+                  this.chars.horizontal.repeat(leftPad) +
+                  titleStr +
+                  this.chars.horizontal.repeat(rightPad) +
+                  this.chars.topRight
+              );
+            } else {
+              box.push(
+                this.chars.topLeft +
+                  this.chars.horizontal +
+                  titleStr +
+                  this.chars.horizontal.repeat(totalPadding - 1) +
+                  this.chars.topRight
+              );
+            }
+          } else {
+            box.push(this.chars.topLeft + this.chars.horizontal.repeat(width - 2) + this.chars.topRight);
+          }
+
+          // Content lines
+          if (content) {
+            const lines = content.split('\n');
+            lines.forEach(line => {
+              const padding = width - line.length - 2;
+              box.push(this.chars.vertical + line + ' '.repeat(Math.max(0, padding)) + this.chars.vertical);
+            });
+          }
+
+          // Bottom line
+          box.push(this.chars.bottomLeft + this.chars.horizontal.repeat(width - 2) + this.chars.bottomRight);
+
+          return box.join('\n');
+        }
+
+        createProgressBar(width, progress) {
+          const filled = Math.floor(((width - 4) * progress) / 100);
+          const empty = width - 4 - filled;
+          return '[' + '█'.repeat(filled) + '░'.repeat(empty) + ']';
+        }
+
+        formatStatus(status) {
+          const icons = {
+            active: '●',
+            warning: '▲',
+            error: '✖',
+          };
+          return icons[status] || '○';
+        }
+
+        init() {
+          this.refreshAllPanels();
+        }
+
+        renderHeader() {
+          const width = 100;
+          const title = this.getText('title');
+          const content = this.getText('version') + '\n' + this.getText('separator');
+
+          document.getElementById('header').textContent = this.createBox(width, title, content);
+        }
+
+        renderStatus() {
+          const width = 100;
+          const content = ` ${this.getText('systemStatus')}: <span class="status-active">${this.getText('systemOnline')}</span> │ ${this.getText('agentsActive')} │ ${this.getText('queueStatus')} │ ${this.getText('cpuStatus')} │ ${this.getText('memoryStatus')} │ ${this.getText('securityStatus')}: <span class="status-active">98</span>`;
+          const box = this.createBox(width, this.getText('systemStatus'), '');
+          const lines = box.split('\n');
+          lines[1] = this.chars.vertical + content + ' '.repeat(width - content.length - 20) + this.chars.vertical;
+          document.getElementById('status').innerHTML = lines.join('\n');
+        }
+
+        renderAgents() {
+          const width = 40;
+          let content = '';
+
+          this.agents.forEach(agent => {
+            const status = this.formatStatus(agent.status);
+            const statusClass = `status-${agent.status}`;
+            content += ` <span class="${statusClass}">${status}</span> ${agent.id.padEnd(8)} ${this.getText('creditLabel')} ${agent.credit}%\n`;
+          });
+
+          const box = this.createBox(width, this.getText('agentControl'), content.trim());
+          document.getElementById('agents').innerHTML = box;
+        }
+
+        renderMetrics() {
+          const width = 40;
+          const content =
+            ` ${this.getText('buildsToday')}     156\n` +
+            ` ${this.getText('successRate')}     98.2%\n` +
+            ` ${this.getText('avgBuildTime')}   2.3s\n` +
+            ` ${this.getText('activeDeploys')}   12`;
+
+          document.getElementById('metrics').textContent = this.createBox(width, this.getText('metrics'), content);
+        }
+
+        renderBuildQueue() {
+          const width = 65;
+          let content = '';
+
+          this.buildQueue.forEach(item => {
+            const progressBar = this.createProgressBar(30, item.progress);
+            const itemName = this.getText(item.name);
+            content += ` ${item.id}. ${itemName.padEnd(20)} ${progressBar} ${item.progress}%\n`;
+          });
+
+          document.getElementById('buildQueue').textContent = this.createBox(
+            width,
+            this.getText('buildQueue'),
+            content.trim()
+          );
+        }
+
+        renderActivity() {
+          const width = 65;
+          const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+          const content =
+            ` [${time}] ${this.getText('buildStarted')}\n` +
+            ` [${time}] ${this.getText('securityCompleted')}\n` +
+            ` [${time}] ${this.getText('deploymentRequested')}\n` +
+            ` [${time}] ${this.getText('cacheCleared')}\n` +
+            ` [${time}] ${this.getText('websocketConnected')}`;
+
+          document.getElementById('activity').textContent = this.createBox(
+            width,
+            this.getText('activityFeed'),
+            content
+          );
+        }
+
+        renderResources() {
+          const width = 40;
+          let content = '';
+
+          const resources = [
+            { name: this.getText('cpu'), value: 45 },
+            { name: this.getText('memory'), value: 62 },
+            { name: this.getText('disk'), value: 28 },
+            { name: this.getText('network'), value: 15 },
+          ];
+
+          resources.forEach(res => {
+            const bar = this.createProgressBar(20, res.value);
+            content += ` ${res.name.padEnd(8)} ${bar}\n`;
+          });
+
+          document.getElementById('resources').textContent = this.createBox(
+            width,
+            this.getText('resources'),
+            content.trim()
+          );
+        }
+
+        renderSecurity() {
+          const width = 40;
+          const content =
+            ` ${this.getText('firewall')}    <span class="status-active">${this.getText('active')}</span>\n` +
+            ` ${this.getText('sslTls')}     <span class="status-active">${this.getText('valid')}</span>\n` +
+            ` ${this.getText('lastScan')}   2 ${this.getText('minAgo')}\n` +
+            ` ${this.getText('threats')}     <span class="status-active">${this.getText('detected')}</span>`;
+
+          const box = this.createBox(width, this.getText('security'), '');
+          const lines = box.split('\n');
+          const contentLines = content.split('\n');
+          contentLines.forEach((line, i) => {
+            lines[i + 1] = this.chars.vertical + line + ' '.repeat(width - line.length - 10) + this.chars.vertical;
+          });
+          document.getElementById('security').innerHTML = lines.join('\n');
+        }
+
+        renderWaterSystem() {
+          const width = 40;
+          const content =
+            ` ${this.getText('waterLevel')}    <span class="status-active">${this.getText('normal')}</span>\n` +
+            ` ${this.getText('temperature')}    <span class="status-active">25${this.getText('degrees')}</span>\n` +
+            ` ${this.getText('flowRate')}      <span class="status-active">150 ${this.getText('litersPerMin')}</span>\n` +
+            ` ${this.getText('pressure')}       <span class="status-active">1.2 ${this.getText('bar')}`;
+
+          const box = this.createBox(width, this.getText('waterSystem'), '');
+          const lines = box.split('\n');
+          const contentLines = content.split('\n');
+          contentLines.forEach((line, i) => {
+            lines[i + 1] = this.chars.vertical + line + ' '.repeat(width - line.length - 10) + this.chars.vertical;
+          });
+          document.getElementById('waterSystem').innerHTML = lines.join('\n');
+        }
+
+        renderTerminal() {
+          const width = 100;
+          const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+          const content =
+            ` [${time}] ${this.getText('systemStatus')}: ${this.getText('systemOnline')} | ${this.getText('agentsActive')} | ${this.getText('queueStatus')} | ${this.getText('cpuStatus')} | ${this.getText('memoryStatus')} | ${this.getText('securityStatus')}: 98\n` +
+            ` [${time}] ${this.getText('agentControl')}: 4 agents active | ${this.getText('buildQueue')}: 3 items | ${this.getText('resources')}: Normal | ${this.getText('security')}: ${this.getText('active')} | ${this.getText('waterSystem')}: ${this.getText('normal')}\n` +
+            ` [${time}] L-keys integrated: ${Object.keys(this.languageKeys).length} keys | Current language: ${this.currentLanguage.toUpperCase()} | Multilingual support: ${Object.keys(this.translations).length} languages`;
+
+          document.getElementById('terminal').textContent = this.createBox(width, 'Terminal Output', content);
+        }
+
+        renderFooter() {
+          const width = 100;
+          const content =
+            ` ${this.getText('footer')}\n` +
+            ` ${this.getText('copyright')} | L-keys: ${Object.keys(this.languageKeys).length} | Languages: ${Object.keys(this.translations).length} | Status: ${this.getText('systemOnline')}`;
+
+          document.getElementById('footer').textContent = this.createBox(width, '', content);
+        }
+
+        startUpdates() {
+          setInterval(() => {
+            this.renderStatus();
+            this.renderTerminal();
+          }, 1000);
+
+          setInterval(() => {
+            this.renderMetrics();
+            this.renderResources();
+            this.renderSecurity();
+            this.renderWaterSystem();
+          }, 5000);
+        }
+      }
+
+      // Initialize dashboard
+      const dashboard = new TerminalDashboard();
+
+      // Global function for language switching
+      window.changeLanguage = function (lang) {
+        dashboard.changeLanguage(lang);
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "fire22-security-scanner",
+  "description": "Fire22 Enterprise Security Scanner for Bun package installations",
+  "version": "1.0.0",
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "packages/fire22-security-scanner"
+  },
+  "keywords": [
+    "bun",
+    "security",
+    "scanner",
+    "fire22",
+    "enterprise",
+    "supply-chain",
+    "vulnerability"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  },
+  "scripts": {
+    "test": "bun test",
+    "lint": "bunx prettier --check .",
+    "format": "bunx prettier --write ."
+  }
+}

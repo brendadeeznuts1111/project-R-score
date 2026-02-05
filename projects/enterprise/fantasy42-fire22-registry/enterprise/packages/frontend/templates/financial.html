@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial Reports</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .period {
+        background: #e8f4fd;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .metric-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .metric-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #28a745;
+      }
+      .metric-label {
+        color: #666;
+        margin-top: 5px;
+      }
+      .charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 30px;
+      }
+      .chart {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .chart-placeholder {
+        height: 200px;
+        background: #e9ecef;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📊 Financial Reports</h1>
+        <p>Revenue Analysis & Financial Performance</p>
+      </div>
+
+      <div class="period">
+        <strong>Reporting Period:</strong>
+        {{periodStart}} to {{periodEnd}}
+      </div>
+
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="metric-value">${{totalRevenue}}</div>
+          <div class="metric-label">Total Revenue</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">${{netProfit}}</div>
+          <div class="metric-label">Net Profit</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">{{complianceScore}}%</div>
+          <div class="metric-label">Compliance Score</div>
+        </div>
+      </div>
+
+      <div class="charts">
+        <div class="chart">
+          <h3>Revenue Trend</h3>
+          <div class="chart-placeholder">📈 Chart would be displayed here</div>
+        </div>
+        <div class="chart">
+          <h3>Profit Analysis</h3>
+          <div class="chart-placeholder">📊 Chart would be displayed here</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

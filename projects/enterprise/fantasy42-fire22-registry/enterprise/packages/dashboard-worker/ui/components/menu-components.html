@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu Components - Dashboard</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <style>
+      /* Menu Components Styles */
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        padding: 20px;
+      }
+
+      .ic-square {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: none;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .ic-square:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      .ic-square.color1 {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      }
+      .ic-square.color2 {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      }
+      .ic-square.color3 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .ic-square.color4 {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+      .ic-square.color5 {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+      .ic-square.color6 {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+
+      .ic-picture {
+        margin-bottom: 10px;
+      }
+
+      .ic-picture i {
+        font-size: 2em;
+        color: white;
+      }
+
+      .ic-legend {
+        color: white;
+      }
+
+      .menu-title {
+        font-weight: bold;
+        font-size: 1.1em;
+        margin: 0;
+      }
+
+      .menu-subtitle {
+        font-size: 0.9em;
+        opacity: 0.8;
+        margin: 5px 0 0 0;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .menu-grid {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
+          padding: 15px;
+        }
+
+        .ic-square {
+          padding: 15px;
+          min-height: 100px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Security & Monitoring Menu Items -->
+    <div class="menu-grid">
+      <!-- IP Tracker - User's Original Component -->
+      <div class="ic-square color3" data-action="get-ip-tracker">
+        <div class="ic-picture">
+          <i class="fa fa-globe"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-333">IP Tracker</span>
+          <p class="menu-subtitle">Monitor & analyze IP addresses</p>
+        </div>
+      </div>
+
+      <!-- Security Admin -->
+      <div class="ic-square color1" data-action="get-security-admin">
+        <div class="ic-picture">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-334">Security Admin</span>
+          <p class="menu-subtitle">Security settings & policies</p>
+        </div>
+      </div>
+
+      <!-- Connection Monitor -->
+      <div class="ic-square color2" data-action="get-connection-monitor">
+        <div class="ic-picture">
+          <i class="fas fa-network-wired"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-335">Connection Monitor</span>
+          <p class="menu-subtitle">Real-time connection tracking</p>
+        </div>
+      </div>
+
+      <!-- Risk Assessment -->
+      <div class="ic-square color4" data-action="get-risk-assessment">
+        <div class="ic-picture">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-336">Risk Assessment</span>
+          <p class="menu-subtitle">Analyze customer risk levels</p>
+        </div>
+      </div>
+
+      <!-- Audit Logs -->
+      <div class="ic-square color5" data-action="get-audit-logs">
+        <div class="ic-picture">
+          <i class="fas fa-history"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-337">Audit Logs</span>
+          <p class="menu-subtitle">System activity & changes</p>
+        </div>
+      </div>
+
+      <!-- Access Control -->
+      <div class="ic-square color6" data-action="get-access-control">
+        <div class="ic-picture">
+          <i class="fas fa-lock"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-338">Access Control</span>
+          <p class="menu-subtitle">User permissions & access</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Management Menu Items -->
+    <div class="menu-grid">
+      <!-- Customer Search -->
+      <div class="ic-square color1" data-action="get-customer-search">
+        <div class="ic-picture">
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-339">Customer Search</span>
+          <p class="menu-subtitle">Find & manage customers</p>
+        </div>
+      </div>
+
+      <!-- Player Dashboard -->
+      <div class="ic-square color2" data-action="get-player-dashboard">
+        <div class="ic-picture">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-340">Player Dashboard</span>
+          <p class="menu-subtitle">Individual player management</p>
+        </div>
+      </div>
+
+      <!-- Transaction History -->
+      <div class="ic-square color3" data-action="get-transaction-history">
+        <div class="ic-picture">
+          <i class="fas fa-history"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-317">Transactions History</span>
+          <p class="menu-subtitle">Payment & transfer history</p>
+        </div>
+      </div>
+
+      <!-- Collections -->
+      <div class="ic-square color4" data-action="get-settled-figure">
+        <div class="ic-picture">
+          <i class="glypth-calendar-and-clock"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-823">Collections</span>
+          <p class="menu-subtitle">Settlement management</p>
+        </div>
+      </div>
+
+      <!-- Sportsbook Lines -->
+      <div class="ic-square color5" data-action="get-lines" data-type="sportbook">
+        <div class="ic-picture">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-825">Sportsbook Lines</span>
+          <p class="menu-subtitle">Live betting lines</p>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="ic-square color6" data-action="get-analysis">
+        <div class="ic-picture">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-935">Analysis</span>
+          <p class="menu-subtitle">Business intelligence</p>
+        </div>
+      </div>
+
+      <!-- Notes Management -->
+      <div class="ic-square color4" data-action="get-notes-management">
+        <div class="ic-picture">
+          <i class="fas fa-sticky-note"></i>
+        </div>
+        <div class="ic-legend">
+          <span class="menu-title" data-language="L-342">Notes</span>
+          <p class="menu-subtitle">Customer notes & comments</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript for Menu Interactions -->
+    <script>
+      // Initialize menu interactions
+      document.addEventListener('DOMContentLoaded', function () {
+        // Add click handlers for all menu items
+        const menuItems = document.querySelectorAll('[data-action]');
+
+        menuItems.forEach(item => {
+          item.addEventListener('click', function (e) {
+            e.preventDefault();
+            const action = this.getAttribute('data-action');
+            handleMenuAction(action, this);
+          });
+        });
+      });
+
+      // Handle menu actions
+      function handleMenuAction(action, element) {
+        console.log('Menu action triggered:', action);
+
+        // Add visual feedback
+        element.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          element.style.transform = '';
+        }, 150);
+
+        // Handle specific actions
+        switch (action) {
+          case 'get-ip-tracker':
+            openIPTracker();
+            break;
+          case 'get-security-admin':
+            openSecurityAdmin();
+            break;
+          case 'get-connection-monitor':
+            openConnectionMonitor();
+            break;
+          case 'get-risk-assessment':
+            openRiskAssessment();
+            break;
+          case 'get-audit-logs':
+            openAuditLogs();
+            break;
+          case 'get-access-control':
+            openAccessControl();
+            break;
+          case 'get-customer-search':
+            openCustomerSearch();
+            break;
+          case 'get-player-dashboard':
+            openPlayerDashboard();
+            break;
+          case 'get-transaction-history':
+            openTransactionHistory();
+            break;
+          case 'get-notes-management':
+            openNotesManagement();
+            break;
+          default:
+            console.log('Unknown action:', action);
+            showNotification('Feature coming soon: ' + action, 'info');
+        }
+      }
+
+      // Action handlers
+      function openIPTracker() {
+        const ipTrackerWindow = window.open(
+          '/dashboard-worker/ui/templates/ip-tracker-dashboard.html',
+          'ipTracker',
+          'width=1200,height=800,scrollbars=yes,resizable=yes'
+        );
+
+        if (ipTrackerWindow) {
+          ipTrackerWindow.focus();
+        } else {
+          showNotification('Please allow popups to open IP Tracker', 'warning');
+        }
+      }
+
+      function openSecurityAdmin() {
+        showNotification('Security Admin panel opening...', 'info');
+        // Implement security admin functionality
+      }
+
+      function openConnectionMonitor() {
+        showNotification('Connection Monitor opening...', 'info');
+        // Implement connection monitor functionality
+      }
+
+      function openRiskAssessment() {
+        showNotification('Risk Assessment tool opening...', 'info');
+        // Implement risk assessment functionality
+      }
+
+      function openAuditLogs() {
+        showNotification('Audit Logs opening...', 'info');
+        // Implement audit logs functionality
+      }
+
+      function openAccessControl() {
+        showNotification('Access Control panel opening...', 'info');
+        // Implement access control functionality
+      }
+
+      function openCustomerSearch() {
+        showNotification('Customer Search opening...', 'info');
+        // Implement customer search functionality
+      }
+
+      function openPlayerDashboard() {
+        showNotification('Player Dashboard opening...', 'info');
+        // Implement player dashboard functionality
+      }
+
+      function openTransactionHistory() {
+        const transactionHistoryWindow = window.open(
+          '/dashboard-worker/ui/templates/transaction-history-dashboard.html',
+          'transactionHistory',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (transactionHistoryWindow) {
+          transactionHistoryWindow.focus();
+        } else {
+          showNotification('Please allow popups to open Transaction History', 'warning');
+        }
+      }
+
+      function openCollections() {
+        const collectionsWindow = window.open(
+          '/dashboard-worker/ui/templates/collections-dashboard.html',
+          'collections',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (collectionsWindow) {
+          collectionsWindow.focus();
+        } else {
+          showNotification('Please allow popups to open Collections', 'warning');
+        }
+      }
+
+      function openSportsbookLines() {
+        const sportsbookWindow = window.open(
+          '/dashboard-worker/ui/templates/sportsbook-lines-dashboard.html',
+          'sportsbookLines',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (sportsbookWindow) {
+          sportsbookWindow.focus();
+        } else {
+          showNotification('Please allow popups to open Sportsbook Lines', 'warning');
+        }
+      }
+
+      function openAnalysis() {
+        const analysisWindow = window.open(
+          '/dashboard-worker/ui/templates/analysis-dashboard.html',
+          'analysis',
+          'width=1400,height=900,scrollbars=yes,resizable=yes'
+        );
+
+        if (analysisWindow) {
+          analysisWindow.focus();
+        } else {
+          showNotification('Please allow popups to open Analysis', 'warning');
+        }
+      }
+
+      function openNotesManagement() {
+        showNotification('Notes Management opening...', 'info');
+        // Implement notes management functionality
+      }
+
+      // Notification system
+      function showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'warning' ? 'warning' : type === 'error' ? 'danger' : 'info'} notification`;
+        notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                max-width: 300px;
+                animation: slideIn 0.3s ease;
+            `;
+        notification.innerHTML = `
+                <i class="fas fa-${type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle'} mr-2"></i>
+                ${message}
+            `;
+
+        document.body.appendChild(notification);
+
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+          notification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 300);
+        }, 3000);
+      }
+
+      // Add CSS animations
+      const style = document.createElement('style');
+      style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

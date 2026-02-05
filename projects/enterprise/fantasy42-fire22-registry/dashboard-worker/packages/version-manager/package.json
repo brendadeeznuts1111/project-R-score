@@ -1,0 +1,135 @@
+{
+  "name": "@fire22/version-manager",
+  "version": "3.1.0",
+  "description": "Production-ready version management using Bun.semver for Fire22 Dashboard Worker",
+  "keywords": [
+    "semver",
+    "version-management",
+    "bun",
+    "fire22",
+    "cli",
+    "workspace",
+    "git-integration"
+  ],
+  "author": "Fire22 Development Team",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js"
+    },
+    "./workspace": {
+      "types": "./dist/workspace.d.ts",
+      "import": "./dist/workspace.js"
+    }
+  },
+  "bin": {
+    "fire22-version-cli": "./dist/cli.js",
+    "fire22-version-status": "./dist/status.js",
+    "fire22-version-bump": "./dist/bump.js"
+  },
+  "sideEffects": [
+    "./src/**/version-constants.ts",
+    "./src/**/sqlite-schemas.ts"
+  ],
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=bun --outdir=./dist --format=esm --minify",
+    "build:dev": "bun build ./src/index.ts --target=bun --outdir=./dist --format=esm --watch",
+    "build:types": "tsc --emitDeclarationOnly --outDir ./dist",
+    "build:all": "bun run build && bun run build:types",
+    "test": "bun test src/**/*.test.ts",
+    "test:watch": "bun test --watch src/**/*.test.ts",
+    "test:coverage": "bun test --coverage src/**/*.test.ts",
+    "cli": "bun run ../../scripts/version-cli.ts",
+    "version:status": "bun run cli status",
+    "version:bump": "bun run cli bump",
+    "version:compare": "bun run cli compare",
+    "version:validate": "bun run cli validate",
+    "version:satisfies": "bun run cli satisfies",
+    "demo": "bun run src/demo.ts",
+    "benchmark": "bun run src/benchmark.ts",
+    "bunx:cli": "bunx --package @fire22/version-manager fire22-version-cli",
+    "bunx:status": "bunx -p @fire22/version-manager fire22-version-status",
+    "bunx:bump": "bunx --package @fire22/version-manager fire22-version-bump",
+    "bunx:demo": "bunx -p @fire22/version-manager fire22-version-cli --help",
+    "lint": "echo 'Linting with Bun built-ins'",
+    "clean": "rm -rf dist node_modules .bun-cache",
+    "dev": "bun run build:dev"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "engines": {
+    "bun": ">=1.2.21",
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/version-manager"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/fire22-dashboard-worker/issues"
+  },
+  "homepage": "https://github.com/brendadeeznuts1111/fire22-dashboard-worker/tree/main/packages/version-manager#readme",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://fire22.workers.dev/registry/"
+  },
+  "packageManager": "bun@1.2.0",
+  "bunBuildConfig": {
+    "target": "bun",
+    "format": "esm",
+    "minify": true,
+    "sourcemap": true,
+    "splitting": true,
+    "external": [
+      "bun:*"
+    ]
+  },
+  "fire22": {
+    "component": "Version Manager",
+    "category": "Developer Tools",
+    "status": "production-ready",
+    "dependencies": {
+      "bun.semver": "native",
+      "sqlite": "bun:sqlite",
+      "shell": "bun:shell"
+    },
+    "features": [
+      "Native Bun.semver integration",
+      "Version parsing and validation",
+      "Semantic version comparison",
+      "Range satisfaction checking",
+      "Version history tracking",
+      "Workspace synchronization",
+      "Git integration and tagging",
+      "CLI interface",
+      "Automated release workflows"
+    ],
+    "performance": {
+      "parsing": "<1ms",
+      "comparison": "<0.1ms",
+      "rangeSatisfaction": "<0.5ms",
+      "databaseOps": "<5ms"
+    }
+  }
+}

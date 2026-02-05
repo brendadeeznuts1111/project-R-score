@@ -1,0 +1,327 @@
+{
+  "name": "fire22-workspace-orchestrator",
+  "version": "3.0.9",
+  "description": "Advanced workspace management for Fire22 dashboard system",
+
+  "workspaces": {
+    "@fire22-core-dashboard": {
+      "name": "@fire22/core-dashboard",
+      "description": "Main dashboard functionality and UI",
+      "version": "3.0.9",
+      "main": "src/index.ts",
+      "type": "module",
+      "target": "cloudflare-workers",
+      "maxSize": "500KB",
+      "dependencies": {
+        "@fire22/pattern-system": "workspace:*",
+        "@fire22/api-client": "workspace:*"
+      },
+      "include": [
+        "src/index.ts",
+        "src/dashboard.html",
+        "src/config.ts",
+        "src/types.ts",
+        "src/utils.ts",
+        "src/globals.ts",
+        "src/worker.ts"
+      ],
+      "exclude": [
+        "src/patterns/",
+        "src/fire22-*",
+        "src/*-management.ts",
+        "src/telegram-*",
+        "src/queue-*",
+        "src/p2p-*"
+      ],
+      "cloudflare": {
+        "compatibility_date": "2024-08-27",
+        "compatibility_flags": ["nodejs_compat"],
+        "limits": {
+          "cpu_time": 30000,
+          "memory": "128MB"
+        },
+        "bindings": {
+          "D1": ["dashboard_db"],
+          "KV": ["config_cache"],
+          "R2": ["assets_bucket"]
+        }
+      }
+    },
+
+    "@fire22-pattern-system": {
+      "name": "@fire22/pattern-system",
+      "description": "Advanced pattern weaver system with streaming capabilities",
+      "version": "3.0.9",
+      "main": "src/patterns/index.ts",
+      "type": "module",
+      "target": "cloudflare-workers",
+      "maxSize": "800KB",
+      "dependencies": {},
+      "include": ["src/patterns/"],
+      "features": [
+        "streaming-analysis",
+        "security-scanning",
+        "performance-monitoring",
+        "multi-pattern-workflows"
+      ],
+      "cloudflare": {
+        "compatibility_date": "2024-08-27",
+        "compatibility_flags": ["nodejs_compat"],
+        "limits": {
+          "cpu_time": 50000,
+          "memory": "256MB"
+        }
+      }
+    },
+
+    "@fire22-api-client": {
+      "name": "@fire22/api-client",
+      "description": "Fire22 API integration and data management",
+      "version": "3.0.9",
+      "main": "src/fire22-api.ts",
+      "type": "module",
+      "target": "cloudflare-workers",
+      "maxSize": "400KB",
+      "dependencies": {
+        "@fire22/core-dashboard": "workspace:*"
+      },
+      "include": [
+        "src/fire22-api.ts",
+        "src/fire22-config.ts",
+        "src/fire22-api.test.ts",
+        "*.sql",
+        "src/types/",
+        "src/config/"
+      ],
+      "cloudflare": {
+        "compatibility_date": "2024-08-27",
+        "compatibility_flags": ["nodejs_compat"],
+        "limits": {
+          "cpu_time": 30000,
+          "memory": "128MB"
+        },
+        "bindings": {
+          "D1": ["fire22_db", "dashboard_db"],
+          "KV": ["api_cache"],
+          "SECRETS": ["fire22_api_key", "database_url"]
+        }
+      }
+    },
+
+    "@fire22-sports-betting": {
+      "name": "@fire22/sports-betting",
+      "description": "Sports betting and live casino management",
+      "version": "3.0.9",
+      "main": "src/sports-betting-management.ts",
+      "type": "module",
+      "target": "cloudflare-workers",
+      "maxSize": "600KB",
+      "dependencies": {
+        "@fire22/api-client": "workspace:*",
+        "@fire22/core-dashboard": "workspace:*"
+      },
+      "include": [
+        "src/sports-betting-management.ts",
+        "src/live-casino-management.ts",
+        "src/business-management.ts"
+      ],
+      "cloudflare": {
+        "compatibility_date": "2024-08-27",
+        "compatibility_flags": ["nodejs_compat"],
+        "limits": {
+          "cpu_time": 30000,
+          "memory": "256MB"
+        },
+        "bindings": {
+          "D1": ["betting_db"],
+          "KV": ["betting_cache"],
+          "QUEUE": ["betting_events"]
+        }
+      }
+    },
+
+    "@fire22-telegram-integration": {
+      "name": "@fire22/telegram-integration",
+      "description": "Telegram bot and P2P queue system",
+      "version": "3.0.9",
+      "main": "src/telegram-bot.ts",
+      "type": "module",
+      "target": "cloudflare-workers",
+      "maxSize": "350KB",
+      "dependencies": {
+        "@fire22/api-client": "workspace:*"
+      },
+      "include": [
+        "src/telegram-bot.ts",
+        "src/p2p-queue-api.ts",
+        "src/queue-system.ts",
+        "p2p-*.sql",
+        "queue-*.sql"
+      ],
+      "cloudflare": {
+        "compatibility_date": "2024-08-27",
+        "compatibility_flags": ["nodejs_compat"],
+        "limits": {
+          "cpu_time": 30000,
+          "memory": "128MB"
+        },
+        "bindings": {
+          "D1": ["telegram_db"],
+          "KV": ["telegram_cache"],
+          "QUEUE": ["p2p_messages", "telegram_updates"],
+          "SECRETS": ["telegram_bot_token", "cashier_bot_token"]
+        }
+      }
+    },
+
+    "@fire22-build-system": {
+      "name": "@fire22/build-system",
+      "description": "Build automation, benchmarking, and tooling",
+      "version": "3.0.9",
+      "main": "scripts/workspace-orchestrator.ts",
+      "type": "module",
+      "target": "node",
+      "dependencies": {
+        "mitata": "^1.0.0",
+        "@types/bun": "^1.2.21",
+        "typescript": "^5.9.2"
+      },
+      "include": [
+        "scripts/",
+        "bench/",
+        "build.ts",
+        "build.config.ts",
+        "tsconfig.json",
+        "bunfig.toml"
+      ],
+      "exclude": ["scripts/workspace-cli.ts"]
+    }
+  },
+
+  "orchestration": {
+    "splitStrategy": "feature-based",
+    "preserveHistory": true,
+    "createRepos": true,
+    "crossDependencies": "symlink",
+    "buildOrder": [
+      "@fire22-pattern-system",
+      "@fire22-api-client",
+      "@fire22-core-dashboard",
+      "@fire22-sports-betting",
+      "@fire22-telegram-integration"
+    ],
+    "testingStrategy": "parallel-workspace",
+    "deploymentStrategy": "progressive-regional"
+  },
+
+  "benchmarking": {
+    "suites": {
+      "package": {
+        "bundleSize": true,
+        "compressionRatio": true,
+        "treeshaking": true,
+        "dependencies": true
+      },
+      "integration": {
+        "crossWorkspace": true,
+        "apiCompatibility": true,
+        "typeChecking": true
+      },
+      "deployment": {
+        "coldStart": true,
+        "memoryUsage": true,
+        "cpuUtilization": true,
+        "networkLatency": true
+      },
+      "performance": {
+        "throughput": true,
+        "concurrency": true,
+        "caching": true,
+        "streaming": true
+      }
+    },
+    "thresholds": {
+      "bundleSize": "1MB",
+      "coldStart": "50ms",
+      "memoryUsage": "256MB",
+      "buildTime": "30s"
+    },
+    "comparison": {
+      "baseline": "monolith",
+      "target": "workspace-split",
+      "metrics": ["size", "performance", "maintainability"]
+    }
+  },
+
+  "publishing": {
+    "registry": {
+      "url": "https://fire22.workers.dev/registry",
+      "type": "cloudflare-workers-registry",
+      "authentication": "api-token"
+    },
+    "strategy": {
+      "stable": {
+        "prerelease": false,
+        "tags": ["latest", "stable"],
+        "regions": ["global"]
+      },
+      "beta": {
+        "prerelease": true,
+        "tags": ["beta", "next"],
+        "regions": ["us-west", "eu-west"]
+      },
+      "prerelease": {
+        "prerelease": true,
+        "tags": ["alpha", "dev"],
+        "regions": ["us-west"]
+      }
+    },
+    "automation": {
+      "versionBump": "auto",
+      "changelog": "auto-generate",
+      "testing": "full-suite",
+      "deployment": "progressive"
+    }
+  },
+
+  "optimization": {
+    "bundling": {
+      "treeshaking": true,
+      "minification": true,
+      "compression": "gzip",
+      "splitting": "dynamic"
+    },
+    "caching": {
+      "buildCache": true,
+      "dependencyCache": true,
+      "workerCache": "edge-optimized"
+    },
+    "performance": {
+      "lazyLoading": true,
+      "codeSquashing": true,
+      "memoryOptimization": true
+    }
+  },
+
+  "monitoring": {
+    "metrics": {
+      "buildTimes": true,
+      "bundleSizes": true,
+      "testCoverage": true,
+      "deploymentSuccess": true,
+      "runtimePerformance": true
+    },
+    "alerting": {
+      "buildFailures": true,
+      "performanceRegression": true,
+      "sizeIncrease": ">10%",
+      "testFailures": true
+    },
+    "dashboard": {
+      "enabled": true,
+      "realTime": true,
+      "historical": true,
+      "comparison": true
+    }
+  }
+}

@@ -1,0 +1,192 @@
+#!/usr/bin/env bun
+
+// Git commit-msg hook for Fire22 enhanced commit messages
+// This hook validates that commits follow the department attribution format
+
+const commitMsgFile = process.argv[2];
+const fs = require('fs');
+
+// Read the commit message
+const commitMessage = fs.readFileSync(commitMsgFile, 'utf8').trim();
+
+// Skip validation for certain commit types
+const skipValidation = [
+  /^Merge /, // Merge commits
+  /^Revert /, // Revert commits  
+  /^fixup! /, // Fixup commits
+  /^squash! /, // Squash commits
+  /^Automatic merge/, // Automatic merges
+  /^bump\(version\)/, // Version bumps
+  /^chore\(release\)/ // Release commits
+];
+
+for (const pattern of skipValidation) {
+  if (pattern.test(commitMessage)) {
+    console.log('✅ Commit message validation skipped (automated commit)');
+    process.exit(0);
+  }
+}
+
+// Required format validation
+const requiredPatterns = {
+  conventionalCommit: /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)\([a-z]+\): .+/,
+  departmentLine: /\nDepartment: [A-Z][a-z]+( [A-Z][a-z]+)*\n/,
+  leadLine: /\nLead: .+ <.+@.+\.fire22>\n/,
+  claudeAttribution: /🤖 Generated with \[Claude Code\]/,
+  coAuthored: /Co-Authored-By: Claude <noreply@anthropic\.com>/
+};
+
+const validationResults = {};
+
+// Validate each pattern
+for (const [name, pattern] of Object.entries(requiredPatterns)) {
+  validationResults[name] = pattern.test(commitMessage);
+}
+
+// Check for valid departments
+const validDepartments = [
+  'finance', 'support', 'compliance', 'operations', 
+  'technology', 'marketing', 'management', 'contributors',
+  'communications', 'design', 'vip-management', 'hr', 'maintenance'
+];
+
+const departmentMatch = commitMessage.match(/^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)\(([a-z]+)\):/);
+const department = departmentMatch ? departmentMatch[2] : null;
+const validDepartment = department && validDepartments.includes(department);
+
+// Validate Fire22 email addresses
+const emailPattern = /@(finance|support|compliance|operations|tech|marketing|exec|team|design|communications|vip|hr|maintenance)\.fire22>/;
+const hasValidEmails = emailPattern.test(commitMessage);
+
+// Department heads contact information
+const departmentContacts = {
+  'gpg-security': {
+    name: 'Chris Brown (CTO)',
+    email: 'chris.brown@tech.fire22',
+    slack: '@chris.brown',
+    phone: '+1-555-0501',
+    reason: 'GPG commit signing and validation systems'
+  },
+  'commit-format': {
+    name: 'Sarah Martinez',
+    role: 'Communications Director',
+    email: 'sarah.martinez@communications.fire22',
+    slack: '@sarah.martinez',
+    phone: '+1-555-0701',
+    reason: 'Commit message standards and templates'
+  }
+};
+
+// Generate validation report
+const errors = [];
+const warnings = [];
+const contacts = new Set();
+
+if (!validationResults.conventionalCommit) {
+  errors.push('❌ Missing conventional commit format: type(department): description');
+  contacts.add('commit-format');
+}
+
+if (!validDepartment) {
+  errors.push(`❌ Invalid department: "${department}". Valid: ${validDepartments.join(', ')}`);
+  contacts.add('commit-format');
+}
+
+if (!validationResults.departmentLine) {
+  errors.push('❌ Missing department line: "Department: Department Name"');
+  contacts.add('commit-format');
+}
+
+if (!validationResults.leadLine) {
+  errors.push('❌ Missing lead line: "Lead: Name <email@dept.fire22>"');
+  contacts.add('commit-format');
+}
+
+if (!hasValidEmails) {
+  warnings.push('⚠️  No Fire22 company emails found (expected @dept.fire22 format)');
+}
+
+if (!validationResults.claudeAttribution) {
+  warnings.push('⚠️  Missing Claude Code attribution');
+}
+
+if (!validationResults.coAuthored) {
+  warnings.push('⚠️  Missing Co-Authored-By: Claude line');
+}
+
+// Check for GPG signature issues (detect common GPG errors)
+const hasGpgIssues = process.env.GIT_COMMIT_GPG_FAILED === 'true' || 
+                     process.env.GPG_TTY === undefined;
+
+if (hasGpgIssues) {
+  errors.push('❌ GPG commit signing failed or not configured');
+  contacts.add('gpg-security');
+}
+
+// Optional validations
+const hasLKeys = /\nL-Keys: /.test(commitMessage);
+const hasContributors = /\nContributors: /.test(commitMessage);
+
+// Display results
+console.log('\n🔍 Fire22 Commit Message Validation\n');
+
+if (errors.length === 0) {
+  console.log('✅ Commit message validation passed!');
+  
+  if (warnings.length > 0) {
+    console.log('\n⚠️  Warnings:');
+    warnings.forEach(warning => console.log(`   ${warning}`));
+  }
+  
+  console.log('\n📊 Enhancement detected:');
+  if (hasLKeys) console.log('   ✅ L-Keys specified');
+  if (hasContributors) console.log('   ✅ Contributors listed');
+  console.log(`   ✅ Department: ${department}`);
+  console.log('   ✅ Fire22 email format used');
+  
+  process.exit(0);
+} else {
+  console.log('❌ Commit message validation failed!\n');
+  console.log('Errors:');
+  errors.forEach(error => console.log(`   ${error}`));
+  
+  if (warnings.length > 0) {
+    console.log('\nWarnings:');
+    warnings.forEach(warning => console.log(`   ${warning}`));
+  }
+  
+  // Show relevant contacts for errors
+  if (contacts.size > 0) {
+    console.log('\n📞 Contact Department Heads (check if accidental):');
+    Array.from(contacts).forEach(contactKey => {
+      const contact = departmentContacts[contactKey];
+      console.log(`\n   🔹 ${contact.name}${contact.role ? ` (${contact.role})` : ''}`);
+      console.log(`     📧 ${contact.email}`);
+      console.log(`     💬 ${contact.slack} (Slack)`);
+      console.log(`     📞 ${contact.phone}`);
+      console.log(`     💡 Handles: ${contact.reason}`);
+    });
+    
+    console.log('\n   💬 Quick inquiry: "Hi! Was the commit validation failure accidental?');
+    console.log('      If intentional, please advise on proper format. Thanks!"');
+  }
+  
+  console.log('\n📝 Example enhanced commit message:');
+  console.log(`
+feat(finance): implement L-69 transaction tracking system
+
+Department: Finance
+Lead: John Smith <john.smith@finance.fire22>
+Contributors: Sarah Johnson <sarah.johnson@finance.fire22>, Mike Chen <mike.chen@finance.fire22>
+L-Keys: L-69, L-187, L-202
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+`);
+
+  console.log('💡 Use the enhanced commit template:');
+  console.log('   bun run scripts/enhanced-commit-template.js --help');
+  
+  process.exit(1);
+}

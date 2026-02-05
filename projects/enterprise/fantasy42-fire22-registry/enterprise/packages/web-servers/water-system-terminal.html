@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌊 Water System Terminal Display</title>
+    <style>
+      :root {
+        --bg-primary: #0a0e27;
+        --bg-secondary: #151a3a;
+        --text-primary: #ffffff;
+        --water-primary: #87ceeb;
+        --water-accent: #4682b4;
+        --terminal-green: #4ade80;
+        --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        min-height: 100vh;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .water-terminal {
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--water-primary);
+        padding: 2rem;
+        border-radius: 8px;
+        border: 1px solid var(--water-accent);
+        box-shadow: 0 0 20px rgba(135, 206, 235, 0.3);
+        text-align: center;
+        white-space: pre;
+        line-height: 1.5;
+        font-size: 16px;
+        text-shadow: 0 0 10px rgba(135, 206, 235, 0.5);
+      }
+
+      .water-terminal:hover {
+        box-shadow: 0 0 30px rgba(135, 206, 235, 0.5);
+        transform: scale(1.02);
+        transition: all 0.3s ease;
+      }
+
+      .water-title {
+        color: var(--water-primary);
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(135, 206, 235, 0.7);
+      }
+
+      .water-metric {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: rgba(135, 206, 235, 0.1);
+        border-radius: 4px;
+        border-left: 3px solid var(--water-accent);
+      }
+
+      .flow-rate {
+        color: #4ade80;
+      }
+      .temperature {
+        color: #fbbf24;
+      }
+      .pressure {
+        color: #ef4444;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .pulse {
+        animation: pulse 2s ease-in-out infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="water-terminal">
+      <div class="water-title">╭─────────────────── WATER SYSTEM ───────────────────╮</div>
+      <div class="water-metric flow-rate">│ 🌊 Flow Rate: 85 L/min │</div>
+      <div class="water-metric temperature">│ 🌡️ Temperature: 22°C │</div>
+      <div class="water-metric pressure">│ 📊 Pressure: 120 PSI │</div>
+      <div class="water-title">╰─────────────────────────────────────────────────╯</div>
+    </div>
+
+    <script>
+      class WaterSystemTerminal {
+        constructor() {
+          this.metrics = {
+            flowRate: 85,
+            temperature: 22,
+            pressure: 120,
+          };
+
+          this.init();
+        }
+
+        init() {
+          this.startUpdates();
+          this.addInteractiveEffects();
+        }
+
+        startUpdates() {
+          // Simulate real-time updates every 5 seconds
+          setInterval(() => {
+            this.updateMetrics();
+          }, 5000);
+        }
+
+        updateMetrics() {
+          // Simulate small variations in metrics
+          this.metrics.flowRate = Math.max(50, Math.min(120, this.metrics.flowRate + (Math.random() - 0.5) * 10));
+          this.metrics.temperature = Math.max(18, Math.min(26, this.metrics.temperature + (Math.random() - 0.5) * 2));
+          this.metrics.pressure = Math.max(100, Math.min(140, this.metrics.pressure + (Math.random() - 0.5) * 10));
+
+          this.renderMetrics();
+        }
+
+        renderMetrics() {
+          const flowRateEl = document.querySelector('.flow-rate');
+          const temperatureEl = document.querySelector('.temperature');
+          const pressureEl = document.querySelector('.pressure');
+
+          if (flowRateEl)
+            flowRateEl.textContent = `│  🌊 Flow Rate: ${this.metrics.flowRate.toFixed(0)} L/min                          │`;
+          if (temperatureEl)
+            temperatureEl.textContent = `│  🌡️ Temperature: ${this.metrics.temperature.toFixed(1)}°C                            │`;
+          if (pressureEl)
+            pressureEl.textContent = `│  📊 Pressure: ${this.metrics.pressure.toFixed(0)} PSI                            │`;
+        }
+
+        addInteractiveEffects() {
+          const terminal = document.querySelector('.water-terminal');
+          if (terminal) {
+            terminal.addEventListener('click', () => {
+              terminal.classList.add('pulse');
+              setTimeout(() => {
+                terminal.classList.remove('pulse');
+              }, 2000);
+            });
+          }
+        }
+      }
+
+      // Initialize water system terminal
+      document.addEventListener('DOMContentLoaded', () => {
+        new WaterSystemTerminal();
+      });
+    </script>
+  </body>
+</html>

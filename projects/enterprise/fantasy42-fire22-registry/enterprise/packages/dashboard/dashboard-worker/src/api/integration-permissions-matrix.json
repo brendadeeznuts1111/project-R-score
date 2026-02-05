@@ -1,0 +1,798 @@
+{
+  "fire22_integration_permissions": {
+    "document_version": "1.0",
+    "last_updated": "2024-08-28",
+    "classification": "Internal Use - Security Sensitive",
+    "description": "Comprehensive permission matrix for all Fire22 system integrations",
+
+    "security_levels": {
+      "level_1": {
+        "name": "Public Integrations",
+        "description": "External APIs and services with limited access",
+        "risk_level": "Low",
+        "approval_process": "Department Head → Security Review (2 days)",
+        "examples": ["Social media APIs", "Marketing tools", "Analytics platforms"]
+      },
+      "level_2": {
+        "name": "Internal Integrations",
+        "description": "Fire22 internal systems and department connections",
+        "risk_level": "Medium",
+        "approval_process": "Department Head → Security Review → CTO Approval (5 days)",
+        "examples": ["Department dashboards", "Reporting systems", "Workflow tools"]
+      },
+      "level_3": {
+        "name": "Enterprise Integrations",
+        "description": "Core business systems with sensitive data access",
+        "risk_level": "High",
+        "approval_process": "Department Head → Security Review → CTO → CEO Approval (10 days)",
+        "examples": ["Financial systems", "Customer databases", "Sportsbook operations"]
+      },
+      "level_4": {
+        "name": "Critical Infrastructure",
+        "description": "Mission-critical systems essential for business operations",
+        "risk_level": "Critical",
+        "approval_process": "Full Executive Review → Board Approval (21 days)",
+        "examples": ["Payment processing", "Core databases", "Security systems"]
+      }
+    },
+
+    "departments": {
+      "technology": {
+        "department_id": "tech",
+        "head": "Chris Brown",
+        "email": "chris.brown@fire22.com",
+        "integration_coordinator": "Amanda Garcia",
+        "coordinator_email": "amanda.garcia@fire22.com",
+        "integrations": [
+          {
+            "name": "GitHub Enterprise",
+            "type": "Code Repository",
+            "security_level": "level_2",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": true,
+              "delete": true
+            },
+            "authentication": {
+              "method": "OAuth + MFA",
+              "session_timeout": "8_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "AWS Infrastructure",
+            "type": "Cloud Infrastructure",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "IAM Roles + MFA",
+              "session_timeout": "4_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "CI/CD Pipeline",
+            "type": "Development Pipeline",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": true,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "2_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          }
+        ]
+      },
+
+      "security": {
+        "department_id": "sec",
+        "head": "Sarah Mitchell",
+        "email": "sarah.mitchell@fire22.com",
+        "integration_coordinator": "Marcus Johnson",
+        "coordinator_email": "marcus.johnson@fire22.com",
+        "integrations": [
+          {
+            "name": "Fire22 Security Scanner",
+            "type": "Vulnerability Scanner",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": true,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "4_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            },
+            "performance_metrics": {
+              "scan_time": "0.72ms_avg",
+              "throughput": "24868_ops_per_sec",
+              "coverage": "95_percent",
+              "test_cases": 19
+            }
+          },
+          {
+            "name": "SIEM System",
+            "type": "Security Information and Event Management",
+            "security_level": "level_4",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": true,
+              "delete": false
+            },
+            "authentication": {
+              "method": "HSM + Biometric + MFA",
+              "session_timeout": "2_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true,
+              "immutable_audit_trail": true
+            }
+          },
+          {
+            "name": "Identity Access Management",
+            "type": "Access Control System",
+            "security_level": "level_4",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": true,
+              "delete": true
+            },
+            "authentication": {
+              "method": "HSM + Multi-person + MFA",
+              "session_timeout": "1_hour",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true,
+              "immutable_audit_trail": true
+            }
+          }
+        ]
+      },
+
+      "finance": {
+        "department_id": "fin",
+        "head": "Michael Chen",
+        "email": "michael.chen@fire22.com",
+        "integration_coordinator": "Sarah Johnson",
+        "coordinator_email": "sarah.johnson@fire22.com",
+        "integrations": [
+          {
+            "name": "QuickBooks Enterprise",
+            "type": "Accounting System",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "OAuth + MFA",
+              "session_timeout": "4_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "Payment Gateway",
+            "type": "Payment Processing",
+            "security_level": "level_4",
+            "permissions": {
+              "read": true,
+              "write": false,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "HSM + Certificate + MFA",
+              "session_timeout": "30_minutes",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true,
+              "immutable_audit_trail": true
+            }
+          },
+          {
+            "name": "Banking API",
+            "type": "Bank Integration",
+            "security_level": "level_4",
+            "permissions": {
+              "read": true,
+              "write": false,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "HSM + Multi-person + MFA",
+              "session_timeout": "30_minutes",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true,
+              "immutable_audit_trail": true
+            }
+          }
+        ]
+      },
+
+      "marketing": {
+        "department_id": "mkt",
+        "head": "Sarah Johnson",
+        "email": "sarah.johnson@fire22.com",
+        "integration_coordinator": "Kevin Thompson",
+        "coordinator_email": "kevin.thompson@fire22.com",
+        "integrations": [
+          {
+            "name": "Facebook Marketing API",
+            "type": "Social Media Marketing",
+            "security_level": "level_1",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "OAuth 2.0",
+              "session_timeout": "24_hours",
+              "mfa_required": false
+            },
+            "monitoring": {
+              "audit_logging": false,
+              "real_time_monitoring": false,
+              "alert_on_failures": true,
+              "rate_limiting": "1000_requests_per_hour"
+            }
+          },
+          {
+            "name": "Google Analytics",
+            "type": "Web Analytics",
+            "security_level": "level_2",
+            "permissions": {
+              "read": true,
+              "write": false,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Service Account + MFA",
+              "session_timeout": "8_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": false,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "Customer Database",
+            "type": "Customer Data Access",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": false,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "4_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          }
+        ]
+      },
+
+      "sportsbook": {
+        "department_id": "sb",
+        "head": "Marcus Rodriguez",
+        "email": "marcus.rodriguez@fire22.com",
+        "integration_coordinator": "James Mitchell",
+        "coordinator_email": "james.mitchell@fire22.com",
+        "integrations": [
+          {
+            "name": "Live Odds Feed",
+            "type": "Sports Data Feed",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": false,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "API Key + Certificate",
+              "session_timeout": "1_hour",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "Betting Engine",
+            "type": "Core Betting System",
+            "security_level": "level_4",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "HSM + Certificate + MFA",
+              "session_timeout": "30_minutes",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true,
+              "immutable_audit_trail": true
+            }
+          },
+          {
+            "name": "Risk Management System",
+            "type": "Risk Assessment",
+            "security_level": "level_4",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": true,
+              "delete": false
+            },
+            "authentication": {
+              "method": "HSM + Multi-person + MFA",
+              "session_timeout": "30_minutes",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true,
+              "immutable_audit_trail": true
+            }
+          }
+        ]
+      },
+
+      "operations": {
+        "department_id": "ops",
+        "head": "David Martinez",
+        "email": "david.martinez@fire22.com",
+        "integration_coordinator": "Jennifer Lee",
+        "coordinator_email": "jennifer.lee@fire22.com",
+        "integrations": [
+          {
+            "name": "Workflow Automation",
+            "type": "Process Management",
+            "security_level": "level_2",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "OAuth + MFA",
+              "session_timeout": "8_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": false,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "Supply Chain API",
+            "type": "Vendor Management",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "4_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          }
+        ]
+      },
+
+      "customer_support": {
+        "department_id": "cs",
+        "head": "Jessica Martinez",
+        "email": "jessica.martinez@fire22.com",
+        "integration_coordinator": "T. Williams",
+        "coordinator_email": "t.williams@fire22.com",
+        "integrations": [
+          {
+            "name": "Zendesk Support",
+            "type": "Customer Support Platform",
+            "security_level": "level_2",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "OAuth + MFA",
+              "session_timeout": "8_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": false,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "Live Chat System",
+            "type": "Customer Communication",
+            "security_level": "level_2",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "OAuth + MFA",
+              "session_timeout": "12_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": false,
+              "alert_on_failures": true
+            }
+          }
+        ]
+      },
+
+      "compliance": {
+        "department_id": "comp",
+        "head": "Lisa Anderson",
+        "email": "lisa.anderson@fire22.com",
+        "integration_coordinator": "Robert Taylor",
+        "coordinator_email": "robert.taylor@fire22.com",
+        "integrations": [
+          {
+            "name": "Legal Document Management",
+            "type": "Document Management System",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "4_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "Regulatory Reporting",
+            "type": "Compliance Reporting",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "2_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          }
+        ]
+      },
+
+      "management": {
+        "department_id": "mgmt",
+        "head": "William Harris",
+        "email": "william.harris@fire22.com",
+        "integration_coordinator": "Patricia Clark",
+        "coordinator_email": "patricia.clark@fire22.com",
+        "integrations": [
+          {
+            "name": "Executive Dashboard",
+            "type": "Business Intelligence",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": false,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "4_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          },
+          {
+            "name": "Board Reporting System",
+            "type": "Corporate Reporting",
+            "security_level": "level_3",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "Certificate-based + MFA",
+              "session_timeout": "2_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": true,
+              "alert_on_failures": true
+            }
+          }
+        ]
+      },
+
+      "team_contributors": {
+        "department_id": "tc",
+        "head": "Brenda Williams",
+        "email": "brenda.williams@fire22.com",
+        "integration_coordinator": "Claude AI",
+        "coordinator_email": "claude.ai@fire22.com",
+        "integrations": [
+          {
+            "name": "Development Tools",
+            "type": "Development Environment",
+            "security_level": "level_2",
+            "permissions": {
+              "read": true,
+              "write": true,
+              "admin": false,
+              "delete": false
+            },
+            "authentication": {
+              "method": "OAuth + MFA",
+              "session_timeout": "8_hours",
+              "mfa_required": true
+            },
+            "monitoring": {
+              "audit_logging": true,
+              "real_time_monitoring": false,
+              "alert_on_failures": true
+            }
+          }
+        ]
+      }
+    },
+
+    "access_control_policies": {
+      "authentication_methods": {
+        "oauth_2_0": {
+          "description": "Standard OAuth 2.0 implementation",
+          "security_level": ["level_1", "level_2"],
+          "requirements": ["Client credentials", "Token refresh", "Scope limitation"]
+        },
+        "certificate_based": {
+          "description": "X.509 certificate authentication",
+          "security_level": ["level_3", "level_4"],
+          "requirements": ["Valid certificate chain", "Certificate validation", "OCSP checking"]
+        },
+        "hsm_based": {
+          "description": "Hardware Security Module authentication",
+          "security_level": ["level_4"],
+          "requirements": ["HSM integration", "Hardware-backed keys", "Multi-person authentication"]
+        }
+      },
+
+      "session_management": {
+        "level_1": {
+          "timeout": "24_hours",
+          "mfa_required": false,
+          "reauth_interval": "never"
+        },
+        "level_2": {
+          "timeout": "8_hours",
+          "mfa_required": true,
+          "reauth_interval": "24_hours"
+        },
+        "level_3": {
+          "timeout": "4_hours",
+          "mfa_required": true,
+          "reauth_interval": "8_hours"
+        },
+        "level_4": {
+          "timeout": "30_minutes",
+          "mfa_required": true,
+          "reauth_interval": "2_hours"
+        }
+      },
+
+      "monitoring_requirements": {
+        "level_1": {
+          "audit_logging": false,
+          "real_time_monitoring": false,
+          "alert_on_failures": true,
+          "rate_limiting": true
+        },
+        "level_2": {
+          "audit_logging": true,
+          "real_time_monitoring": false,
+          "alert_on_failures": true,
+          "rate_limiting": true
+        },
+        "level_3": {
+          "audit_logging": true,
+          "real_time_monitoring": true,
+          "alert_on_failures": true,
+          "immutable_audit_trail": false
+        },
+        "level_4": {
+          "audit_logging": true,
+          "real_time_monitoring": true,
+          "alert_on_failures": true,
+          "immutable_audit_trail": true
+        }
+      }
+    },
+
+    "emergency_procedures": {
+      "security_incident": {
+        "level_1": {
+          "response_time": "4_hours",
+          "escalation": ["Department Head"],
+          "actions": ["Disable integration", "Review logs", "Incident report"]
+        },
+        "level_2": {
+          "response_time": "2_hours",
+          "escalation": ["Department Head", "Security Team"],
+          "actions": ["Immediate disable", "Forensic analysis", "Impact assessment"]
+        },
+        "level_3": {
+          "response_time": "1_hour",
+          "escalation": ["Security Team", "CTO", "Department Head"],
+          "actions": ["Emergency shutdown", "Incident commander", "Executive notification"]
+        },
+        "level_4": {
+          "response_time": "15_minutes",
+          "escalation": ["Security Team", "CTO", "CEO", "Board"],
+          "actions": ["Critical shutdown", "Emergency response team", "External notification"]
+        }
+      },
+
+      "integration_failure": {
+        "automated_response": {
+          "failover": true,
+          "backup_systems": true,
+          "alert_escalation": true,
+          "self_healing": "level_1_and_2_only"
+        },
+        "manual_response": {
+          "on_call_engineer": "24/7",
+          "escalation_chain": ["Integration Team", "Security Team", "CTO"],
+          "communication_channels": ["Slack", "Email", "SMS", "Phone"]
+        }
+      }
+    },
+
+    "compliance_requirements": {
+      "soc_2_type_ii": {
+        "applicable_levels": ["level_3", "level_4"],
+        "audit_frequency": "quarterly",
+        "requirements": ["Access controls", "System monitoring", "Data protection"]
+      },
+      "gdpr": {
+        "applicable_levels": ["level_2", "level_3", "level_4"],
+        "requirements": ["Data minimization", "Consent management", "Right to erasure"]
+      },
+      "pci_dss": {
+        "applicable_levels": ["level_4"],
+        "requirements": ["Payment data protection", "Secure transmission", "Access restriction"]
+      }
+    },
+
+    "integration_metrics": {
+      "performance_kpis": {
+        "availability_target": "99.99%",
+        "response_time_target": "<100ms",
+        "error_rate_target": "<0.1%",
+        "security_incident_target": "<5_per_month"
+      },
+      "security_kpis": {
+        "compliance_rate_target": "100%",
+        "access_violation_target": "<5_per_month",
+        "mttr_target": "<1_hour_for_critical",
+        "audit_pass_rate_target": "98%"
+      }
+    }
+  }
+}

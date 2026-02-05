@@ -1,0 +1,1427 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Dashboard API Documentation - Water Aesthetic</title>
+    <style>
+      /* Water/Cloudflare Color Palette */
+      :root {
+        /* Primary Blues */
+        --water-deep: #003d7a;
+        --water-ocean: #0051a5;
+        --water-sea: #0078d4;
+        --water-sky: #40a9ff;
+        --water-light: #69c0ff;
+        --water-mist: #91d5ff;
+        --water-foam: #bae7ff;
+        --water-spray: #e6f7ff;
+
+        /* Cyan Accents */
+        --cyan-deep: #006d75;
+        --cyan-ocean: #008b94;
+        --cyan-sea: #00acc1;
+        --cyan-light: #26c6da;
+        --cyan-mist: #4dd0e1;
+        --cyan-foam: #80deea;
+        --cyan-spray: #b2ebf2;
+        --cyan-ice: #e0f7fa;
+
+        /* Fire22 Brand Colors */
+        --fire-orange: #ff6b35;
+        --fire-red: #d32f2f;
+        --fire-gold: #ffc107;
+
+        /* Neutral Waters */
+        --slate-900: #0f172a;
+        --slate-800: #1e293b;
+        --slate-700: #334155;
+        --slate-600: #475569;
+        --slate-500: #64748b;
+        --slate-400: #94a3b8;
+        --slate-300: #cbd5e1;
+        --slate-200: #e2e8f0;
+        --slate-100: #f1f5f9;
+        --slate-50: #f8fafc;
+
+        /* Spacing */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        --space-3xl: 4rem;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+        background: linear-gradient(180deg, var(--slate-900) 0%, var(--water-deep) 50%, var(--cyan-deep) 100%);
+        min-height: 100vh;
+        color: var(--slate-100);
+        position: relative;
+        overflow-x: hidden;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* Animated Water Background */
+      .water-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.3;
+      }
+
+      .wave {
+        position: absolute;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--water-sky), transparent, var(--cyan-light), transparent);
+        animation: wave 15s linear infinite;
+      }
+
+      .wave:nth-child(2) {
+        animation-delay: -5s;
+        opacity: 0.5;
+        animation-duration: 20s;
+      }
+
+      .wave:nth-child(3) {
+        animation-delay: -10s;
+        opacity: 0.3;
+        animation-duration: 25s;
+      }
+
+      @keyframes wave {
+        0% {
+          transform: translateX(-50%);
+        }
+        100% {
+          transform: translateX(0%);
+        }
+      }
+
+      /* Container */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--space-xl);
+      }
+
+      /* Terminal-style Box Components */
+      .terminal-box {
+        background: linear-gradient(135deg, rgba(0, 61, 122, 0.95), rgba(0, 109, 117, 0.95));
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--water-light);
+        border-radius: 8px;
+        padding: var(--space-lg);
+        margin-bottom: var(--space-xl);
+        box-shadow:
+          0 10px 40px rgba(0, 120, 212, 0.2),
+          inset 0 1px 0 rgba(105, 192, 255, 0.2);
+        position: relative;
+      }
+
+      .terminal-box::before {
+        content: '╭────────────────────────────────────────────────────╮';
+        position: absolute;
+        top: -8px;
+        left: 0;
+        right: 0;
+        color: var(--cyan-light);
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1;
+        pointer-events: none;
+        text-align: center;
+      }
+
+      .terminal-box::after {
+        content: '╰────────────────────────────────────────────────────╯';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        right: 0;
+        color: var(--cyan-light);
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1;
+        pointer-events: none;
+        text-align: center;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: var(--space-3xl);
+        position: relative;
+      }
+
+      .logo-container {
+        display: inline-block;
+        padding: var(--space-md) var(--space-xl);
+        background: linear-gradient(135deg, var(--fire-orange), var(--fire-red));
+        border-radius: 100px;
+        margin-bottom: var(--space-lg);
+        box-shadow:
+          0 10px 30px rgba(255, 107, 53, 0.3),
+          inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 300;
+        letter-spacing: -1px;
+        background: linear-gradient(90deg, var(--fire-orange), var(--water-light), var(--cyan-light), var(--fire-gold));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 3s ease-in-out infinite;
+      }
+
+      @keyframes shimmer {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .subtitle {
+        font-size: 1.125rem;
+        color: var(--water-mist);
+        margin-top: var(--space-sm);
+        font-weight: 300;
+      }
+
+      /* Navigation Tabs */
+      .nav-tabs {
+        display: flex;
+        gap: 1px;
+        background: rgba(0, 120, 212, 0.1);
+        padding: 4px;
+        border-radius: 8px;
+        margin-bottom: var(--space-2xl);
+        border: 1px solid var(--water-sea);
+        overflow-x: auto;
+      }
+
+      .nav-tab {
+        flex: 1;
+        padding: var(--space-sm) var(--space-lg);
+        background: transparent;
+        border: none;
+        color: var(--water-light);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        font-weight: 500;
+        position: relative;
+        border-radius: 6px;
+        white-space: nowrap;
+        min-width: 120px;
+      }
+
+      .nav-tab:hover {
+        background: rgba(64, 169, 255, 0.1);
+        color: var(--cyan-light);
+      }
+
+      .nav-tab.active {
+        background: linear-gradient(135deg, var(--water-sea), var(--cyan-sea));
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+      }
+
+      /* API Endpoint Cards */
+      .endpoint-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: var(--space-lg);
+        margin-bottom: var(--space-2xl);
+      }
+
+      .endpoint-card {
+        background: linear-gradient(135deg, rgba(0, 81, 165, 0.9), rgba(0, 139, 148, 0.9));
+        border: 1px solid var(--water-sky);
+        border-radius: 12px;
+        padding: var(--space-xl);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .endpoint-card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          0 20px 40px rgba(0, 172, 193, 0.3),
+          inset 0 0 20px rgba(77, 208, 225, 0.1);
+        border-color: var(--cyan-light);
+      }
+
+      .method-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: var(--space-sm);
+      }
+
+      .method-get {
+        background: #10b981;
+        color: white;
+      }
+      .method-post {
+        background: #3b82f6;
+        color: white;
+      }
+      .method-put {
+        background: #f59e0b;
+        color: white;
+      }
+      .method-delete {
+        background: #ef4444;
+        color: white;
+      }
+
+      .endpoint-path {
+        font-family: 'Fira Code', monospace;
+        font-size: 1rem;
+        color: var(--cyan-light);
+        margin-bottom: var(--space-sm);
+        word-break: break-all;
+      }
+
+      .endpoint-description {
+        color: var(--water-foam);
+        margin-bottom: var(--space-md);
+        line-height: 1.5;
+      }
+
+      .endpoint-details {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        padding: var(--space-md);
+        font-size: 0.875rem;
+      }
+
+      .endpoint-details h4 {
+        color: var(--water-light);
+        margin-bottom: var(--space-xs);
+      }
+
+      /* Code Examples */
+      .code-example {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid var(--water-sea);
+        border-radius: 8px;
+        padding: var(--space-lg);
+        margin: var(--space-md) 0;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.875rem;
+        overflow-x: auto;
+      }
+
+      .code-example pre {
+        color: var(--water-foam);
+        white-space: pre-wrap;
+      }
+
+      .highlight-json {
+        color: var(--cyan-light);
+      }
+      .highlight-string {
+        color: var(--water-light);
+      }
+      .highlight-number {
+        color: var(--fire-gold);
+      }
+      .highlight-boolean {
+        color: var(--fire-orange);
+      }
+
+      /* Workspace Integration Cards */
+      .workspace-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-lg);
+        margin: var(--space-2xl) 0;
+      }
+
+      .workspace-card {
+        background: linear-gradient(135deg, rgba(0, 61, 122, 0.8), rgba(0, 109, 117, 0.8));
+        border: 1px solid var(--water-sky);
+        border-radius: 12px;
+        padding: var(--space-xl);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .workspace-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 172, 193, 0.2);
+      }
+
+      .workspace-icon {
+        font-size: 2.5rem;
+        margin-bottom: var(--space-md);
+      }
+
+      .workspace-name {
+        font-size: 1.25rem;
+        color: var(--cyan-light);
+        margin-bottom: var(--space-sm);
+      }
+
+      .workspace-description {
+        color: var(--water-foam);
+        font-size: 0.875rem;
+        margin-bottom: var(--space-md);
+      }
+
+      .workspace-features {
+        list-style: none;
+        font-size: 0.8rem;
+        color: var(--water-mist);
+      }
+
+      .workspace-features li {
+        margin: 4px 0;
+      }
+
+      .workspace-features li::before {
+        content: '▸ ';
+        color: var(--cyan-light);
+      }
+
+      /* Table Styling */
+      .api-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: var(--space-lg) 0;
+        background: rgba(0, 61, 122, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .api-table th,
+      .api-table td {
+        padding: var(--space-sm) var(--space-md);
+        text-align: left;
+        border-bottom: 1px solid rgba(105, 192, 255, 0.1);
+      }
+
+      .api-table th {
+        background: rgba(0, 120, 212, 0.3);
+        color: var(--cyan-light);
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+
+      .api-table tr:hover {
+        background: rgba(105, 192, 255, 0.05);
+      }
+
+      .telegram-command {
+        font-family: monospace;
+        background: rgba(255, 107, 53, 0.2);
+        color: var(--fire-orange);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+      }
+
+      /* Status Indicators */
+      .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .status-active {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid #10b981;
+      }
+
+      .status-integration {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+        border: 1px solid #3b82f6;
+      }
+
+      .status-pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+        border: 1px solid #f59e0b;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .container {
+          padding: var(--space-md);
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .endpoint-grid,
+        .workspace-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-tabs {
+          flex-direction: column;
+        }
+
+        .nav-tab {
+          min-width: auto;
+        }
+      }
+
+      /* Section Headers */
+      .section-header {
+        color: var(--cyan-light);
+        font-size: 1.5rem;
+        margin: var(--space-2xl) 0 var(--space-lg);
+        padding-bottom: var(--space-sm);
+        border-bottom: 2px solid var(--water-sea);
+        position: relative;
+      }
+
+      .section-header::before {
+        content: '◊';
+        position: absolute;
+        left: -30px;
+        color: var(--fire-orange);
+      }
+
+      /* Interactive Elements */
+      .expandable {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .expandable:hover {
+        background: rgba(105, 192, 255, 0.05);
+        border-radius: 4px;
+      }
+
+      .expanded-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .expanded-content.active {
+        max-height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Animated Water Background -->
+    <div class="water-background">
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-container">
+          <span style="font-size: 2rem">🔥</span>
+        </div>
+        <h1>Fire22 Dashboard API</h1>
+        <p class="subtitle">Complete Integration Documentation · Commission Systems · Agent Management</p>
+      </header>
+
+      <!-- Navigation -->
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-section="overview">Overview</button>
+        <button class="nav-tab" data-section="endpoints">API Endpoints</button>
+        <button class="nav-tab" data-section="workspaces">Workspaces</button>
+        <button class="nav-tab" data-section="telegram">Telegram Bot</button>
+        <button class="nav-tab" data-section="security">Security</button>
+        <button class="nav-tab" data-section="registry">Security Registry</button>
+        <button class="nav-tab" data-section="tooling">Tools</button>
+        <button class="nav-tab" data-section="examples">Examples</button>
+      </nav>
+
+      <!-- Overview Section -->
+      <div id="overview" class="section active">
+        <div class="terminal-box">
+          <h2 class="section-header">🏠 System Architecture Overview</h2>
+          <p style="color: var(--water-foam); line-height: 1.8; margin-bottom: 1.5rem">
+            The Fire22 Dashboard integrates multiple systems including agent management, customer administration,
+            commission tracking, and real-time analytics. Built on Cloudflare Workers with Bun runtime optimization.
+          </p>
+
+          <div class="api-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dashboard Component</th>
+                  <th>API Endpoint</th>
+                  <th>Controller</th>
+                  <th>Telegram Command</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Agent Admin</td>
+                  <td><code>/api/agents</code></td>
+                  <td>agents.ts</td>
+                  <td><span class="telegram-command">/commission</span></td>
+                  <td><span class="status-badge status-active">Active</span></td>
+                </tr>
+                <tr>
+                  <td>Customer Admin</td>
+                  <td><code>/api/customers</code></td>
+                  <td>customer.controller.ts</td>
+                  <td><span class="telegram-command">/profile</span></td>
+                  <td><span class="status-badge status-active">Active</span></td>
+                </tr>
+                <tr>
+                  <td>Weekly Figures</td>
+                  <td><code>/api/manager/getWeeklyFigureByAgent</code></td>
+                  <td>manager.controller.ts</td>
+                  <td><span class="telegram-command">/stats</span></td>
+                  <td><span class="status-badge status-active">Active</span></td>
+                </tr>
+                <tr>
+                  <td>Pending Wagers</td>
+                  <td><code>/api/manager/getLiveWagers</code></td>
+                  <td>manager.controller.ts</td>
+                  <td><span class="telegram-command">/wagers</span></td>
+                  <td><span class="status-badge status-active">Active</span></td>
+                </tr>
+                <tr>
+                  <td>Billing System</td>
+                  <td><code>/api/billing</code></td>
+                  <td>financial.controller.ts</td>
+                  <td><span class="telegram-command">/commission</span></td>
+                  <td><span class="status-badge status-integration">Integration</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Endpoints Section -->
+      <div id="endpoints" class="section" style="display: none">
+        <h2 class="section-header">🔌 API Endpoints</h2>
+
+        <div class="endpoint-grid">
+          <!-- Agent Management -->
+          <div class="endpoint-card">
+            <span class="method-badge method-get">GET</span>
+            <div class="endpoint-path">/api/agents</div>
+            <div class="endpoint-description">
+              Retrieve all agents with hierarchy, commission rates, and performance metrics.
+            </div>
+            <div class="endpoint-details">
+              <h4>Response Format:</h4>
+              <div class="code-example">
+                <pre>{
+  <span class="highlight-string">"success"</span>: <span class="highlight-boolean">true</span>,
+  <span class="highlight-string">"data"</span>: [
+    {
+      <span class="highlight-string">"agent_id"</span>: <span class="highlight-string">"AG001"</span>,
+      <span class="highlight-string">"agent_name"</span>: <span class="highlight-string">"Master Agent"</span>,
+      <span class="highlight-string">"commission_rates"</span>: {
+        <span class="highlight-string">"internet"</span>: <span class="highlight-number">0.03</span>,
+        <span class="highlight-string">"casino"</span>: <span class="highlight-number">0.032</span>
+      },
+      <span class="highlight-string">"status"</span>: <span class="highlight-string">"active"</span>
+    }
+  ]
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Commission Calculation -->
+          <div class="endpoint-card">
+            <span class="method-badge method-post">POST</span>
+            <div class="endpoint-path">/api/agents/commission/calculate</div>
+            <div class="endpoint-description">
+              Calculate agent commission with performance bonuses and risk adjustments.
+            </div>
+            <div class="endpoint-details">
+              <h4>Request Body:</h4>
+              <div class="code-example">
+                <pre>{
+  <span class="highlight-string">"agent_id"</span>: <span class="highlight-string">"AG001"</span>,
+  <span class="highlight-string">"handle"</span>: <span class="highlight-number">50000</span>,
+  <span class="highlight-string">"volume"</span>: <span class="highlight-number">150000</span>,
+  <span class="highlight-string">"risk_score"</span>: <span class="highlight-number">0.92</span>
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Management -->
+          <div class="endpoint-card">
+            <span class="method-badge method-get">GET</span>
+            <div class="endpoint-path">/api/customers</div>
+            <div class="endpoint-description">
+              Fire22 customer integration with balance tracking and Telegram linking.
+            </div>
+            <div class="endpoint-details">
+              <h4>Features:</h4>
+              <ul style="color: var(--water-mist); margin-top: 8px">
+                <li>Real-time balance synchronization</li>
+                <li>Telegram username mapping</li>
+                <li>Weekly P&L calculations</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Telegram Integration -->
+          <div class="endpoint-card">
+            <span class="method-badge method-post">POST</span>
+            <div class="endpoint-path">/api/telegram/webhook</div>
+            <div class="endpoint-description">Telegram webhook for bot commands and notifications.</div>
+            <div class="endpoint-details">
+              <h4>Supported Commands:</h4>
+              <div style="margin-top: 8px">
+                <span class="telegram-command">/balance</span>
+                <span class="telegram-command">/commission</span>
+                <span class="telegram-command">/profile</span>
+                <span class="telegram-command">/stats</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- P2P Queue System -->
+          <div class="endpoint-card">
+            <span class="method-badge method-post">POST</span>
+            <div class="endpoint-path">/api/queue/process</div>
+            <div class="endpoint-description">P2P transaction matching system for withdrawals and deposits.</div>
+            <div class="endpoint-details">
+              <h4>Capacity:</h4>
+              <div style="color: var(--fire-gold); font-weight: 600; margin-top: 8px">63,416 transactions/minute</div>
+            </div>
+          </div>
+
+          <!-- Security Scanner -->
+          <div class="endpoint-card">
+            <span class="method-badge method-get">GET</span>
+            <div class="endpoint-path">/api/security/scan</div>
+            <div class="endpoint-description">Real-time security scanning with threat intelligence integration.</div>
+            <div class="endpoint-details">
+              <h4>Workspace:</h4>
+              <div style="color: var(--cyan-light); margin-top: 8px">@fire22-security-registry</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workspaces Section -->
+      <div id="workspaces" class="section" style="display: none">
+        <h2 class="section-header">📦 Workspace Packages</h2>
+
+        <div class="workspace-grid">
+          <div class="workspace-card">
+            <div class="workspace-icon">🏢</div>
+            <div class="workspace-name">@fire22-core-dashboard</div>
+            <div class="workspace-description">Core dashboard functionality with Cloudflare Workers integration</div>
+            <ul class="workspace-features">
+              <li>Main dashboard interface</li>
+              <li>Worker deployment</li>
+              <li>Real-time updates</li>
+            </ul>
+          </div>
+
+          <div class="workspace-card">
+            <div class="workspace-icon">👥</div>
+            <div class="workspace-name">@fire22-api-consolidated</div>
+            <div class="workspace-description">Consolidated API system with all controllers and routes</div>
+            <ul class="workspace-features">
+              <li>Agent management</li>
+              <li>Customer administration</li>
+              <li>Financial operations</li>
+              <li>Health monitoring</li>
+            </ul>
+          </div>
+
+          <div class="workspace-card">
+            <div class="workspace-icon">🎮</div>
+            <div class="workspace-name">@fire22-sports-betting</div>
+            <div class="workspace-description">Sports betting and live casino management system</div>
+            <ul class="workspace-features">
+              <li>VIP tier management</li>
+              <li>Commission structures</li>
+              <li>Risk assessment</li>
+              <li>Performance tracking</li>
+            </ul>
+          </div>
+
+          <div class="workspace-card">
+            <div class="workspace-icon">🤖</div>
+            <div class="workspace-name">@fire22-telegram-integration</div>
+            <div class="workspace-description">Telegram bot with P2P queue system integration</div>
+            <ul class="workspace-features">
+              <li>Mobile dashboard access</li>
+              <li>Commission queries</li>
+              <li>Real-time notifications</li>
+              <li>P2P transaction matching</li>
+            </ul>
+          </div>
+
+          <div class="workspace-card">
+            <div class="workspace-icon">🔒</div>
+            <div class="workspace-name">@fire22-security-registry</div>
+            <div class="workspace-description">Security scanning and threat detection system</div>
+            <ul class="workspace-features">
+              <li>Vulnerability scanning</li>
+              <li>Threat intelligence</li>
+              <li>Supply chain security</li>
+              <li>Real-time monitoring</li>
+            </ul>
+          </div>
+
+          <div class="workspace-card">
+            <div class="workspace-icon">🔗</div>
+            <div class="workspace-name">@fire22-api-client</div>
+            <div class="workspace-description">Fire22 external API integration client</div>
+            <ul class="workspace-features">
+              <li>Fire22 API connectivity</li>
+              <li>Authentication handling</li>
+              <li>Data synchronization</li>
+              <li>Error recovery</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telegram Bot Section -->
+      <div id="telegram" class="section" style="display: none">
+        <h2 class="section-header">🤖 Telegram Bot Integration</h2>
+
+        <div class="terminal-box">
+          <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Available Commands</h3>
+
+          <div class="api-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Command</th>
+                  <th>Description</th>
+                  <th>Dashboard Equivalent</th>
+                  <th>Access Level</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="telegram-command">/commission</span></td>
+                  <td>Calculate agent commission with breakdown</td>
+                  <td>Agent Admin → Billing</td>
+                  <td>Agent/Admin</td>
+                </tr>
+                <tr>
+                  <td><span class="telegram-command">/balance</span></td>
+                  <td>Check customer balance and credit limits</td>
+                  <td>Customer Admin</td>
+                  <td>Customer</td>
+                </tr>
+                <tr>
+                  <td><span class="telegram-command">/stats</span></td>
+                  <td>System statistics and performance</td>
+                  <td>Weekly Figures</td>
+                  <td>Admin</td>
+                </tr>
+                <tr>
+                  <td><span class="telegram-command">/wagers</span></td>
+                  <td>Pending and recent wagers</td>
+                  <td>Pending</td>
+                  <td>Customer/Agent</td>
+                </tr>
+                <tr>
+                  <td><span class="telegram-command">/vip</span></td>
+                  <td>VIP tier information and benefits</td>
+                  <td>Customer Admin</td>
+                  <td>Customer</td>
+                </tr>
+                <tr>
+                  <td><span class="telegram-command">/casino</span></td>
+                  <td>Casino system overview and rates</td>
+                  <td>Game Admin</td>
+                  <td>Agent/Admin</td>
+                </tr>
+                <tr>
+                  <td><span class="telegram-command">/sports</span></td>
+                  <td>Sports betting events and rates</td>
+                  <td>Game Admin</td>
+                  <td>Agent/Admin</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="color: var(--cyan-light); margin: 2rem 0 1rem">Command Examples</h3>
+
+          <div class="code-example">
+            <pre><span style="color: var(--fire-orange);">User:</span> <span class="telegram-command">/commission</span>
+
+<span style="color: var(--cyan-light);">Bot:</span> 💰 <strong>Commission Calculation</strong>
+
+<strong>Period:</strong> 2025-01-27
+📊 <strong>Handle:</strong> $50,000
+📈 <strong>Volume:</strong> $150,000
+⚠️ <strong>Risk Score:</strong> 92%
+✅ <strong>Compliance:</strong> 98%
+
+<strong>Commission Breakdown:</strong>
+💰 Base Commission: $1,500.00
+🚀 Performance Bonuses: $300.00
+⚖️ Risk Adjustments: -$50.00
+💵 <strong>Total Payout: $1,750.00</strong>
+
+<strong>Status:</strong> APPROVED
+📅 Calculated: 1/27/2025</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Section -->
+      <div id="security" class="section" style="display: none">
+        <h2 class="section-header">🔒 Security Architecture</h2>
+
+        <div class="endpoint-grid">
+          <div class="endpoint-card">
+            <div class="workspace-icon">🛡️</div>
+            <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Authentication Flow</h3>
+            <ol style="color: var(--water-foam); line-height: 1.6">
+              <li>
+                Dashboard login via
+                <code>/api/auth/login</code>
+              </li>
+              <li>JWT token generation and storage</li>
+              <li>Bearer token authentication on all requests</li>
+              <li>Agent hierarchy permission validation</li>
+            </ol>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="workspace-icon">⚡</div>
+            <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Rate Limiting</h3>
+            <ul style="color: var(--water-foam); line-height: 1.6">
+              <li>Per-endpoint rate limits</li>
+              <li>IP-based throttling</li>
+              <li>Cloudflare Workers integration</li>
+              <li>Admin bypass capabilities</li>
+            </ul>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="workspace-icon">🔍</div>
+            <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Security Scanner</h3>
+            <div class="code-example">
+              <pre>📊 <strong>Scan Results:</strong>
+├─ Vulnerability Scan: ✅ Clean
+├─ Threat Intelligence: ✅ No threats
+├─ Supply Chain: ✅ Verified
+╰─ Status: All systems secure</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tooling Section -->
+      <div id="tooling" class="section" style="display: none">
+        <h2 class="section-header">🛠️ Fire22 Dashboard Tools</h2>
+
+        <div class="endpoint-grid">
+          <div class="endpoint-card">
+            <div class="workspace-icon">📊</div>
+            <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Bet Ticker</h3>
+            <div class="endpoint-path">/api/betting/ticker</div>
+            <div class="endpoint-description">Real-time betting activity feed with live wagers and settlements.</div>
+            <div class="endpoint-details">
+              <h4>Live Metrics:</h4>
+              <div style="color: var(--water-mist); margin-top: 8px">
+                <div>
+                  🎯
+                  <strong>Active Bets:</strong>
+                  247
+                </div>
+                <div>
+                  💰
+                  <strong>Volume Today:</strong>
+                  $156,780
+                </div>
+                <div>
+                  📈
+                  <strong>Avg Bet Size:</strong>
+                  $125.75
+                </div>
+                <div>
+                  🏆
+                  <strong>Win Rate:</strong>
+                  47.3%
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="workspace-icon">🎯</div>
+            <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Ticketwriter</h3>
+            <div class="endpoint-path">/api/lines/place-bets</div>
+            <div class="endpoint-description">Bet placement interface with odds calculation and risk management.</div>
+            <div class="endpoint-details">
+              <h4>Features:</h4>
+              <ul style="color: var(--water-mist); margin-top: 8px">
+                <li>Interactive bet slip builder</li>
+                <li>Real-time odds calculation</li>
+                <li>Credit limit validation</li>
+                <li>Commission preview</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="workspace-icon">📈</div>
+            <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Sportsbook Lines</h3>
+            <div class="endpoint-path">/api/lines/sportsbook</div>
+            <div class="endpoint-description">Live odds management with line movement tracking and risk analysis.</div>
+            <div class="endpoint-details">
+              <h4>Monitoring:</h4>
+              <div class="code-example">
+                <pre>
+Cowboys vs Giants
+ML: -150 / +130 (moved)
+Spread: -3.5 (-110)
+Total: 45.5 O/U (-110)
+🔴 High Volume Alert</pre
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="workspace-icon">⚽</div>
+            <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Live Scores</h3>
+            <div class="endpoint-path">/api/scores</div>
+            <div class="endpoint-description">Real-time sports scores with automatic bet settlement triggers.</div>
+            <div class="endpoint-details">
+              <h4>Score Updates:</h4>
+              <div style="color: var(--water-mist); margin-top: 8px">
+                <div>
+                  🏈
+                  <strong>Cowboys 14-7 Giants</strong>
+                </div>
+                <div>
+                  ⏱️
+                  <strong>Q2 8:32 remaining</strong>
+                </div>
+                <div>
+                  💰
+                  <strong>89 bets pending settlement</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-box">
+          <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Real-Time Tool Integration</h3>
+
+          <div class="code-example">
+            <pre><span style="color: var(--fire-orange);">// WebSocket Connection for Live Updates</span>
+<strong>wss://fire22.workers.dev/tools/dashboard-001</strong>
+
+<span style="color: var(--cyan-light);">// Subscribe to Tool Updates</span>
+{
+  "action": "subscribe",
+  "tools": ["ticker", "lines", "scores"]
+}
+
+<span style="color: var(--cyan-light);">// Live Bet Ticker Update</span>
+{
+  "type": "bet_placed",
+  "data": {
+    "betId": "BT003",
+    "customer": "CUST001",
+    "agent": "AG001", 
+    "event": "Cowboys vs Giants",
+    "amount": 100.00,
+    "commission": 3.00
+  }
+}
+
+<span style="color: var(--cyan-light);">// Line Movement Alert</span>
+{
+  "type": "line_movement",
+  "data": {
+    "event": "Cowboys vs Giants",
+    "market": "moneyline",
+    "old": -145,
+    "new": -150,
+    "movement": "5c towards favorite"
+  }
+}
+
+<span style="color: var(--cyan-light);">// Score Update with Settlement</span>
+{
+  "type": "score_update",
+  "data": {
+    "game": "Cowboys vs Giants",
+    "score": {"home": 21, "away": 17},
+    "status": "final",
+    "betsToSetttle": 156
+  }
+}</pre>
+          </div>
+        </div>
+
+        <div class="api-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Dashboard Action</th>
+                <th>API Endpoint</th>
+                <th>Update Frequency</th>
+                <th>Telegram Command</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bet Ticker</td>
+                <td><code>get-bet-ticker</code></td>
+                <td>GET /api/betting/ticker</td>
+                <td>1 second</td>
+                <td><span class="telegram-command">/ticker</span></td>
+              </tr>
+              <tr>
+                <td>Ticketwriter</td>
+                <td>
+                  <code>get-lines</code>
+                  (place-bets)
+                </td>
+                <td>GET /api/lines/place-bets</td>
+                <td>5 seconds</td>
+                <td><span class="telegram-command">/place-bet</span></td>
+              </tr>
+              <tr>
+                <td>Sportsbook Lines</td>
+                <td>
+                  <code>get-lines</code>
+                  (sportsbook)
+                </td>
+                <td>GET /api/lines/sportsbook</td>
+                <td>5 seconds</td>
+                <td><span class="telegram-command">/lines</span></td>
+              </tr>
+              <tr>
+                <td>Live Scores</td>
+                <td><code>get-scores</code></td>
+                <td>GET /api/scores</td>
+                <td>1 second</td>
+                <td><span class="telegram-command">/scores</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="terminal-box">
+          <h3 style="color: var(--cyan-light); margin-bottom: 1rem">External Data Integration</h3>
+          <p style="color: var(--water-foam); margin-bottom: 1.5rem">
+            Fire22 tools integrate with multiple sports data providers for comprehensive coverage:
+          </p>
+
+          <div class="workspace-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))">
+            <div class="workspace-card" style="text-align: center; padding: 1rem">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem">📡</div>
+              <div style="color: var(--cyan-light); font-weight: 600">ESPN API</div>
+              <div style="color: var(--water-mist); font-size: 0.8rem">Live scores & stats</div>
+            </div>
+            <div class="workspace-card" style="text-align: center; padding: 1rem">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem">⚡</div>
+              <div style="color: var(--cyan-light); font-weight: 600">Sportradar</div>
+              <div style="color: var(--water-mist); font-size: 0.8rem">Real-time data feeds</div>
+            </div>
+            <div class="workspace-card" style="text-align: center; padding: 1rem">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem">📊</div>
+              <div style="color: var(--cyan-light); font-weight: 600">Pinnacle</div>
+              <div style="color: var(--water-mist); font-size: 0.8rem">Sharp line reference</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Registry Section -->
+      <div id="registry" class="section" style="display: none">
+        <h2 class="section-header">🔒 Fire22 Security Registry</h2>
+
+        <div class="endpoint-grid">
+          <div class="endpoint-card">
+            <span class="method-badge method-put">PUT</span>
+            <div class="endpoint-path">/api/registry/:package</div>
+            <div class="endpoint-description">
+              Publish packages to Fire22 registry with integrated security scanning.
+            </div>
+            <div class="endpoint-details">
+              <h4>Security Features:</h4>
+              <ul style="color: var(--water-mist); margin-top: 8px">
+                <li>Vulnerability scanning (0-100 score)</li>
+                <li>Dependency analysis</li>
+                <li>Supply chain verification</li>
+                <li>Integrity checksums (SHA-256/SHA-512)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <span class="method-badge method-post">POST</span>
+            <div class="endpoint-path">/api/security/scan</div>
+            <div class="endpoint-description">Real-time security scanning with threat intelligence integration.</div>
+            <div class="endpoint-details">
+              <h4>Scan Results:</h4>
+              <div class="code-example">
+                <pre>{
+  <span class="highlight-string">"score"</span>: <span class="highlight-number">95</span>,
+  <span class="highlight-string">"riskLevel"</span>: <span class="highlight-string">"low"</span>,
+  <span class="highlight-string">"vulnerabilities"</span>: <span class="highlight-number">0</span>
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <span class="method-badge method-get">GET</span>
+            <div class="endpoint-path">/api/registry/-/stats</div>
+            <div class="endpoint-description">Registry statistics with security metrics and download counts.</div>
+            <div class="endpoint-details">
+              <h4>Registry Metrics:</h4>
+              <div style="color: var(--water-mist); margin-top: 8px">
+                <div>
+                  📦
+                  <strong>Total Packages:</strong>
+                  157
+                </div>
+                <div>
+                  🔒
+                  <strong>Avg Security Score:</strong>
+                  92/100
+                </div>
+                <div>
+                  ⚠️
+                  <strong>Vulnerable Packages:</strong>
+                  8 (5.1%)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-box">
+          <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Registry Integration Workflow</h3>
+
+          <div class="code-example">
+            <pre><span style="color: var(--fire-orange);">// 1. Package Publishing with Security Scan</span>
+<strong>PUT /api/registry/@fire22/core-dashboard</strong>
+{
+  "name": "@fire22/core-dashboard",
+  "version": "2.1.0",
+  "security": { "scanning": true }
+}
+
+<span style="color: var(--cyan-light);">// 2. Automatic Security Scanning</span>
+<strong>🔍 Scanning package for vulnerabilities...</strong>
+├─ Source code analysis: ✅ Clean
+├─ Dependency check: ✅ No issues  
+├─ License compliance: ✅ MIT compatible
+╰─ Supply chain: ✅ Verified origin
+
+<span style="color: var(--cyan-light);">// 3. Security Report Generation</span>
+{
+  "security": {
+    "score": 98,
+    "riskLevel": "low", 
+    "vulnerabilities": 0,
+    "scannedAt": "2025-01-27T10:30:00Z"
+  }
+}
+
+<span style="color: var(--cyan-light);">// 4. Telegram Security Alert (if issues found)</span>
+<strong>🚨 Security Alert: @fire22/package-name</strong>
+⚠️ Medium risk vulnerability detected
+🔧 Update recommended: v1.2.0 → v1.2.1</pre>
+          </div>
+        </div>
+
+        <div class="terminal-box">
+          <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Registry Commands</h3>
+          <div class="api-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>CLI Command</th>
+                  <th>API Endpoint</th>
+                  <th>Description</th>
+                  <th>Security Level</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>fire22-registry publish</code></td>
+                  <td>PUT /api/registry/:package</td>
+                  <td>Publish with security scan</td>
+                  <td><span class="status-badge status-active">High</span></td>
+                </tr>
+                <tr>
+                  <td><code>fire22-registry security-scan</code></td>
+                  <td>POST /api/security/scan</td>
+                  <td>Manual security scanning</td>
+                  <td><span class="status-badge status-active">High</span></td>
+                </tr>
+                <tr>
+                  <td><code>fire22-registry search</code></td>
+                  <td>GET /api/registry/-/search</td>
+                  <td>Search with security scores</td>
+                  <td><span class="status-badge status-integration">Medium</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Examples Section -->
+      <div id="examples" class="section" style="display: none">
+        <h2 class="section-header">💡 Integration Examples</h2>
+
+        <div class="terminal-box">
+          <h3 style="color: var(--cyan-light); margin-bottom: 1rem">Complete Workflow Example</h3>
+          <p style="color: var(--water-foam); margin-bottom: 1.5rem">
+            This example shows how a dashboard action flows through the entire system:
+          </p>
+
+          <div class="code-example">
+            <pre><span style="color: var(--cyan-light);">// 1. Dashboard Menu Click</span>
+<strong>data-action="get-agent-management"</strong>
+
+<span style="color: var(--cyan-light);">// 2. API Request</span>
+<strong>GET /api/agents</strong>
+Authorization: Bearer ${jwt_token}
+
+<span style="color: var(--cyan-light);">// 3. Controller Processing</span>
+<strong>src/api/agents.ts → AgentManager.getAllAgents()</strong>
+
+<span style="color: var(--cyan-light);">// 4. Database Query</span>
+<strong>SELECT * FROM agent_summary ORDER BY agent_name</strong>
+
+<span style="color: var(--cyan-light);">// 5. Response</span>
+{
+  "success": true,
+  "data": [
+    {
+      "agent_id": "AG001",
+      "commission_rates": { "internet": 0.03 },
+      "status": "active"
+    }
+  ]
+}
+
+<span style="color: var(--cyan-light);">// 6. Telegram Notification (if configured)</span>
+<strong>📱 Agent AG001 commission updated: 3%</strong></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Tab switching functionality
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+          const targetSection = this.getAttribute('data-section');
+
+          // Hide all sections
+          document.querySelectorAll('.section').forEach(section => {
+            section.style.display = 'none';
+            section.classList.remove('active');
+          });
+
+          // Show target section
+          const target = document.getElementById(targetSection);
+          if (target) {
+            target.style.display = 'block';
+            target.classList.add('active');
+          }
+
+          // Update tab states
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+
+      // Expandable content functionality
+      document.querySelectorAll('.expandable').forEach(element => {
+        element.addEventListener('click', function () {
+          const content = this.nextElementSibling;
+          if (content && content.classList.contains('expanded-content')) {
+            content.classList.toggle('active');
+          }
+        });
+      });
+
+      // Add ripple effects to cards
+      document.querySelectorAll('.endpoint-card, .workspace-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+          const ripple = document.createElement('div');
+          ripple.style.position = 'absolute';
+          ripple.style.borderRadius = '50%';
+          ripple.style.background = 'rgba(105, 192, 255, 0.3)';
+          ripple.style.transform = 'scale(0)';
+          ripple.style.animation = 'ripple 0.6s linear';
+          ripple.style.left = e.clientX - card.offsetLeft + 'px';
+          ripple.style.top = e.clientY - card.offsetTop + 'px';
+          ripple.style.width = '20px';
+          ripple.style.height = '20px';
+
+          card.style.position = 'relative';
+          card.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+
+      // Add CSS for ripple animation
+      const style = document.createElement('style');
+      style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

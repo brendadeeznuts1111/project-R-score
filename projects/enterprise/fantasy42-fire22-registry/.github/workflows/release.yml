@@ -1,0 +1,335 @@
+# 🚀 Enterprise Release Pipeline
+# Automated release management for domain-driven development
+#
+# REQUIRED SECRETS:
+# - NPM_TOKEN: npm automation token for publishing to npm registry
+# - PRIVATE_REGISTRY_TOKEN: token for publishing to private registry
+#
+# Setup guide: .github/SECRETS-SETUP.md
+
+name: 🚀 Release Pipeline
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  BUN_VERSION: '1.0.0'
+
+jobs:
+  # 📋 Release Preparation
+  release-prep:
+    name: 📋 Release Preparation
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      environment: ${{ steps.version.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Determine version and environment
+        id: version
+        run: |
+          # Get release type from input or release event
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            RELEASE_TYPE="${{ github.event.inputs.release_type }}"
+            ENVIRONMENT="${{ github.event.inputs.environment }}"
+          else
+            # Extract from release tag
+            TAG="${{ github.event.release.tag_name }}"
+            if [[ $TAG =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+              RELEASE_TYPE="patch"
+              ENVIRONMENT="production"
+            elif [[ $TAG =~ ^v([0-9]+)\.([0-9]+)\.0$ ]]; then
+              RELEASE_TYPE="minor"
+              ENVIRONMENT="production"
+            elif [[ $TAG =~ ^v([0-9]+)\.0\.0$ ]]; then
+              RELEASE_TYPE="major"
+              ENVIRONMENT="production"
+            else
+              RELEASE_TYPE="patch"
+              ENVIRONMENT="staging"
+            fi
+          fi
+
+          # Get current version
+          CURRENT_VERSION=$(cat package.json | grep '"version"' | sed 's/.*"version": "\([^"]*\)".*/\1/')
+
+          # Calculate new version
+          if [ "$RELEASE_TYPE" = "major" ]; then
+            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1+1 ".0.0"}')
+          elif [ "$RELEASE_TYPE" = "minor" ]; then
+            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1 "." $2+1 ".0"}')
+          else
+            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1 "." $2 "." $3+1}')
+          fi
+
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+  # 🧪 Pre-release Testing
+  prerelease-testing:
+    name: 🧪 Pre-release Testing
+    runs-on: ubuntu-latest
+    needs: release-prep
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run full test suite
+        run: |
+          echo "🧪 Running comprehensive test suite"
+          bun run test:all
+
+      - name: Integration tests
+        run: |
+          echo "🔗 Running integration tests"
+          bun run test:integration
+
+      - name: Performance tests
+        run: |
+          echo "⚡ Running performance tests"
+          bun run test:performance
+
+      - name: Security tests
+        run: |
+          echo "🔐 Running security tests"
+          bun run test:security
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: prerelease-test-results
+          path: |
+            test-results/
+            coverage/
+          retention-days: 30
+
+  # 🏗️ Release Build
+  release-build:
+    name: 🏗️ Release Build
+    runs-on: ubuntu-latest
+    needs: [release-prep, prerelease-testing]
+    strategy:
+      matrix:
+        platform: [linux-x64, windows-x64, macos-x64, macos-arm64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build for ${{ matrix.platform }}
+        run: |
+          echo "🏗️ Building for ${{ matrix.platform }}"
+          bun run build:platform ${{ matrix.platform }}
+
+      - name: Create platform-specific package
+        run: |
+          echo "📦 Creating package for ${{ matrix.platform }}"
+          bun run pack:platform ${{ matrix.platform }}
+
+      - name: Upload platform build
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-build-${{ matrix.platform }}
+          path: |
+            dist/
+            fantasy42-fire22-registry-*.tgz
+          retention-days: 90
+
+  # 📦 Package Publishing
+  package-publish:
+    name: 📦 Package Publishing
+    runs-on: ubuntu-latest
+    needs: [release-prep, release-build]
+    environment: production
+    if: needs.release-prep.outputs.environment == 'production'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: release-build-linux-x64
+
+      - name: Setup Node.js for publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npm
+        run: |
+          echo "📦 Publishing to npm registry"
+          # Check if token is available
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "❌ NPM_TOKEN secret not configured"
+            exit 1
+          fi
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to private registry
+        run: |
+          echo "🔒 Publishing to private registry"
+          # Check if token is available
+          if [ -z "$PRIVATE_REGISTRY_TOKEN" ]; then
+            echo "❌ PRIVATE_REGISTRY_TOKEN secret not configured"
+            exit 1
+          fi
+          bun run publish:private
+        env:
+          PRIVATE_REGISTRY_TOKEN: ${{ secrets.PRIVATE_REGISTRY_TOKEN }}
+
+  # 🚀 Deployment
+  deployment:
+    name: 🚀 Deployment
+    runs-on: ubuntu-latest
+    needs: [release-prep, package-publish]
+    environment: ${{ needs.release-prep.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: release-build-linux-x64
+
+      - name: Deploy to ${{ needs.release-prep.outputs.environment }}
+        run: |
+          ENVIRONMENT="${{ needs.release-prep.outputs.environment }}"
+          echo "🚀 Deploying to $ENVIRONMENT environment"
+          bun run deploy:$ENVIRONMENT
+
+      - name: Run deployment tests
+        run: |
+          echo "🧪 Running deployment tests"
+          bun run test:deployment
+
+      - name: Health check
+        run: |
+          echo "💚 Running health checks"
+          bun run health:check
+
+  # 📢 Release Announcement
+  release-announcement:
+    name: 📢 Release Announcement
+    runs-on: ubuntu-latest
+    needs: [release-prep, deployment]
+    if: needs.release-prep.outputs.environment == 'production'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Generate release notes
+        run: |
+          VERSION="${{ needs.release-prep.outputs.version }}"
+          echo "📝 Generating release notes for v$VERSION"
+          bun run release:notes $VERSION
+
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.release-prep.outputs.tag }}
+          release_name: Release ${{ needs.release-prep.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+
+      - name: Send release notifications
+        run: |
+          echo "📢 Sending release notifications"
+          bun run release:notify
+
+  # 📊 Release Analytics
+  release-analytics:
+    name: 📊 Release Analytics
+    runs-on: ubuntu-latest
+    needs: [release-prep, deployment]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Collect release metrics
+        run: |
+          echo "📊 Collecting release metrics"
+          bun run analytics:release
+
+      - name: Update release dashboard
+        run: |
+          echo "📈 Updating release dashboard"
+          bun run analytics:release:dashboard
+
+      - name: Archive release data
+        run: |
+          echo "📚 Archiving release data"
+          bun run release:archive

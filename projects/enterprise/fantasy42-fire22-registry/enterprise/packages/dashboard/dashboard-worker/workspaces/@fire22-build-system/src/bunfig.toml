@@ -1,0 +1,300 @@
+# 🔧 Fire22 Dashboard - Bun Configuration
+# Configuration file for Bun runtime and development tools
+
+[debug]
+# Editor configuration for Bun.openInEditor()
+# Options: "code" (VSCode), "subl" (Sublime), "vim", "nano"
+editor = "code"
+
+# Development settings
+[dev]
+# Hot reload settings
+watch = true
+# Port for development server
+port = 3000
+# Environment for development
+env = "development"
+
+# Test configuration
+[test]
+# Test timeout in milliseconds
+timeout = 10000
+# Test environment
+env = "test"
+
+# Build configuration
+[build]
+# Output directory
+outdir = "dist"
+# Entry point
+entry = "src/index.ts"
+# Target environment
+target = "bun"
+
+# Package management
+[package]
+# Package manager
+manager = "bun"
+# Registry URL
+registry = "https://registry.npmjs.org/"
+
+# Environment variables
+[env]
+# Environment file paths
+files = [".env.local", ".env.development", ".env"]
+
+# Performance settings
+[performance]
+# Memory limit
+memory_limit = "512MB"
+# CPU limit
+cpu_limit = "100%"
+
+# Security settings
+[security]
+# Allow network access
+allow_net = true
+# Allow file system access
+allow_read = true
+# Allow environment variables
+allow_env = true
+# Allow process spawning
+allow_run = true
+
+# Logging configuration
+[logging]
+# Log level
+level = "info"
+# Log format
+format = "json"
+# Log output
+output = "stdout"
+
+# Monitoring settings
+[monitoring]
+# Enable performance monitoring
+enabled = true
+# Metrics collection interval
+interval = "5s"
+# Health check endpoint
+health_check = "/health"
+
+# Development tools
+[tools]
+# Enable TypeScript support
+typescript = true
+# Enable JSX support
+jsx = true
+# Enable source maps
+source_maps = true
+# Enable debugging
+debug = true
+
+# Editor integration
+[editor]
+# Default editor for Bun.openInEditor()
+default = "code"
+# Line number display
+show_line_numbers = true
+# Syntax highlighting
+syntax_highlighting = true
+# Auto-completion
+auto_completion = true
+# Error highlighting
+error_highlighting = true
+
+# Project structure
+[project]
+# Root directory
+root = "."
+# Source directory
+src = "src"
+# Documentation directory
+docs = "docs"
+# Scripts directory
+scripts = "scripts"
+# Tests directory
+tests = "tests"
+# Build directory
+build = "dist"
+# Configuration directory
+config = "config"
+
+# API configuration
+[api]
+# Base URL
+base_url = "https://api.fire22.com"
+# Timeout
+timeout = "30s"
+# Rate limiting
+rate_limit = 1000
+# Authentication
+auth_type = "bearer"
+
+# Database configuration
+[database]
+# Type
+type = "sqlite"
+# File path
+file = "fire22-dashboard.db"
+# Connection pool
+pool_size = 10
+# Timeout
+timeout = "10s"
+
+# Queue system
+[queue]
+# Type
+type = "p2p"
+# Max size
+max_size = 10000
+# Processing interval
+interval = "1s"
+# Retry attempts
+retry_attempts = 3
+
+# Version management
+[version]
+# Current version
+current = "3.0.8"
+# Version file
+file = "VERSION"
+# Changelog file
+changelog = "CHANGELOG.md"
+# Auto-increment
+auto_increment = true
+
+# Documentation
+[docs]
+# Output format
+format = "html"
+# Theme
+theme = "fire22"
+# Search enabled
+search = true
+# Navigation
+navigation = true
+# Responsive
+responsive = true
+
+# Testing
+[testing]
+# Framework
+framework = "bun"
+# Coverage
+coverage = true
+# Reports
+reports = true
+# Parallel execution
+parallel = true
+
+# Deployment
+[deployment]
+# Platform
+platform = "cloudflare"
+# Environment
+environment = "production"
+# Auto-deploy
+auto_deploy = false
+# Health checks
+health_checks = true
+
+# Monitoring
+[monitoring]
+# Metrics collection
+metrics = true
+# Logging
+logging = true
+# Alerts
+alerts = true
+# Dashboard
+dashboard = true
+
+# Security
+[security]
+# Authentication
+auth = true
+# Authorization
+authorization = true
+# Rate limiting
+rate_limiting = true
+# Input validation
+input_validation = true
+# Output sanitization
+output_sanitization = true
+
+# Performance
+[performance]
+# Caching
+caching = true
+# Compression
+compression = true
+# Minification
+minification = true
+# Bundling
+bundling = true
+# Tree shaking
+tree_shaking = true
+
+# Development workflow
+[workflow]
+# Git integration
+git = true
+# Code formatting
+formatting = true
+# Linting
+linting = true
+# Type checking
+type_checking = true
+# Testing
+testing = true
+# Building
+building = true
+# Deployment
+deployment = true
+
+# Editor integration commands
+[commands]
+# Open project
+open = "bun run editor:open"
+# Open source
+src = "bun run editor:src"
+# Open docs
+docs = "bun run editor:docs"
+# Open scripts
+scripts = "bun run editor:scripts"
+# Open config
+config = "bun run editor:config"
+# Show structure
+structure = "bun run editor:structure"
+# Help
+help = "bun run editor:help"
+
+# Quick access
+[quick_access]
+# Common files
+package_json = "package.json"
+bunfig_toml = "bunfig.toml"
+tsconfig_json = "tsconfig.json"
+src_index = "src/index.ts"
+docs_packages = "docs/packages.html"
+scripts_version = "scripts/version-manager.ts"
+
+# Development shortcuts
+[shortcuts]
+# Quick test
+test = "bun run test:quick"
+# Full test
+test_all = "bun run test:checklist"
+# Build
+build = "bun run build:quick"
+# Deploy
+deploy = "bun run deploy:staging"
+# Health check
+health = "bun run health:comprehensive"
+# Environment
+env = "bun run env:validate"
+# Queue demo
+queue = "bun run queue:demo"
+# Payment demo
+payment = "bun run payment:demo"

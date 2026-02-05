@@ -1,0 +1,1710 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Fire22 Advanced Build Automation & Agent Command Center</title>
+    <style>
+      :root {
+        /* Fire22 Brand Colors */
+        --fire-primary: #ff6b35;
+        --fire-secondary: #ff8c42;
+        --fire-accent: #ffa751;
+        --fire-dark: #d84315;
+        --fire-glow: rgba(255, 107, 53, 0.5);
+
+        /* Agent Status Colors */
+        --agent-active: #4ade80;
+        --agent-pending: #fbbf24;
+        --agent-inactive: #ef4444;
+        --agent-suspended: #8b5cf6;
+
+        /* Performance Colors */
+        --perf-excellent: #10b981;
+        --perf-good: #3b82f6;
+        --perf-average: #f59e0b;
+        --perf-poor: #ef4444;
+
+        /* UI Colors */
+        --bg-primary: #0a0e27;
+        --bg-secondary: #151a3a;
+        --bg-tertiary: #1e2449;
+        --bg-quaternary: #252b4d;
+        --text-primary: #ffffff;
+        --text-secondary: #a8b2d1;
+        --text-tertiary: #64748b;
+        --border-color: #2a3152;
+        --terminal-green: #4ade80;
+        --terminal-amber: #fbbf24;
+
+        /* Typography */
+        --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        --font-sans: system-ui, -apple-system, sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Animated Background */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 50%, var(--fire-glow) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(255, 140, 66, 0.3) 0%, transparent 50%),
+          radial-gradient(circle at 40% 20%, rgba(255, 167, 81, 0.2) 0%, transparent 50%);
+        animation: backgroundShift 20s ease infinite;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      @keyframes backgroundShift {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.1);
+        }
+      }
+
+      /* Terminal Header Enhanced */
+      .terminal-header {
+        background: var(--bg-tertiary);
+        border-bottom: 2px solid var(--border-color);
+        padding: 1.5rem 2rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+      }
+
+      .terminal-header::before {
+        content: '╭────────────────────────────────────────────────────────────────────────────────────────────────╮';
+        position: absolute;
+        top: -1px;
+        left: 0;
+        right: 0;
+        color: var(--fire-primary);
+        font-family: var(--font-mono);
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .fire-logo {
+        font-size: 3rem;
+        animation: fireFlicker 2s infinite;
+        filter: drop-shadow(0 0 20px var(--fire-primary));
+      }
+
+      @keyframes fireFlicker {
+        0%,
+        100% {
+          opacity: 1;
+          filter: brightness(1) drop-shadow(0 0 20px var(--fire-primary));
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.95;
+          filter: brightness(1.2) drop-shadow(0 0 30px var(--fire-accent));
+          transform: scale(1.05);
+        }
+      }
+
+      .title-text h1 {
+        font-family: var(--font-mono);
+        font-size: 1.8rem;
+        color: var(--fire-primary);
+        text-shadow: 0 0 20px var(--fire-glow);
+        background: linear-gradient(135deg, var(--fire-primary), var(--fire-accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .title-text p {
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+        font-size: 0.9rem;
+      }
+
+      /* Live Status Bar */
+      .live-status-bar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-color);
+        border-radius: 50px;
+      }
+
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+      }
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+          box-shadow: 0 0 0 0 currentColor;
+        }
+        50% {
+          opacity: 0.7;
+          transform: scale(1.1);
+          box-shadow: 0 0 0 4px transparent;
+        }
+      }
+
+      .status-dot.active {
+        background: var(--terminal-green);
+      }
+      .status-dot.warning {
+        background: var(--terminal-amber);
+      }
+      .status-dot.error {
+        background: var(--agent-inactive);
+      }
+      .status-dot.scanning {
+        background: var(--fire-primary);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Main Dashboard Layout */
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: 300px 1fr 350px;
+        gap: 2rem;
+        padding: 2rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (max-width: 1400px) {
+        .dashboard-container {
+          grid-template-columns: 250px 1fr 300px;
+          gap: 1rem;
+          padding: 1rem;
+        }
+      }
+
+      @media (max-width: 1100px) {
+        .dashboard-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Enhanced Card Component */
+      .card {
+        background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-quaternary));
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(255, 107, 53, 0.2);
+        border-color: var(--fire-primary);
+      }
+
+      .card::before {
+        content: '╭';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        color: var(--fire-primary);
+        font-size: 18px;
+      }
+
+      .card::after {
+        content: '╯';
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        color: var(--fire-primary);
+        font-size: 18px;
+      }
+
+      .card-header {
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.05));
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-family: var(--font-mono);
+        font-size: 1.1rem;
+        color: var(--fire-primary);
+      }
+
+      .card-icon {
+        font-size: 1.3rem;
+        filter: drop-shadow(0 0 5px currentColor);
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      /* Agent Cards Enhanced */
+      .agent-card {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+      }
+
+      .agent-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--fire-glow), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .agent-card:hover::before {
+        left: 100%;
+      }
+
+      .agent-card:hover {
+        border-color: var(--fire-primary);
+        transform: translateX(5px);
+        box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+      }
+
+      .agent-card.selected {
+        border-color: var(--fire-primary);
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.1));
+        box-shadow: 0 0 30px rgba(255, 107, 53, 0.3);
+      }
+
+      /* Performance Metrics */
+      .performance-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .metric-card {
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), transparent);
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--fire-primary);
+        animation: metricPulse 2s ease infinite;
+      }
+
+      @keyframes metricPulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scaleX(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scaleX(0.95);
+        }
+      }
+
+      .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--fire-primary);
+        font-family: var(--font-mono);
+        text-shadow: 0 0 10px currentColor;
+      }
+
+      .metric-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        margin-top: 0.25rem;
+      }
+
+      .metric-trend {
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+      }
+
+      .trend-up {
+        color: var(--terminal-green);
+      }
+
+      .trend-down {
+        color: var(--agent-inactive);
+      }
+
+      /* Build Queue */
+      .build-queue {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .queue-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border-color);
+        margin-bottom: 0.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .queue-item.processing {
+        border-color: var(--fire-primary);
+        background: rgba(255, 107, 53, 0.1);
+      }
+
+      .queue-item.completed {
+        border-color: var(--terminal-green);
+        opacity: 0.7;
+      }
+
+      .queue-position {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--fire-primary);
+        color: var(--bg-primary);
+        font-weight: bold;
+        font-family: var(--font-mono);
+        border-radius: 50%;
+      }
+
+      .queue-details {
+        flex: 1;
+      }
+
+      .queue-agent {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+      }
+
+      .queue-type {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .queue-progress {
+        width: 60px;
+        height: 60px;
+        position: relative;
+      }
+
+      .progress-circle {
+        transform: rotate(-90deg);
+      }
+
+      .progress-bg {
+        fill: none;
+        stroke: var(--bg-primary);
+        stroke-width: 4;
+      }
+
+      .progress-fill {
+        fill: none;
+        stroke: var(--fire-primary);
+        stroke-width: 4;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.5s ease;
+      }
+
+      .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.75rem;
+        font-weight: bold;
+        font-family: var(--font-mono);
+      }
+
+      /* Resource Monitor */
+      .resource-monitor {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .resource-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .resource-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+      }
+
+      .resource-label {
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+      }
+
+      .resource-value {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-family: var(--font-mono);
+      }
+
+      .resource-bar {
+        height: 8px;
+        background: var(--bg-primary);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .resource-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--fire-primary), var(--fire-accent));
+        transition: width 0.5s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .resource-fill::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        right: -100%;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: resourceShine 2s infinite;
+      }
+
+      @keyframes resourceShine {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(200%);
+        }
+      }
+
+      /* Advanced Terminal */
+      .terminal {
+        background: #000;
+        color: var(--terminal-green);
+        font-family: var(--font-mono);
+        padding: 1rem;
+        height: 300px;
+        overflow-y: auto;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        border: 1px solid var(--terminal-green);
+        position: relative;
+        box-shadow: inset 0 0 20px rgba(74, 222, 128, 0.1);
+      }
+
+      .terminal::before {
+        content: '╭─ Advanced Build Terminal ─────────────────────╮';
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background: #000;
+        padding: 0 0.5rem;
+        font-size: 0.75rem;
+      }
+
+      .terminal::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--terminal-green), transparent);
+        animation: terminalScan 3s linear infinite;
+      }
+
+      @keyframes terminalScan {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(300px);
+        }
+      }
+
+      .terminal-line {
+        margin-bottom: 0.5rem;
+        white-space: pre-wrap;
+        word-break: break-all;
+        opacity: 0;
+        animation: terminalFadeIn 0.3s ease forwards;
+      }
+
+      @keyframes terminalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* Security Scanner Visual */
+      .security-scanner {
+        padding: 1rem;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .scanner-radar {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        position: relative;
+        background: radial-gradient(
+          circle,
+          transparent 30%,
+          var(--fire-primary) 31%,
+          transparent 32%,
+          transparent 60%,
+          var(--fire-primary) 61%,
+          transparent 62%,
+          transparent 90%,
+          var(--fire-primary) 91%,
+          transparent 92%
+        );
+        border-radius: 50%;
+        border: 2px solid var(--fire-primary);
+      }
+
+      .scanner-sweep {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--terminal-green));
+        transform-origin: left center;
+        animation: radarSweep 2s linear infinite;
+      }
+
+      @keyframes radarSweep {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .scanner-blips {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      .scanner-blip {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: var(--agent-inactive);
+        border-radius: 50%;
+        animation: blipPulse 2s infinite;
+      }
+
+      @keyframes blipPulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.5);
+        }
+      }
+
+      /* Charts and Graphs */
+      .chart-container {
+        height: 200px;
+        margin-top: 1rem;
+        position: relative;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+      }
+
+      .chart-bars {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        height: 150px;
+        gap: 0.5rem;
+      }
+
+      .chart-bar {
+        flex: 1;
+        background: linear-gradient(to top, var(--fire-primary), var(--fire-accent));
+        position: relative;
+        animation: barGrow 1s ease forwards;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+
+      @keyframes barGrow {
+        from {
+          height: 0;
+        }
+      }
+
+      .chart-bar:hover {
+        opacity: 0.8;
+      }
+
+      .chart-bar-label {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+      }
+
+      .chart-bar-value {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.75rem;
+        color: var(--fire-primary);
+        font-weight: bold;
+        font-family: var(--font-mono);
+      }
+
+      /* Advanced Buttons */
+      .btn {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, transparent, rgba(255, 107, 53, 0.1));
+        border: 2px solid var(--fire-primary);
+        color: var(--fire-primary);
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(circle, var(--fire-primary), transparent);
+        transform: translate(-50%, -50%);
+        transition: all 0.5s ease;
+        border-radius: 50%;
+      }
+
+      .btn:hover::before {
+        width: 300%;
+        height: 300%;
+      }
+
+      .btn:hover {
+        color: var(--bg-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(255, 107, 53, 0.5);
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .btn span {
+        position: relative;
+        z-index: 2;
+      }
+
+      .btn.btn-success {
+        border-color: var(--terminal-green);
+        color: var(--terminal-green);
+      }
+
+      .btn.btn-success::before {
+        background: radial-gradient(circle, var(--terminal-green), transparent);
+      }
+
+      .btn.btn-danger {
+        border-color: var(--agent-inactive);
+        color: var(--agent-inactive);
+      }
+
+      .btn.btn-danger::before {
+        background: radial-gradient(circle, var(--agent-inactive), transparent);
+      }
+
+      /* Notification System */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: -400px;
+        width: 350px;
+        padding: 1rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--fire-primary);
+        border-left: 4px solid var(--fire-primary);
+        transition: right 0.3s ease;
+        z-index: 9999;
+      }
+
+      .notification.show {
+        right: 20px;
+      }
+
+      .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .notification-title {
+        font-weight: 600;
+        color: var(--fire-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+
+      .notification-body {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      /* WebSocket Status */
+      .websocket-status {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 0.5rem 1rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        z-index: 9998;
+      }
+
+      .ws-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--terminal-green);
+        animation: pulse 2s infinite;
+      }
+
+      .ws-indicator.disconnected {
+        background: var(--agent-inactive);
+        animation: none;
+      }
+
+      /* Responsive Grid */
+      @media (max-width: 768px) {
+        .dashboard-container {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+        }
+
+        .performance-metrics {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .header-title h1 {
+          font-size: 1.3rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Terminal Header -->
+    <header class="terminal-header">
+      <div class="header-content">
+        <div class="header-title">
+          <span class="fire-logo">🔥</span>
+          <div class="title-text">
+            <h1>Fire22 Advanced Build Command Center</h1>
+            <p>Real-time agent orchestration, security scanning, and performance analytics</p>
+          </div>
+        </div>
+        <div class="live-status-bar">
+          <div class="status-indicator">
+            <div class="status-dot active"></div>
+            <span>System Online</span>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot scanning"></div>
+            <span>Security Active</span>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot active"></div>
+            <span id="active-builds">0 Builds</span>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot active"></div>
+            <span id="connected-agents">4 Agents</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+      <!-- Left Panel -->
+      <aside class="left-panel">
+        <!-- Agent Management -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">🎯</span>
+              <span>Agent Control</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="agent-list"></div>
+          </div>
+        </div>
+
+        <!-- Build Queue -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">📋</span>
+              <span>Build Queue</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="build-queue" id="build-queue"></div>
+          </div>
+        </div>
+
+        <!-- Resource Monitor -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">📊</span>
+              <span>Resources</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="resource-monitor">
+              <div class="resource-item">
+                <div class="resource-header">
+                  <span class="resource-label">CPU Usage</span>
+                  <span class="resource-value" id="cpu-usage">45%</span>
+                </div>
+                <div class="resource-bar">
+                  <div class="resource-fill" style="width: 45%"></div>
+                </div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-header">
+                  <span class="resource-label">Memory</span>
+                  <span class="resource-value" id="memory-usage">62%</span>
+                </div>
+                <div class="resource-bar">
+                  <div class="resource-fill" style="width: 62%"></div>
+                </div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-header">
+                  <span class="resource-label">Disk I/O</span>
+                  <span class="resource-value" id="disk-usage">28%</span>
+                </div>
+                <div class="resource-bar">
+                  <div class="resource-fill" style="width: 28%"></div>
+                </div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-header">
+                  <span class="resource-label">Network</span>
+                  <span class="resource-value" id="network-usage">15%</span>
+                </div>
+                <div class="resource-bar">
+                  <div class="resource-fill" style="width: 15%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Panel -->
+      <main class="center-panel">
+        <!-- Performance Metrics -->
+        <div class="performance-metrics">
+          <div class="metric-card">
+            <div class="metric-value" id="total-builds">0</div>
+            <div class="metric-label">Total Builds</div>
+            <div class="metric-trend trend-up">
+              <span>↑ 12%</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="success-rate">100%</div>
+            <div class="metric-label">Success Rate</div>
+            <div class="metric-trend trend-up">
+              <span>↑ 5%</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="avg-time">2.3s</div>
+            <div class="metric-label">Avg Build Time</div>
+            <div class="metric-trend trend-down">
+              <span>↓ 18%</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="security-score">95</div>
+            <div class="metric-label">Security Score</div>
+            <div class="metric-trend trend-up">
+              <span>↑ 3pts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Scanner -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">🛡️</span>
+              <span>Security Scanner</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="security-scanner">
+              <div class="scanner-radar">
+                <div class="scanner-sweep"></div>
+                <div class="scanner-blips">
+                  <div class="scanner-blip" style="top: 30%; left: 40%"></div>
+                  <div class="scanner-blip" style="top: 60%; left: 70%"></div>
+                  <div class="scanner-blip" style="top: 45%; left: 25%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build Analytics Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">📈</span>
+              <span>Build Analytics</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <div class="chart-bars" id="build-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Terminal -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">💻</span>
+              <span>System Terminal</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="terminal" id="terminal"></div>
+          </div>
+        </div>
+
+        <!-- Control Center -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">⚡</span>
+              <span>Command Center</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+              <button class="btn btn-success" id="btn-build">
+                <span>🚀 Deploy Build</span>
+              </button>
+              <button class="btn" id="btn-security">
+                <span>🔒 Security Scan</span>
+              </button>
+              <button class="btn" id="btn-optimize">
+                <span>⚙️ Optimize</span>
+              </button>
+              <button class="btn btn-danger" id="btn-emergency">
+                <span>🚨 Emergency Stop</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Panel -->
+      <aside class="right-panel">
+        <!-- Live Activity Feed -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">🔴</span>
+              <span>Live Activity</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="activity-feed" style="max-height: 400px; overflow-y: auto"></div>
+          </div>
+        </div>
+
+        <!-- Agent Performance -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">🏆</span>
+              <span>Top Performers</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="agent-performance"></div>
+          </div>
+        </div>
+
+        <!-- System Health -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon">❤️</span>
+              <span>System Health</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="system-health"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- WebSocket Status -->
+    <div class="websocket-status">
+      <div class="ws-indicator" id="ws-indicator"></div>
+      <span id="ws-status">WebSocket Connected</span>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <script>
+      class AdvancedBuildDashboard {
+        constructor() {
+          this.agents = [
+            {
+              id: 'BLAKE',
+              name: 'Blake Agent',
+              status: 'active',
+              performance: 94,
+              builds: 45,
+              creditLimit: 50000,
+              usedCredit: 12500,
+            },
+            {
+              id: 'DAKO',
+              name: 'Dako Agent',
+              status: 'active',
+              performance: 88,
+              builds: 32,
+              creditLimit: 40000,
+              usedCredit: 8000,
+            },
+            {
+              id: 'SCRAM',
+              name: 'Scram Agent',
+              status: 'active',
+              performance: 76,
+              builds: 28,
+              creditLimit: 35000,
+              usedCredit: 22000,
+            },
+            {
+              id: 'SPEN',
+              name: 'Spen Agent',
+              status: 'active',
+              performance: 92,
+              builds: 51,
+              creditLimit: 60000,
+              usedCredit: 15000,
+            },
+          ];
+
+          this.buildQueue = [];
+          this.selectedAgent = null;
+          this.totalBuilds = 0;
+          this.wsConnected = true;
+
+          this.init();
+        }
+
+        init() {
+          this.renderAgents();
+          this.initBuildQueue();
+          this.initCharts();
+          this.initTerminal();
+          this.initActivityFeed();
+          this.initPerformanceMonitor();
+          this.setupEventListeners();
+          this.startRealTimeUpdates();
+          this.simulateWebSocket();
+
+          this.showNotification('System Ready', 'All systems operational and ready for deployment');
+        }
+
+        renderAgents() {
+          const agentList = document.getElementById('agent-list');
+          agentList.innerHTML = '';
+
+          this.agents.forEach(agent => {
+            const agentCard = document.createElement('div');
+            agentCard.className = 'agent-card';
+            agentCard.dataset.agentId = agent.id;
+
+            const creditUsage = ((agent.usedCredit / agent.creditLimit) * 100).toFixed(1);
+
+            agentCard.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: 600; color: var(--text-primary); font-family: var(--font-mono);">
+                                ${agent.name}
+                            </div>
+                            <div style="padding: 0.25rem 0.5rem; background: var(--agent-active); color: black; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">
+                                ${agent.status}
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; font-size: 0.85rem;">
+                            <div style="color: var(--text-secondary);">
+                                Performance: <span style="color: var(--fire-primary); font-weight: 600;">${agent.performance}%</span>
+                            </div>
+                            <div style="color: var(--text-secondary);">
+                                Builds: <span style="color: var(--text-primary); font-weight: 600;">${agent.builds}</span>
+                            </div>
+                            <div style="color: var(--text-secondary);">
+                                Credit: <span style="color: var(--terminal-amber); font-weight: 600;">${creditUsage}%</span>
+                            </div>
+                            <div style="color: var(--text-secondary);">
+                                Available: <span style="color: var(--terminal-green); font-weight: 600;">$${(agent.creditLimit - agent.usedCredit).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+
+            agentCard.addEventListener('click', () => this.selectAgent(agent));
+            agentList.appendChild(agentCard);
+          });
+        }
+
+        selectAgent(agent) {
+          this.selectedAgent = agent;
+
+          document.querySelectorAll('.agent-card').forEach(card => {
+            card.classList.remove('selected');
+            if (card.dataset.agentId === agent.id) {
+              card.classList.add('selected');
+            }
+          });
+
+          this.addTerminalLine(`[SYSTEM] Agent ${agent.id} selected for operations`, 'success');
+          this.addActivity(`Agent Selected`, `${agent.name} ready for deployment`);
+          this.showNotification('Agent Selected', `${agent.name} is now active`);
+        }
+
+        initBuildQueue() {
+          this.buildQueue = [
+            { id: 1, agent: 'BLAKE', type: 'Production Build', progress: 75 },
+            { id: 2, agent: 'SPEN', type: 'Security Scan', progress: 30 },
+            { id: 3, agent: 'DAKO', type: 'Test Suite', progress: 0 },
+          ];
+
+          this.renderBuildQueue();
+        }
+
+        renderBuildQueue() {
+          const queueContainer = document.getElementById('build-queue');
+          queueContainer.innerHTML = '';
+
+          this.buildQueue.forEach((item, index) => {
+            const queueItem = document.createElement('div');
+            queueItem.className = `queue-item ${index === 0 ? 'processing' : ''}`;
+
+            const circumference = 2 * Math.PI * 28;
+            const offset = circumference - (item.progress / 100) * circumference;
+
+            queueItem.innerHTML = `
+                        <div class="queue-position">${index + 1}</div>
+                        <div class="queue-details">
+                            <div class="queue-agent">${item.agent}</div>
+                            <div class="queue-type">${item.type}</div>
+                        </div>
+                        <div class="queue-progress">
+                            <svg width="60" height="60" class="progress-circle">
+                                <circle cx="30" cy="30" r="28" class="progress-bg"></circle>
+                                <circle cx="30" cy="30" r="28" class="progress-fill"
+                                        stroke-dasharray="${circumference}"
+                                        stroke-dashoffset="${offset}"></circle>
+                            </svg>
+                            <div class="progress-text">${item.progress}%</div>
+                        </div>
+                    `;
+
+            queueContainer.appendChild(queueItem);
+          });
+        }
+
+        initCharts() {
+          const chartBars = document.getElementById('build-chart');
+          const data = [65, 78, 82, 91, 88, 95, 72];
+          const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+          chartBars.innerHTML = '';
+          data.forEach((value, index) => {
+            const bar = document.createElement('div');
+            bar.className = 'chart-bar';
+            bar.style.height = `${value}%`;
+            bar.innerHTML = `
+                        <div class="chart-bar-value">${value}</div>
+                        <div class="chart-bar-label">${labels[index]}</div>
+                    `;
+            chartBars.appendChild(bar);
+          });
+        }
+
+        initTerminal() {
+          this.addTerminalLine('[SYSTEM] Fire22 Advanced Build System v2.0.0 initialized', 'success');
+          this.addTerminalLine('[SECURITY] All security protocols active and monitoring', 'info');
+          this.addTerminalLine('[NETWORK] WebSocket connection established', 'success');
+          this.addTerminalLine('[AGENTS] 4 agents online and ready', 'info');
+        }
+
+        addTerminalLine(text, type = 'info') {
+          const terminal = document.getElementById('terminal');
+          const line = document.createElement('div');
+          line.className = 'terminal-line';
+
+          const time = new Date().toLocaleTimeString('en-US', {
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
+
+          const typeColors = {
+            success: 'var(--terminal-green)',
+            error: 'var(--agent-inactive)',
+            warning: 'var(--terminal-amber)',
+            info: 'var(--text-secondary)',
+            command: 'var(--fire-primary)',
+          };
+
+          line.innerHTML = `<span style="color: var(--text-secondary);">[${time}]</span> <span style="color: ${typeColors[type]};">${text}</span>`;
+
+          terminal.appendChild(line);
+          terminal.scrollTop = terminal.scrollHeight;
+
+          // Keep only last 50 lines
+          while (terminal.children.length > 50) {
+            terminal.removeChild(terminal.firstChild);
+          }
+        }
+
+        initActivityFeed() {
+          this.addActivity('System Started', 'Dashboard initialized successfully');
+          this.addActivity('Security Check', 'All security protocols verified');
+          this.addActivity('Agent Sync', 'Synchronized with 4 active agents');
+        }
+
+        addActivity(title, description) {
+          const feed = document.getElementById('activity-feed');
+          const item = document.createElement('div');
+
+          const time = new Date().toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+
+          item.style.cssText = `
+                    padding: 0.75rem;
+                    border-bottom: 1px solid var(--border-color);
+                    transition: background 0.3s ease;
+                `;
+
+          item.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                        <div style="font-weight: 600; color: var(--fire-primary);">${title}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono);">${time}</div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">${description}</div>
+                `;
+
+          item.addEventListener('mouseenter', () => {
+            item.style.background = 'rgba(255, 107, 53, 0.05)';
+          });
+
+          item.addEventListener('mouseleave', () => {
+            item.style.background = 'transparent';
+          });
+
+          feed.insertBefore(item, feed.firstChild);
+
+          // Keep only last 10 activities
+          while (feed.children.length > 10) {
+            feed.removeChild(feed.lastChild);
+          }
+        }
+
+        initPerformanceMonitor() {
+          const performanceContainer = document.getElementById('agent-performance');
+
+          const sortedAgents = [...this.agents].sort((a, b) => b.performance - a.performance);
+
+          performanceContainer.innerHTML = sortedAgents
+            .map(
+              (agent, index) => `
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(0, 0, 0, 0.3); margin-bottom: 0.5rem; border-left: 3px solid ${index === 0 ? 'var(--terminal-green)' : 'var(--border-color)'};">
+                        <div style="font-size: 1.5rem;">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: var(--text-primary); font-family: var(--font-mono);">${agent.name}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Performance: ${agent.performance}%</div>
+                        </div>
+                    </div>
+                `
+            )
+            .join('');
+
+          // System Health
+          const healthContainer = document.getElementById('system-health');
+          healthContainer.innerHTML = `
+                    <div style="display: grid; gap: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: rgba(0, 0, 0, 0.3);">
+                            <span style="color: var(--text-secondary);">API Response</span>
+                            <span style="color: var(--terminal-green); font-weight: 600;">12ms</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: rgba(0, 0, 0, 0.3);">
+                            <span style="color: var(--text-secondary);">Database</span>
+                            <span style="color: var(--terminal-green); font-weight: 600;">Healthy</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: rgba(0, 0, 0, 0.3);">
+                            <span style="color: var(--text-secondary);">Cache Hit</span>
+                            <span style="color: var(--terminal-green); font-weight: 600;">94%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: rgba(0, 0, 0, 0.3);">
+                            <span style="color: var(--text-secondary);">Uptime</span>
+                            <span style="color: var(--terminal-green); font-weight: 600;">99.98%</span>
+                        </div>
+                    </div>
+                `;
+        }
+
+        setupEventListeners() {
+          document.getElementById('btn-build').addEventListener('click', () => this.startBuild());
+          document.getElementById('btn-security').addEventListener('click', () => this.runSecurityScan());
+          document.getElementById('btn-optimize').addEventListener('click', () => this.optimizeSystem());
+          document.getElementById('btn-emergency').addEventListener('click', () => this.emergencyStop());
+        }
+
+        async startBuild() {
+          if (!this.selectedAgent) {
+            this.showNotification('No Agent Selected', 'Please select an agent first', 'warning');
+            return;
+          }
+
+          this.totalBuilds++;
+          document.getElementById('total-builds').textContent = this.totalBuilds;
+
+          this.addTerminalLine(`[BUILD] Initiating build process with agent ${this.selectedAgent.id}`, 'command');
+          this.addActivity('Build Started', `${this.selectedAgent.name} executing build #${this.totalBuilds}`);
+
+          // Add to queue
+          this.buildQueue.unshift({
+            id: Date.now(),
+            agent: this.selectedAgent.id,
+            type: 'Production Build',
+            progress: 0,
+          });
+
+          this.renderBuildQueue();
+
+          // Simulate build progress
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+              progress = 100;
+              clearInterval(interval);
+              this.completeBuild();
+            }
+
+            if (this.buildQueue[0]) {
+              this.buildQueue[0].progress = Math.min(progress, 100);
+              this.renderBuildQueue();
+            }
+          }, 500);
+        }
+
+        completeBuild() {
+          this.addTerminalLine('[BUILD] Build completed successfully', 'success');
+          this.addActivity('Build Complete', 'Deployment successful');
+          this.showNotification('Build Successful', 'Your build has been deployed successfully', 'success');
+
+          if (this.buildQueue[0]) {
+            this.buildQueue[0].progress = 100;
+            setTimeout(() => {
+              this.buildQueue.shift();
+              this.renderBuildQueue();
+            }, 2000);
+          }
+        }
+
+        async runSecurityScan() {
+          this.addTerminalLine('[SECURITY] Initiating comprehensive security scan', 'command');
+          this.addActivity('Security Scan', 'Running vulnerability assessment');
+
+          const scanner = document.querySelector('.scanner-sweep');
+          scanner.style.animationDuration = '0.5s';
+
+          setTimeout(() => {
+            scanner.style.animationDuration = '2s';
+            this.addTerminalLine('[SECURITY] Scan complete - No vulnerabilities detected', 'success');
+            document.getElementById('security-score').textContent = '98';
+          }, 3000);
+        }
+
+        optimizeSystem() {
+          this.addTerminalLine('[OPTIMIZE] Running system optimization', 'command');
+          this.addActivity('Optimization', 'Optimizing build pipeline');
+
+          setTimeout(() => {
+            document.getElementById('avg-time').textContent = '1.8s';
+            this.addTerminalLine('[OPTIMIZE] Optimization complete - Build time reduced by 22%', 'success');
+          }, 2000);
+        }
+
+        emergencyStop() {
+          this.addTerminalLine('[EMERGENCY] Emergency stop activated', 'error');
+          this.addActivity('Emergency Stop', 'All operations halted');
+          this.showNotification('Emergency Stop', 'All build operations have been stopped', 'error');
+
+          this.buildQueue = [];
+          this.renderBuildQueue();
+        }
+
+        showNotification(title, message, type = 'info') {
+          const notification = document.createElement('div');
+          notification.className = 'notification';
+
+          const icons = {
+            info: 'ℹ️',
+            success: '✅',
+            warning: '⚠️',
+            error: '❌',
+          };
+
+          notification.innerHTML = `
+                    <div class="notification-header">
+                        <div class="notification-title">
+                            <span>${icons[type]}</span>
+                            <span>${title}</span>
+                        </div>
+                        <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                    <div class="notification-body">${message}</div>
+                `;
+
+          document.body.appendChild(notification);
+
+          setTimeout(() => {
+            notification.classList.add('show');
+          }, 100);
+
+          setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+          }, 5000);
+        }
+
+        startRealTimeUpdates() {
+          // Update metrics
+          setInterval(() => {
+            // Update resource usage
+            const cpu = Math.floor(Math.random() * 30) + 40;
+            const memory = Math.floor(Math.random() * 20) + 50;
+            const disk = Math.floor(Math.random() * 15) + 20;
+            const network = Math.floor(Math.random() * 10) + 10;
+
+            document.getElementById('cpu-usage').textContent = `${cpu}%`;
+            document.getElementById('memory-usage').textContent = `${memory}%`;
+            document.getElementById('disk-usage').textContent = `${disk}%`;
+            document.getElementById('network-usage').textContent = `${network}%`;
+
+            document.querySelector('.resource-item:nth-child(1) .resource-fill').style.width = `${cpu}%`;
+            document.querySelector('.resource-item:nth-child(2) .resource-fill').style.width = `${memory}%`;
+            document.querySelector('.resource-item:nth-child(3) .resource-fill').style.width = `${disk}%`;
+            document.querySelector('.resource-item:nth-child(4) .resource-fill').style.width = `${network}%`;
+
+            // Update success rate
+            const successRate = Math.floor(Math.random() * 5) + 95;
+            document.getElementById('success-rate').textContent = `${successRate}%`;
+          }, 5000);
+
+          // Update active builds
+          setInterval(() => {
+            const activeBuilds = this.buildQueue.filter(b => b.progress > 0 && b.progress < 100).length;
+            document.getElementById('active-builds').textContent = `${activeBuilds} Builds`;
+          }, 1000);
+        }
+
+        simulateWebSocket() {
+          setInterval(() => {
+            this.wsConnected = !this.wsConnected;
+            const indicator = document.getElementById('ws-indicator');
+            const status = document.getElementById('ws-status');
+
+            if (this.wsConnected) {
+              indicator.classList.remove('disconnected');
+              status.textContent = 'WebSocket Connected';
+            } else {
+              indicator.classList.add('disconnected');
+              status.textContent = 'WebSocket Reconnecting...';
+            }
+
+            // Always reconnect
+            if (!this.wsConnected) {
+              setTimeout(() => {
+                this.wsConnected = true;
+                indicator.classList.remove('disconnected');
+                status.textContent = 'WebSocket Connected';
+              }, 2000);
+            }
+          }, 30000);
+        }
+      }
+
+      // Initialize dashboard
+      document.addEventListener('DOMContentLoaded', () => {
+        window.dashboard = new AdvancedBuildDashboard();
+      });
+    </script>
+  </body>
+</html>

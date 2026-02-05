@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📚 API Documentation - Fire22 & Fantasy402</title>
+    <meta name="description" content="Comprehensive API documentation for Fire22 and Fantasy402 enterprise platforms" />
+    <meta name="keywords" content="API, documentation, Fire22, Fantasy402, REST, endpoints, Swagger, OpenAPI" />
+
+    <!-- Swagger UI -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.7.2/swagger-ui.css" />
+    <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5.7.2/favicon-32x32.png" sizes="32x32" />
+    <style>
+      html {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      body {
+        margin: 0;
+        background: #fafafa;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .api-nav {
+        background: white;
+        border-bottom: 1px solid #e1e5e9;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .nav-tabs {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-tab {
+        color: #666;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+
+      .nav-tab:hover,
+      .nav-tab.active {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+      }
+
+      .api-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .api-section {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        overflow: hidden;
+      }
+
+      .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .section-content {
+        padding: 1.5rem;
+      }
+
+      .endpoint-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .endpoint-item {
+        border: 1px solid #e1e5e9;
+        border-radius: 6px;
+        padding: 1rem;
+        transition: all 0.2s;
+      }
+
+      .endpoint-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+      }
+
+      .endpoint-method {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 1rem;
+      }
+
+      .method-get {
+        background: #10b981;
+        color: white;
+      }
+      .method-post {
+        background: #f59e0b;
+        color: white;
+      }
+      .method-put {
+        background: #3b82f6;
+        color: white;
+      }
+      .method-delete {
+        background: #ef4444;
+        color: white;
+      }
+
+      .endpoint-path {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .endpoint-description {
+        color: #6b7280;
+        margin-top: 0.5rem;
+      }
+
+      .code-block {
+        background: #f8fafc;
+        border: 1px solid #e1e5e9;
+        border-radius: 6px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.875rem;
+        overflow-x: auto;
+      }
+
+      .code-block pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .status-healthy {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+
+      .status-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+
+      .status-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+
+      .param-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+      }
+
+      .param-table th,
+      .param-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .param-table th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .param-required {
+        color: #ef4444;
+        font-weight: 600;
+      }
+
+      .try-it-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+        margin: 1rem 0;
+      }
+
+      .try-it-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .response-example {
+        background: #f0f9ff;
+        border: 1px solid #0ea5e9;
+        border-radius: 6px;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .response-example h4 {
+        color: #0ea5e9;
+        margin-bottom: 0.5rem;
+      }
+
+      .tab-container {
+        margin: 2rem 0;
+      }
+
+      .tab-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .tab-btn {
+        background: none;
+        border: none;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+        font-weight: 500;
+        color: #6b7280;
+      }
+
+      .tab-btn.active {
+        color: #667eea;
+        border-bottom-color: #667eea;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .swagger-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin: 2rem 0;
+        overflow: hidden;
+      }
+
+      #swagger-ui {
+        background: #f8fafc;
+      }
+
+      @media (max-width: 768px) {
+        .nav-container {
+          padding: 0 1rem;
+        }
+
+        .nav-tabs {
+          display: none;
+        }
+
+        .api-container {
+          padding: 1rem;
+        }
+
+        .section-header,
+        .section-content {
+          padding: 1rem;
+        }
+
+        .endpoint-list {
+          gap: 0.5rem;
+        }
+
+        .endpoint-item {
+          padding: 0.75rem;
+        }
+      }
+
+      /* Loading animation */
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+      }
+
+      .loading::before {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #e1e5e9;
+        border-top: 2px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.5rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <h1>📚 API Documentation</h1>
+      <p>Comprehensive REST API documentation for Fire22 and Fantasy402 enterprise platforms</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="api-nav">
+      <div class="nav-container">
+        <a href="/" class="nav-brand">🚀 Fire22 API</a>
+        <div class="nav-tabs">
+          <a href="#overview" class="nav-tab active">Overview</a>
+          <a href="#endpoints" class="nav-tab">Endpoints</a>
+          <a href="#authentication" class="nav-tab">Authentication</a>
+          <a href="#examples" class="nav-tab">Examples</a>
+          <a href="#swagger" class="nav-tab">Interactive</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="api-container">
+      <!-- Overview Section -->
+      <section class="api-section" id="overview">
+        <div class="section-header">
+          <h2 class="section-title">📖 Overview</h2>
+        </div>
+        <div class="section-content">
+          <p>
+            Welcome to the comprehensive API documentation for Fire22 and Fantasy402 platforms. This documentation
+            provides detailed information about all available REST endpoints, authentication methods, and integration
+            guides.
+          </p>
+
+          <h3>🚀 Key Features</h3>
+          <ul>
+            <li>
+              <strong>RESTful Design:</strong>
+              Clean, consistent REST API following industry standards
+            </li>
+            <li>
+              <strong>Real-time Updates:</strong>
+              WebSocket support for live data streaming
+            </li>
+            <li>
+              <strong>Comprehensive Analytics:</strong>
+              Advanced metrics and business intelligence
+            </li>
+            <li>
+              <strong>Enterprise Security:</strong>
+              JWT authentication, rate limiting, and encryption
+            </li>
+            <li>
+              <strong>Multi-Platform:</strong>
+              Unified API for Fire22 and Fantasy402 services
+            </li>
+          </ul>
+
+          <h3>🔗 Base URLs</h3>
+          <div class="code-block">
+            <strong>Production:</strong>
+            https://api.fire22.com/v1
+            <br />
+            <strong>Development:</strong>
+            http://localhost:3001/api
+            <br />
+            <strong>Fantasy402:</strong>
+            https://api.fantasy402.com/v2
+          </div>
+
+          <h3>📊 API Status</h3>
+          <div style="display: flex; gap: 1rem; margin: 1rem 0">
+            <span class="status-badge status-healthy">🟢 Core API: Healthy</span>
+            <span class="status-badge status-healthy">🟢 Fantasy402: Connected</span>
+            <span class="status-badge status-healthy">🟢 WebSocket: Active</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Endpoints Section -->
+      <section class="api-section" id="endpoints">
+        <div class="section-header">
+          <h2 class="section-title">🔗 API Endpoints</h2>
+        </div>
+        <div class="section-content">
+          <div class="tab-container">
+            <div class="tab-buttons">
+              <button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
+              <button class="tab-btn" onclick="showTab('domain')">Domain</button>
+              <button class="tab-btn" onclick="showTab('fantasy')">Fantasy402</button>
+              <button class="tab-btn" onclick="showTab('analytics')">Analytics</button>
+            </div>
+
+            <!-- Dashboard Endpoints -->
+            <div class="tab-content active" id="dashboard-tab">
+              <div class="endpoint-list">
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/dashboard/metrics</span>
+                  </div>
+                  <div class="endpoint-description">Retrieve key performance metrics and KPIs</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/dashboard/metrics')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/dashboard/analytics</span>
+                  </div>
+                  <div class="endpoint-description">Get comprehensive analytics data and insights</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/dashboard/analytics')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/dashboard/health</span>
+                  </div>
+                  <div class="endpoint-description">Check system health and service status</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/dashboard/health')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/dashboard/performance</span>
+                  </div>
+                  <div class="endpoint-description">Get detailed performance metrics and benchmarks</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/dashboard/performance')">Try It</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Domain Endpoints -->
+            <div class="tab-content" id="domain-tab">
+              <div class="endpoint-list">
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/domain/stats</span>
+                  </div>
+                  <div class="endpoint-description">Get domain-wide statistics and metrics</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/domain/stats')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/domain/accounts</span>
+                  </div>
+                  <div class="endpoint-description">Retrieve all domain accounts information</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/domain/accounts')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/domain/bets</span>
+                  </div>
+                  <div class="endpoint-description">Get all betting activities and history</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/domain/bets')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-post">POST</span>
+                    <span class="endpoint-path">/api/domain/operations/create-account</span>
+                  </div>
+                  <div class="endpoint-description">Create a new domain account</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/domain/operations/create-account', 'POST')">
+                    Try It
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fantasy402 Endpoints -->
+            <div class="tab-content" id="fantasy-tab">
+              <div class="endpoint-list">
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/fantasy402/health</span>
+                  </div>
+                  <div class="endpoint-description">Check Fantasy402 service health and connectivity</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/fantasy402/health')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/fantasy402/users/{userId}</span>
+                  </div>
+                  <div class="endpoint-description">Get user information by ID</div>
+                  <div class="endpoint-description" style="font-size: 0.8rem; color: #666">
+                    Parameters: userId (path, required)
+                  </div>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-post">POST</span>
+                    <span class="endpoint-path">/api/fantasy402/users</span>
+                  </div>
+                  <div class="endpoint-description">Create a new Fantasy402 user</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/fantasy402/users', 'POST')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-post">POST</span>
+                    <span class="endpoint-path">/api/fantasy402/websocket/connect</span>
+                  </div>
+                  <div class="endpoint-description">Establish WebSocket connection for real-time updates</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/fantasy402/websocket/connect', 'POST')">
+                    Try It
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analytics Endpoints -->
+            <div class="tab-content" id="analytics-tab">
+              <div class="endpoint-list">
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/analytics/revenue</span>
+                  </div>
+                  <div class="endpoint-description">Get detailed revenue analytics and trends</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/analytics/revenue')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/analytics/users</span>
+                  </div>
+                  <div class="endpoint-description">Retrieve user behavior and engagement analytics</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/analytics/users')">Try It</button>
+                </div>
+
+                <div class="endpoint-item">
+                  <div>
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/api/analytics/performance</span>
+                  </div>
+                  <div class="endpoint-description">Get system performance metrics and benchmarks</div>
+                  <button class="try-it-btn" onclick="tryEndpoint('/api/analytics/performance')">Try It</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Authentication Section -->
+      <section class="api-section" id="authentication">
+        <div class="section-header">
+          <h2 class="section-title">🔐 Authentication</h2>
+        </div>
+        <div class="section-content">
+          <h3>JWT Token Authentication</h3>
+          <p>
+            Most API endpoints require authentication using JWT tokens. Include the token in the Authorization header:
+          </p>
+
+          <div class="code-block">Authorization: Bearer &lt;your-jwt-token&gt;</div>
+
+          <h3>API Key Authentication</h3>
+          <p>For service-to-service communication, use API keys:</p>
+
+          <div class="code-block">X-API-Key: &lt;your-api-key&gt;</div>
+
+          <h3>Rate Limiting</h3>
+          <ul>
+            <li>
+              <strong>Authenticated requests:</strong>
+              1000 requests per minute
+            </li>
+            <li>
+              <strong>Unauthenticated requests:</strong>
+              100 requests per minute
+            </li>
+            <li>
+              <strong>Analytics endpoints:</strong>
+              500 requests per minute
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Examples Section -->
+      <section class="api-section" id="examples">
+        <div class="section-header">
+          <h2 class="section-title">💡 Code Examples</h2>
+        </div>
+        <div class="section-content">
+          <h3>JavaScript/Fetch API</h3>
+          <div class="code-block">
+            <pre>
+// Get dashboard metrics
+const response = await fetch('/api/dashboard/metrics', {
+  headers: {
+    'Authorization': 'Bearer your-jwt-token',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log('Dashboard metrics:', data);</pre
+            >
+          </div>
+
+          <h3>cURL Examples</h3>
+          <div class="code-block">
+            <pre>
+# Get dashboard metrics
+curl -X GET "http://localhost:3001/api/dashboard/metrics" \
+  -H "Authorization: Bearer your-jwt-token" \
+  -H "Content-Type: application/json"
+
+# Create new account
+curl -X POST "http://localhost:3001/api/domain/operations/create-account" \
+  -H "Authorization: Bearer your-jwt-token" \
+  -H "Content-Type: application/json" \
+  -d '{}' </pre
+            >
+          </div>
+
+          <h3>Python/Requests</h3>
+          <div class="code-block">
+            <pre>
+import requests
+
+# Get dashboard metrics
+headers = {
+    'Authorization': 'Bearer your-jwt-token',
+    'Content-Type': 'application/json'
+}
+
+response = requests.get('http://localhost:3001/api/dashboard/metrics', headers=headers)
+data = response.json()
+print('Dashboard metrics:', data)</pre
+            >
+          </div>
+
+          <h3>Response Example</h3>
+          <div class="response-example">
+            <h4>✅ Success Response (200)</h4>
+            <pre>
+{
+  "success": true,
+  "data": {
+    "totalRevenue": 125000,
+    "activeUsers": 2500,
+    "roi": 85,
+    "performanceScore": 92
+  },
+  "message": "Dashboard metrics retrieved successfully",
+  "timestamp": "2025-01-29T10:30:00.000Z"
+}</pre
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Swagger UI -->
+      <section class="api-section" id="swagger">
+        <div class="section-header">
+          <h2 class="section-title">🎮 Interactive API Explorer</h2>
+        </div>
+        <div class="section-content">
+          <div class="swagger-container">
+            <div id="swagger-ui"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/swagger-ui-dist@5.7.2/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.7.2/swagger-ui-standalone-preset.js"></script>
+    <script>
+      // Tab switching functionality
+      function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.add('active');
+        event.target.classList.add('active');
+      }
+
+      // Try endpoint functionality
+      async function tryEndpoint(endpoint, method = 'GET') {
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = '⏳ Testing...';
+        button.disabled = true;
+
+        try {
+          const response = await fetch(endpoint, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const data = await response.json();
+          showResult(data, response.status);
+        } catch (error) {
+          showResult({ error: error.message }, 500);
+        }
+
+        button.textContent = originalText;
+        button.disabled = false;
+      }
+
+      function showResult(data, status) {
+        const result = document.createElement('div');
+        result.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: white;
+          border: 1px solid #e1e5e9;
+          border-radius: 8px;
+          padding: 2rem;
+          max-width: 600px;
+          max-height: 400px;
+          overflow-y: auto;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+          z-index: 10000;
+        `;
+
+        result.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="margin: 0; color: ${status < 400 ? '#10b981' : '#ef4444'}">
+              ${status < 400 ? '✅' : '❌'} Response (${status})
+            </h3>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+              background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;
+            ">×</button>
+          </div>
+          <pre style="
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 0;
+          ">${JSON.stringify(data, null, 2)}</pre>
+        `;
+
+        document.body.appendChild(result);
+      }
+
+      // Initialize Swagger UI
+      window.onload = function () {
+        const ui = SwaggerUIBundle({
+          url: '/docs/openapi.yaml',
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+          layout: 'StandaloneLayout',
+          tryItOutEnabled: true,
+          requestInterceptor: req => {
+            // Add authentication if available
+            const token = localStorage.getItem('api-token');
+            if (token) {
+              req.headers.Authorization = 'Bearer ' + token;
+            }
+            return req;
+          },
+        });
+      };
+
+      // Smooth scrolling for navigation
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

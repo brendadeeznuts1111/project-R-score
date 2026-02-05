@@ -1,0 +1,187 @@
+{
+  "name": "@fire22/wager-system",
+  "version": "1.0.3",
+  "description": "Fire22 Wager System - Financial calculations, wager processing, and risk management",
+  "main": "src/index.ts",
+  "type": "module",
+  "sideEffects": [
+    "./src/index.ts",
+    "./src/interfaces/index.ts",
+    "./src/types/index.ts"
+  ],
+  "author": {
+    "name": "Fire22 Development Team",
+    "email": "dev@fire22.com",
+    "url": "https://fire22.com"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://fire22-security-registry.nolarose1968-806.workers.dev/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/packages/wager-system"
+  },
+  "scripts": {
+    "test:wager:unit": "bun test --test-name-pattern='wager.*unit'",
+    "test:wager:integration": "bun test --test-name-pattern='wager.*integration'",
+    "test:wager:middleware": "bun test --test-name-pattern='wager.*middleware'",
+    "test:wager:financial": "bun test --test-name-pattern='wager.*financial'",
+    "test:wager:security": "bun test --test-name-pattern='wager.*security'",
+    "test:wager:smoke": "bun test --test-name-pattern='wager.*smoke'",
+    "test:wager:all": "bun run test:wager:unit && bun run test:wager:integration && bun run test:wager:financial && bun run test:wager:security",
+    "test:component:unit": "bun test --test-name-pattern='component.*unit'",
+    "test:component:integration": "bun test --test-name-pattern='component.*integration'",
+    "test:component:performance": "bun test --test-name-pattern='component.*performance'",
+    "test:component:stress": "bun test --test-name-pattern='component.*stress'",
+    "test:component:all": "bun run test:component:unit && bun run test:component:integration && bun run test:component:performance && bun run test:component:stress",
+    "benchmark:performance": "bun run scripts/benchmark-performance.ts",
+    "benchmark:load": "bun run scripts/benchmark-load.ts",
+    "benchmark:memory": "bun run scripts/benchmark-memory.ts",
+    "benchmark:functional": "bun run scripts/benchmark-functional.ts",
+    "benchmark:all": "bun run benchmark:performance && bun run benchmark:load && bun run benchmark:memory && bun run benchmark:functional",
+    "benchmark:quick": "bun run scripts/benchmark-quick.ts",
+    "benchmark:standard": "bun run scripts/benchmark-standard.ts",
+    "benchmark:comprehensive": "bun run scripts/benchmark-comprehensive.ts",
+    "benchmark:report": "bun run scripts/benchmark-report.ts",
+    "benchmark:status": "bun run scripts/benchmark-status.ts",
+    "benchmark:diagnose": "bun run scripts/benchmark-diagnose.ts",
+    "benchmark:profile": "bun run scripts/benchmark-profile.ts",
+    "benchmark:analyze": "bun run scripts/benchmark-analyze.ts",
+    "benchmark:optimize": "bun run scripts/benchmark-optimize.ts",
+    "template:list": "bun run scripts/template-list.ts",
+    "template:validate": "bun run scripts/template-validate.ts",
+    "template:test": "bun run scripts/template-test.ts",
+    "template:generate": "bun run scripts/template-generate.ts",
+    "template:export": "bun run scripts/template-export.ts",
+    "template:import": "bun run scripts/template-import.ts",
+    "component:status": "bun run scripts/component-status.ts",
+    "component:health": "bun run scripts/component-health.ts",
+    "component:logs": "bun run scripts/component-logs.ts",
+    "component:diagnose": "bun run scripts/component-diagnose.ts",
+    "component:test": "bun run scripts/component-test.ts",
+    "docs:generate": "bun run scripts/docs-generate.ts",
+    "docs:validate": "bun run scripts/docs-validate.ts",
+    "docs:export": "bun run scripts/docs-export.ts",
+    "build": "bun build ./src/index.ts --target=bun --outdir ./dist",
+    "build:wager:quick": "bun run build --profile=quick",
+    "build:wager:standard": "bun run build --profile=standard",
+    "build:wager:production": "bun run build --profile=production",
+    "build:wager:full": "bun run build --profile=full",
+    "dev": "bun --watch src/index.ts",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.29.0",
+    "zod": "^3.22.4",
+    "date-fns": "^3.0.6"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "keywords": [
+    "fire22",
+    "wager",
+    "sportsbook",
+    "financial",
+    "risk-management",
+    "settlement",
+    "benchmarks",
+    "templates",
+    "components"
+  ],
+  "config": {
+    "wager": {
+      "maxAmount": 100000,
+      "minAmount": 1,
+      "maxRisk": 50000,
+      "settlementTypes": [
+        "win",
+        "loss",
+        "push",
+        "void"
+      ],
+      "processingTimeout": 30000
+    },
+    "financial": {
+      "commissionRate": 0.05,
+      "taxRate": 0.25,
+      "bonusMultiplier": 1.1
+    },
+    "benchmarks": {
+      "iterations": 1000,
+      "concurrentUsers": 100,
+      "timeout": 30000,
+      "warmupIterations": 100
+    },
+    "templates": {
+      "enabled": true,
+      "cacheSize": 1000,
+      "validationLevel": "standard",
+      "autoUpdate": true
+    },
+    "components": {
+      "healthCheck": {
+        "enabled": true,
+        "interval": 30000,
+        "timeout": 10000
+      },
+      "metrics": {
+        "enabled": true,
+        "collection": true,
+        "reporting": true
+      }
+    }
+  },
+  "metadata": {
+    "component": "wager-system",
+    "responsibilities": [
+      "Wager processing and validation",
+      "Financial calculations",
+      "Risk management",
+      "Settlement processing",
+      "Commission calculations",
+      "Performance benchmarking",
+      "Template management",
+      "Component architecture"
+    ],
+    "testing": {
+      "unit": "Individual wager functions",
+      "integration": "Database and external services",
+      "financial": "Money calculations and validation",
+      "security": "Permission and access control",
+      "smoke": "Quick health checks",
+      "component": "Component functionality and integration",
+      "performance": "Performance and load testing",
+      "stress": "Stress testing and failure scenarios"
+    },
+    "benchmarks": {
+      "performance": "Response time and throughput testing",
+      "load": "Concurrent user and stress testing",
+      "memory": "Memory usage and optimization testing",
+      "functional": "Functional component performance testing"
+    },
+    "templates": {
+      "straight": "Single selection wager templates",
+      "parlay": "Multiple selection wager templates",
+      "sports": "Sports-specific wager templates",
+      "financial": "Financial calculation templates"
+    },
+    "components": {
+      "core": "Main wager processing components",
+      "support": "Supporting system components",
+      "data": "Data management and storage components"
+    },
+    "integration": {
+      "buildSystem": "Fire22 Build System v3.0.8 integration",
+      "externalServices": "External API and service integration",
+      "developmentTools": "Development environment integration"
+    }
+  }
+}

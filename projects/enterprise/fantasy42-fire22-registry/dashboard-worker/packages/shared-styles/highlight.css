@@ -1,0 +1,118 @@
+/* Fire22 Shared Highlight Styles - Bun CSS Bundling */
+
+/* 1. Design tokens: highlight rings with Fire22 brand colors */
+:root {
+  --fire22-highlight-primary: 0 0 0 2px oklch(70% 0.25 30); /* Orange/fire glow */
+  --fire22-highlight-hover: 0 0 0 3px oklch(75% 0.3 28); /* Brighter on hover */
+  --fire22-highlight-success: 0 0 0 2px oklch(75% 0.2 145); /* Green success */
+  --fire22-highlight-warning: 0 0 0 2px oklch(75% 0.2 60); /* Yellow warning */
+  --fire22-highlight-error: 0 0 0 2px oklch(65% 0.25 25); /* Red error */
+  --fire22-highlight-info: 0 0 0 2px oklch(65% 0.2 230); /* Blue info */
+
+  /* Animation timing */
+  --fire22-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 2. Base highlight utility class */
+.fire22-highlight {
+  border-radius: 12px;
+  box-shadow: var(--fire22-highlight-primary);
+  transition:
+    box-shadow var(--fire22-transition),
+    transform var(--fire22-transition);
+  position: relative;
+}
+
+.fire22-highlight:hover {
+  box-shadow: var(--fire22-highlight-hover);
+  transform: translateY(-2px);
+}
+
+/* 3. Variant classes for different states */
+.fire22-highlight.success {
+  box-shadow: var(--fire22-highlight-success);
+}
+
+.fire22-highlight.warning {
+  box-shadow: var(--fire22-highlight-warning);
+}
+
+.fire22-highlight.error {
+  box-shadow: var(--fire22-highlight-error);
+}
+
+.fire22-highlight.info {
+  box-shadow: var(--fire22-highlight-info);
+}
+
+/* 4. Package card specific enhancements */
+.fire22-package-card {
+  background: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(64, 224, 208, 0.2);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.fire22-package-card.fire22-highlight {
+  border-color: transparent;
+}
+
+.fire22-package-card.fire22-highlight:hover {
+  background: rgba(10, 14, 39, 0.8);
+  border-color: rgba(253, 187, 45, 0.2);
+}
+
+/* 5. Animated glow effect for active/selected items */
+.fire22-highlight.active::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(45deg, oklch(70% 0.25 30), oklch(75% 0.2 145), oklch(70% 0.25 30));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: fire22-glow 3s ease-in-out infinite;
+}
+
+@keyframes fire22-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 6. Focus styles for accessibility */
+.fire22-highlight:focus-visible {
+  outline: 2px solid oklch(75% 0.3 28);
+  outline-offset: 2px;
+}
+
+/* 7. Dark mode adjustments (automatic) */
+@media (prefers-color-scheme: dark) {
+  .fire22-highlight {
+    box-shadow:
+      var(--fire22-highlight-primary),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 8. Responsive adjustments */
+@media (max-width: 768px) {
+  .fire22-highlight {
+    border-radius: 8px;
+  }
+
+  .fire22-highlight:hover {
+    transform: none;
+  }
+}

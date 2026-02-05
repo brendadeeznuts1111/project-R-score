@@ -1,0 +1,128 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: '[FEATURE] '
+labels: ['enhancement', 'feature-request']
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✨ Feature Request
+
+        Thank you for suggesting a new feature! Please provide detailed information about your request.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Brief description of the requested feature
+      placeholder: 'What feature would you like to see?'
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem/Use Case
+      description: What problem does this feature solve?
+      placeholder: 'Describe the problem this feature would solve...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How should this feature work?
+      placeholder: 'Describe how you envision this feature working...'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Target Domain
+      description: Which domain would this feature primarily affect?
+      options:
+        - Security
+        - Compliance
+        - Analytics
+        - Betting
+        - API
+        - Database
+        - Cloudflare
+        - Web Servers
+        - Monitoring
+        - Telegram
+        - Accounting
+        - Collections
+        - External
+        - Financial Reporting
+        - Settlement
+        - VIP
+        - Benchmarking
+        - Core
+        - Health
+        - Config Management
+        - New Domain (specify below)
+    validations:
+      required: true
+
+  - type: input
+    id: new-domain
+    attributes:
+      label: New Domain Name (if applicable)
+      description: If this requires a new domain, what should it be called?
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - Critical (Business blocker)
+        - High (Important for business)
+        - Medium (Nice to have)
+        - Low (Future consideration)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Estimated Complexity
+      description: How complex do you think this feature would be?
+      options:
+        - Simple (1-2 days)
+        - Medium (1-2 weeks)
+        - Complex (1-2 months)
+        - Major (2+ months)
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative approaches?
+      placeholder: "Describe any alternative solutions you've considered..."
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any additional information or context?
+      placeholder: 'Add any other context, mockups, or examples...'
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched for similar feature requests
+          required: true
+        - label: This feature aligns with the enterprise architecture
+          required: true
+        - label: I have considered the security and compliance implications
+          required: true

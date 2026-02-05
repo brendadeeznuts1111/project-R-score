@@ -1,0 +1,38 @@
+# Bun configuration for @fire22/api-client
+# Uses isolated installs for strict dependency isolation
+
+[install]
+# Use isolated install strategy (prevents phantom dependencies)
+linker = "isolated"
+
+# Performance optimizations
+registry = "https://registry.npmjs.org"
+cache = true
+exact = false
+
+# Development configuration
+dev = true
+optional = true
+
+# Peer dependency handling
+auto = true
+
+# Workspace configuration
+workspaces = ["../*/package.json"]
+
+[build]
+# Build optimizations
+target = "bun"
+format = "esm"
+splitting = true
+minify = false
+
+[test]
+# Test configuration
+preload = "./tests/setup.ts"
+coverage = true
+
+[run]
+# Runtime optimizations
+bun = true
+hot = true

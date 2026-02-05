@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+*.log
+npm-debug.log*
+bun-debug.log*
+bun-error.log*
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+*.lcov
+
+# Temporary
+*.tmp
+*.temp
+.cache/

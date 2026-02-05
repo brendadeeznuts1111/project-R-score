@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Fire22 Dashboard - Error Code Registry</title>
+  <description>Real-time updates for Fire22 Dashboard error codes, system alerts, and troubleshooting information</description>
+  <link>https://dashboard-worker.nolarose2503.workers.dev/feeds/error-codes-rss.xml</link>
+  <atom:link href="https://dashboard-worker.nolarose2503.workers.dev/feeds/error-codes-rss.xml" rel="self" type="application/rss+xml"/>
+  <language>en-us</language>
+  <lastBuildDate>Wed, 28 Jan 2025 00:00:00 GMT</lastBuildDate>
+  <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+  <generator>Fire22 Dashboard Error Code System v1.0.0</generator>
+  <managingEditor>tech-team@fire22.ag (Fire22 Technology Department)</managingEditor>
+  <webMaster>ops-manager@fire22.ag (Fire22 Operations Department)</webMaster>
+  <category>Technology</category>
+  <category>System Monitoring</category>
+  <category>Error Tracking</category>
+  <ttl>60</ttl>
+  
+  <image>
+    <url>https://dashboard-worker.nolarose2503.workers.dev/assets/fire22-logo.png</url>
+    <title>Fire22 Dashboard</title>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/</link>
+    <width>144</width>
+    <height>144</height>
+    <description>Fire22 Dashboard Error Code Registry</description>
+  </image>
+
+  <!-- System Errors (E1xxx) - Technology Department -->
+  <item>
+    <title>🔴 CRITICAL: E1001 - SYSTEM_INIT_FAILED</title>
+    <description><![CDATA[
+      <h3>System Initialization Failed</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> CRITICAL</p>
+      <p><strong>HTTP Status:</strong> 500</p>
+      <p><strong>Description:</strong> Core system components failed to initialize properly during application startup.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Insufficient system resources (memory, disk space)</li>
+        <li>Missing or corrupted configuration files</li>
+        <li>Failed dependency injection</li>
+        <li>Database connection failure during startup</li>
+        <li>Missing environment variables</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Check system resources: <code>free -m && df -h</code></li>
+        <li>Verify configuration files syntax and completeness</li>
+        <li>Review system logs: <code>journalctl -u fire22-dashboard</code></li>
+        <li>Validate environment variables: <code>bun run env:validate</code></li>
+        <li>Test database connectivity before startup</li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag</p>
+      <p><strong>📚 Documentation:</strong> <a href="/docs/system/troubleshooting">System Troubleshooting Guide</a></p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E1001</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E1001</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>System</category>
+    <category>Critical</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <item>
+    <title>🟡 ERROR: E1002 - MEMORY_LIMIT_EXCEEDED</title>
+    <description><![CDATA[
+      <h3>Memory Limit Exceeded</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> ERROR</p>
+      <p><strong>HTTP Status:</strong> 507</p>
+      <p><strong>Description:</strong> Application exceeded allocated memory limits, which can cause system instability.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Memory leak in application code</li>
+        <li>Insufficient memory allocation</li>
+        <li>Large dataset processing without pagination</li>
+        <li>Recursive functions causing stack overflow</li>
+        <li>Unoptimized database queries loading too much data</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Increase memory allocation in configuration</li>
+        <li>Implement memory profiling: <code>bun run profile:memory</code></li>
+        <li>Optimize data processing with streaming/pagination</li>
+        <li>Review and optimize database queries</li>
+        <li>Monitor with: <code>bun run monitor:memory</code></li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E1002</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E1002</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>System</category>
+    <category>Error</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <item>
+    <title>🟡 ERROR: E1003 - DIRECTORY_NOT_FOUND</title>
+    <description><![CDATA[
+      <h3>Required Directory Not Found</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> ERROR</p>
+      <p><strong>HTTP Status:</strong> 404</p>
+      <p><strong>Description:</strong> System cannot locate required directory path, preventing file operations.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Directory path does not exist in filesystem</li>
+        <li>Incorrect relative or absolute path configuration</li>
+        <li>Directory was moved or deleted</li>
+        <li>Insufficient filesystem permissions</li>
+        <li>Case-sensitive filesystem path mismatch</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Verify directory exists: <code>ls -la /path/to/directory</code></li>
+        <li>Check working directory: <code>pwd</code></li>
+        <li>Create missing directory: <code>mkdir -p /path/to/directory</code></li>
+        <li>Check permissions: <code>ls -ld /path/to/directory</code></li>
+        <li>Use absolute paths instead of relative paths</li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E1003</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E1003</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>System</category>
+    <category>Error</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <!-- Database Errors (E2xxx) - Technology Department -->
+  <item>
+    <title>🔴 CRITICAL: E2001 - DB_CONNECTION_FAILED</title>
+    <description><![CDATA[
+      <h3>Database Connection Failed</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> CRITICAL</p>
+      <p><strong>HTTP Status:</strong> 503</p>
+      <p><strong>Description:</strong> Unable to establish connection to database server, preventing all data operations.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Database server is down or unreachable</li>
+        <li>Invalid connection string or credentials</li>
+        <li>Network connectivity issues</li>
+        <li>Firewall blocking database port</li>
+        <li>Database server resource exhaustion</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Check database status: <code>bun run health:database</code></li>
+        <li>Test connection: <code>bun run test:db-connection</code></li>
+        <li>Verify network connectivity: <code>ping db-host.fire22.ag</code></li>
+        <li>Check firewall rules and ports</li>
+        <li>Monitor database resources</li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag | ops-manager@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E2001</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E2001</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>Database</category>
+    <category>Critical</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <item>
+    <title>🟡 ERROR: E2002 - DB_QUERY_TIMEOUT</title>
+    <description><![CDATA[
+      <h3>Database Query Timeout</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> ERROR</p>
+      <p><strong>HTTP Status:</strong> 504</p>
+      <p><strong>Description:</strong> Database query exceeded maximum execution time, indicating performance issues.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Inefficient or unoptimized queries</li>
+        <li>Missing database indexes</li>
+        <li>Large dataset operations without pagination</li>
+        <li>Database server resource contention</li>
+        <li>Network latency issues</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Analyze query performance: <code>EXPLAIN ANALYZE</code></li>
+        <li>Add proper indexes for frequently queried columns</li>
+        <li>Implement query pagination for large datasets</li>
+        <li>Monitor database performance: <code>bun run monitor:db</code></li>
+        <li>Optimize slow queries in query log</li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E2002</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E2002</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>Database</category>
+    <category>Error</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <!-- API Errors (E3xxx) - Technology Department -->
+  <item>
+    <title>⚠️ WARNING: E3001 - API_UNAUTHORIZED</title>
+    <description><![CDATA[
+      <h3>Unauthorized API Request</h3>
+      <p><strong>Department:</strong> Technology Department 💻 | Customer Support 🎧</p>
+      <p><strong>Severity:</strong> WARNING</p>
+      <p><strong>HTTP Status:</strong> 401</p>
+      <p><strong>Description:</strong> Request lacks valid authentication credentials or token has expired.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Missing or invalid API key/token</li>
+        <li>Expired authentication token</li>
+        <li>Incorrect authentication header format</li>
+        <li>Revoked or suspended credentials</li>
+        <li>Clock skew causing token validation failure</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Verify API key: <code>curl -H "Authorization: Bearer $TOKEN"</code></li>
+        <li>Check token expiration and refresh if needed</li>
+        <li>Ensure proper header format: <code>Authorization: Bearer [token]</code></li>
+        <li>Synchronize system clocks with NTP</li>
+        <li>Contact admin if credentials are suspended</li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag | support@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E3001</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E3001</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>API</category>
+    <category>Warning</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <item>
+    <title>⚠️ WARNING: E3002 - API_RATE_LIMIT_EXCEEDED</title>
+    <description><![CDATA[
+      <h3>API Rate Limit Exceeded</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> WARNING</p>
+      <p><strong>HTTP Status:</strong> 429</p>
+      <p><strong>Description:</strong> Request rate exceeds configured API limits. Implement proper rate limiting handling.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Too many requests in short time period</li>
+        <li>Missing rate limiting implementation in client</li>
+        <li>Inefficient API usage patterns</li>
+        <li>Multiple clients using same credentials</li>
+        <li>Burst traffic without proper throttling</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Implement exponential backoff retry strategy</li>
+        <li>Use request caching to reduce API calls</li>
+        <li>Implement request queuing and throttling</li>
+        <li>Review API usage patterns and optimize</li>
+        <li>Consider upgrading rate limit tier</li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E3002</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E3002</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>API</category>
+    <category>Warning</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <!-- Network Errors (E4xxx) - Technology Department -->
+  <item>
+    <title>🟡 ERROR: E4001 - NETWORK_TIMEOUT</title>
+    <description><![CDATA[
+      <h3>Network Request Timeout</h3>
+      <p><strong>Department:</strong> Technology Department 💻 | Operations ⚙️</p>
+      <p><strong>Severity:</strong> ERROR</p>
+      <p><strong>HTTP Status:</strong> 504</p>
+      <p><strong>Description:</strong> Network request exceeded timeout duration, indicating connectivity or performance issues.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Slow network connection</li>
+        <li>Server overload or unresponsive</li>
+        <li>DNS resolution delays</li>
+        <li>Network congestion or packet loss</li>
+        <li>Insufficient timeout configuration</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Check network latency: <code>ping fire22.ag</code></li>
+        <li>Test DNS resolution: <code>nslookup fire22.ag</code></li>
+        <li>Increase request timeout settings appropriately</li>
+        <li>Implement retry logic with exponential backoff</li>
+        <li>Monitor network performance and routing</li>
+      </ul>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag | ops-manager@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E4001</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E4001</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>Network</category>
+    <category>Error</category>
+    <category>Technology</category>
+    <dc:creator>Fire22 Technology Department</dc:creator>
+  </item>
+
+  <!-- Fire22 Integration Errors (E7xxx) - Operations Department -->
+  <item>
+    <title>🔴 CRITICAL: E7001 - FIRE22_API_CONNECTION_FAILED</title>
+    <description><![CDATA[
+      <h3>Fire22 API Connection Failed</h3>
+      <p><strong>Department:</strong> Operations Department ⚙️ | Technology Department 💻</p>
+      <p><strong>Severity:</strong> CRITICAL</p>
+      <p><strong>HTTP Status:</strong> 503</p>
+      <p><strong>Description:</strong> Unable to connect to Fire22 sportsbook API, preventing betting operations and data sync.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Fire22 API server downtime or maintenance</li>
+        <li>Invalid Fire22 API credentials</li>
+        <li>Network connectivity to fire22.ag domain</li>
+        <li>DNS resolution issues for Fire22 endpoints</li>
+        <li>Fire22 API rate limiting or blocking</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Check Fire22 API status: <code>curl https://api.fire22.ag/health</code></li>
+        <li>Verify Fire22 credentials and authentication</li>
+        <li>Test DNS resolution: <code>nslookup api.fire22.ag</code></li>
+        <li>Check API rate limits and quotas</li>
+        <li>Monitor Fire22 service status page</li>
+      </ul>
+      
+      <p><strong>🚨 Business Impact:</strong> Sportsbook operations disrupted</p>
+      <p><strong>📞 Contact:</strong> ops-manager@fire22.ag | tech-team@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E7001</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E7001</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>Fire22</category>
+    <category>Critical</category>
+    <category>Operations</category>
+    <dc:creator>Fire22 Operations Department</dc:creator>
+  </item>
+
+  <!-- Telegram Integration Errors (E8xxx) - Customer Support Department -->
+  <item>
+    <title>🟡 ERROR: E8001 - TELEGRAM_BOT_AUTHENTICATION_FAILED</title>
+    <description><![CDATA[
+      <h3>Telegram Bot Authentication Failed</h3>
+      <p><strong>Department:</strong> Customer Support Department 🎧 | Technology Department 💻</p>
+      <p><strong>Severity:</strong> ERROR</p>
+      <p><strong>HTTP Status:</strong> 401</p>
+      <p><strong>Description:</strong> Telegram bot token is invalid or expired, preventing bot functionality and customer communication.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Invalid or expired Telegram bot token</li>
+        <li>Bot token revoked by Telegram</li>
+        <li>Incorrect bot token configuration</li>
+        <li>Network connectivity to Telegram API</li>
+        <li>Telegram API service disruption</li>
+      </ul>
+      
+      <h4>💡 Solutions:</h4>
+      <ul>
+        <li>Verify bot token: <code>curl https://api.telegram.org/bot$TOKEN/getMe</code></li>
+        <li>Regenerate bot token if compromised via @BotFather</li>
+        <li>Check bot token configuration and format</li>
+        <li>Test connectivity: <code>ping api.telegram.org</code></li>
+        <li>Monitor Telegram API status</li>
+      </ul>
+      
+      <p><strong>🚨 Customer Impact:</strong> Bot notifications and support disabled</p>
+      <p><strong>📞 Contact:</strong> support@fire22.ag | tech-team@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E8001</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E8001</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>Telegram</category>
+    <category>Error</category>
+    <category>Customer Support</category>
+    <dc:creator>Fire22 Customer Support Department</dc:creator>
+  </item>
+
+  <!-- Footer Information -->
+  <item>
+    <title>📊 Fire22 Dashboard - Error Code Registry Information</title>
+    <description><![CDATA[
+      <h3>🔧 Error Code Registry System</h3>
+      <p>This RSS feed provides real-time updates for Fire22 Dashboard error codes, departmental assignments, and troubleshooting information.</p>
+      
+      <h4>📈 System Statistics:</h4>
+      <ul>
+        <li><strong>Total Error Codes:</strong> 9 documented</li>
+        <li><strong>Departments Involved:</strong> 3 (Technology, Operations, Customer Support)</li>
+        <li><strong>Severity Levels:</strong> Critical (3), Error (4), Warning (2)</li>
+        <li><strong>Last Updated:</strong> January 28, 2025</li>
+      </ul>
+      
+      <h4>🏢 Departmental Responsibilities:</h4>
+      <ul>
+        <li><strong>Technology Department 💻:</strong> System, Database, API, Network errors</li>
+        <li><strong>Operations Department ⚙️:</strong> Fire22 integration, business processes</li>
+        <li><strong>Customer Support Department 🎧:</strong> Telegram bot, user communications</li>
+      </ul>
+      
+      <h4>🔗 Resources:</h4>
+      <ul>
+        <li><a href="/docs/error-codes.json">Complete Error Registry (JSON)</a></li>
+        <li><a href="/docs/error-code-links.md">Error Code Documentation Links</a></li>
+        <li><a href="/src/departments/">Department Information</a></li>
+        <li><a href="/docs/api/fire22-endpoints">Fire22 API Documentation</a></li>
+      </ul>
+      
+      <p><strong>🔄 Feed Updates:</strong> This RSS feed is updated automatically when new error codes are added or existing codes are modified.</p>
+      <p><strong>📞 Technical Support:</strong> tech-team@fire22.ag</p>
+      <p><strong>⚙️ Operations Support:</strong> ops-manager@fire22.ag</p>
+    ]]></description>
+    <link>https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json</link>
+    <guid isPermaLink="true">https://dashboard-worker.nolarose2503.workers.dev/feeds/error-codes-info</guid>
+    <pubDate>Wed, 28 Jan 2025 00:00:00 GMT</pubDate>
+    <category>Information</category>
+    <category>System</category>
+    <dc:creator>Fire22 Dashboard System</dc:creator>
+  </item>
+
+</channel>
+</rss>

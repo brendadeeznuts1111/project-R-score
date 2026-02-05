@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 Terminal Box Drawing Utility & Demo</title>
+    <style>
+      :root {
+        --bg-primary: #0a0e27;
+        --bg-secondary: #151a3a;
+        --text-primary: #ffffff;
+        --text-secondary: #a8b2d1;
+        --fire-primary: #ff6b35;
+        --terminal-green: #4ade80;
+        --border-color: #2a3152;
+        --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: var(--fire-primary);
+        margin-bottom: 2rem;
+        text-align: center;
+        font-size: 2rem;
+      }
+
+      .demo-section {
+        margin-bottom: 3rem;
+      }
+
+      .demo-title {
+        color: var(--terminal-green);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+
+      .terminal-box {
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--terminal-green);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        font-family: var(--font-mono);
+        white-space: pre;
+        line-height: 1.2;
+        overflow-x: auto;
+      }
+
+      .grid-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .controls {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+      }
+
+      .control-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        align-items: center;
+      }
+
+      label {
+        color: var(--text-secondary);
+        min-width: 100px;
+      }
+
+      input,
+      select {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        padding: 0.5rem;
+        font-family: var(--font-mono);
+      }
+
+      button {
+        background: var(--fire-primary);
+        color: var(--bg-primary);
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-family: var(--font-mono);
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(255, 107, 53, 0.5);
+      }
+
+      .connected-boxes {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .connection {
+        color: var(--fire-primary);
+        font-size: 1.2rem;
+      }
+
+      .code-output {
+        background: rgba(0, 0, 0, 0.9);
+        color: var(--text-secondary);
+        padding: 1rem;
+        margin-top: 1rem;
+        border: 1px solid var(--border-color);
+        font-size: 0.9rem;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔥 Terminal Box Drawing Utility</h1>
+
+      <!-- Interactive Controls -->
+      <div class="controls">
+        <h2 style="color: var(--terminal-green); margin-bottom: 1rem">Interactive Box Generator</h2>
+        <div class="control-group">
+          <label>Width:</label>
+          <input type="number" id="boxWidth" value="40" min="10" max="80" />
+        </div>
+        <div class="control-group">
+          <label>Height:</label>
+          <input type="number" id="boxHeight" value="5" min="3" max="20" />
+        </div>
+        <div class="control-group">
+          <label>Title:</label>
+          <input type="text" id="boxTitle" value="System Status" placeholder="Enter title (optional)" />
+        </div>
+        <div class="control-group">
+          <label>Content:</label>
+          <input type="text" id="boxContent" value="All systems operational" placeholder="Enter content" />
+        </div>
+        <div class="control-group">
+          <label>Style:</label>
+          <select id="boxStyle">
+            <option value="single">Single Line</option>
+            <option value="double">Double Line (simulated)</option>
+            <option value="heavy">Heavy (bold)</option>
+          </select>
+        </div>
+        <button onclick="generateBox()">Generate Box</button>
+      </div>
+
+      <!-- Generated Box Output -->
+      <div class="demo-section">
+        <h2 class="demo-title">Generated Box:</h2>
+        <div class="terminal-box" id="generatedBox"></div>
+        <div class="code-output" id="codeOutput"></div>
+      </div>
+
+      <!-- Demo Section 1: Basic Boxes -->
+      <div class="demo-section">
+        <h2 class="demo-title">Basic Box Examples:</h2>
+        <div class="grid-demo">
+          <div class="terminal-box" id="box1"></div>
+          <div class="terminal-box" id="box2"></div>
+          <div class="terminal-box" id="box3"></div>
+        </div>
+      </div>
+
+      <!-- Demo Section 2: Connected Boxes -->
+      <div class="demo-section">
+        <h2 class="demo-title">Connected Boxes:</h2>
+        <div class="terminal-box" id="connectedBoxes"></div>
+      </div>
+
+      <!-- Demo Section 3: Complex Layouts -->
+      <div class="demo-section">
+        <h2 class="demo-title">Complex Dashboard Layout:</h2>
+        <div class="terminal-box" id="dashboardLayout"></div>
+      </div>
+
+      <!-- Demo Section 4: Nested Boxes -->
+      <div class="demo-section">
+        <h2 class="demo-title">Nested Box Structure:</h2>
+        <div class="terminal-box" id="nestedBoxes"></div>
+      </div>
+    </div>
+
+    <script>
+      class TerminalBoxDrawer {
+        constructor() {
+          // Box drawing characters
+          this.chars = {
+            topLeft: '╭',
+            topRight: '╮',
+            bottomLeft: '╰',
+            bottomRight: '╯',
+            horizontal: '─',
+            vertical: '│',
+            connectLeft: '├',
+            connectRight: '┤',
+            connectTop: '┬',
+            connectBottom: '┴',
+            cross: '┼',
+          };
+
+          // Double line variants (using bold/different style)
+          this.doubleChars = {
+            topLeft: '╔',
+            topRight: '╗',
+            bottomLeft: '╚',
+            bottomRight: '╝',
+            horizontal: '═',
+            vertical: '║',
+          };
+        }
+
+        /**
+         * Create a single box with optional title
+         * @param {number} width - Width of the box
+         * @param {number} height - Height of the box
+         * @param {string} title - Optional title for the box
+         * @param {string} content - Content to display inside
+         * @param {string} style - Style of box (single, double, heavy)
+         */
+        createBox(width, height, title = '', content = '', style = 'single') {
+          const chars = style === 'double' ? this.doubleChars : this.chars;
+          let box = [];
+
+          // Top line with optional title
+          if (title) {
+            const titleStr = ` ${title} `;
+            const remainingWidth = width - titleStr.length - 4;
+            const leftPadding = Math.floor(remainingWidth / 2);
+            const rightPadding = Math.ceil(remainingWidth / 2);
+
+            box.push(
+              chars.topLeft +
+                chars.horizontal.repeat(leftPadding) +
+                titleStr +
+                chars.horizontal.repeat(rightPadding) +
+                chars.topRight
+            );
+          } else {
+            box.push(chars.topLeft + chars.horizontal.repeat(width - 2) + chars.topRight);
+          }
+
+          // Middle lines with content
+          const contentLines = content ? content.split('\n') : [];
+          for (let i = 0; i < height - 2; i++) {
+            let line = chars.vertical;
+
+            if (contentLines[i]) {
+              const contentStr = contentLines[i];
+              const padding = width - contentStr.length - 2;
+              line += contentStr + ' '.repeat(Math.max(0, padding));
+            } else {
+              line += ' '.repeat(width - 2);
+            }
+
+            line += chars.vertical;
+            box.push(line);
+          }
+
+          // Bottom line
+          box.push(chars.bottomLeft + chars.horizontal.repeat(width - 2) + chars.bottomRight);
+
+          return box.join('\n');
+        }
+
+        /**
+         * Create connected boxes vertically
+         */
+        createConnectedBoxes(boxes) {
+          let result = [];
+
+          for (let i = 0; i < boxes.length; i++) {
+            const box = boxes[i];
+            const boxLines = this.createBox(box.width, box.height, box.title, box.content).split('\n');
+
+            // Modify connection points if not first or last box
+            if (i > 0) {
+              // Connect to previous box
+              const midPoint = Math.floor(box.width / 2);
+              result.push(' '.repeat(midPoint) + this.chars.vertical);
+            }
+
+            if (i < boxes.length - 1) {
+              // Prepare connection to next box
+              const lastLine = boxLines[boxLines.length - 1];
+              const midPoint = Math.floor(box.width / 2);
+              boxLines[boxLines.length - 1] =
+                lastLine.substring(0, midPoint) + this.chars.connectBottom + lastLine.substring(midPoint + 1);
+            }
+
+            result.push(...boxLines);
+          }
+
+          return result.join('\n');
+        }
+
+        /**
+         * Create a dashboard-style layout with multiple sections
+         */
+        createDashboardLayout() {
+          const sections = [];
+
+          // Header
+          sections.push(
+            this.createBox(
+              80,
+              4,
+              'Fire22 System Dashboard',
+              '  Status: ● Online | Agents: 4 | Builds: 12 | Security: 98%'
+            )
+          );
+
+          sections.push('');
+
+          // Main content area with columns
+          const leftPanel = this.createBox(
+            38,
+            8,
+            'Agents',
+            '  ● BLAKE  - Active - 94%\n  ● DAKO   - Active - 88%\n  ● SCRAM  - Active - 76%\n  ● SPEN   - Active - 92%'
+          );
+
+          const rightPanel = this.createBox(
+            38,
+            8,
+            'Build Queue',
+            '  1. Production Build  [████████░░] 75%\n  2. Security Scan     [███░░░░░░░] 30%\n  3. Test Suite        [░░░░░░░░░░] 0%'
+          );
+
+          // Combine panels side by side
+          const leftLines = leftPanel.split('\n');
+          const rightLines = rightPanel.split('\n');
+          const combined = leftLines.map((line, i) => line + '  ' + (rightLines[i] || ''));
+
+          sections.push(...combined);
+          sections.push('');
+
+          // Footer
+          sections.push(this.createBox(80, 3, 'Terminal', '  [00:00:00] System initialized successfully'));
+
+          return sections.join('\n');
+        }
+
+        /**
+         * Create nested boxes
+         */
+        createNestedBoxes() {
+          // Outer box
+          const outerContent = this.createBox(60, 12, 'Container', '');
+          const outerLines = outerContent.split('\n');
+
+          // Inner boxes
+          const innerBox1 = this.createBox(25, 4, 'Module A', '  Status: Active');
+          const innerBox2 = this.createBox(25, 4, 'Module B', '  Status: Ready');
+
+          const innerLines1 = innerBox1.split('\n');
+          const innerLines2 = innerBox2.split('\n');
+
+          // Insert inner boxes into outer box
+          for (let i = 0; i < innerLines1.length; i++) {
+            const lineIndex = i + 3;
+            if (lineIndex < outerLines.length - 1) {
+              outerLines[lineIndex] =
+                outerLines[lineIndex].substring(0, 3) +
+                innerLines1[i] +
+                '  ' +
+                innerLines2[i] +
+                outerLines[lineIndex].substring(56);
+            }
+          }
+
+          return outerLines.join('\n');
+        }
+
+        /**
+         * Create a tree structure with boxes
+         */
+        createTreeStructure() {
+          const lines = [];
+
+          lines.push(this.createBox(30, 3, 'Root', '  Main Process'));
+          lines.push('               │');
+          lines.push('       ┌───────┴───────┐');
+          lines.push('       │               │');
+
+          const child1 = this.createBox(20, 3, 'Child A', '  Worker 1');
+          const child2 = this.createBox(20, 3, 'Child B', '  Worker 2');
+
+          const child1Lines = child1.split('\n');
+          const child2Lines = child2.split('\n');
+
+          for (let i = 0; i < child1Lines.length; i++) {
+            lines.push(child1Lines[i] + '     ' + child2Lines[i]);
+          }
+
+          return lines.join('\n');
+        }
+      }
+
+      // Initialize drawer
+      const drawer = new TerminalBoxDrawer();
+
+      // Generate initial examples
+      function initializeExamples() {
+        // Basic boxes
+        document.getElementById('box1').textContent = drawer.createBox(
+          35,
+          5,
+          'Status',
+          '  All systems operational\n  CPU: 45% | Memory: 62%'
+        );
+        document.getElementById('box2').textContent = drawer.createBox(
+          35,
+          5,
+          'Network',
+          '  Latency: 12ms\n  Bandwidth: 1.2 Gbps'
+        );
+        document.getElementById('box3').textContent = drawer.createBox(
+          35,
+          5,
+          'Security',
+          '  Firewall: Active\n  Last scan: 2 min ago'
+        );
+
+        // Connected boxes
+        const connectedBoxes = drawer.createConnectedBoxes([
+          { width: 40, height: 4, title: 'Pipeline Stage 1', content: '  Status: Complete' },
+          { width: 40, height: 4, title: 'Pipeline Stage 2', content: '  Status: In Progress' },
+          { width: 40, height: 4, title: 'Pipeline Stage 3', content: '  Status: Pending' },
+        ]);
+        document.getElementById('connectedBoxes').textContent = connectedBoxes;
+
+        // Dashboard layout
+        document.getElementById('dashboardLayout').textContent = drawer.createDashboardLayout();
+
+        // Nested boxes
+        document.getElementById('nestedBoxes').textContent = drawer.createNestedBoxes();
+
+        // Generate initial custom box
+        generateBox();
+      }
+
+      // Generate custom box from controls
+      function generateBox() {
+        const width = parseInt(document.getElementById('boxWidth').value);
+        const height = parseInt(document.getElementById('boxHeight').value);
+        const title = document.getElementById('boxTitle').value;
+        const content = document.getElementById('boxContent').value;
+        const style = document.getElementById('boxStyle').value;
+
+        const box = drawer.createBox(width, height, title, content, style);
+        document.getElementById('generatedBox').textContent = box;
+
+        // Show the code to generate this box
+        const code = `drawer.createBox(${width}, ${height}, '${title}', '${content}', '${style}');`;
+        document.getElementById('codeOutput').textContent = 'Code:\n' + code;
+      }
+
+      // Initialize on load
+      document.addEventListener('DOMContentLoaded', initializeExamples);
+    </script>
+  </body>
+</html>

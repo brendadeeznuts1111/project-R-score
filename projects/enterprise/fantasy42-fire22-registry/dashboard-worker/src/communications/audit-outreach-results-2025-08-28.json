@@ -1,0 +1,44 @@
+[
+  {
+    "to": "mike.hunt@technology.fire22",
+    "subject": "📋 STANDARD PRIORITY - Fire22 Communications Infrastructure Audit Request - Technology Department",
+    "status": "sent",
+    "timestamp": "2025-08-28T22:20:52.857Z",
+    "priority": "standard"
+  },
+  {
+    "to": "head@marketing.fire22",
+    "subject": "🟡 HIGH PRIORITY - Fire22 Communications Infrastructure Audit Request - Marketing Department",
+    "status": "sent",
+    "timestamp": "2025-08-28T22:20:52.857Z",
+    "priority": "high"
+  },
+  {
+    "to": "head@security.fire22",
+    "subject": "🚨 CRITICAL PRIORITY - Fire22 Communications Infrastructure Audit Request - Security Department",
+    "status": "sent",
+    "timestamp": "2025-08-28T22:20:52.857Z",
+    "priority": "immediate"
+  },
+  {
+    "to": "head@finance.fire22",
+    "subject": "🟡 HIGH PRIORITY - Fire22 Communications Infrastructure Audit Request - Finance Department",
+    "status": "sent",
+    "timestamp": "2025-08-28T22:20:52.857Z",
+    "priority": "high"
+  },
+  {
+    "to": "head@operations.fire22",
+    "subject": "🟡 HIGH PRIORITY - Fire22 Communications Infrastructure Audit Request - Operations Department",
+    "status": "sent",
+    "timestamp": "2025-08-28T22:20:52.857Z",
+    "priority": "high"
+  },
+  {
+    "to": "head@legal.fire22",
+    "subject": "🟡 HIGH PRIORITY - Fire22 Communications Infrastructure Audit Request - Legal Department",
+    "status": "sent",
+    "timestamp": "2025-08-28T22:20:52.857Z",
+    "priority": "high"
+  }
+]

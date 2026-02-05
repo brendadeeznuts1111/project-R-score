@@ -1,0 +1,207 @@
+# 🛡️ Enterprise Branch Protection & Validation
+# Consolidated branch management for domain-driven development
+
+name: 🛡️ Branch Protection
+
+on:
+  push:
+    branches: [main, develop, enterprise, staging]
+  pull_request:
+    branches: [main, develop, enterprise, staging]
+  create:
+  delete:
+
+jobs:
+  # 🔍 Branch Validation
+  branch-validation:
+    name: 🔍 Branch Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.0.0'
+
+      - name: Validate branch naming
+        run: |
+          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+          echo "🔍 Validating branch: $BRANCH_NAME"
+
+          # Check branch naming convention
+          if [[ $BRANCH_NAME =~ ^(main|develop|enterprise|staging)$ ]]; then
+            echo "✅ Protected branch detected"
+          elif [[ $BRANCH_NAME =~ ^feature/ ]]; then
+            echo "✅ Feature branch naming convention"
+          elif [[ $BRANCH_NAME =~ ^bugfix/ ]]; then
+            echo "✅ Bugfix branch naming convention"
+          elif [[ $BRANCH_NAME =~ ^hotfix/ ]]; then
+            echo "✅ Hotfix branch naming convention"
+          elif [[ $BRANCH_NAME =~ ^release/ ]]; then
+            echo "✅ Release branch naming convention"
+          else
+            echo "❌ Invalid branch naming convention"
+            exit 1
+          fi
+
+      - name: Validate CODEOWNERS
+        run: |
+          echo "📋 Validating CODEOWNERS configuration"
+          if [ -f ".github/CODEOWNERS" ]; then
+            bun run validate:codeowners
+          else
+            echo "❌ CODEOWNERS file missing"
+            exit 1
+          fi
+
+  # 🏷️ Branch Labeling
+  branch-labeling:
+    name: 🏷️ Branch Labeling
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.0.0'
+
+      - name: Determine branch type and labels
+        id: analyze
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "🏷️ Analyzing branch for labels: $BRANCH_NAME"
+
+          # Extract domain/package from branch name
+          if [[ $BRANCH_NAME =~ ^feature/([^/]+)- ]]; then
+            DOMAIN="${BASH_REMATCH[1]}"
+            echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
+            echo "type=feature" >> $GITHUB_OUTPUT
+          elif [[ $BRANCH_NAME =~ ^pkg/([^/]+)- ]]; then
+            PACKAGE="${BASH_REMATCH[1]}"
+            echo "domain=$PACKAGE" >> $GITHUB_OUTPUT
+            echo "type=package" >> $GITHUB_OUTPUT
+          else
+            echo "domain=unknown" >> $GITHUB_OUTPUT
+            echo "type=other" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Add domain labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const domain = '${{ steps.analyze.outputs.domain }}';
+            const type = '${{ steps.analyze.outputs.type }}';
+
+            const labels = [];
+
+            // Add type label
+            if (type === 'feature') {
+              labels.push('enhancement');
+            } else if (type === 'package') {
+              labels.push('package');
+            }
+
+            // Add domain-specific labels
+            const domainLabels = {
+              'security': 'security',
+              'compliance': 'compliance',
+              'finance': 'finance',
+              'betting': 'betting',
+              'users': 'users',
+              'dashboard': 'dashboard',
+              'cloudflare': 'infrastructure'
+            };
+
+            if (domainLabels[domain]) {
+              labels.push(domainLabels[domain]);
+            }
+
+            // Add enterprise label for enterprise packages
+            if (type === 'package') {
+              labels.push('enterprise');
+            }
+
+            // Apply labels
+            for (const label of labels) {
+              try {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  labels: [label]
+                });
+              } catch (error) {
+                console.log(`Label ${label} may already exist or be invalid`);
+              }
+            }
+
+  # 🔐 Branch Protection Rules
+  protection-rules:
+    name: 🔐 Protection Rules
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.0.0'
+
+      - name: Validate protection requirements
+        run: |
+          echo "🔐 Validating branch protection requirements"
+
+          # Check for required approvals
+          APPROVALS=$(gh pr view ${{ github.event.pull_request.number }} --json reviews --jq '.reviews | map(select(.state == "APPROVED")) | length' 2>/dev/null || echo "0")
+
+          if [ "$APPROVALS" -lt 1 ]; then
+            echo "❌ Insufficient approvals for protected branch"
+            exit 1
+          fi
+
+          # Check for required status checks
+          STATUS_CHECKS=$(gh pr view ${{ github.event.pull_request.number }} --json statusCheckRollup --jq '.statusCheckRollup | map(select(.state == "SUCCESS")) | length' 2>/dev/null || echo "0")
+
+          if [ "$STATUS_CHECKS" -lt 3 ]; then
+            echo "❌ Insufficient status checks passed"
+            exit 1
+          fi
+
+          echo "✅ Branch protection requirements met"
+
+      - name: Update branch protection rules
+        run: |
+          echo "🛡️ Updating branch protection rules"
+          bun run branch:protection:update
+
+  # 📊 Branch Analytics
+  branch-analytics:
+    name: 📊 Branch Analytics
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.0.0'
+
+      - name: Collect branch metrics
+        run: |
+          echo "📊 Collecting branch analytics"
+          bun run analytics:branch
+
+      - name: Update branch dashboard
+        run: |
+          echo "📈 Updating branch analytics dashboard"
+          bun run analytics:branch:dashboard

@@ -1,0 +1,383 @@
+# 🔥 Fantasy42-Fire22 GitHub Repository Settings
+# This file configures repository settings via the GitHub Settings app
+# https://github.com/apps/settings
+
+repository:
+  # Repository visibility and features
+  private: true
+  has_issues: true
+  has_projects: true
+  has_wiki: false
+  has_discussions: true
+  has_downloads: false
+  allow_merge_commit: false
+  allow_rebase_merge: true
+  allow_squash_merge: true
+  allow_auto_merge: false
+  delete_branch_on_merge: true
+  allow_update_branch: true
+
+  # Security settings
+  security_and_analysis:
+    advanced_security:
+      status: enabled
+    secret_scanning:
+      status: enabled
+    secret_scanning_push_protection:
+      status: enabled
+    dependabot_security_updates:
+      status: enabled
+    dependabot_alerts:
+      status: enabled
+    code_scanning_default_setup:
+      status: enabled
+
+  # Topics for repository discovery
+  topics:
+    - fantasy42
+    - fire22
+    - enterprise
+    - domain-driven-design
+    - microservices
+    - cloudflare
+    - typescript
+    - bun
+    - gaming
+    - betting
+    - finance
+    - security
+    - compliance
+    - ci-cd
+    - devops
+
+# Branch protection rules
+branches:
+  # Main branch - STRICT PROTECTION
+  - name: main
+    protection:
+      required_status_checks:
+        required_check:
+          - 'domain-detection'
+          - 'domain-testing'
+          - 'security-compliance'
+          - 'integration-testing'
+          - 'enterprise-deployment'
+          - 'performance-monitoring'
+        strict: true
+        contexts:
+          - 'ci/circleci: build'
+          - 'ci/circleci: test'
+          - 'security/codeql'
+          - 'security/dependency-review'
+          - 'lint-and-format'
+          - 'enterprise-compliance'
+      required_pull_requests:
+        required_approving_review_count: 2
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+        dismissal_restrictions:
+          - 'fire22/enterprise-admins'
+          - 'fire22/architects'
+          - 'fire22/core-team'
+      restrictions:
+        - 'fire22/enterprise-admins'
+        - 'fire22/core-team'
+        - 'fire22/security-team'
+        - 'fire22/devops-team'
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: true
+
+  # Develop branch - MEDIUM PROTECTION
+  - name: develop
+    protection:
+      required_status_checks:
+        required_check:
+          - 'domain-detection'
+          - 'domain-testing'
+          - 'security-compliance'
+        strict: true
+        contexts:
+          - 'ci/circleci: build'
+          - 'ci/circleci: test'
+          - 'lint-and-format'
+      required_pull_requests:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+      restrictions: []
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: false
+
+  # Enterprise branch - STRICT PROTECTION
+  - name: enterprise
+    protection:
+      required_status_checks:
+        required_check:
+          - 'domain-detection'
+          - 'domain-testing'
+          - 'security-compliance'
+          - 'integration-testing'
+        strict: true
+        contexts:
+          - 'ci/circleci: build'
+          - 'ci/circleci: test'
+          - 'security/codeql'
+          - 'security/dependency-review'
+          - 'enterprise-compliance'
+      required_pull_requests:
+        required_approving_review_count: 2
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+        dismissal_restrictions:
+          - 'fire22/enterprise-admins'
+          - 'fire22/architects'
+      restrictions:
+        - 'fire22/enterprise-admins'
+        - 'fire22/core-team'
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: false
+
+  # Staging branch - MEDIUM PROTECTION
+  - name: staging
+    protection:
+      required_status_checks:
+        required_check:
+          - 'domain-detection'
+          - 'domain-testing'
+        strict: true
+        contexts:
+          - 'ci/circleci: build'
+          - 'ci/circleci: test'
+          - 'lint-and-format'
+      required_pull_requests:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+      restrictions: []
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: false
+
+# Domain-specific branch protection patterns
+branch_protection_rules:
+  # Core Domain - Strict
+  - pattern: 'feature/core-*'
+    required_approving_review_count: 2
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'domain-tests-core'
+      - 'integration-tests'
+      - 'security-scan'
+      - 'lint-check'
+      - 'type-check'
+    restrictions:
+      - 'fire22/core-team'
+      - 'fire22/architects'
+
+  # Users Domain - Medium
+  - pattern: 'feature/users-*'
+    required_approving_review_count: 1
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'domain-tests-users'
+      - 'security-scan'
+      - 'lint-check'
+    restrictions:
+      - 'fire22/users-team'
+      - 'fire22/security-team'
+
+  # Betting Domain - Enterprise Strict
+  - pattern: 'feature/betting-*'
+    required_approving_review_count: 2
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'domain-tests-betting'
+      - 'compliance-check'
+      - 'security-scan'
+      - 'risk-assessment'
+      - 'performance-test'
+    restrictions:
+      - 'fire22/betting-team'
+      - 'fire22/compliance-team'
+      - 'fire22/risk-team'
+
+  # Gaming Domain - Medium
+  - pattern: 'feature/gaming-*'
+    required_approving_review_count: 1
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'domain-tests-gaming'
+      - 'analytics-validation'
+      - 'security-scan'
+    restrictions:
+      - 'fire22/gaming-team'
+      - 'fire22/analytics-team'
+
+  # Finance Domain - Regulatory Compliance
+  - pattern: 'feature/finance-*'
+    required_approving_review_count: 2
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'domain-tests-finance'
+      - 'regulatory-compliance'
+      - 'audit-validation'
+      - 'financial-test'
+      - 'security-scan'
+    restrictions:
+      - 'fire22/finance-team'
+      - 'fire22/compliance-team'
+      - 'fire22/audit-team'
+
+  # Security Domain - Maximum Security
+  - pattern: 'feature/security-*'
+    required_approving_review_count: 3
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'security-tests'
+      - 'penetration-test'
+      - 'compliance-audit'
+      - 'dependency-scan'
+      - 'code-review'
+    restrictions:
+      - 'fire22/security-team'
+      - 'fire22/compliance-team'
+      - 'fire22/enterprise-admins'
+
+  # Analytics Domain - Data Security
+  - pattern: 'feature/analytics-*'
+    required_approving_review_count: 2
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'domain-tests-analytics'
+      - 'data-validation'
+      - 'performance-test'
+      - 'security-scan'
+    restrictions:
+      - 'fire22/analytics-team'
+      - 'fire22/data-team'
+
+  # Cloudflare Package - Infrastructure
+  - pattern: 'pkg/cloudflare-*'
+    required_approving_review_count: 2
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'cloudflare-tests'
+      - 'infrastructure-validation'
+      - 'security-scan'
+    restrictions:
+      - 'fire22/cloudflare-team'
+      - 'fire22/devops-team'
+
+  # Security Package - Maximum Security
+  - pattern: 'pkg/security-*'
+    required_approving_review_count: 3
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'security-tests'
+      - 'penetration-test'
+      - 'compliance-audit'
+      - 'dependency-scan'
+    restrictions:
+      - 'fire22/security-team'
+      - 'fire22/compliance-team'
+
+  # Hotfix branches - Emergency
+  - pattern: 'hotfix/*'
+    required_approving_review_count: 1
+    require_code_owner_reviews: true
+    required_status_checks:
+      - 'emergency-tests'
+      - 'security-scan'
+    restrictions: []
+    allow_force_pushes: false
+    allow_deletions: false
+
+# Team permissions configuration
+teams:
+  enterprise-admins:
+    permission: admin
+    privacy: closed
+
+  architects:
+    permission: maintain
+    privacy: closed
+
+  core-team:
+    permission: write
+    privacy: closed
+
+  domain-teams:
+    security-team:
+      permission: write
+      privacy: closed
+    finance-team:
+      permission: write
+      privacy: closed
+    betting-team:
+      permission: write
+      privacy: closed
+    compliance-team:
+      permission: write
+      privacy: closed
+
+  infrastructure-teams:
+    devops-team:
+      permission: write
+      privacy: closed
+    cloudflare-team:
+      permission: write
+      privacy: closed
+    database-team:
+      permission: write
+      privacy: closed
+
+  development-teams:
+    frontend-team:
+      permission: write
+      privacy: closed
+    backend-team:
+      permission: write
+      privacy: closed
+    qa-team:
+      permission: write
+      privacy: closed
+
+# Repository rulesets (GitHub's new branch protection system)
+rulesets:
+  - name: 'Enterprise Security Ruleset'
+    enforcement: active
+    conditions:
+      ref_name:
+        include:
+          - '~ALL'
+        exclude:
+          - 'refs/heads/main'
+          - 'refs/heads/develop'
+          - 'refs/heads/enterprise'
+    rules:
+      - type: creation
+      - type: update
+        parameters:
+          required_signatures: false
+      - type: deletion
+        parameters:
+          delete_protected: true
+      - type: required_signatures
+      - type: pull_request
+        parameters:
+          dismiss_stale_reviews_on_push: true
+          require_code_owner_review: true
+          require_last_push_approval: true
+          required_approving_review_count: 1
+      - type: required_status_checks
+        parameters:
+          required_status_checks:
+            - context: 'ci/circleci: build'
+              integration_id: 0
+            - context: 'security/dependency-review'
+              integration_id: 0
+            - context: 'lint-and-format'
+              integration_id: 0

@@ -1,0 +1,49 @@
+{
+  "name": "crystal-clear-docs-worker",
+  "version": "1.0.0",
+  "description": "Automated documentation CDN using Cloudflare Workers",
+  "main": "src/docs-worker.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "wrangler deploy --dry-run",
+    "test": "wrangler dev --test",
+    "logs": "wrangler tail",
+    "format": "prettier --write .",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "documentation",
+    "cdn",
+    "github",
+    "automation"
+  ],
+  "author": "Crystal Clear Architecture",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "@types/node": "^20.10.0",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0",
+    "wrangler": "^3.22.0"
+  },
+  "optionalDependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "docs-worker"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture/issues"
+  },
+  "homepage": "https://crystal-clear-docs.nolarose1968.workers.dev"
+}

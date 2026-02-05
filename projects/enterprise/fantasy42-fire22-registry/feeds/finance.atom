@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Finance Department Updates</title>
+  <subtitle>Department updates and announcements</subtitle>
+  <link href="https://fire22.com/feeds/finance.atom" rel="self" />
+  <link href="https://fire22.com" />
+  <id>urn:fire22:finance</id>
+  <updated>2025-08-30T15:36:51.380Z</updated>
+  <author>
+    <name>Fire22 Enterprise</name>
+    <email>finance@fire22.com</email>
+  </author>
+
+</feed>

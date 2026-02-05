@@ -1,0 +1,166 @@
+{
+  "BUILD_VERSION": "\"3.0.10\"",
+  "BUILD_COMMIT": "\"unknown\"",
+  "BUILD_BRANCH": "\"unknown\"",
+  "BUILD_TAG": "\"unknown\"",
+  "BUILD_DIRTY": false,
+  "BUILD_TIMESTAMP": 1756272726325,
+  "BUILD_DATE": "\"2025-08-27T05:32:06.325Z\"",
+  "BUILD_TIME": "\"2025-08-27T05:32:06.325Z\"",
+  "BUILD_NUMBER": "\"1756272726\"",
+  "PACKAGE_NAME": "\"fire22-dashboard-worker\"",
+  "PACKAGE_DESCRIPTION": "\"A robust dashboard worker for the Fire22 sportsbook platform, handling API integrations, notifications, and analytics with comprehensive bun pm pkg testing capabilities\"",
+  "DEPENDENCIES_COUNT": 14,
+  "DEV_DEPENDENCIES_COUNT": 13,
+  "process.env.NODE_ENV": "\"development\"",
+  "process.env.API_URL": "\"http://localhost:3000\"",
+  "process.env.BUILD_ENV": "\"development\"",
+  "ENVIRONMENT": "\"development\"",
+  "DEBUG_MODE": true,
+  "LOG_LEVEL": "\"debug\"",
+  "API_URL": "\"http://localhost:3000\"",
+  "BUN_VERSION": "\"1.2.21\"",
+  "BUILD_PLATFORM": "\"darwin\"",
+  "BUILD_ARCH": "\"arm64\"",
+  "COMPILER_VERSION": "\"1.2.21\"",
+  "ENABLE_ANALYTICS": false,
+  "ENABLE_DEBUG_LOGS": true,
+  "ENABLE_PERFORMANCE_MONITORING": false,
+  "ENABLE_SENTRY": false,
+  "FIRE22_CONFIG": {
+    "apiUrl": "http://localhost:3000",
+    "timeout": 10000,
+    "retries": 1,
+    "debug": true
+  },
+  "FEATURE_FLAGS": {
+    "newDashboard": true,
+    "advancedCharts": true,
+    "realTimeUpdates": false,
+    "betaFeatures": true,
+    "analytics": false,
+    "sentry": false,
+    "debugLogs": true,
+    "performanceMonitoring": false
+  },
+  "PLATFORM_CONFIG": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "nodeVersion": "v24.3.0",
+    "bunVersion": "1.2.21"
+  },
+  "WORKSPACE_VERSION": "3.0.10",
+  "WORKSPACE_PACKAGES_COUNT": 10,
+  "WORKSPACE_BUILD_TIME": "2025-08-27T05:32:06.325Z",
+  "PACKAGE_VERSIONS": {
+    "MIDDLEWARE_VERSION": "1.0.3",
+    "TESTING-FRAMEWORK_VERSION": "1.0.3",
+    "CORE_VERSION": "1.0.3",
+    "MEMORY-PROFILER_VERSION": "1.0.3",
+    "BENCHMARK-FORMATTER_VERSION": "1.0.3",
+    "WAGER-SYSTEM_VERSION": "1.0.3",
+    "BENCHMARK-SUITE_VERSION": "1.0.3",
+    "ENV-MANAGER_VERSION": "1.0.3",
+    "MICRO-BENCHMARKS_VERSION": "1.0.3",
+    "LOAD-TESTING_VERSION": "1.0.3"
+  },
+  "WORKSPACE_COMPONENTS": [
+    {
+      "name": "middleware",
+      "version": "1.0.3",
+      "responsibilities": [
+        "Request body handling and validation",
+        "Error formatting and logging",
+        "Performance monitoring and metrics",
+        "Rate limiting and security",
+        "Request/response transformation"
+      ]
+    },
+    {
+      "name": "testing-framework",
+      "version": "1.0.3",
+      "responsibilities": [
+        "Testing utilities and helpers",
+        "Test workflow management",
+        "Coverage reporting",
+        "Performance testing",
+        "Security testing",
+        "Integration testing"
+      ]
+    },
+    {
+      "name": "@fire22/core",
+      "version": "1.0.3",
+      "responsibilities": []
+    },
+    {
+      "name": "@fire22/memory-profiler",
+      "version": "1.0.3",
+      "responsibilities": []
+    },
+    {
+      "name": "@fire22/benchmark-formatter",
+      "version": "1.0.3",
+      "responsibilities": []
+    },
+    {
+      "name": "wager-system",
+      "version": "1.0.3",
+      "responsibilities": [
+        "Wager processing and validation",
+        "Financial calculations",
+        "Risk management",
+        "Settlement processing",
+        "Commission calculations",
+        "Performance benchmarking",
+        "Template management",
+        "Component architecture"
+      ]
+    },
+    {
+      "name": "@fire22/benchmark-suite",
+      "version": "1.0.3",
+      "responsibilities": []
+    },
+    {
+      "name": "env-manager",
+      "version": "1.0.3",
+      "responsibilities": [
+        "Environment variable validation",
+        "Configuration management",
+        "Security auditing",
+        "Performance monitoring",
+        "Environment switching",
+        "Backup and restore"
+      ]
+    },
+    {
+      "name": "@fire22/micro-benchmarks",
+      "version": "1.0.3",
+      "responsibilities": []
+    },
+    {
+      "name": "@fire22/load-testing",
+      "version": "1.0.3",
+      "responsibilities": []
+    }
+  ],
+  "DEPENDENCY_GRAPH": {
+    "@fire22/middleware": [],
+    "@fire22/testing-framework": [],
+    "@fire22/core": [],
+    "@fire22/memory-profiler": [],
+    "@fire22/benchmark-formatter": [],
+    "@fire22/wager-system": [],
+    "@fire22/benchmark-suite": [],
+    "@fire22/env-manager": [],
+    "@fire22/micro-benchmarks": ["@fire22/benchmark-suite", "@fire22/memory-profiler"],
+    "@fire22/load-testing": ["@fire22/benchmark-formatter"]
+  },
+  "BUILD_METADATA": {
+    "timestamp": 1756272726325,
+    "packagesBuilt": 10,
+    "dependencyCount": 10,
+    "hasBreakingChanges": false
+  }
+}

@@ -1,0 +1,217 @@
+version: 2
+updates:
+  # Main project dependencies
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+    open-pull-requests-limit: 5
+    reviewers:
+      - '@fire22/devops'
+      - '@fire22/engineering'
+    assignees:
+      - '@fire22/devops'
+    commit-message:
+      prefix: 'deps'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'security'
+    allow:
+      - dependency-type: 'all'
+    ignore:
+      # Ignore major version updates for critical dependencies
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'bun-types'
+        update-types: ['version-update:semver-major']
+
+  # Workspace: API Client
+  - package-ecosystem: 'npm'
+    directory: '/workspaces/@fire22-api-client'
+    schedule:
+      interval: 'weekly'
+      day: 'tuesday'
+      time: '07:00'
+    open-pull-requests-limit: 3
+    reviewers:
+      - '@fire22/backend'
+      - '@fire22/integration'
+    assignees:
+      - '@fire22/backend'
+    commit-message:
+      prefix: 'deps(api-client)'
+    labels:
+      - 'dependencies'
+      - 'workspace:api-client'
+
+  # Workspace: Core Dashboard
+  - package-ecosystem: 'npm'
+    directory: '/workspaces/@fire22-core-dashboard'
+    schedule:
+      interval: 'weekly'
+      day: 'tuesday'
+      time: '07:30'
+    open-pull-requests-limit: 3
+    reviewers:
+      - '@fire22/frontend'
+      - '@fire22/ui-ux'
+    assignees:
+      - '@fire22/frontend'
+    commit-message:
+      prefix: 'deps(core-dashboard)'
+    labels:
+      - 'dependencies'
+      - 'workspace:core-dashboard'
+
+  # Workspace: Sports Betting
+  - package-ecosystem: 'npm'
+    directory: '/workspaces/@fire22-sports-betting'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+      time: '07:00'
+    open-pull-requests-limit: 3
+    reviewers:
+      - '@fire22/business'
+      - '@fire22/backend'
+    assignees:
+      - '@fire22/business'
+    commit-message:
+      prefix: 'deps(sports-betting)'
+    labels:
+      - 'dependencies'
+      - 'workspace:sports-betting'
+
+  # Workspace: Telegram Integration
+  - package-ecosystem: 'npm'
+    directory: '/workspaces/@fire22-telegram-integration'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+      time: '07:30'
+    open-pull-requests-limit: 3
+    reviewers:
+      - '@fire22/integration'
+      - '@fire22/backend'
+    assignees:
+      - '@fire22/integration'
+    commit-message:
+      prefix: 'deps(telegram-integration)'
+    labels:
+      - 'dependencies'
+      - 'workspace:telegram-integration'
+
+  # Workspace: Build System
+  - package-ecosystem: 'npm'
+    directory: '/workspaces/@fire22-build-system'
+    schedule:
+      interval: 'weekly'
+      day: 'thursday'
+      time: '07:00'
+    open-pull-requests-limit: 3
+    reviewers:
+      - '@fire22/devops'
+      - '@fire22/engineering'
+    assignees:
+      - '@fire22/devops'
+    commit-message:
+      prefix: 'deps(build-system)'
+    labels:
+      - 'dependencies'
+      - 'workspace:build-system'
+
+  # Workspace: Pattern System
+  - package-ecosystem: 'npm'
+    directory: '/workspaces/@fire22-pattern-system'
+    schedule:
+      interval: 'weekly'
+      day: 'thursday'
+      time: '07:30'
+    open-pull-requests-limit: 3
+    reviewers:
+      - '@fire22/engineering'
+    assignees:
+      - '@fire22/engineering'
+    commit-message:
+      prefix: 'deps(pattern-system)'
+    labels:
+      - 'dependencies'
+      - 'workspace:pattern-system'
+
+  # Workspace: Security Registry
+  - package-ecosystem: 'npm'
+    directory: '/workspaces/@fire22-security-registry'
+    schedule:
+      interval: 'daily' # More frequent updates for security components
+    time: '06:00'
+    open-pull-requests-limit: 5
+    reviewers:
+      - '@fire22/security'
+      - '@fire22/devops'
+    assignees:
+      - '@fire22/security'
+    commit-message:
+      prefix: 'deps(security)'
+    labels:
+      - 'dependencies'
+      - 'security'
+      - 'workspace:security-registry'
+      - 'high-priority'
+
+  # Benchmark suite
+  - package-ecosystem: 'npm'
+    directory: '/bench'
+    schedule:
+      interval: 'weekly'
+      day: 'friday'
+      time: '08:00'
+    open-pull-requests-limit: 2
+    reviewers:
+      - '@fire22/qa'
+      - '@fire22/engineering'
+    assignees:
+      - '@fire22/qa'
+    commit-message:
+      prefix: 'deps(benchmarks)'
+    labels:
+      - 'dependencies'
+      - 'benchmarks'
+
+  # GitHub Actions dependencies
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'saturday'
+      time: '09:00'
+    open-pull-requests-limit: 5
+    reviewers:
+      - '@fire22/devops'
+    assignees:
+      - '@fire22/devops'
+    commit-message:
+      prefix: 'ci'
+    labels:
+      - 'github-actions'
+      - 'ci-cd'
+
+  # Docker dependencies (if applicable)
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'saturday'
+      time: '10:00'
+    open-pull-requests-limit: 3
+    reviewers:
+      - '@fire22/devops'
+    assignees:
+      - '@fire22/devops'
+    commit-message:
+      prefix: 'docker'
+    labels:
+      - 'docker'
+      - 'infrastructure'

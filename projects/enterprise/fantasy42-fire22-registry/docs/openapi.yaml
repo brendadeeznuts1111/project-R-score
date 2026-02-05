@@ -1,0 +1,796 @@
+openapi: 3.0.3
+info:
+  title: Fire22 & Fantasy402 Unified API
+  description: Comprehensive REST API for Fire22 and Fantasy402 enterprise platforms
+  version: 2.1.0
+  contact:
+    name: Fire22 API Support
+    email: support@fire22.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3001/api
+    description: Development server
+  - url: https://api.fire22.com/v1
+    description: Production server
+
+security:
+  - bearerAuth: []
+  - apiKeyAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        message:
+          type: string
+        error:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    DashboardMetrics:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+          format: float
+        activeUsers:
+          type: integer
+        roi:
+          type: number
+          format: float
+        performanceScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+
+    DomainStats:
+      type: object
+      properties:
+        accountsCount:
+          type: integer
+        betsCount:
+          type: integer
+        totalBalance:
+          type: number
+          format: float
+        timezone:
+          type: string
+        lastUpdated:
+          type: string
+          format: date-time
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        type:
+          type: string
+          enum: [Premium, Standard, VIP, Basic]
+        balance:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [Active, Inactive, Suspended]
+        createdAt:
+          type: string
+          format: date-time
+        lastLogin:
+          type: string
+          format: date-time
+
+    Bet:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        sport:
+          type: string
+        stake:
+          type: number
+          format: float
+        odds:
+          type: string
+        potentialPayout:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [Pending, Won, Lost, Cancelled]
+        createdAt:
+          type: string
+          format: date-time
+        settledAt:
+          type: string
+          format: date-time
+
+    FantasyUser:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        balance:
+          type: number
+          format: float
+        vipLevel:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        lastActivity:
+          type: string
+          format: date-time
+
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, unhealthy, degraded]
+        uptime:
+          type: number
+          format: float
+        services:
+          type: object
+          additionalProperties:
+            type: string
+        timestamp:
+          type: string
+          format: date-time
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Get the health status of the API service
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /dashboard/metrics:
+    get:
+      summary: Get dashboard metrics
+      description: Retrieve key performance indicators and metrics
+      tags:
+        - Dashboard
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Dashboard metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DashboardMetrics'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /dashboard/analytics:
+    get:
+      summary: Get analytics data
+      description: Retrieve comprehensive analytics and business intelligence data
+      tags:
+        - Dashboard
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Analytics data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /dashboard/health:
+    get:
+      summary: Get system health
+      description: Check the health status of all system components
+      tags:
+        - Dashboard
+      responses:
+        '200':
+          description: System health status
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          $ref: '#/components/schemas/HealthStatus'
+
+  /dashboard/performance:
+    get:
+      summary: Get performance metrics
+      description: Retrieve detailed performance metrics and benchmarks
+      tags:
+        - Dashboard
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Performance metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /domain/stats:
+    get:
+      summary: Get domain statistics
+      description: Retrieve domain-wide statistics and metrics
+      tags:
+        - Domain
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Domain statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          $ref: '#/components/schemas/DomainStats'
+
+  /domain/accounts:
+    get:
+      summary: Get all accounts
+      description: Retrieve all domain accounts information
+      tags:
+        - Domain
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Accounts retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Account'
+
+  /domain/bets:
+    get:
+      summary: Get all bets
+      description: Retrieve all betting activities and history
+      tags:
+        - Domain
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Bets retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Bet'
+
+  /domain/config:
+    get:
+      summary: Get domain configuration
+      description: Retrieve current domain configuration settings
+      tags:
+        - Domain
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Domain configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /domain/operations/create-account:
+    post:
+      summary: Create new account
+      description: Create a new domain account
+      tags:
+        - Domain
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                accountType:
+                  type: string
+                  enum: [Premium, Standard, VIP, Basic]
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          type: object
+                          properties:
+                            success:
+                              type: boolean
+                            account:
+                              $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /domain/operations/create-bet:
+    post:
+      summary: Create new bet
+      description: Create a new betting position
+      tags:
+        - Domain
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountId:
+                  type: string
+                sport:
+                  type: string
+                stake:
+                  type: number
+                  format: float
+                odds:
+                  type: string
+      responses:
+        '201':
+          description: Bet created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          type: object
+                          properties:
+                            success:
+                              type: boolean
+                            bet:
+                              $ref: '#/components/schemas/Bet'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /fantasy402/health:
+    get:
+      summary: Fantasy402 health check
+      description: Check Fantasy402 service health and connectivity
+      tags:
+        - Fantasy402
+      responses:
+        '200':
+          description: Fantasy402 health status
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          type: object
+                          properties:
+                            status:
+                              type: string
+                            fantasy402:
+                              type: object
+                              properties:
+                                api:
+                                  type: boolean
+                                authenticated:
+                                  type: boolean
+                                websocket:
+                                  type: boolean
+                            timestamp:
+                              type: string
+                              format: date-time
+
+  /fantasy402/status:
+    get:
+      summary: Get Fantasy402 system status
+      description: Retrieve comprehensive Fantasy402 system status
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: System status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /fantasy402/users:
+    get:
+      summary: Get all users
+      description: Retrieve all Fantasy402 users
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/FantasyUser'
+
+    post:
+      summary: Create user
+      description: Create a new Fantasy402 user
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                metadata:
+                  type: object
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          $ref: '#/components/schemas/FantasyUser'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /fantasy402/users/{userId}:
+    get:
+      summary: Get user by ID
+      description: Retrieve a specific Fantasy402 user by ID
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          $ref: '#/components/schemas/FantasyUser'
+        '404':
+          description: User not found
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+    put:
+      summary: Update user
+      description: Update a Fantasy402 user's information
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                balance:
+                  type: number
+                  format: float
+                vipLevel:
+                  type: integer
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          $ref: '#/components/schemas/FantasyUser'
+        '400':
+          description: Bad request
+        '404':
+          description: User not found
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /fantasy402/users/username/{username}:
+    get:
+      summary: Get user by username
+      description: Retrieve a Fantasy402 user by username
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Username
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                      properties:
+                        data:
+                          $ref: '#/components/schemas/FantasyUser'
+        '404':
+          description: User not found
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /fantasy402/sync/{dataType}:
+    post:
+      summary: Sync data
+      description: Synchronize data with Fantasy402 service
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - name: dataType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [users, bets, transactions, analytics]
+          description: Type of data to sync
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Data to synchronize
+      responses:
+        '200':
+          description: Data synchronized successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /fantasy402/websocket/connect:
+    post:
+      summary: Connect WebSocket
+      description: Establish WebSocket connection for real-time updates
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: WebSocket connection established
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+  /fantasy402/websocket/disconnect:
+    post:
+      summary: Disconnect WebSocket
+      description: Close WebSocket connection
+      tags:
+        - Fantasy402
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      responses:
+        '200':
+          description: WebSocket connection closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Dashboard
+    description: Dashboard metrics and analytics endpoints
+  - name: Domain
+    description: Domain management and operations endpoints
+  - name: Fantasy402
+    description: Fantasy402 integration endpoints

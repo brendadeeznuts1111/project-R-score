@@ -1,0 +1,56 @@
+
+Subject: 🚀 Fire22 Registry Release Flow - Specialist Review Walkthrough
+
+Dear Michael Davis,
+
+You are receiving this notification as a **Migration Specialist** in the **Database Department**.
+
+## 🎯 **Your Specialist Role**
+
+As **Data Migration & Schema Management** specialist, you provide deep technical expertise:
+
+- **Domain Expertise**: Data Migration & Schema Management validation and review
+- **Technical Review**: Detailed analysis of package compliance
+- **Quality Assurance**: Ensure standards in your specialty area
+- **Documentation**: Provide specialist feedback and recommendations
+
+### **Your Department Context**
+- **Department Head**: James Wilson (Chief Database Architect)
+- **Secondary Validator**: Maria Sanchez (Database Operations Lead)
+- **Your Colleagues**: Robert Chen (Performance Specialist), Lisa Thompson (Security Specialist)
+- **Focus Area**: DATA_RETENTION, GDPR, PERFORMANCE_SLA
+
+## 📋 **Specialist Walkthrough Guide Attached**
+
+The attached guide includes:
+- **REGISTRY-RELEASE-SPECIALIST-WALKTHROUGH.md** - Specialist-focused guide
+- **Data Migration & Schema Management** specific validation procedures
+- **Review checklists** and best practices
+- **Reporting templates** for your findings
+
+## ⏰ **Required Actions**
+
+1. **Review specialist guide** (10-15 minutes)
+2. **Identify packages requiring your expertise**
+3. **Prepare review checklists** for your specialty
+4. **Confirm readiness** by replying with "CONFIRMED"
+
+## 📋 **Your Review Focus**
+
+**Specialty**: Data Migration & Schema Management
+**Department**: Database
+**Compliance Areas**: DATA_RETENTION, GDPR, PERFORMANCE_SLA
+
+## 📞 **Support**
+
+- **Department Head**: James Wilson (james.wilson@fire22.com)
+- **Secondary Validator**: Maria Sanchez (maria.sanchez@fire22.com)
+- **Technical Support**: enterprise@fire22.com
+- **Specialist Colleagues**: robert.chen@fire22.com, lisa.thompson@fire22.com
+
+---
+
+**Please reply with "CONFIRMED" once ready to begin specialist reviews.**
+
+Best regards,
+Fire22 Enterprise Registry Team

@@ -1,0 +1,21 @@
+{
+  "install": {
+    "linker": "isolated",
+    "cache": true,
+    "exact": false,
+    "dev": true,
+    "optional": true,
+    "registry": "https://registry.npmjs.org"
+  },
+  "build": {
+    "target": "bun",
+    "format": "esm",
+    "splitting": true,
+    "minify": false
+  },
+  "workspace": {
+    "isolation": true,
+    "linked": "telegram-integration",
+    "mode": "development"
+  }
+}

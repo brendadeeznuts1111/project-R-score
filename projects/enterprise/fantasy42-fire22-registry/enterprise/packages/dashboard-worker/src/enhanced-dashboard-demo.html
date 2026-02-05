@@ -1,0 +1,1943 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fire22 Enhanced Dashboard Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+      :root {
+        --fire-red: #b21f1f;
+        --fire-orange: #fdbb2d;
+        --fire-gradient: linear-gradient(135deg, #fdbb2d 0%, #b21f1f 100%);
+        --dark-bg: #0f172a;
+        --dark-card: #1e293b;
+        --dark-border: #475569;
+        --text-primary: #e2e8f0;
+        --text-secondary: #94a3b8;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #6366f1;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--dark-border);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      }
+
+      .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logo {
+        font-size: 3rem;
+        background: var(--fire-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: flame-flicker 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+        }
+      }
+
+      .brand-text h1 {
+        font-size: 2rem;
+        background: var(--fire-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+      }
+
+      .brand-text p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      /* Navigation */
+      .nav-tabs {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        overflow-x: auto;
+      }
+
+      .nav-tab {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        background: var(--dark-card);
+        border: 1px solid var(--dark-border);
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+      }
+
+      .nav-tab:hover {
+        background: #334155;
+        transform: translateY(-2px);
+      }
+
+      .nav-tab.active {
+        background: var(--fire-gradient);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 6px -1px rgba(178, 31, 31, 0.3);
+      }
+
+      /* Container */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      /* Dashboard Grid */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Cards */
+      .card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 1px solid var(--dark-border);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      .kpi-card {
+        text-align: center;
+      }
+
+      .kpi-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: var(--fire-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .kpi-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .kpi-label {
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .kpi-change {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .kpi-change.positive {
+        color: var(--success);
+      }
+
+      .kpi-change.negative {
+        color: var(--danger);
+      }
+
+      /* Live Feed */
+      .live-feed {
+        background: var(--dark-card);
+        border: 1px solid var(--dark-border);
+        border-radius: 1rem;
+        padding: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .feed-item {
+        padding: 0.75rem;
+        border-left: 3px solid var(--fire-orange);
+        margin-bottom: 0.5rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 0.5rem;
+        animation: slideIn 0.5s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .feed-time {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .feed-message {
+        margin-top: 0.25rem;
+      }
+
+      /* Status Indicators */
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+
+      .status-card {
+        background: var(--dark-card);
+        border: 1px solid var(--dark-border);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      .status-indicator.active {
+        background: var(--success);
+      }
+
+      .status-indicator.warning {
+        background: var(--warning);
+      }
+
+      .status-indicator.error {
+        background: var(--danger);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table th {
+        background: var(--dark-card);
+        color: var(--text-secondary);
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid var(--dark-border);
+      }
+
+      .data-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--dark-border);
+      }
+
+      .data-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        color: white;
+      }
+
+      .btn-primary {
+        background: var(--fire-gradient);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(178, 31, 31, 0.3);
+      }
+
+      .btn-secondary {
+        background: var(--dark-card);
+        border: 1px solid var(--dark-border);
+        color: var(--text-primary);
+      }
+
+      .btn-secondary:hover {
+        background: #475569;
+      }
+
+      /* Charts */
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 1rem 0;
+      }
+
+      /* Loading Animation */
+      .loader {
+        width: 50px;
+        height: 50px;
+        border: 4px solid var(--dark-border);
+        border-top-color: var(--fire-orange);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 2rem auto;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .nav-tabs {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+    </style>
+  </head>
+  <body x-data="dashboardApp()" x-init="init()">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="brand">
+          <div class="logo">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div class="brand-text">
+            <h1>FIRE22</h1>
+            <p>Enhanced Dashboard Demo v2.0</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <!-- Language Selector -->
+          <div class="language-selector" style="margin-right: 1rem">
+            <select
+              @change="setLanguage($event.target.value)"
+              :value="currentLanguage"
+              style="
+                padding: 0.5rem 1rem;
+                border-radius: 0.5rem;
+                background: var(--dark-card);
+                color: var(--text-primary);
+                border: 1px solid var(--dark-border);
+              "
+            >
+              <option value="en">🇺🇸 EN</option>
+              <option value="es">🇪🇸 ES</option>
+              <option value="pt">🇵🇹 PT</option>
+              <option value="fr">🇫🇷 FR</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" @click="startDemo()">
+            <i class="fas fa-play"></i>
+            <span data-language="L-449">Start Demo</span>
+          </button>
+          <button class="btn btn-secondary" @click="toggleRealtime()">
+            <i class="fas" :class="realtime ? 'fa-pause' : 'fa-play'"></i>
+            <span x-text="realtime ? t('L-449') : 'Resume'"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab" :class="{ active: activeTab === 'overview' }" @click="activeTab = 'overview'">
+        <i class="fas fa-chart-line"></i>
+        <span data-language="L-935">Overview</span>
+      </button>
+      <button class="nav-tab" :class="{ active: activeTab === 'fire22' }" @click="activeTab = 'fire22'">
+        <i class="fas fa-fire"></i>
+        Fire22 API
+      </button>
+      <button class="nav-tab" :class="{ active: activeTab === 'performance' }" @click="activeTab = 'performance'">
+        <i class="fas fa-tachometer-alt"></i>
+        <span data-language="L-329">Performance</span>
+      </button>
+      <button class="nav-tab" :class="{ active: activeTab === 'security' }" @click="activeTab = 'security'">
+        <i class="fas fa-shield-alt"></i>
+        Security
+      </button>
+      <button class="nav-tab" :class="{ active: activeTab === 'queue' }" @click="activeTab = 'queue'">
+        <i class="fas fa-exchange-alt"></i>
+        P2P Queue
+      </button>
+      <button class="nav-tab" :class="{ active: activeTab === 'database' }" @click="activeTab = 'database'">
+        <i class="fas fa-database"></i>
+        Database
+      </button>
+      <button class="nav-tab" :class="{ active: activeTab === 'patterns' }" @click="activeTab = 'patterns'">
+        <i class="fas fa-puzzle-piece"></i>
+        Patterns
+      </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Overview Tab -->
+      <div x-show="activeTab === 'overview'">
+        <div class="dashboard-grid">
+          <div class="card kpi-card">
+            <div class="kpi-icon"><i class="fas fa-users"></i></div>
+            <div class="kpi-value" x-text="metrics.activeUsers"></div>
+            <div class="kpi-label" data-language="L-821">Active Users</div>
+            <div class="kpi-change positive">
+              <i class="fas fa-arrow-up"></i>
+              12.5%
+            </div>
+          </div>
+
+          <div class="card kpi-card">
+            <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="kpi-value" x-text="'$' + metrics.revenue.toLocaleString()"></div>
+            <div class="kpi-label" data-language="L-449">Today's Revenue</div>
+            <div class="kpi-change positive">
+              <i class="fas fa-arrow-up"></i>
+              8.3%
+            </div>
+          </div>
+
+          <div class="card kpi-card">
+            <div class="kpi-icon"><i class="fas fa-exchange-alt"></i></div>
+            <div class="kpi-value" x-text="metrics.transactions"></div>
+            <div class="kpi-label" data-language="L-317">Transactions</div>
+            <div class="kpi-change negative">
+              <i class="fas fa-arrow-down"></i>
+              2.1%
+            </div>
+          </div>
+
+          <div class="card kpi-card">
+            <div class="kpi-icon"><i class="fas fa-server"></i></div>
+            <div class="kpi-value" x-text="metrics.systemLoad + '%'"></div>
+            <div class="kpi-label">System Load</div>
+            <div class="kpi-change" :class="metrics.systemLoad > 70 ? 'negative' : 'positive'">
+              <i class="fas" :class="metrics.systemLoad > 70 ? 'fa-arrow-up' : 'fa-check'"></i>
+              <span x-text="metrics.systemLoad > 70 ? 'High' : 'Normal'"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Feed -->
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-stream"></i>
+            Live Activity Feed
+          </h3>
+          <div class="live-feed" x-ref="liveFeed">
+            <template x-for="item in liveFeedItems" :key="item.id">
+              <div class="feed-item">
+                <div class="feed-time" x-text="item.time"></div>
+                <div class="feed-message" x-html="item.message"></div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Status Grid -->
+        <div class="status-grid">
+          <div class="status-card">
+            <div class="status-indicator active"></div>
+            <div>
+              <div style="font-weight: 600">Fire22 API</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary)">Connected</div>
+            </div>
+          </div>
+          <div class="status-card">
+            <div class="status-indicator active"></div>
+            <div>
+              <div style="font-weight: 600">Database</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary)">Healthy</div>
+            </div>
+          </div>
+          <div class="status-card">
+            <div class="status-indicator warning"></div>
+            <div>
+              <div style="font-weight: 600">Queue System</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary)">15 Pending</div>
+            </div>
+          </div>
+          <div class="status-card">
+            <div class="status-indicator active"></div>
+            <div>
+              <div style="font-weight: 600">Cache</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary)">85% Hit Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fire22 API Tab -->
+      <div x-show="activeTab === 'fire22'" style="display: none">
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-fire"></i>
+            Fire22 API Endpoints
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Response Time</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="endpoint in fire22Endpoints" :key="endpoint.name">
+                <tr>
+                  <td x-text="endpoint.path"></td>
+                  <td><span style="color: var(--info)" x-text="endpoint.method"></span></td>
+                  <td x-text="endpoint.responseTime + 'ms'"></td>
+                  <td>
+                    <span style="color: var(--success)">
+                      <i class="fas fa-check-circle"></i>
+                      200 OK
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-secondary"
+                      style="padding: 0.5rem 1rem; font-size: 0.85rem"
+                      @click="testEndpoint(endpoint)"
+                    >
+                      Test
+                    </button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- API Metrics -->
+        <div class="dashboard-grid" style="margin-top: 1rem">
+          <div class="card kpi-card">
+            <div class="kpi-value">2,650</div>
+            <div class="kpi-label">Total Customers</div>
+          </div>
+          <div class="card kpi-card">
+            <div class="kpi-value">156</div>
+            <div class="kpi-label">Active Agents</div>
+          </div>
+          <div class="card kpi-card">
+            <div class="kpi-value">99.8%</div>
+            <div class="kpi-label">API Uptime</div>
+          </div>
+          <div class="card kpi-card">
+            <div class="kpi-value">125ms</div>
+            <div class="kpi-label">Avg Response Time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Tab -->
+      <div x-show="activeTab === 'performance'" style="display: none">
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-chart-line"></i>
+            Performance Metrics
+          </h3>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard-grid" style="margin-top: 1rem">
+          <div class="card">
+            <h4 style="color: var(--fire-orange); margin-bottom: 1rem">CPU Usage</h4>
+            <div style="font-size: 2rem; font-weight: bold" x-text="metrics.cpu + '%'"></div>
+            <div style="margin-top: 0.5rem">
+              <div style="background: var(--dark-border); height: 8px; border-radius: 4px">
+                <div
+                  :style="`width: ${metrics.cpu}%; background: ${metrics.cpu > 70 ? 'var(--danger)' : 'var(--success)'}; height: 100%; border-radius: 4px; transition: width 0.5s;`"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 style="color: var(--fire-orange); margin-bottom: 1rem">Memory Usage</h4>
+            <div style="font-size: 2rem; font-weight: bold" x-text="metrics.memory + '%'"></div>
+            <div style="margin-top: 0.5rem">
+              <div style="background: var(--dark-border); height: 8px; border-radius: 4px">
+                <div
+                  :style="`width: ${metrics.memory}%; background: ${metrics.memory > 80 ? 'var(--danger)' : 'var(--warning)'}; height: 100%; border-radius: 4px; transition: width 0.5s;`"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Tab -->
+      <div x-show="activeTab === 'security'" style="display: none">
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-shield-alt"></i>
+            Security Status
+          </h3>
+          <div class="status-grid">
+            <template x-for="check in securityChecks" :key="check.name">
+              <div class="status-card">
+                <div class="status-indicator" :class="check.status ? 'active' : 'error'"></div>
+                <div>
+                  <div style="font-weight: 600" x-text="check.name"></div>
+                  <div
+                    style="font-size: 0.85rem; color: var(--text-secondary)"
+                    x-text="check.status ? 'Active' : 'Needs Attention'"
+                  ></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1rem">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-history"></i>
+            Security Events
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Event</th>
+                <th>Source</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="event in securityEvents" :key="event.id">
+                <tr>
+                  <td x-text="event.time"></td>
+                  <td x-text="event.event"></td>
+                  <td x-text="event.source"></td>
+                  <td>
+                    <span :style="`color: var(--${event.status});`">
+                      <i class="fas fa-circle" style="font-size: 0.5rem"></i>
+                      <span x-text="event.statusText"></span>
+                    </span>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- P2P Queue Tab -->
+      <div x-show="activeTab === 'queue'" style="display: none">
+        <div class="dashboard-grid">
+          <div class="card">
+            <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+              <i class="fas fa-arrow-up"></i>
+              Withdrawal Queue
+            </h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Match</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="item in withdrawalQueue" :key="item.id">
+                  <tr>
+                    <td x-text="item.id"></td>
+                    <td x-text="'$' + item.amount"></td>
+                    <td><span style="color: var(--warning)" x-text="item.status"></span></td>
+                    <td x-text="item.match || 'Searching...'"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+              <i class="fas fa-arrow-down"></i>
+              Deposit Queue
+            </h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="item in depositQueue" :key="item.id">
+                  <tr>
+                    <td x-text="item.id"></td>
+                    <td x-text="'$' + item.amount"></td>
+                    <td><span style="color: var(--success)" x-text="item.status"></span></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1rem">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-check-circle"></i>
+            Matched Transactions
+          </h3>
+          <div id="matchedTransactions"></div>
+        </div>
+      </div>
+
+      <!-- Database Tab -->
+      <div x-show="activeTab === 'database'" style="display: none">
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-database"></i>
+            Database Operations
+          </h3>
+          <div class="dashboard-grid">
+            <div class="kpi-card">
+              <div class="kpi-value">85.5%</div>
+              <div class="kpi-label">Cache Hit Rate</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-value">45ms</div>
+              <div class="kpi-label">Avg Query Time</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-value">2.1GB</div>
+              <div class="kpi-label">Database Size</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-value">156</div>
+              <div class="kpi-label">Active Connections</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1rem">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-clock"></i>
+            Recent Queries
+          </h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Query</th>
+                <th>Table</th>
+                <th>Rows</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="query in recentQueries" :key="query.id">
+                <tr>
+                  <td x-text="query.type"></td>
+                  <td x-text="query.table"></td>
+                  <td x-text="query.rows"></td>
+                  <td x-text="query.time + 'ms'"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Patterns Tab -->
+      <div x-show="activeTab === 'patterns'" style="display: none">
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-puzzle-piece"></i>
+            Pattern Weaver System
+          </h3>
+          <div class="status-grid">
+            <template x-for="pattern in patterns" :key="pattern.name">
+              <div class="status-card">
+                <div class="status-indicator active"></div>
+                <div>
+                  <div style="font-weight: 600" x-text="pattern.name"></div>
+                  <div style="font-size: 0.85rem; color: var(--text-secondary)" x-text="pattern.description"></div>
+                  <div style="font-size: 0.75rem; color: var(--info); margin-top: 0.25rem">
+                    <i class="fas fa-link"></i>
+                    <span x-text="pattern.connections + ' connections'"></span>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1rem">
+          <h3 style="margin-bottom: 1rem; color: var(--fire-orange)">
+            <i class="fas fa-project-diagram"></i>
+            Pattern Connections
+          </h3>
+          <div class="chart-container">
+            <canvas id="patternChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Fire22 Language System Integration
+      const FIRE22_LANGUAGE_CODES = {
+        'L-20': { en: 'Scores', es: 'Marcadores', pt: 'Placares', fr: 'Scores' },
+        'L-28': { en: 'Cashier', es: 'Cajero', pt: 'Caixa', fr: 'Caissier' },
+        'L-233': { en: 'Pending', es: 'Pendiente', pt: 'Pendente', fr: 'En attente' },
+        'L-257': { en: 'Weekly Figures', es: 'Cifras Semanales', pt: 'Números Semanais', fr: 'Chiffres Hebdomadaires' },
+        'L-288': { en: 'Customer Admin', es: 'Admin de Clientes', pt: 'Admin de Clientes', fr: 'Admin Client' },
+        'L-317': {
+          en: 'Transactions History',
+          es: 'Historial de Transacciones',
+          pt: 'Histórico de Transações',
+          fr: 'Historique des Transactions',
+        },
+        'L-329': {
+          en: 'Agent Performance',
+          es: 'Rendimiento de Agentes',
+          pt: 'Desempenho de Agentes',
+          fr: 'Performance des Agents',
+        },
+        'L-407': { en: 'Settings', es: 'Configuración', pt: 'Configurações', fr: 'Paramètres' },
+        'L-449': { en: 'Today', es: 'Hoy', pt: 'Hoje', fr: "Aujourd'hui" },
+        'L-820': { en: 'Messaging', es: 'Mensajería', pt: 'Mensagens', fr: 'Messagerie' },
+        'L-821': { en: 'Add Customer', es: 'Agregar Cliente', pt: 'Adicionar Cliente', fr: 'Ajouter Client' },
+        'L-827': { en: 'Agent Admin', es: 'Admin de Agentes', pt: 'Admin de Agentes', fr: 'Admin Agent' },
+        'L-935': { en: 'Analysis', es: 'Análisis', pt: 'Análise', fr: 'Analyse' },
+      };
+
+      function t(code, lang = 'en') {
+        return FIRE22_LANGUAGE_CODES[code]?.[lang] || code;
+      }
+
+      function updateLanguageElements(lang) {
+        document.querySelectorAll('[data-language]').forEach(element => {
+          const code = element.getAttribute('data-language');
+          const text = t(code, lang);
+
+          if (element.tagName === 'INPUT' && element.placeholder !== undefined) {
+            element.placeholder = text;
+          } else if (element.tagName === 'IMG' && element.alt !== undefined) {
+            element.alt = text;
+          } else {
+            element.textContent = text;
+          }
+        });
+      }
+
+      function dashboardApp() {
+        return {
+          activeTab: 'overview',
+          realtime: true,
+          intervalId: null,
+          performanceChart: null,
+          patternChart: null,
+          currentLanguage: 'en',
+
+          // Metrics
+          metrics: {
+            activeUsers: 156,
+            revenue: 125000,
+            transactions: 1234,
+            systemLoad: 45,
+            cpu: 38,
+            memory: 62,
+          },
+
+          // Live feed items
+          liveFeedItems: [],
+
+          // Fire22 endpoints
+          fire22Endpoints: [
+            { name: 'customers', path: '/api/customers', method: 'GET', responseTime: 125 },
+            { name: 'agents', path: '/api/agents/hierarchy', method: 'GET', responseTime: 98 },
+            { name: 'wagers', path: '/api/manager/getLiveWagers', method: 'POST', responseTime: 156 },
+            { name: 'figures', path: '/api/manager/getWeeklyFigureByAgent', method: 'POST', responseTime: 234 },
+            { name: 'transactions', path: '/api/transactions', method: 'GET', responseTime: 89 },
+          ],
+
+          // Security checks
+          securityChecks: [
+            { name: 'JWT Validation', status: true },
+            { name: 'Rate Limiting', status: true },
+            { name: 'CORS Policy', status: true },
+            { name: 'SQL Injection Protection', status: true },
+            { name: 'XSS Protection', status: true },
+            { name: 'CSRF Protection', status: true },
+            { name: 'SSL/TLS', status: true },
+            { name: 'Authentication', status: false },
+          ],
+
+          // Security events
+          securityEvents: [
+            {
+              id: 1,
+              time: '10:45:23',
+              event: 'Login Success',
+              source: '192.168.1.1',
+              status: 'success',
+              statusText: 'OK',
+            },
+            {
+              id: 2,
+              time: '10:44:15',
+              event: 'Rate Limit Warning',
+              source: '10.0.0.5',
+              status: 'warning',
+              statusText: 'Warning',
+            },
+            {
+              id: 3,
+              time: '10:42:08',
+              event: 'Token Refresh',
+              source: 'API Gateway',
+              status: 'success',
+              statusText: 'OK',
+            },
+            {
+              id: 4,
+              time: '10:41:33',
+              event: 'Failed Login',
+              source: '203.45.67.89',
+              status: 'danger',
+              statusText: 'Blocked',
+            },
+          ],
+
+          // Queue data
+          withdrawalQueue: [
+            { id: 'W001', amount: 500, status: 'Pending', match: null },
+            { id: 'W002', amount: 1500, status: 'Pending', match: null },
+            { id: 'W003', amount: 250, status: 'Pending', match: null },
+          ],
+
+          depositQueue: [
+            { id: 'D001', amount: 2000, status: 'Available' },
+            { id: 'D002', amount: 500, status: 'Available' },
+          ],
+
+          // Recent queries
+          recentQueries: [
+            { id: 1, type: 'SELECT', table: 'customers', rows: 2650, time: 45 },
+            { id: 2, type: 'INSERT', table: 'transactions', rows: 1, time: 12 },
+            { id: 3, type: 'UPDATE', table: 'bets', rows: 15, time: 28 },
+            { id: 4, type: 'JOIN', table: 'agents+customers', rows: 850, time: 125 },
+          ],
+
+          // Patterns
+          patterns: [
+            { name: 'LOADER', description: 'Data loading patterns', connections: 8 },
+            { name: 'STYLER', description: 'UI styling patterns', connections: 12 },
+            { name: 'SECURE', description: 'Security patterns', connections: 15 },
+            { name: 'TIMING', description: 'Performance patterns', connections: 6 },
+            { name: 'BUILDER', description: 'Build patterns', connections: 9 },
+            { name: 'STREAM', description: 'Data streaming', connections: 7 },
+          ],
+
+          init() {
+            this.startRealtime();
+            this.initCharts();
+            this.addFeedItem('System initialized', 'success');
+            // Initialize language elements
+            updateLanguageElements(this.currentLanguage);
+            // Initialize action handlers
+            this.initActionHandlers();
+
+            // Initialize field toggles
+            this.initFieldToggles();
+          },
+
+          // Language Management
+          setLanguage(lang) {
+            this.currentLanguage = lang;
+            updateLanguageElements(lang);
+            this.addFeedItem(`🌐 Language changed to ${lang.toUpperCase()}`, 'info');
+          },
+
+          // Action Handlers
+          initActionHandlers() {
+            document.addEventListener('click', e => {
+              const target = e.target.closest('[data-action]');
+              if (target) {
+                const action = target.getAttribute('data-action');
+                this.handleAction(action, target, e);
+              }
+            });
+          },
+
+          handleAction(action, element, event) {
+            switch (action) {
+              case 'add-account':
+                this.handleAddCustomer();
+                break;
+              case 'get-rules':
+                this.handleGetRules();
+                break;
+              case 'get-transactions':
+                this.handleGetTransactions();
+                break;
+              case 'get-lines':
+                this.handleGetLines();
+                break;
+              case 'get-game-admin':
+                this.addFeedItem('🎮 Opening Game Admin...', 'info');
+                break;
+              case 'get-agent-performance':
+                this.addFeedItem('📊 Opening Agent Performance...', 'info');
+                break;
+              case 'get-analysis':
+                this.addFeedItem('📈 Opening Analysis Dashboard...', 'info');
+                break;
+              case 'get-ip-tracker':
+                this.addFeedItem('🌐 Opening IP Tracker...', 'info');
+                break;
+              case 'get-transaction-history':
+                this.addFeedItem('💰 Opening Transaction History...', 'info');
+                break;
+              case 'get-settled-figure':
+                this.handleGetSettledFigure();
+                break;
+              case 'get-lines':
+                if (target.getAttribute('data-type') === 'sportbook') {
+                  this.addFeedItem('🏆 Opening Sportsbook Lines...', 'info');
+                }
+                break;
+              case 'get-adjustments':
+                this.handleGetAdjustments();
+                break;
+              case 'get-distributions':
+                this.handleGetDistributions();
+                break;
+              case 'get-free-play':
+                this.handleGetFreePlay();
+                break;
+              case 'get-analysis':
+                this.addFeedItem('📊 Opening Analysis Dashboard...', 'info');
+                break;
+              default:
+                this.addFeedItem(`⚠️ Unknown action: ${action}`, 'warning');
+            }
+          },
+
+          handleAddCustomer() {
+            this.addFeedItem('👤 Opening Add Customer modal...', 'info');
+
+            // Load the modal component if not already loaded
+            if (!document.getElementById('add-customer-modal')) {
+              this.loadAddCustomerModal();
+            } else {
+              // Modal already loaded, just open it
+              if (window.openAddCustomerModal) {
+                window.openAddCustomerModal();
+              }
+            }
+          },
+
+          async loadAddCustomerModal() {
+            try {
+              const response = await fetch('/ui/components/add-customer-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openAddCustomerModal) {
+                    window.openAddCustomerModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load customer modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading customer modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          handleGetRules() {
+            this.addFeedItem('📋 Opening System Rules & Policies...', 'info');
+
+            // Load the modal component if not already loaded
+            if (!document.getElementById('rules-modal')) {
+              this.loadRulesModal();
+            } else {
+              // Modal already loaded, just open it
+              if (window.openRulesModal) {
+                window.openRulesModal();
+              }
+            }
+          },
+
+          async loadRulesModal() {
+            try {
+              const response = await fetch('/ui/components/rules-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openRulesModal) {
+                    window.openRulesModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load rules modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading rules modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          handleGetTransactions() {
+            this.addFeedItem('💰 Opening Cashier & Transactions...', 'info');
+
+            // Load the modal component if not already loaded
+            if (!document.getElementById('transactions-modal')) {
+              this.loadTransactionsModal();
+            } else {
+              // Modal already loaded, just open it
+              if (window.openTransactionsModal) {
+                window.openTransactionsModal();
+              }
+            }
+          },
+
+          async loadTransactionsModal() {
+            try {
+              const response = await fetch('/ui/components/transactions-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openTransactionsModal) {
+                    window.openTransactionsModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load transactions modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading transactions modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          handleGetLines() {
+            this.addFeedItem('🎯 Opening Ticketwriter & Betting Lines...', 'info');
+
+            // Load the modal component if not already loaded
+            if (!document.getElementById('ticketwriter-modal')) {
+              this.loadTicketwriterModal();
+            } else {
+              // Modal already loaded, just open it
+              if (window.openTicketwriterModal) {
+                window.openTicketwriterModal();
+              }
+            }
+          },
+
+          async loadTicketwriterModal() {
+            try {
+              const response = await fetch('/ui/components/ticketwriter-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openTicketwriterModal) {
+                    window.openTicketwriterModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load ticketwriter modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading ticketwriter modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          handleGetSettledFigure() {
+            this.addFeedItem('💵 Opening Collections & Settlements...', 'info');
+
+            // Load the modal component if not already loaded
+            if (!document.getElementById('collections-modal')) {
+              this.loadCollectionsModal();
+            } else {
+              // Modal already loaded, just open it
+              if (window.openCollectionsModal) {
+                window.openCollectionsModal();
+              }
+            }
+          },
+
+          async loadCollectionsModal() {
+            try {
+              const response = await fetch('/ui/components/collections-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openCollectionsModal) {
+                    window.openCollectionsModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load collections modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading collections modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          handleGetAdjustments() {
+            this.addFeedItem('🔧 Opening Adjustments & Corrections...', 'info');
+
+            // Load the modal component if not already loaded
+            if (!document.getElementById('adjustments-modal')) {
+              this.loadAdjustmentsModal();
+            } else {
+              // Modal already loaded, just open it
+              if (window.openAdjustmentsModal) {
+                window.openAdjustmentsModal();
+              }
+            }
+          },
+
+          async loadAdjustmentsModal() {
+            try {
+              const response = await fetch('/ui/components/adjustments-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openAdjustmentsModal) {
+                    window.openAdjustmentsModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load adjustments modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading adjustments modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          handleGetDistributions() {
+            this.addFeedItem('📊 Opening Distributions Management...', 'info');
+            this.loadDistributionsModal();
+          },
+
+          async loadDistributionsModal() {
+            try {
+              const response = await fetch('/ui/components/distributions-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openDistributionsModal) {
+                    window.openDistributionsModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load distributions modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading distributions modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          handleGetFreePlay() {
+            this.addFeedItem('🎁 Opening Free Play & Bonus Management...', 'info');
+            this.loadFreePlayModal();
+          },
+
+          async loadFreePlayModal() {
+            try {
+              const response = await fetch('/ui/components/free-play-modal.html');
+              if (response.ok) {
+                const modalHtml = await response.text();
+                // Insert modal into document
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                // Open the modal
+                setTimeout(() => {
+                  if (window.openFreePlayModal) {
+                    window.openFreePlayModal();
+                  }
+                }, 100);
+              } else {
+                this.addFeedItem('❌ Failed to load free play modal', 'error');
+              }
+            } catch (error) {
+              this.addFeedItem('❌ Error loading free play modal', 'error');
+              console.error('Modal load error:', error);
+            }
+          },
+
+          // Field Toggles Management
+          initFieldToggles() {
+            // Handle balances toggle
+            const balancesToggle = document.querySelector('input[data-field="balances"]');
+            if (balancesToggle) {
+              balancesToggle.addEventListener('change', e => {
+                this.handleBalancesToggle(e.target.checked);
+              });
+
+              // Set initial state based on saved preference
+              const savedState = localStorage.getItem('balancesVisible');
+              if (savedState !== null) {
+                balancesToggle.checked = savedState === 'true';
+                this.handleBalancesToggle(balancesToggle.checked);
+              }
+            }
+
+            // Handle distributions toggle
+            const distributionsToggle = document.querySelector('input[data-field="distributions"]');
+            if (distributionsToggle) {
+              distributionsToggle.addEventListener('change', e => {
+                this.handleDistributionsToggle(e.target.checked);
+              });
+
+              // Set initial state based on saved preference
+              const savedState = localStorage.getItem('distributionsVisible');
+              if (savedState !== null) {
+                distributionsToggle.checked = savedState === 'true';
+                this.handleDistributionsToggle(distributionsToggle.checked);
+              }
+            }
+
+            // Handle free play toggle
+            const freePlayToggle = document.querySelector('input[data-field="free-play"]');
+            if (freePlayToggle) {
+              freePlayToggle.addEventListener('change', e => {
+                this.handleFreePlayToggle(e.target.checked);
+              });
+
+              // Set initial state based on saved preference
+              const savedState = localStorage.getItem('freePlayVisible');
+              if (savedState !== null) {
+                freePlayToggle.checked = savedState === 'true';
+                this.handleFreePlayToggle(freePlayToggle.checked);
+              }
+            }
+          },
+
+          handleBalancesToggle(isVisible) {
+            // Save preference
+            localStorage.setItem('balancesVisible', isVisible.toString());
+
+            // Find all balance display elements
+            const balanceElements = document.querySelectorAll(
+              '.balance-display, .balance-amount, .balance-value, [data-balance]'
+            );
+
+            balanceElements.forEach(element => {
+              if (isVisible) {
+                element.style.display = '';
+                element.style.visibility = 'visible';
+              } else {
+                element.style.display = 'none';
+                element.style.visibility = 'hidden';
+              }
+            });
+
+            // Update balance visibility in tables and cards
+            const balanceCells = document.querySelectorAll(
+              'td:nth-child(3), td:nth-child(4), .balance-item, .metric-card'
+            );
+            balanceCells.forEach(cell => {
+              if (cell.textContent.includes('$') || cell.classList.contains('balance')) {
+                if (isVisible) {
+                  cell.style.display = '';
+                  cell.style.visibility = 'visible';
+                } else {
+                  cell.style.display = 'none';
+                  cell.style.visibility = 'hidden';
+                }
+              }
+            });
+
+            // Update dashboard feed
+            if (isVisible) {
+              this.addFeedItem('💰 Balance information is now visible', 'info');
+            } else {
+              this.addFeedItem('🔒 Balance information is now hidden', 'info');
+            }
+
+            // Dispatch custom event for other components
+            const event = new CustomEvent('balanceVisibilityChanged', {
+              detail: { visible: isVisible },
+            });
+            document.dispatchEvent(event);
+          },
+
+          handleDistributionsToggle(isVisible) {
+            // Save preference
+            localStorage.setItem('distributionsVisible', isVisible.toString());
+
+            // Find all distribution display elements
+            const distributionElements = document.querySelectorAll(
+              '.distribution-display, .distribution-amount, .distribution-value, [data-distribution]'
+            );
+
+            distributionElements.forEach(element => {
+              if (isVisible) {
+                element.style.display = '';
+                element.style.visibility = 'visible';
+              } else {
+                element.style.display = 'none';
+                element.style.visibility = 'hidden';
+              }
+            });
+
+            // Update distribution visibility in tables and cards
+            const distributionCells = document.querySelectorAll(
+              'td:nth-child(4), td:nth-child(5), .distribution-item, .distribution-card'
+            );
+            distributionCells.forEach(cell => {
+              if (cell.textContent.includes('$') || cell.classList.contains('distribution')) {
+                if (isVisible) {
+                  cell.style.display = '';
+                  cell.style.visibility = 'visible';
+                } else {
+                  cell.style.display = 'none';
+                  cell.style.visibility = 'hidden';
+                }
+              }
+            });
+
+            // Update dashboard feed
+            if (isVisible) {
+              this.addFeedItem('📊 Distribution information is now visible', 'info');
+            } else {
+              this.addFeedItem('🔒 Distribution information is now hidden', 'info');
+            }
+
+            // Dispatch custom event for other components
+            const event = new CustomEvent('distributionVisibilityChanged', {
+              detail: { visible: isVisible },
+            });
+            document.dispatchEvent(event);
+          },
+
+          handleFreePlayToggle(isVisible) {
+            // Save preference
+            localStorage.setItem('freePlayVisible', isVisible.toString());
+
+            // Find all free play display elements
+            const freePlayElements = document.querySelectorAll(
+              '.free-play-display, .free-play-amount, .free-play-value, [data-free-play]'
+            );
+
+            freePlayElements.forEach(element => {
+              if (isVisible) {
+                element.style.display = '';
+                element.style.visibility = 'visible';
+              } else {
+                element.style.display = 'none';
+                element.style.visibility = 'hidden';
+              }
+            });
+
+            // Update free play visibility in tables and cards
+            const freePlayCells = document.querySelectorAll(
+              'td:nth-child(5), td:nth-child(6), .free-play-item, .bonus-card'
+            );
+            freePlayCells.forEach(cell => {
+              if (
+                cell.textContent.includes('$') ||
+                cell.classList.contains('free-play') ||
+                cell.classList.contains('bonus')
+              ) {
+                if (isVisible) {
+                  cell.style.display = '';
+                  cell.style.visibility = 'visible';
+                } else {
+                  cell.style.display = 'none';
+                  cell.style.visibility = 'hidden';
+                }
+              }
+            });
+
+            // Update dashboard feed
+            if (isVisible) {
+              this.addFeedItem('🎁 Free play information is now visible', 'info');
+            } else {
+              this.addFeedItem('🔒 Free play information is now hidden', 'info');
+            }
+
+            // Dispatch custom event for other components
+            const event = new CustomEvent('freePlayVisibilityChanged', {
+              detail: { visible: isVisible },
+            });
+            document.dispatchEvent(event);
+          },
+
+          t(code, lang) {
+            return t(code, lang || this.currentLanguage);
+          },
+
+          startDemo() {
+            this.addFeedItem('🚀 Demo started - all systems running', 'info');
+            this.runDemoSequence();
+          },
+
+          runDemoSequence() {
+            // Simulate various activities
+            setTimeout(() => {
+              this.addFeedItem('Customer AL500 placed bet: $250 on Team A', 'info');
+              this.metrics.transactions++;
+              this.metrics.revenue += 250;
+            }, 2000);
+
+            setTimeout(() => {
+              this.addFeedItem('Agent hierarchy updated: 8 levels synchronized', 'success');
+            }, 4000);
+
+            setTimeout(() => {
+              this.addFeedItem('P2P Match: W001 ($500) matched with D002 ($500)', 'success');
+              this.withdrawalQueue[0].match = 'D002';
+            }, 6000);
+
+            setTimeout(() => {
+              this.addFeedItem('Cache hit rate improved to 87.5%', 'info');
+            }, 8000);
+
+            setTimeout(() => {
+              this.addFeedItem('Security scan completed: All checks passed', 'success');
+            }, 10000);
+          },
+
+          testEndpoint(endpoint) {
+            this.addFeedItem(`Testing ${endpoint.name}: ${endpoint.path}`, 'info');
+            setTimeout(() => {
+              endpoint.responseTime = Math.floor(Math.random() * 100 + 50);
+              this.addFeedItem(`✅ ${endpoint.name} responded in ${endpoint.responseTime}ms`, 'success');
+            }, 1000);
+          },
+
+          addFeedItem(message, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            const icons = {
+              success: '✅',
+              warning: '⚠️',
+              error: '❌',
+              info: 'ℹ️',
+            };
+
+            this.liveFeedItems.unshift({
+              id: Date.now(),
+              time: time,
+              message: `${icons[type]} ${message}`,
+            });
+
+            // Keep only last 10 items
+            if (this.liveFeedItems.length > 10) {
+              this.liveFeedItems.pop();
+            }
+          },
+
+          toggleRealtime() {
+            this.realtime = !this.realtime;
+            if (this.realtime) {
+              this.startRealtime();
+            } else {
+              this.stopRealtime();
+            }
+          },
+
+          startRealtime() {
+            if (this.intervalId) return;
+
+            this.intervalId = setInterval(() => {
+              if (!this.realtime) return;
+
+              // Update metrics
+              this.metrics.activeUsers += Math.floor(Math.random() * 10 - 5);
+              this.metrics.transactions += Math.floor(Math.random() * 5);
+              this.metrics.revenue += Math.floor(Math.random() * 500);
+              this.metrics.systemLoad = Math.min(100, Math.max(0, this.metrics.systemLoad + Math.random() * 10 - 5));
+              this.metrics.cpu = Math.min(100, Math.max(0, this.metrics.cpu + Math.random() * 10 - 5));
+              this.metrics.memory = Math.min(100, Math.max(0, this.metrics.memory + Math.random() * 5 - 2));
+
+              // Update charts
+              this.updateCharts();
+
+              // Random events
+              if (Math.random() > 0.7) {
+                const events = [
+                  'New customer registration: USER_' + Math.floor(Math.random() * 9999),
+                  'Transaction completed: $' + Math.floor(Math.random() * 1000 + 100),
+                  'Cache hit for customer query',
+                  'API rate limit check passed',
+                  'Database connection pool optimized',
+                ];
+                this.addFeedItem(events[Math.floor(Math.random() * events.length)], 'info');
+              }
+            }, 2000);
+          },
+
+          stopRealtime() {
+            if (this.intervalId) {
+              clearInterval(this.intervalId);
+              this.intervalId = null;
+            }
+          },
+
+          initCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart');
+            if (perfCtx) {
+              this.performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                  labels: Array.from({ length: 10 }, (_, i) => `${i}0s`),
+                  datasets: [
+                    {
+                      label: 'Response Time (ms)',
+                      data: Array.from({ length: 10 }, () => Math.random() * 100 + 50),
+                      borderColor: '#fdbb2d',
+                      backgroundColor: 'rgba(253, 187, 45, 0.1)',
+                      tension: 0.4,
+                    },
+                    {
+                      label: 'Requests/sec',
+                      data: Array.from({ length: 10 }, () => Math.random() * 200 + 100),
+                      borderColor: '#b21f1f',
+                      backgroundColor: 'rgba(178, 31, 31, 0.1)',
+                      tension: 0.4,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      labels: { color: '#e2e8f0' },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      ticks: { color: '#94a3b8' },
+                      grid: { color: '#475569' },
+                    },
+                    y: {
+                      ticks: { color: '#94a3b8' },
+                      grid: { color: '#475569' },
+                    },
+                  },
+                },
+              });
+            }
+
+            // Pattern Chart
+            const patternCtx = document.getElementById('patternChart');
+            if (patternCtx) {
+              this.patternChart = new Chart(patternCtx, {
+                type: 'radar',
+                data: {
+                  labels: this.patterns.map(p => p.name),
+                  datasets: [
+                    {
+                      label: 'Active Connections',
+                      data: this.patterns.map(p => p.connections),
+                      borderColor: '#fdbb2d',
+                      backgroundColor: 'rgba(253, 187, 45, 0.2)',
+                      pointBackgroundColor: '#fdbb2d',
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      labels: { color: '#e2e8f0' },
+                    },
+                  },
+                  scales: {
+                    r: {
+                      ticks: { color: '#94a3b8' },
+                      grid: { color: '#475569' },
+                      pointLabels: { color: '#e2e8f0' },
+                    },
+                  },
+                },
+              });
+            }
+          },
+
+          updateCharts() {
+            if (this.performanceChart) {
+              // Add new data point and remove old one
+              this.performanceChart.data.datasets[0].data.shift();
+              this.performanceChart.data.datasets[0].data.push(Math.random() * 100 + 50);
+              this.performanceChart.data.datasets[1].data.shift();
+              this.performanceChart.data.datasets[1].data.push(Math.random() * 200 + 100);
+              this.performanceChart.update('none');
+            }
+          },
+        };
+      }
+    </script>
+
+    <!-- ==================== FIRE22 DASHBOARD WORKER FOOTER v4.0.0-staging ==================== -->
+    <!-- Generated with [pk:fire22-dashboard-worker@4.0.0-staging] -->
+    <footer
+      style="
+        margin-top: 60px;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+        color: #e2e8f0;
+        font-family: 'SF Mono', 'Monaco', 'Fira Code', monospace;
+        position: relative;
+        text-align: center;
+        border-top: 2px solid rgba(253, 187, 45, 0.3);
+        border-radius: 15px;
+      "
+    >
+      <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+        ╭────────────────────────────────────────────────────────────────────────╮
+      </div>
+
+      <div style="padding: 30px 0">
+        <!-- Fire22 Dashboard Worker Branding -->
+        <div style="padding: 30px 0">
+          <div
+            style="
+              font-size: 3rem;
+              color: #fdbb2d;
+              text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+              animation: flame-flicker 2s ease-in-out infinite;
+            "
+          >
+            🔥
+          </div>
+          <h2 style="font-size: 2rem; color: #fdbb2d; margin: 10px 0; font-weight: 700; letter-spacing: 2px">
+            Fire22 Dashboard Worker
+          </h2>
+          <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; font-style: italic">
+            Enhanced with Bun v1.01.04-alpha features and native Bun.semver version management
+          </p>
+          <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 10px">
+            Version:
+            <span style="color: #fdbb2d; font-weight: bold">4.0.0-staging</span>
+            | Status:
+            <span style="color: #10b981; font-weight: bold">production-ready</span>
+          </div>
+        </div>
+
+        <!-- Enhanced Features Section -->
+        <div
+          style="
+            margin: 30px 0;
+            padding: 20px 0;
+            border-top: 1px solid rgba(253, 187, 45, 0.3);
+            border-bottom: 1px solid rgba(253, 187, 45, 0.3);
+          "
+        >
+          <div style="color: #fdbb2d; margin-bottom: 20px; font-size: 1.2rem">├─── Fire22 Dashboard Features ───┤</div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+              gap: 15px;
+              text-align: left;
+              max-width: 1200px;
+              margin: 0 auto;
+            "
+          >
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🎯 Standalone Executables with Runtime Flags
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🌐 Custom User Agent Management
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 🎨 ANSI Color Support with Bun.stripANSI()
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ ⚡ Runtime Information & Diagnostics
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ├─ 📦 Side Effects Optimization
+            </div>
+            <div
+              style="color: rgba(255, 255, 255, 0.8); transition: color 0.3s; cursor: pointer"
+              onmouseover="this.style.color='#fdbb2d'"
+              onmouseout="this.style.color='rgba(255, 255, 255, 0.8)'"
+            >
+              ╰─ 🚀 Native Bun.semver & CLI Tooling
+            </div>
+          </div>
+        </div>
+
+        <!-- Development Status -->
+        <div style="margin: 30px 0; color: #fdbb2d; font-size: 14px">
+          ├───────────────────────────────────────────────────────────────────────┤
+          <br />
+          │ Package: fire22-dashboard-worker | v4.0.0-staging | Status: ● Active │
+          <br />
+          │ Runtime: Bun >=1.2.0 | Node: >=18.0 | Build Time: 47.2s | Tests: 54.8s│
+          <br />
+          ├───────────────────────────────────────────────────────────────────────┤
+        </div>
+
+        <!-- Copyright & Legal -->
+        <div style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; line-height: 1.8">
+          <p>&copy; 2024 Fire22 Development Team. All rights reserved.</p>
+          <p style="font-family: monospace; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6)">
+            Generated with
+            <span style="color: #fdbb2d">[pk:fire22-dashboard-worker@4.0.0-staging]</span>
+          </p>
+          <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.8rem">
+            Enhanced with Bun's latest features for professional deployment and development experience.
+          </p>
+          <p>╰─────────────────────────────────────────────────────────────────╯</p>
+        </div>
+      </div>
+
+      <div style="color: #fdbb2d; font-size: 14px; line-height: 1; overflow: hidden">
+        ╰────────────────────────────────────────────────────────────────────────╯
+      </div>
+    </footer>
+
+    <!-- Flame Animation Keyframes -->
+    <style>
+      @keyframes flame-flicker {
+        0%,
+        100% {
+          transform: scale(1) rotate(-2deg);
+          text-shadow: 0 0 20px rgba(253, 187, 45, 0.5);
+        }
+        50% {
+          transform: scale(1.1) rotate(2deg);
+          text-shadow: 0 0 30px rgba(253, 187, 45, 0.8);
+        }
+      }
+    </style>
+
+    <!-- Fire22 Dashboard Worker Footer v4.0.0-staging - End -->
+  </body>
+</html>

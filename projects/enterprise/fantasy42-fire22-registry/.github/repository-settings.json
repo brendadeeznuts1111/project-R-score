@@ -1,0 +1,364 @@
+{
+  "name": "fantasy42-fire22-registry",
+  "description": "Enterprise-grade Fantasy42-Fire22 package registry with domain-driven architecture, real-time analytics, and comprehensive security",
+  "homepage": "https://docs.apexodds.net",
+  "private": true,
+  "has_issues": true,
+  "has_projects": true,
+  "has_wiki": false,
+  "has_discussions": true,
+  "has_downloads": false,
+  "default_branch": "main",
+  "allow_squash_merge": true,
+  "allow_merge_commit": false,
+  "allow_rebase_merge": true,
+  "allow_auto_merge": false,
+  "delete_branch_on_merge": true,
+  "allow_update_branch": true,
+  "use_squash_pr_title_as_default": true,
+  "squash_merge_commit_title": "PR_TITLE",
+  "squash_merge_commit_message": "COMMIT_MESSAGES",
+  "merge_commit_title": "PR_TITLE",
+  "merge_commit_message": "PR_BODY",
+  "topics": [
+    "fantasy42",
+    "fire22",
+    "enterprise",
+    "package-registry",
+    "domain-driven-design",
+    "typescript",
+    "bun",
+    "cloudflare",
+    "cloudflare-workers",
+    "sports-betting",
+    "fantasy-sports",
+    "gaming",
+    "analytics",
+    "dashboard",
+    "real-time",
+    "security",
+    "compliance",
+    "microservices",
+    "edge-computing",
+    "serverless",
+    "websocket",
+    "jwt",
+    "sqlite",
+    "r2",
+    "ci-cd",
+    "devops",
+    "scalability",
+    "event-driven",
+    "cqrs",
+    "fintech",
+    "sports-tech"
+  ],
+  "security_and_analysis": {
+    "advanced_security": {
+      "status": "enabled"
+    },
+    "secret_scanning": {
+      "status": "enabled"
+    },
+    "secret_scanning_push_protection": {
+      "status": "enabled"
+    },
+    "dependabot_security_updates": {
+      "status": "enabled"
+    },
+    "dependabot_alerts": {
+      "status": "enabled"
+    },
+    "code_scanning_default_setup": {
+      "status": "enabled"
+    }
+  },
+  "branch_protection_rules": [
+    {
+      "pattern": "main",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": [
+          "ci/circleci: build",
+          "ci/circleci: test",
+          "security/codeql",
+          "security/dependency-review",
+          "lint-and-format",
+          "enterprise-compliance",
+          "domain-detection",
+          "domain-testing",
+          "security-compliance",
+          "integration-testing"
+        ]
+      },
+      "enforce_admins": true,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 2,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "dismissal_restrictions": {
+          "users": [],
+          "teams": ["fire22/enterprise-admins", "fire22/architects", "fire22/core-team"]
+        }
+      },
+      "restrictions": {
+        "users": [],
+        "teams": [
+          "fire22/enterprise-admins",
+          "fire22/core-team",
+          "fire22/security-team",
+          "fire22/devops-team"
+        ],
+        "apps": []
+      },
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": true,
+      "required_conversation_resolution": true
+    },
+    {
+      "pattern": "develop",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": [
+          "ci/circleci: build",
+          "ci/circleci: test",
+          "lint-and-format",
+          "domain-detection",
+          "domain-testing"
+        ]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "dismissal_restrictions": {
+          "users": [],
+          "teams": ["fire22/architects"]
+        }
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_conversation_resolution": true
+    },
+    {
+      "pattern": "enterprise",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": [
+          "ci/circleci: build",
+          "ci/circleci: test",
+          "security/codeql",
+          "security/dependency-review",
+          "lint-and-format",
+          "enterprise-compliance",
+          "domain-detection",
+          "domain-testing",
+          "security-compliance"
+        ]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 2,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true,
+        "dismissal_restrictions": {
+          "users": [],
+          "teams": ["fire22/enterprise-admins", "fire22/architects"]
+        }
+      },
+      "restrictions": {
+        "users": [],
+        "teams": ["fire22/enterprise-admins", "fire22/core-team"],
+        "apps": []
+      },
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_conversation_resolution": true
+    },
+    {
+      "pattern": "feature/*",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": ["domain-tests-*", "security-scan", "lint-check", "type-check"]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_conversation_resolution": true
+    },
+    {
+      "pattern": "pkg/*",
+      "required_status_checks": {
+        "strict": true,
+        "contexts": ["package-tests-*", "security-scan", "dependency-check", "lint-check"]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": true
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_conversation_resolution": true
+    },
+    {
+      "pattern": "hotfix/*",
+      "required_status_checks": {
+        "strict": false,
+        "contexts": ["emergency-tests", "security-scan"]
+      },
+      "enforce_admins": false,
+      "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": false,
+        "require_code_owner_reviews": true
+      },
+      "restrictions": null,
+      "allow_force_pushes": false,
+      "allow_deletions": false,
+      "block_creations": false,
+      "required_conversation_resolution": false
+    }
+  ],
+  "environments": [
+    {
+      "name": "development",
+      "wait_timer": 0,
+      "reviewers": [],
+      "deployment_branch_policy": {
+        "protected_branches": false,
+        "custom_branch_policies": false
+      }
+    },
+    {
+      "name": "staging",
+      "wait_timer": 10,
+      "reviewers": [
+        {
+          "type": "Team",
+          "id": "fire22/devops-team"
+        }
+      ],
+      "deployment_branch_policy": {
+        "protected_branches": true,
+        "custom_branch_policies": false
+      }
+    },
+    {
+      "name": "production",
+      "wait_timer": 30,
+      "reviewers": [
+        {
+          "type": "Team",
+          "id": "fire22/enterprise-admins"
+        },
+        {
+          "type": "Team",
+          "id": "fire22/security-team"
+        }
+      ],
+      "deployment_branch_policy": {
+        "protected_branches": true,
+        "custom_branch_policies": false
+      }
+    }
+  ],
+  "dependabot": {
+    "package-ecosystem": "npm",
+    "directory": "/",
+    "schedule": {
+      "interval": "weekly",
+      "day": "monday",
+      "time": "09:00",
+      "timezone": "America/New_York"
+    },
+    "open-pull-requests-limit": 10,
+    "reviewers": ["fire22/devops-team", "fire22/security-team"],
+    "assignees": ["fire22/devops-team"],
+    "commit-message": {
+      "prefix": "deps",
+      "include": "scope"
+    }
+  },
+  "codeowners": {
+    "filepath": ".github/CODEOWNERS",
+    "errors": "strict"
+  },
+  "labels": [
+    {
+      "name": "bug",
+      "color": "d73a49",
+      "description": "Something isn't working"
+    },
+    {
+      "name": "enhancement",
+      "color": "a2eeef",
+      "description": "New feature or request"
+    },
+    {
+      "name": "documentation",
+      "color": "0075ca",
+      "description": "Improvements or additions to documentation"
+    },
+    {
+      "name": "security",
+      "color": "b60205",
+      "description": "Security-related issue or vulnerability"
+    },
+    {
+      "name": "performance",
+      "color": "fbca04",
+      "description": "Performance-related issue or improvement"
+    },
+    {
+      "name": "breaking-change",
+      "color": "d93f0b",
+      "description": "Breaking change that requires migration"
+    },
+    {
+      "name": "good-first-issue",
+      "color": "7057ff",
+      "description": "Good for newcomers to contribute"
+    },
+    {
+      "name": "help-wanted",
+      "color": "008672",
+      "description": "Extra attention is needed"
+    },
+    {
+      "name": "question",
+      "color": "d876e3",
+      "description": "Further information is requested"
+    },
+    {
+      "name": "wontfix",
+      "color": "ffffff",
+      "description": "This will not be worked on"
+    },
+    {
+      "name": "duplicate",
+      "color": "cfd3d7",
+      "description": "This issue or pull request already exists"
+    },
+    {
+      "name": "invalid",
+      "color": "e4e669",
+      "description": "This doesn't seem right"
+    }
+  ]
+}

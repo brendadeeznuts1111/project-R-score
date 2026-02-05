@@ -1,0 +1,128 @@
+{
+  "timestamp": "2025-08-30T01:16:37.473Z",
+  "benchmarks": [
+    {
+      "command": "bunx --bun --package @fire22-registry/security-scanner audit",
+      "totalTime": 19,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 255,
+      "success": false
+    },
+    {
+      "command": "bunx --bun -p @fire22-registry/compliance-core validate",
+      "totalTime": 190,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    },
+    {
+      "command": "bunx --bun --package @fire22-registry/fraud-prevention monitor",
+      "totalTime": 177,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    },
+    {
+      "command": "bunx --bun -p @fire22-registry/analytics-dashboard report",
+      "totalTime": 178,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    },
+    {
+      "command": "bunx --bun --package @fire22-registry/betting-engine validate",
+      "totalTime": 200,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    },
+    {
+      "command": "bunx --bun -p @fire22-registry/payment-processing audit",
+      "totalTime": 12,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 255,
+      "success": false
+    },
+    {
+      "command": "bunx --bun --package @fire22-registry/user-management verify",
+      "totalTime": 185,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    },
+    {
+      "command": "bunx prettier --version",
+      "totalTime": 70,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 0,
+      "success": true
+    },
+    {
+      "command": "bunx eslint --version",
+      "totalTime": 1356,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    },
+    {
+      "command": "bunx tsc --version",
+      "totalTime": 60,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 0,
+      "success": true
+    },
+    {
+      "command": "bunx lodash --version",
+      "totalTime": 8,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    },
+    {
+      "command": "bunx prettier --version",
+      "totalTime": 53,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 0,
+      "success": true
+    },
+    {
+      "command": "bunx eslint --version",
+      "totalTime": 1179,
+      "userTime": 0,
+      "systemTime": 0,
+      "cpuUsage": 0,
+      "exitCode": 1,
+      "success": false
+    }
+  ],
+  "summary": {
+    "totalBenchmarks": 13,
+    "successfulBenchmarks": 3,
+    "averageTotalTime": 283.61538461538464,
+    "averageCpuUsage": 0
+  }
+}

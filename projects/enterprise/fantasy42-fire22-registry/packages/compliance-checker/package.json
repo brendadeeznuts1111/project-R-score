@@ -1,0 +1,82 @@
+{
+  "name": "@fire22/compliance-checker",
+  "version": "1.0.0",
+  "description": "Enterprise compliance validation for Fantasy42-Fire22 with regulatory framework support",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "fire22-compliance": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --compile --outfile=./dist/index.js --target=node",
+    "build:types": "bunx tsc --emitDeclarationOnly --outDir ./dist",
+    "build:cli": "bun build ./src/cli.ts --compile --outfile=./dist/cli.js --target=node",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "lint": "bunx eslint src/**/*.ts",
+    "benchmark": "bun run scripts/benchmark.ts"
+  },
+  "keywords": [
+    "compliance",
+    "gdpr",
+    "pci",
+    "aml",
+    "kyc",
+    "regulatory",
+    "fantasy42",
+    "fire22",
+    "enterprise",
+    "audit",
+    "responsible-gaming"
+  ],
+  "author": "Fire22 Compliance Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry",
+    "directory": "packages/compliance-checker"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry/issues"
+  },
+  "homepage": "https://fire22.com/docs/compliance-checker",
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "bun": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "fire22": {
+    "domain": "compliance",
+    "category": "auditing",
+    "criticality": "high",
+    "compliance": [
+      "gdpr",
+      "pci",
+      "aml",
+      "kyc",
+      "responsible-gaming"
+    ],
+    "benchmark": {
+      "minComplianceScore": 80,
+      "maxCriticalViolations": 0,
+      "maxHighViolations": 2
+    }
+  }
+}

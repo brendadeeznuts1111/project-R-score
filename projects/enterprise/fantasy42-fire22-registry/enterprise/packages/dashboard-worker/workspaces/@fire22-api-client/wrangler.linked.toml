@@ -1,0 +1,18 @@
+name = "api-client-linked"
+compatibility_date = "2024-08-27"
+compatibility_flags = ["nodejs_compat"]
+main = "dist/linked/index.js"
+[limits]
+cpu_time = 30000
+memory = "128MB"
+
+[bindings]
+D1 = ["fire22_db","dashboard_db"]
+KV = ["api_cache"]
+SECRETS = ["fire22_api_key","database_url"]
+
+[vars]
+WORKSPACE_MODE = "linked"
+WORKSPACE_NAME = "@fire22/api-client"
+BUILD_TARGET = "development"
+

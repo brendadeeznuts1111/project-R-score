@@ -1,0 +1,213 @@
+name: 🔒 Security Issue
+description: Report a security vulnerability (use responsibly)
+title: '🔒 [SECURITY]: '
+labels: ['security', 'critical', 'needs-immediate-attention']
+assignees: ['@fire22/security']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🔒 Fire22 Dashboard Worker - Security Issue Report
+
+        **⚠️ IMPORTANT**: For serious security vulnerabilities, please use our private security reporting process instead of this public form.
+
+        **Private Reporting**: Send details to [security@fire22.com](mailto:security@fire22.com) with subject "CONFIDENTIAL: Security Vulnerability"
+
+        **Use this form only for**: Non-critical security improvements, security configuration questions, or publicly known issues.
+
+  - type: checkboxes
+    id: security_checklist
+    attributes:
+      label: '🛡️ Security Report Checklist'
+      description: 'Please confirm before proceeding'
+      options:
+        - label: 'This is NOT a critical vulnerability that could compromise user data or system security'
+          required: true
+        - label: 'I have removed all sensitive information from this report'
+          required: true
+        - label: 'I understand this report will be public'
+          required: true
+        - label: 'I have considered using private reporting for sensitive issues'
+          required: true
+
+  - type: dropdown
+    id: security_type
+    attributes:
+      label: '🔍 Security Issue Type'
+      description: 'What type of security issue are you reporting?'
+      options:
+        - '🔧 Configuration Security - Insecure defaults or recommendations'
+        - '📚 Documentation - Missing security guidance or outdated practices'
+        - '🛠️ Tooling - Security scanning or validation improvements'
+        - '🔗 Dependencies - Known vulnerable dependencies'
+        - '⚙️ Process - Security workflow or process improvements'
+        - '🔍 Code Quality - Potential security code issues (non-critical)'
+        - '📋 Compliance - Standards compliance or audit findings'
+        - '🎓 Educational - Security awareness or training topics'
+        - '❓ Other - Something else (describe below)'
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity_assessment
+    attributes:
+      label: '📊 Severity Assessment'
+      description: 'How would you rate the potential impact?'
+      options:
+        - '🟢 Low - Minimal impact, theoretical risk'
+        - '🟡 Medium - Could affect some users under specific conditions'
+        - '🟠 High - Could affect many users or have significant impact'
+        - '🔴 Critical - Immediate threat to user safety or data (should use private reporting)'
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected_component
+    attributes:
+      label: '🎯 Affected Component'
+      description: 'Which part of the system is affected?'
+      options:
+        - '🔌 API Client - Fire22 API integration'
+        - '📊 Core Dashboard - Main application interface'
+        - '🔐 Authentication - Login/session management'
+        - '💰 Financial Systems - Payment/transaction handling'
+        - '🔒 Security Registry - Security scanning and policies'
+        - '📱 Telegram Integration - Bot and messaging systems'
+        - '🏗️ Build System - Compilation and deployment'
+        - '🗄️ Database - Data storage and queries'
+        - '🌐 Network - HTTP/API communications'
+        - '⚙️ Configuration - Environment and settings'
+        - '📜 Scripts - Automation and tooling'
+        - '📚 Documentation - Guides and examples'
+        - '❓ Multiple/Unknown'
+      default: 12
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue_description
+    attributes:
+      label: '📝 Issue Description'
+      description: 'Describe the security issue or concern'
+      placeholder: 'Provide a clear description of the security issue...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: potential_impact
+    attributes:
+      label: '💥 Potential Impact'
+      description: 'What could happen if this issue is exploited?'
+      placeholder: |
+        - What data or systems could be affected?
+        - Who could be impacted?
+        - What are the potential consequences?
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: '🔄 Steps to Reproduce/Verify'
+      description: 'How can this issue be reproduced or verified?'
+      placeholder: |
+        1. Navigate to...
+        2. Configure...
+        3. Observe...
+        4. Notice the security concern...
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: '❌ Current Behavior'
+      description: 'What currently happens that creates the security concern?'
+      placeholder: 'Describe the current insecure behavior...'
+
+  - type: textarea
+    id: expected_secure_behavior
+    attributes:
+      label: '✅ Expected Secure Behavior'
+      description: 'What should happen instead to address the security concern?'
+      placeholder: 'Describe what secure behavior should look like...'
+
+  - type: textarea
+    id: environment_details
+    attributes:
+      label: '💻 Environment Details'
+      description: 'Provide relevant environment information'
+      placeholder: |
+        - Platform: (Windows/Linux/macOS/Docker)
+        - Version: 
+        - Configuration details:
+        - Deployment environment:
+
+  - type: textarea
+    id: mitigation_suggestions
+    attributes:
+      label: '🛠️ Suggested Mitigation'
+      description: 'Do you have suggestions for how to fix this issue?'
+      placeholder: |
+        - Immediate workarounds:
+        - Recommended fixes:
+        - Configuration changes:
+        - Code modifications:
+
+  - type: textarea
+    id: references
+    attributes:
+      label: '📖 References'
+      description: 'Include any relevant security standards, guidelines, or resources'
+      placeholder: |
+        - OWASP guidelines:
+        - Security best practices:
+        - CVE references:
+        - Documentation links:
+
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: '📢 Responsible Disclosure'
+      description: 'Disclosure preferences'
+      options:
+        - label: "I'm comfortable with this issue being discussed publicly"
+          required: false
+        - label: 'I would like to be credited if this leads to a security improvement'
+          required: false
+        - label: 'I can provide additional details if needed'
+          required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: '📋 Additional Context'
+      description: 'Any other relevant information'
+      placeholder: |
+        - How did you discover this issue?
+        - Have you seen this pattern elsewhere?
+        - Any other relevant details...
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ### 🔒 Security Response Process
+
+        1. **Immediate Review**: Security team reviews within 24 hours
+        2. **Risk Assessment**: Evaluate severity and impact
+        3. **Response Plan**: Develop mitigation strategy
+        4. **Implementation**: Apply fixes and improvements
+        5. **Verification**: Test and validate security improvements
+        6. **Communication**: Update community as appropriate
+
+        ### 🤝 Thank You!
+
+        Security researchers and the community help keep Fire22 Dashboard Worker secure for everyone. We appreciate responsible disclosure and will:
+
+        - Respond promptly to security reports
+        - Keep you informed of progress
+        - Credit your contribution (if desired)
+        - Maintain confidentiality for sensitive issues
+
+        **Questions?** Contact our security team: [security@fire22.com](mailto:security@fire22.com)

@@ -1,0 +1,33 @@
+{
+  "infrastructure": {
+    "localSqlite": true,
+    "cloudflareD1": true,
+    "r2Storage": true,
+    "kvCaching": true
+  },
+  "dataStatus": {
+    "currentRecords": {
+      "customers": 600,
+      "agents": 0,
+      "transactions": 5738,
+      "bets": 875
+    },
+    "estimatedCompletionPercent": 100,
+    "lastSyncTimestamp": "2025-08-30T07:12:35.444Z"
+  },
+  "retentionConfig": {
+    "d1ActiveDays": 90,
+    "r2ArchiveYears": 7,
+    "sqliteLocalDays": 90,
+    "recommendedChanges": [
+      "Consider reducing R2 retention from 7 years to 1 year as originally planned"
+    ]
+  },
+  "technicalCapabilities": {
+    "lkeyMappings": 7,
+    "secureAuth": true,
+    "dnsOptimized": true,
+    "performanceReady": true
+  },
+  "readinessScore": 100
+}

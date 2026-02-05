@@ -1,0 +1,39 @@
+# Fire22 Security Scanner Configuration
+# Copy to bunfig.toml in your project root
+
+[install.security]
+# Use Fire22 production security scanner
+scanner = "@fire22/security-scanner"
+
+[install]
+# Enhanced security settings for Fire22 workspace
+auto = false          # Disable auto-install for security
+exact = true          # Use exact versions to prevent supply chain attacks
+production = true     # Production-grade install settings
+
+# Registry security configuration
+registry = "https://registry.npmjs.org/"
+scopes = {
+  "@fire22" = "https://fire22.workers.dev/registry"
+}
+
+# Cache security
+[install.cache]
+dir = "~/.bun/install/cache"
+disable = false
+disableManifest = false
+
+# Test configuration
+[test]
+coverage = true
+timeout = 30000
+
+# Fire22 workspace-specific settings
+[install.production]
+dev = false
+optional = false
+
+# Logging for security audit trails
+[logLevel]
+default = "info"
+install = "verbose"  # Detailed security scan logging

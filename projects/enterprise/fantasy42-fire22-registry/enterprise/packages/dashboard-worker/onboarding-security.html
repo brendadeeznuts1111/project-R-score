@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Fire22 Security Onboarding - Bun Native Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .progress-bar {
+            flex: 1;
+            max-width: 300px;
+            margin: 0 40px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38b2ac);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .step-counter {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .main {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .onboarding-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: none;
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .step-subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: #f7fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: #667eea;
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.1);
+        }
+
+        .feature-card.selected {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        .code-block {
+            background: #1a202c;
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: #e2e8f0;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 1px solid #2d3748;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .code-title {
+            color: #81c784;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: #4a5568;
+            border: none;
+            color: #e2e8f0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #718096;
+        }
+
+        .command-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .command-item {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .command-name {
+            font-family: 'SF Mono', monospace;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .command-desc {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .benefits-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: #f0fff4;
+            border-radius: 12px;
+            border: 1px solid #c6f6d5;
+        }
+
+        .benefit-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            background: #48bb78;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .benefit-text {
+            font-size: 0.9rem;
+            color: #2d3748;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .security-demo {
+            background: #fff5f5;
+            border: 2px solid #fed7d7;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .security-demo-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .security-demo-title {
+            font-weight: 600;
+            color: #c53030;
+        }
+
+        .demo-output {
+            background: #1a202c;
+            border-radius: 8px;
+            padding: 1rem;
+            color: #e2e8f0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .onboarding-card {
+                padding: 1.5rem;
+                margin: 1rem;
+                border-radius: 16px;
+            }
+
+            .step-title {
+                font-size: 2rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .progress-bar {
+                max-width: 100%;
+                margin: 0;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .check-animation {
+            animation: checkScale 0.3s ease;
+        }
+
+        @keyframes checkScale {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    🔥 Fire22 Security Center
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="step-counter">
+                    <span id="currentStep">1</span> / <span id="totalSteps">6</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="onboarding-card">
+                <!-- Step 1: Welcome -->
+                <div class="step active" id="step-1">
+                    <div class="step-header">
+                        <div class="step-icon">🛡️</div>
+                        <h1 class="step-title">Welcome to Fire22 Security</h1>
+                        <p class="step-subtitle">Enterprise-grade security powered by Bun's native APIs</p>
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🔐</div>
+                            <h3 class="feature-title">Bun.secrets</h3>
+                            <p class="feature-description">Native credential storage using OS keychain (Keychain Services, libsecret, Credential Manager)</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🛡️</div>
+                            <h3 class="feature-title">Security Scanner</h3>
+                            <p class="feature-description">Automatic vulnerability scanning with custom Fire22 security policies</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">⚡</div>
+                            <h3 class="feature-title">Zero Dependencies</h3>
+                            <p class="feature-description">Built entirely on Bun's native APIs for maximum performance</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🌐</div>
+                            <h3 class="feature-title">Cross-Platform</h3>
+                            <p class="feature-description">Works seamlessly on macOS, Linux, and Windows</p>
+                        </div>
+                    </div>
+
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div class="benefit-text">No plaintext secrets in code or config files</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div class="benefit-text">Supply chain attack prevention</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div class="benefit-text">Enterprise security compliance</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div class="benefit-text">Nanosecond precision performance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Bun.secrets -->
+                <div class="step" id="step-2">
+                    <div class="step-header">
+                        <div class="step-icon">🔐</div>
+                        <h1 class="step-title">Secure Credential Storage</h1>
+                        <p class="step-subtitle">Store Fire22 credentials securely in your OS keychain</p>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">🔥 Fire22 Credential Management</span>
+                            <button class="copy-btn" onclick="copyCode('secrets-code')">Copy</button>
+                        </div>
+                        <pre id="secrets-code">import { secrets } from "bun";
+
+// Store Fire22 credentials securely
+await secrets.set({
+  service: "fire22-dashboard",
+  name: "database_url",
+  value: "postgresql://fire22:secure@localhost:5432/fire22"
+});
+
+await secrets.set({
+  service: "fire22-dashboard", 
+  name: "fire22_api_token",
+  value: "f22_live_api_your_secure_token_here"
+});
+
+// Retrieve during app startup
+const dbUrl = await secrets.get({
+  service: "fire22-dashboard",
+  name: "database_url"
+});
+
+const apiToken = await secrets.get({
+  service: "fire22-dashboard",
+  name: "fire22_api_token"
+});</pre>
+                    </div>
+
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command-name">bun run secrets-demo</div>
+                            <div class="command-desc">Interactive Bun.secrets demonstration</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun run env-setup development</div>
+                            <div class="command-desc">Setup secure environment credentials</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun run env-audit</div>
+                            <div class="command-desc">Security audit of current environment</div>
+                        </div>
+                    </div>
+
+                    <div class="security-demo">
+                        <div class="security-demo-header">
+                            <span>🔍</span>
+                            <span class="security-demo-title">Platform-Specific Storage</span>
+                        </div>
+                        <ul style="margin-left: 1rem;">
+                            <li><strong>macOS:</strong> Keychain Services (searchable in Keychain Access)</li>
+                            <li><strong>Linux:</strong> libsecret (GNOME Keyring, KWallet)</li>
+                            <li><strong>Windows:</strong> Credential Manager (Control Panel)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 3: Security Scanner -->
+                <div class="step" id="step-3">
+                    <div class="step-header">
+                        <div class="step-icon">🛡️</div>
+                        <h1 class="step-title">Security Scanner</h1>
+                        <p class="step-subtitle">Automatic vulnerability detection with Fire22 custom policies</p>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">📋 bunfig.toml Security Configuration</span>
+                            <button class="copy-btn" onclick="copyCode('bunfig-code')">Copy</button>
+                        </div>
+                        <pre id="bunfig-code">[install.security]
+# Use Fire22 custom security scanner
+scanner = "@fire22/security-scanner"
+
+[install]
+# Enhanced security settings
+auto = false          # Disable auto-install for security
+exact = true          # Use exact versions
+production = true     # Production-grade installs
+
+# Registry security
+registry = "https://registry.npmjs.org/"
+scopes = {
+  "@fire22" = "https://fire22.workers.dev/registry"
+}</pre>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🚨</div>
+                            <h3 class="feature-title">CVE Detection</h3>
+                            <p class="feature-description">Scans for known vulnerabilities with severity levels (fatal/warn)</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🎯</div>
+                            <h3 class="feature-title">Custom Policies</h3>
+                            <p class="feature-description">Fire22-specific rules block crypto mining and gambling packages</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">⛔</div>
+                            <h3 class="feature-title">Malicious Packages</h3>
+                            <p class="feature-description">Automatic detection and blocking of known malicious packages</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3 class="feature-title">License Compliance</h3>
+                            <p class="feature-description">Ensures all packages comply with Fire22 licensing requirements</p>
+                        </div>
+                    </div>
+
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command-name">bun run security-demo</div>
+                            <div class="command-desc">Full security scanner demonstration</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun audit --audit-level=high --prod</div>
+                            <div class="command-desc">Audit production dependencies only</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun install</div>
+                            <div class="command-desc">Automatic security scanning on install</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun run security:integration</div>
+                            <div class="command-desc">Fire22 workspace integration demo</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun run security:scanner-demo</div>
+                            <div class="command-desc">Production Bun security scanner demo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Environment Management -->
+                <div class="step" id="step-4">
+                    <div class="step-header">
+                        <div class="step-icon">⚙️</div>
+                        <h1 class="step-title">Environment Management</h1>
+                        <p class="step-subtitle">Secure multi-environment credential management</p>
+                    </div>
+                    
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">🔧 Secure Environment Setup</span>
+                            <button class="copy-btn" onclick="copyCode('env-code')">Copy</button>
+                        </div>
+                        <pre id="env-code">// Load environment securely
+const envManager = new SecureEnvironmentManager();
+
+// Setup credentials for different environments
+await envManager.setupEnvironment('development');
+await envManager.setupEnvironment('production');
+
+// Load environment with validation
+const env = await envManager.loadEnvironment('production');
+
+// Migrate from .env files
+await envManager.migrateFromDotEnv('.env.production');
+
+// Security audit
+await envManager.auditEnvironment();</pre>
+                    </div>
+
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🔒</div>
+                            <div class="benefit-text">Sensitive credentials in OS keychain only</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🌍</div>
+                            <div class="benefit-text">Environment-specific credential isolation</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✅</div>
+                            <div class="benefit-text">Automated credential validation</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">📊</div>
+                            <div class="benefit-text">Security audit reporting</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🔄</div>
+                            <div class="benefit-text">Seamless .env migration</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">⚡</div>
+                            <div class="benefit-text">High-performance credential retrieval</div>
+                        </div>
+                    </div>
+
+                    <div class="security-demo">
+                        <div class="security-demo-header">
+                            <span>📋</span>
+                            <span class="security-demo-title">Supported Credentials</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <div>• DATABASE_URL</div>
+                            <div>• FIRE22_API_TOKEN</div>
+                            <div>• TELEGRAM_BOT_TOKEN</div>
+                            <div>• CLOUDFLARE_API_TOKEN</div>
+                            <div>• JWT_SECRET</div>
+                            <div>• STRIPE_SECRET_KEY</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Integration -->
+                <div class="step" id="step-5">
+                    <div class="step-header">
+                        <div class="step-icon">🔗</div>
+                        <h1 class="step-title">Fire22 Integration</h1>
+                        <p class="step-subtitle">Seamless integration with existing Fire22 dashboard architecture</p>
+                    </div>
+                    
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">🚀 Fire22 Dashboard Startup</span>
+                            <button class="copy-btn" onclick="copyCode('integration-code')">Copy</button>
+                        </div>
+                        <pre id="integration-code">// src/index.ts - Fire22 Dashboard Worker
+import { secrets } from "bun";
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    // Load credentials securely from OS keychain
+    const dbUrl = await secrets.get({
+      service: "fire22-dashboard",
+      name: "database_url_production"
+    });
+    
+    const fire22Token = await secrets.get({
+      service: "fire22-dashboard", 
+      name: "fire22_api_token_production"
+    });
+    
+    // Initialize Fire22 dashboard with secure credentials
+    const dashboard = new Fire22Dashboard({
+      databaseUrl: dbUrl,
+      fire22ApiToken: fire22Token,
+      environment: "production"
+    });
+    
+    return await dashboard.handleRequest(request);
+  }
+};
+</pre>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">☁️</div>
+                            <h3 class="feature-title">Cloudflare Workers</h3>
+                            <p class="feature-description">Edge deployment with secure credential management</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🗄️</div>
+                            <h3 class="feature-title">Database Security</h3>
+                            <p class="feature-description">PostgreSQL connections secured with encrypted credentials</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🤖</div>
+                            <h3 class="feature-title">API Integration</h3>
+                            <p class="feature-description">Fire22 API tokens stored securely, no plaintext exposure</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📱</div>
+                            <h3 class="feature-title">Telegram Bots</h3>
+                            <p class="feature-description">Bot tokens encrypted and environment-isolated</p>
+                        </div>
+                    </div>
+
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command-name">bun run dev</div>
+                            <div class="command-desc">Start development with secure credentials</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun run deploy</div>
+                            <div class="command-desc">Deploy to Cloudflare Workers with security</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">bun run health:comprehensive</div>
+                            <div class="command-desc">Security-aware health monitoring</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Get Started -->
+                <div class="step" id="step-6">
+                    <div class="step-header">
+                        <div class="step-icon">🚀</div>
+                        <h1 class="step-title">Ready to Secure Fire22!</h1>
+                        <p class="step-subtitle">Your dashboard is now protected with enterprise-grade security</p>
+                    </div>
+                    
+                    <div class="security-demo" style="background: #f0fff4; border-color: #c6f6d5;">
+                        <div class="security-demo-header">
+                            <span>✅</span>
+                            <span class="security-demo-title" style="color: #38a169;">Setup Complete</span>
+                        </div>
+                        <div class="demo-output" style="background: #f7fafc; color: #2d3748;">
+🛡️ Fire22 Security Status: ACTIVE
+🔐 Credentials: Stored in OS keychain
+🚫 Plaintext secrets: NONE found
+⚡ Performance: Excellent (1.3ms avg retrieval)
+🌐 Cross-platform: Ready for production
+🔍 Security scanner: Enabled and configured
+                        </div>
+                    </div>
+
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🎯</div>
+                            <div class="benefit-text">Zero configuration required - works out of the box</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">⚡</div>
+                            <div class="benefit-text">Production-ready performance with Bun native APIs</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🔒</div>
+                            <div class="benefit-text">Enterprise security standards compliance</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">📊</div>
+                            <div class="benefit-text">Comprehensive monitoring and audit capabilities</div>
+                        </div>
+                    </div>
+
+                    <div class="command-list">
+                        <div class="command-item" style="border-left-color: #48bb78;">
+                            <div class="command-name">bun run secrets-demo</div>
+                            <div class="command-desc">Try the interactive credential management demo</div>
+                        </div>
+                        <div class="command-item" style="border-left-color: #ed8936;">
+                            <div class="command-name">bun run security-demo</div>
+                            <div class="command-desc">Run the complete security scanner demonstration</div>
+                        </div>
+                        <div class="command-item" style="border-left-color: #667eea;">
+                            <div class="command-name">bun run env-setup production</div>
+                            <div class="command-desc">Setup production environment credentials</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 16px; color: white;">
+                        <h3 style="margin-bottom: 1rem;">🎉 Congratulations!</h3>
+                        <p>Your Fire22 dashboard now has enterprise-grade security powered by Bun's native APIs. No external dependencies, maximum performance, and complete protection against supply chain attacks.</p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" disabled>
+                        ← Previous
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                        Next →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="#" class="footer-link">🔥 Fire22 Dashboard</a>
+                <a href="#" class="footer-link">📚 Documentation</a>
+                <a href="#" class="footer-link">🛡️ Security Guide</a>
+                <a href="#" class="footer-link">⚡ Bun Native APIs</a>
+            </div>
+            <p>&copy; 2024 Fire22 Development Team. Powered by Bun native security APIs.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.querySelector('.progress-fill').style.width = `${progress}%`;
+            document.getElementById('currentStep').textContent = currentStep;
+            document.getElementById('totalSteps').textContent = totalSteps;
+        }
+
+        function showStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show current step
+            document.getElementById(`step-${stepNumber}`).classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = stepNumber === 1;
+            document.getElementById('nextBtn').textContent = stepNumber === totalSteps ? 'Get Started 🚀' : 'Next →';
+            
+            updateProgress();
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            } else {
+                // Final step - could redirect or show completion
+                alert('🎉 Fire22 Security setup complete! Run "bun run secrets-demo" to get started.');
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const textArea = document.createElement('textarea');
+            textArea.value = codeElement.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Visual feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.background = '#48bb78';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '';
+            }, 2000);
+        }
+
+        // Feature card interaction
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('selected');
+            });
+        });
+
+        // Initialize
+        updateProgress();
+        
+        // Auto-advance demo (optional)
+        let autoAdvance = false;
+        if (autoAdvance) {
+            setInterval(() => {
+                if (currentStep < totalSteps) {
+                    nextStep();
+                }
+            }, 8000);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextStep();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousStep();
+            }
+        });
+    </script>
+</body>
+</html>

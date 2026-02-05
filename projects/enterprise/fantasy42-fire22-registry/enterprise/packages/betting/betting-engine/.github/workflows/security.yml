@@ -1,0 +1,652 @@
+# 🔒 Fantasy42 Betting Engine Security Pipeline
+# Enterprise Security Scanning & Compliance Validation
+
+name: Security Pipeline
+
+on:
+  push:
+    branches: [main, enterprise, develop]
+    paths:
+      - 'enterprise/packages/betting/betting-engine/**'
+  pull_request:
+    branches: [main, enterprise, develop]
+    paths:
+      - 'enterprise/packages/betting/betting-engine/**'
+  schedule:
+    # Run security scans daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  # ====================================================================================
+  # DEPENDENCY SECURITY SCANNING
+  # ====================================================================================
+
+  dependency-scan:
+    name: 📦 Dependency Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install Dependencies
+        run: bun install
+
+      - name: 🔍 Bun Audit
+        run: |
+          echo "🔍 Running Bun dependency audit..."
+          bun audit --format json > audit-results.json || true
+
+          # Check for critical vulnerabilities
+          CRITICAL_COUNT=$(jq '.advisories | map(select(.severity == "critical")) | length' audit-results.json)
+          HIGH_COUNT=$(jq '.advisories | map(select(.severity == "high")) | length' audit-results.json)
+
+          echo "🚨 Critical vulnerabilities: $CRITICAL_COUNT"
+          echo "⚠️ High vulnerabilities: $HIGH_COUNT"
+
+          if [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo "❌ Critical vulnerabilities found!"
+            exit 1
+          fi
+
+          if [ "$HIGH_COUNT" -gt 5 ]; then
+            echo "❌ Too many high-severity vulnerabilities!"
+            exit 1
+          fi
+
+          echo "✅ Dependency security scan passed"
+
+      - name: 🛡️ OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Fantasy42 Betting Engine'
+          path: '.'
+          format: 'ALL'
+          args: >
+            --enableRetired
+            --enableExperimental
+            --nvdValidForHours 24
+
+      - name: 📤 Upload Dependency Check Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: reports/
+
+  # ====================================================================================
+  # CODE SECURITY SCANNING
+  # ====================================================================================
+
+  code-security:
+    name: 🔐 Code Security Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install Dependencies
+        run: bun install
+
+      - name: 🔍 CodeQL Security Scan
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          config-file: ./.github/codeql-config.yml
+          queries: +security-and-quality
+
+      - name: 🚀 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+      - name: 🛡️ ESLint Security Rules
+        run: |
+          # Install security-focused ESLint rules if not already included
+          bun add --dev eslint-plugin-security eslint-plugin-no-unsanitized
+
+          # Create security ESLint config
+          cat > .eslintrc.security.js << 'EOF'
+          module.exports = {
+            extends: ['plugin:security/recommended'],
+            plugins: ['security', 'no-unsanitized'],
+            rules: {
+              'security/detect-buffer-noassert': 'error',
+              'security/detect-child-process': 'error',
+              'security/detect-disable-mustache-escape': 'error',
+              'security/detect-eval-with-expression': 'error',
+              'security/detect-new-buffer': 'error',
+              'security/detect-no-csrf-before-method-override': 'error',
+              'security/detect-non-literal-fs-filename': 'error',
+              'security/detect-non-literal-regexp': 'error',
+              'security/detect-non-literal-require': 'error',
+              'security/detect-object-injection': 'error',
+              'security/detect-possible-timing-attacks': 'error',
+              'security/detect-pseudoRandomBytes': 'error',
+              'security/detect-unsafe-regex': 'error',
+              'no-unsanitized/method': 'error',
+              'no-unsanitized/property': 'error'
+            }
+          };
+          EOF
+
+          # Run security linting
+          bun run eslint src --config .eslintrc.security.js --ext .ts || true
+
+      - name: 🔐 Secret Detection
+        run: |
+          # Check for hardcoded secrets and API keys
+          echo "🔍 Scanning for potential secrets..."
+
+          # Common secret patterns
+          PATTERNS=(
+            "password.*=.*['\"]"
+            "secret.*=.*['\"]"
+            "key.*=.*['\"]"
+            "token.*=.*['\"]"
+            "api_key.*=.*['\"]"
+            "private_key.*=.*['\"]"
+          )
+
+          FOUND_SECRETS=0
+
+          for pattern in "${PATTERNS[@]}"; do
+            if grep -r -i "$pattern" src/ --include="*.ts" --include="*.js" > /dev/null 2>&1; then
+              echo "⚠️ Potential secret pattern found: $pattern"
+              ((FOUND_SECRETS++))
+            fi
+          done
+
+          if [ "$FOUND_SECRETS" -gt 0 ]; then
+            echo "❌ Potential secrets detected! Review and fix before proceeding."
+            exit 1
+          fi
+
+          echo "✅ No hardcoded secrets detected"
+
+  # ====================================================================================
+  # GAMBLING COMPLIANCE SCANNING
+  # ====================================================================================
+
+  compliance-scan:
+    name: 📋 Gambling Compliance Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install Dependencies
+        run: bun install
+
+      - name: 📋 Regulatory Compliance Check
+        run: |
+          echo "📋 Checking regulatory compliance..."
+
+          # Check for required compliance features
+          COMPLIANCE_CHECKS=(
+            "age.*verification"
+            "location.*compliance"
+            "self.*exclusion"
+            "responsible.*gambling"
+            "fraud.*detection"
+            "audit.*trail"
+            "gdpr|privacy"
+            "aml|money.*laundering"
+          )
+
+          MISSING_FEATURES=()
+
+          for check in "${COMPLIANCE_CHECKS[@]}"; do
+            if ! grep -r -i "$check" src/ README.md --include="*.ts" --include="*.md" > /dev/null 2>&1; then
+              MISSING_FEATURES+=("$check")
+            fi
+          done
+
+          if [ ${#MISSING_FEATURES[@]} -gt 0 ]; then
+            echo "⚠️ Missing compliance features:"
+            for feature in "${MISSING_FEATURES[@]}"; do
+              echo "  - $feature"
+            done
+          else
+            echo "✅ All regulatory compliance features detected"
+          fi
+
+      - name: 🏦 Payment Compliance Validation
+        run: |
+          echo "💳 Checking payment compliance..."
+
+          # Check for PCI DSS compliance indicators
+          PCI_CHECKS=(
+            "encryption"
+            "tokenization"
+            "pci.*dss"
+            "payment.*security"
+            "ssl|tls"
+          )
+
+          PCI_COMPLIANT=true
+
+          for check in "${PCI_CHECKS[@]}"; do
+            if ! grep -r -i "$check" src/ README.md --include="*.ts" --include="*.md" > /dev/null 2>&1; then
+              echo "⚠️ Missing PCI DSS feature: $check"
+              PCI_COMPLIANT=false
+            fi
+          done
+
+          if $PCI_COMPLIANT; then
+            echo "✅ PCI DSS compliance features detected"
+          else
+            echo "❌ PCI DSS compliance issues found"
+          fi
+
+      - name: 🎯 Responsible Gambling Validation
+        run: |
+          echo "🎯 Checking responsible gambling features..."
+
+          RG_CHECKS=(
+            "deposit.*limit"
+            "betting.*limit"
+            "time.*limit"
+            "loss.*limit"
+            "self.*assessment"
+            "cooling.*off"
+            "reality.*check"
+          )
+
+          RG_COMPLIANT=true
+
+          for check in "${RG_CHECKS[@]}"; do
+            if ! grep -r -i "$check" src/ README.md --include="*.ts" --include="*.md" > /dev/null 2>&1; then
+              echo "⚠️ Missing responsible gambling feature: $check"
+              RG_COMPLIANT=false
+            fi
+          done
+
+          if $RG_COMPLIANT; then
+            echo "✅ Responsible gambling features detected"
+          else
+            echo "⚠️ Some responsible gambling features may be missing"
+          fi
+
+  # ====================================================================================
+  # CONTAINER SECURITY SCANNING
+  # ====================================================================================
+
+  container-security:
+    name: 🐳 Container Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install Dependencies
+        run: bun install
+
+      - name: 🏗️ Build Application
+        run: bun run build:production
+
+      - name: 📦 Create Container Image
+        run: |
+          # Create Dockerfile for security scanning
+          cat > Dockerfile.security << 'EOF'
+          FROM oven/bun:latest
+
+          WORKDIR /app
+
+          # Copy package files
+          COPY package.json bun.lock ./
+
+          # Install dependencies
+          RUN bun install --frozen-lockfile
+
+          # Copy source code
+          COPY dist/ ./dist/
+
+          # Create non-root user
+          RUN addgroup -g 1001 -S nodejs
+          RUN adduser -S nodejs -u 1001
+
+          USER nodejs
+
+          CMD ["bun", "run", "dist/index.js"]
+          EOF
+
+      - name: 🐳 Build Container
+        run: docker build -f Dockerfile.security -t fantasy42-betting-engine:security .
+
+      - name: 🔍 Trivy Container Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          scan-ref: 'fantasy42-betting-engine:security'
+          format: 'sarif'
+          output: 'trivy-container-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: 📤 Upload Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-container-results.sarif'
+
+      - name: 🧹 Cleanup
+        run: |
+          docker rmi fantasy42-betting-engine:security || true
+          rm Dockerfile.security || true
+
+  # ====================================================================================
+  # INFRASTRUCTURE SECURITY
+  # ====================================================================================
+
+  infrastructure-security:
+    name: 🏗️ Infrastructure Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install Dependencies
+        run: bun install
+
+      - name: 🏗️ Infrastructure as Code Security
+        run: |
+          echo "🏗️ Checking infrastructure security..."
+
+          # Check for secure defaults
+          SECURITY_CHECKS=(
+            "https.*only"
+            "secure.*headers"
+            "rate.*limit"
+            "cors.*policy"
+            "helmet|security.*middleware"
+            "input.*validation"
+            "output.*encoding"
+          )
+
+          INFRA_ISSUES=0
+
+          for check in "${SECURITY_CHECKS[@]}"; do
+            if ! grep -r -i "$check" src/ --include="*.ts" > /dev/null 2>&1; then
+              echo "⚠️ Missing security feature: $check"
+              ((INFRA_ISSUES++))
+            fi
+          done
+
+          if [ "$INFRA_ISSUES" -gt 3 ]; then
+            echo "❌ Too many infrastructure security issues"
+            exit 1
+          fi
+
+          echo "✅ Infrastructure security check completed"
+
+      - name: 🔐 Environment Security
+        run: |
+          echo "🔐 Checking environment security..."
+
+          # Check for secure environment handling
+          ENV_CHECKS=(
+            "process\.env"
+            "environment.*variable"
+            "config.*validation"
+            "secret.*management"
+          )
+
+          ENV_SECURE=true
+
+          for check in "${ENV_CHECKS[@]}"; do
+            if ! grep -r "$check" src/ --include="*.ts" > /dev/null 2>&1; then
+              echo "⚠️ Missing environment security: $check"
+              ENV_SECURE=false
+            fi
+          done
+
+          if $ENV_SECURE; then
+            echo "✅ Environment security validated"
+          else
+            echo "⚠️ Environment security issues detected"
+          fi
+
+  # ====================================================================================
+  # VULNERABILITY MANAGEMENT
+  # ====================================================================================
+
+  vulnerability-management:
+    name: 🛡️ Vulnerability Management
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: 📦 Install Dependencies
+        run: bun install
+
+      - name: 🛡️ Generate SBOM (Software Bill of Materials)
+        run: |
+          echo "📦 Generating Software Bill of Materials..."
+
+          # Create basic SBOM
+          cat > sbom.json << EOF
+          {
+            "bomFormat": "CycloneDX",
+            "specVersion": "1.4",
+            "serialNumber": "urn:uuid:$(uuidgen)",
+            "version": 1,
+            "metadata": {
+              "timestamp": "$(date -Iseconds)",
+              "component": {
+                "type": "library",
+                "name": "@fire22-registry/betting-engine",
+                "version": "$(node -p "require('./package.json').version")",
+                "description": "Enterprise sports betting engine"
+              }
+            },
+            "components": [
+              {
+                "type": "library",
+                "name": "@fire22-registry/betting-engine",
+                "version": "$(node -p "require('./package.json').version")",
+                "description": "Core betting engine",
+                "licenses": [
+                  {
+                    "license": {
+                      "id": "MIT"
+                    }
+                  }
+                ],
+                "externalReferences": [
+                  {
+                    "type": "website",
+                    "url": "https://fire22.com/betting-engine"
+                  },
+                  {
+                    "type": "vcs",
+                    "url": "https://github.com/brendadeeznuts1111/fantasy42-fire22-registry"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+
+          echo "✅ SBOM generated"
+
+      - name: 🔍 Vulnerability Database Check
+        run: |
+          echo "🔍 Checking vulnerability databases..."
+
+          # Check if current dependencies have known vulnerabilities
+          bun audit --format json > vuln-check.json || true
+
+          # Parse and analyze vulnerabilities
+          if [ -f "vuln-check.json" ]; then
+            VULN_COUNT=$(jq '.advisories | length' vuln-check.json 2>/dev/null || echo 0)
+            echo "📊 Total vulnerabilities found: $VULN_COUNT"
+
+            if [ "$VULN_COUNT" -gt 0 ]; then
+              echo "📋 Vulnerability Summary:"
+              jq -r '.advisories[] | "- \(.title) (\(.severity))"' vuln-check.json 2>/dev/null || echo "Unable to parse vulnerabilities"
+            fi
+          fi
+
+          echo "✅ Vulnerability check completed"
+
+  # ====================================================================================
+  # SECURITY REPORTING
+  # ====================================================================================
+
+  security-report:
+    name: 📊 Security Report Generation
+    runs-on: ubuntu-latest
+    needs:
+      [
+        dependency-scan,
+        code-security,
+        compliance-scan,
+        container-security,
+        infrastructure-security,
+        vulnerability-management,
+      ]
+    if: always()
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 📊 Generate Security Report
+        run: |
+          cat > security-report.md << EOF
+          # 🔒 Fantasy42 Betting Engine Security Report
+
+          **Generated:** $(date -Iseconds)
+          **Commit:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+
+          ## 📊 Security Scan Results
+
+          ### Dependency Security
+          - **Status:** ${{ needs.dependency-scan.result }}
+          - **Critical Vulnerabilities:** TBD
+          - **High Vulnerabilities:** TBD
+          - **OWASP Dependency Check:** ${{ needs.dependency-scan.result }}
+
+          ### Code Security
+          - **Status:** ${{ needs.code-security.result }}
+          - **CodeQL Analysis:** ${{ needs.code-security.result }}
+          - **ESLint Security:** ${{ needs.code-security.result }}
+          - **Secret Detection:** ${{ needs.code-security.result }}
+
+          ### Compliance Validation
+          - **Status:** ${{ needs.compliance-scan.result }}
+          - **Regulatory Compliance:** ${{ needs.compliance-scan.result }}
+          - **PCI DSS:** ${{ needs.compliance-scan.result }}
+          - **Responsible Gambling:** ${{ needs.compliance-scan.result }}
+
+          ### Container Security
+          - **Status:** ${{ needs.container-security.result }}
+          - **Trivy Scan:** ${{ needs.container-security.result }}
+          - **Base Image Security:** ${{ needs.container-security.result }}
+
+          ### Infrastructure Security
+          - **Status:** ${{ needs.infrastructure-security.result }}
+          - **Security Headers:** ${{ needs.infrastructure-security.result }}
+          - **Environment Security:** ${{ needs.infrastructure-security.result }}
+
+          ### Vulnerability Management
+          - **Status:** ${{ needs.vulnerability-management.result }}
+          - **SBOM Generation:** ${{ needs.vulnerability-management.result }}
+          - **Vulnerability Database:** ${{ needs.vulnerability-management.result }}
+
+          ## 🚨 Security Issues
+
+          $(if [[ "${{ needs.dependency-scan.result }}" != "success" ]]; then echo "- ⚠️ Dependency vulnerabilities detected"; fi)
+          $(if [[ "${{ needs.code-security.result }}" != "success" ]]; then echo "- ⚠️ Code security issues found"; fi)
+          $(if [[ "${{ needs.compliance-scan.result }}" != "success" ]]; then echo "- ⚠️ Compliance issues detected"; fi)
+          $(if [[ "${{ needs.container-security.result }}" != "success" ]]; then echo "- ⚠️ Container security issues found"; fi)
+          $(if [[ "${{ needs.infrastructure-security.result }}" != "success" ]]; then echo "- ⚠️ Infrastructure security issues"; fi)
+          $(if [[ "${{ needs.vulnerability-management.result }}" != "success" ]]; then echo "- ⚠️ Vulnerability management issues"; fi)
+
+          ## ✅ Security Recommendations
+
+          ### Immediate Actions
+          - Review and fix any critical vulnerabilities
+          - Ensure all compliance features are implemented
+          - Verify PCI DSS compliance for payment processing
+          - Update dependencies to latest secure versions
+
+          ### Ongoing Security
+          - Regular dependency updates and security scans
+          - Continuous monitoring of security advisories
+          - Regular security training and awareness
+          - Periodic security audits and penetration testing
+
+          ### Compliance Monitoring
+          - Monitor regulatory changes and updates
+          - Regular compliance audits and certifications
+          - Update responsible gambling features
+          - Maintain comprehensive audit trails
+
+          ## 📈 Security Metrics
+
+          - **Overall Security Score:** TBD
+          - **Compliance Coverage:** TBD%
+          - **Vulnerability Density:** TBD
+          - **Security Debt:** TBD
+
+          ---
+          *Generated by Fantasy42 Security Pipeline*
+          EOF
+
+      - name: 📤 Upload Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.md
+
+      - name: 📢 Security Notification
+        run: |
+          OVERALL_STATUS="${{ needs.dependency-scan.result }} ${{ needs.code-security.result }} ${{ needs.compliance-scan.result }} ${{ needs.container-security.result }} ${{ needs.infrastructure-security.result }} ${{ needs.vulnerability-management.result }}"
+
+          if [[ "$OVERALL_STATUS" == *"failure"* ]]; then
+            echo "❌ Security issues detected in Fantasy42 Betting Engine"
+            echo "📊 Review the security report for details"
+            echo "🔧 Address security issues before deployment"
+            exit 1
+          else
+            echo "✅ Fantasy42 Betting Engine security scan completed successfully"
+            echo "🛡️ All security checks passed"
+          fi

@@ -1,0 +1,199 @@
+name: 🚀 Fire22 Dashboard CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '18'
+  BUN_VERSION: '1.2.21'
+
+jobs:
+  # 🔍 Environment Validation
+  validate:
+    name: 🔍 Environment Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🔍 Validate environment configuration
+        run: bun run env:validate
+
+      - name: 🔒 Run security audit
+        run: bun run env:audit
+
+      - name: ⚡ Performance check
+        run: bun run env:performance
+
+      - name: 🧪 Integration test
+        run: bun run env:integration
+
+  # 🧪 Testing
+  test:
+    name: 🧪 Testing Suite
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🧪 Run quick tests
+        run: bun run test:quick
+
+      - name: 🧪 Run comprehensive tests
+        run: bun run test:checklist
+
+      - name: 🧪 Run environment tests
+        run: bun run env:test
+
+  # 🏗️ Build
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    needs: [validate, test]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🏗️ Build application
+        run: bun run build:prod
+
+      - name: 📊 Analyze build
+        run: bun run build:analyze
+
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+
+  # 🚀 Deploy to Staging
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [validate, test, build]
+    if: github.ref == 'refs/heads/develop' || github.event.inputs.environment == 'staging'
+    environment: staging
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🔍 Pre-deployment validation
+        run: bun run env:deploy
+
+      - name: 🚀 Deploy to Cloudflare Workers (Staging)
+        run: bun run deploy:staging
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: ✅ Verify deployment
+        run: bun run validate
+
+  # 🚀 Deploy to Production
+  deploy-production:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [validate, test, build]
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
+    environment: production
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟡 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🔍 Pre-deployment validation
+        run: bun run env:deploy
+
+      - name: 🚀 Deploy to Cloudflare Workers (Production)
+        run: bun run deploy:production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: ✅ Verify deployment
+        run: bun run validate
+
+      - name: 📊 Post-deployment health check
+        run: bun run monitor
+
+  # 📊 Monitoring & Notifications
+  notify:
+    name: 📊 Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    steps:
+      - name: 📊 Deployment Summary
+        run: |
+          echo "🚀 Deployment Summary"
+          echo "=================="
+          echo "Environment: ${{ github.event.inputs.environment || 'auto' }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "Timestamp: $(date -u)"
+
+      - name: 🔔 Notify on Success
+        if: success()
+        run: |
+          echo "✅ Deployment successful!"
+          # Add your notification logic here (Slack, Discord, etc.)
+
+      - name: 🚨 Notify on Failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          # Add your notification logic here (Slack, Discord, etc.)

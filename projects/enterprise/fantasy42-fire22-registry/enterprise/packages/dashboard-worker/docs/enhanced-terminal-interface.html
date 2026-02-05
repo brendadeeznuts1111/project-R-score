@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enhanced Terminal Interface - Interactive Command System</title>
+    <style>
+      :root {
+        /* Water/Cloudflare Blues & Cyans */
+        --water-deep: #003d7a;
+        --water-ocean: #0051a5;
+        --water-sea: #0078d4;
+        --water-sky: #40a9ff;
+        --water-light: #69c0ff;
+        --water-mist: #91d5ff;
+        --water-foam: #bae7ff;
+        --cyan-deep: #006d75;
+        --cyan-ocean: #008b94;
+        --cyan-sea: #00acc1;
+        --cyan-light: #26c6da;
+        --cyan-mist: #4dd0e1;
+
+        --bg-dark: #0a0e1a;
+        --bg-medium: #0f172a;
+        --bg-light: #1e293b;
+
+        --text-primary: #e0f7fa;
+        --text-secondary: #b2ebf2;
+        --text-muted: #80deea;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Fira Code', 'SF Mono', 'Consolas', monospace;
+        background: linear-gradient(135deg, var(--bg-dark) 0%, var(--water-deep) 100%);
+        min-height: 100vh;
+        color: var(--text-primary);
+        padding: 1rem;
+        line-height: 1.4;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 1rem;
+        height: calc(100vh - 2rem);
+      }
+
+      /* Terminal Section */
+      .terminal-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .terminal {
+        background: rgba(15, 23, 42, 0.98);
+        border: 1px solid var(--water-sea);
+        border-radius: 8px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .terminal-header {
+        background: linear-gradient(90deg, var(--water-ocean), var(--cyan-ocean));
+        padding: 0.5rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--water-sea);
+      }
+
+      .terminal-title {
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .terminal-controls {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .terminal-btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+      }
+
+      .terminal-btn.close {
+        background: #ff5f56;
+      }
+      .terminal-btn.minimize {
+        background: #ffbd2e;
+      }
+      .terminal-btn.maximize {
+        background: #27c93f;
+      }
+
+      .terminal-output {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .terminal-input-line {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: var(--bg-light);
+        border-top: 1px solid var(--water-sea);
+      }
+
+      .terminal-prompt {
+        color: var(--cyan-light);
+        margin-right: 0.5rem;
+        font-weight: 600;
+      }
+
+      .terminal-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        outline: none;
+        font-family: inherit;
+        font-size: 14px;
+      }
+
+      /* Output Styles */
+      .output-line {
+        margin: 0.25rem 0;
+        color: var(--text-secondary);
+      }
+
+      .output-command {
+        color: var(--water-light);
+      }
+
+      .output-success {
+        color: #27c93f;
+      }
+
+      .output-error {
+        color: #ff5f56;
+      }
+
+      .output-info {
+        color: var(--cyan-light);
+      }
+
+      .output-warning {
+        color: #ffbd2e;
+      }
+
+      .output-box {
+        color: var(--cyan-light);
+        display: inline-block;
+        margin: 0.5rem 0;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .panel {
+        background: rgba(0, 81, 165, 0.15);
+        border: 1px solid var(--water-sea);
+        border-radius: 8px;
+        padding: 1rem;
+      }
+
+      .panel-title {
+        color: var(--cyan-light);
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* System Stats */
+      .stat-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 0.5rem 0;
+        font-size: 0.875rem;
+      }
+
+      .stat-label {
+        color: var(--text-muted);
+      }
+
+      .stat-value {
+        color: var(--water-light);
+        font-weight: 500;
+      }
+
+      .stat-bar {
+        width: 100%;
+        height: 4px;
+        background: var(--bg-light);
+        border-radius: 2px;
+        margin-top: 0.25rem;
+        overflow: hidden;
+      }
+
+      .stat-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--water-sea), var(--cyan-sea));
+        transition: width 0.3s ease;
+      }
+
+      /* Command List */
+      .command-list {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .command-item {
+        padding: 0.25rem 0.5rem;
+        margin: 0.25rem 0;
+        background: var(--bg-light);
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: var(--water-foam);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .command-item:hover {
+        background: var(--water-ocean);
+        transform: translateX(4px);
+      }
+
+      .command-item code {
+        color: var(--cyan-light);
+        font-weight: 600;
+      }
+
+      /* History */
+      .history-item {
+        padding: 0.25rem 0.5rem;
+        margin: 0.25rem 0;
+        background: var(--bg-light);
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .history-item:hover {
+        background: var(--water-ocean);
+        color: var(--text-primary);
+      }
+
+      .history-time {
+        font-size: 0.75rem;
+        color: var(--water-mist);
+      }
+
+      /* ASCII Art */
+      .ascii-art {
+        color: var(--cyan-light);
+        font-size: 10px;
+        line-height: 1.2;
+        text-align: center;
+        margin: 1rem 0;
+      }
+
+      /* Animations */
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 16px;
+        background: var(--cyan-light);
+        animation: blink 1s infinite;
+        margin-left: 2px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr auto;
+        }
+
+        .sidebar {
+          flex-direction: row;
+          overflow-x: auto;
+        }
+
+        .panel {
+          min-width: 250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="terminal-section">
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-title">╭─ CLOUDFLARE TERMINAL v2.0 ─────────────────╮</span>
+            <div class="terminal-controls">
+              <button class="terminal-btn close"></button>
+              <button class="terminal-btn minimize"></button>
+              <button class="terminal-btn maximize"></button>
+            </div>
+          </div>
+          <div class="terminal-output" id="output"></div>
+          <div class="terminal-input-line">
+            <span class="terminal-prompt">╭─▶</span>
+            <input
+              type="text"
+              class="terminal-input"
+              id="terminal-input"
+              placeholder="Type 'help' for commands..."
+              autofocus
+            />
+            <span class="cursor" id="cursor"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="panel">
+          <div class="panel-title">System Stats</div>
+          <div id="system-stats">
+            <div class="stat-item">
+              <span class="stat-label">CPU Usage</span>
+              <span class="stat-value" id="cpu-usage">0%</span>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-fill" id="cpu-bar" style="width: 0%"></div>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Memory</span>
+              <span class="stat-value" id="memory-usage">0 GB</span>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-fill" id="memory-bar" style="width: 0%"></div>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Network</span>
+              <span class="stat-value" id="network-speed">0 Mbps</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Uptime</span>
+              <span class="stat-value" id="uptime">00:00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Available Commands</div>
+          <div class="command-list" id="command-list">
+            <div class="command-item">
+              <code>help</code>
+              - Show commands
+            </div>
+            <div class="command-item">
+              <code>status</code>
+              - System status
+            </div>
+            <div class="command-item">
+              <code>box</code>
+              - Create box
+            </div>
+            <div class="command-item">
+              <code>time</code>
+              - Current time
+            </div>
+            <div class="command-item">
+              <code>stats</code>
+              - Live stats
+            </div>
+            <div class="command-item">
+              <code>clear</code>
+              - Clear terminal
+            </div>
+            <div class="command-item">
+              <code>info</code>
+              - System info
+            </div>
+            <div class="command-item">
+              <code>network</code>
+              - Network status
+            </div>
+            <div class="command-item">
+              <code>workers</code>
+              - Worker status
+            </div>
+            <div class="command-item">
+              <code>dns</code>
+              - DNS stats
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Command History</div>
+          <div class="command-list" id="history-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Terminal System State
+      class TerminalSystem {
+        constructor() {
+          this.history = [];
+          this.historyIndex = -1;
+          this.maxHistory = 50;
+          this.startTime = Date.now();
+          this.output = document.getElementById('output');
+          this.input = document.getElementById('terminal-input');
+          this.historyList = document.getElementById('history-list');
+
+          // Dynamic stats
+          this.stats = {
+            cpu: 0,
+            memory: 0,
+            network: 0,
+            requests: 0,
+            errors: 0,
+            latency: 0,
+          };
+
+          // Box drawing characters
+          this.boxChars = {
+            topLeft: '╭',
+            topRight: '╮',
+            bottomLeft: '╰',
+            bottomRight: '╯',
+            horizontal: '─',
+            vertical: '│',
+          };
+
+          this.init();
+        }
+
+        init() {
+          // Input handling
+          this.input.addEventListener('keydown', e => this.handleInput(e));
+
+          // Command list click handling
+          document.querySelectorAll('.command-item').forEach(item => {
+            item.addEventListener('click', () => {
+              const command = item.querySelector('code').textContent;
+              this.input.value = command;
+              this.input.focus();
+            });
+          });
+
+          // Start dynamic updates
+          this.startDynamicUpdates();
+
+          // Initial welcome message
+          this.printWelcome();
+        }
+
+        handleInput(e) {
+          switch (e.key) {
+            case 'Enter':
+              this.executeCommand(this.input.value.trim());
+              this.input.value = '';
+              break;
+
+            case 'ArrowUp':
+              e.preventDefault();
+              this.navigateHistory('up');
+              break;
+
+            case 'ArrowDown':
+              e.preventDefault();
+              this.navigateHistory('down');
+              break;
+
+            case 'Tab':
+              e.preventDefault();
+              this.autocomplete();
+              break;
+          }
+        }
+
+        executeCommand(command) {
+          if (!command) return;
+
+          // Add to history
+          this.addToHistory(command);
+
+          // Display command
+          this.print(`╭─▶ ${command}`, 'output-command');
+
+          // Process command with switch statement
+          const [cmd, ...args] = command.toLowerCase().split(' ');
+
+          switch (cmd) {
+            case 'help':
+              this.showHelp();
+              break;
+
+            case 'clear':
+              this.clearTerminal();
+              break;
+
+            case 'status':
+              this.showStatus();
+              break;
+
+            case 'box':
+              this.createBox(args.join(' ') || 'Hello, World!');
+              break;
+
+            case 'time':
+              this.showTime();
+              break;
+
+            case 'stats':
+              this.showLiveStats();
+              break;
+
+            case 'info':
+              this.showSystemInfo();
+              break;
+
+            case 'network':
+              this.showNetworkStatus();
+              break;
+
+            case 'workers':
+              this.showWorkerStatus();
+              break;
+
+            case 'dns':
+              this.showDnsStats();
+              break;
+
+            case 'matrix':
+              this.showMatrix();
+              break;
+
+            case 'ping':
+              this.ping(args[0] || 'cloudflare.com');
+              break;
+
+            default:
+              this.print(`Command not found: ${cmd}. Type 'help' for available commands.`, 'output-error');
+              this.stats.errors++;
+          }
+
+          this.stats.requests++;
+        }
+
+        addToHistory(command) {
+          this.history.unshift(command);
+          if (this.history.length > this.maxHistory) {
+            this.history.pop();
+          }
+          this.historyIndex = -1;
+          this.updateHistoryDisplay();
+        }
+
+        updateHistoryDisplay() {
+          const now = new Date();
+          this.historyList.innerHTML = this.history
+            .slice(0, 10)
+            .map(cmd => {
+              const time = now.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+              });
+              return `<div class="history-item" onclick="terminal.setCommand('${cmd}')">${cmd}<span class="history-time">${time}</span></div>`;
+            })
+            .join('');
+        }
+
+        navigateHistory(direction) {
+          if (direction === 'up' && this.historyIndex < this.history.length - 1) {
+            this.historyIndex++;
+            this.input.value = this.history[this.historyIndex];
+          } else if (direction === 'down' && this.historyIndex > 0) {
+            this.historyIndex--;
+            this.input.value = this.history[this.historyIndex];
+          } else if (direction === 'down' && this.historyIndex === 0) {
+            this.historyIndex = -1;
+            this.input.value = '';
+          }
+        }
+
+        setCommand(cmd) {
+          this.input.value = cmd;
+          this.input.focus();
+        }
+
+        autocomplete() {
+          const commands = [
+            'help',
+            'clear',
+            'status',
+            'box',
+            'time',
+            'stats',
+            'info',
+            'network',
+            'workers',
+            'dns',
+            'matrix',
+            'ping',
+          ];
+          const input = this.input.value.toLowerCase();
+          const matches = commands.filter(cmd => cmd.startsWith(input));
+
+          if (matches.length === 1) {
+            this.input.value = matches[0];
+          } else if (matches.length > 1) {
+            this.print(`Available: ${matches.join(', ')}`, 'output-info');
+          }
+        }
+
+        print(text, className = '') {
+          const line = document.createElement('div');
+          line.className = `output-line ${className}`;
+          line.textContent = text;
+          this.output.appendChild(line);
+          this.output.scrollTop = this.output.scrollHeight;
+        }
+
+        printBox(boxText) {
+          const box = document.createElement('div');
+          box.className = 'output-box';
+          box.textContent = boxText;
+          this.output.appendChild(box);
+          this.output.scrollTop = this.output.scrollHeight;
+        }
+
+        clearTerminal() {
+          this.output.innerHTML = '';
+          this.print('Terminal cleared.', 'output-success');
+        }
+
+        printWelcome() {
+          const art = `
+    ╭─────────────────────────────────────╮
+    │  CLOUDFLARE TERMINAL SYSTEM v2.0   │
+    │  Enhanced Interactive Interface     │
+    ╰─────────────────────────────────────╯`;
+          this.printBox(art);
+          this.print('Welcome to Cloudflare Terminal. Type "help" for commands.', 'output-info');
+        }
+
+        showHelp() {
+          const helpText = this.createBox(
+            'Available Commands:\n' +
+              '  help     - Show this help message\n' +
+              '  status   - Display system status\n' +
+              '  box      - Create a terminal box\n' +
+              '  time     - Show current time\n' +
+              '  stats    - Display live statistics\n' +
+              '  info     - System information\n' +
+              '  network  - Network status\n' +
+              '  workers  - Worker status\n' +
+              '  dns      - DNS statistics\n' +
+              '  matrix   - Show the matrix\n' +
+              '  ping     - Ping a server\n' +
+              '  clear    - Clear terminal',
+            { title: 'HELP', width: 45 }
+          );
+          this.printBox(helpText);
+        }
+
+        showStatus() {
+          const uptime = this.getUptime();
+          const statusText = this.createBox(
+            `System Status: Operational\n` +
+              `Uptime: ${uptime}\n` +
+              `CPU Usage: ${this.stats.cpu}%\n` +
+              `Memory: ${(this.stats.memory / 1024).toFixed(2)} GB / 16 GB\n` +
+              `Network: ${this.stats.network} Mbps\n` +
+              `Total Requests: ${this.stats.requests}\n` +
+              `Errors: ${this.stats.errors}`,
+            { title: 'STATUS', width: 50 }
+          );
+          this.printBox(statusText);
+        }
+
+        showTime() {
+          const now = new Date();
+          const timeStr = now.toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZoneName: 'short',
+          });
+          this.print(`├─ Current Time: ${timeStr}`, 'output-info');
+        }
+
+        showLiveStats() {
+          const stats = `
+├─ Live Statistics ────────────────────
+│ CPU Usage: ${this.stats.cpu}% ${this.getBar(this.stats.cpu)}
+│ Memory: ${(this.stats.memory / 1024).toFixed(2)} GB ${this.getBar((this.stats.memory / 16384) * 100)}
+│ Network: ${this.stats.network} Mbps
+│ Latency: ${this.stats.latency} ms
+│ Requests: ${this.stats.requests}
+│ Errors: ${this.stats.errors}
+╰──────────────────────────────────────`;
+          this.printBox(stats);
+        }
+
+        showSystemInfo() {
+          const info = this.createBox(
+            `Platform: Cloudflare Workers\n` +
+              `Version: 2.0.0\n` +
+              `Node Version: ${typeof process !== 'undefined' ? process.version : 'N/A'}\n` +
+              `User Agent: ${navigator.userAgent.substring(0, 50)}...\n` +
+              `Language: ${navigator.language}\n` +
+              `Screen: ${window.screen.width}x${window.screen.height}\n` +
+              `Time Zone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+            { title: 'SYSTEM INFO', width: 60 }
+          );
+          this.printBox(info);
+        }
+
+        showNetworkStatus() {
+          const latency = Math.floor(Math.random() * 50) + 10;
+          const bandwidth = Math.floor(Math.random() * 900) + 100;
+          const packet_loss = (Math.random() * 0.5).toFixed(2);
+
+          const networkText = this.createBox(
+            `Edge Locations: 192 Active\n` +
+              `Global Latency: ${latency} ms\n` +
+              `Bandwidth: ${bandwidth} Mbps\n` +
+              `Packet Loss: ${packet_loss}%\n` +
+              `DDoS Protection: Active\n` +
+              `SSL/TLS: Enabled\n` +
+              `HTTP/3: Supported`,
+            { title: 'NETWORK STATUS', width: 45 }
+          );
+          this.printBox(networkText);
+        }
+
+        showWorkerStatus() {
+          const workers = Math.floor(Math.random() * 50) + 150;
+          const requests = Math.floor(Math.random() * 9000) + 1000;
+
+          const workerText = this.createBox(
+            `Active Workers: ${workers}\n` +
+              `Requests/sec: ${requests}\n` +
+              `CPU Time: ${(Math.random() * 10).toFixed(2)} ms\n` +
+              `Memory Usage: ${Math.floor(Math.random() * 128)} MB\n` +
+              `Subrequests: ${Math.floor(Math.random() * 50)}\n` +
+              `Status: All Systems Operational`,
+            { title: 'WORKER STATUS', width: 45 }
+          );
+          this.printBox(workerText);
+        }
+
+        showDnsStats() {
+          const queries = Math.floor(Math.random() * 90000) + 10000;
+          const cache_hit = (Math.random() * 30 + 70).toFixed(1);
+
+          const dnsText = this.createBox(
+            `DNS Queries/sec: ${queries}\n` +
+              `Cache Hit Rate: ${cache_hit}%\n` +
+              `Average Response: ${Math.floor(Math.random() * 10) + 5} ms\n` +
+              `DNSSEC Validated: ${Math.floor(queries * 0.92)}\n` +
+              `Blocked Threats: ${Math.floor(Math.random() * 1000)}\n` +
+              `Resolver IPs: 1.1.1.1, 1.0.0.1`,
+            { title: 'DNS STATISTICS', width: 45 }
+          );
+          this.printBox(dnsText);
+        }
+
+        showMatrix() {
+          const width = 60;
+          const height = 10;
+          let matrix = '';
+
+          for (let i = 0; i < height; i++) {
+            let line = '';
+            for (let j = 0; j < width; j++) {
+              line += Math.random() > 0.5 ? '1' : '0';
+            }
+            matrix += line + '\n';
+          }
+
+          this.print('├─ Entering the Matrix...', 'output-success');
+          this.printBox(matrix);
+        }
+
+        ping(host) {
+          this.print(`├─ Pinging ${host}...`, 'output-info');
+
+          setTimeout(() => {
+            const times = [
+              Math.floor(Math.random() * 50) + 10,
+              Math.floor(Math.random() * 50) + 10,
+              Math.floor(Math.random() * 50) + 10,
+              Math.floor(Math.random() * 50) + 10,
+            ];
+
+            times.forEach((time, i) => {
+              this.print(`│  Reply from ${host}: time=${time}ms`, 'output-success');
+            });
+
+            const avg = (times.reduce((a, b) => a + b) / times.length).toFixed(1);
+            this.print(`╰─ Average: ${avg}ms`, 'output-info');
+          }, 500);
+        }
+
+        createBox(content, options = {}) {
+          const { title = '', width = 40, padding = 1 } = options;
+          const lines = content.split('\n');
+          const maxLineLength = Math.max(...lines.map(l => l.length));
+          const boxWidth = Math.max(width, maxLineLength + padding * 2 + 2);
+          const innerWidth = boxWidth - 2;
+
+          let result = [];
+
+          // Top line
+          let topLine = this.boxChars.topLeft;
+          if (title) {
+            topLine += this.boxChars.horizontal + ' ' + title + ' ';
+            topLine += this.boxChars.horizontal.repeat(Math.max(0, innerWidth - title.length - 2));
+          } else {
+            topLine += this.boxChars.horizontal.repeat(innerWidth);
+          }
+          topLine += this.boxChars.topRight;
+          result.push(topLine);
+
+          // Content lines
+          for (let i = 0; i < padding; i++) {
+            result.push(this.boxChars.vertical + ' '.repeat(innerWidth) + this.boxChars.vertical);
+          }
+
+          lines.forEach(line => {
+            const paddedLine = ' '.repeat(padding) + line.padEnd(innerWidth - padding * 2) + ' '.repeat(padding);
+            result.push(this.boxChars.vertical + paddedLine + this.boxChars.vertical);
+          });
+
+          for (let i = 0; i < padding; i++) {
+            result.push(this.boxChars.vertical + ' '.repeat(innerWidth) + this.boxChars.vertical);
+          }
+
+          // Bottom line
+          result.push(
+            this.boxChars.bottomLeft + this.boxChars.horizontal.repeat(innerWidth) + this.boxChars.bottomRight
+          );
+
+          return result.join('\n');
+        }
+
+        getBar(percentage) {
+          const width = 20;
+          const filled = Math.floor((percentage / 100) * width);
+          return '[' + '█'.repeat(filled) + '░'.repeat(width - filled) + ']';
+        }
+
+        getUptime() {
+          const elapsed = Date.now() - this.startTime;
+          const seconds = Math.floor(elapsed / 1000) % 60;
+          const minutes = Math.floor(elapsed / 60000) % 60;
+          const hours = Math.floor(elapsed / 3600000);
+          return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        startDynamicUpdates() {
+          // Update stats every second
+          setInterval(() => {
+            // Update random stats
+            this.stats.cpu = Math.floor(Math.random() * 30) + 20;
+            this.stats.memory = Math.floor(Math.random() * 8192) + 4096;
+            this.stats.network = Math.floor(Math.random() * 900) + 100;
+            this.stats.latency = Math.floor(Math.random() * 50) + 10;
+
+            // Update UI
+            document.getElementById('cpu-usage').textContent = `${this.stats.cpu}%`;
+            document.getElementById('cpu-bar').style.width = `${this.stats.cpu}%`;
+
+            document.getElementById('memory-usage').textContent = `${(this.stats.memory / 1024).toFixed(1)} GB`;
+            document.getElementById('memory-bar').style.width = `${(this.stats.memory / 16384) * 100}%`;
+
+            document.getElementById('network-speed').textContent = `${this.stats.network} Mbps`;
+            document.getElementById('uptime').textContent = this.getUptime();
+          }, 1000);
+        }
+      }
+
+      // Initialize terminal
+      const terminal = new TerminalSystem();
+    </script>
+  </body>
+</html>

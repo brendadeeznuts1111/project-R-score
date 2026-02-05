@@ -1,0 +1,92 @@
+{
+  "name": "@fire22/telegram-benchmarks",
+  "version": "1.0.0",
+  "description": "Performance benchmarks for Fire22 Telegram integration system",
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nolarose1968-pixel/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-telegram-benchmarks"
+  },
+  "keywords": [
+    "benchmarks",
+    "performance",
+    "testing",
+    "telegram",
+    "fire22",
+    "metrics"
+  ],
+  "engines": {
+    "bun": ">=1.2.21"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "bin": {
+    "fire22-benchmarks": "./dist/benchmarks.js",
+    "fire22-telegram-benchmarks": "./dist/benchmarks.js",
+    "telegram-benchmarks": "./dist/benchmarks.js"
+  },
+  "sideEffects": [
+    "./src/**/*.benchmark.{js,ts}",
+    "./src/benchmarks/**/*",
+    "**/*.d.ts"
+  ],
+  "scripts": {
+    "benchmark": "bun run src/index.ts",
+    "benchmark:all": "bun run src/run-all-benchmarks.ts",
+    "benchmark:telegram": "bun run src/telegram-performance.ts",
+    "benchmark:queue": "bun run src/queue-matching-performance.ts",
+    "benchmark:language": "bun run src/language-translation-performance.ts",
+    "benchmark:workflow": "bun run src/workflow-orchestration-performance.ts",
+    "benchmark:dashboard": "bun run src/dashboard-sse-performance.ts",
+    "benchmark:memory": "bun run src/memory-benchmarks.ts",
+    "benchmark:stress": "bun run src/stress-test.ts",
+    "report": "bun run src/generate-report.ts",
+    "compare": "bun run src/compare-results.ts",
+    "build:bin": "bun build src/index.ts --outdir dist --target bun --format esm --compile --outfile benchmarks.js",
+    "build:all": "bun run build:bin"
+  },
+  "dependencies": {
+    "@fire22/telegram-bot": "workspace:*",
+    "@fire22/queue-system": "workspace:*",
+    "@fire22/multilingual": "workspace:*",
+    "@fire22/telegram-workflows": "workspace:*",
+    "@fire22/telegram-dashboard": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "fire22": {
+    "workspace": "telegram-benchmarks",
+    "isolation": {
+      "standalone": false,
+      "linked": true
+    },
+    "benchmarks": {
+      "categories": [
+        "telegram",
+        "queue",
+        "language",
+        "workflow",
+        "dashboard",
+        "memory",
+        "stress"
+      ],
+      "targets": {
+        "responseTime": "< 100ms",
+        "throughput": "> 1000 req/s",
+        "matchingSpeed": "< 50ms",
+        "translationSpeed": "< 1ms",
+        "memoryUsage": "< 100MB",
+        "errorRate": "< 0.1%"
+      }
+    }
+  }
+}

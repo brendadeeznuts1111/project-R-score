@@ -1,0 +1,35 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of main content
+Allow: /docs/
+Allow: /analytics/
+Allow: /api/
+
+# Disallow crawling of development and build files
+Disallow: /node_modules/
+Disallow: /build/
+Disallow: /dist/
+Disallow: /scripts/
+Disallow: /src/
+Disallow: /.git/
+Disallow: /package.json
+Disallow: /bun.lock
+Disallow: /wrangler.toml
+Disallow: /*.ts
+Disallow: /*.js
+Disallow: /*.json
+Disallow: /*.lock
+
+# Allow important documentation files
+Allow: /docs/index.html
+Allow: /docs/communication.html
+Allow: /docs/domains.html
+Allow: /docs/performance.html
+Allow: /analytics/index.html
+
+# Sitemap location
+Sitemap: https://brendadeeznuts1111.github.io/crystal-clear-architecture/sitemap.xml
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1

@@ -1,0 +1,18 @@
+{
+  "name": "fire22-benchmarking-suite",
+  "domain": "benchmarking",
+  "registry": "npm",
+  "packages": [
+    "@fire22/benchmark-suite",
+    "@fire22/benchmark-formatter",
+    "@fire22/micro-benchmarks",
+    "@fire22/memory-profiler",
+    "@fire22/load-testing"
+  ],
+  "dependencies": ["@fire22/core"],
+  "orchestrator": {
+    "version": "1.0.0",
+    "created": "2025-08-27T05:43:39.369Z",
+    "lastUpdated": "2025-08-27T05:43:39.369Z"
+  }
+}

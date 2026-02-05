@@ -1,0 +1,13 @@
+name = "pattern-system-standalone"
+compatibility_date = "2024-08-27"
+compatibility_flags = ["nodejs_compat"]
+main = "dist/standalone/index.js"
+[limits]
+cpu_time = 50000
+memory = "256MB"
+
+[vars]
+WORKSPACE_MODE = "standalone"
+WORKSPACE_NAME = "@fire22/pattern-system"
+BUILD_TARGET = "production"
+

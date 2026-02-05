@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢 Fire22 Sportsbook Operations - Department Overview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .header {
+        background: rgba(10, 14, 39, 0.9);
+        border-bottom: 2px solid rgba(64, 224, 208, 0.3);
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: clamp(28px, 5vw, 42px);
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        color: #9ca3af;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #3b82f6;
+        display: block;
+      }
+
+      .header-stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 30px;
+        padding: 15px 0;
+      }
+
+      .breadcrumb a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb a:hover {
+        color: #3b82f6;
+      }
+
+      .breadcrumb-separator {
+        margin: 0 10px;
+        color: #6b7280;
+      }
+
+      .breadcrumb-current {
+        color: #3b82f6;
+        font-weight: 600;
+      }
+
+      .department-overview {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-overview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+      }
+
+      .overview-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .overview-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: rgba(59, 130, 246, 0.2);
+        border: 3px solid rgba(59, 130, 246, 0.4);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+      }
+
+      .overview-title h2 {
+        font-size: 28px;
+        color: #3b82f6;
+        margin-bottom: 8px;
+      }
+
+      .overview-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+      }
+
+      .specialist-teams {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .specialist-team {
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .specialist-team::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .specialist-team:hover::before {
+        left: 100%;
+      }
+
+      .specialist-team:hover {
+        background: rgba(0, 0, 0, 0.4);
+        border-color: rgba(59, 130, 246, 0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+      }
+
+      .team-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+      }
+
+      .team-icon {
+        font-size: 24px;
+      }
+
+      .team-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #3b82f6;
+      }
+
+      .team-subtitle {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 2px;
+      }
+
+      .team-members {
+        margin-top: 15px;
+      }
+
+      .team-member {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .team-member:hover {
+        border-color: rgba(59, 130, 246, 0.4);
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .member-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+        color: #fff;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        border: 2px solid rgba(59, 130, 246, 0.4);
+      }
+
+      .member-info {
+        flex: 1;
+      }
+
+      .member-name {
+        font-size: 14px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin-bottom: 2px;
+      }
+
+      .member-role {
+        font-size: 11px;
+        color: #3b82f6;
+      }
+
+      .member-speciality {
+        font-size: 10px;
+        color: #9ca3af;
+      }
+
+      .language-keys-section {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 25px;
+      }
+
+      .lkey-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .lkey-card {
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        padding: 12px;
+        transition: all 0.2s ease;
+      }
+
+      .lkey-card:hover {
+        border-color: rgba(59, 130, 246, 0.5);
+      }
+
+      .lkey-id {
+        font-weight: bold;
+        color: #3b82f6;
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+
+      .lkey-translations {
+        font-size: 11px;
+      }
+
+      .lkey-en {
+        color: #e0e6ed;
+      }
+      .lkey-es {
+        color: #fbbf24;
+      }
+      .lkey-pt {
+        color: #10b981;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header-stats {
+          gap: 20px;
+        }
+
+        .specialist-teams {
+          grid-template-columns: 1fr;
+        }
+
+        .lkey-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Department-Specific Color Variables */
+      :root {
+        --dept-primary: #3b82f6;
+        --dept-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --dept-bg: rgba(59, 130, 246, 0.2);
+        --dept-border: rgba(59, 130, 246, 0.4);
+        --dept-shadow: rgba(59, 130, 246, 0.3);
+        --dept-hover: rgba(59, 130, 246, 0.1);
+      }
+
+      /* Live Implementation Links */
+      .implementation-links {
+        margin-top: 40px;
+        padding: 30px;
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .implementation-links::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dept-primary), #1d4ed8);
+        animation: linkGradient 3s ease-in-out infinite;
+      }
+
+      @keyframes linkGradient {
+        0%,
+        100% {
+          transform: translateX(-100%);
+        }
+        50% {
+          transform: translateX(100%);
+        }
+      }
+
+      .links-header {
+        font-size: 24px;
+        color: var(--dept-primary);
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .link-card {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--dept-border);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .link-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--dept-hover), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .link-card:hover::before {
+        left: 100%;
+      }
+
+      .link-card:hover {
+        transform: translateY(-3px) scale(1.02);
+        background: rgba(0, 0, 0, 0.5);
+        border-color: var(--dept-primary);
+        box-shadow: 0 10px 30px var(--dept-shadow);
+      }
+
+      .link-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--dept-primary);
+        margin-bottom: 8px;
+      }
+
+      .link-description {
+        font-size: 13px;
+        color: #9ca3af;
+        flex: 1;
+      }
+
+      .link-arrow {
+        font-size: 20px;
+        color: var(--dept-primary);
+        align-self: flex-end;
+        margin-top: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .link-card:hover .link-arrow {
+        transform: translateX(5px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🎲 Sportsbook Operations</h1>
+      <div class="header-subtitle">Sports betting operations, risk management, and wagering systems</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">18</span>
+          <div class="header-stat-label">Specialists</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">15</span>
+          <div class="header-stat-label">Active Lines</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">99.5%</span>
+          <div class="header-stat-label">Uptime</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">$2.4M</span>
+          <div class="header-stat-label">Daily Volume</div>
+        </div>
+      </div>
+
+      <!-- Live Implementation Links Section -->
+      <div class="implementation-links">
+        <h3 class="links-header">🔗 Live Sportsbook Systems</h3>
+        <div class="links-grid">
+          <a href="../sportsbook/live-betting.html" class="link-card" target="_blank">
+            <div class="link-title">🎯 Live Betting Dashboard</div>
+            <div class="link-description">Real-time sports betting interface</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../odds/management.html" class="link-card" target="_blank">
+            <div class="link-title">📊 Odds Management</div>
+            <div class="link-description">Dynamic odds calculation system</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../risk/assessment.html" class="link-card" target="_blank">
+            <div class="link-title">⚖️ Risk Assessment</div>
+            <div class="link-description">Real-time risk monitoring</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../props/builder.html" class="link-card" target="_blank">
+            <div class="link-title">🎰 Props Builder</div>
+            <div class="link-description">Proposition betting system</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../parlay/manager.html" class="link-card" target="_blank">
+            <div class="link-title">🔗 Parlay Manager</div>
+            <div class="link-description">Complex betting combinations</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../analytics/betting.html" class="link-card" target="_blank">
+            <div class="link-title">📈 Betting Analytics</div>
+            <div class="link-description">Performance and trend analysis</div>
+            <div class="link-arrow">→</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../dashboard.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="./">🏢 Departments</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Sportsbook Operations</span>
+      </nav>
+
+      <!-- Welcome Section -->
+      <div class="department-overview" style="margin-bottom: 30px">
+        <div class="overview-header">
+          <div class="overview-icon">👋</div>
+          <div class="overview-title">
+            <h2>Welcome to Sportsbook Operations</h2>
+            <div class="overview-subtitle">Excellence in wagering, precision in risk management</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 12px">
+          <h3 style="color: var(--dept-primary); margin-bottom: 15px; font-size: 20px">🎯 Department Mission</h3>
+          <p style="color: #e0e6ed; line-height: 1.8; margin-bottom: 20px">
+            The Sportsbook Operations Department manages all aspects of sports betting, from live odds calculation to
+            risk assessment and wagering system optimization, ensuring profitable and secure betting operations.
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+              gap: 20px;
+              margin-top: 25px;
+            "
+          >
+            <div
+              style="
+                padding: 15px;
+                background: rgba(59, 130, 246, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">👔 Department Lead</h4>
+              <div style="color: #e0e6ed; font-weight: bold">Marcus Rodriguez</div>
+              <div style="color: #9ca3af; font-size: 14px">Head of Sportsbook Operations</div>
+              <div style="color: #9ca3af; font-size: 12px; margin-top: 5px">15+ years sports betting experience</div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(59, 130, 246, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">📊 Key Metrics</h4>
+
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                <span style="color: #9ca3af">Daily Volume:</span>
+                <span style="color: #10b981; font-weight: bold">$2.4M</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                <span style="color: #9ca3af">Risk Accuracy:</span>
+                <span style="color: #10b981; font-weight: bold">97.8%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: #9ca3af">System Uptime:</span>
+                <span style="color: #10b981; font-weight: bold">99.95%</span>
+              </div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(59, 130, 246, 0.1);
+                border-left: 4px solid var(--dept-primary);
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: var(--dept-primary); margin-bottom: 10px">🏆 Top Performers</h4>
+              <div style="font-size: 14px">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                  <span style="color: #fbbf24">🥇 M. Rodriguez</span>
+                  <span style="color: #9ca3af">94 setups</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                  <span style="color: #d1d5db">🥈 L. Chen</span>
+                  <span style="color: #9ca3af">87 setups</span>
+                </div>
+                <div style="display: flex; justify-content: space-between">
+                  <span style="color: #cd7c2f">🥉 R. Taylor</span>
+                  <span style="color: #9ca3af">73 setups</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specialist Teams Section -->
+      <div class="department-overview">
+        <div class="overview-header">
+          <div class="overview-icon">🎲</div>
+          <div class="overview-title">
+            <h2>Specialist Teams Structure</h2>
+            <div class="overview-subtitle">Expert teams focused on specific sportsbook operations</div>
+          </div>
+        </div>
+
+        <div class="specialist-teams">
+          <!-- Betting Operations Team -->
+          <div class="specialist-team">
+            <div class="team-header">
+              <div class="team-icon">🎯</div>
+              <div>
+                <div class="team-title">Betting Operations</div>
+                <div class="team-subtitle">Core betting functionality & user experience</div>
+              </div>
+            </div>
+
+            <div class="team-members">
+              <div class="team-member">
+                <div class="member-avatar">MR</div>
+                <div class="member-info">
+                  <div class="member-name">Marcus Rodriguez</div>
+                  <div class="member-role">Operations Lead</div>
+                  <div class="member-speciality">Betting Systems Architecture</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">LC</div>
+                <div class="member-info">
+                  <div class="member-name">Linda Chen</div>
+                  <div class="member-role">Betting Specialist</div>
+                  <div class="member-speciality">Parlays & Teasers Expert</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">RT</div>
+                <div class="member-info">
+                  <div class="member-name">Robert Taylor</div>
+                  <div class="member-role">Systems Analyst</div>
+                  <div class="member-speciality">Bet Processing & Validation</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">AG</div>
+                <div class="member-info">
+                  <div class="member-name">Ana Garcia</div>
+                  <div class="member-role">UX Specialist</div>
+                  <div class="member-speciality">Betting Interface Design</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Betting Team -->
+          <div class="specialist-team">
+            <div class="team-header">
+              <div class="team-icon">⚡</div>
+              <div>
+                <div class="team-title">Live Betting Team</div>
+                <div class="team-subtitle">Real-time in-game betting operations</div>
+              </div>
+            </div>
+
+            <div class="team-members">
+              <div class="team-member">
+                <div class="member-avatar">JM</div>
+                <div class="member-info">
+                  <div class="member-name">James Mitchell</div>
+                  <div class="member-role">Live Betting Lead</div>
+                  <div class="member-speciality">Real-time Odds Management</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">SW</div>
+                <div class="member-info">
+                  <div class="member-name">Sarah Wilson</div>
+                  <div class="member-role">Props Specialist</div>
+                  <div class="member-speciality">Proposition Betting Expert</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">DK</div>
+                <div class="member-info">
+                  <div class="member-name">David Kim</div>
+                  <div class="member-role">Data Feed Specialist</div>
+                  <div class="member-speciality">Live Sports Data Integration</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">MO</div>
+                <div class="member-info">
+                  <div class="member-name">Maria Oliveira</div>
+                  <div class="member-role">Risk Monitor</div>
+                  <div class="member-speciality">Live Risk Assessment</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Odds Management Team -->
+          <div class="specialist-team">
+            <div class="team-header">
+              <div class="team-icon">📊</div>
+              <div>
+                <div class="team-title">Odds Management</div>
+                <div class="team-subtitle">Pricing strategy & odds optimization</div>
+              </div>
+            </div>
+
+            <div class="team-members">
+              <div class="team-member">
+                <div class="member-avatar">AB</div>
+                <div class="member-info">
+                  <div class="member-name">Alex Brown</div>
+                  <div class="member-role">Head Oddsmaker</div>
+                  <div class="member-speciality">Sports Odds Strategy</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">LM</div>
+                <div class="member-info">
+                  <div class="member-name">Lisa Martinez</div>
+                  <div class="member-role">Pricing Analyst</div>
+                  <div class="member-speciality">Market Analysis & Pricing</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">TJ</div>
+                <div class="member-info">
+                  <div class="member-name">Tom Johnson</div>
+                  <div class="member-role">Risk Calculator</div>
+                  <div class="member-speciality">Mathematical Risk Models</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">ER</div>
+                <div class="member-info">
+                  <div class="member-name">Emma Rodriguez</div>
+                  <div class="member-role">Data Scientist</div>
+                  <div class="member-speciality">Predictive Analytics</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Management Team -->
+          <div class="specialist-team">
+            <div class="team-header">
+              <div class="team-icon">⚖️</div>
+              <div>
+                <div class="team-title">Risk Management</div>
+                <div class="team-subtitle">Financial risk assessment & protection</div>
+              </div>
+            </div>
+
+            <div class="team-members">
+              <div class="team-member">
+                <div class="member-avatar">PS</div>
+                <div class="member-info">
+                  <div class="member-name">Peter Smith</div>
+                  <div class="member-role">Risk Manager</div>
+                  <div class="member-speciality">Portfolio Risk Analysis</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">KL</div>
+                <div class="member-info">
+                  <div class="member-name">Karen Lee</div>
+                  <div class="member-role">Fraud Analyst</div>
+                  <div class="member-speciality">Betting Pattern Analysis</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">MD</div>
+                <div class="member-info">
+                  <div class="member-name">Mike Davis</div>
+                  <div class="member-role">Limit Specialist</div>
+                  <div class="member-speciality">Betting Limits & Controls</div>
+                </div>
+              </div>
+              <div class="team-member">
+                <div class="member-avatar">JW</div>
+                <div class="member-info">
+                  <div class="member-name">Jennifer Wang</div>
+                  <div class="member-role">Compliance Officer</div>
+                  <div class="member-speciality">Regulatory Risk Management</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fire22 Language Keys Section -->
+      <div class="department-overview">
+        <div class="overview-header">
+          <div class="overview-icon">🔤</div>
+          <div class="overview-title">
+            <h2>Fire22 Language Keys Ownership</h2>
+            <div class="overview-subtitle">Department-owned L-keys for betting operations</div>
+          </div>
+        </div>
+
+        <div class="language-keys-section">
+          <h3 style="color: var(--dept-primary); margin-bottom: 15px; font-size: 18px">🎯 Betting Operations Keys</h3>
+          <div class="lkey-grid">
+            <div class="lkey-card">
+              <div class="lkey-id">L-12: Straights</div>
+              <div class="lkey-translations">
+                <div class="lkey-en">🇺🇸 Straights</div>
+                <div class="lkey-es">🇪🇸 Directas</div>
+                <div class="lkey-pt">🇧🇷 Diretas</div>
+              </div>
+            </div>
+            <div class="lkey-card">
+              <div class="lkey-id">L-15: Parlays</div>
+              <div class="lkey-translations">
+                <div class="lkey-en">🇺🇸 Parlays</div>
+                <div class="lkey-es">🇪🇸 Combinadas</div>
+                <div class="lkey-pt">🇧🇷 Combinadas</div>
+              </div>
+            </div>
+            <div class="lkey-card">
+              <div class="lkey-id">L-16: If Bets</div>
+              <div class="lkey-translations">
+                <div class="lkey-en">🇺🇸 If Bets</div>
+                <div class="lkey-es">🇪🇸 Apuestas Si</div>
+                <div class="lkey-pt">🇧🇷 Apostas Se</div>
+              </div>
+            </div>
+            <div class="lkey-card">
+              <div class="lkey-id">L-85: Teasers</div>
+              <div class="lkey-translations">
+                <div class="lkey-en">🇺🇸 Teasers</div>
+                <div class="lkey-es">🇪🇸 Teasers</div>
+                <div class="lkey-pt">🇧🇷 Teasers</div>
+              </div>
+            </div>
+            <div class="lkey-card">
+              <div class="lkey-id">L-1390: Live/Props</div>
+              <div class="lkey-translations">
+                <div class="lkey-en">🇺🇸 Live/Props</div>
+                <div class="lkey-es">🇪🇸 En Vivo/Props</div>
+                <div class="lkey-pt">🇧🇷 Ao Vivo/Props</div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="
+              margin-top: 20px;
+              padding: 15px;
+              background: rgba(59, 130, 246, 0.1);
+              border-radius: 8px;
+              border: 1px solid rgba(59, 130, 246, 0.3);
+            "
+          >
+            <h4 style="color: var(--dept-primary); margin-bottom: 10px">🎯 Usage Context</h4>
+            <p style="color: #e0e6ed; font-size: 13px; line-height: 1.6">
+              These L-keys are used across all betting interfaces, customer communications, and system displays. The
+              Sportsbook Operations team is responsible for ensuring accurate implementation and consistent usage of
+              these betting terminology translations throughout the platform.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Department Configuration
+      const departmentConfig = {
+        name: 'Sportsbook Operations',
+        code: 'SPORT',
+        primaryColor: '#3b82f6',
+        languageKeys: ['L-12', 'L-15', 'L-16', 'L-85', 'L-1390'],
+        specialistTeams: [
+          {
+            id: 'betting-operations',
+            name: 'Betting Operations',
+            icon: '🎯',
+            members: 4,
+            focus: 'Core betting functionality',
+          },
+          {
+            id: 'live-betting',
+            name: 'Live Betting Team',
+            icon: '⚡',
+            members: 4,
+            focus: 'Real-time betting operations',
+          },
+          {
+            id: 'odds-management',
+            name: 'Odds Management',
+            icon: '📊',
+            members: 4,
+            focus: 'Pricing and odds optimization',
+          },
+          {
+            id: 'risk-management',
+            name: 'Risk Management',
+            icon: '⚖️',
+            members: 4,
+            focus: 'Risk assessment and controls',
+          },
+        ],
+      };
+
+      // Initialize department
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log(`🎲 ${departmentConfig.name} Department loaded`);
+        console.log(`📊 ${departmentConfig.specialistTeams.length} specialist teams initialized`);
+        console.log(`🔤 ${departmentConfig.languageKeys.length} L-keys owned`);
+
+        // Track department statistics
+        const totalSpecialists = departmentConfig.specialistTeams.reduce((sum, team) => sum + team.members, 0);
+        console.log(`👥 ${totalSpecialists} total specialists across all teams`);
+      });
+
+      // Specialist team interaction
+      document.querySelectorAll('.specialist-team').forEach(team => {
+        team.addEventListener('click', e => {
+          if (!e.target.closest('.team-member')) {
+            team.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+              team.style.transform = '';
+            }, 200);
+          }
+        });
+      });
+
+      // Language key card interactions
+      document.querySelectorAll('.lkey-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const lkeyId = card.querySelector('.lkey-id').textContent;
+          console.log(`📝 L-key selected: ${lkeyId}`);
+
+          // Visual feedback
+          card.style.transform = 'scale(1.05)';
+          card.style.borderColor = 'rgba(59, 130, 246, 0.8)';
+
+          setTimeout(() => {
+            card.style.transform = '';
+            card.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+          }, 300);
+        });
+      });
+    </script>
+
+    <!-- Dynamic Task Loading -->
+    <script src="../js/department-tasks.js"></script>
+  </body>
+</html>

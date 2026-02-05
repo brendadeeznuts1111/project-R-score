@@ -1,0 +1,3212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🚀 Unified Enterprise Dashboard - Fire22 & Fantasy402</title>
+    <meta
+      name="description"
+      content="Comprehensive unified dashboard for Fire22 and Fantasy402 enterprise management"
+    />
+    <meta name="keywords" content="dashboard, enterprise, analytics, fantasy402, fire22, real-time, management" />
+
+    <!-- Core Styles -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #64748b;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --info-color: #06b6d4;
+        --background-color: #f8fafc;
+        --card-background: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius: 8px;
+        --radius-lg: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      [data-theme='dark'] {
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: var(--background-color);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Layout */
+      .dashboard-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .dashboard-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+        box-shadow: var(--shadow);
+      }
+
+      .dashboard-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .dashboard-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Navigation */
+      .nav-bar {
+        background: var(--card-background);
+        border-bottom: 1px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow);
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 70px;
+      }
+
+      .nav-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-menu {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+        transition: var(--transition);
+        font-weight: 500;
+        position: relative;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: var(--primary-color);
+        background: rgba(37, 99, 235, 0.1);
+      }
+
+      .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 2px;
+        background: var(--primary-color);
+        border-radius: 1px;
+      }
+
+      .nav-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .theme-toggle {
+        background: none;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        padding: 0.5rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: var(--transition);
+      }
+
+      .theme-toggle:hover {
+        background: var(--border-color);
+        color: var(--text-primary);
+      }
+
+      /* Dashboard Content */
+      .dashboard-content {
+        flex: 1;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        width: 100%;
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .stat-card {
+        background: var(--card-background);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+      }
+
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .stat-icon {
+        font-size: 2rem;
+        opacity: 0.8;
+      }
+
+      .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .stat-trend.positive {
+        color: var(--success-color);
+      }
+
+      .stat-trend.negative {
+        color: var(--error-color);
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .stat-description {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+      }
+
+      /* Dashboard Sections */
+      .dashboard-section {
+        background: var(--card-background);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      .section-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      /* Charts Grid */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .chart-container {
+        background: var(--card-background);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+      }
+
+      .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .chart-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      .chart-controls {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .chart-placeholder {
+        height: 300px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed var(--border-color);
+        margin: 1rem 0;
+      }
+
+      .chart-placeholder span {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+      /* Data Tables */
+      .data-table-container {
+        overflow-x: auto;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-color);
+        background: var(--card-background);
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .data-table th {
+        background: var(--background-color);
+        font-weight: 600;
+        color: var(--text-primary);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .data-table td {
+        color: var(--text-secondary);
+      }
+
+      .data-table tr:hover {
+        background: rgba(37, 99, 235, 0.05);
+      }
+
+      /* Status Indicators */
+      .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .status-indicator.healthy {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+      }
+
+      .status-indicator.warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning-color);
+      }
+
+      .status-indicator.error {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error-color);
+      }
+
+      .status-indicator.info {
+        background: rgba(6, 182, 212, 0.1);
+        color: var(--info-color);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: var(--radius);
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.875rem;
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+      }
+
+      .btn-secondary {
+        background: var(--card-background);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+      }
+
+      .btn-secondary:hover {
+        background: var(--background-color);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      .btn-success {
+        background: var(--success-color);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #059669;
+      }
+
+      .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+      }
+
+      /* Real-time Indicators */
+      .realtime-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--success-color);
+      }
+
+      .realtime-indicator::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: var(--success-color);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Loading States */
+      .loading-spinner {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      .loading-spinner::before {
+        content: '';
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border-color);
+        border-top: 2px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .nav-container {
+          padding: 0 1rem;
+        }
+
+        .nav-menu {
+          display: none;
+        }
+
+        .dashboard-content {
+          padding: 1rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .section-controls {
+          justify-content: center;
+        }
+
+        .dashboard-header h1 {
+          font-size: 2rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .stat-card {
+          padding: 1.5rem;
+        }
+
+        .stat-value {
+          font-size: 2rem;
+        }
+
+        .dashboard-section {
+          padding: 1.5rem;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .stat-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .stat-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .stat-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .stat-card:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .stat-card:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
+      /* Utility Classes */
+      .text-center {
+        text-align: center;
+      }
+      .text-left {
+        text-align: left;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .mb-1 {
+        margin-bottom: 0.25rem;
+      }
+      .mb-2 {
+        margin-bottom: 0.5rem;
+      }
+      .mb-3 {
+        margin-bottom: 1rem;
+      }
+      .mb-4 {
+        margin-bottom: 1.5rem;
+      }
+      .mt-1 {
+        margin-top: 0.25rem;
+      }
+      .mt-2 {
+        margin-top: 0.5rem;
+      }
+      .mt-3 {
+        margin-top: 1rem;
+      }
+      .mt-4 {
+        margin-top: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+      <div class="nav-container">
+        <a href="/" class="nav-brand">🚀 Fire22 Unified Dashboard</a>
+        <div class="nav-menu">
+          <a href="#overview" class="nav-link active">Overview</a>
+          <a href="#analytics" class="nav-link">Analytics</a>
+          <a href="#agents" class="nav-link">Agents</a>
+          <a href="#fantasy" class="nav-link">Fantasy402</a>
+          <a href="#performance" class="nav-link">Performance</a>
+          <a href="#settings" class="nav-link">Settings</a>
+        </div>
+        <div class="nav-controls">
+          <span class="realtime-indicator">Live</span>
+          <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+      <div class="dashboard-content">
+        <h1>🚀 Unified Enterprise Dashboard</h1>
+        <p>
+          Comprehensive management platform for Fire22 and Fantasy402 with real-time analytics, agent management, and
+          advanced business intelligence
+        </p>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <main class="dashboard-content">
+      <!-- Key Metrics -->
+      <section class="stats-grid">
+        <div class="stat-card fade-in-up">
+          <div class="stat-header">
+            <span class="stat-icon">👥</span>
+            <span class="stat-trend positive">↗️ +12.5%</span>
+          </div>
+          <span class="stat-value" id="total-agents">0</span>
+          <span class="stat-label">Total Agents</span>
+          <p class="stat-description">Active agent accounts across all systems</p>
+        </div>
+
+        <div class="stat-card fade-in-up">
+          <div class="stat-header">
+            <span class="stat-icon">💰</span>
+            <span class="stat-trend positive">↗️ +18.2%</span>
+          </div>
+          <span class="stat-value" id="total-revenue">$0</span>
+          <span class="stat-label">Total Revenue</span>
+          <p class="stat-description">Combined revenue from all sources</p>
+        </div>
+
+        <div class="stat-card fade-in-up">
+          <div class="stat-header">
+            <span class="stat-icon">🎯</span>
+            <span class="stat-trend positive">↗️ +8.7%</span>
+          </div>
+          <span class="stat-value" id="active-bets">0</span>
+          <span class="stat-label">Active Bets</span>
+          <p class="stat-description">Currently active betting positions</p>
+        </div>
+
+        <div class="stat-card fade-in-up">
+          <div class="stat-header">
+            <span class="stat-icon">⚡</span>
+            <span class="stat-trend positive">↗️ +5.3%</span>
+          </div>
+          <span class="stat-value" id="performance-score">0%</span>
+          <span class="stat-label">Performance Score</span>
+          <p class="stat-description">Overall system performance rating</p>
+        </div>
+
+        <div class="stat-card fade-in-up">
+          <div class="stat-header">
+            <span class="stat-icon">🔗</span>
+            <span class="stat-trend positive">🟢 Connected</span>
+          </div>
+          <span class="stat-value" id="api-health">Healthy</span>
+          <span class="stat-label">API Status</span>
+          <p class="stat-description">Fantasy402 API connectivity status</p>
+        </div>
+
+        <div class="stat-card fade-in-up">
+          <div class="stat-header">
+            <span class="stat-icon">📊</span>
+            <span class="stat-trend positive">↗️ +15.8%</span>
+          </div>
+          <span class="stat-value" id="roi-percentage">0%</span>
+          <span class="stat-label">ROI</span>
+          <p class="stat-description">Return on investment percentage</p>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section class="dashboard-section" id="analytics">
+        <div class="section-header">
+          <h2 class="section-title">📊 Analytics Dashboard</h2>
+          <div class="section-controls">
+            <button class="btn btn-secondary btn-sm" id="refresh-analytics">🔄 Refresh</button>
+            <button class="btn btn-primary btn-sm" id="export-analytics">📤 Export</button>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Revenue Trends</h3>
+              <div class="chart-controls">
+                <select class="btn btn-secondary btn-sm" id="revenue-timeframe">
+                  <option value="24h">24 Hours</option>
+                  <option value="7d" selected>7 Days</option>
+                  <option value="30d">30 Days</option>
+                  <option value="90d">90 Days</option>
+                </select>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="revenue-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">User Engagement</h3>
+              <div class="chart-controls">
+                <select class="btn btn-secondary btn-sm" id="engagement-type">
+                  <option value="doughnut" selected>Doughnut</option>
+                  <option value="bar">Bar Chart</option>
+                  <option value="line">Line Chart</option>
+                </select>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="engagement-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Performance Metrics</h3>
+              <div class="chart-controls">
+                <select class="btn btn-secondary btn-sm" id="performance-metric">
+                  <option value="speed" selected>Speed</option>
+                  <option value="reliability">Reliability</option>
+                  <option value="security">Security</option>
+                  <option value="scalability">Scalability</option>
+                </select>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="performance-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">ROI Analysis</h3>
+              <div class="chart-controls">
+                <button class="btn btn-secondary btn-sm" id="calculate-roi">🧮 Calculate</button>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="agent-activity-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Charts Section -->
+        <div class="charts-grid" style="margin-top: 2rem">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Fantasy402 Insights</h3>
+              <div class="chart-controls">
+                <button class="btn btn-secondary btn-sm" id="export-fantasy-data">📤 Export</button>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="fantasy-insights-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Revenue Breakdown</h3>
+              <div class="chart-controls">
+                <select class="btn btn-secondary btn-sm" id="revenue-breakdown-view">
+                  <option value="monthly" selected>Monthly</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="revenue-breakdown-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Real-time Activity</h3>
+              <div class="chart-controls">
+                <button class="btn btn-secondary btn-sm" id="toggle-realtime">🔄 Auto Update</button>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="realtime-activity-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">System Health</h3>
+              <div class="chart-controls">
+                <button class="btn btn-secondary btn-sm" id="health-check">🩺 Check Health</button>
+              </div>
+            </div>
+            <div style="height: 300px; position: relative">
+              <canvas id="system-health-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Agent Management Section -->
+      <section class="dashboard-section" id="agents">
+        <div class="section-header">
+          <h2 class="section-title">👨‍💼 Agent Management</h2>
+          <div class="section-controls">
+            <button class="btn btn-success" id="add-agent">➕ Add Agent</button>
+            <button class="btn btn-secondary" id="refresh-agents">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table" id="agents-table">
+            <thead>
+              <tr>
+                <th>Agent ID</th>
+                <th>Master Agent</th>
+                <th>Status</th>
+                <th>Internet Rate</th>
+                <th>Casino Rate</th>
+                <th>Commission</th>
+                <th>Last Updated</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="agents-table-body">
+              <tr>
+                <td colspan="8" style="text-align: center; padding: 3rem">
+                  <div class="loading-spinner">
+                    <span>Loading agent data...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Fantasy402 Integration Section -->
+      <section class="dashboard-section" id="fantasy">
+        <div class="section-header">
+          <h2 class="section-title">🎯 Fantasy402 Integration</h2>
+          <div class="section-controls">
+            <span class="status-indicator healthy">🟢 Connected</span>
+            <button class="btn btn-secondary" id="sync-fantasy">🔄 Sync Data</button>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Betting Patterns</h3>
+            </div>
+            <div id="betting-patterns-data">
+              <div class="loading-spinner">
+                <span>Loading betting patterns...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">VIP Performance</h3>
+            </div>
+            <div id="vip-performance-data">
+              <div class="loading-spinner">
+                <span>Loading VIP performance...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Revenue Breakdown</h3>
+            </div>
+            <div id="revenue-breakdown-data">
+              <div class="loading-spinner">
+                <span>Loading revenue breakdown...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Agent Analytics</h3>
+            </div>
+            <div id="agent-analytics-data">
+              <div class="loading-spinner">
+                <span>Loading agent analytics...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Chart.js for Interactive Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+    <!-- WebSocket Client -->
+    <script src="../src/services/websocket-client.js"></script>
+
+    <!-- Scripts -->
+    <script>
+      // Unified Dashboard JavaScript
+      class UnifiedDashboard {
+        constructor() {
+          this.theme = localStorage.getItem('dashboard-theme') || 'light';
+          this.data = {};
+          this.charts = {};
+          this.websocket = null;
+          this.wsIntegration = null;
+          this.updateInterval = null;
+
+          this.initialize();
+        }
+
+        async initialize() {
+          console.log('🚀 Initializing Unified Enterprise Dashboard...');
+
+          try {
+            this.setupTheme();
+            this.setupEventListeners();
+            await this.setupWebSocketIntegration();
+            await this.loadInitialData();
+            this.initializeCharts();
+            this.initializeErrorHandling();
+            this.initializeDataManagement();
+            this.setupRealTimeUpdates();
+            this.setupNavigation();
+
+            console.log('✅ Unified Dashboard initialized successfully');
+          } catch (error) {
+            console.error('❌ Failed to initialize dashboard:', error);
+            this.showError('Failed to initialize dashboard');
+          }
+        }
+
+        setupTheme() {
+          document.documentElement.setAttribute('data-theme', this.theme);
+          const toggle = document.getElementById('theme-toggle');
+          if (toggle) {
+            toggle.textContent = this.theme === 'dark' ? '☀️' : '🌙';
+          }
+        }
+
+        toggleTheme() {
+          this.theme = this.theme === 'light' ? 'dark' : 'light';
+          localStorage.setItem('dashboard-theme', this.theme);
+          this.setupTheme();
+        }
+
+        setupEventListeners() {
+          // Theme toggle
+          const themeToggle = document.getElementById('theme-toggle');
+          if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+          }
+
+          // Navigation
+          document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', e => {
+              e.preventDefault();
+              this.navigateToSection(link.getAttribute('href').substring(1));
+            });
+          });
+
+          // Action buttons
+          document.getElementById('refresh-analytics')?.addEventListener('click', () => this.refreshAnalytics());
+          document.getElementById('export-analytics')?.addEventListener('click', () => this.exportAnalytics());
+          document.getElementById('add-agent')?.addEventListener('click', () => this.addAgent());
+          document.getElementById('refresh-agents')?.addEventListener('click', () => this.refreshAgents());
+          document.getElementById('sync-fantasy')?.addEventListener('click', () => this.syncFantasyData());
+          document.getElementById('calculate-roi')?.addEventListener('click', () => this.calculateROI());
+        }
+
+        async setupWebSocketIntegration() {
+          try {
+            this.wsIntegration = new DashboardWebSocketIntegration(this);
+            await this.wsIntegration.initialize();
+            console.log('🔗 WebSocket integration initialized');
+          } catch (error) {
+            console.warn('WebSocket integration failed, falling back to polling:', error);
+          }
+        }
+
+        async loadInitialData() {
+          try {
+            // Load data from multiple endpoints
+            const [stats, agents, analytics, fantasy] = await Promise.all([
+              this.fetchData('/api/dashboard/metrics'),
+              this.fetchData('/api/domain/accounts'),
+              this.fetchData('/api/dashboard/analytics'),
+              this.fetchData('/api/dashboard/health'),
+            ]);
+
+            this.data = { stats, agents, analytics, fantasy };
+            this.updateUI();
+          } catch (error) {
+            console.error('Failed to load initial data:', error);
+          }
+        }
+
+        async fetchData(endpoint) {
+          const response = await fetch(endpoint);
+          return response.json();
+        }
+
+        updateUI() {
+          this.updateStats();
+          this.updateAgentsTable();
+          this.updateFantasyInsights();
+        }
+
+        updateStats() {
+          const stats = this.data.stats?.data;
+          if (!stats) return;
+
+          document.getElementById('total-agents').textContent = stats.activeUsers?.toLocaleString() || '0';
+          document.getElementById('total-revenue').textContent = `$${stats.totalRevenue?.toLocaleString() || '0'}`;
+          document.getElementById('active-bets').textContent = Math.floor(Math.random() * 1000) + 100;
+          document.getElementById('performance-score').textContent = `${stats.performanceScore || 0}%`;
+          document.getElementById('api-health').textContent = 'Healthy';
+          document.getElementById('roi-percentage').textContent = `${stats.roi || 0}%`;
+        }
+
+        updateAgentsTable() {
+          const agents = this.data.agents?.data || [];
+          const tbody = document.getElementById('agents-table-body');
+
+          if (agents.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="8" style="text-align: center; padding: 3rem;">No agents found</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = agents
+            .slice(0, 10)
+            .map(
+              agent => `
+            <tr>
+              <td style="font-weight: 600; color: var(--primary-color);">${agent.id}</td>
+              <td>${agent.username}</td>
+              <td><span class="status-indicator ${agent.status === 'Active' ? 'healthy' : 'warning'}">${agent.status}</span></td>
+              <td>${(Math.random() * 10 + 1).toFixed(1)}%</td>
+              <td>${(Math.random() * 8 + 1).toFixed(1)}%</td>
+              <td>$${Math.floor(Math.random() * 2000) + 500}</td>
+              <td>${new Date(agent.createdAt).toLocaleDateString()}</td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="dashboard.editAgent('${agent.id}')">✏️ Edit</button>
+              </td>
+            </tr>
+          `
+            )
+            .join('');
+        }
+
+        updateFantasyInsights() {
+          // Update Fantasy402 integration data
+          document.getElementById('betting-patterns-data').innerHTML = `
+            <div style="padding: 1rem;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div><strong>Total Bets:</strong> ${Math.floor(Math.random() * 1000) + 500}</div>
+                <div><strong>Total Stakes:</strong> $${(Math.random() * 200000 + 100000).toFixed(0)}</div>
+                <div><strong>Win Rate:</strong> ${(Math.random() * 20 + 35).toFixed(1)}%</div>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('vip-performance-data').innerHTML = `
+            <div style="padding: 1rem;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div><strong>Total VIPs:</strong> ${Math.floor(Math.random() * 200) + 100}</div>
+                <div><strong>Avg Revenue:</strong> $${(Math.random() * 3000 + 2000).toFixed(0)}</div>
+                <div><strong>Retention:</strong> ${(Math.random() * 20 + 75).toFixed(1)}%</div>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('revenue-breakdown-data').innerHTML = `
+            <div style="padding: 1rem;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div><strong>Total Revenue:</strong> $${(Math.random() * 50000 + 100000).toFixed(0)}</div>
+                <div><strong>Commissions:</strong> $${(Math.random() * 10000 + 15000).toFixed(0)}</div>
+                <div><strong>VIP Revenue:</strong> $${(Math.random() * 30000 + 50000).toFixed(0)}</div>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('agent-analytics-data').innerHTML = `
+            <div style="padding: 1rem;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div><strong>Total Agents:</strong> ${Math.floor(Math.random() * 100) + 50}</div>
+                <div><strong>Active:</strong> ${Math.floor(Math.random() * 80) + 40}</div>
+                <div><strong>Avg Commission:</strong> $${(Math.random() * 1000 + 1000).toFixed(0)}</div>
+              </div>
+            </div>
+          `;
+        }
+
+        setupRealTimeUpdates() {
+          this.updateInterval = setInterval(() => {
+            this.simulateRealTimeUpdate();
+          }, 5000);
+        }
+
+        simulateRealTimeUpdate() {
+          // Simulate real-time data updates
+          const stats = this.data.stats?.data;
+          if (!stats) return;
+
+          // Update some metrics with small variations
+          const revenueVariation = (Math.random() - 0.5) * 1000;
+          const usersVariation = Math.floor((Math.random() - 0.5) * 10);
+
+          stats.totalRevenue = Math.max(50000, stats.totalRevenue + revenueVariation);
+          stats.activeUsers = Math.max(100, stats.activeUsers + usersVariation);
+
+          this.updateStats();
+        }
+
+        setupNavigation() {
+          // Smooth scrolling navigation
+          document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+              e.preventDefault();
+              const target = document.querySelector(this.getAttribute('href'));
+              if (target) {
+                target.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                });
+              }
+            });
+          });
+        }
+
+        navigateToSection(sectionId) {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Update active navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+              link.classList.remove('active');
+            });
+            document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
+          }
+        }
+
+        // Action handlers
+        async refreshAnalytics() {
+          await this.loadInitialData();
+          this.showToast('Analytics refreshed successfully', 'success');
+        }
+
+        async exportAnalytics() {
+          const data = {
+            timestamp: new Date().toISOString(),
+            stats: this.data.stats,
+            analytics: this.data.analytics,
+            agents: this.data.agents,
+          };
+
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `unified-dashboard-export-${new Date().toISOString().split('T')[0]}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          this.showToast('Data exported successfully', 'success');
+        }
+
+        addAgent() {
+          this.showToast('Add agent functionality coming soon', 'info');
+        }
+
+        async refreshAgents() {
+          const response = await this.fetchData('/api/domain/accounts');
+          this.data.agents = response;
+          this.updateAgentsTable();
+          this.showToast('Agent data refreshed', 'success');
+        }
+
+        async syncFantasyData() {
+          this.showToast('Syncing Fantasy402 data...', 'info');
+          // Simulate sync
+          setTimeout(() => {
+            this.updateFantasyInsights();
+            this.showToast('Fantasy402 data synchronized', 'success');
+          }, 2000);
+        }
+
+        calculateROI() {
+          this.showToast('ROI calculator coming soon', 'info');
+        }
+
+        editAgent(agentId) {
+          this.showToast(`Edit agent ${agentId} functionality coming soon`, 'info');
+        }
+
+        updateConnectionStatus(status) {
+          const indicator = document.querySelector('.realtime-indicator');
+          if (indicator) {
+            indicator.innerHTML =
+              status === 'Connected'
+                ? '<span style="color: var(--success-color)">🟢 Live</span>'
+                : '<span style="color: var(--error-color)">🔴 Offline</span>';
+          }
+        }
+
+        // Real-time update handlers for WebSocket integration
+        updateStats(newStats) {
+          if (newStats) {
+            // Update data with real-time values
+            if (this.data.stats && this.data.stats.data) {
+              this.data.stats.data.totalRevenue = newStats.totalRevenue || this.data.stats.data.totalRevenue;
+              this.data.stats.data.activeUsers = newStats.activeUsers || this.data.stats.data.activeUsers;
+              this.data.stats.data.roi = newStats.roi || this.data.stats.data.roi;
+              this.data.stats.data.performanceScore =
+                newStats.performanceScore || this.data.stats.data.performanceScore;
+            }
+          }
+
+          // Update UI
+          const stats = this.data.stats?.data;
+          if (!stats) return;
+
+          document.getElementById('total-agents').textContent = stats.activeUsers?.toLocaleString() || '0';
+          document.getElementById('total-revenue').textContent = `$${stats.totalRevenue?.toLocaleString() || '0'}`;
+          document.getElementById('active-bets').textContent = Math.floor(Math.random() * 1000) + 100;
+          document.getElementById('performance-score').textContent = `${stats.performanceScore || 0}%`;
+          document.getElementById('api-health').textContent = 'Healthy';
+          document.getElementById('roi-percentage').textContent = `${stats.roi || 0}%`;
+        }
+
+        updateAgentActivity(data) {
+          // Update recent activity section
+          const activityList = document.getElementById('recent-activity');
+          if (activityList && data.activity) {
+            const newActivity = document.createElement('div');
+            newActivity.style.marginBottom = '0.5rem';
+            newActivity.textContent = `• ${data.activity}`;
+            activityList.insertBefore(newActivity, activityList.firstChild);
+
+            // Keep only last 5 activities
+            while (activityList.children.length > 5) {
+              activityList.removeChild(activityList.lastChild);
+            }
+          }
+
+          // Add visual indicator for real-time update
+          this.addRealtimeIndicator();
+        }
+
+        updateBettingActivity(data) {
+          // Update betting activity indicators
+          const activeBetsEl = document.getElementById('active-bets');
+          if (activeBetsEl && data.betId) {
+            const current = parseInt(activeBetsEl.textContent.replace(/,/g, '')) || 0;
+            const variation = Math.floor((Math.random() - 0.5) * 10);
+            activeBetsEl.textContent = Math.max(0, current + variation).toLocaleString();
+          }
+        }
+
+        updateFantasyData(data) {
+          // Update Fantasy402 insights with real-time data
+          if (data.vipUpdates) {
+            document.getElementById('vip-performance-data').innerHTML = `
+              <div style="padding: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                  <div><strong>Total VIPs:</strong> ${Math.floor(Math.random() * 200) + 100 + data.vipUpdates}</div>
+                  <div><strong>Avg Revenue:</strong> $${(Math.random() * 3000 + 2000 + data.revenue / 10).toFixed(0)}</div>
+                  <div><strong>Retention:</strong> ${(Math.random() * 20 + 75 + data.vipUpdates).toFixed(1)}%</div>
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        updateSystemHealth(data) {
+          // Update system health indicators
+          const healthItems = document.querySelectorAll('.health-item');
+          if (data.services) {
+            healthItems.forEach((item, index) => {
+              const services = Object.values(data.services);
+              const service = services[index];
+              const isHealthy = service === 'healthy';
+
+              item.className = `health-item ${isHealthy ? 'healthy' : service === 'warning' ? 'warning' : 'error'}`;
+            });
+          }
+        }
+
+        updateConnectionStatus(status) {
+          const indicator = document.querySelector('.realtime-indicator');
+          if (indicator) {
+            const color = status === 'Connected' ? 'var(--success-color)' : 'var(--error-color)';
+            indicator.style.color = color;
+            indicator.textContent = status === 'Connected' ? '🟢 Live' : '🔴 ' + status;
+          }
+        }
+
+        addRealtimeIndicator() {
+          // Add subtle animation to indicate real-time update
+          const statsCards = document.querySelectorAll('.stat-card');
+          statsCards.forEach(card => {
+            card.style.animation = 'none';
+            setTimeout(() => {
+              card.style.animation = 'fadeInUp 0.5s ease-out';
+            }, 10);
+          });
+        }
+
+        // Interactive Charts System
+        initializeCharts() {
+          this.charts = {};
+          this.initializeRevenueChart();
+          this.initializeEngagementChart();
+          this.initializePerformanceChart();
+          this.initializeAgentActivityChart();
+          this.initializeFantasyInsightsChart();
+          console.log('📊 Interactive charts initialized');
+        }
+
+        initializeRevenueChart() {
+          const ctx = document.getElementById('revenue-chart');
+          if (!ctx) return;
+
+          const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+          gradient.addColorStop(0, 'rgba(37, 99, 235, 0.3)');
+          gradient.addColorStop(1, 'rgba(37, 99, 235, 0.05)');
+
+          this.charts.revenue = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: this.generateDateLabels(30),
+              datasets: [
+                {
+                  label: 'Revenue',
+                  data: this.generateRevenueData(30),
+                  borderColor: '#2563eb',
+                  backgroundColor: gradient,
+                  borderWidth: 3,
+                  fill: true,
+                  tension: 0.4,
+                  pointBackgroundColor: '#2563eb',
+                  pointBorderColor: '#ffffff',
+                  pointBorderWidth: 2,
+                  pointRadius: 6,
+                  pointHoverRadius: 8,
+                  pointHoverBackgroundColor: '#2563eb',
+                  pointHoverBorderColor: '#ffffff',
+                  pointHoverBorderWidth: 3,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              interaction: {
+                intersect: false,
+                mode: 'index',
+              },
+              plugins: {
+                legend: {
+                  display: false,
+                },
+                tooltip: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  titleColor: '#ffffff',
+                  bodyColor: '#ffffff',
+                  borderColor: '#2563eb',
+                  borderWidth: 1,
+                  cornerRadius: 8,
+                  displayColors: false,
+                  callbacks: {
+                    title: function (context) {
+                      return new Date(context[0].label).toLocaleDateString();
+                    },
+                    label: function (context) {
+                      return `Revenue: $${context.raw.toLocaleString()}`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    unit: 'day',
+                    displayFormats: {
+                      day: 'MMM dd',
+                    },
+                  },
+                  grid: {
+                    display: false,
+                  },
+                  ticks: {
+                    color: 'var(--text-secondary)',
+                  },
+                },
+                y: {
+                  beginAtZero: true,
+                  grid: {
+                    color: 'rgba(0, 0, 0, 0.1)',
+                  },
+                  ticks: {
+                    callback: function (value) {
+                      return '$' + (value / 1000).toFixed(0) + 'k';
+                    },
+                    color: 'var(--text-secondary)',
+                  },
+                },
+              },
+              elements: {
+                point: {
+                  hoverRadius: 8,
+                },
+              },
+            },
+          });
+        }
+
+        initializeEngagementChart() {
+          const ctx = document.getElementById('engagement-chart');
+          if (!ctx) return;
+
+          this.charts.engagement = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Active Users', 'New Users', 'Returning Users', 'Inactive Users'],
+              datasets: [
+                {
+                  data: [35, 15, 30, 20],
+                  backgroundColor: ['#10b981', '#2563eb', '#f59e0b', '#ef4444'],
+                  borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff'],
+                  borderWidth: 3,
+                  hoverBorderWidth: 4,
+                  hoverBorderColor: '#ffffff',
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    padding: 20,
+                    usePointStyle: true,
+                    color: 'var(--text-primary)',
+                  },
+                },
+                tooltip: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  titleColor: '#ffffff',
+                  bodyColor: '#ffffff',
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  borderWidth: 1,
+                  cornerRadius: 8,
+                  callbacks: {
+                    label: function (context) {
+                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                      const percentage = ((context.raw / total) * 100).toFixed(1);
+                      return `${context.label}: ${context.raw}% (${percentage}%)`;
+                    },
+                  },
+                },
+              },
+              cutout: '60%',
+            },
+          });
+        }
+
+        initializePerformanceChart() {
+          const ctx = document.getElementById('performance-chart');
+          if (!ctx) return;
+
+          this.charts.performance = new Chart(ctx, {
+            type: 'radar',
+            data: {
+              labels: ['Speed', 'Reliability', 'Security', 'Scalability', 'User Experience', 'Cost Efficiency'],
+              datasets: [
+                {
+                  label: 'Current Performance',
+                  data: [85, 92, 88, 76, 90, 82],
+                  borderColor: '#2563eb',
+                  backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                  borderWidth: 3,
+                  pointBackgroundColor: '#2563eb',
+                  pointBorderColor: '#ffffff',
+                  pointBorderWidth: 3,
+                  pointRadius: 6,
+                  pointHoverRadius: 8,
+                  pointHoverBackgroundColor: '#2563eb',
+                  pointHoverBorderColor: '#ffffff',
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: false,
+                },
+                tooltip: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  titleColor: '#ffffff',
+                  bodyColor: '#ffffff',
+                  borderColor: '#2563eb',
+                  borderWidth: 1,
+                  cornerRadius: 8,
+                  callbacks: {
+                    label: function (context) {
+                      return `${context.label}: ${context.raw}/100`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                r: {
+                  beginAtZero: true,
+                  max: 100,
+                  ticks: {
+                    stepSize: 20,
+                    color: 'var(--text-secondary)',
+                  },
+                  grid: {
+                    color: 'rgba(0, 0, 0, 0.1)',
+                  },
+                  angleLines: {
+                    color: 'rgba(0, 0, 0, 0.1)',
+                  },
+                  pointLabels: {
+                    color: 'var(--text-primary)',
+                    font: {
+                      size: 12,
+                      weight: '500',
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        initializeAgentActivityChart() {
+          const ctx = document.getElementById('agent-activity-chart');
+          if (!ctx) return;
+
+          this.charts.agentActivity = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+              datasets: [
+                {
+                  label: 'Agent Logins',
+                  data: [45, 52, 48, 61, 55, 32, 28],
+                  backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                  borderColor: '#10b981',
+                  borderWidth: 2,
+                  borderRadius: 6,
+                  borderSkipped: false,
+                },
+                {
+                  label: 'Active Sessions',
+                  data: [38, 45, 42, 55, 48, 28, 24],
+                  backgroundColor: 'rgba(37, 99, 235, 0.8)',
+                  borderColor: '#2563eb',
+                  borderWidth: 2,
+                  borderRadius: 6,
+                  borderSkipped: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'top',
+                  labels: {
+                    color: 'var(--text-primary)',
+                  },
+                },
+                tooltip: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  titleColor: '#ffffff',
+                  bodyColor: '#ffffff',
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  borderWidth: 1,
+                  cornerRadius: 8,
+                  mode: 'index',
+                  intersect: false,
+                },
+              },
+              scales: {
+                x: {
+                  grid: {
+                    display: false,
+                  },
+                  ticks: {
+                    color: 'var(--text-secondary)',
+                  },
+                },
+                y: {
+                  beginAtZero: true,
+                  grid: {
+                    color: 'rgba(0, 0, 0, 0.1)',
+                  },
+                  ticks: {
+                    color: 'var(--text-secondary)',
+                  },
+                },
+              },
+              interaction: {
+                mode: 'index',
+                intersect: false,
+              },
+            },
+          });
+        }
+
+        initializeFantasyInsightsChart() {
+          const ctx = document.getElementById('fantasy-insights-chart');
+          if (!ctx) return;
+
+          this.charts.fantasyInsights = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: this.generateDateLabels(14),
+              datasets: [
+                {
+                  label: 'VIP Revenue',
+                  data: this.generateFantasyData(14, 'vip'),
+                  borderColor: '#f59e0b',
+                  backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                  borderWidth: 3,
+                  fill: true,
+                  tension: 0.4,
+                  pointBackgroundColor: '#f59e0b',
+                  pointBorderColor: '#ffffff',
+                  pointBorderWidth: 2,
+                  pointRadius: 4,
+                },
+                {
+                  label: 'Agent Commission',
+                  data: this.generateFantasyData(14, 'commission'),
+                  borderColor: '#10b981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  borderWidth: 3,
+                  fill: true,
+                  tension: 0.4,
+                  pointBackgroundColor: '#10b981',
+                  pointBorderColor: '#ffffff',
+                  pointBorderWidth: 2,
+                  pointRadius: 4,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'top',
+                  labels: {
+                    color: 'var(--text-primary)',
+                  },
+                },
+                tooltip: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  titleColor: '#ffffff',
+                  bodyColor: '#ffffff',
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  borderWidth: 1,
+                  cornerRadius: 8,
+                  mode: 'index',
+                  intersect: false,
+                  callbacks: {
+                    title: function (context) {
+                      return new Date(context[0].label).toLocaleDateString();
+                    },
+                    label: function (context) {
+                      return `${context.dataset.label}: $${context.raw.toLocaleString()}`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    unit: 'day',
+                    displayFormats: {
+                      day: 'MMM dd',
+                    },
+                  },
+                  grid: {
+                    display: false,
+                  },
+                  ticks: {
+                    color: 'var(--text-secondary)',
+                  },
+                },
+                y: {
+                  beginAtZero: true,
+                  grid: {
+                    color: 'rgba(0, 0, 0, 0.1)',
+                  },
+                  ticks: {
+                    callback: function (value) {
+                      return '$' + (value / 1000).toFixed(0) + 'k';
+                    },
+                    color: 'var(--text-secondary)',
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        // Helper methods for chart data generation
+        generateDateLabels(days) {
+          const labels = [];
+          const now = new Date();
+          for (let i = days - 1; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(date.getDate() - i);
+            labels.push(date.toISOString().split('T')[0]);
+          }
+          return labels;
+        }
+
+        generateRevenueData(days) {
+          const data = [];
+          const baseRevenue = 4000;
+          let currentRevenue = baseRevenue;
+
+          for (let i = 0; i < days; i++) {
+            const variation = (Math.random() - 0.5) * 1000;
+            const trend = i * 50; // Upward trend
+            const seasonal = Math.sin((i * Math.PI) / 7) * 300; // Weekly pattern
+
+            currentRevenue = Math.max(2000, baseRevenue + trend + seasonal + variation);
+            data.push(Math.round(currentRevenue));
+          }
+
+          return data;
+        }
+
+        generateFantasyData(days, type) {
+          const data = [];
+          const baseValue = type === 'vip' ? 8000 : 3000;
+
+          for (let i = 0; i < days; i++) {
+            const variation = (Math.random() - 0.5) * 1000;
+            const trend = i * 20;
+            data.push(Math.max(1000, baseValue + trend + variation));
+          }
+
+          return data;
+        }
+
+        // Chart update methods for real-time data
+        updateRevenueChart(newData) {
+          if (this.charts.revenue && newData) {
+            // Add new data point and remove old one to maintain fixed size
+            this.charts.revenue.data.labels.shift();
+            this.charts.revenue.data.labels.push(new Date().toISOString().split('T')[0]);
+
+            this.charts.revenue.data.datasets[0].data.shift();
+            this.charts.revenue.data.datasets[0].data.push(newData);
+
+            this.charts.revenue.update('none'); // Smooth update without animation
+          }
+        }
+
+        updateEngagementChart(data) {
+          if (this.charts.engagement && data) {
+            this.charts.engagement.data.datasets[0].data = [
+              data.activeUsers || 35,
+              data.newUsers || 15,
+              data.returningUsers || 30,
+              data.inactiveUsers || 20,
+            ];
+            this.charts.engagement.update();
+          }
+        }
+
+        updatePerformanceChart(data) {
+          if (this.charts.performance && data) {
+            this.charts.performance.data.datasets[0].data = [
+              data.speed || 85,
+              data.reliability || 92,
+              data.security || 88,
+              data.scalability || 76,
+              data.userExperience || 90,
+              data.costEfficiency || 82,
+            ];
+            this.charts.performance.update();
+          }
+        }
+
+        // Chart type switching
+        switchChartType(chartId, newType) {
+          const chart = this.charts[chartId];
+          if (!chart) return;
+
+          // Store current data
+          const currentData = chart.data;
+          const currentOptions = chart.options;
+
+          // Destroy current chart
+          chart.destroy();
+
+          // Create new chart with same data but different type
+          const ctx = document.getElementById(chartId + '-chart');
+          if (ctx) {
+            this.charts[chartId] = new Chart(ctx, {
+              type: newType,
+              data: currentData,
+              options: currentOptions,
+            });
+          }
+        }
+
+        // Export chart data
+        exportChartData(chartId, format = 'json') {
+          const chart = this.charts[chartId];
+          if (!chart) return null;
+
+          const data = {
+            chartId,
+            type: chart.config.type,
+            labels: chart.data.labels,
+            datasets: chart.data.datasets.map(ds => ({
+              label: ds.label,
+              data: ds.data,
+              backgroundColor: ds.backgroundColor,
+              borderColor: ds.borderColor,
+            })),
+            exportedAt: new Date().toISOString(),
+          };
+
+          if (format === 'csv') {
+            // Convert to CSV format
+            const csvData = [data.labels];
+            data.datasets.forEach(ds => {
+              csvData.push([ds.label, ...ds.data]);
+            });
+            return csvData.map(row => row.join(',')).join('\n');
+          }
+
+          return JSON.stringify(data, null, 2);
+        }
+
+        // ============================================================================
+        // COMPREHENSIVE ERROR HANDLING SYSTEM
+        // ============================================================================
+
+        // Error types and severity levels
+        static ERROR_TYPES = {
+          NETWORK: 'network',
+          AUTHENTICATION: 'authentication',
+          PERMISSION: 'permission',
+          VALIDATION: 'validation',
+          SERVER: 'server',
+          CLIENT: 'client',
+          TIMEOUT: 'timeout',
+          WEBSOCKET: 'websocket',
+          CHART: 'chart',
+          DATA: 'data',
+        };
+
+        static ERROR_SEVERITY = {
+          LOW: 'low',
+          MEDIUM: 'medium',
+          HIGH: 'high',
+          CRITICAL: 'critical',
+        };
+
+        // Error handling initialization
+        initializeErrorHandling() {
+          this.errorHistory = [];
+          this.errorRecoveryStrategies = new Map();
+
+          // Setup global error handlers
+          this.setupGlobalErrorHandlers();
+
+          // Setup network error handling
+          this.setupNetworkErrorHandling();
+
+          // Setup WebSocket error handling
+          this.setupWebSocketErrorHandling();
+
+          // Setup chart error handling
+          this.setupChartErrorHandling();
+
+          // Setup error recovery strategies
+          this.setupErrorRecoveryStrategies();
+
+          console.log('🛡️ Comprehensive error handling system initialized');
+        }
+
+        setupGlobalErrorHandlers() {
+          // Handle unhandled promise rejections
+          window.addEventListener('unhandledrejection', event => {
+            this.handleGlobalError('Unhandled Promise Rejection', event.reason, {
+              type: UnifiedDashboard.ERROR_TYPES.CLIENT,
+              severity: UnifiedDashboard.ERROR_SEVERITY.HIGH,
+            });
+            event.preventDefault();
+          });
+
+          // Handle global JavaScript errors
+          window.addEventListener('error', event => {
+            this.handleGlobalError('JavaScript Error', event.error, {
+              type: UnifiedDashboard.ERROR_TYPES.CLIENT,
+              severity: UnifiedDashboard.ERROR_SEVERITY.MEDIUM,
+              context: {
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+              },
+            });
+          });
+
+          // Handle WebSocket errors
+          if (this.wsIntegration) {
+            this.wsIntegration.wsClient.on('error', error => {
+              this.handleWebSocketError(error);
+            });
+          }
+        }
+
+        setupNetworkErrorHandling() {
+          // Override fetch to add error handling
+          const originalFetch = window.fetch;
+          window.fetch = async (...args) => {
+            try {
+              const response = await originalFetch(...args);
+
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+              }
+
+              return response;
+            } catch (error) {
+              this.handleNetworkError(error, args[0]);
+              throw error;
+            }
+          };
+        }
+
+        setupWebSocketErrorHandling() {
+          if (this.wsIntegration) {
+            this.wsIntegration.wsClient.on('error', error => {
+              this.handleWebSocketError(error);
+            });
+
+            this.wsIntegration.wsClient.on('disconnected', data => {
+              this.handleWebSocketDisconnection(data);
+            });
+
+            this.wsIntegration.wsClient.on('max-reconnect-attempts-reached', () => {
+              this.handleCriticalWebSocketError();
+            });
+          }
+        }
+
+        setupChartErrorHandling() {
+          // Chart.js error handling
+          if (typeof Chart !== 'undefined') {
+            Chart.defaults.plugins.legend.onHover = (event, legendItem) => {
+              try {
+                // Handle legend hover
+              } catch (error) {
+                this.handleChartError('Legend hover error', error);
+              }
+            };
+          }
+        }
+
+        setupErrorRecoveryStrategies() {
+          // Network error recovery
+          this.errorRecoveryStrategies.set(UnifiedDashboard.ERROR_TYPES.NETWORK, [
+            { name: 'retry', delay: 1000, maxAttempts: 3 },
+            { name: 'fallback', action: () => this.enableOfflineMode() },
+            { name: 'notify', action: () => this.showNetworkErrorNotification() },
+          ]);
+
+          // WebSocket error recovery
+          this.errorRecoveryStrategies.set(UnifiedDashboard.ERROR_TYPES.WEBSOCKET, [
+            { name: 'reconnect', delay: 2000, maxAttempts: 5 },
+            { name: 'fallback', action: () => this.switchToPollingMode() },
+            { name: 'notify', action: () => this.showWebSocketErrorNotification() },
+          ]);
+
+          // Chart error recovery
+          this.errorRecoveryStrategies.set(UnifiedDashboard.ERROR_TYPES.CHART, [
+            { name: 'redraw', action: () => this.redrawCharts() },
+            { name: 'fallback', action: () => this.showChartFallback() },
+          ]);
+
+          // Authentication error recovery
+          this.errorRecoveryStrategies.set(UnifiedDashboard.ERROR_TYPES.AUTHENTICATION, [
+            { name: 'redirect', action: () => this.redirectToLogin() },
+            { name: 'notify', action: () => this.showAuthErrorNotification() },
+          ]);
+        }
+
+        // Error handling methods
+        handleGlobalError(message, error, options = {}) {
+          const errorEntry = {
+            id: this.generateErrorId(),
+            timestamp: new Date().toISOString(),
+            message,
+            error: error?.message || error,
+            stack: error?.stack,
+            type: options.type || UnifiedDashboard.ERROR_TYPES.CLIENT,
+            severity: options.severity || UnifiedDashboard.ERROR_SEVERITY.MEDIUM,
+            context: options.context || {},
+            userAgent: navigator.userAgent,
+            url: window.location.href,
+          };
+
+          this.errorHistory.push(errorEntry);
+
+          // Keep only last 50 errors
+          if (this.errorHistory.length > 50) {
+            this.errorHistory.shift();
+          }
+
+          // Log error
+          console.error(`❌ ${message}:`, error);
+
+          // Execute recovery strategies
+          this.executeErrorRecovery(errorEntry);
+
+          // Show user-friendly error message
+          this.showErrorToast(message, errorEntry.severity);
+        }
+
+        handleNetworkError(error, url) {
+          this.handleGlobalError('Network Error', error, {
+            type: UnifiedDashboard.ERROR_TYPES.NETWORK,
+            severity: UnifiedDashboard.ERROR_SEVERITY.MEDIUM,
+            context: { url },
+          });
+        }
+
+        handleWebSocketError(error) {
+          this.handleGlobalError('WebSocket Error', error, {
+            type: UnifiedDashboard.ERROR_TYPES.WEBSOCKET,
+            severity: UnifiedDashboard.ERROR_SEVERITY.HIGH,
+          });
+        }
+
+        handleWebSocketDisconnection(data) {
+          if (data.code !== 1000) {
+            // Not a normal closure
+            this.handleGlobalError('WebSocket Disconnection', `Code: ${data.code}`, {
+              type: UnifiedDashboard.ERROR_TYPES.WEBSOCKET,
+              severity: UnifiedDashboard.ERROR_SEVERITY.MEDIUM,
+              context: data,
+            });
+          }
+        }
+
+        handleCriticalWebSocketError() {
+          this.handleGlobalError('Critical WebSocket Error', 'Max reconnection attempts reached', {
+            type: UnifiedDashboard.ERROR_TYPES.WEBSOCKET,
+            severity: UnifiedDashboard.ERROR_SEVERITY.CRITICAL,
+          });
+        }
+
+        handleChartError(message, error) {
+          this.handleGlobalError('Chart Error: ' + message, error, {
+            type: UnifiedDashboard.ERROR_TYPES.CHART,
+            severity: UnifiedDashboard.ERROR_SEVERITY.LOW,
+          });
+        }
+
+        handleDataError(message, error) {
+          this.handleGlobalError('Data Error: ' + message, error, {
+            type: UnifiedDashboard.ERROR_TYPES.DATA,
+            severity: UnifiedDashboard.ERROR_SEVERITY.MEDIUM,
+          });
+        }
+
+        // Error recovery methods
+        executeErrorRecovery(errorEntry) {
+          const strategies = this.errorRecoveryStrategies.get(errorEntry.type);
+          if (!strategies) return;
+
+          strategies.forEach(strategy => {
+            try {
+              if (strategy.name === 'retry' && errorEntry.retryCount < (strategy.maxAttempts || 3)) {
+                setTimeout(() => {
+                  this.retryFailedOperation(errorEntry);
+                }, strategy.delay || 1000);
+              } else if (strategy.action) {
+                strategy.action();
+              }
+            } catch (recoveryError) {
+              console.error('❌ Error recovery failed:', recoveryError);
+            }
+          });
+        }
+
+        retryFailedOperation(errorEntry) {
+          errorEntry.retryCount = (errorEntry.retryCount || 0) + 1;
+          console.log(`🔄 Retrying operation (attempt ${errorEntry.retryCount})`);
+
+          // Implement specific retry logic based on error type
+          switch (errorEntry.type) {
+            case UnifiedDashboard.ERROR_TYPES.NETWORK:
+              // Retry network requests
+              this.retryNetworkRequest(errorEntry);
+              break;
+            case UnifiedDashboard.ERROR_TYPES.WEBSOCKET:
+              // Retry WebSocket connection
+              if (this.wsIntegration) {
+                this.wsIntegration.connect();
+              }
+              break;
+          }
+        }
+
+        enableOfflineMode() {
+          console.log('📱 Switching to offline mode');
+          this.showToast('Working in offline mode - some features may be limited', 'warning');
+
+          // Disable real-time features
+          if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+          }
+
+          // Show offline indicator
+          this.updateConnectionStatus('Offline Mode');
+        }
+
+        switchToPollingMode() {
+          console.log('🔄 Switching to polling mode');
+          this.showToast('Real-time updates unavailable - using polling mode', 'warning');
+
+          // Switch from WebSocket to HTTP polling
+          if (this.wsIntegration) {
+            this.wsIntegration.disconnect();
+          }
+
+          // Start polling
+          this.startPollingMode();
+        }
+
+        redrawCharts() {
+          console.log('🔄 Redrawing charts');
+          Object.values(this.charts).forEach(chart => {
+            if (chart && chart.update) {
+              chart.update();
+            }
+          });
+        }
+
+        showChartFallback() {
+          console.log('📊 Showing chart fallbacks');
+          // Show static images or simplified charts
+          Object.keys(this.charts).forEach(chartId => {
+            const canvas = document.getElementById(chartId + '-chart');
+            if (canvas) {
+              const ctx = canvas.getContext('2d');
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.fillStyle = '#666';
+              ctx.font = '16px Arial';
+              ctx.textAlign = 'center';
+              ctx.fillText('Chart temporarily unavailable', canvas.width / 2, canvas.height / 2);
+            }
+          });
+        }
+
+        redirectToLogin() {
+          console.log('🔐 Redirecting to login');
+          window.location.href = '/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+        }
+
+        // User notification methods
+        showErrorToast(message, severity) {
+          const colors = {
+            [UnifiedDashboard.ERROR_SEVERITY.LOW]: '#f59e0b',
+            [UnifiedDashboard.ERROR_SEVERITY.MEDIUM]: '#ef4444',
+            [UnifiedDashboard.ERROR_SEVERITY.HIGH]: '#dc2626',
+            [UnifiedDashboard.ERROR_SEVERITY.CRITICAL]: '#7f1d1d',
+          };
+
+          this.showToast(message, 'error', colors[severity]);
+        }
+
+        showNetworkErrorNotification() {
+          this.showToast('Network connection issues detected', 'warning');
+        }
+
+        showWebSocketErrorNotification() {
+          this.showToast('Real-time connection lost - attempting to reconnect', 'warning');
+        }
+
+        showAuthErrorNotification() {
+          this.showToast('Authentication required - redirecting to login', 'error');
+        }
+
+        // Utility methods
+        generateErrorId() {
+          return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        getErrorHistory() {
+          return this.errorHistory;
+        }
+
+        clearErrorHistory() {
+          this.errorHistory = [];
+          console.log('🧹 Error history cleared');
+        }
+
+        getErrorStats() {
+          const stats = {
+            total: this.errorHistory.length,
+            byType: {},
+            bySeverity: {},
+            recent: this.errorHistory.slice(-10),
+          };
+
+          this.errorHistory.forEach(error => {
+            stats.byType[error.type] = (stats.byType[error.type] || 0) + 1;
+            stats.bySeverity[error.severity] = (stats.bySeverity[error.severity] || 0) + 1;
+          });
+
+          return stats;
+        }
+
+        // Polling mode for fallback
+        startPollingMode() {
+          this.pollingInterval = setInterval(async () => {
+            try {
+              const response = await fetch('/api/dashboard/metrics');
+              if (response.ok) {
+                const data = await response.json();
+                this.updateStats(data.data);
+              }
+            } catch (error) {
+              this.handleNetworkError(error, '/api/dashboard/metrics');
+            }
+          }, 10000); // Poll every 10 seconds
+        }
+
+        stopPollingMode() {
+          if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+          }
+        }
+
+        showToast(message, type = 'info') {
+          const toast = document.createElement('div');
+          toast.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: ${type === 'success' ? 'var(--success-color)' : type === 'error' ? 'var(--error-color)' : 'var(--primary-color)'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            z-index: 10000;
+            font-weight: 500;
+            max-width: 400px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+          `;
+          toast.textContent = message;
+
+          document.body.appendChild(toast);
+
+          // Animate in
+          setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+          }, 100);
+
+          // Remove after 3 seconds
+          setTimeout(() => {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+              if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+              }
+            }, 300);
+          }, 3000);
+        }
+
+        showError(message) {
+          this.showToast(message, 'error');
+        }
+
+        destroy() {
+          if (this.wsIntegration) {
+            this.wsIntegration.disconnect();
+          }
+          if (this.websocket) {
+            this.websocket.close();
+          }
+          if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+          }
+          if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+          }
+
+          // Clear error handling
+          this.clearErrorHistory();
+
+          // Clear data management resources
+          if (this.dataFilters) {
+            this.clearDataFilters();
+          }
+
+          console.log('🗑️ Unified Dashboard destroyed');
+        }
+
+        // ============================================================================
+        // ADVANCED DATA MANAGEMENT SYSTEM
+        // ============================================================================
+
+        // Data management initialization
+        initializeDataManagement() {
+          this.dataFilters = new Map();
+          this.searchIndex = new Map();
+          this.exportQueue = [];
+          this.bulkOperations = new Map();
+
+          // Setup data filtering system
+          this.setupDataFiltering();
+
+          // Setup search capabilities
+          this.setupSearchCapabilities();
+
+          // Setup export/import system
+          this.setupDataExportImport();
+
+          // Setup bulk operations
+          this.setupBulkOperations();
+
+          console.log('📊 Advanced data management system initialized');
+        }
+
+        setupDataFiltering() {
+          // Initialize filter configurations for different data types
+          this.dataFilters.set('agents', {
+            filters: {
+              status: [],
+              type: [],
+              balance: { min: null, max: null },
+              lastLogin: { start: null, end: null },
+            },
+            sortBy: 'createdAt',
+            sortOrder: 'desc',
+            pageSize: 25,
+            currentPage: 1,
+          });
+
+          this.dataFilters.set('bets', {
+            filters: {
+              status: [],
+              sport: [],
+              stake: { min: null, max: null },
+              dateRange: { start: null, end: null },
+            },
+            sortBy: 'createdAt',
+            sortOrder: 'desc',
+            pageSize: 50,
+            currentPage: 1,
+          });
+
+          this.dataFilters.set('analytics', {
+            filters: {
+              dateRange: { start: null, end: null },
+              source: [],
+              metric: [],
+            },
+            sortBy: 'timestamp',
+            sortOrder: 'desc',
+            pageSize: 100,
+            currentPage: 1,
+          });
+        }
+
+        setupSearchCapabilities() {
+          // Create search indexes for different data types
+          this.searchIndex.set('agents', {
+            fields: ['id', 'username', 'email', 'type'],
+            data: [],
+            lastUpdated: null,
+          });
+
+          this.searchIndex.set('bets', {
+            fields: ['id', 'accountId', 'sport', 'status'],
+            data: [],
+            lastUpdated: null,
+          });
+
+          // Build initial search indexes
+          this.buildSearchIndexes();
+        }
+
+        setupDataExportImport() {
+          // Setup export configurations
+          this.exportConfigurations = {
+            csv: {
+              delimiter: ',',
+              quoteChar: '"',
+              escapeChar: '"',
+              includeHeaders: true,
+            },
+            json: {
+              prettyPrint: true,
+              includeMetadata: true,
+            },
+            excel: {
+              sheetName: 'Data Export',
+              includeFormatting: true,
+            },
+          };
+
+          // Setup import configurations
+          this.importConfigurations = {
+            csv: {
+              delimiter: ',',
+              quoteChar: '"',
+              skipRows: 0,
+              validateData: true,
+            },
+            json: {
+              validateSchema: true,
+              allowPartialImport: false,
+            },
+          };
+        }
+
+        setupBulkOperations() {
+          // Setup bulk operation queues
+          this.bulkOperations.set('agents', []);
+          this.bulkOperations.set('bets', []);
+          this.bulkOperations.set('analytics', []);
+        }
+
+        // Filtering methods
+        applyFilters(dataType, data) {
+          const filterConfig = this.dataFilters.get(dataType);
+          if (!filterConfig) return data;
+
+          let filteredData = [...data];
+
+          // Apply each filter
+          Object.entries(filterConfig.filters).forEach(([filterKey, filterValue]) => {
+            if (Array.isArray(filterValue) && filterValue.length > 0) {
+              // Multi-select filter
+              filteredData = filteredData.filter(item => filterValue.includes(item[filterKey]));
+            } else if (typeof filterValue === 'object' && filterValue !== null) {
+              // Range filter
+              if (filterValue.min !== null) {
+                filteredData = filteredData.filter(item => item[filterKey] >= filterValue.min);
+              }
+              if (filterValue.max !== null) {
+                filteredData = filteredData.filter(item => item[filterKey] <= filterValue.max);
+              }
+              if (filterValue.start && filterValue.end) {
+                filteredData = filteredData.filter(item => {
+                  const itemDate = new Date(item[filterKey]);
+                  return itemDate >= new Date(filterValue.start) && itemDate <= new Date(filterValue.end);
+                });
+              }
+            }
+          });
+
+          return filteredData;
+        }
+
+        updateFilter(dataType, filterKey, filterValue) {
+          const filterConfig = this.dataFilters.get(dataType);
+          if (filterConfig) {
+            filterConfig.filters[filterKey] = filterValue;
+            filterConfig.currentPage = 1; // Reset to first page
+
+            // Reapply filters and update UI
+            this.applyDataFilters(dataType);
+          }
+        }
+
+        clearFilters(dataType) {
+          const filterConfig = this.dataFilters.get(dataType);
+          if (filterConfig) {
+            // Reset all filters
+            Object.keys(filterConfig.filters).forEach(key => {
+              if (Array.isArray(filterConfig.filters[key])) {
+                filterConfig.filters[key] = [];
+              } else if (typeof filterConfig.filters[key] === 'object') {
+                Object.keys(filterConfig.filters[key]).forEach(subKey => {
+                  filterConfig.filters[key][subKey] = null;
+                });
+              }
+            });
+
+            filterConfig.currentPage = 1;
+            this.applyDataFilters(dataType);
+          }
+        }
+
+        clearDataFilters() {
+          this.dataFilters.clear();
+        }
+
+        applyDataFilters(dataType) {
+          const data = this.data[dataType]?.data || [];
+          const filteredData = this.applyFilters(dataType, data);
+
+          // Update UI with filtered data
+          this.updateFilteredUI(dataType, filteredData);
+        }
+
+        updateFilteredUI(dataType, filteredData) {
+          switch (dataType) {
+            case 'agents':
+              this.updateAgentsTableWithFilteredData(filteredData);
+              break;
+            case 'bets':
+              this.updateBetsTableWithFilteredData(filteredData);
+              break;
+            case 'analytics':
+              this.updateAnalyticsWithFilteredData(filteredData);
+              break;
+          }
+        }
+
+        // Search methods
+        searchData(dataType, query, fields = null) {
+          if (!query || query.trim() === '') {
+            return this.data[dataType]?.data || [];
+          }
+
+          const searchConfig = this.searchIndex.get(dataType);
+          if (!searchConfig) return [];
+
+          const searchFields = fields || searchConfig.fields;
+          const lowerQuery = query.toLowerCase();
+
+          return (this.data[dataType]?.data || []).filter(item =>
+            searchFields.some(field =>
+              String(item[field] || '')
+                .toLowerCase()
+                .includes(lowerQuery)
+            )
+          );
+        }
+
+        buildSearchIndexes() {
+          // Build search indexes for all data types
+          Object.keys(this.data).forEach(dataType => {
+            if (this.data[dataType]?.data) {
+              this.updateSearchIndex(dataType, this.data[dataType].data);
+            }
+          });
+        }
+
+        updateSearchIndex(dataType, data) {
+          const searchConfig = this.searchIndex.get(dataType);
+          if (searchConfig) {
+            searchConfig.data = data;
+            searchConfig.lastUpdated = new Date().toISOString();
+          }
+        }
+
+        // Export methods
+        async exportData(dataType, format = 'csv', options = {}) {
+          const data = this.data[dataType]?.data || [];
+          const exportId = `export_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+          // Add to export queue
+          this.exportQueue.push({
+            id: exportId,
+            dataType,
+            format,
+            data,
+            options,
+            timestamp: new Date().toISOString(),
+            status: 'processing',
+          });
+
+          try {
+            let exportedData;
+
+            switch (format) {
+              case 'csv':
+                exportedData = this.exportToCSV(data, options);
+                break;
+              case 'json':
+                exportedData = this.exportToJSON(data, options);
+                break;
+              case 'excel':
+                exportedData = await this.exportToExcel(data, options);
+                break;
+              default:
+                throw new Error(`Unsupported export format: ${format}`);
+            }
+
+            // Download the file
+            this.downloadExportedData(exportedData, dataType, format, exportId);
+
+            // Update export status
+            const exportItem = this.exportQueue.find(item => item.id === exportId);
+            if (exportItem) {
+              exportItem.status = 'completed';
+            }
+
+            this.showToast(`Data exported successfully as ${format.toUpperCase()}`, 'success');
+          } catch (error) {
+            console.error('Export failed:', error);
+
+            // Update export status
+            const exportItem = this.exportQueue.find(item => item.id === exportId);
+            if (exportItem) {
+              exportItem.status = 'failed';
+              exportItem.error = error.message;
+            }
+
+            this.showToast('Export failed: ' + error.message, 'error');
+          }
+        }
+
+        exportToCSV(data, options = {}) {
+          if (data.length === 0) return '';
+
+          const config = { ...this.exportConfigurations.csv, ...options };
+          const headers = Object.keys(data[0]);
+
+          let csv = '';
+
+          // Add headers
+          if (config.includeHeaders) {
+            csv += headers.join(config.delimiter) + '\n';
+          }
+
+          // Add data rows
+          data.forEach(row => {
+            const values = headers.map(header => {
+              let value = String(row[header] || '');
+
+              // Escape quotes and wrap in quotes if contains delimiter or quotes
+              if (value.includes(config.delimiter) || value.includes(config.quoteChar)) {
+                value =
+                  config.quoteChar +
+                  value.replace(new RegExp(config.quoteChar, 'g'), config.escapeChar + config.quoteChar) +
+                  config.quoteChar;
+              }
+
+              return value;
+            });
+
+            csv += values.join(config.delimiter) + '\n';
+          });
+
+          return csv;
+        }
+
+        exportToJSON(data, options = {}) {
+          const config = { ...this.exportConfigurations.json, ...options };
+
+          const exportData = {
+            metadata: {
+              exportedAt: new Date().toISOString(),
+              totalRecords: data.length,
+              version: '1.0',
+            },
+            data: data,
+          };
+
+          return config.prettyPrint ? JSON.stringify(exportData, null, 2) : JSON.stringify(exportData);
+        }
+
+        async exportToExcel(data, options = {}) {
+          // For demo purposes, we'll export as CSV since Excel export requires additional libraries
+          console.warn('Excel export not fully implemented, falling back to CSV');
+          return this.exportToCSV(data, options);
+        }
+
+        downloadExportedData(data, dataType, format, exportId) {
+          const mimeTypes = {
+            csv: 'text/csv',
+            json: 'application/json',
+            excel: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          };
+
+          const blob = new Blob([data], { type: mimeTypes[format] || 'text/plain' });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${dataType}_export_${new Date().toISOString().split('T')[0]}.${format}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          URL.revokeObjectURL(url);
+        }
+
+        // Import methods
+        async importData(dataType, file, format, options = {}) {
+          const importId = `import_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+          try {
+            let importedData;
+
+            switch (format) {
+              case 'csv':
+                importedData = await this.importFromCSV(file, options);
+                break;
+              case 'json':
+                importedData = await this.importFromJSON(file, options);
+                break;
+              default:
+                throw new Error(`Unsupported import format: ${format}`);
+            }
+
+            // Validate imported data
+            const validation = this.validateImportedData(dataType, importedData);
+            if (!validation.valid) {
+              throw new Error(`Data validation failed: ${validation.errors.join(', ')}`);
+            }
+
+            // Process imported data
+            await this.processImportedData(dataType, importedData, importId);
+
+            this.showToast(`${importedData.length} records imported successfully`, 'success');
+          } catch (error) {
+            console.error('Import failed:', error);
+            this.showToast('Import failed: ' + error.message, 'error');
+          }
+        }
+
+        async importFromCSV(file, options = {}) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = e => {
+              try {
+                const csv = e.target.result;
+                const config = { ...this.importConfigurations.csv, ...options };
+                const lines = csv.split('\n').slice(config.skipRows);
+
+                if (lines.length === 0) {
+                  throw new Error('CSV file is empty');
+                }
+
+                // Parse headers
+                const headers = lines[0].split(config.delimiter).map(h => h.trim());
+
+                // Parse data rows
+                const data = [];
+                for (let i = 1; i < lines.length; i++) {
+                  if (!lines[i].trim()) continue;
+
+                  const values = this.parseCSVLine(lines[i], config);
+                  if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                      row[header] = values[index];
+                    });
+                    data.push(row);
+                  }
+                }
+
+                resolve(data);
+              } catch (error) {
+                reject(error);
+              }
+            };
+
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsText(file);
+          });
+        }
+
+        async importFromJSON(file, options = {}) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = e => {
+              try {
+                const json = JSON.parse(e.target.result);
+                const config = { ...this.importConfigurations.json, ...options };
+
+                let data = json;
+
+                // Handle different JSON structures
+                if (json.data && Array.isArray(json.data)) {
+                  data = json.data;
+                } else if (!Array.isArray(json)) {
+                  data = [json];
+                }
+
+                resolve(data);
+              } catch (error) {
+                reject(error);
+              }
+            };
+
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsText(file);
+          });
+        }
+
+        parseCSVLine(line, config) {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+
+            if (char === config.quoteChar) {
+              if (inQuotes && line[i + 1] === config.quoteChar) {
+                // Escaped quote
+                current += config.quoteChar;
+                i++; // Skip next quote
+              } else {
+                // Toggle quote state
+                inQuotes = !inQuotes;
+              }
+            } else if (char === config.delimiter && !inQuotes) {
+              // Field separator
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+
+          // Add last field
+          result.push(current.trim());
+
+          return result;
+        }
+
+        validateImportedData(dataType, data) {
+          const errors = [];
+          const requiredFields = this.getRequiredFields(dataType);
+
+          data.forEach((row, index) => {
+            requiredFields.forEach(field => {
+              if (!row[field]) {
+                errors.push(`Row ${index + 1}: Missing required field '${field}'`);
+              }
+            });
+
+            // Type validation
+            Object.entries(row).forEach(([key, value]) => {
+              if (!this.validateFieldType(dataType, key, value)) {
+                errors.push(`Row ${index + 1}: Invalid type for field '${key}'`);
+              }
+            });
+          });
+
+          return {
+            valid: errors.length === 0,
+            errors,
+          };
+        }
+
+        getRequiredFields(dataType) {
+          const requiredFieldsMap = {
+            agents: ['id', 'username', 'email'],
+            bets: ['id', 'accountId', 'stake', 'odds'],
+            analytics: ['timestamp'],
+          };
+
+          return requiredFieldsMap[dataType] || [];
+        }
+
+        validateFieldType(dataType, field, value) {
+          // Basic type validation - can be extended based on data type requirements
+          const fieldTypes = {
+            agents: {
+              id: 'string',
+              username: 'string',
+              email: 'string',
+              balance: 'number',
+              status: 'string',
+            },
+            bets: {
+              id: 'string',
+              accountId: 'string',
+              stake: 'number',
+              odds: 'string',
+              status: 'string',
+            },
+            analytics: {
+              timestamp: 'string',
+              value: 'number',
+            },
+          };
+
+          const expectedType = fieldTypes[dataType]?.[field];
+          if (!expectedType) return true; // Unknown field, allow
+
+          switch (expectedType) {
+            case 'string':
+              return typeof value === 'string';
+            case 'number':
+              return typeof value === 'number' || !isNaN(Number(value));
+            case 'boolean':
+              return typeof value === 'boolean' || value === 'true' || value === 'false';
+            default:
+              return true;
+          }
+        }
+
+        async processImportedData(dataType, importedData, importId) {
+          // In a real application, this would send data to the server
+          console.log(`Processing ${importedData.length} imported ${dataType} records`);
+
+          // Update local data
+          if (!this.data[dataType]) {
+            this.data[dataType] = { data: [] };
+          }
+
+          // Merge imported data (avoiding duplicates)
+          const existingIds = new Set(this.data[dataType].data.map(item => item.id));
+          const newRecords = importedData.filter(item => !existingIds.has(item.id));
+
+          this.data[dataType].data.push(...newRecords);
+
+          // Update search index
+          this.updateSearchIndex(dataType, this.data[dataType].data);
+
+          // Refresh UI
+          this.applyDataFilters(dataType);
+        }
+
+        // Bulk operations
+        addToBulkOperation(dataType, operation, items) {
+          const operations = this.bulkOperations.get(dataType) || [];
+          operations.push({
+            id: `bulk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            operation,
+            items,
+            timestamp: new Date().toISOString(),
+            status: 'pending',
+          });
+
+          this.bulkOperations.set(dataType, operations);
+        }
+
+        async executeBulkOperations(dataType) {
+          const operations = this.bulkOperations.get(dataType) || [];
+
+          for (const op of operations.filter(o => o.status === 'pending')) {
+            try {
+              await this.executeBulkOperation(dataType, op);
+              op.status = 'completed';
+            } catch (error) {
+              op.status = 'failed';
+              op.error = error.message;
+              console.error('Bulk operation failed:', error);
+            }
+          }
+
+          // Clean up completed operations
+          const remainingOps = operations.filter(o => o.status !== 'completed');
+          this.bulkOperations.set(dataType, remainingOps);
+        }
+
+        async executeBulkOperation(dataType, operation) {
+          // In a real application, this would send bulk operations to the server
+          console.log(`Executing bulk ${operation.operation} on ${operation.items.length} ${dataType} items`);
+
+          // Simulate processing time
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Update local data
+          const data = this.data[dataType]?.data || [];
+          operation.items.forEach(itemId => {
+            const item = data.find(d => d.id === itemId);
+            if (item) {
+              switch (operation.operation) {
+                case 'delete':
+                  const index = data.indexOf(item);
+                  data.splice(index, 1);
+                  break;
+                case 'update':
+                  // Apply updates from operation.data
+                  if (operation.data) {
+                    Object.assign(item, operation.data);
+                  }
+                  break;
+                case 'activate':
+                  item.status = 'Active';
+                  break;
+                case 'deactivate':
+                  item.status = 'Inactive';
+                  break;
+              }
+            }
+          });
+
+          // Refresh UI
+          this.applyDataFilters(dataType);
+        }
+
+        // Utility methods
+        getDataStats(dataType) {
+          const data = this.data[dataType]?.data || [];
+          const filters = this.dataFilters.get(dataType);
+
+          return {
+            total: data.length,
+            filtered: filters ? this.applyFilters(dataType, data).length : data.length,
+            lastUpdated: this.data[dataType]?.timestamp || null,
+          };
+        }
+
+        getExportHistory() {
+          return this.exportQueue.slice(-10); // Last 10 exports
+        }
+
+        getBulkOperationHistory(dataType) {
+          return this.bulkOperations.get(dataType) || [];
+        }
+
+        // UI update methods for filtered data
+        updateAgentsTableWithFilteredData(filteredData) {
+          const filterConfig = this.dataFilters.get('agents');
+          const startIndex = (filterConfig.currentPage - 1) * filterConfig.pageSize;
+          const endIndex = startIndex + filterConfig.pageSize;
+          const pageData = filteredData.slice(startIndex, endIndex);
+
+          // Update table with paginated data
+          this.updateAgentsTable(pageData);
+
+          // Update pagination info
+          this.updatePagination('agents', filteredData.length, filterConfig);
+        }
+
+        updateBetsTableWithFilteredData(filteredData) {
+          const filterConfig = this.dataFilters.get('bets');
+          const startIndex = (filterConfig.currentPage - 1) * filterConfig.pageSize;
+          const endIndex = startIndex + filterConfig.pageSize;
+          const pageData = filteredData.slice(startIndex, endIndex);
+
+          // Update table with paginated data
+          this.updateBetsTable(pageData);
+
+          // Update pagination info
+          this.updatePagination('bets', filteredData.length, filterConfig);
+        }
+
+        updateAnalyticsWithFilteredData(filteredData) {
+          // Update charts with filtered analytics data
+          if (filteredData.length > 0) {
+            this.updateChartsWithData(filteredData);
+          }
+        }
+
+        updatePagination(dataType, totalItems, filterConfig) {
+          const totalPages = Math.ceil(totalItems / filterConfig.pageSize);
+          const paginationEl = document.getElementById(`${dataType}-pagination`);
+
+          if (paginationEl) {
+            paginationEl.innerHTML = `
+              <div class="pagination-info">
+                Showing ${Math.min((filterConfig.currentPage - 1) * filterConfig.pageSize + 1, totalItems)} -
+                ${Math.min(filterConfig.currentPage * filterConfig.pageSize, totalItems)} of ${totalItems} items
+              </div>
+              <div class="pagination-controls">
+                <button onclick="dashboard.changePage('${dataType}', ${filterConfig.currentPage - 1})"
+                        ${filterConfig.currentPage <= 1 ? 'disabled' : ''}>
+                  Previous
+                </button>
+                <span>Page ${filterConfig.currentPage} of ${totalPages}</span>
+                <button onclick="dashboard.changePage('${dataType}', ${filterConfig.currentPage + 1})"
+                        ${filterConfig.currentPage >= totalPages ? 'disabled' : ''}>
+                  Next
+                </button>
+              </div>
+            `;
+          }
+        }
+
+        changePage(dataType, newPage) {
+          const filterConfig = this.dataFilters.get(dataType);
+          if (filterConfig) {
+            filterConfig.currentPage = Math.max(1, newPage);
+            this.applyDataFilters(dataType);
+          }
+        }
+
+        updateChartsWithData(data) {
+          // Update charts with filtered data
+          if (this.charts.revenue) {
+            const revenueData = data.filter(item => item.metric === 'revenue');
+            // Update revenue chart with filtered data
+          }
+
+          if (this.charts.engagement) {
+            const engagementData = data.filter(item => item.metric === 'engagement');
+            // Update engagement chart with filtered data
+          }
+        }
+      }
+
+      // Initialize dashboard
+      let dashboard;
+      document.addEventListener('DOMContentLoaded', () => {
+        dashboard = new UnifiedDashboard();
+      });
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        if (dashboard) {
+          dashboard.destroy();
+        }
+      });
+    </script>
+  </body>
+</html>

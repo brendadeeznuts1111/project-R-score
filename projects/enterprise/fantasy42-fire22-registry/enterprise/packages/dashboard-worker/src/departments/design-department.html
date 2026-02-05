@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢 Fire22 Design Department - Creative Excellence & User Experience</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .header {
+        background: rgba(10, 14, 39, 0.9);
+        border-bottom: 2px solid rgba(236, 72, 153, 0.3);
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: clamp(28px, 5vw, 42px);
+        background: linear-gradient(135deg, #ec4899 0%, #f97316 30%, #eab308 60%, #22d3ee 100%);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        color: #9ca3af;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ec4899;
+        display: block;
+      }
+
+      .header-stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 30px;
+        padding: 15px 0;
+      }
+
+      .breadcrumb a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb a:hover {
+        color: #ec4899;
+      }
+
+      .breadcrumb-separator {
+        margin: 0 10px;
+        color: #6b7280;
+      }
+
+      .breadcrumb-current {
+        color: #ec4899;
+        font-weight: 600;
+      }
+
+      .department-overview {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(236, 72, 153, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-overview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #ec4899 0%, #f97316 30%, #eab308 60%, #22d3ee 100%);
+      }
+
+      .overview-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .overview-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: rgba(236, 72, 153, 0.1);
+        border: 3px solid rgba(236, 72, 153, 0.3);
+        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.2);
+      }
+
+      .overview-title h2 {
+        font-size: 28px;
+        color: #ec4899;
+        margin-bottom: 8px;
+      }
+
+      .overview-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .team-member {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        border: 2px solid rgba(236, 72, 153, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-member::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .team-member:hover::before {
+        left: 100%;
+      }
+
+      .team-member:hover {
+        background: rgba(0, 0, 0, 0.4);
+        border-color: rgba(236, 72, 153, 0.4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.2);
+      }
+
+      .member-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: #fff;
+        background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+        border: 2px solid rgba(236, 72, 153, 0.3);
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);
+      }
+
+      .member-info {
+        flex: 1;
+      }
+
+      .member-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin-bottom: 4px;
+      }
+
+      .member-role {
+        font-size: 12px;
+        color: #ec4899;
+        margin-bottom: 2px;
+      }
+
+      .member-stats {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .member-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .action-button {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(236, 72, 153, 0.3);
+        background: rgba(236, 72, 153, 0.1);
+        color: #ec4899;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .action-button:hover {
+        background: #ec4899;
+        color: #0a0e27;
+        transform: translateY(-1px);
+      }
+
+      .recruiting-banner {
+        background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
+        border: 2px solid rgba(236, 72, 153, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .recruiting-title {
+        color: #ec4899;
+        font-size: 20px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .recruiting-text {
+        color: #9ca3af;
+        margin-bottom: 20px;
+      }
+
+      .recruiting-button {
+        display: inline-block;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .recruiting-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
+      }
+
+      /* Modal System */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+        display: flex;
+        opacity: 1;
+        align-items: center;
+        justify-content: center;
+        animation: modalFadeIn 0.3s ease;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        border: 2px solid rgba(236, 72, 153, 0.3);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(236, 72, 153, 0.3);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #ef4444;
+        font-size: 16px;
+        transition: all 0.2s ease;
+      }
+
+      .modal-close:hover {
+        background: rgba(239, 68, 68, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header-stats {
+          gap: 20px;
+        }
+
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .team-member {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .modal-content {
+          width: 95%;
+          padding: 20px;
+        }
+      }
+
+      /* Department-Specific Color Variables */
+      :root {
+        --dept-primary: #ec4899;
+        --dept-gradient: linear-gradient(135deg, #ec4899 0%, #f97316 30%, #eab308 60%, #22d3ee 100%);
+        --dept-bg: rgba(236, 72, 153, 0.1);
+        --dept-border: rgba(236, 72, 153, 0.3);
+        --dept-shadow: rgba(236, 72, 153, 0.2);
+        --dept-hover: rgba(236, 72, 153, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🎨 Design Department</h1>
+      <div class="header-subtitle">Creative Excellence & User Experience Innovation</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">3</span>
+          <div class="header-stat-label">Team Members</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">12</span>
+          <div class="header-stat-label">Active Projects</div>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">98%</span>
+          <div class="header-stat-label">Design Quality</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../index.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="./index.html">🏢 Departments</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Design Department</span>
+      </nav>
+
+      <div class="recruiting-banner">
+        <div class="recruiting-title">🎨 Design Team Active & Growing!</div>
+        <div class="recruiting-text">
+          Our talented design team is creating exceptional user experiences across all Fire22 platforms. We're
+          continuing to grow and welcome passionate designers to join our creative mission.
+        </div>
+        <a href="mailto:isabella.martinez@design.fire22" class="recruiting-button">Connect with Design Team</a>
+      </div>
+
+      <div class="department-overview">
+        <div class="overview-header">
+          <div class="overview-icon">🎨</div>
+          <div class="overview-title">
+            <h2>Design Department</h2>
+            <div class="overview-subtitle">Leading creative vision and user experience across all Fire22 platforms</div>
+          </div>
+        </div>
+
+        <div class="team-grid">
+          <div class="team-member" onclick="openMemberProfile('isabella-martinez')" id="isabella-martinez">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #ec4899 0%, #f97316 100%)">IM</div>
+            <div class="member-info">
+              <div class="member-name">Isabella Martinez</div>
+              <div class="member-role">Design Director</div>
+              <div class="member-stats">47 designs • 98% client satisfaction • Available</div>
+            </div>
+            <div class="member-actions">
+              <a href="mailto:isabella.martinez@design.fire22" class="action-button">📧 Email</a>
+              <a href="https://portfolio.fire22.com/isabella-martinez" class="action-button">🎨 Portfolio</a>
+              <a href="https://figma.com/team/fire22/isabella-martinez" class="action-button">🎯 Figma</a>
+            </div>
+          </div>
+
+          <div class="team-member" onclick="openMemberProfile('ethan-cooper')" id="ethan-cooper">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)">EC</div>
+            <div class="member-info">
+              <div class="member-name">Ethan Cooper</div>
+              <div class="member-role">UI/UX Designer</div>
+              <div class="member-stats">32 interfaces • 95% usability score • Creative work</div>
+            </div>
+            <div class="member-actions">
+              <a href="mailto:ethan.cooper@design.fire22" class="action-button">📧 Email</a>
+              <a href="https://portfolio.fire22.com/ethan-cooper" class="action-button">🎨 Portfolio</a>
+              <a href="https://figma.com/team/fire22/ethan-cooper" class="action-button">🎯 Figma</a>
+            </div>
+          </div>
+
+          <div class="team-member" onclick="openMemberProfile('maya-patel')" id="maya-patel">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)">MP</div>
+            <div class="member-info">
+              <div class="member-name">Maya Patel</div>
+              <div class="member-role">Visual Designer</div>
+              <div class="member-stats">28 visual assets • 99% brand consistency • Available</div>
+            </div>
+            <div class="member-actions">
+              <a href="mailto:maya.patel@design.fire22" class="action-button">📧 Email</a>
+              <a href="https://portfolio.fire22.com/maya-patel" class="action-button">🎨 Portfolio</a>
+              <a href="https://figma.com/team/fire22/maya-patel" class="action-button">🎯 Figma</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Template -->
+    <div id="memberModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-close" onclick="closeModal()">&times;</div>
+        <div class="modal-header">
+          <div class="member-avatar" id="modalAvatar"></div>
+          <div>
+            <h3 id="modalName"></h3>
+            <div id="modalRole" style="color: var(--dept-primary)"></div>
+          </div>
+        </div>
+        <div id="modalDetails"></div>
+      </div>
+    </div>
+
+    <script>
+      // Design Department Configuration
+      const departmentConfig = {
+        name: 'Design Department',
+        code: 'DESIGN',
+        primaryColor: '#ec4899',
+        members: [
+          {
+            id: 'isabella-martinez',
+            name: 'Isabella Martinez',
+            role: 'Design Director',
+            avatar: 'IM',
+            avatarBg: 'linear-gradient(135deg, #ec4899 0%, #f97316 100%)',
+            email: 'isabella.martinez@design.fire22',
+            status: 'available',
+            metrics: {
+              implementations: 47,
+              efficiency: '98%',
+            },
+            responsibilities: [
+              'Lead design vision and strategy across all Fire22 platforms',
+              'Establish design systems and maintain consistency standards',
+              'Manage design team and creative workflows',
+              'Collaborate with department heads on user experience',
+              'Drive design thinking and user-centered design processes',
+              'Oversee design quality and creative excellence',
+              'Coordinate cross-department design initiatives',
+            ],
+            communicationTasks: [
+              'Weekly design updates to Communications team',
+              'Cross-department design consultation and support',
+              'Design system documentation and guidelines',
+              'Creative asset approval and brand consistency',
+            ],
+          },
+          {
+            id: 'ethan-cooper',
+            name: 'Ethan Cooper',
+            role: 'UI/UX Designer',
+            avatar: 'EC',
+            avatarBg: 'linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%)',
+            email: 'ethan.cooper@design.fire22',
+            status: 'creative-work',
+            metrics: {
+              implementations: 32,
+              efficiency: '95%',
+            },
+            responsibilities: [
+              'Design user interfaces for web and mobile applications',
+              'Conduct user experience research and usability testing',
+              'Create wireframes, prototypes, and interactive designs',
+              'Collaborate with developers on implementation',
+              'Maintain design consistency across digital products',
+              'Optimize user flows and interaction patterns',
+            ],
+            communicationTasks: [
+              'UI/UX design reviews and feedback sessions',
+              'User research findings and recommendations',
+              'Design implementation guidance for developers',
+              'Accessibility compliance documentation',
+            ],
+          },
+          {
+            id: 'maya-patel',
+            name: 'Maya Patel',
+            role: 'Visual Designer',
+            avatar: 'MP',
+            avatarBg: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
+            email: 'maya.patel@design.fire22',
+            status: 'available',
+            metrics: {
+              implementations: 28,
+              efficiency: '99%',
+            },
+            responsibilities: [
+              'Create visual assets for marketing and communications',
+              'Design brand-consistent graphics and illustrations',
+              'Develop visual identity for Fire22 products',
+              'Create presentation templates and marketing materials',
+              'Maintain brand guidelines and visual standards',
+              'Support video and motion graphics projects',
+            ],
+            communicationTasks: [
+              'Brand asset creation and approval workflow',
+              'Marketing visual content coordination',
+              'Brand consistency guidelines updates',
+              'Visual design standards documentation',
+            ],
+          },
+        ],
+      };
+
+      const teamMembers = departmentConfig.members;
+
+      // Modal System
+      function openMemberProfile(memberId) {
+        try {
+          const member = teamMembers.find(m => m.id === memberId);
+          if (!member) {
+            throw new Error(`Team member not found: ${memberId}`);
+          }
+
+          // Populate modal
+          document.getElementById('modalAvatar').style.background = member.avatarBg;
+          document.getElementById('modalAvatar').textContent = member.avatar;
+          document.getElementById('modalName').textContent = member.name;
+          document.getElementById('modalRole').textContent = member.role;
+          document.getElementById('modalDetails').innerHTML = generateMemberDetails(member);
+
+          // Show modal
+          const modal = document.getElementById('memberModal');
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+
+          console.log(`✅ Opened profile for ${member.name}`);
+        } catch (error) {
+          console.error('Failed to open member profile:', error);
+        }
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('memberModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+
+      function generateMemberDetails(member) {
+        return `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">📊 Performance Metrics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.metrics.implementations || 0}</div>
+                            <div style="font-size: 11px; color: #9ca3af;">Designs Created</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.metrics.efficiency || '95%'}</div>
+                            <div style="font-size: 11px; color: #9ca3af;">Quality Score</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div style="font-size: 20px; font-weight: bold; color: var(--dept-primary);">${member.status === 'available' ? '🟢' : member.status === 'creative-work' ? '🎨' : '🔴'}</div>
+                            <div style="font-size: 11px; color: #9ca3af;">Status</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">🎯 Key Responsibilities</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${member.responsibilities.map(resp => `<li style="margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--dept-primary);">• ${resp}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--dept-primary); margin-bottom: 10px;">📋 Communication Tasks</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${member.communicationTasks.map(task => `<li style="margin-bottom: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--dept-primary);">• ${task}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <a href="mailto:${member.email}" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #ec4899 0%, #f97316 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: bold;">Contact ${member.name}</a>
+                </div>
+            `;
+      }
+
+      // Event Listeners
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log(`🎨 ${departmentConfig.name} page loaded`);
+        console.log(`👥 ${teamMembers.length} team members initialized`);
+
+        // ESC key to close modal
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') {
+            closeModal();
+          }
+        });
+      });
+
+      // Click outside modal to close
+      document.getElementById('memberModal').addEventListener('click', e => {
+        if (e.target.id === 'memberModal') {
+          closeModal();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+# Fantasy42-Fire22 Development Configuration
+# This file is sourced automatically in development
+
+# Set environment variables
+export NODE_ENV=development
+export FIRE22_ENV=enterprise
+export BUN_ENV=development
+export LOG_LEVEL=debug
+
+# Set PATH for local tools
+export PATH="$PWD/node_modules/.bin:$PWD/scripts:$PATH"
+
+# Set database path
+export DATABASE_URL="$PWD/domain-data.sqlite"
+
+# Set cache and temp directories
+export CACHE_DIR="$PWD/.cache"
+export TEMP_DIR="$PWD/.tmp"
+export LOG_DIR="$PWD/logs"
+
+# Set backup directory
+export BACKUP_DIR="$PWD/backups"
+
+# Enable Bun features
+export BUN_DEBUG=true
+export BUN_TEST_TIMEOUT=10000
+
+# Development shortcuts
+alias dev="bun run dev"
+alias test="bun run test"
+alias lint="bun run lint"
+alias build="bun run build"
+alias status="bun run enterprise:status"
+alias deploy="bun run enterprise:setup"
+alias clean="bun run dev:clean"
+alias reset="bun run dev:reset"
+
+# Quick navigation
+alias cdff="cd $PWD"
+alias logs="tail -f $LOG_DIR/*.log"
+alias cache="ls -la $CACHE_DIR"
+alias backup="ls -la $BACKUP_DIR"
+
+# Git shortcuts
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit -S"
+alias gp="git push"
+alias gl="git log --oneline -5"
+
+# Display development info
+echo "🔧 Fantasy42-Fire22 Development Environment"
+echo "=========================================="
+echo "📁 Project: $(basename $PWD)"
+echo "🌐 Environment: $NODE_ENV"
+echo "🐰 Runtime: $(bun --version)"
+echo "📊 Database: $DATABASE_URL"
+echo "📝 Logs: $LOG_DIR"
+echo "💾 Cache: $CACHE_DIR"
+echo ""
+echo "🚀 Quick commands:"
+echo "  dev     - Start development server"
+echo "  test    - Run tests"
+echo "  status  - Check enterprise status"
+echo "  deploy  - Deploy infrastructure"
+echo "  clean   - Clean cache and logs"
+echo "  reset   - Full reset and setup"
+echo ""
+echo "🔗 Git shortcuts:"
+echo "  gs     - git status"
+echo "  ga     - git add"
+echo "  gc     - git commit -S (signed)"
+echo "  gp     - git push"
+echo "  gl     - git log"
+echo ""
+echo "Ready for development! 🎯"

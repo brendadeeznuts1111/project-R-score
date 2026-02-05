@@ -1,0 +1,17 @@
+{
+  "name": "fire22-dependency-resolution-demo",
+  "version": "1.0.0",
+  "description": "Demonstrating Bun's dependency resolution priority",
+  "dependencies": {
+    "semver": "^7.3.0"
+  },
+  "devDependencies": {
+    "semver": "^7.6.0"
+  },
+  "optionalDependencies": {
+    "semver": "^7.4.0"
+  },
+  "peerDependencies": {
+    "semver": "^7.5.0"
+  }
+}

@@ -1,0 +1,82 @@
+[install]
+# Default to ES modules
+exact = true
+# Enable auto-install peer dependencies
+auto = "auto"
+# Use global cache for faster installs
+global = "auto"
+
+[build]
+# Target modern Node.js versions
+target = "node"
+# Enable source maps in development
+sourcemap = "external"
+# Optimize for production
+minify = true
+# Define build environment variables
+env = { NODE_ENV = "production" }
+# Enable tree shaking
+treeShaking = true
+# Split bundles for better caching
+splitting = true
+
+[test]
+# Enable test coverage
+coverage = true
+# Use jsdom environment for React components
+preload = "./packages/dashboard/src/test/setup.ts"
+# Test environment configuration
+env = { NODE_ENV = "test" }
+# Enable verbose test output
+verbose = true
+
+[run]
+# Enable hot reload in development
+watch = true
+# Define development environment variables
+env = { 
+  NODE_ENV = "development",
+  VITE_DEBUG = "true",
+  VITE_DEVELOPER_MODE = "true",
+  VITE_DUOPLUS_ENABLED = "true",
+  VITE_ENHANCED_TEMPLATES = "true",
+  VITE_BETA_FEATURES = "true",
+  VITE_PERFORMANCE_PROFILING = "true"
+}
+# Development server configuration
+port = 5173
+hostname = "localhost"
+
+[bun]
+# Lockfile configuration
+lockfile = true
+# Enable install cache
+cache = true
+# Registry configuration
+registry = "https://npm.factory-wager.com"
+# Timeout configuration
+timeout = 30000
+
+[define]
+# Global constants for build optimization
+__DEV__ = "process.env.NODE_ENV === 'development'"
+__PROD__ = "process.env.NODE_ENV === 'production'"
+__TEST__ = "process.env.NODE_ENV === 'test'"
+
+[loader]
+# Custom loader configuration
+".ts" = "ts"
+".tsx" = "tsx"
+".js" = "js"
+".jsx" = "jsx"
+
+[loglevel]
+# Set log level for better debugging
+level = "debug"
+
+[publish]
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }

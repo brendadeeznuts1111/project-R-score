@@ -1,0 +1,75 @@
+{
+  "name": "@fire22/telegram-workflows",
+  "version": "1.0.0",
+  "description": "Department workflows and orchestration for Fire22 Telegram bot",
+  "author": "Fire22 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/crystal-clear-architecture.git",
+    "directory": "dashboard-worker/workspaces/@fire22-telegram-workflows"
+  },
+  "keywords": [
+    "telegram",
+    "workflows",
+    "orchestration",
+    "departments",
+    "permissions",
+    "fire22"
+  ],
+  "engines": {
+    "bun": ">=1.2.21"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "dev:workflow": "bun run src/telegram-workflow.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm",
+    "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
+    "test": "bun test",
+    "test:departments": "bun test tests/departments/",
+    "test:permissions": "bun test tests/permissions/",
+    "test:workflows": "bun test tests/workflows/",
+    "benchmark": "bun run tests/benchmarks/workflow-performance.ts",
+    "demo": "bun run src/demo/workflow-demo.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "grammy": "^1.21.1",
+    "zod": "^3.22.4",
+    "@fire22/telegram-bot": "workspace:*",
+    "@fire22/queue-system": "workspace:*",
+    "@fire22/multilingual": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "bun": ">=1.2.21"
+  },
+  "fire22": {
+    "workspace": "telegram-workflows",
+    "isolation": {
+      "standalone": true,
+      "linked": true
+    },
+    "include": [
+      "src/telegram-workflow.ts",
+      "src/telegram-integration.ts",
+      "src/departments/",
+      "src/permissions/"
+    ],
+    "departments": [
+      "customer_service",
+      "finance",
+      "operations",
+      "compliance",
+      "management",
+      "technical"
+    ]
+  }
+}

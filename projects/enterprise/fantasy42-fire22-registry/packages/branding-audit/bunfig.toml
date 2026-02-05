@@ -1,0 +1,33 @@
+[install]
+# Use the workspace's lockfile
+lockfile = "../../bun.lock"
+
+[build]
+# Target Bun runtime
+target = "bun"
+
+# Enable source maps for debugging
+sourcemap = "linked"
+
+# Minify for production builds
+minify = true
+
+# Enable tree shaking
+splitting = true
+
+[run]
+# Hot reload for development
+hot = false
+
+[define]
+# Environment variables
+NODE_ENV = "production"
+
+[test]
+# Test configuration
+timeout = 10000
+preload = []
+
+[lint]
+# Enable linting
+rules = "recommended"

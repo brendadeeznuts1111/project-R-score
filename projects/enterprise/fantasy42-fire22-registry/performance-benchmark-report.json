@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-08-30T15:26:10.363Z",
+  "environment": {
+    "bunVersion": "1.2.21",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "results": {
+    "apiResponseTimes": {
+      "healthCheck": 3029,
+      "authentication": 3003,
+      "userRetrieval": 3010,
+      "dataSync": 3005
+    },
+    "webSocketPerformance": {
+      "connectionTime": 3128,
+      "messageLatency": 1003.5,
+      "throughput": 0.9965122072745392
+    },
+    "tokenRefreshPerformance": {
+      "refreshTime": 3007,
+      "refreshSuccess": false,
+      "automaticRefreshTime": 3005
+    },
+    "concurrentPerformance": {
+      "concurrency": 10,
+      "totalTime": 3007,
+      "averageResponseTime": 3006.2,
+      "successRate": 1,
+      "throughput": 3.325573661456601
+    },
+    "loadTestResults": {
+      "totalRequests": 96,
+      "successfulRequests": 96,
+      "failedRequests": 0,
+      "averageResponseTime": 3017.0833333333335,
+      "minResponseTime": 3002,
+      "maxResponseTime": 3170,
+      "requestsPerSecond": 2.930224040046395,
+      "duration": 32762,
+      "memoryUsage": {
+        "initial": 3.5685653686523438,
+        "peak": 5.175146102905273,
+        "final": 5.175146102905273
+      }
+    }
+  },
+  "summary": {
+    "overallHealthy": true,
+    "criticalIssues": [],
+    "recommendations": []
+  }
+}

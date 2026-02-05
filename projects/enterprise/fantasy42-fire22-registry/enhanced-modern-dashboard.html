@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🚀 Fire22 Enhanced Modern Dashboard - Cloudflare Integrated</title>
+    <meta
+      name="description"
+      content="Next-generation dashboard with Cloudflare integration, real-time collaboration, and AI-powered insights"
+    />
+    <meta
+      name="keywords"
+      content="dashboard, cloudflare, real-time, ai, collaboration, analytics, modern, enterprise"
+    />
+
+    <!-- Cloudflare Analytics -->
+    <script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "your-analytics-token"}'
+    ></script>
+
+    <!-- Modern CSS Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Cloudflare Workers Integration -->
+    <script>
+      // Cloudflare Workers API endpoints
+      const CLOUDFLARE_API = {
+        analytics: '/api/analytics',
+        realtime: '/api/realtime',
+        cache: '/api/cache',
+        ai: '/api/ai-insights',
+      };
+
+      // WebSocket for real-time updates
+      let wsConnection = null;
+      const initWebSocket = () => {
+        if (wsConnection) return;
+
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/dashboard`;
+
+        wsConnection = new WebSocket(wsUrl);
+
+        wsConnection.onopen = () => {
+          console.log('🔗 Connected to Cloudflare WebSocket');
+          updateConnectionStatus('connected');
+        };
+
+        wsConnection.onmessage = event => {
+          const data = JSON.parse(event.data);
+          handleRealtimeUpdate(data);
+        };
+
+        wsConnection.onclose = () => {
+          console.log('🔌 WebSocket connection closed');
+          updateConnectionStatus('disconnected');
+          // Auto-reconnect after 5 seconds
+          setTimeout(initWebSocket, 5000);
+        };
+
+        wsConnection.onerror = error => {
+          console.error('WebSocket error:', error);
+          updateConnectionStatus('error');
+        };
+      };
+    </script>
+
+    <style>
+      :root {
+        --cf-blue: #0066cc;
+        --cf-orange: #ff7900;
+        --cf-gray: #f3f4f6;
+        --cf-dark: #1f2937;
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      * {
+        font-family: 'Inter', sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+      }
+
+      .glass-morphism {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .cf-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .cf-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .metric-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border: 1px solid rgba(102, 126, 234, 0.2);
+      }
+
+      .status-connected {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+      }
+
+      .status-disconnected {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+      }
+
+      .status-error {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+      }
+
+      .ai-insight {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+      }
+
+      .collaborator-cursor {
+        position: absolute;
+        pointer-events: none;
+        z-index: 9999;
+        transition: all 0.1s ease;
+      }
+
+      .collaborator-cursor::after {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: -2px;
+        width: 20px;
+        height: 20px;
+        background: currentColor;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px currentColor;
+      }
+
+      .pulse-animation {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .loading-shimmer {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="antialiased">
+    <!-- Header with Cloudflare Branding -->
+    <header class="bg-white shadow-lg border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+          <div class="flex items-center space-x-4">
+            <img src="https://www.cloudflare.com/img/logo-cloudflare-dark.svg" alt="Cloudflare" class="h-8" />
+            <div class="h-8 w-px bg-gray-300"></div>
+            <h1 class="text-2xl font-bold text-gray-900">Fire22 Dashboard</h1>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <!-- Connection Status -->
+            <div
+              id="connection-status"
+              class="flex items-center space-x-2 px-3 py-2 rounded-full text-sm font-medium status-disconnected"
+            >
+              <i class="fas fa-circle text-xs"></i>
+              <span>Connecting...</span>
+            </div>
+
+            <!-- Real-time Collaborators -->
+            <div id="collaborators" class="flex -space-x-2">
+              <!-- Collaborator avatars will be added here -->
+            </div>
+
+            <!-- AI Insights Toggle -->
+            <button
+              id="ai-toggle"
+              class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+            >
+              <i class="fas fa-brain mr-2"></i>
+              AI Insights
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Welcome Section with AI Insights -->
+      <div class="mb-8">
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-3xl font-bold mb-2">Welcome to Fire22</h2>
+              <p class="text-blue-100 mb-4">Real-time insights powered by Cloudflare</p>
+              <div id="ai-welcome-insight" class="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-md">
+                <div class="flex items-center space-x-2 mb-2">
+                  <i class="fas fa-lightbulb text-yellow-300"></i>
+                  <span class="font-medium">AI Insight</span>
+                </div>
+                <p id="welcome-insight-text" class="text-sm">Loading personalized insights...</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-4xl font-bold" id="active-users">1,247</div>
+              <div class="text-blue-200">Active Users</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="cf-card metric-card rounded-xl p-6 fade-in">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Response Time</p>
+              <p class="text-2xl font-bold text-gray-900" id="response-time">245ms</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+              <i class="fas fa-tachometer-alt text-white"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="flex items-center text-sm">
+              <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+              <span class="text-green-500 font-medium">12%</span>
+              <span class="text-gray-500 ml-1">vs last week</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cf-card metric-card rounded-xl p-6 fade-in">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Error Rate</p>
+              <p class="text-2xl font-bold text-gray-900" id="error-rate">0.12%</p>
+            </div>
+            <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+              <i class="fas fa-shield-alt text-white"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="flex items-center text-sm">
+              <i class="fas fa-arrow-down text-green-500 mr-1"></i>
+              <span class="text-green-500 font-medium">8%</span>
+              <span class="text-gray-500 ml-1">vs last week</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cf-card metric-card rounded-xl p-6 fade-in">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Cache Hit Rate</p>
+              <p class="text-2xl font-bold text-gray-900" id="cache-hit-rate">94.7%</p>
+            </div>
+            <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+              <i class="fas fa-database text-white"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="flex items-center text-sm">
+              <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+              <span class="text-green-500 font-medium">5%</span>
+              <span class="text-gray-500 ml-1">vs last week</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cf-card metric-card rounded-xl p-6 fade-in">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Uptime</p>
+              <p class="text-2xl font-bold text-gray-900" id="uptime">99.98%</p>
+            </div>
+            <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
+              <i class="fas fa-clock text-white"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="flex items-center text-sm">
+              <i class="fas fa-equals text-blue-500 mr-1"></i>
+              <span class="text-blue-500 font-medium">Consistent</span>
+              <span class="text-gray-500 ml-1">vs last week</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Real-time Activity Feed -->
+        <div class="lg:col-span-2">
+          <div class="cf-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">Real-time Activity</h3>
+              <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-sm text-gray-600">Live</span>
+              </div>
+            </div>
+
+            <div id="activity-feed" class="space-y-4 max-h-96 overflow-y-auto">
+              <!-- Activity items will be populated here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Insights Panel -->
+        <div class="space-y-6">
+          <div class="cf-card ai-insight rounded-xl p-6">
+            <div class="flex items-center space-x-2 mb-4">
+              <i class="fas fa-robot text-xl"></i>
+              <h3 class="text-lg font-semibold">AI Insights</h3>
+            </div>
+
+            <div id="ai-insights" class="space-y-4">
+              <!-- AI insights will be populated here -->
+            </div>
+          </div>
+
+          <!-- Cloudflare Status -->
+          <div class="cf-card rounded-xl p-6">
+            <div class="flex items-center space-x-2 mb-4">
+              <img src="https://www.cloudflare.com/img/logo-cloudflare-dark.svg" alt="Cloudflare" class="h-6" />
+              <h3 class="text-lg font-semibold text-gray-900">Cloudflare Status</h3>
+            </div>
+
+            <div id="cloudflare-status" class="space-y-3">
+              <!-- Cloudflare status will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="mt-8">
+        <div class="cf-card rounded-xl p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-900">Performance Analytics</h3>
+            <div class="flex items-center space-x-2">
+              <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                1H
+              </button>
+              <button class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg">24H</button>
+              <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                7D
+              </button>
+              <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                30D
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-md font-medium text-gray-700 mb-4">Response Time Trend</h4>
+              <div id="response-time-chart" class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                <div class="text-center">
+                  <i class="fas fa-chart-line text-4xl text-gray-400 mb-2"></i>
+                  <p class="text-gray-500">Chart loading...</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-md font-medium text-gray-700 mb-4">Traffic Distribution</h4>
+              <div id="traffic-chart" class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+                <div class="text-center">
+                  <i class="fas fa-chart-pie text-4xl text-gray-400 mb-2"></i>
+                  <p class="text-gray-500">Chart loading...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Collaborator Cursors Container -->
+    <div id="collaborator-cursors" class="pointer-events-none fixed inset-0 z-50">
+      <!-- Collaborator cursors will be added here -->
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+      // Initialize WebSocket connection
+      document.addEventListener('DOMContentLoaded', () => {
+        initWebSocket();
+        loadDashboardData();
+        setupCollaboratorTracking();
+        initializeCharts();
+      });
+
+      // Connection status management
+      function updateConnectionStatus(status) {
+        const statusElement = document.getElementById('connection-status');
+        const icon = statusElement.querySelector('i');
+        const text = statusElement.querySelector('span');
+
+        statusElement.className = `flex items-center space-x-2 px-3 py-2 rounded-full text-sm font-medium status-${status}`;
+
+        switch (status) {
+          case 'connected':
+            icon.className = 'fas fa-circle text-xs';
+            text.textContent = 'Connected';
+            break;
+          case 'disconnected':
+            icon.className = 'fas fa-circle text-xs';
+            text.textContent = 'Disconnected';
+            break;
+          case 'error':
+            icon.className = 'fas fa-exclamation-triangle text-xs';
+            text.textContent = 'Connection Error';
+            break;
+        }
+      }
+
+      // Handle real-time updates
+      function handleRealtimeUpdate(data) {
+        switch (data.type) {
+          case 'metric_update':
+            updateMetrics(data.payload);
+            break;
+          case 'activity':
+            addActivityItem(data.payload);
+            break;
+          case 'ai_insight':
+            addAIInsight(data.payload);
+            break;
+          case 'collaborator_join':
+            addCollaborator(data.payload);
+            break;
+          case 'collaborator_leave':
+            removeCollaborator(data.payload.userId);
+            break;
+          case 'cursor_move':
+            updateCollaboratorCursor(data.payload);
+            break;
+        }
+      }
+
+      // Update dashboard metrics
+      function updateMetrics(metrics) {
+        if (metrics.responseTime) {
+          document.getElementById('response-time').textContent = `${metrics.responseTime}ms`;
+        }
+        if (metrics.errorRate) {
+          document.getElementById('error-rate').textContent = `${metrics.errorRate}%`;
+        }
+        if (metrics.cacheHitRate) {
+          document.getElementById('cache-hit-rate').textContent = `${metrics.cacheHitRate}%`;
+        }
+        if (metrics.uptime) {
+          document.getElementById('uptime').textContent = `${metrics.uptime}%`;
+        }
+        if (metrics.activeUsers) {
+          document.getElementById('active-users').textContent = metrics.activeUsers.toLocaleString();
+        }
+      }
+
+      // Add activity item to feed
+      function addActivityItem(activity) {
+        const feed = document.getElementById('activity-feed');
+        const item = document.createElement('div');
+        item.className = 'flex items-start space-x-3 p-3 bg-gray-50 rounded-lg fade-in';
+
+        item.innerHTML = `
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-${activity.icon || 'activity'} text-white text-xs"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900">${activity.title}</p>
+            <p class="text-sm text-gray-500">${activity.description}</p>
+            <p class="text-xs text-gray-400 mt-1">${new Date(activity.timestamp).toLocaleTimeString()}</p>
+          </div>
+        `;
+
+        feed.insertBefore(item, feed.firstChild);
+
+        // Keep only last 20 items
+        while (feed.children.length > 20) {
+          feed.removeChild(feed.lastChild);
+        }
+      }
+
+      // Add AI insight
+      function addAIInsight(insight) {
+        const insightsContainer = document.getElementById('ai-insights');
+        const insightElement = document.createElement('div');
+        insightElement.className = 'bg-white/20 backdrop-blur-sm rounded-lg p-4 fade-in';
+
+        insightElement.innerHTML = `
+          <div class="flex items-center space-x-2 mb-2">
+            <i class="fas fa-${insight.icon || 'lightbulb'} text-yellow-300"></i>
+            <span class="font-medium">${insight.title}</span>
+            <span class="text-xs bg-yellow-300/20 text-yellow-200 px-2 py-1 rounded-full">
+              ${Math.round(insight.confidence * 100)}% confidence
+            </span>
+          </div>
+          <p class="text-sm text-white/90">${insight.description}</p>
+          <div class="mt-2 text-xs text-white/70">
+            <i class="fas fa-clock mr-1"></i>
+            ${insight.timestamp ? new Date(insight.timestamp).toLocaleTimeString() : 'Just now'}
+          </div>
+        `;
+
+        insightsContainer.insertBefore(insightElement, insightsContainer.firstChild);
+
+        // Keep only last 5 insights
+        while (insightsContainer.children.length > 5) {
+          insightsContainer.removeChild(insightsContainer.lastChild);
+        }
+
+        // Update welcome insight if it's the first one
+        if (insightsContainer.children.length === 1) {
+          document.getElementById('welcome-insight-text').textContent = insight.description;
+        }
+      }
+
+      // Collaborator management
+      function addCollaborator(user) {
+        const collaboratorsContainer = document.getElementById('collaborators');
+        const avatar = document.createElement('div');
+        avatar.className =
+          'w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white';
+        avatar.title = user.name;
+        avatar.textContent = user.name.charAt(0).toUpperCase();
+
+        collaboratorsContainer.appendChild(avatar);
+      }
+
+      function removeCollaborator(userId) {
+        const collaboratorsContainer = document.getElementById('collaborators');
+        const avatars = collaboratorsContainer.children;
+        // Remove the last avatar (simplified - in real implementation, track by user ID)
+        if (avatars.length > 0) {
+          collaboratorsContainer.removeChild(avatars[avatars.length - 1]);
+        }
+      }
+
+      // Collaborator cursor tracking
+      function setupCollaboratorTracking() {
+        document.addEventListener('mousemove', e => {
+          if (wsConnection && wsConnection.readyState === WebSocket.OPEN) {
+            wsConnection.send(
+              JSON.stringify({
+                type: 'cursor_move',
+                payload: { x: e.clientX, y: e.clientY, timestamp: Date.now() },
+              })
+            );
+          }
+        });
+      }
+
+      function updateCollaboratorCursor(data) {
+        const cursorsContainer = document.getElementById('collaborator-cursors');
+        let cursor = document.getElementById(`cursor-${data.userId}`);
+
+        if (!cursor) {
+          cursor = document.createElement('div');
+          cursor.id = `cursor-${data.userId}`;
+          cursor.className = 'collaborator-cursor';
+          cursor.style.color = data.color || '#8b5cf6';
+          cursorsContainer.appendChild(cursor);
+        }
+
+        cursor.style.left = `${data.x}px`;
+        cursor.style.top = `${data.y}px`;
+
+        // Remove cursor after 5 seconds of inactivity
+        clearTimeout(cursor.timeout);
+        cursor.timeout = setTimeout(() => {
+          if (cursor.parentNode) {
+            cursor.parentNode.removeChild(cursor);
+          }
+        }, 5000);
+      }
+
+      // Load initial dashboard data
+      async function loadDashboardData() {
+        try {
+          // Simulate loading initial data
+          const mockData = {
+            metrics: {
+              responseTime: 245,
+              errorRate: 0.12,
+              cacheHitRate: 94.7,
+              uptime: 99.98,
+              activeUsers: 1247,
+            },
+            activities: [
+              {
+                title: 'New user registration',
+                description: 'John Doe joined the platform',
+                icon: 'user-plus',
+                timestamp: Date.now() - 300000,
+              },
+              {
+                title: 'Cache optimization',
+                description: 'Improved cache hit rate by 5%',
+                icon: 'rocket',
+                timestamp: Date.now() - 600000,
+              },
+            ],
+            aiInsights: [
+              {
+                title: 'Performance Optimization',
+                description: 'Consider implementing lazy loading for images to improve page load speed',
+                icon: 'chart-line',
+                confidence: 0.87,
+                timestamp: Date.now() - 180000,
+              },
+            ],
+          };
+
+          updateMetrics(mockData.metrics);
+          mockData.activities.forEach(activity => addActivityItem(activity));
+          mockData.aiInsights.forEach(insight => addAIInsight(insight));
+        } catch (error) {
+          console.error('Failed to load dashboard data:', error);
+        }
+      }
+
+      // Initialize charts (placeholder for Chart.js integration)
+      function initializeCharts() {
+        // In a real implementation, this would initialize Chart.js charts
+        console.log('📊 Charts initialized');
+      }
+
+      // AI Insights toggle
+      document.getElementById('ai-toggle').addEventListener('click', () => {
+        const button = document.getElementById('ai-toggle');
+        const isActive = button.classList.contains('bg-purple-700');
+
+        if (isActive) {
+          button.classList.remove('bg-purple-700');
+          button.classList.add('bg-purple-600');
+          button.innerHTML = '<i class="fas fa-brain mr-2"></i>AI Insights';
+        } else {
+          button.classList.remove('bg-purple-600');
+          button.classList.add('bg-purple-700');
+          button.innerHTML = '<i class="fas fa-brain mr-2"></i>AI Active';
+        }
+
+        // Send toggle event to WebSocket
+        if (wsConnection && wsConnection.readyState === WebSocket.OPEN) {
+          wsConnection.send(
+            JSON.stringify({
+              type: 'ai_toggle',
+              payload: { enabled: !isActive },
+            })
+          );
+        }
+      });
+
+      // Simulate real-time updates
+      setInterval(() => {
+        if (Math.random() > 0.7) {
+          // 30% chance every 5 seconds
+          const activities = [
+            { title: 'API request processed', description: 'High-priority request completed', icon: 'zap' },
+            { title: 'Cache invalidation', description: 'Updated content cache', icon: 'refresh' },
+            { title: 'User session created', description: 'New active session', icon: 'user' },
+          ];
+
+          const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+          addActivityItem({
+            ...randomActivity,
+            timestamp: Date.now(),
+          });
+        }
+      }, 5000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "timestamp": "2025-08-28T14:25:09Z",
+  "root_version": "1.0.0-rc",
+  "workspace_count": 30,
+  "outdated": {
+    "command": "bun outdated",
+    "packages": []
+  }
+}

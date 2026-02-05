@@ -1,0 +1,882 @@
+<!-- Ticketwriter Modal -->
+<div id="ticketwriter-modal" class="modal-overlay" style="display: none">
+  <div class="modal-container large-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-pencil-square-o"></i>
+        <span data-language="L-826">Ticketwriter</span>
+        - Bet Placement
+      </h3>
+      <button type="button" class="modal-close" onclick="closeTicketwriterModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Customer Selection -->
+      <div class="ticket-section">
+        <h4 class="section-title">
+          <i class="fas fa-user"></i>
+          Customer Information
+        </h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customer-select">Customer:</label>
+            <select id="customer-select" onchange="onCustomerChange()">
+              <option value="">Select Customer</option>
+              <option value="CUST_001">John Doe (VIP)</option>
+              <option value="CUST_002">Jane Smith (Regular)</option>
+              <option value="CUST_003">Bob Johnson (New)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="customer-balance">Available Balance:</label>
+            <input type="text" id="customer-balance" readonly value="$0.00" />
+          </div>
+          <div class="form-group">
+            <label for="customer-credit">Credit Limit:</label>
+            <input type="text" id="customer-credit" readonly value="$0.00" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Lines Browser -->
+      <div class="ticket-section">
+        <h4 class="section-title">
+          <i class="fas fa-search"></i>
+          Available Lines
+        </h4>
+
+        <!-- Filters -->
+        <div class="lines-filters">
+          <div class="filter-group">
+            <label>Sport:</label>
+            <select id="sport-filter" onchange="loadLines()">
+              <option value="all">All Sports</option>
+              <option value="football">Football</option>
+              <option value="basketball">Basketball</option>
+              <option value="soccer">Soccer</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Date:</label>
+            <input type="date" id="date-filter" onchange="loadLines()" />
+          </div>
+          <button class="btn btn-secondary" onclick="loadLines()">
+            <i class="fas fa-refresh"></i>
+            Refresh
+          </button>
+        </div>
+
+        <!-- Lines List -->
+        <div class="lines-list" id="lines-list">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading betting lines...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bet Slip -->
+      <div class="ticket-section">
+        <h4 class="section-title">
+          <i class="fas fa-receipt"></i>
+          Bet Slip
+          <span class="bet-count" id="bet-count">(0 bets)</span>
+        </h4>
+
+        <div class="bet-slip" id="bet-slip">
+          <div class="empty-slip">
+            <i class="fas fa-plus-circle"></i>
+            <p>Add bets to your slip</p>
+            <small>Click on odds above to add selections</small>
+          </div>
+        </div>
+
+        <!-- Bet Summary -->
+        <div class="bet-summary" id="bet-summary" style="display: none">
+          <div class="summary-row">
+            <span>Total Stake:</span>
+            <span id="total-stake">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Potential Payout:</span>
+            <span id="potential-payout">$0.00</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total Return:</span>
+            <span id="total-return">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="bet-info">
+        <span id="last-updated">Lines updated: Loading...</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="clearBetSlip()">
+          <i class="fas fa-trash"></i>
+          Clear Slip
+        </button>
+        <button type="button" class="btn btn-primary" onclick="placeBet()" id="place-bet-btn" disabled>
+          <i class="fas fa-check"></i>
+          Place Bet
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Styles -->
+<style>
+  .large-modal .modal-container {
+    max-width: 1200px;
+    width: 95%;
+  }
+
+  .lines-filters {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  .lines-filters .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .lines-filters label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-color, #333333);
+  }
+
+  .lines-filters select,
+  .lines-filters input[type='date'] {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+    min-width: 140px;
+  }
+
+  .lines-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: white;
+  }
+
+  .line-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    transition: all 0.2s ease;
+  }
+
+  .line-item:hover {
+    background: var(--surface-secondary, #f8f9fa);
+  }
+
+  .line-item:last-child {
+    border-bottom: none;
+  }
+
+  .line-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .line-teams {
+    font-weight: 600;
+    color: var(--text-color, #333333);
+    margin-bottom: 4px;
+  }
+
+  .line-meta {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    margin-bottom: 8px;
+  }
+
+  .line-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .status-upcoming {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warning-color, #ffc107);
+  }
+
+  .status-live {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--success-color, #198754);
+  }
+
+  .line-odds {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    min-width: 200px;
+  }
+
+  .odds-group {
+    text-align: center;
+  }
+
+  .odds-label {
+    font-size: 0.8rem;
+    color: var(--text-muted, #666666);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .odds-value {
+    display: block;
+    padding: 8px 12px;
+    background: var(--surface-secondary, #f8f9fa);
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-color, #333333);
+    transition: all 0.2s ease;
+  }
+
+  .odds-value:hover {
+    background: var(--primary-color, #007bff);
+    color: white;
+    border-color: var(--primary-color, #007bff);
+  }
+
+  .odds-value.selected {
+    background: var(--primary-color, #007bff);
+    color: white;
+    border-color: var(--primary-color, #007bff);
+  }
+
+  .bet-slip {
+    min-height: 150px;
+    border: 2px dashed var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-secondary, #f8f9fa);
+    transition: all 0.3s ease;
+  }
+
+  .bet-slip.has-bets {
+    border-style: solid;
+    border-color: var(--primary-color, #007bff);
+    background: rgba(0, 123, 255, 0.05);
+  }
+
+  .empty-slip {
+    text-align: center;
+    color: var(--text-muted, #666666);
+  }
+
+  .empty-slip i {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .bet-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: white;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  .bet-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bet-description {
+    font-weight: 500;
+    color: var(--text-color, #333333);
+    margin-bottom: 2px;
+  }
+
+  .bet-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted, #666666);
+  }
+
+  .bet-stake {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+  }
+
+  .stake-input {
+    width: 80px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .remove-bet {
+    background: none;
+    border: none;
+    color: var(--danger-color, #dc3545);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .remove-bet:hover {
+    background: rgba(220, 53, 69, 0.1);
+  }
+
+  .bet-summary {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--surface-secondary, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0e0e0);
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.9rem;
+  }
+
+  .summary-row.total {
+    border-top: 2px solid var(--border-color, #e0e0e0);
+    padding-top: 8px;
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--text-color, #333333);
+  }
+
+  .bet-count {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+    font-weight: normal;
+  }
+
+  .bet-info {
+    font-size: 0.9rem;
+    color: var(--text-muted, #666666);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .large-modal .modal-container {
+      width: 98%;
+      margin: 10px;
+    }
+
+    .line-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .line-odds {
+      width: 100%;
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .lines-filters {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .lines-filters .filter-group {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lines-filters label {
+      min-width: 60px;
+      margin-bottom: 0;
+    }
+
+    .bet-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .bet-stake {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .line-odds {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+
+    .odds-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .odds-label {
+      margin-bottom: 0;
+    }
+
+    .modal-actions {
+      flex-direction: column;
+    }
+
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<!-- Ticketwriter Modal JavaScript -->
+<script>
+  // Global variables for ticketwriter
+  let currentLines = [];
+  let betSlip = [];
+  let selectedCustomer = null;
+
+  // Ticketwriter Modal Functions
+  function openTicketwriterModal() {
+    const modal = document.getElementById('ticketwriter-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      // Load initial data
+      loadLines();
+    }
+  }
+
+  function closeTicketwriterModal() {
+    const modal = document.getElementById('ticketwriter-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+
+      // Clear bet slip
+      clearBetSlip();
+    }
+  }
+
+  function onCustomerChange() {
+    const customerSelect = document.getElementById('customer-select');
+    const customerId = customerSelect.value;
+
+    if (customerId) {
+      selectedCustomer = customerId;
+      // Load customer balance and credit limit
+      loadCustomerInfo(customerId);
+    } else {
+      selectedCustomer = null;
+      document.getElementById('customer-balance').value = '$0.00';
+      document.getElementById('customer-credit').value = '$0.00';
+    }
+
+    updatePlaceBetButton();
+  }
+
+  function loadCustomerInfo(customerId) {
+    // Mock customer data - in real implementation, this would come from API
+    const customerData = {
+      CUST_001: { balance: 1250.75, credit: 5000.0 },
+      CUST_002: { balance: 500.0, credit: 2000.0 },
+      CUST_003: { balance: 100.0, credit: 1000.0 },
+    };
+
+    const data = customerData[customerId] || { balance: 0, credit: 0 };
+
+    document.getElementById('customer-balance').value = `$${data.balance.toFixed(2)}`;
+    document.getElementById('customer-credit').value = `$${data.credit.toFixed(2)}`;
+  }
+
+  async function loadLines() {
+    const sportFilter = document.getElementById('sport-filter').value;
+    const dateFilter = document.getElementById('date-filter').value;
+    const linesList = document.getElementById('lines-list');
+
+    // Show loading state
+    linesList.innerHTML = `
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Loading betting lines...</span>
+    </div>
+  `;
+
+    try {
+      const params = new URLSearchParams();
+      if (sportFilter !== 'all') params.append('sport', sportFilter);
+      if (dateFilter) params.append('date', dateFilter);
+      params.append('type', 'place-bets');
+
+      const response = await fetch(`/api/lines/place-bets?${params}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        currentLines = data.data.lines;
+        displayLines(currentLines);
+        updateLastUpdated();
+      } else {
+        showNoLines();
+      }
+    } catch (error) {
+      console.error('Error loading lines:', error);
+      linesList.innerHTML = `
+      <div style="padding: 20px; text-align: center; color: var(--danger-color, #dc3545);">
+        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 12px;"></i>
+        <div>Failed to load betting lines: ${error.message}</div>
+        <button onclick="loadLines()" style="margin-top: 12px; padding: 8px 16px; background: var(--primary-color, #007bff); color: white; border: none; border-radius: 4px; cursor: pointer;">
+          <i class="fas fa-redo"></i> Retry
+        </button>
+      </div>
+    `;
+    }
+  }
+
+  function displayLines(lines) {
+    const linesList = document.getElementById('lines-list');
+
+    if (!lines || lines.length === 0) {
+      showNoLines();
+      return;
+    }
+
+    linesList.innerHTML = lines
+      .map(
+        line => `
+    <div class="line-item">
+      <div class="line-info">
+        <div class="line-teams">${line.homeTeam} vs ${line.awayTeam}</div>
+        <div class="line-meta">
+          ${line.league} • ${new Date(line.startTime).toLocaleDateString()} ${new Date(line.startTime).toLocaleTimeString()}
+          ${line.score ? ` • Score: ${line.homeTeam} ${line.score.home} - ${line.awayTeam} ${line.score.away}` : ''}
+        </div>
+        <span class="line-status status-${line.status}">${line.status}</span>
+      </div>
+      <div class="line-odds">
+        <div class="odds-group">
+          <div class="odds-label">Moneyline</div>
+          <div class="odds-value" onclick="addToBetSlip('${line.id}', 'moneyline', '${line.homeTeam}', ${line.odds.moneyline.home})">
+            ${line.homeTeam} ${formatOdds(line.odds.moneyline.home)}
+          </div>
+          ${
+            line.odds.moneyline.away
+              ? `
+            <div class="odds-value" onclick="addToBetSlip('${line.id}', 'moneyline', '${line.awayTeam}', ${line.odds.moneyline.away})">
+              ${line.awayTeam} ${formatOdds(line.odds.moneyline.away)}
+            </div>
+          `
+              : ''
+          }
+          ${
+            line.odds.moneyline.draw
+              ? `
+            <div class="odds-value" onclick="addToBetSlip('${line.id}', 'moneyline', 'Draw', ${line.odds.moneyline.draw})">
+              Draw ${formatOdds(line.odds.moneyline.draw)}
+            </div>
+          `
+              : ''
+          }
+        </div>
+        <div class="odds-group">
+          <div class="odds-label">Spread</div>
+          <div class="odds-value" onclick="addToBetSlip('${line.id}', 'spread', '${line.homeTeam} ${line.odds.spread.home > 0 ? '+' : ''}${line.odds.spread.home}', ${line.odds.spread.homeOdds})">
+            ${line.homeTeam} ${line.odds.spread.home > 0 ? '+' : ''}${line.odds.spread.home}
+          </div>
+          <div class="odds-value" onclick="addToBetSlip('${line.id}', 'spread', '${line.awayTeam} ${line.odds.spread.away > 0 ? '+' : ''}${line.odds.spread.away}', ${line.odds.spread.awayOdds})">
+            ${line.awayTeam} ${line.odds.spread.away > 0 ? '+' : ''}${line.odds.spread.away}
+          </div>
+        </div>
+        <div class="odds-group">
+          <div class="odds-label">Total</div>
+          <div class="odds-value" onclick="addToBetSlip('${line.id}', 'total', 'Over ${line.odds.total.over}', ${line.odds.total.overOdds})">
+            O ${line.odds.total.over}
+          </div>
+          <div class="odds-value" onclick="addToBetSlip('${line.id}', 'total', 'Under ${line.odds.total.under}', ${line.odds.total.underOdds})">
+            U ${line.odds.total.under}
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+      )
+      .join('');
+  }
+
+  function showNoLines() {
+    const linesList = document.getElementById('lines-list');
+    linesList.innerHTML = `
+    <div style="padding: 40px; text-align: center; color: var(--text-muted, #666666);">
+      <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 12px; opacity: 0.5;"></i>
+      <div>No betting lines found</div>
+      <small>Try adjusting your filters or check back later</small>
+    </div>
+  `;
+  }
+
+  function addToBetSlip(lineId, betType, selection, odds) {
+    const line = currentLines.find(l => l.id === lineId);
+    if (!line) return;
+
+    // Check if bet already exists
+    const existingBet = betSlip.find(
+      bet => bet.lineId === lineId && bet.betType === betType && bet.selection === selection
+    );
+    if (existingBet) {
+      // Remove existing bet
+      betSlip = betSlip.filter(
+        bet => !(bet.lineId === lineId && bet.betType === betType && bet.selection === selection)
+      );
+    } else {
+      // Add new bet
+      betSlip.push({
+        lineId,
+        event: `${line.homeTeam} vs ${line.awayTeam}`,
+        betType,
+        selection,
+        odds,
+        stake: 10, // Default stake
+        line: line,
+      });
+    }
+
+    updateBetSlip();
+    updatePlaceBetButton();
+  }
+
+  function updateBetSlip() {
+    const betSlipElement = document.getElementById('bet-slip');
+
+    if (betSlip.length === 0) {
+      betSlipElement.innerHTML = `
+      <div class="empty-slip">
+        <i class="fas fa-plus-circle"></i>
+        <p>Add bets to your slip</p>
+        <small>Click on odds above to add selections</small>
+      </div>
+    `;
+      betSlipElement.classList.remove('has-bets');
+      document.getElementById('bet-summary').style.display = 'none';
+    } else {
+      betSlipElement.innerHTML = betSlip
+        .map(
+          (bet, index) => `
+      <div class="bet-item">
+        <div class="bet-details">
+          <div class="bet-description">${bet.event}</div>
+          <div class="bet-meta">${bet.betType} • ${bet.selection} (${formatOdds(bet.odds)})</div>
+        </div>
+        <div class="bet-stake">
+          <span>$</span>
+          <input type="number" class="stake-input" value="${bet.stake}" min="1" step="0.01" onchange="updateBetStake(${index}, this.value)">
+          <button class="remove-bet" onclick="removeBet(${index})">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    `
+        )
+        .join('');
+
+      betSlipElement.classList.add('has-bets');
+      updateBetSummary();
+      document.getElementById('bet-summary').style.display = 'block';
+    }
+
+    // Update bet count
+    document.getElementById('bet-count').textContent = `(${betSlip.length} bet${betSlip.length !== 1 ? 's' : ''})`;
+  }
+
+  function updateBetStake(index, stake) {
+    if (index >= 0 && index < betSlip.length) {
+      betSlip[index].stake = parseFloat(stake) || 0;
+      updateBetSummary();
+    }
+  }
+
+  function removeBet(index) {
+    if (index >= 0 && index < betSlip.length) {
+      betSlip.splice(index, 1);
+      updateBetSlip();
+      updatePlaceBetButton();
+    }
+  }
+
+  function updateBetSummary() {
+    const totalStake = betSlip.reduce((sum, bet) => sum + bet.stake, 0);
+    const potentialPayout = betSlip.reduce((sum, bet) => {
+      const decimalOdds = bet.odds > 0 ? bet.odds / 100 + 1 : 100 / Math.abs(bet.odds) + 1;
+      return sum + bet.stake * decimalOdds;
+    }, 0);
+    const totalReturn = totalStake + (potentialPayout - totalStake);
+
+    document.getElementById('total-stake').textContent = `$${totalStake.toFixed(2)}`;
+    document.getElementById('potential-payout').textContent = `$${(potentialPayout - totalStake).toFixed(2)}`;
+    document.getElementById('total-return').textContent = `$${totalReturn.toFixed(2)}`;
+  }
+
+  function clearBetSlip() {
+    betSlip = [];
+    updateBetSlip();
+    updatePlaceBetButton();
+  }
+
+  function updatePlaceBetButton() {
+    const placeBetBtn = document.getElementById('place-bet-btn');
+    const canPlaceBet = betSlip.length > 0 && selectedCustomer;
+
+    placeBetBtn.disabled = !canPlaceBet;
+    placeBetBtn.textContent = canPlaceBet ? 'Place Bet' : 'Select Customer & Add Bets';
+  }
+
+  function formatOdds(odds) {
+    if (odds > 0) {
+      return `+${odds}`;
+    } else {
+      return odds.toString();
+    }
+  }
+
+  function updateLastUpdated() {
+    const now = new Date();
+    document.getElementById('last-updated').textContent = `Lines updated: ${now.toLocaleString()}`;
+  }
+
+  async function placeBet() {
+    if (betSlip.length === 0 || !selectedCustomer) {
+      showError('Please select a customer and add bets to your slip');
+      return;
+    }
+
+    const placeBetBtn = document.getElementById('place-bet-btn');
+    placeBetBtn.disabled = true;
+    placeBetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Bet...';
+
+    try {
+      const betData = {
+        customerId: selectedCustomer,
+        bets: betSlip.map(bet => ({
+          lineId: bet.lineId,
+          betType: bet.betType,
+          selection: bet.selection,
+          odds: bet.odds,
+          stake: bet.stake,
+        })),
+        totalStake: betSlip.reduce((sum, bet) => sum + bet.stake, 0),
+        timestamp: new Date().toISOString(),
+      };
+
+      // In real implementation, this would send to betting API
+      console.log('Placing bet:', betData);
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      showSuccess('Bet placed successfully!');
+      clearBetSlip();
+    } catch (error) {
+      console.error('Error placing bet:', error);
+      showError('Failed to place bet. Please try again.');
+    } finally {
+      placeBetBtn.disabled = false;
+      placeBetBtn.innerHTML = '<i class="fas fa-check"></i> Place Bet';
+    }
+  }
+
+  // Helper functions (should be defined elsewhere in your app)
+  function getAuthToken() {
+    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  }
+
+  function showSuccess(message) {
+    console.log('✅ Success:', message);
+    // Implement your success notification system
+    alert('Success: ' + message);
+  }
+
+  function showError(message) {
+    console.error('❌ Error:', message);
+    // Implement your error notification system
+    alert('Error: ' + message);
+  }
+
+  // Close modal when clicking outside
+  document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('ticketwriter-modal');
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+          closeTicketwriterModal();
+        }
+      });
+    }
+
+    // Handle escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeTicketwriterModal();
+      }
+    });
+
+    // Set default date to today
+    const dateFilter = document.getElementById('date-filter');
+    if (dateFilter) {
+      dateFilter.value = new Date().toISOString().split('T')[0];
+    }
+  });
+
+  // Export functions for global access
+  window.openTicketwriterModal = openTicketwriterModal;
+  window.closeTicketwriterModal = closeTicketwriterModal;
+  window.loadLines = loadLines;
+  window.clearBetSlip = clearBetSlip;
+  window.placeBet = placeBet;
+</script>

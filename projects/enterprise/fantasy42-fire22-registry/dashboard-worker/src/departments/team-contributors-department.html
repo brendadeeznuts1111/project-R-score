@@ -1,0 +1,1542 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏢 Fire22 Team Contributors - Department Overview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .header {
+        background: rgba(10, 14, 39, 0.9);
+        border-bottom: 2px solid rgba(64, 224, 208, 0.3);
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header h1 {
+        font-size: clamp(28px, 5vw, 42px);
+        background: linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        animation: header-glow 4s ease-in-out infinite;
+      }
+
+      @keyframes header-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .header-subtitle {
+        color: #9ca3af;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .header-stat {
+        text-align: center;
+      }
+
+      .header-stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #40e0d0;
+        display: block;
+      }
+
+      .header-stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 30px;
+        padding: 15px 0;
+      }
+
+      .breadcrumb a {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb a:hover {
+        color: #ff6b35;
+      }
+
+      .breadcrumb-separator {
+        margin: 0 10px;
+        color: #6b7280;
+      }
+
+      .breadcrumb-current {
+        color: #ff6b35;
+        font-weight: 600;
+      }
+
+      .department-overview {
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-overview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #ff6b35, #f7931e);
+      }
+
+      .overview-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .overview-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: rgba(255, 107, 53, 0.2);
+        border: 3px solid rgba(255, 107, 53, 0.4);
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+      }
+
+      .overview-title h2 {
+        font-size: 28px;
+        color: #ff6b35;
+        margin-bottom: 8px;
+      }
+
+      .overview-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+      }
+
+      .department-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+      }
+
+      .department-card {
+        background: rgba(10, 14, 39, 0.7);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 16px;
+        padding: 25px;
+        backdrop-filter: blur(15px);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .department-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--dept-color, linear-gradient(90deg, #40e0d0, #64ffda));
+      }
+
+      .department-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(64, 224, 208, 0.4);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .department-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .department-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background: var(--dept-bg, rgba(64, 224, 208, 0.2));
+        border: 2px solid var(--dept-border, rgba(64, 224, 208, 0.4));
+      }
+
+      .department-title {
+        flex: 1;
+      }
+
+      .department-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--dept-color, #40e0d0);
+        margin-bottom: 4px;
+      }
+
+      .department-description {
+        font-size: 12px;
+        color: #9ca3af;
+        line-height: 1.4;
+      }
+
+      .team-members {
+        space-y: 15px;
+      }
+
+      .team-member {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-member::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .team-member:hover::before {
+        left: 100%;
+      }
+
+      .team-member:hover {
+        background: rgba(0, 0, 0, 0.4);
+        border-color: rgba(64, 224, 208, 0.4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(64, 224, 208, 0.2);
+      }
+
+      .team-member.card-expanded {
+        transform: scale(1.05);
+        border-color: rgba(64, 224, 208, 0.8);
+        background: rgba(10, 14, 39, 0.9);
+        box-shadow: 0 20px 50px rgba(64, 224, 208, 0.3);
+        z-index: 100;
+      }
+
+      .member-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: var(--member-bg, linear-gradient(135deg, #ff6b35, #f7931e));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .member-info {
+        flex: 1;
+      }
+
+      .member-name {
+        font-size: 14px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin-bottom: 2px;
+      }
+
+      .member-role {
+        font-size: 12px;
+        color: var(--dept-color, #40e0d0);
+        margin-bottom: 4px;
+      }
+
+      .member-specialization {
+        font-size: 10px;
+        color: #9ca3af;
+        line-height: 1.3;
+      }
+
+      .member-stats {
+        text-align: right;
+      }
+
+      .member-contributions {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--dept-color, #40e0d0);
+        display: block;
+      }
+
+      .member-contributions-label {
+        font-size: 9px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .member-badges {
+        display: flex;
+        gap: 4px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+      }
+
+      .member-badge {
+        font-size: 8px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .badge-senior {
+        background: rgba(255, 107, 53, 0.2);
+        color: #ff8a65;
+        border: 1px solid rgba(255, 107, 53, 0.3);
+      }
+
+      .badge-lead {
+        background: rgba(139, 92, 246, 0.2);
+        color: #a78bfa;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+      }
+
+      .badge-junior {
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+      }
+
+      .badge-specialist {
+        background: rgba(6, 182, 212, 0.2);
+        color: #22d3ee;
+        border: 1px solid rgba(6, 182, 212, 0.3);
+      }
+
+      /* Department Color Themes */
+      .dept-frontend {
+        --dept-color: #ff6b35;
+        --dept-bg: rgba(255, 107, 53, 0.2);
+        --dept-border: rgba(255, 107, 53, 0.4);
+      }
+
+      .dept-backend {
+        --dept-color: #22c55e;
+        --dept-bg: rgba(34, 197, 94, 0.2);
+        --dept-border: rgba(34, 197, 94, 0.4);
+      }
+
+      .dept-design {
+        --dept-color: #8b5cf6;
+        --dept-bg: rgba(139, 92, 246, 0.2);
+        --dept-border: rgba(139, 92, 246, 0.4);
+      }
+
+      .dept-devops {
+        --dept-color: #06b6d4;
+        --dept-bg: rgba(6, 182, 212, 0.2);
+        --dept-border: rgba(6, 182, 212, 0.4);
+      }
+
+      .dept-data {
+        --dept-color: #f59e0b;
+        --dept-bg: rgba(245, 158, 11, 0.2);
+        --dept-border: rgba(245, 158, 11, 0.4);
+      }
+
+      .dept-docs {
+        --dept-color: #ec4899;
+        --dept-bg: rgba(236, 72, 153, 0.2);
+        --dept-border: rgba(236, 72, 153, 0.4);
+      }
+
+      .dept-ai {
+        --dept-color: #40e0d0;
+        --dept-bg: rgba(64, 224, 208, 0.2);
+        --dept-border: rgba(64, 224, 208, 0.4);
+      }
+
+      .dept-communications {
+        --dept-color: #10b981;
+        --dept-bg: rgba(16, 185, 129, 0.2);
+        --dept-border: rgba(16, 185, 129, 0.4);
+      }
+
+      .dept-telegram {
+        --dept-color: #3b82f6;
+        --dept-bg: rgba(59, 130, 246, 0.2);
+        --dept-border: rgba(59, 130, 246, 0.4);
+      }
+
+      .org-chart {
+        background: rgba(10, 14, 39, 0.8);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 40px;
+      }
+
+      .org-chart h2 {
+        color: #ff6b35;
+        font-size: 24px;
+        margin-bottom: 25px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .org-levels {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .org-level {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .org-role {
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--role-color, #40e0d0);
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        min-width: 180px;
+      }
+
+      .org-role-title {
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--role-color, #40e0d0);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .org-role-members {
+        font-size: 10px;
+        color: #9ca3af;
+        line-height: 1.4;
+      }
+
+      .footer-stats {
+        background: rgba(10, 14, 39, 0.9);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 16px;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .footer-stats h2 {
+        color: #ff6b35;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .contribution-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 25px;
+      }
+
+      .contribution-item {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .contribution-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #40e0d0;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .contribution-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Team member highlighting animations */
+      .member-highlighted {
+        position: relative;
+        z-index: 10;
+      }
+
+      .member-highlighted::before {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: 12px;
+        padding: 3px;
+        background: linear-gradient(
+          45deg,
+          rgba(64, 224, 208, 0.6),
+          rgba(74, 222, 128, 0.6),
+          rgba(34, 197, 94, 0.6),
+          rgba(64, 224, 208, 0.6)
+        );
+        background-size: 200% 200%;
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: member-highlight-glow 2s ease-in-out infinite;
+        z-index: -1;
+      }
+
+      @keyframes member-highlight-glow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+          opacity: 0.8;
+        }
+        50% {
+          background-position: 100% 50%;
+          opacity: 1;
+        }
+      }
+
+      /* Smooth scroll behavior for hash navigation */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Team Member Modal Overlay System */
+      .team-member-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .team-member-modal.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-card {
+        background: linear-gradient(135deg, #0a0e27 0%, #151932 50%, #1a1f3a 100%);
+        border: 2px solid rgba(64, 224, 208, 0.4);
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        transform: scale(0.8) translateY(50px);
+        transition: all 0.3s ease;
+      }
+
+      .team-member-modal.active .modal-card {
+        transform: scale(1) translateY(0);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #9ca3af;
+        font-size: 24px;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        z-index: 10;
+      }
+
+      .modal-close:hover {
+        color: #ff6b35;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(64, 224, 208, 0.2);
+      }
+
+      .modal-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: bold;
+        color: white;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        flex-shrink: 0;
+      }
+
+      .modal-info {
+        flex: 1;
+      }
+
+      .modal-name {
+        font-size: 28px;
+        font-weight: bold;
+        color: #e0e6ed;
+        margin-bottom: 8px;
+      }
+
+      .modal-role {
+        font-size: 16px;
+        color: var(--dept-color, #40e0d0);
+        margin-bottom: 12px;
+      }
+
+      .modal-specialization {
+        font-size: 14px;
+        color: #9ca3af;
+        line-height: 1.5;
+      }
+
+      .modal-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .modal-stat {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(64, 224, 208, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .modal-stat-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: var(--dept-color, #40e0d0);
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .modal-stat-label {
+        font-size: 12px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .modal-badges {
+        display: flex;
+        gap: 8px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .modal-badge {
+        font-size: 10px;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .modal-contributions {
+        margin-top: 30px;
+      }
+
+      .modal-contributions h4 {
+        color: #ff6b35;
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .contribution-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(64, 224, 208, 0.1);
+      }
+
+      .contribution-item:last-child {
+        border-bottom: none;
+      }
+
+      .contribution-name {
+        color: #e0e6ed;
+        font-weight: 500;
+      }
+
+      .contribution-count {
+        color: var(--dept-color, #40e0d0);
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      /* Error Banner System */
+      .error-banner {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        border: 2px solid rgba(239, 68, 68, 0.8);
+        border-radius: 12px;
+        padding: 0;
+        max-width: 400px;
+        z-index: 2000;
+        animation: errorSlideIn 0.3s ease-out;
+        box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+      }
+
+      .error-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        position: relative;
+      }
+
+      .error-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+
+      .error-details {
+        flex: 1;
+        color: white;
+      }
+
+      .error-message {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        line-height: 1.4;
+      }
+
+      .error-code {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.8);
+        font-family: monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .error-close {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 20px;
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .error-close:hover {
+        color: white;
+      }
+
+      @keyframes errorSlideIn {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* Fallback UI when errors prevent normal functionality */
+      .error-fallback {
+        background: rgba(10, 14, 39, 0.9);
+        border: 2px solid rgba(239, 68, 68, 0.6);
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        margin: 20px;
+      }
+
+      .error-fallback-title {
+        color: #ef4444;
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .error-fallback-message {
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+
+      .error-fallback-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .error-fallback-button {
+        background: linear-gradient(135deg, #374151, #4b5563);
+        color: white;
+        border: 1px solid #6b7280;
+        border-radius: 8px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .error-fallback-button:hover {
+        background: linear-gradient(135deg, #4b5563, #6b7280);
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 768px) {
+        .department-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .header-stats {
+          gap: 20px;
+        }
+
+        .container {
+          padding: 30px 15px;
+        }
+
+        .team-member {
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+        }
+
+        .member-stats {
+          text-align: center;
+        }
+      }
+
+      /* Live Implementation Links */
+      .implementation-links {
+        margin-top: 40px;
+        padding: 30px;
+        background: rgba(10, 14, 39, 0.7);
+        border: 2px solid rgba(64, 224, 208, 0.2);
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .implementation-links::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dept-primary), var(--dept-gradient));
+        animation: linkGradient 3s ease-in-out infinite;
+      }
+
+      @keyframes linkGradient {
+        0%,
+        100% {
+          transform: translateX(-100%);
+        }
+        50% {
+          transform: translateX(100%);
+        }
+      }
+
+      .links-header {
+        font-size: 24px;
+        color: var(--dept-primary);
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .link-card {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--dept-border);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .link-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, var(--dept-hover), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .link-card:hover::before {
+        left: 100%;
+      }
+
+      .link-card:hover {
+        transform: translateY(-3px) scale(1.02);
+        background: rgba(0, 0, 0, 0.5);
+        border-color: var(--dept-primary);
+        box-shadow: 0 10px 30px var(--dept-shadow);
+      }
+
+      .link-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--dept-primary);
+        margin-bottom: 8px;
+      }
+
+      .link-description {
+        font-size: 13px;
+        color: #9ca3af;
+        flex: 1;
+      }
+
+      .link-arrow {
+        font-size: 20px;
+        color: var(--dept-primary);
+        align-self: flex-end;
+        margin-top: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .link-card:hover .link-arrow {
+        transform: translateX(5px);
+      }
+
+      @media (max-width: 768px) {
+        .links-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <h1>🏢 Fire22 Team Contributors</h1>
+      <p class="header-subtitle">Department Overview & Organizational Structure</p>
+      <p class="header-subtitle">Building the Future of Sports Betting Technology</p>
+
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-value">12</span>
+          <span class="header-stat-label">Team Members</span>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">9</span>
+          <span class="header-stat-label">Departments</span>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">620+</span>
+          <span class="header-stat-label">Contributions</span>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-value">100%</span>
+          <span class="header-stat-label">System Coverage</span>
+        </div>
+      </div>
+
+      <!-- Live Implementation Links Section -->
+      <div class="implementation-links">
+        <h3 class="links-header">🔗 Live Implementation Links</h3>
+        <div class="links-grid">
+          <a
+            href="../../packages/@fire22/grid-ui/fire22-highlight-system-showcase.html"
+            class="link-card"
+            target="_blank"
+          >
+            <div class="link-title">🌟 Fire22 Showcase</div>
+            <div class="link-description">CSS highlight system showcase</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../team/" class="link-card" target="_blank">
+            <div class="link-title">👥 Team Directory</div>
+            <div class="link-description">Complete team member directory</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../recognition/" class="link-card" target="_blank">
+            <div class="link-title">🏆 Recognition Wall</div>
+            <div class="link-description">Employee achievements</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../training/" class="link-card" target="_blank">
+            <div class="link-title">📚 Training Portal</div>
+            <div class="link-description">Professional development resources</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../reviews/" class="link-card" target="_blank">
+            <div class="link-title">🎯 Performance Reviews</div>
+            <div class="link-description">Performance management system</div>
+            <div class="link-arrow">→</div>
+          </a>
+          <a href="../innovation/" class="link-card" target="_blank">
+            <div class="link-title">💡 Innovation Hub</div>
+            <div class="link-description">Ideas and suggestions portal</div>
+            <div class="link-arrow">→</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="../dashboard.html">🏠 Dashboard</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="./">🏢 Departments</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Team Contributors</span>
+      </nav>
+
+      <!-- Welcome Section -->
+      <div class="department-overview" style="margin-bottom: 30px">
+        <div class="overview-header">
+          <div class="overview-icon">👋</div>
+          <div class="overview-title">
+            <h2>Welcome to Team Contributors Department</h2>
+            <div class="overview-subtitle">Fostering collaboration and innovation across teams</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 12px">
+          <h3 style="color: #ff6b35; margin-bottom: 15px; font-size: 20px">🎯 Department Mission</h3>
+          <p style="color: #e0e6ed; line-height: 1.8; margin-bottom: 20px">
+            The Team Contributors Department fosters cross-functional collaboration and innovation, bringing together
+            diverse talents to drive special projects, initiatives, and breakthrough solutions that advance our
+            organization's goals.
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+              gap: 20px;
+              margin-top: 25px;
+            "
+          >
+            <div
+              style="
+                padding: 15px;
+                background: rgba(255, 107, 53, 0.1);
+                border-left: 4px solid #ff6b35;
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: #ff6b35; margin-bottom: 10px">👔 Department Lead</h4>
+              <div style="color: #e0e6ed; font-weight: bold">Brenda Williams</div>
+              <div style="color: #9ca3af; font-size: 14px">Chief Technology Officer</div>
+              <div style="color: #9ca3af; font-size: 12px; margin-top: 5px">18+ years experience</div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(255, 107, 53, 0.1);
+                border-left: 4px solid #ff6b35;
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: #ff6b35; margin-bottom: 10px">📊 Key Metrics</h4>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                <span style="color: #9ca3af">Project Success:</span>
+                <span style="color: #10b981; font-weight: bold">91%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: #9ca3af">Innovation:</span>
+                <span style="color: #10b981; font-weight: bold">23 patents</span>
+              </div>
+            </div>
+
+            <div
+              style="
+                padding: 15px;
+                background: rgba(255, 107, 53, 0.1);
+                border-left: 4px solid #ff6b35;
+                border-radius: 8px;
+              "
+            >
+              <h4 style="color: #ff6b35; margin-bottom: 10px">🏆 Top Contributors</h4>
+              <div style="font-size: 14px">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
+                  <span style="color: #fbbf24">🥇 B. Williams</span>
+                  <span style="color: #9ca3af">Lead</span>
+                </div>
+                <div style="display: flex; justify-content: space-between">
+                  <span style="color: #d1d5db">🥈 Claude AI</span>
+                  <span style="color: #9ca3af">Architect</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="color: #ff6b35; margin: 25px 0 15px; font-size: 20px">💼 Core Responsibilities</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 107, 53, 0.3);
+              "
+            >
+              <span style="color: #ff6b35">•</span>
+              Cross-Team Collaboration
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 107, 53, 0.3);
+              "
+            >
+              <span style="color: #ff6b35">•</span>
+              Innovation Projects
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 107, 53, 0.3);
+              "
+            >
+              <span style="color: #ff6b35">•</span>
+              Special Initiatives
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 107, 53, 0.3);
+              "
+            >
+              <span style="color: #ff6b35">•</span>
+              Knowledge Sharing
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 107, 53, 0.3);
+              "
+            >
+              <span style="color: #ff6b35">•</span>
+              R&D Coordination
+            </div>
+            <div
+              style="
+                padding: 10px 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 107, 53, 0.3);
+              "
+            >
+              <span style="color: #ff6b35">•</span>
+              Team Development
+            </div>
+          </div>
+
+          <h3 style="color: #ff6b35; margin: 25px 0 15px; font-size: 20px">🚀 Recent Contributions</h3>
+          <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px">
+            <ul style="list-style: none; padding: 0; margin: 0">
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Filed 23 patents for innovative technology solutions</span>
+              </li>
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Created Fire22 Security Scanner with sub-millisecond performance</span>
+              </li>
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Led cross-functional teams delivering 91% project success rate</span>
+              </li>
+              <li style="margin-bottom: 10px; padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Established innovation lab generating 40+ new product ideas</span>
+              </li>
+              <li style="padding-left: 20px; position: relative">
+                <span style="position: absolute; left: 0; color: #10b981">✓</span>
+                <span style="color: #e0e6ed">Created mentorship program connecting 100+ team members</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Fire22 Package Showcase -->
+          <h3 style="color: #ff6b35; margin: 35px 0 20px; font-size: 22px">📦 Fire22 Package Ecosystem</h3>
+          <div
+            style="
+              background: rgba(0, 0, 0, 0.4);
+              padding: 25px;
+              border-radius: 12px;
+              border: 1px solid rgba(255, 107, 53, 0.3);
+            "
+          >
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px">
+              <!-- Fire22 Security Scanner - Updated with Fire22 Harmony Branding -->
+              <div
+                style="
+                  background: rgba(64, 224, 208, 0.1);
+                  padding: 20px;
+                  border-radius: 12px;
+                  border-left: 4px solid #40e0d0;
+                "
+              >
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px">
+                  <span style="font-size: 24px">🛡️</span>
+                  <div>
+                    <h4 style="color: #40e0d0; font-size: 16px; margin: 0">@fire22/security-scanner</h4>
+                    <div style="color: #9ca3af; font-size: 12px">Enterprise Security Package</div>
+                  </div>
+                </div>
+
+                <div
+                  class="fire22-metrics-container"
+                  style="
+                    background: rgba(0, 0, 0, 0.4);
+                    border: 1px solid rgba(64, 224, 208, 0.3);
+                    border-radius: 8px;
+                    font-family: 'SF Mono', monospace;
+                    padding: 12px 16px;
+                    margin: 15px 0;
+                  "
+                >
+                  <div
+                    class="metric-line"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px"
+                  >
+                    <span style="color: #9ca3af; font-size: 11px">⚡ Performance:</span>
+                    <span style="color: #10b981; font-weight: bold; font-size: 12px">0.72ms avg</span>
+                  </div>
+                  <div
+                    class="metric-line"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px"
+                  >
+                    <span style="color: #9ca3af; font-size: 11px">🎯 Throughput:</span>
+                    <span style="color: #10b981; font-weight: bold; font-size: 12px">24,868 ops/sec</span>
+                  </div>
+                  <div
+                    class="metric-line"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px"
+                  >
+                    <span style="color: #9ca3af; font-size: 11px">🔍 Detection:</span>
+                    <span style="color: #06b6d4; font-weight: bold; font-size: 12px">CVE + Secrets</span>
+                  </div>
+                  <div class="metric-line" style="display: flex; justify-content: space-between; align-items: center">
+                    <span style="color: #9ca3af; font-size: 11px">📊 Coverage:</span>
+                    <span style="color: #10b981; font-weight: bold; font-size: 12px">95%</span>
+                  </div>
+                </div>
+
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 15px">
+                  Advanced vulnerability scanner with Bun-native performance, real-time CVE detection, and comprehensive
+                  secret scanning.
+                </div>
+
+                <div class="fire22-package-badge" style="display: flex; gap: 8px; flex-wrap: wrap">
+                  <span
+                    style="
+                      background: rgba(64, 224, 208, 0.2);
+                      color: #40e0d0;
+                      padding: 4px 8px;
+                      border-radius: 12px;
+                      font-size: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    FIRE22
+                  </span>
+                  <span
+                    style="
+                      background: rgba(239, 68, 68, 0.2);
+                      color: #ef4444;
+                      padding: 4px 8px;
+                      border-radius: 12px;
+                      font-size: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    SECURITY
+                  </span>
+                  <span
+                    style="
+                      background: rgba(16, 185, 129, 0.2);
+                      color: #10b981;
+                      padding: 4px 8px;
+                      border-radius: 12px;
+                      font-size: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    BUN-NATIVE
+                  </span>
+                </div>
+              </div>
+
+              <!-- Fire22 Dashboard Worker -->
+              <div
+                style="
+                  background: rgba(6, 182, 212, 0.1);
+                  padding: 20px;
+                  border-radius: 12px;
+                  border-left: 4px solid #06b6d4;
+                "
+              >
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px">
+                  <span style="font-size: 24px">🏢</span>
+                  <div>
+                    <h4 style="color: #06b6d4; font-size: 16px; margin: 0">fire22-dashboard-worker</h4>
+                    <div style="color: #9ca3af; font-size: 12px">Organizational Platform</div>
+                  </div>
+                </div>
+
+                <div
+                  style="
+                    margin: 15px 0;
+                    padding: 12px;
+                    background: rgba(0, 0, 0, 0.3);
+                    border-radius: 8px;
+                    font-family: monospace;
+                    font-size: 11px;
+                  "
+                >
+                  <div style="color: #10b981">👥 Team Members: 87 specialists</div>
+                  <div style="color: #06b6d4">🏢 Departments: 10 divisions</div>
+                  <div style="color: #ef4444">🔒 Security: Zero breaches (18+ months)</div>
+                  <div style="color: #9ca3af">📊 Uptime: 99.99% availability</div>
+                </div>
+
+                <div style="color: #e0e6ed; font-size: 13px; margin-bottom: 15px">
+                  Complete organizational management platform with department structure, team hierarchy, and integrated
+                  security systems.
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                  <span
+                    style="
+                      background: rgba(255, 107, 53, 0.2);
+                      color: #ff6b35;
+                      padding: 4px 8px;
+                      border-radius: 4px;
+                      font-size: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    ENTERPRISE
+                  </span>
+                  <span
+                    style="
+                      background: rgba(139, 92, 246, 0.2);
+                      color: #8b5cf6;
+                      padding: 4px 8px;
+                      border-radius: 4px;
+                      font-size: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    SCALABLE
+                  </span>
+                  <span
+                    style="
+                      background: rgba(16, 185, 129, 0.2);
+                      color: #10b981;
+                      padding: 4px 8px;
+                      border-radius: 4px;
+                      font-size: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    CLOUDFLARE
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.3); border-radius: 10px">
+              <h4 style="color: #ff6b35; margin-bottom: 15px; display: flex; align-items: center; gap: 10px">
+                <span>🚀</span>
+                Package Ecosystem Achievements
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px">
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 16px">✅</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold; font-size: 14px">Enterprise Security</div>
+                    <div style="color: #9ca3af; font-size: 12px">SOC 2 Type II compliance</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 16px">⚡</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold; font-size: 14px">Ultra Performance</div>
+                    <div style="color: #9ca3af; font-size: 12px">Sub-millisecond scanning</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 16px">🧪</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold; font-size: 14px">95% Test Coverage</div>
+                    <div style="color: #9ca3af; font-size: 12px">Comprehensive validation</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <span style="color: #10b981; font-size: 16px">🔐</span>
+                  <div>
+                    <div style="color: #e0e6ed; font-weight: bold; font-size: 14px">Native Bun APIs</div>
+                    <div style="color: #9ca3af; font-size: 12px">OS-integrated security</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Tasks Section (Dynamic) -->
+          <div class="current-tasks-section" style="margin-top: 40px">
+            <div
+              id="department-tasks-container"
+              style="padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 12px"
+            >
+              <div style="text-align: center; padding: 40px; color: #6b7280">
+                <div
+                  style="
+                    display: inline-block;
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid #e5e7eb;
+                    border-top-color: var(--dept-primary);
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                  "
+                ></div>
+                <p style="margin-top: 16px; color: var(--dept-primary)">Loading tasks...</p>
+              </div>
+            </div>
+          </div>
+
+          <style>
+            @keyframes spin {
+              to {
+                transform: rotate(360deg);
+              }
+            }
+          </style>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

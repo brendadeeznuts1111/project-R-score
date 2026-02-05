@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>Fire22 Dashboard - Error Code Registry</title>
+  <subtitle>Real-time updates for Fire22 Dashboard error codes, system alerts, and troubleshooting information</subtitle>
+  <link href="https://dashboard-worker.nolarose2503.workers.dev/src/feeds/error-codes-atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://dashboard-worker.nolarose2503.workers.dev/" rel="alternate" type="text/html"/>
+  <id>https://dashboard-worker.nolarose2503.workers.dev/feeds/error-codes</id>
+  <updated>2025-01-28T00:00:00Z</updated>
+  <generator uri="https://fire22.ag" version="1.0.0">Fire22 Dashboard Error Code System</generator>
+  <rights>© 2025 Fire22 Dashboard. All rights reserved.</rights>
+  <author>
+    <name>Fire22 Technology Department</name>
+    <email>tech-team@fire22.ag</email>
+  </author>
+  <category term="Technology"/>
+  <category term="System Monitoring"/>
+  <category term="Error Tracking"/>
+  <icon>https://dashboard-worker.nolarose2503.workers.dev/assets/fire22-logo.png</icon>
+  <logo>https://dashboard-worker.nolarose2503.workers.dev/assets/fire22-logo.png</logo>
+
+  <!-- System Errors (E1xxx) - Technology Department -->
+  <entry>
+    <title>🔴 CRITICAL: E1001 - SYSTEM_INIT_FAILED</title>
+    <link href="https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E1001" rel="alternate" type="text/html"/>
+    <id>https://dashboard-worker.nolarose2503.workers.dev/error-codes/E1001</id>
+    <published>2025-01-28T00:00:00Z</published>
+    <updated>2025-01-28T00:00:00Z</updated>
+    <summary type="text">System initialization failed - Core system components failed to initialize properly during application startup.</summary>
+    <content type="html"><![CDATA[
+      <h3>System Initialization Failed</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> CRITICAL</p>
+      <p><strong>HTTP Status:</strong> 500</p>
+      <p><strong>Description:</strong> Core system components failed to initialize properly during application startup.</p>
+      
+      <h4>🔍 Common Causes:</h4>
+      <ul>
+        <li>Insufficient system resources (memory, disk space)</li>
+        <li>Missing or corrupted configuration files</li>
+        <li>Failed dependency injection</li>
+        <li>Database connection failure during startup</li>
+        <li>Missing environment variables</li>
+      </ul>
+      
+      <h4>💡 Quick Fix Commands:</h4>
+      <pre><code>
+# Check system resources
+free -m && df -h
+
+# Validate environment
+bun run env:validate
+
+# Check system logs  
+journalctl -u fire22-dashboard
+
+# Test database connectivity
+bun run health:database
+      </code></pre>
+      
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag</p>
+      <p><strong>📚 Documentation:</strong> <a href="/docs/system/troubleshooting">System Troubleshooting Guide</a></p>
+    ]]></content>
+    <author>
+      <name>Fire22 Technology Department</name>
+      <email>tech-team@fire22.ag</email>
+    </author>
+    <category term="System"/>
+    <category term="Critical"/>
+    <category term="Technology"/>
+  </entry>
+
+  <entry>
+    <title>🔴 CRITICAL: E2001 - DB_CONNECTION_FAILED</title>
+    <link href="https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E2001" rel="alternate" type="text/html"/>
+    <id>https://dashboard-worker.nolarose2503.workers.dev/error-codes/E2001</id>
+    <published>2025-01-28T00:00:00Z</published>
+    <updated>2025-01-28T00:00:00Z</updated>
+    <summary type="text">Database connection failed - Unable to establish connection to database server, preventing all data operations.</summary>
+    <content type="html"><![CDATA[
+      <h3>Database Connection Failed</h3>
+      <p><strong>Department:</strong> Technology Department 💻</p>
+      <p><strong>Severity:</strong> CRITICAL</p>
+      <p><strong>HTTP Status:</strong> 503</p>
+      <p><strong>Description:</strong> Unable to establish connection to database server, preventing all data operations.</p>
+      
+      <h4>🔍 Immediate Actions:</h4>
+      <pre><code>
+# Check database health
+bun run health:database
+
+# Test connectivity
+ping db-host.fire22.ag
+
+# Verify connection string
+bun run test:db-connection
+
+# Check database logs
+docker logs fire22-postgres
+      </code></pre>
+      
+      <p><strong>🚨 Impact:</strong> All database operations are blocked</p>
+      <p><strong>📞 Emergency Contact:</strong> tech-team@fire22.ag | ops-manager@fire22.ag</p>
+    ]]></content>
+    <author>
+      <name>Fire22 Technology Department</name>
+      <email>tech-team@fire22.ag</email>
+    </author>
+    <category term="Database"/>
+    <category term="Critical"/>
+    <category term="Technology"/>
+  </entry>
+
+  <entry>
+    <title>🔴 CRITICAL: E7001 - FIRE22_API_CONNECTION_FAILED</title>
+    <link href="https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E7001" rel="alternate" type="text/html"/>
+    <id>https://dashboard-worker.nolarose2503.workers.dev/error-codes/E7001</id>
+    <published>2025-01-28T00:00:00Z</published>
+    <updated>2025-01-28T00:00:00Z</updated>
+    <summary type="text">Fire22 API connection failed - Unable to connect to Fire22 sportsbook API, preventing betting operations.</summary>
+    <content type="html"><![CDATA[
+      <h3>Fire22 API Connection Failed</h3>
+      <p><strong>Department:</strong> Operations Department ⚙️ | Technology Department 💻</p>
+      <p><strong>Severity:</strong> CRITICAL</p>
+      <p><strong>HTTP Status:</strong> 503</p>
+      <p><strong>Description:</strong> Unable to connect to Fire22 sportsbook API, preventing betting operations and data sync.</p>
+      
+      <h4>🔍 Emergency Diagnostics:</h4>
+      <pre><code>
+# Check Fire22 API status
+curl https://api.fire22.ag/health
+
+# Test DNS resolution
+nslookup api.fire22.ag
+
+# Verify API credentials
+curl -H "Authorization: Bearer $FIRE22_TOKEN" https://api.fire22.ag/auth/verify
+
+# Check rate limits
+curl -I https://api.fire22.ag/v1/limits
+      </code></pre>
+      
+      <p><strong>🚨 Business Impact:</strong> Sportsbook operations disrupted, customer betting blocked</p>
+      <p><strong>📞 Emergency Escalation:</strong> ops-manager@fire22.ag (Primary) | tech-team@fire22.ag (Technical)</p>
+      <p><strong>📈 Monitor:</strong> <a href="/api/fire22/status">Fire22 Integration Dashboard</a></p>
+    ]]></content>
+    <author>
+      <name>Fire22 Operations Department</name>
+      <email>ops-manager@fire22.ag</email>
+    </author>
+    <category term="Fire22"/>
+    <category term="Critical"/>
+    <category term="Operations"/>
+  </entry>
+
+  <entry>
+    <title>⚠️ WARNING: E3001 - API_UNAUTHORIZED</title>
+    <link href="https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E3001" rel="alternate" type="text/html"/>
+    <id>https://dashboard-worker.nolarose2503.workers.dev/error-codes/E3001</id>
+    <published>2025-01-28T00:00:00Z</published>
+    <updated>2025-01-28T00:00:00Z</updated>
+    <summary type="text">Unauthorized API request - Request lacks valid authentication credentials or token has expired.</summary>
+    <content type="html"><![CDATA[
+      <h3>Unauthorized API Request</h3>
+      <p><strong>Department:</strong> Technology Department 💻 | Customer Support 🎧</p>
+      <p><strong>Severity:</strong> WARNING</p>
+      <p><strong>HTTP Status:</strong> 401</p>
+      <p><strong>Description:</strong> Request lacks valid authentication credentials or token has expired.</p>
+      
+      <h4>🔍 Quick Diagnostics:</h4>
+      <pre><code>
+# Verify token format
+echo $API_TOKEN | base64 -d | jq '.'
+
+# Test authentication
+curl -H "Authorization: Bearer $API_TOKEN" https://api.fire22.ag/auth/verify
+
+# Check token expiration
+jwt decode $API_TOKEN
+
+# Refresh token if expired
+curl -X POST https://api.fire22.ag/auth/refresh
+      </code></pre>
+      
+      <p><strong>👥 User Impact:</strong> API clients experiencing authentication failures</p>
+      <p><strong>📞 Contact:</strong> tech-team@fire22.ag | support@fire22.ag</p>
+    ]]></content>
+    <author>
+      <name>Fire22 Technology Department</name>
+      <email>tech-team@fire22.ag</email>
+    </author>
+    <category term="API"/>
+    <category term="Warning"/>
+    <category term="Technology"/>
+  </entry>
+
+  <entry>
+    <title>🟡 ERROR: E8001 - TELEGRAM_BOT_AUTHENTICATION_FAILED</title>
+    <link href="https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json#E8001" rel="alternate" type="text/html"/>
+    <id>https://dashboard-worker.nolarose2503.workers.dev/error-codes/E8001</id>
+    <published>2025-01-28T00:00:00Z</published>
+    <updated>2025-01-28T00:00:00Z</updated>
+    <summary type="text">Telegram bot authentication failed - Bot token is invalid or expired, preventing customer communication.</summary>
+    <content type="html"><![CDATA[
+      <h3>Telegram Bot Authentication Failed</h3>
+      <p><strong>Department:</strong> Customer Support Department 🎧 | Technology Department 💻</p>
+      <p><strong>Severity:</strong> ERROR</p>
+      <p><strong>HTTP Status:</strong> 401</p>
+      <p><strong>Description:</strong> Telegram bot token is invalid or expired, preventing bot functionality and customer communication.</p>
+      
+      <h4>🔍 Bot Diagnostics:</h4>
+      <pre><code>
+# Verify bot token
+curl https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getMe
+
+# Check bot permissions
+curl https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getMyCommands
+
+# Test webhook
+curl https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getWebhookInfo
+
+# Monitor bot logs
+bun run logs:telegram-bot
+      </code></pre>
+      
+      <p><strong>👥 Customer Impact:</strong> Bot notifications disabled, customer support affected</p>
+      <p><strong>📞 Primary Contact:</strong> support@fire22.ag</p>
+      <p><strong>🔧 Technical Support:</strong> tech-team@fire22.ag</p>
+      <p><strong>🤖 Bot Management:</strong> Contact @BotFather for token issues</p>
+    ]]></content>
+    <author>
+      <name>Fire22 Customer Support Department</name>
+      <email>support@fire22.ag</email>
+    </author>
+    <category term="Telegram"/>
+    <category term="Error"/>
+    <category term="Customer Support"/>
+  </entry>
+
+  <!-- Feed Information Entry -->
+  <entry>
+    <title>📊 Fire22 Dashboard - Error Code Registry Feed Information</title>
+    <link href="https://dashboard-worker.nolarose2503.workers.dev/docs/error-codes.json" rel="alternate" type="text/html"/>
+    <id>https://dashboard-worker.nolarose2503.workers.dev/feeds/error-codes-info</id>
+    <published>2025-01-28T00:00:00Z</published>
+    <updated>2025-01-28T00:00:00Z</updated>
+    <summary type="text">Fire22 Dashboard Error Code Registry system information and departmental assignments.</summary>
+    <content type="html"><![CDATA[
+      <h3>🔧 Error Code Registry System</h3>
+      <p>This Atom feed provides real-time updates for Fire22 Dashboard error codes with departmental assignments and comprehensive troubleshooting information.</p>
+      
+      <h4>📈 Registry Statistics:</h4>
+      <table style="border-collapse: collapse; width: 100%;">
+        <tr style="background-color: #f0f9ff; border: 1px solid #0ea5e9;">
+          <th style="padding: 8px; border: 1px solid #0ea5e9;">Metric</th>
+          <th style="padding: 8px; border: 1px solid #0ea5e9;">Value</th>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #e0e7ff;">Total Error Codes</td>
+          <td style="padding: 8px; border: 1px solid #e0e7ff;"><strong>9 documented</strong></td>
+        </tr>
+        <tr style="background-color: #f8fafc;">
+          <td style="padding: 8px; border: 1px solid #e0e7ff;">Departments Involved</td>
+          <td style="padding: 8px; border: 1px solid #e0e7ff;"><strong>3 departments</strong></td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #e0e7ff;">Severity Levels</td>
+          <td style="padding: 8px; border: 1px solid #e0e7ff;">Critical (3), Error (4), Warning (2)</td>
+        </tr>
+        <tr style="background-color: #f8fafc;">
+          <td style="padding: 8px; border: 1px solid #e0e7ff;">Last Updated</td>
+          <td style="padding: 8px; border: 1px solid #e0e7ff;">January 28, 2025</td>
+        </tr>
+      </table>
+      
+      <h4>🏢 Department Responsibilities:</h4>
+      <ul>
+        <li><strong>💻 Technology Department:</strong> E1xxx (System), E2xxx (Database), E3xxx (API), E4xxx (Network)</li>
+        <li><strong>⚙️ Operations Department:</strong> E7xxx (Fire22 Integration), Business processes</li>
+        <li><strong>🎧 Customer Support:</strong> E8xxx (Telegram Bot), User communications</li>
+      </ul>
+      
+      <h4>🔗 Resources & Documentation:</h4>
+      <ul>
+        <li><a href="/docs/error-codes.json">📄 Complete Error Registry (JSON)</a></li>
+        <li><a href="/docs/error-code-links.md">🔗 Error Code Documentation Links</a></li>
+        <li><a href="/src/departments/">🏢 Department Information</a></li>
+        <li><a href="/docs/api/fire22-endpoints">🏆 Fire22 API Documentation</a></li>
+        <li><a href="/src/feeds/error-codes-rss.xml">📡 RSS Feed Version</a></li>
+      </ul>
+      
+      <h4>🔄 Feed Features:</h4>
+      <ul>
+        <li>Real-time error code updates</li>
+        <li>Departmental assignments and contact information</li>
+        <li>Command-line diagnostic tools</li>
+        <li>Business impact assessments</li>
+        <li>Escalation procedures</li>
+      </ul>
+      
+      <p><strong>📞 Support Contacts:</strong></p>
+      <ul>
+        <li>Technical Support: tech-team@fire22.ag</li>
+        <li>Operations Support: ops-manager@fire22.ag</li>
+        <li>Customer Support: support@fire22.ag</li>
+      </ul>
+    ]]></content>
+    <author>
+      <name>Fire22 Dashboard System</name>
+      <email>tech-team@fire22.ag</email>
+    </author>
+    <category term="Information"/>
+    <category term="System"/>
+    <category term="Documentation"/>
+  </entry>
+
+</feed>
