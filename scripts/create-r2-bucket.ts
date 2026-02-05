@@ -1,14 +1,49 @@
 #!/usr/bin/env bun
 /**
- * Create R2 bucket using admin credentials
+ * @fileoverview Create R2 bucket using admin credentials
+ * @module scripts/create-r2-bucket
+ * 
+ * @description
+ * Creates a new Cloudflare R2 bucket using S3-compatible API.
+ * Requires admin credentials with bucket creation permissions.
+ * 
+ * @example
+ * ```bash
+ * bun run scripts/create-r2-bucket.ts my-bucket
+ * bun run scripts/create-r2-bucket.ts list
+ * ```
+ * 
+ * @see {@link https://developers.cloudflare.com/r2/} Cloudflare R2 Docs
+ * @see {@link https://npm.factory-wager.com} FactoryWager NPM Registry
+ * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com} R2 Endpoint
  */
 
+/** R2 Account ID */
 const R2_ACCOUNT_ID = "7a470541a704caaf91e71efccc78fd36";
-const R2_ACCESS_KEY_ID = "5827898f34598da457de7fdf8a5a2ebd";
-const R2_SECRET_ACCESS_KEY = "35e3bfdec97455b9a0a7caf62d26b23edaae70642c36aeb223369617f6cf9165";
-const R2_ENDPOINT = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
-const BUCKET_NAME = process.argv[2] || "bun-secrets";
 
+/** R2 Access Key ID (admin) */
+const R2_ACCESS_KEY_ID = "5827898f34598da457de7fdf8a5a2ebd";
+
+/** R2 Secret Access Key (admin) */
+const R2_SECRET_ACCESS_KEY = "35e3bfdec97455b9a0a7caf62d26b23edaae70642c36aeb223369617f6cf9165";
+
+/** R2 S3-compatible endpoint */
+const R2_ENDPOINT = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+
+/** FactoryWager registry URL */
+const REGISTRY_URL = process.env.REGISTRY_URL || "https://npm.factory-wager.com";
+
+/** Default bucket name */
+const DEFAULT_BUCKET = "bun-secrets";
+
+/**
+ * Generate AWS Signature V4 for R2 authentication
+ * @param method - HTTP method
+ * @param path - Request path
+ * @param headers - Additional headers
+ * @param body - Request body
+ * @returns Signed headers
+ */
 async function signRequest(
   method: string,
   path: string,
@@ -76,8 +111,14 @@ async function signRequest(
   };
 }
 
-async function createBucket(bucketName: string) {
+/**
+ * Create a new R2 bucket
+ * @param bucketName - Name of the bucket to create
+ */
+async function createBucket(bucketName: string): Promise<void> {
   console.log(`Creating bucket: ${bucketName}...\n`);
+  console.log(`   Endpoint: ${R2_ENDPOINT}`);
+  console.log(`   Registry: ${REGISTRY_URL}\n`);
   
   const headers = await signRequest('PUT', `/${bucketName}`);
   
@@ -88,8 +129,14 @@ async function createBucket(bucketName: string) {
   
   if (resp.ok) {
     console.log(`✅ Bucket "${bucketName}" created successfully`);
+    console.log(`   URL: ${R2_ENDPOINT}/${bucketName}`);
+    console.log(`\n🚀 Next steps:`);
+    console.log(`   1. Configure CORS if needed`);
+    console.log(`   2. Set up bucket policies`);
+    console.log(`   3. Use with: R2_BUCKET_NAME=${bucketName} bun run bun:secrets:init`);
   } else if (resp.status === 409) {
     console.log(`ℹ️  Bucket "${bucketName}" already exists`);
+    console.log(`   URL: ${R2_ENDPOINT}/${bucketName}`);
   } else {
     console.error(`❌ Failed to create bucket: ${resp.status}`);
     const text = await resp.text();
@@ -97,8 +144,12 @@ async function createBucket(bucketName: string) {
   }
 }
 
-async function listBuckets() {
+/**
+ * List all R2 buckets
+ */
+async function listBuckets(): Promise<void> {
   console.log("Listing buckets...\n");
+  console.log(`   Endpoint: ${R2_ENDPOINT}\n`);
   
   const headers = await signRequest('GET', '/');
   
@@ -113,15 +164,24 @@ async function listBuckets() {
     console.log(`Found ${buckets.length} bucket(s):`);
     for (const bucket of buckets) {
       console.log(`  • ${bucket}`);
+      console.log(`    ${R2_ENDPOINT}/${bucket}`);
     }
   } else {
     console.error(`❌ Failed to list buckets: ${resp.status}`);
   }
 }
 
-const cmd = process.argv[2];
-if (cmd === 'list') {
-  await listBuckets();
-} else {
-  await createBucket(cmd || 'bun-secrets');
+/**
+ * Main function
+ */
+async function main(): Promise<void> {
+  const cmd = process.argv[2] || DEFAULT_BUCKET;
+  
+  if (cmd === 'list') {
+    await listBuckets();
+  } else {
+    await createBucket(cmd);
+  }
 }
+
+await main();
