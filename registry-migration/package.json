@@ -1,0 +1,42 @@
+{
+  "name": "@factorywager/registry",
+  "version": "1.0.0",
+  "description": "🏭 FactoryWager Private NPM Registry - Bun v1.4+ Optimized",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter '*' build",
+    "test": "bun run --filter '*' test",
+    "lint": "bun run --filter '*' lint",
+    "format": "bun run --filter '*' format",
+    "typecheck": "bun run --filter '*' typecheck",
+    
+    "dev": "bun run --filter 'registry-server' dev",
+    "start": "bun run --filter 'registry-server' start",
+    
+    "deploy:staging": "bun run --filter 'registry-worker' deploy:staging",
+    "deploy:production": "bun run --filter 'registry-worker' deploy:production",
+    
+    "version:patch": "bun run scripts/bump-version.ts patch",
+    "version:minor": "bun run scripts/bump-version.ts minor",
+    "version:major": "bun run scripts/bump-version.ts major",
+    
+    "publish:packages": "bun run scripts/publish-packages.ts",
+    "migrate": "bun run scripts/migrate-from-monorepo.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.8",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "bun": ">=1.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:factorywager/registry.git"
+  },
+  "license": "MIT"
+}

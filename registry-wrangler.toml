@@ -1,0 +1,55 @@
+# 🌐 NPM Registry CDN Worker Configuration
+# Deploy with: wrangler deploy -c registry-wrangler.toml
+
+name = "npm-registry-cdn"
+main = "lib/registry/cdn-worker.ts"
+compatibility_date = "2024-01-01"
+
+# Environment variables
+[vars]
+REGISTRY_BUCKET_NAME = "npm-registry"
+CACHE_TTL = "86400"
+PUBLIC_PACKAGES = ""  # Comma-separated list of public packages
+
+# Secrets (set with wrangler secret put)
+# - JWT_SECRET: Secret key for JWT signing
+
+# R2 bucket binding
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "npm-registry"
+
+# Routes for npm.factory-wager.com
+[[routes]]
+pattern = "npm.factory-wager.com/*"
+custom_domain = true
+
+# KV namespace for user management (optional)
+# [[kv_namespaces]]
+# binding = "USERS"
+# id = "your-kv-namespace-id"
+
+# Environment-specific configurations
+[env.production]
+name = "npm-registry-cdn-prod"
+vars = { ENVIRONMENT = "production", CACHE_TTL = "86400" }
+
+[env.staging]
+name = "npm-registry-cdn-staging"
+vars = { ENVIRONMENT = "staging", CACHE_TTL = "300" }
+
+# Cache configuration
+[[env.production.cache_rules]]
+regex = "/.*\\.tgz$"
+cache_everything = true
+ttl = 86400  # 24 hours for tarballs (immutable)
+
+[[env.production.cache_rules]]
+regex = "/@.*/.*$"
+cache_everything = true
+ttl = 60  # 1 minute for manifests
+
+[[env.production.cache_rules]]
+regex = "/-/search$"
+cache_everything = true
+ttl = 300  # 5 minutes for search

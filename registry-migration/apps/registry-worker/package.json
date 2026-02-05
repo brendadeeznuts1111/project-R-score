@@ -1,0 +1,15 @@
+{
+  "name": "@factorywager/registry-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/worker.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

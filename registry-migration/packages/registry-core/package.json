@@ -1,0 +1,19 @@
+{
+  "name": "@factorywager/registry-core",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./config": "./src/config.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

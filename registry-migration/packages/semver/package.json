@@ -1,0 +1,17 @@
+{
+  "name": "@factorywager/semver",
+  "version": "1.0.0",
+  "type": "module",
+  "peerDependencies": {
+    "bun": ">=1.4.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

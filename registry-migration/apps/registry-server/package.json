@@ -1,0 +1,18 @@
+{
+  "name": "@factorywager/registry-server",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@factorywager/registry-core": "workspace:*",
+    "@factorywager/r2-storage": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
