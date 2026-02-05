@@ -111,6 +111,7 @@ test*-*
 *.dist.*
 
 # Build artifacts and large binaries
+*.rdb
 *.bun-build
 *.tar.gz
 *.tgz
