@@ -1,0 +1,15 @@
+{
+  "name": "@factorywager/profile-cli",
+  "version": "10.0.0",
+  "description": "CLI for FactoryWager profile management",
+  "type": "module",
+  "bin": {
+    "profile": "./src/cli.ts"
+  },
+  "dependencies": {
+    "@factorywager/user-profile": "workspace:*",
+    "@factorywager/pref-propagation": "workspace:*",
+    "@factorywager/redis-profile": "workspace:*",
+    "@factorywager/xgboost-pers": "workspace:*"
+  }
+}

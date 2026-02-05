@@ -13,11 +13,21 @@
     "build": "bun run build --workspaces",
     "dev": "bun run dev --workspaces",
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "profile:create": "bun run apps/profile-cli/src/cli.ts create",
+    "profile:query": "bun run apps/profile-cli/src/cli.ts query",
+    "profile:update": "bun run apps/profile-cli/src/cli.ts update",
+    "profile:bench": "bun run apps/profile-cli/src/cli.ts bench",
+    "profiler": "bun --cpu-prof-md apps/profile-cli/src/cli.ts",
+    "dashboard": "bun run packages/dashboard-profile/src/app.ts",
+    "dashboard-profile": "bun run packages/dashboard-profile/src/app.ts",
+    "avatar": "bun run packages/dashboard-profile/src/avatar-3d.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "zod": "^3.22.0"
+  }
 }

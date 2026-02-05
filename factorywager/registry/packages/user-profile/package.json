@@ -1,0 +1,17 @@
+{
+  "name": "@factorywager/user-profile",
+  "version": "10.0.0",
+  "description": "Bun-native user profile engine with type-safe preferences, SHA-256 parity locks, and enterprise secrets",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "bun test",
+    "bench": "bun run src/bench.ts"
+  },
+  "dependencies": {
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

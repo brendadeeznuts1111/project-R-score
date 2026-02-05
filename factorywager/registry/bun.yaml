@@ -1,0 +1,62 @@
+# bun.yaml - FactoryWager GOV Profiles v10.0
+# Profile Fortress: Type-safe, SHA-256 parity-locked, enterprise-scoped
+
+rules:
+  profile:
+    schema:
+      scope: [FACTORY, USER, PREF, PROGRESS, SEC]
+      type: [CREATE, UPDATE, QUERY, SAVE, DASHBOARD]
+      variant: [DRY-RUN, FULL, COMPRESSED]
+      hash_algo: 'SHA-256'  # Parity locks
+      id: 
+        pattern: '^[A-Z]{3}-USR-[0-9]{3}$'
+    defaults:
+      scope: FACTORY
+      type: CREATE
+      version: v10.0
+      status: ACTIVE
+    grep:
+      all-tags: '\[FACTORY\-[USER|PREF|PROGRESS\]-[A-Z]{3}-USR-[0-9]{3}-v10\.0-\[ACTIVE\]-([a-f0-9]{64})\]'
+      rg-flags: '--type ts --mmap --pcre2-unicode'
+
+# Performance targets (Golden Matrix)
+performance:
+  profile_create_50k: 1ms      # Target: 50k profiles in 1ms
+  pref_query_p99: 0.8ms        # Target: p99 query latency
+  progress_save: 0.2ms          # Target: atomic save with parity
+  pers_prediction: 0.001ms      # Target: XGBoost ONNX inference
+  r2_snapshot_zstd: 3.2ms       # Target: compressed snapshot
+  binary_size_golden: 9.2KB     # Target: Golden Matrix binary size
+
+# Security
+security:
+  secrets_persist: enterprise   # CRED_PERSIST_ENTERPRISE scoping
+  parity_hash: SHA-256          # Immutable refs
+  post_quantum_ready: true      # Future-proof
+
+# Storage
+storage:
+  sqlite_path: './profiles.db'
+  r2_bucket: 'factorywager-profiles'
+  r2_region: 'us-east-1'
+  compression: zstd             # R2 snapshot compression
+
+# Redis
+redis:
+  hll_enabled: true
+  url: ${REDIS_URL:-redis://localhost:6379}
+  p99_target: 0.001ms           # Golden Matrix: 10.8ms target crushed
+
+# Personalization
+personalization:
+  model_path: './pers-booster.onnx'
+  feature_dim: 384              # 384-dimensional features
+  target_score: 0.9999           # 99.9999999% accuracy
+  inference_target: 0.001ms      # ONNX inference time
+
+# Dashboard
+dashboard:
+  port: 3006
+  websocket:
+    per_message_deflate: true   # 3.5MB → 184KB compression
+    pub_sub: true               # Real-time profile updates
