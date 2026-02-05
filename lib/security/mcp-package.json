@@ -1,0 +1,41 @@
+{
+  "name": "@tier1380/security-mcp-server",
+  "version": "4.5.0",
+  "description": "Tier-1380 Enterprise Security MCP Server - Model Context Protocol server for enterprise security operations",
+  "main": "mcp-server.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build mcp-server.ts --outdir ./dist --target bun",
+    "start": "bun run mcp-server.ts",
+    "dev": "bun --watch mcp-server.ts",
+    "test": "bun test test-integration.ts"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "security",
+    "enterprise",
+    "authentication",
+    "secret-management",
+    "tier1380"
+  ],
+  "author": "Tier-1380 Security Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/project-R-score.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/project-R-score/issues"
+  },
+  "homepage": "https://github.com/brendadeeznuts1111/project-R-score#readme"
+}

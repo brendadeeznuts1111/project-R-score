@@ -1,0 +1,115 @@
+{
+  "mcpServers": {
+    "tier1380-security": {
+      "command": "bun",
+      "args": ["run", "/Users/nolarose/Projects/lib/security/mcp-server.ts"],
+      "description": "Tier-1380 Enterprise Security MCP Server - Provides secure secret management, authentication, deployment, and audit capabilities"
+    }
+  },
+  "tools": [
+    {
+      "name": "store_secret",
+      "description": "Store secrets in enterprise-grade secure storage with cross-platform support",
+      "category": "Secret Management"
+    },
+    {
+      "name": "retrieve_secret",
+      "description": "Retrieve secrets from secure storage",
+      "category": "Secret Management"
+    },
+    {
+      "name": "delete_secret",
+      "description": "Delete secrets from secure storage",
+      "category": "Secret Management"
+    },
+    {
+      "name": "list_secrets",
+      "description": "List all stored secrets with metadata",
+      "category": "Secret Management"
+    },
+    {
+      "name": "hash_password",
+      "description": "Hash passwords using Argon2id or bcrypt algorithms",
+      "category": "Authentication"
+    },
+    {
+      "name": "verify_password",
+      "description": "Verify passwords against stored hashes with strength scoring",
+      "category": "Authentication"
+    },
+    {
+      "name": "authenticate_user",
+      "description": "Authenticate users with enterprise security and rate limiting",
+      "category": "Authentication"
+    },
+    {
+      "name": "deploy_application",
+      "description": "Deploy applications with enterprise security and audit trails",
+      "category": "Deployment"
+    },
+    {
+      "name": "rotate_secret",
+      "description": "Rotate secrets automatically with proper lifecycle management",
+      "category": "Secret Management"
+    },
+    {
+      "name": "create_secret_version",
+      "description": "Create new versions of secrets with full audit trail",
+      "category": "Secret Management"
+    },
+    {
+      "name": "rollback_secret",
+      "description": "Rollback secrets to previous versions safely",
+      "category": "Secret Management"
+    }
+  ],
+  "resources": [
+    {
+      "uri": "security://audit-log",
+      "description": "Real-time security audit log with authentication events",
+      "category": "Monitoring"
+    },
+    {
+      "uri": "security://secret-status",
+      "description": "Current status and health of all stored secrets",
+      "category": "Monitoring"
+    },
+    {
+      "uri": "security://auth-report",
+      "description": "Authentication system statistics and security metrics",
+      "category": "Monitoring"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "security-audit",
+      "description": "Generate comprehensive security audit reports",
+      "category": "Reporting"
+    },
+    {
+      "name": "secret-rotation-plan",
+      "description": "Create automated secret rotation plans",
+      "category": "Planning"
+    },
+    {
+      "name": "deployment-security-checklist",
+      "description": "Generate security checklists for deployments",
+      "category": "Planning"
+    }
+  ],
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": true,
+    "logging": true,
+    "transports": ["stdio"]
+  },
+  "security": {
+    "enterprise": true,
+    "cross_platform": true,
+    "credential_manager": true,
+    "audit_trail": true,
+    "rate_limiting": true,
+    "encryption": "AES-256"
+  }
+}

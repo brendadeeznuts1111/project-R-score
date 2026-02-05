@@ -39,7 +39,9 @@
     "validate:pointers:save": "bun scripts/validate-pointers.ts --save",
     "validate:pointers:compare": "bun scripts/validate-pointers.ts --compare"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0"
+  },
   "devDependencies": {
     "@types/bun": "^1.3.8"
   }
