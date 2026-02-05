@@ -1398,7 +1398,19 @@ const BUN_DEFAULT_TRUSTED = new Set([
 ]);
 
 // ── CONSTANTS: Configuration ────────────────────────────────────────────
-const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? '/Users/nolarose/Projects';
+const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? (() => {
+	const mainDir = Bun.main.slice(0, Bun.main.lastIndexOf('/'));
+	// Walk up to find platform root (where .husky, docs/, tools/ exist)
+	let current = mainDir;
+	while (current !== '/' && current !== '') {
+		if (Bun.file(`${current}/.husky`).existsSync() && Bun.file(`${current}/docs`).existsSync()) {
+			return current;
+		}
+		current = current.slice(0, current.lastIndexOf('/'));
+	}
+	// Fallback: use parent of current file's directory
+	return mainDir.split('/').slice(0, -2).join('/') || process.cwd();
+})();
 const projectDir = (p: {folder: string}): string => `${PROJECTS_ROOT}/${p.folder}`;
 
 // ── EXPORTS: Keychain/Secrets ──────────────────────────────────────────

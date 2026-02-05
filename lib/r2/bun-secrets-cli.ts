@@ -15,10 +15,10 @@
 
 import { styled } from '../theme/colors.ts';
 
-// R2 Configuration from environment
-const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID || '';
-const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID || '5827898f34598da457de7fdf8a5a2ebd';
-const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY || '35e3bfdec97455b9a0a7caf62d26b23edaae70642c36aeb223369617f6cf9165';
+// R2 Configuration from environment - NO DEFAULTS FOR SECURITY
+const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
+const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
+const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'bun-secrets';
 const R2_ENDPOINT = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 const SECRETS_PREFIX = 'bun-secrets/';
@@ -125,13 +125,23 @@ class BunSecretsR2CLI {
   async init() {
     console.log(styled('🔐 Initializing bun.secrets with R2...\n', 'accent'));
     
-    // Check credentials
+    // Validate credentials are present
     if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
-      console.error(styled('❌ Missing R2 credentials', 'error'));
-      console.log('Required env vars:');
-      console.log('  - R2_ACCOUNT_ID');
-      console.log('  - R2_ACCESS_KEY_ID');
-      console.log('  - R2_SECRET_ACCESS_KEY');
+      console.error(styled('❌ Missing required R2 credentials', 'error'));
+      console.error(styled('🚨 SECURITY: All R2 credentials must be set as environment variables', 'error'));
+      console.log('Required environment variables:');
+      console.log('  export R2_ACCOUNT_ID="your-account-id"');
+      console.log('  export R2_ACCESS_KEY_ID="your-access-key-id"');
+      console.log('  export R2_SECRET_ACCESS_KEY="your-secret-access-key"');
+      console.log('  export R2_BUCKET_NAME="your-bucket-name" (optional, defaults to bun-secrets)');
+      console.log('\n📖 For security, never commit credentials to version control.');
+      process.exit(1);
+    }
+
+    // Validate credential format
+    if (R2_ACCESS_KEY_ID.length < 16 || R2_SECRET_ACCESS_KEY.length < 16) {
+      console.error(styled('❌ Invalid credential format detected', 'error'));
+      console.error(styled('🚨 Credentials appear to be malformed', 'error'));
       process.exit(1);
     }
 

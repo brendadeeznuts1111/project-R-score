@@ -313,7 +313,7 @@ class UrlValidator {
    * Save validation report
    */
   private async saveReport(report: ValidationReport): Promise<void> {
-    const reportPath = 'url-validation-report.json';
+    const reportPath = 'docs/data/url-validation-report.json';
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
     console.log(`📄 Report saved to: ${reportPath}\n`);
   }

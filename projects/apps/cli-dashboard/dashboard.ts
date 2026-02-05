@@ -122,7 +122,7 @@ async function renderDashboard() {
   console.log(`
 ┌─ Quick Actions
 │ Press Ctrl+C to exit
-│ Run: bun overseer-cli.ts cli-dashboard bun run dashboard --debug
+│ Run: bun tools/overseer-cli.ts cli-dashboard bun run dashboard --debug
 `);
 }
 

@@ -74,8 +74,8 @@ This report provides a comprehensive analysis of untracked files and URL validat
 
 #### **Documentation Files (11)**
 - `AGENTS.md` (14.5KB) - AI coding agent guide
-- `BUN_SPAWN_GUIDE.md` (16.3KB) - Comprehensive spawn guide
-- `BUN_WHICH_GUIDE.md` (20.3KB) - Binary resolution guide
+- `docs/guides/BUN_SPAWN_GUIDE.md` (16.3KB) - Comprehensive spawn guide
+- `docs/guides/BUN_WHICH_GUIDE.md` (20.3KB) - Binary resolution guide
 - `CONSOLIDATION_SUMMARY.md` (5.8KB) - Implementation summary
 - `ENHANCED_FRAMEWORK_COMPLETE.md` (7.1KB) - Framework completion
 - `IMPLEMENTATION_SUMMARY.md` (6.0KB) - Implementation details
@@ -92,10 +92,10 @@ This report provides a comprehensive analysis of untracked files and URL validat
 - `lib/url-discovery-validator.ts` (10.1KB) - URL validation
 
 #### **CLI Tools (8)**
-- `guide-cli.ts` (11.9KB) - Advanced binary resolution
-- `overseer-cli.ts` (2.1KB) - Monorepo manager
-- `registry-color-channel-cli.ts` (17.2KB) - Registry CLI
-- `terminal-tool.ts` (1.5KB) - Terminal interaction
+- `utils/guide-cli.ts` (11.9KB) - Advanced binary resolution
+- `tools/overseer-cli.ts` (2.1KB) - Monorepo manager
+- `utils/registry-color-channel-cli.ts` (17.2KB) - Registry CLI
+- `utils/terminal-tool.ts` (1.5KB) - Terminal interaction
 
 #### **Server & Services (8)**
 - `server.ts` (16.3KB) - Main server
@@ -126,13 +126,13 @@ This report provides a comprehensive analysis of untracked files and URL validat
 ### **1. Critical - Add to Git (High Priority)**
 ```bash
 # Add documentation files
-git add AGENTS.md BUN_SPAWN_GUIDE.md BUN_WHICH_GUIDE.md CONSOLIDATION_SUMMARY.md ENHANCED_FRAMEWORK_COMPLETE.md
+git add AGENTS.md docs/guides/BUN_SPAWN_GUIDE.md docs/guides/BUN_WHICH_GUIDE.md CONSOLIDATION_SUMMARY.md ENHANCED_FRAMEWORK_COMPLETE.md
 
 # Add core library files
 git add lib/core-errors.ts lib/core-types.ts lib/core-validation.ts lib/json-loader.ts
 
 # Add CLI tools
-git add guide-cli.ts overseer-cli.ts registry-color-channel-cli.ts terminal-tool.ts
+git add utils/guide-cli.ts tools/overseer-cli.ts utils/registry-color-channel-cli.ts utils/terminal-tool.ts
 
 # Add configuration
 git add .gitignore tsconfig.json BUN_CONSTANTS_VERSION.json

@@ -4,7 +4,7 @@
  * Uses Bun.Terminal API (v1.3.5+) for proper PTY support
  */
 
-import { ensureDirectExecution } from "./shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
 ensureDirectExecution();
 
 const projectName = Bun.main.split('/').pop()?.replace(/\.ts$/, '') || 'unknown';

@@ -13,7 +13,7 @@ console.log("🧪 Testing entry guard functionality...\n");
 console.log("1️⃣  Testing overseer-cli.ts entry guard...");
 const { spawnSync } = Bun;
 
-const overseerTest = spawnSync(["bun", "-e", 'import "../overseer-cli.ts"; console.log("ERROR: Should not reach here");'], {
+const overseerTest = spawnSync(["bun", "-e", 'import "../tools/overseer-cli.ts"; console.log("ERROR: Should not reach here");'], {
   cwd: Bun.cwd,
   timeout: 5000
 });
@@ -26,7 +26,7 @@ if (overseerTest.exitCode === 0) {
 
 // Test 2: Try to import guide-cli.ts (should cause exit)
 console.log("2️⃣  Testing guide-cli.ts entry guard...");
-const guideTest = spawnSync(["bun", "-e", 'import "../guide-cli.ts"; console.log("ERROR: Should not reach here");'], {
+const guideTest = spawnSync(["bun", "-e", 'import "../utils/guide-cli.ts"; console.log("ERROR: Should not reach here");'], {
   cwd: Bun.cwd,
   timeout: 5000
 });
@@ -39,7 +39,7 @@ if (guideTest.exitCode === 0) {
 
 // Test 3: Verify direct execution still works
 console.log("3️⃣  Testing direct execution of guide-cli.ts...");
-const directTest = spawnSync(["bun", "../guide-cli.ts"], {
+const directTest = spawnSync(["bun", "../utils/guide-cli.ts"], {
   cwd: Bun.cwd,
   timeout: 5000
 });

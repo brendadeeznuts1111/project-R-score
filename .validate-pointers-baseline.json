@@ -10,7 +10,7 @@
   },
   {
     "id": 3173,
-    "pointer": "/Users/nolarose/Projects/guide-cli.ts",
+    "pointer": "/Users/nolarose/Projects/utils/guide-cli.ts",
     "conceptual": "CLI tooling",
     "category": "CLI_TOOLS",
     "protocol": "file:",
@@ -19,7 +19,7 @@
   },
   {
     "id": 96743,
-    "pointer": "/Users/nolarose/Projects/overseer-cli.ts",
+    "pointer": "/Users/nolarose/Projects/tools/overseer-cli.ts",
     "conceptual": "CLI tooling",
     "category": "CLI_TOOLS",
     "protocol": "file:",
@@ -28,7 +28,7 @@
   },
   {
     "id": 13986,
-    "pointer": "/Users/nolarose/Projects/server.ts",
+    "pointer": "/Users/nolarose/Projects/server/server.ts",
     "conceptual": "Server runtime",
     "category": "CLI_TOOLS",
     "protocol": "file:",
@@ -46,7 +46,7 @@
   },
   {
     "id": 50293,
-    "pointer": "/Users/nolarose/Projects/terminal-tool.ts",
+    "pointer": "/Users/nolarose/Projects/utils/terminal-tool.ts",
     "conceptual": "Terminal tool",
     "category": "CLI_TOOLS",
     "protocol": "file:",

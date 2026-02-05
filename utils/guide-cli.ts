@@ -12,20 +12,20 @@
  * - Simple mode using Bun.main (merged from cli-resolver.ts)
  *
  * Usage:
- *   bun guide-cli.ts --project <name> --bin <binary> [--args <args...>] [--no-fallback]
- *   bun guide-cli.ts typecheck           # Simple mode: run tsc --noEmit relative to Bun.main
- *   bun guide-cli.ts <binary> [args...] # Simple mode: run any binary relative to Bun.main
+ *   bun utils/guide-cli.ts --project <name> --bin <binary> [--args <args...>] [--no-fallback]
+ *   bun utils/guide-cli.ts typecheck           # Simple mode: run tsc --noEmit relative to Bun.main
+ *   bun utils/guide-cli.ts <binary> [args...] # Simple mode: run any binary relative to Bun.main
  *
  * Examples:
- *   bun guide-cli.ts --project my-bun-app --bin bun --args run dev
- *   bun guide-cli.ts --project cli-dashboard --bin htop
- *   bun guide-cli.ts --project edge-worker --bin wrangler --args deploy
- *   bun guide-cli.ts typecheck
- *   bun guide-cli.ts eslint src/
- *   bun guide-cli.ts jest --coverage
+ *   bun utils/guide-cli.ts --project my-bun-app --bin bun --args run dev
+ *   bun utils/guide-cli.ts --project cli-dashboard --bin htop
+ *   bun utils/guide-cli.ts --project edge-worker --bin wrangler --args deploy
+ *   bun utils/guide-cli.ts typecheck
+ *   bun utils/guide-cli.ts eslint src/
+ *   bun utils/guide-cli.ts jest --coverage
  */
 
-import { ensureDirectExecution } from "./shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
 ensureDirectExecution();
 
 import { which, spawn } from "bun";
@@ -210,19 +210,19 @@ Guide CLI - Uses Bun.main for project-specific binary resolution
 
 Simple Mode (merged from cli-resolver.ts):
 Usage:
-  bun guide-cli.ts typecheck           # Run tsc --noEmit
-  bun guide-cli.ts <binary> [args...] # Run any binary
+  bun utils/guide-cli.ts typecheck           # Run tsc --noEmit
+  bun utils/guide-cli.ts <binary> [args...] # Run any binary
 
 Examples:
-  bun guide-cli.ts typecheck
-  bun guide-cli.ts eslint src/
-  bun guide-cli.ts jest --coverage
+  bun utils/guide-cli.ts typecheck
+  bun utils/guide-cli.ts eslint src/
+  bun utils/guide-cli.ts jest --coverage
 
 Note: All binaries are resolved relative to the directory of Bun.main
       (the entrypoint script: ${Bun.main})
 
 Advanced Mode (with --project):
-  bun guide-cli.ts --help
+  bun utils/guide-cli.ts --help
 `);
     Bun.exit(0);
   }
@@ -271,9 +271,9 @@ if (!projectName || !binary) {
 Guide CLI (Advanced) - Project-specific binary resolution with diagnostics
 
 Usage:
-  bun guide-cli.ts --project <name> --bin <binary> [--args <args...>] [options]
-  bun guide-cli.ts typecheck           # Simple mode: run tsc --noEmit relative to Bun.main
-  bun guide-cli.ts <binary> [args...] # Simple mode: run any binary relative to Bun.main
+  bun utils/guide-cli.ts --project <name> --bin <binary> [--args <args...>] [options]
+  bun utils/guide-cli.ts typecheck           # Simple mode: run tsc --noEmit relative to Bun.main
+  bun utils/guide-cli.ts <binary> [args...] # Simple mode: run any binary relative to Bun.main
 
 Arguments:
   --project <name>    Project directory name under $BUN_PLATFORM_HOME
@@ -286,15 +286,15 @@ Options:
   --help              Show this help message
 
 Examples (Advanced Mode):
-  bun guide-cli.ts --project my-bun-app --bin bun --args run dev
-  bun guide-cli.ts --project cli-dashboard --bin htop
-  bun guide-cli.ts --project edge-worker --bin wrangler --args deploy
-  bun guide-cli.ts --project native-addon-tool --bin cargo --args build --release --diagnostics
+  bun utils/guide-cli.ts --project my-bun-app --bin bun --args run dev
+  bun utils/guide-cli.ts --project cli-dashboard --bin htop
+  bun utils/guide-cli.ts --project edge-worker --bin wrangler --args deploy
+  bun utils/guide-cli.ts --project native-addon-tool --bin cargo --args build --release --diagnostics
 
 Examples (Simple Mode):
-  bun guide-cli.ts typecheck
-  bun guide-cli.ts eslint src/
-  bun guide-cli.ts jest --coverage
+  bun utils/guide-cli.ts typecheck
+  bun utils/guide-cli.ts eslint src/
+  bun utils/guide-cli.ts jest --coverage
 
 Features:
   - Platform-aware PATH building (auto-detects Windows vs POSIX)

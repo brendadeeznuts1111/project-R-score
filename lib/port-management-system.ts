@@ -144,6 +144,10 @@ class PortManager {
   private static readonly PROJECT_CONFIGS = new Map<string, PortConfig>();
   private static readonly USED_PORTS = new Set<number>();
   private static readonly PORT_ALLOCATION = new Map<string, number>();
+  
+  // Mutex for preventing race conditions in port allocation
+  private static allocationMutex = Promise.resolve();
+  private static isAllocating = false;
 
   /**
    * Load project-specific port configuration with validation
@@ -207,39 +211,69 @@ class PortManager {
   }
 
   /**
-   * Allocate a dedicated port for a project
+   * Allocate a dedicated port for a project (thread-safe)
    */
-  static allocatePort(projectPath: string): number {
-    const config = this.loadProjectConfig(projectPath);
+  static async allocatePort(projectPath: string): Promise<number> {
+    // Wait for any ongoing allocation to complete
+    await this.allocationMutex;
     
-    // Check if project already has an allocated port
-    if (this.PORT_ALLOCATION.has(projectPath)) {
-      return this.PORT_ALLOCATION.get(projectPath)!;
+    // Start new allocation
+    const allocationPromise = this.performAllocation(projectPath);
+    this.allocationMutex = allocationPromise;
+    
+    return allocationPromise;
+  }
+
+  /**
+   * Internal method to perform port allocation with proper locking
+   */
+  private static async performAllocation(projectPath: string): Promise<number> {
+    if (this.isAllocating) {
+      throw new Error('Port allocation already in progress');
     }
 
-    // Find available port in project's range
-    let allocatedPort = config.port;
+    this.isAllocating = true;
     
-    if (this.USED_PORTS.has(allocatedPort)) {
-      // Find next available port in range
-      for (let port = config.range.start; port <= config.range.end; port++) {
-        if (!this.USED_PORTS.has(port)) {
-          allocatedPort = port;
-          break;
-        }
+    try {
+      const config = this.loadProjectConfig(projectPath);
+      
+      // Check if project already has an allocated port
+      if (this.PORT_ALLOCATION.has(projectPath)) {
+        const existingPort = this.PORT_ALLOCATION.get(projectPath)!;
+        console.log(`🚪 Port ${existingPort} already allocated to project: ${config.project}`);
+        return existingPort;
       }
+
+      // Find available port in project's range (atomic operation)
+      let allocatedPort = config.port;
       
       if (this.USED_PORTS.has(allocatedPort)) {
-        throw new Error(`No available ports in range ${config.range.start}-${config.range.end}`);
+        // Find next available port in range
+        let found = false;
+        for (let port = config.range.start; port <= config.range.end; port++) {
+          if (!this.USED_PORTS.has(port)) {
+            allocatedPort = port;
+            found = true;
+            break;
+          }
+        }
+        
+        if (!found) {
+          throw new Error(`No available ports in range ${config.range.start}-${config.range.end} for project ${config.project}`);
+        }
       }
+
+      // Atomic allocation
+      this.USED_PORTS.add(allocatedPort);
+      this.PORT_ALLOCATION.set(projectPath, allocatedPort);
+      this.PROJECT_CONFIGS.set(projectPath, config);
+
+      console.log(`🚪 Port ${allocatedPort} allocated to project: ${config.project}`);
+      return allocatedPort;
+      
+    } finally {
+      this.isAllocating = false;
     }
-
-    this.USED_PORTS.add(allocatedPort);
-    this.PORT_ALLOCATION.set(projectPath, allocatedPort);
-    this.PROJECT_CONFIGS.set(projectPath, config);
-
-    console.log(`🚪 Port ${allocatedPort} allocated to project: ${config.project}`);
-    return allocatedPort;
   }
 
   /**
@@ -358,7 +392,9 @@ interface ConnectionPoolOptions {
 class ConnectionPool {
   private readonly pools = new Map<string, any[]>();
   private readonly activeConnections = new Map<string, number>();
+  private readonly connectionTimestamps = new Map<string, number>();
   private readonly options: ConnectionPoolOptions;
+  private cleanupInterval?: ReturnType<typeof setInterval>;
 
   constructor(options: ConnectionPoolOptions) {
     this.options = {
@@ -369,6 +405,9 @@ class ConnectionPool {
       retryDelay: 1000,
       ...options
     };
+
+    // Start periodic cleanup
+    this.startCleanupInterval();
   }
 
   /**
@@ -381,9 +420,13 @@ class ConnectionPool {
     const pool = this.pools.get(poolKey) || [];
     const activeCount = this.activeConnections.get(poolKey) || 0;
 
+    // Clean up expired connections from pool
+    this.cleanupExpiredConnections(poolKey);
+
     if (pool.length > 0 && activeCount < this.options.maxConnections) {
       const connection = pool.pop();
       this.activeConnections.set(poolKey, activeCount + 1);
+      this.connectionTimestamps.set(`${poolKey}:${Date.now()}`, Date.now());
       return connection;
     }
 
@@ -391,6 +434,7 @@ class ConnectionPool {
     if (activeCount < this.options.maxConnections) {
       const connection = await this.createConnection(host, port);
       this.activeConnections.set(poolKey, activeCount + 1);
+      this.connectionTimestamps.set(`${poolKey}:${Date.now()}`, Date.now());
       return connection;
     }
 
@@ -406,12 +450,133 @@ class ConnectionPool {
     const pool = this.pools.get(poolKey) || [];
     const activeCount = this.activeConnections.get(poolKey) || 0;
 
-    if (this.options.keepAlive && connection && !connection.destroyed) {
-      pool.push(connection);
-      this.pools.set(poolKey, pool);
+    // Mark connection as returned
+    this.activeConnections.set(poolKey, Math.max(0, activeCount - 1));
+
+    // Clean up connection if needed
+    if (!this.options.keepAlive || connection.destroyed) {
+      this.destroyConnection(connection);
+      return;
     }
 
-    this.activeConnections.set(poolKey, Math.max(0, activeCount - 1));
+    // Add connection back to pool if it's still valid
+    if (this.isConnectionValid(connection)) {
+      pool.push(connection);
+      this.pools.set(poolKey, pool);
+    } else {
+      this.destroyConnection(connection);
+    }
+  }
+
+  /**
+   * Clean up expired connections
+   */
+  private cleanupExpiredConnections(poolKey: string): void {
+    const pool = this.pools.get(poolKey) || [];
+    const now = Date.now();
+    const timeoutMs = this.options.connectionTimeout;
+
+    // Remove expired connections from pool
+    const validConnections = pool.filter(connection => {
+      if (connection.created && (now - connection.created) > timeoutMs) {
+        this.destroyConnection(connection);
+        return false;
+      }
+      return true;
+    });
+
+    this.pools.set(poolKey, validConnections);
+  }
+
+  /**
+   * Check if connection is still valid
+   */
+  private isConnectionValid(connection: any): boolean {
+    return connection && !connection.destroyed && 
+           (!connection.created || (Date.now() - connection.created) < this.options.connectionTimeout);
+  }
+
+  /**
+   * Destroy a connection properly
+   */
+  private destroyConnection(connection: any): void {
+    try {
+      if (connection && typeof connection.destroy === 'function') {
+        connection.destroy();
+      } else if (connection && typeof connection.close === 'function') {
+        connection.close();
+      }
+    } catch (error) {
+      console.warn('Error destroying connection:', error);
+    }
+  }
+
+  /**
+   * Start periodic cleanup interval
+   */
+  private startCleanupInterval(): void {
+    // Run cleanup every 30 seconds
+    this.cleanupInterval = setInterval(() => {
+      this.performCleanup();
+    }, 30000);
+  }
+
+  /**
+   * Perform comprehensive cleanup
+   */
+  private performCleanup(): void {
+    const now = Date.now();
+    const timeoutMs = this.options.connectionTimeout;
+    let cleanedUp = 0;
+
+    // Clean up all pools
+    for (const [poolKey, pool] of this.pools.entries()) {
+      const validConnections = pool.filter(connection => {
+        if (connection.created && (now - connection.created) > timeoutMs) {
+          this.destroyConnection(connection);
+          cleanedUp++;
+          return false;
+        }
+        return true;
+      });
+
+      if (validConnections.length !== pool.length) {
+        this.pools.set(poolKey, validConnections);
+      }
+    }
+
+    // Clean up old timestamps
+    for (const [timestampKey, timestamp] of this.connectionTimestamps.entries()) {
+      if (now - timestamp > timeoutMs) {
+        this.connectionTimestamps.delete(timestampKey);
+      }
+    }
+
+    if (cleanedUp > 0) {
+      console.log(`🧹 Connection pool cleanup: removed ${cleanedUp} expired connections`);
+    }
+  }
+
+  /**
+   * Stop cleanup interval and destroy all connections
+   */
+  destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = undefined;
+    }
+
+    // Destroy all connections in all pools
+    for (const [poolKey, pool] of this.pools.entries()) {
+      pool.forEach(connection => this.destroyConnection(connection));
+    }
+
+    // Clear all maps
+    this.pools.clear();
+    this.activeConnections.clear();
+    this.connectionTimestamps.clear();
+
+    console.log('🔌 Connection pool destroyed and all connections cleaned up');
   }
 
   /**
@@ -747,7 +912,8 @@ class ProjectServer {
       keepAlive: config.keepAlive !== false
     };
     
-    this.port = PortManager.allocatePort(projectPath);
+    // Note: Port allocation is now async, will be done in start()
+    this.port = 0; // Temporary, will be set in start()
     
     this.connectionPool = new ConnectionPool({
       maxConnections: this.config.maxConnections,
@@ -764,10 +930,19 @@ class ProjectServer {
   }
 
   /**
-   * Start optimized server with dedicated port
+   * Start optimized server with dedicated port (async allocation)
    */
   async start(): Promise<void> {
     console.log(`🚀 Starting server for project: ${this.config.project}`);
+    
+    // Allocate port asynchronously to prevent race conditions
+    try {
+      this.port = await PortManager.allocatePort(this.projectPath);
+    } catch (error) {
+      console.error(`❌ Failed to allocate port: ${error.message}`);
+      throw error;
+    }
+    
     console.log(`📍 Dedicated port: ${this.port}`);
     console.log(`🔗 Max connections: ${this.config.maxConnections}`);
     console.log(`⏱️ Connection timeout: ${this.config.connectionTimeout}ms`);
@@ -846,16 +1021,29 @@ class ProjectServer {
   }
 
   /**
-   * Stop server and release port
+   * Stop the server and cleanup resources
    */
   async stop(): Promise<void> {
+    console.log(`🛑 Stopping server for project: ${this.config.project}`);
+    
+    // Stop the server
     if (this.server) {
       this.server.stop();
-      this.server = null;
+      this.server = undefined;
     }
     
-    PortManager.releasePort(this.projectPath);
-    console.log(`🛑 Server stopped for project: ${this.config.project}`);
+    // Destroy connection pool and cleanup connections
+    if (this.connectionPool) {
+      this.connectionPool.destroy();
+      this.connectionPool = undefined;
+    }
+    
+    // Release port allocation
+    if (this.projectPath) {
+      PortManager.releasePort(this.projectPath);
+    }
+    
+    console.log(`✅ Server stopped and resources cleaned up for: ${this.config.project}`);
   }
 
   /**
@@ -894,10 +1082,11 @@ async function demonstratePortManagement(): Promise<void> {
   });
 
   // Create project servers with dedicated ports
+  const platformRoot = Bun.env.BUN_PLATFORM_HOME ?? process.cwd();
   const projects = [
-    '/Users/nolarose/Projects/my-bun-app',
-    '/Users/nolarose/Projects/cli-dashboard',
-    '/Users/nolarose/Projects/edge-worker'
+    `${platformRoot}/projects/apps/my-bun-app`,
+    `${platformRoot}/projects/apps/cli-dashboard`,
+    `${platformRoot}/projects/apps/edge-worker`
   ];
 
   const servers: ProjectServer[] = [];

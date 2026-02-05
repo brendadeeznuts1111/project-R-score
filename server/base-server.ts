@@ -37,6 +37,9 @@ import { ChromeAppManager } from '../lib/chrome-integration';
 // Import RSS integration service
 import { RSSIntegrationService, RSSFeedItem } from '../services/rss-integration';
 
+// Import advanced cache management
+import { CacheFactory, CacheMiddleware } from '../lib/cache-management.ts';
+
 // Initialize services
 const docsFetcher = new EnhancedDocsFetcher({
   ttl: 6 * 60 * 60 * 1000, // 6 hours
@@ -51,8 +54,8 @@ const chromeManager = new ChromeAppManager({
 // Initialize RSS integration service
 const rssService = new RSSIntegrationService();
 
-// Cache for performance
-const responseCache = new Map<string, { data: Response; timestamp: number }>();
+// Advanced cache with eviction policies
+const responseCache = CacheFactory.createApiCache();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 // Unified server configuration
@@ -1612,7 +1615,7 @@ async function handleCookieScannerDemo(request: Request, url: URL): Promise<Resp
       }
     },
     cliUsage: {
-      command: `R2_BUCKET=${r2Bucket} PROJECT_ID=${projectId} bun cookie-scanner.ts ${sessionId}`,
+      command: `R2_BUCKET=${r2Bucket} PROJECT_ID=${projectId} bun tools/cookie-scanner.ts ${sessionId}`,
       oneLiner: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));const b=Buffer.concat([Buffer.from([0x01]),z]);console.log({p,s,bundle:b.length+"B",bucket:process.env.R2_BUCKET||"scanner-cookies",status:"✅"})' ${projectId} ${sessionId}`
     },
     benefits: [
@@ -2122,15 +2125,14 @@ async function handleChromeApp(request: Request, url: URL): Promise<Response> {
  * Cache statistics
  */
 async function handleCacheStats(request: Request, url: URL): Promise<Response> {
-  const serverCache = {
-    size: responseCache.size,
-    ttl: CACHE_TTL / 1000 / 60 + ' minutes'
-  };
-  
+  const serverCache = responseCache.getStats();
   const docsCache = (docsFetcher as any).cache.getStats();
   
   return new Response(JSON.stringify({
-    server: serverCache,
+    server: {
+      ...serverCache,
+      ttl: CACHE_TTL / 1000 / 60 + ' minutes'
+    },
     documentation: docsCache
   }, null, 2));
 }

@@ -707,8 +707,8 @@ console.log(`System CPU: ${usage.cpuTime.system} µs`);
 
 This guide is part of the Project Matrix. See also:
 - `BUN_MAIN_GUIDE.md` - Entrypoint-based path resolution
-- `guide-cli.ts` - CLI guidance tool implementation
-- `overseer-cli.ts` - Monorepo manager using spawn
+- `utils/guide-cli.ts` - CLI guidance tool implementation
+- `tools/overseer-cli.ts` - Monorepo manager using spawn
 
 ---
 

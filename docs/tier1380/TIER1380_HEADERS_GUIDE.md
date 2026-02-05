@@ -233,10 +233,10 @@ export FW_ALLOW_PTY=1  # Optional: for PTY debug
 ### **2. Run One-Liner Tests**
 ```bash
 # Make scripts executable
-chmod +x tier1380-one-liners.sh
+chmod +x scripts/tier1380-one-liners.sh
 
 # Run all one-liner tests
-./tier1380-one-liners.sh
+./scripts/tier1380-one-liners.sh
 
 # Run performance benchmark
 bun tier1380-benchmark.sh
@@ -449,7 +449,7 @@ const metrics = {
 ## 📁 **Files Created**
 
 - `tier1380-headers-citadel.ts` - Core Tier-1380 implementation
-- `tier1380-one-liners.sh` - One-liner scripts and benchmarks
+- `scripts/tier1380-one-liners.sh` - One-liner scripts and benchmarks
 - `tier1380-worker.js` - Cloudflare Workers handler
 - `test-tier1380-csrf.js` - CSRF validation tests
 - `test-tier1380-snapshot.js` - Snapshot creation tests

@@ -12,15 +12,15 @@
   <link rel="dns-prefetch" href="https://developer.mozilla.org">
 <!-- End Prefetch Optimizations -->
 
-# Quick Test Guide for guide-cli.ts
+# Quick Test Guide for utils/guide-cli.ts
 
-This document verifies that `guide-cli.ts` is working properly with the advanced Bun.which patterns.
+This document verifies that `utils/guide-cli.ts` is working properly with the advanced Bun.which patterns.
 
 ## Test 1: Entry Guard
 
 ```bash
-cd /Users/nolarose/PROJECTS
-bun guide-cli.ts
+cd "${BUN_PLATFORM_HOME:-$HOME/Projects}"
+bun utils/guide-cli.ts
 ```
 
 **Expected:** Shows usage message and exits with code 1
@@ -28,8 +28,8 @@ bun guide-cli.ts
 ## Test 2: Missing Project Error
 
 ```bash
-cd /Users/nolarose/PROJECTS
-bun guide-cli.ts --project nonexistent --bin bun
+cd "${BUN_PLATFORM_HOME:-$HOME/Projects}"
+bun utils/guide-cli.ts --project nonexistent --bin bun
 ```
 
 **Expected:** Error message "Project not found" and exit code 1
@@ -37,8 +37,9 @@ bun guide-cli.ts --project nonexistent --bin bun
 ## Test 3: Binary Resolution with Diagnostics
 
 ```bash
-cd /Users/nolarose/PROJECTS
-BUN_PLATFORM_HOME=/Users/nolarose/PROJECTS bun guide-cli.ts --project my-bun-app --bin bun --diagnostics
+export BUN_PLATFORM_HOME="${BUN_PLATFORM_HOME:-$HOME/Projects}"
+cd "$BUN_PLATFORM_HOME"
+bun utils/guide-cli.ts --project my-bun-app --bin bun --diagnostics
 ```
 
 **Expected:** Shows searched paths and either "Found:" or "Binary not found"
@@ -46,8 +47,9 @@ BUN_PLATFORM_HOME=/Users/nolarose/PROJECTS bun guide-cli.ts --project my-bun-app
 ## Test 4: Successful Resolution (if dependencies installed)
 
 ```bash
-cd /Users/nolarose/PROJECTS
-BUN_PLATFORM_HOME=/Users/nolarose/PROJECTS bun guide-cli.ts --project my-bun-app --bin bun --args --version
+export BUN_PLATFORM_HOME="${BUN_PLATFORM_HOME:-$HOME/Projects}"
+cd "$BUN_PLATFORM_HOME"
+bun utils/guide-cli.ts --project my-bun-app --bin bun --args --version
 ```
 
 **Expected:** Bun version output (e.g., "1.3.8")
@@ -55,8 +57,8 @@ BUN_PLATFORM_HOME=/Users/nolarose/PROJECTS bun guide-cli.ts --project my-bun-app
 ## Test 5: Entry Guard Verification
 
 ```bash
-cd /Users/nolarose/PROJECTS
-bun -e "import('./guide-cli.ts')"
+cd "${BUN_PLATFORM_HOME:-$HOME/Projects}"
+bun -e "import('./utils/guide-cli.ts')"
 echo $?
 ```
 
@@ -72,12 +74,13 @@ echo $?
 
 ```bash
 # First, install dependencies in a project that has TypeScript
-cd /Users/nolarose/PROJECTS/my-bun-app
+export BUN_PLATFORM_HOME="${BUN_PLATFORM_HOME:-$HOME/Projects}"
+cd "$BUN_PLATFORM_HOME/projects/apps/my-bun-app"
 bun add -d typescript
 
 # Then test from root
-cd /Users/nolarose/PROJECTS
-BUN_PLATFORM_HOME=/Users/nolarose/PROJECTS bun guide-cli.ts --project my-bun-app --bin tsc --args --version
+cd "$BUN_PLATFORM_HOME"
+bun utils/guide-cli.ts --project my-bun-app --bin tsc --args --version
 ```
 
 This should show the TypeScript compiler version, proving that project-isolated binary resolution works correctly.

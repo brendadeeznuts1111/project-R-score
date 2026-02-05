@@ -12,6 +12,9 @@ This monorepo is organized with clear separation of concerns:
 - **utils/** - Utility scripts
 - **deployment/** - Deployment scripts and configurations
 - **docs/** - Documentation organized by type
+- **docs/archives/** - Historical reports (read-only)
+- **docs/data/** - Diagnostic data and reports
+- **scripts/** - Shell scripts and maintenance tasks
 
 ### Configuration Files
 - **package.json** - Root package configuration
@@ -35,7 +38,7 @@ This monorepo is organized with clear separation of concerns:
 ## 🏗️ Architecture
 
 ```
-/Users/nolarose/Projects/
+${BUN_PLATFORM_HOME:-$HOME/Projects}/
 ├── projects/          # All projects (46+)
 │   ├── games/        # Games (2048)
 │   ├── automation/   # Automation frameworks
@@ -54,7 +57,10 @@ This monorepo is organized with clear separation of concerns:
 ├── utils/            # Utility scripts (8 files)
 ├── deployment/       # Deployment scripts
 ├── docs/             # Documentation
+├── docs/archives/    # Historical reports (read-only)
+├── docs/data/        # Diagnostic data and reports
 ├── examples/         # Example files
+├── scripts/          # Shell scripts and maintenance
 ├── tests/            # Test files
 └── [config files]    # Root configurations
 ```
@@ -65,7 +71,9 @@ This monorepo is organized with clear separation of concerns:
 2. **shared/** stays in root - Common configurations
 3. **projects/** organized by purpose - Easy navigation
 4. **tools/** and **utils/** in root - Global utilities
-5. **docs/** organized - Better documentation management
+5. **scripts/** in root - Maintenance and manual test scripts
+6. **docs/** organized - Better documentation management
+7. **docs/archives/** - Historical reports only (no new reports)
 
 This structure provides:
 - ✅ Clear separation of concerns

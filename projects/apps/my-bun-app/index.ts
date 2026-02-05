@@ -50,7 +50,7 @@ Bun.serve({
           <ul>
             <li><code>bun run dev</code> - Start dev server (this)</li>
             <li><code>bun cli-resolver.ts typecheck</code> - Type check project</li>
-            <li><code>bun overseer-cli.ts my-bun-app bun run dev</code> - Run via root CLI</li>
+            <li><code>bun tools/overseer-cli.ts my-bun-app bun run dev</code> - Run via root CLI</li>
           </ul>
 
           <p><a href="/api/health">Check API Health</a></p>

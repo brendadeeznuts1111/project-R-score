@@ -77,6 +77,10 @@ This monorepo is organized into specialized directories:
 - **`utils/`** - Utility scripts and helpers
 - **`deployment/`** - Deployment configurations
 - **`docs/`** - Comprehensive documentation
+- **`docs/archives/`** - Historical reports (read-only)
+- **`docs/data/`** - Diagnostic data and reports
+- **`tools/`** - Root tooling CLIs (all root-level utilities live here)
+- **`scripts/`** - Shell scripts and maintenance tasks
 
 ### Project Categories
 - **`automation/`** - Automation frameworks and scripts
@@ -85,6 +89,12 @@ This monorepo is organized into specialized directories:
 - **`apps/`** - Application projects
 - **`enterprise/`** - Enterprise-grade solutions
 - **`development/`** - Development tools and utilities
+
+## 📌 Documentation Hygiene
+
+- New docs must **not** use these markers: `summary`, `final`, `complete`, `final-complete`, `quantum`, `quantaum`, `enhance-[docname]`.
+- Progress reporting belongs in `CHANGELOG.md` only (versioned entries).
+- Historical reports live in `docs/archives/` and should not be extended.
 
 ## 🛠️ Available Scripts
 

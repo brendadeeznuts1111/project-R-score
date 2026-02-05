@@ -6,7 +6,7 @@
   "scripts": {
     "start": "bun dashboard.ts",
     "dev": "bun dashboard.ts --debug",
-    "terminal": "bun terminal-tool.ts",
+    "terminal": "bun utils/terminal-tool.ts",
     "typecheck": "bun cli-resolver.ts typecheck"
   },
   "dependencies": {

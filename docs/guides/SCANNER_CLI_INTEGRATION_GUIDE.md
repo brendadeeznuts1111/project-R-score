@@ -233,7 +233,7 @@ const combinedData = {
 
 ### **Core Implementation**
 - `scanner-cli.ts` - Production-ready scanner CLI (50 lines)
-- `test-scanner-cli.sh` - Comprehensive test suite
+- `scripts/test-scanner-cli.sh` - Comprehensive test suite
 
 ### **Integration Components**
 - Integrates with `tier1380-config-manager.ts`
@@ -271,7 +271,7 @@ R2_BUCKET=scanner-cookies PROJECT_ID=prod-test bun scanner-cli.ts
 bun scanner-cli.ts health-check
 
 # Performance test
-bun test-scanner-cli.sh
+bun scripts/test-scanner-cli.sh
 
 # Integration test
 bun tier1380-config-manager.ts load && bun scanner-cli.ts

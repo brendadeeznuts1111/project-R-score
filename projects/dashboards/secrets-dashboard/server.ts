@@ -3,6 +3,99 @@
 import {readFile, writeFile, mkdir, readdir} from 'node:fs/promises';
 import {existsSync, watch} from 'node:fs';
 import {join, extname} from 'node:path';
+import { InputValidator, CommonSchemas, ValidationMiddleware } from '../../lib/input-validation.ts';
+
+// ============================================================================
+// ERROR SANITIZATION UTILITIES
+// ============================================================================
+
+interface SanitizedError {
+  code: string;
+  message: string;
+  details?: string;
+  timestamp: string;
+  requestId?: string;
+}
+
+class ErrorHandler {
+  private static isDevelopment = process.env.NODE_ENV === 'development' || process.env.DEBUG === '1';
+  
+  /**
+   * Sanitize error for client response
+   */
+  static sanitize(error: unknown, requestId?: string): SanitizedError {
+    const timestamp = new Date().toISOString();
+    
+    if (error instanceof Error) {
+      // In development, include more details
+      if (this.isDevelopment) {
+        return {
+          code: 'INTERNAL_ERROR',
+          message: error.message,
+          details: error.stack,
+          timestamp,
+          requestId
+        };
+      }
+      
+      // In production, hide sensitive details
+      const sanitizedMessage = this.sanitizeMessage(error.message);
+      return {
+        code: this.getErrorCode(error),
+        message: sanitizedMessage,
+        timestamp,
+        requestId
+      };
+    }
+    
+    // Handle non-Error objects
+    return {
+      code: 'UNKNOWN_ERROR',
+      message: 'An unexpected error occurred',
+      timestamp,
+      requestId
+    };
+  }
+  
+  /**
+   * Remove sensitive information from error messages
+   */
+  private static sanitizeMessage(message: string): string {
+    // Remove file paths, environment variables, and sensitive patterns
+    return message
+      .replace(/\/[^\s]+/g, '[PATH]') // Remove file paths
+      .replace(/[A-Z_]+_?[A-Z_]*=/g, '[ENV_VAR]=') // Remove env vars
+      .replace(/password[s]?:[^\s]*/gi, 'password:***') // Remove passwords
+      .replace(/secret[s]?:[^\s]*/gi, 'secret:***') // Remove secrets
+      .replace(/token[s]?:[^\s]*/gi, 'token:***') // Remove tokens
+      .replace(/key[s]?:[^\s]*/gi, 'key:***') // Remove keys
+      .substring(0, 200); // Limit length
+  }
+  
+  /**
+   * Map error types to safe error codes
+   */
+  private static getErrorCode(error: Error): string {
+    if (error.name === 'ValidationError') return 'VALIDATION_ERROR';
+    if (error.name === 'TypeError') return 'INVALID_REQUEST';
+    if (error.name === 'RangeError') return 'OUT_OF_RANGE';
+    if (error.message.includes('ENOENT')) return 'FILE_NOT_FOUND';
+    if (error.message.includes('EACCES')) return 'PERMISSION_DENIED';
+    if (error.message.includes('timeout')) return 'TIMEOUT';
+    return 'INTERNAL_ERROR';
+  }
+  
+  /**
+   * Log error securely (without sensitive data)
+   */
+  static log(error: unknown, context?: string, requestId?: string): void {
+    const sanitized = this.sanitize(error, requestId);
+    console.error(`[${new Date().toISOString()}] ERROR ${requestId ? `[${requestId}]` : ''} ${context ? `[${context}]` : ''}:`, {
+      code: sanitized.code,
+      message: sanitized.message
+    });
+  }
+}
 
 const PORT = Number(Bun.env.PORT ?? 3456);
 const ROOT = import.meta.dir;
@@ -12,7 +105,19 @@ const INDEX_PATH = join(DATA_DIR, 'index.json');
 const AUDIT_PATH = join(DATA_DIR, 'audit.jsonl');
 const API_USAGE_PATH = join(DATA_DIR, 'bun-api-usage.json');
 const PROFILES_PATH = join(DATA_DIR, 'profiles.json');
-const PROJECTS_ROOT = '/Users/nolarose/Projects';
+const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? (() => {
+	// Try to derive from Bun.main or current working directory
+	const mainDir = Bun.main ? Bun.main.slice(0, Bun.main.lastIndexOf('/')) : process.cwd();
+	let current = mainDir;
+	// Walk up to find platform root
+	while (current !== '/' && current !== '') {
+		if (Bun.file(`${current}/.husky`).existsSync() && Bun.file(`${current}/docs`).existsSync()) {
+			return current;
+		}
+		current = current.slice(0, current.lastIndexOf('/'));
+	}
+	return process.cwd();
+})();
 const HMR_CLIENTS = new Set<WritableStreamDefaultWriter>();
 const ENV_ROOT = PROJECTS_ROOT;
 const MAIN_DIR = Bun.fileURLToPath(new URL('.', Bun.pathToFileURL(Bun.main)));
@@ -500,10 +605,15 @@ async function listProjects(): Promise<{folder: string; name: string | null; pat
   return results.sort((a, b) => a.folder.localeCompare(b.folder));
 }
 
+function generateRequestId(): string {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
 const server = Bun.serve({
   port: PORT,
   idleTimeout: 0,
   async fetch(req) {
+    const requestId = generateRequestId();
     const url = new URL(req.url);
 
     if (url.pathname === '/' || url.pathname === '/index.html') {
@@ -540,10 +650,21 @@ const server = Bun.serve({
           return Response.json({items});
         }
         if (url.pathname === '/api/bun-usage') {
-          const project = url.searchParams.get('project') || '';
-          if (!project) throw new Error('Missing project');
-          const refresh = url.searchParams.get('refresh') === '1';
-          const format = url.searchParams.get('format') || 'json';
+          // Validate URL parameters
+          const paramValidation = InputValidator.validateUrlParams(url, {
+            project: { required: true, type: 'string', minLength: 1, maxLength: 100, sanitize: true },
+            refresh: { required: false, type: 'string', enum: ['0', '1'] },
+            format: { required: false, type: 'string', enum: ['json', 'csv'] }
+          });
+          
+          if (!paramValidation.isValid) {
+            throw new Error(`Validation failed: ${paramValidation.errors.join(', ')}`);
+          }
+          
+          const project = paramValidation.sanitized.project;
+          const refresh = paramValidation.sanitized.refresh === '1';
+          const format = paramValidation.sanitized.format || 'json';
+          
           const cache = await readUsageCache();
           if (!refresh && cache[project]) {
             if (format === 'csv') {
@@ -574,11 +695,40 @@ const server = Bun.serve({
           return Response.json({items});
         }
         if (url.pathname === '/api/import') {
-          const body = await json(req);
-          if (!Array.isArray(body.items)) throw new Error('Missing items array');
-          const items = body.items
+          const bodyValidation = await InputValidator.validateJsonBody(req, {
+            items: {
+              required: true,
+              type: 'array',
+              maxLength: 1000
+            }
+          });
+          
+          if (!bodyValidation.isValid) {
+            throw new Error(`Validation failed: ${bodyValidation.errors.join(', ')}`);
+          }
+          
+          const items = bodyValidation.sanitized.items
             .filter((i: any) => i && typeof i.service === 'string' && typeof i.name === 'string' && typeof i.value === 'string')
-            .map((i: any) => ({service: i.service, name: i.name, value: i.value}));
+            .map((i: any) => ({
+              service: InputValidator.validateField(i.service, {
+                type: 'string',
+                minLength: 1,
+                maxLength: 255,
+                sanitize: true
+              }, 'service').sanitized,
+              name: InputValidator.validateField(i.name, {
+                type: 'string',
+                minLength: 1,
+                maxLength: 255,
+                sanitize: true
+              }, 'name').sanitized,
+              value: i.value // Don't sanitize secret values
+            }));
+            
+          if (items.length === 0) {
+            throw new Error('No valid items provided');
+          }
+          
           const secrets = requireSecrets();
           for (const i of items) {
             await secrets.set({service: i.service, name: i.name}, i.value);
@@ -661,19 +811,33 @@ const server = Bun.serve({
         }
 
         const secrets = requireSecrets();
-        const body = await json(req);
-        const service = normalizeService(body.service);
-        const name = normalizeName(body.name);
+        
+        // Validate all secret management requests
+        const bodyValidation = await InputValidator.validateJsonBody(req, {
+          service: { required: true, type: 'string', minLength: 1, maxLength: 255, sanitize: true },
+          name: { required: true, type: 'string', minLength: 1, maxLength: 255, sanitize: true },
+          value: { required: false, type: 'string', maxLength: 10000 }
+        });
+        
+        if (!bodyValidation.isValid) {
+          throw new Error(`Validation failed: ${bodyValidation.errors.join(', ')}`);
+        }
+        
+        const service = bodyValidation.sanitized.service;
+        const name = bodyValidation.sanitized.name;
+        const value = bodyValidation.sanitized.value;
 
         if (url.pathname === '/api/get') {
-          const value = await secrets.get({service, name});
-          await appendAudit({action: 'get', service, name, hit: !!value});
-          return Response.json({value});
+          const getValue = await secrets.get({service, name});
+          await appendAudit({action: 'get', service, name, hit: !!getValue});
+          return Response.json({value: getValue});
         }
 
         if (url.pathname === '/api/set') {
-          if (typeof body.value !== 'string') throw new Error('Missing value');
-          await secrets.set({service, name}, body.value);
+          if (typeof value !== 'string') {
+            throw new Error('Missing value for set operation');
+          }
+          await secrets.set({service, name}, value);
           await appendAudit({action: 'set', service, name});
           const items = await ensureIndex();
           const now = new Date().toISOString();
@@ -695,7 +859,12 @@ const server = Bun.serve({
 
         return new Response('Not found', {status: 404});
       } catch (err) {
-        return Response.json({error: err instanceof Error ? err.message : String(err)}, {status: 400});
+        // Log the full error for debugging
+        ErrorHandler.log(err, `API ${url.pathname}`, requestId);
+        
+        // Return sanitized error to client
+        const sanitized = ErrorHandler.sanitize(err, requestId);
+        return Response.json(sanitized, {status: 400});
       }
     }
 

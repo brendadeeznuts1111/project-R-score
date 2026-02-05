@@ -8,7 +8,7 @@ console.log("🧪 Testing guide-cli.ts directly...\n");
 
 // Test 1: Show help (no args)
 console.log("1️⃣  Testing help output:");
-const helpResult = Bun.spawnSync(["bun", "../guide-cli.ts"]);
+const helpResult = Bun.spawnSync(["bun", "../utils/guide-cli.ts"]);
 const helpOutput = helpResult.stdout.toString() + helpResult.stderr.toString();
 if (helpOutput.includes("Usage:") && helpResult.exitCode === 1) {
   console.log("✅ Shows usage and exits with code 1\n");
@@ -20,7 +20,7 @@ if (helpOutput.includes("Usage:") && helpResult.exitCode === 1) {
 
 // Test 2: Missing project
 console.log("2️⃣  Testing missing project:");
-const missingResult = Bun.spawnSync(["bun", "../guide-cli.ts", "--project", "nonexistent", "--bin", "bun"]);
+const missingResult = Bun.spawnSync(["bun", "../utils/guide-cli.ts", "--project", "nonexistent", "--bin", "bun"]);
 const missingOutput = missingResult.stdout.toString() + missingResult.stderr.toString();
 if (missingOutput.includes("not found") && missingResult.exitCode === 1) {
   console.log("✅ Properly handles missing project\n");
@@ -32,7 +32,7 @@ if (missingOutput.includes("not found") && missingResult.exitCode === 1) {
 
 // Test 3: Try to resolve bun in my-bun-app (with diagnostics)
 console.log("3️⃣  Testing binary resolution with diagnostics:");
-const diagResult = Bun.spawnSync(["bun", "../guide-cli.ts", "--project", "my-bun-app", "--bin", "bun", "--diagnostics"]);
+const diagResult = Bun.spawnSync(["bun", "../utils/guide-cli.ts", "--project", "my-bun-app", "--bin", "bun", "--diagnostics"]);
 const diagOutput = diagResult.stdout.toString() + diagResult.stderr.toString();
 if (diagOutput.includes("Found:") || diagOutput.includes("Searched:")) {
   console.log("✅ Binary resolution with diagnostics works\n");
@@ -44,7 +44,7 @@ if (diagOutput.includes("Found:") || diagOutput.includes("Searched:")) {
 
 // Test 4: Check that entry guard works (importing should exit)
 console.log("4️⃣  Testing entry guard via import:");
-const importResult = Bun.spawnSync(["bun", "-e", "import('../guide-cli.ts')"]);
+const importResult = Bun.spawnSync(["bun", "-e", "import('../utils/guide-cli.ts')"]);
 if (importResult.exitCode === 0) {
   console.log("✅ Import exits with code 0 (guard active)\n");
 } else {

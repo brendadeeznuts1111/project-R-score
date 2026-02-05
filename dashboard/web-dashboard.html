@@ -235,101 +235,52 @@
             }
         }
 
-        // Mock dashboard data (replace with real API calls)
+        // API configuration
+        const API_BASE_URL = window.location.origin;
+        
+        // Fetch real dashboard data from API
         async function fetchDashboardData() {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 500));
-
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/dashboard`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Convert date strings back to Date objects for tokens
+                if (data.tokens) {
+                    data.tokens = data.tokens.map(t => ({
+                        ...t,
+                        expiresAt: new Date(t.expiresAt)
+                    }));
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('Failed to fetch dashboard data:', error);
+                showNotification('error', 'API Error', 'Failed to connect to dashboard server. Using fallback data.');
+                
+                // Return fallback mock data if API fails
+                return getFallbackData();
+            }
+        }
+        
+        // Fallback mock data when API is unavailable
+        function getFallbackData() {
             return {
                 systemStatus: [
-                    {
-                        component: '🔐 Master Token System',
-                        status: 'healthy',
-                        message: '3 active tokens, 0 recent failures',
-                        metrics: { activeTokens: 3, recentFailures: 0 }
-                    },
-                    {
-                        component: '☁️ R2 Storage Integration',
-                        status: 'healthy',
-                        message: 'Connected: 243 objects (15.7MB)',
-                        metrics: { configured: true, bucketName: 'scanner-cookies' }
-                    },
-                    {
-                        component: '📚 Bun MCP Server',
-                        status: 'healthy',
-                        message: 'Server script accessible',
-                        metrics: { accessible: true }
-                    },
-                    {
-                        component: '🔧 Tools MCP Server',
-                        status: 'healthy',
-                        message: 'Server script accessible',
-                        metrics: { accessible: true }
-                    },
-                    {
-                        component: '🌉 MCP Bridge',
-                        status: 'healthy',
-                        message: 'Server script accessible',
-                        metrics: { accessible: true }
-                    },
-                    {
-                        component: '🔍 fw-docs CLI',
-                        status: 'healthy',
-                        message: 'CLI tool accessible',
-                        metrics: { accessible: true }
-                    }
+                    { component: '🔐 Master Token System', status: 'warning', message: 'API connection failed', metrics: {} },
+                    { component: '☁️ R2 Storage Integration', status: 'warning', message: 'API connection failed', metrics: {} },
+                    { component: '📚 Bun MCP Server', status: 'unknown', message: 'Cannot determine status', metrics: {} }
                 ],
                 metrics: {
-                    authentication: {
-                        activeTokens: 3,
-                        recentAuths: 15,
-                        failedAuths: 0
-                    },
-                    storage: {
-                        totalObjects: 243,
-                        totalSize: '15.7MB',
-                        diagnosesCount: 85,
-                        auditsCount: 125
-                    },
-                    usage: {
-                        totalSearches: 1250,
-                        totalDiagnoses: 85,
-                        totalExamples: 320,
-                        avgResponseTime: 45
-                    },
-                    system: {
-                        uptime: '2h 15m',
-                        memoryUsage: '45.2 MB',
-                        errorRate: 0.0,
-                        lastRestart: 'Today 09:20 AM'
-                    }
+                    authentication: { activeTokens: 0, recentAuths: 0, failedAuths: 0 },
+                    storage: { totalObjects: 0, totalSize: '0 B', diagnosesCount: 0, auditsCount: 0 },
+                    usage: { totalSearches: 0, totalDiagnoses: 0, totalExamples: 0, avgResponseTime: 0 },
+                    system: { uptime: '0s', memoryUsage: '0 MB', errorRate: 0, lastRestart: 'Unknown' }
                 },
-                recentActivity: [
-                    { time: '09:24:58', event: 'Diagnosis stored', type: 'success' },
-                    { time: '09:23:21', event: 'R2 connection test', type: 'success' },
-                    { time: '09:22:15', event: 'MCP bridge started', type: 'success' },
-                    { time: '09:20:00', event: 'Dashboard initialized', type: 'success' }
-                ],
-                tokens: [
-                    {
-                        id: 'mt_1704441234567_abc12345',
-                        permissions: ['search:docs', 'store:diagnosis', 'write:metrics'],
-                        expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000),
-                        metadata: { createdFor: 'CLI User' }
-                    },
-                    {
-                        id: 'mt_1704440987654_def67890',
-                        permissions: ['search:docs', 'audit:search', 'metrics:read'],
-                        expiresAt: new Date(Date.now() + 6 * 60 * 60 * 1000),
-                        metadata: { createdFor: 'Claude Desktop' }
-                    },
-                    {
-                        id: 'mt_1704440765432_ghi11111',
-                        permissions: ['manage:tokens', 'read:audits', 'system:admin'],
-                        expiresAt: new Date(Date.now() + 23 * 60 * 60 * 1000),
-                        metadata: { createdFor: 'Admin' }
-                    }
-                ]
+                recentActivity: [{ time: new Date().toLocaleTimeString(), event: 'API connection failed - using fallback', type: 'warning' }],
+                tokens: []
             };
         }
 

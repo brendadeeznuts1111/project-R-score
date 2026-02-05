@@ -811,10 +811,10 @@ const POINTER_DICTIONARY = {
 
   // Core CLI tools (local paths)
   CLI_TOOLS: {
-    overseer: join(PLATFORM_ROOT, 'overseer-cli.ts'),
-    guide: join(PLATFORM_ROOT, 'guide-cli.ts'),
+    overseer: join(PLATFORM_ROOT, 'tools', 'overseer-cli.ts'),
+    guide: join(PLATFORM_ROOT, 'utils', 'guide-cli.ts'),
     server: join(PLATFORM_ROOT, 'server.ts'),
-    terminal: join(PLATFORM_ROOT, 'terminal-tool.ts'),
+    terminal: join(PLATFORM_ROOT, 'utils', 'terminal-tool.ts'),
   },
 
   // Shared utilities

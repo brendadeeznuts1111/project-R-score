@@ -57,16 +57,20 @@ This is a **Bun-based monorepo-lite platform** demonstrating project isolation u
 
 ```
 /Users/nolarose/Projects/          # $BUN_PLATFORM_HOME
-├── Root-Level Tools (CLI)
+├── tools/                        # Root tooling CLIs and utilities
 │   ├── overseer-cli.ts           # Monorepo manager - discover and run commands in sub-projects
-│   ├── guide-cli.ts              # Advanced binary resolution with Bun.which patterns
-│   ├── server.ts                 # Example web server with session/cookie handling
-│   ├── terminal-tool.ts          # Interactive PTY terminal with project context
+│   ├── scan.ts                   # Tier-1380 scan CLI
+│   ├── secret-helper.ts          # Versioned secret helpers
+│   ├── cookie-scanner.ts         # Cookie scanner CLI
 │   ├── inspect-projects.ts       # Bun.inspect demo with tabular output
 │   ├── inspect-demo.ts           # General Bun.inspect demonstrations
-│   ├── keychain-naming.ts        # Keychain/credential naming utilities
-│   ├── registry-color-channel-cli.ts  # Registry CLI with color channel support
 │   └── ... (other .ts tools)
+│
+├── utils/                        # Root utility CLIs
+│   ├── guide-cli.ts              # Advanced binary resolution with Bun.which patterns
+│   ├── terminal-tool.ts          # Interactive PTY terminal with project context
+│   ├── keychain-naming.ts        # Keychain/credential naming utilities
+│   └── registry-color-channel-cli.ts  # Registry CLI with color channel support
 │
 ├── shared/                       # Shared utilities
 │   ├── tools/
@@ -81,11 +85,13 @@ This is a **Bun-based monorepo-lite platform** demonstrating project isolation u
 │
 ├── docs/                         # Documentation
 │   ├── BUN_MAIN_GUIDE.md       # Comprehensive Bun.main reference
-│   ├── BUN_SPAWN_GUIDE.md      # Bun.spawn() complete guide (root level)
-│   ├── BUN_WHICH_GUIDE.md      # Bun.which() advanced patterns (root level)
+│   ├── guides/
+│   │   ├── BUN_SPAWN_GUIDE.md  # Bun.spawn() complete guide
+│   │   └── BUN_WHICH_GUIDE.md  # Bun.which() advanced patterns
 │   ├── BUN_ESCAPEHTML_GUIDE.md # Bun.escapeHTML() XSS prevention guide
 │   ├── BUN_MARKDOWN_HTML_GUIDE.md # Bun.markdown.html() options guide
-│   └── bun-file-io-guide.md    # File I/O patterns
+│   ├── bun-file-io-guide.md    # File I/O patterns
+│   └── archives/               # Historical reports (read-only)
 │
 ├── Kimi Shell Integration (MCP)
 │   ├── AGENTS.md               # This file - AI agent guide with MCP tool reference
@@ -114,34 +120,37 @@ This is a **Bun-based monorepo-lite platform** demonstrating project isolation u
 
 ### Environment Setup
 ```bash
-# Required environment variable
-export BUN_PLATFORM_HOME="/Users/nolarose/Projects"
+# Optional: Set platform root (defaults to $HOME/Projects or auto-detected)
+export BUN_PLATFORM_HOME="${BUN_PLATFORM_HOME:-$HOME/Projects}"
+
+# Or use a custom path
+export BUN_PLATFORM_HOME="/path/to/your/projects"
 ```
 
 ### Running Root-Level Tools
 ```bash
 # List all projects
-bun overseer-cli.ts
+bun tools/overseer-cli.ts
 
 # Run command in specific project
-bun overseer-cli.ts <project-name> <command> [args...]
-bun overseer-cli.ts my-bun-app bun run dev
+bun tools/overseer-cli.ts <project-name> <command> [args...]
+bun tools/overseer-cli.ts my-bun-app bun run dev
 
 # Guide CLI - project-specific binary execution
-bun guide-cli.ts --project my-bun-app --bin bun --args run dev
-bun guide-cli.ts typecheck                    # Simple mode: run tsc --noEmit
+bun utils/guide-cli.ts --project my-bun-app --bin bun --args run dev
+bun utils/guide-cli.ts typecheck                    # Simple mode: run tsc --noEmit
 
 # Start example server
-bun server.ts
+bun tools/server.ts
 
 # Interactive terminal
-bun terminal-tool.ts
+bun utils/terminal-tool.ts
 
 # Profile a workload
 bun scripts/profiler.ts --run
 
 # Inspect projects table
-bun inspect-projects.ts
+bun tools/inspect-projects.ts
 ```
 
 ### Running Sub-Projects
@@ -157,10 +166,10 @@ cd <project> && bun run <script>
 ### Type Checking
 ```bash
 # Simple mode - type check relative to Bun.main
-bun guide-cli.ts typecheck
+bun utils/guide-cli.ts typecheck
 
 # With project specification
-bun guide-cli.ts --project my-bun-app --bin tsc --args --noEmit
+bun utils/guide-cli.ts --project my-bun-app --bin tsc --args --noEmit
 ```
 
 ## Code Style Guidelines
@@ -174,7 +183,7 @@ bun guide-cli.ts --project my-bun-app --bin tsc --args --noEmit
 - `skipLibCheck`: true
 
 ### Naming Conventions
-- Files: kebab-case.ts (e.g., `guide-cli.ts`, `entry-guard.ts`)
+- Files: kebab-case.ts (e.g., `tools/overseer-cli.ts`, `utils/guide-cli.ts`)
 - Functions: camelCase
 - Constants: UPPER_SNAKE_CASE for true constants
 - Types/Interfaces: PascalCase
@@ -184,7 +193,7 @@ All CLI tools must include entry guards to prevent accidental import execution:
 
 ```typescript
 #!/usr/bin/env bun
-import { ensureDirectExecution } from "./shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
 ensureDirectExecution();  // MUST be first after imports
 
 // ... rest of CLI code
@@ -222,21 +231,21 @@ This project does **not** have a formal test framework configured. Testing is ma
 
 ```bash
 # Test entry guards
-bun test-guard-import.sh
+bun scripts/test-guard-import.sh
 
 # Manual test script
-./manual-test.sh
+./scripts/manual-test.sh
 
 # Test specific tools
-bun overseer-cli.ts  # Should list projects
-bun guide-cli.ts --help  # Should show help
+bun tools/overseer-cli.ts  # Should list projects
+bun utils/guide-cli.ts --help  # Should show help
 ```
 
 ### Testing Entry Guards
 Create a test file that imports the tool:
 ```typescript
 // test-import.ts
-import "./overseer-cli.ts";  // Should exit immediately (code 0)
+import "./tools/overseer-cli.ts";  // Should exit immediately (code 0)
 console.log("This should never print");
 ```
 
@@ -276,6 +285,26 @@ Each sub-project should:
 3. Use `Bun.main` for path resolution, not hardcoded paths
 4. Write outputs to project-specific locations
 
+### Root Hygiene (Required)
+To reduce root-level bloat and path confusion:
+- Keep the root for configuration, entrypoints, and top-level docs only.
+- Do not add new one-off files in the root. Place them in the appropriate directory.
+- Prefer relative paths derived from `Bun.main` or `BUN_PLATFORM_HOME`, never hardcode `/Users/nolarose/Projects`.
+- Generated outputs must go to `build/`, `dist/`, `logs/`, or a project-local `artifacts/` folder.
+
+Recommended placement:
+- Documentation: `docs/` (use subfolders like `docs/notes/` and `docs/architecture/`)
+- Historical reports only: `docs/archives/`
+- Tools/CLIs and scripts: `scripts/` (shell) or `tools/` (TypeScript utilities)
+- Examples and demos: `examples/`
+- Data snapshots and diagnostics: `data/` or `docs/data/` (if documentation-facing)
+- Project-specific assets: inside the owning project folder
+
+### Documentation Hygiene (Required)
+- Ban new docs with these markers: `summary`, `final`, `complete`, `final-complete`, `quantum`, `quantaum`, `enhance-[docname]`.
+- Progress updates and reporting must go into `CHANGELOG.md` using versioned entries.
+- Historical reports are kept only in `docs/archives/` and should not be extended.
+
 ### Binary Resolution Pattern
 ```typescript
 import { which, spawn } from "bun";
@@ -299,7 +328,7 @@ if (binPath) {
 ### Shared Tool Usage
 Import from shared using relative paths:
 ```typescript
-import { ensureDirectExecution } from "./shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
 ```
 
 ### Documentation
@@ -321,20 +350,36 @@ import { ensureDirectExecution } from "./shared/tools/entry-guard.ts";
 4. Create entrypoint (e.g., `index.ts`)
 5. Run `bun install` in the directory
 
-### Creating a New Root-Level CLI Tool
-1. Create file: `touch my-tool.ts`
+### Creating a New Tooling CLI
+1. Create file: `touch tools/my-tool.ts`
 2. Add shebang: `#!/usr/bin/env bun`
 3. Add entry guard as first import
-4. Follow existing patterns in `guide-cli.ts`
+4. Follow existing patterns in `utils/guide-cli.ts`
 5. Export nothing (CLI-only)
+
+### Root Cleanup Workflow
+1. Inventory loose files:
+   - `find . -maxdepth 1 -type f -print`
+2. Classify by purpose (docs, tools, configs, data, reports).
+3. Move files into target folders and update references.
+4. Confirm no hardcoded absolute paths remain.
+
+Useful commands:
+```bash
+# Show loose files only
+find . -maxdepth 1 -type f -print
+
+# Search for hardcoded root paths
+rg -n "/Users/nolarose/Projects" -g "*"
+```
 
 ### Running Code in Specific Project Context
 ```bash
 # Via overseer
-bun overseer-cli.ts <project> bun run <script>
+bun tools/overseer-cli.ts <project> bun run <script>
 
 # Via guide-cli (more control)
-bun guide-cli.ts --project <name> --bin <binary> --args <args...>
+bun utils/guide-cli.ts --project <name> --bin <binary> --args <args...>
 ```
 
 ## Troubleshooting
@@ -428,8 +473,8 @@ The following environment variables are used by Kimi Shell integration:
 
 - [Bun Documentation 🌐](https://bun.sh/docs)
 - [BUN_MAIN_GUIDE.md](./docs/BUN_MAIN_GUIDE.md) - Comprehensive Bun.main patterns
-- [BUN_SPAWN_GUIDE.md](./BUN_SPAWN_GUIDE.md) - Complete Bun.spawn reference
-- [BUN_WHICH_GUIDE.md](./BUN_WHICH_GUIDE.md) - Advanced binary resolution
+- [BUN_SPAWN_GUIDE.md](./guides/BUN_SPAWN_GUIDE.md) - Complete Bun.spawn reference
+- [BUN_WHICH_GUIDE.md](./guides/BUN_WHICH_GUIDE.md) - Advanced binary resolution
 - [BUN_ESCAPEHTML_GUIDE.md](./docs/BUN_ESCAPEHTML_GUIDE.md) - XSS prevention with Bun.escapeHTML()
 - [BUN_MARKDOWN_HTML_GUIDE.md](./docs/BUN_MARKDOWN_HTML_GUIDE.md) - Bun.markdown.html() options reference
 - [README.md](./README.md) - Project overview and quick start

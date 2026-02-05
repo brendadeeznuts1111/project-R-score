@@ -494,7 +494,7 @@ Bun.inspect(projects, {
 ## 📝 Example from Your Project Matrix
 
 ```typescript
-// In overseer-cli.ts or cli-resolver.ts
+// In tools/overseer-cli.ts or cli-resolver.ts
 const projects = fs.readdirSync(Bun.cwd)
   .filter(dir => fs.existsSync(`${Bun.cwd}/${dir}/package.json`))
   .map(name => ({

@@ -344,7 +344,7 @@ if (!status) {
 ### **Core Implementation**
 - `tier1380-secrets-manager.ts` - Secure secrets management system
 - `scanner-cli-secure.ts` - Enhanced scanner with secrets integration
-- `test-secrets-integration.sh` - Comprehensive test suite
+- `scripts/test-secrets-integration.sh` - Comprehensive test suite
 
 ### **Integration Components**
 - Integrates with existing `scanner-cli.ts`

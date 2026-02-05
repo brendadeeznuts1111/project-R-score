@@ -18,12 +18,12 @@
 
 ### ✅ 1. CLI Tools Merger
 **Files Removed:**
-- `cli-resolver.ts` (merged into `guide-cli.ts`)
+- `cli-resolver.ts` (merged into `utils/guide-cli.ts`)
 
 **Files Enhanced:**
-- `guide-cli.ts` - Now supports both advanced and simple modes
-  - Advanced mode: `bun guide-cli.ts --project <name> --bin <binary>`
-  - Simple mode: `bun guide-cli.ts typecheck` or `bun guide-cli.ts <binary> [args...]`
+- `utils/guide-cli.ts` - Now supports both advanced and simple modes
+  - Advanced mode: `bun utils/guide-cli.ts --project <name> --bin <binary>`
+  - Simple mode: `bun utils/guide-cli.ts typecheck` or `bun utils/guide-cli.ts <binary> [args...]`
 
 **Benefits:**
 - Single CLI tool instead of two overlapping ones
@@ -55,7 +55,7 @@
 - `test-import-direct.ts` (merged into consolidated test)
 - `test-import-direct-2.ts` (obsolete - cli-resolver.ts removed)
 - `test-import-guard.ts` (merged into consolidated test)
-- `test-guide-cli.ts` (redundant - kept simple version)
+- `test-utils/guide-cli.ts` (redundant - kept simple version)
 
 **Files Created:**
 - `test-entry-guards-consolidated.ts` - Comprehensive entry guard testing
@@ -98,17 +98,17 @@
 ### **Remaining Files: 14** (down from 24)
 
 **CLI Tools (4 files):**
-- `guide-cli.ts` - ⭐ Main CLI (merged functionality)
-- `overseer-cli.ts` - Project manager
-- `terminal-tool.ts` - PTY terminal tool
-- `registry-color-channel-cli.ts` - Registry color management
+- `utils/guide-cli.ts` - ⭐ Main CLI (merged functionality)
+- `tools/overseer-cli.ts` - Project manager
+- `utils/terminal-tool.ts` - PTY terminal tool
+- `utils/registry-color-channel-cli.ts` - Registry color management
 
 **Demo/Utility Files (6 files):**
 - `cat.ts` - Simple file reader utility
 - `debug-entry.ts` - Entry guard debug utility
 - `import-meta-url-demo.ts` - import.meta.url demo
 - `inspect-demo.ts` - Bun.inspect table formatting demo
-- `inspect-projects.ts` - Project matrix inspection demo
+- `tools/inspect-projects.ts` - Project matrix inspection demo
 - `server.ts` - Web server with cookie/session handling
 
 **Registry/Color Tools (3 files):**

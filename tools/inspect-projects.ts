@@ -74,7 +74,7 @@ const cliTools = [
   {
     name: "overseer-cli.ts",
     purpose: "Monorepo manager",
-    location: "/Users/nolarose/PROJECTS/overseer-cli.ts",
+    location: "/Users/nolarose/PROJECTS/tools/overseer-cli.ts",
     uses: ["Bun.main", "Bun.spawn", "entry guard"],
     commands: ["list", "run", "execute"],
     isolation: "full"
@@ -90,7 +90,7 @@ const cliTools = [
   {
     name: "guide-cli.ts",
     purpose: "Advanced binary resolution demo",
-    location: "/Users/nolarose/PROJECTS/guide-cli.ts",
+    location: "/Users/nolarose/PROJECTS/utils/guide-cli.ts",
     uses: ["Bun.which", "Bun.spawn", "caching", "diagnostics"],
     commands: ["--project", "--bin", "--args", "--diagnostics"],
     isolation: "project-local + env"
@@ -114,7 +114,7 @@ const cliTools = [
   {
     name: "terminal-tool.ts",
     purpose: "Interactive PTY terminal",
-    location: "/Users/nolarose/PROJECTS/terminal-tool.ts",
+    location: "/Users/nolarose/PROJECTS/utils/terminal-tool.ts",
     uses: ["Bun.Terminal", "PTY", "data events"],
     commands: ["interactive"],
     isolation: "pty-session"

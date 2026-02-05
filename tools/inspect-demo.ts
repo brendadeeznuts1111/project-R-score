@@ -89,8 +89,8 @@ console.log("\n\n4️⃣  NESTED DATA (with properties option)\n");
 
 const projectDetails = {
   platformHome: "/Users/ashley/PROJECTS",
-  overseer: "overseer-cli.ts",
-  sharedTools: ["cli-resolver.ts", "profiler.ts", "server.ts", "terminal-tool.ts"],
+  overseer: "tools/overseer-cli.ts",
+  sharedTools: ["utils/guide-cli.ts", "scripts/profiler.ts", "tools/server.ts", "utils/terminal-tool.ts"],
   projects: projects
 };
 

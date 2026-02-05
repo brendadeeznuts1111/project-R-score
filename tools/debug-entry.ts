@@ -4,7 +4,7 @@ console.log("Bun.main:", Bun.main);
 console.log("import.meta.path:", import.meta.path);
 console.log("Are they equal?", import.meta.path === Bun.main);
 
-import { ensureDirectExecution } from "./shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
 
 /**
  * 🚀 Prefetch Optimizations

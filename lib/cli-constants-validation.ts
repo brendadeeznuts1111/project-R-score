@@ -470,7 +470,7 @@ CLIToolValidator.registerTool({
 
 CLIToolValidator.registerTool({
   name: 'overseer-cli',
-  path: 'overseer-cli.ts',
+  path: 'tools/overseer-cli.ts',
   maxExecutionTime: 30000
 });
 

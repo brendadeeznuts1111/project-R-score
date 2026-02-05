@@ -22,7 +22,8 @@ Complete reference for using `Bun.main` in Bun runtime applications.
 
 ```typescript
 console.log(Bun.main);
-// Example output: "/Users/ashley/PROJECTS/my-bun-app/index.ts"
+// Example output: "/path/to/projects/my-bun-app/index.ts"
+// Actual path depends on where you run the script from
 ```
 
 ---
@@ -184,11 +185,11 @@ process.env.ENTRY_SCRIPT = Bun.main;
 
 ## 📝 Real Examples from Project Matrix
 
-### Overseer CLI (`overseer-cli.ts`)
+### Overseer CLI (`tools/overseer-cli.ts`)
 
 ```typescript
 #!/usr/bin/env bun
-import { ensureDirectExecution } from "./shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
 ensureDirectExecution();
 
 console.log(`Overseer running from: ${Bun.main}`);
@@ -377,7 +378,7 @@ export function isEntrypoint(): boolean {
 
 ```typescript
 // test-import.ts
-import "./overseer-cli.ts"; // Should exit immediately (code 0)
+import "./tools/overseer-cli.ts"; // Should exit immediately (code 0)
 console.log("This should never print");
 ```
 
@@ -391,7 +392,7 @@ echo $? # should print 0
 ### Test that guard allows direct execution:
 
 ```bash
-bun overseer-cli.ts
+bun tools/overseer-cli.ts
 # Should show project list normally
 ```
 
@@ -432,7 +433,7 @@ bun overseer-cli.ts
 ## 🤝 Contributing
 
 This guide is part of the Project Matrix. For examples and patterns, see:
-- `overseer-cli.ts` - Monorepo manager
+- `tools/overseer-cli.ts` - Monorepo manager
 - `cli-resolver.ts` - Project-specific binary resolution
 - `shared/tools/entry-guard.ts` - Reusable guard utilities
 

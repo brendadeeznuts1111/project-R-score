@@ -3,10 +3,13 @@
 # Initialize new project with metadata enforcement hooks
 
 PROJECT_NAME=$1
-PROJECT_PATH="/Users/nolarose/Projects/$PROJECT_NAME"
+BUN_PLATFORM_HOME="${BUN_PLATFORM_HOME:-${HOME}/Projects}"
+PROJECT_PATH="$BUN_PLATFORM_HOME/$PROJECT_NAME"
+HOOKS_PATH="$BUN_PLATFORM_HOME/.husky"
 
 if [ -z "$PROJECT_NAME" ]; then
   echo "Usage: new-project.sh <project-name>"
+  echo "Note: Uses BUN_PLATFORM_HOME (default: $HOME/Projects)"
   exit 1
 fi
 
@@ -17,11 +20,11 @@ if [ ! -d ".git" ]; then
   git init -q
 fi
 
-git config core.hooksPath /Users/nolarose/Projects/.husky
+git config core.hooksPath "$HOOKS_PATH"
 
 cat <<EOF
 ✓ $PROJECT_NAME initialized
-✓ Hooks: /Users/nolarose/Projects/.husky
+✓ Hooks: $HOOKS_PATH
 
 Enforcement:
   [CACHE] changes → require *.test.ts (blocks)

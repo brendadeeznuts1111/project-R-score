@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node-gyp rebuild",
-    "test": "bun build --plugin=./native-plugin-demo.node ./demo-app.ts --outdir=./dist"
+    "test": "bun build --plugin=./native-plugin-demo.node ./examples/demo-app.ts --outdir=./dist"
   },
   "dependencies": {
     "node-addon-api": "^7.0.0"

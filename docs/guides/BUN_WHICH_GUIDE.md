@@ -64,11 +64,14 @@ The **current working directory** used as a reference for relative PATH entries.
 
 ```typescript
 // Resolve relative to specific project
+const projectPath = Bun.env.BUN_PLATFORM_HOME 
+  ? `${Bun.env.BUN_PLATFORM_HOME}/projects/apps/my-bun-app`
+  : "./projects/apps/my-bun-app";
 const bin = which("tsc", {
-  cwd: "/Users/ashley/PROJECTS/my-bun-app"
+  cwd: projectPath
 });
 // If PATH contains "node_modules/.bin", it resolves to:
-// "/Users/ashley/PROJECTS/my-bun-app/node_modules/.bin/tsc"
+// "/path/to/projects/apps/my-bun-app/node_modules/.bin/tsc"
 ```
 
 **Key insight:** `cwd` allows you to simulate "being in" a different directory just for PATH resolution, without affecting the actual process.
@@ -98,7 +101,10 @@ Most common use case: Run project-local binaries without global installation.
 ```typescript
 import { which, spawn } from "bun";
 
-const projectHome = "/Users/ashley/PROJECTS/my-bun-app";
+// Get project path from environment or derive from Bun.main
+const projectHome = Bun.env.BUN_PLATFORM_HOME 
+  ? `${Bun.env.BUN_PLATFORM_HOME}/projects/apps/my-bun-app`
+  : Bun.main.slice(0, Bun.main.lastIndexOf('/'));
 
 // Prepend project's node_modules/.bin to PATH
 const binPath = which("tsc", {
@@ -137,7 +143,7 @@ const binPath = which("tsc", {
 
 ### Pattern 3: Multi-Project Tool (Guide CLI Pattern)
 
-From `guide-cli.ts`: resolve and run binaries in any specified project.
+From `utils/guide-cli.ts`: resolve and run binaries in any specified project.
 
 ```typescript
 const platformHome = process.env.BUN_PLATFORM_HOME || Bun.cwd;
@@ -205,7 +211,7 @@ const customPATH = `${process.env.PROJECT_HOME}/node_modules/.bin:/usr/local/bin
 const tscPath = which("tsc", { PATH: customPATH });
 
 if (tscPath) {
-  console.log(`Found tsc at: ${tscPath}`); // e.g., "/Users/ashley/PROJECTS/my-bun-app/node_modules/.bin/tsc"
+  console.log(`Found tsc at: ${tscPath}`); // e.g., "/path/to/projects/apps/my-bun-app/node_modules/.bin/tsc"
 } else {
   console.error("tsc not found in custom PATH!");
 }
@@ -222,11 +228,14 @@ Resolve binaries relative to a specific directory without changing the process c
 
 ```typescript
 // From user feedback example
-const subDir = "/Users/ashley/PROJECTS/my-bun-app/sub-tool";
+const projectBase = Bun.env.BUN_PLATFORM_HOME 
+  ? `${Bun.env.BUN_PLATFORM_HOME}/projects/apps/my-bun-app`
+  : "./projects/apps/my-bun-app";
+const subDir = `${projectBase}/sub-tool`;
 const scriptPath = which("./my-script.sh", { cwd: subDir });
 
 if (scriptPath) {
-  console.log(`Found relative script at: ${scriptPath}`); // e.g., "/Users/ashley/PROJECTS/my-bun-app/sub-tool/my-script.sh"
+  console.log(`Found relative script at: ${scriptPath}`); // e.g., "/path/to/projects/apps/my-bun-app/sub-tool/my-script.sh"
 }
 ```
 
@@ -682,7 +691,7 @@ console.log(resolved); // fakeBin
 
 - **In this Project:**
   - `cli-resolver.ts` - Basic which usage with custom PATH
-  - `guide-cli.ts` - Advanced which in multi-project tool
+  - `utils/guide-cli.ts` - Advanced which in multi-project tool
   - `BUN_SPAWN_GUIDE.md` - Spawn integration patterns
 
 - **External:**

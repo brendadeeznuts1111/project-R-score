@@ -49,7 +49,7 @@
     "markdown:ansi": "bun run lib/enhanced-markdown.ts README.md ansi",
     "url:validate": "bun run scripts/url-validator.ts check",
     "url:check": "bun run scripts/url-validator-focused.ts quick",
-    "url:report": "bun run scripts/url-validator.ts check && cat url-validation-report.json",
+    "url:report": "bun run scripts/url-validator.ts check && cat docs/data/url-validation-report.json",
     "url:optimize": "bun run scripts/optimize-examples-prefetch.ts optimize",
     "url:localhost-to-example": "bun run scripts/localhost-to-example.ts convert",
     "standards:check": "bun run url:check && bun run lint && bun run type-check",

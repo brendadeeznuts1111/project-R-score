@@ -3,7 +3,7 @@
     {
       "target_name": "native-plugin-demo",
       "sources": [
-        "native-plugin-demo.c"
+        "examples/native-plugin/native-plugin-demo.c"
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"
