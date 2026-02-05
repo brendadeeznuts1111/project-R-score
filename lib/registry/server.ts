@@ -34,8 +34,9 @@ export class NPMRegistryServer {
   private server?: ReturnType<typeof Bun.serve>;
 
   constructor(options: ServerOptions = {}) {
+    const REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
     this.options = {
-      port: 4873, // Default npm registry port
+      port: REGISTRY_PORT, // Default npm registry port
       hostname: '0.0.0.0',
       auth: 'none',
       allowProxy: true,

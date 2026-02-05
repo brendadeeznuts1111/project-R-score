@@ -1,9 +1,4 @@
-/**
- * Standardized Error Handling Utilities
- * 
- * Provides consistent error handling patterns across all modules
- * with proper type safety and logging capabilities.
- */
+import { logger } from './logger.ts';
 
 export interface ErrorContext {
   module?: string;
@@ -62,22 +57,26 @@ export class ErrorHandler {
     };
 
     // Log the error with consistent format
-    const logMessage = `[${standardizedError.context?.module}] ${standardizedError.message}`;
-    const logDetails = {
-      error: standardizedError,
-      context: standardizedError.context
+    const logMessage = `${errorMessage || fallbackMessage}`;
+    const logContext = {
+      module: standardizedError.context?.module,
+      function: standardizedError.context?.function,
+      operation: standardizedError.context?.operation,
+      requestId: standardizedError.context?.requestId,
+      userId: standardizedError.context?.userId,
+      error: originalError
     };
 
     switch (logLevel) {
       case 'warn':
-        console.warn(logMessage, logDetails);
+        logger.warn(logMessage, logContext);
         break;
       case 'info':
-        console.info(logMessage, logDetails);
+        logger.info(logMessage, logContext);
         break;
       case 'error':
       default:
-        console.error(logMessage, logDetails);
+        logger.error(logMessage, logContext);
         break;
     }
 

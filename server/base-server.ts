@@ -117,8 +117,9 @@ try {
 }
 
 // Unified server configuration
+const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
 const server = Bun.serve({
-  port: 3000,
+  port: SERVER_PORT,
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -2698,7 +2699,7 @@ Security: https://bun.com/security/rss.xml</code></pre>
 </html>`;
 }
 
-console.log(`🏗️ Unified Base Server running on http://localhost:3000`);
+console.log(`🏗️ Unified Base Server running on http://localhost:${SERVER_PORT}`);
 console.log(`📚 Documentation: https://bun.sh/docs | https://bun.com/guides`);
 console.log(`💻 CLI Integration: Available via /cli/* endpoints`);
 console.log(`⚡ Enhanced Features: Domain distinction, caching, Chrome apps`);

@@ -8,6 +8,7 @@
 
 import { getSignedR2URL } from "./lib/r2/signed-url.ts";
 import { handleError, ErrorHandler } from "../lib/utils/error-handler.ts";
+import { validateKey, validateURL } from "../lib/utils/input-validator.ts";
 
 /**
  * 🚀 Prefetch Optimizations
@@ -39,10 +40,25 @@ export default {
         });
       }
       
+      // Validate the key parameter
+      const keyValidation = validateKey(key);
+      if (!keyValidation.isValid) {
+        return Response.json({
+          error: "Invalid key parameter",
+          details: keyValidation.errors,
+          usage: "/signed?key=<object-key>"
+        }, { 
+          status: 400, 
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+      
+      const validatedKey = keyValidation.value!;
+      
       // Use standardized error handling
       const result = await ErrorHandler.safeExecute(
         async () => {
-          return await getSignedR2URL(env.R2_BUCKET, key, {
+          return await getSignedR2URL(env.R2_BUCKET, validatedKey, {
             expiresInSeconds: 3600, // 1 hour default
             customMetadata: {
               requestedBy: request.headers.get("CF-Connecting-IP") || "unknown",
@@ -65,7 +81,7 @@ export default {
         const signed = result.data;
         return Response.json({
           signedUrl: signed,
-          key,
+          key: validatedKey,
           expiresIn: "1 hour",
           securityLevel: signed.securityLevel,
           metadata: signed.metadata,

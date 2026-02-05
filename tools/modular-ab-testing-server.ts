@@ -534,8 +534,9 @@ function generateAdminDashboard(): string {
 registerTests();
 
 // Start server
+const MODULAR_AB_TESTING_PORT = parseInt(process.env.MODULAR_AB_TESTING_PORT || '3004', 10);
 const server = serve({
-  port: 3004,
+  port: MODULAR_AB_TESTING_PORT,
   async fetch(req) {
     const url = new URL(req.url);
     

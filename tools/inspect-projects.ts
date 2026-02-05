@@ -23,6 +23,7 @@ console.log("╚═════════════════════�
 // Define the complete project structure
 // ============================================================================
 
+const DEFAULT_PROJECT_PORT = parseInt(process.env.DEFAULT_PROJECT_PORT || '3000', 10);
 const projects = [
   {
     name: "my-bun-app",
@@ -30,7 +31,7 @@ const projects = [
     description: "Web server project",
     entryPoint: "index.ts",
     status: "active",
-    port: 3000,
+    port: DEFAULT_PROJECT_PORT,
     dependencies: ["express", "cors", "helmet"],
     envVars: ["NODE_ENV", "DB_URL", "SESSION_SECRET"],
     features: ["sessions", "hmac", "logging"]

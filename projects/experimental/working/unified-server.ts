@@ -4,8 +4,9 @@ import { UnifiedQuantumSystem, MarketGame } from './unified-system';
 
 const unifiedSystem = new UnifiedQuantumSystem();
 
+const UNIFIED_SERVER_PORT = parseInt(process.env.UNIFIED_SERVER_PORT || '3003', 10);
 const server = serve({
-  port: 3003,
+  port: UNIFIED_SERVER_PORT,
   hostname: '0.0.0.0',
 
   async fetch(req) {
@@ -84,7 +85,7 @@ const server = serve({
             deployed: true,
             container: {
               id: 'mock-container',
-              endpoint: 'http://localhost:8080',
+              endpoint: `http://localhost:${process.env.CONTAINER_PORT || '8080'}`,
               status: 'DEPLOYING'
             }
           });

@@ -150,8 +150,9 @@ function calculateSignificance(): {
 }
 
 // Start A/B testing server
+const AB_TESTING_SERVICE_PORT = parseInt(process.env.AB_TESTING_SERVICE_PORT || '3001', 10);
 const server = serve({
-  port: 3001,
+  port: AB_TESTING_SERVICE_PORT,
   async fetch(req) {
     const url = new URL(req.url);
     

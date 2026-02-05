@@ -50,6 +50,8 @@ export class RateLimiter {
   private readonly config: RateLimitConfig;
   private readonly clients = new Map<string, RateLimitEntry>();
   private cleanupInterval?: ReturnType<typeof setInterval>;
+  private maxClients: number;
+  private cleanupThreshold: number;
 
   constructor(config: RateLimitConfig) {
     this.config = {
@@ -62,6 +64,10 @@ export class RateLimiter {
       ...config
     };
 
+    // Memory management settings
+    this.maxClients = Math.max(1000, this.config.maxRequests * 10);
+    this.cleanupThreshold = Math.max(100, this.maxClients / 10);
+
     // Start cleanup interval
     this.startCleanupInterval();
   }
@@ -72,6 +78,11 @@ export class RateLimiter {
   checkLimit(request: Request): RateLimitInfo {
     const key = this.generateKey(request);
     const now = Date.now();
+    
+    // Check if we need to trigger cleanup due to memory pressure
+    if (this.clients.size > this.maxClients) {
+      this.performAggressiveCleanup();
+    }
     
     // Get or create client entry
     let entry = this.clients.get(key);
@@ -90,7 +101,7 @@ export class RateLimiter {
       entry.resetTime = now + this.config.windowMs;
     }
 
-    // Increment count
+    // Increment count and update last access
     entry.count++;
     entry.lastAccess = now;
 
@@ -103,6 +114,48 @@ export class RateLimiter {
       resetTime: entry.resetTime,
       isRateLimited
     };
+  }
+
+  /**
+   * Perform aggressive cleanup when memory pressure is detected
+   */
+  private performAggressiveCleanup(): void {
+    const now = Date.now();
+    const entries = Array.from(this.clients.entries());
+    
+    // Sort by last access time (oldest first)
+    entries.sort(([, a], [, b]) => a.lastAccess - b.lastAccess);
+    
+    // Remove oldest entries until we're under the threshold
+    let removed = 0;
+    const targetSize = this.maxClients - this.cleanupThreshold;
+    
+    for (let i = 0; i < entries.length && this.clients.size > targetSize; i++) {
+      const [key, entry] = entries[i];
+      
+      // Remove entries that haven't been accessed recently
+      if (now - entry.lastAccess > this.config.windowMs) {
+        this.clients.delete(key);
+        removed++;
+      }
+    }
+    
+    // If still too many entries, remove the oldest ones regardless of access time
+    if (this.clients.size > targetSize) {
+      const remainingEntries = Array.from(this.clients.entries());
+      remainingEntries.sort(([, a], [, b]) => a.lastAccess - b.lastAccess);
+      
+      const excessCount = this.clients.size - targetSize;
+      for (let i = 0; i < excessCount; i++) {
+        const [key] = remainingEntries[i];
+        this.clients.delete(key);
+        removed++;
+      }
+    }
+    
+    if (removed > 0) {
+      console.warn(`🧹 Aggressive rate limiter cleanup: removed ${removed} entries due to memory pressure`);
+    }
   }
 
   /**

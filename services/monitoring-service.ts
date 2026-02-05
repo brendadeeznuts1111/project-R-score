@@ -20,8 +20,9 @@ import { serve } from "bun";
  */
 
 // Configuration
+const MONITORING_SERVICE_PORT = parseInt(process.env.MONITORING_SERVICE_PORT || '3002', 10);
 const MONITORING_CONFIG = {
-  port: 3002,
+  port: MONITORING_SERVICE_PORT,
   alertThresholds: {
     errorRate: 5.0, // 5%
     responseTime: 500, // 500ms

@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { logger } from "../lib/utils/logger.ts";
+import { safeReadFile, safeWriteFile } from "../lib/utils/safe-file-operations.ts";
 
 const REGISTRY_FILE = join(import.meta.dir, "BUN_CONSTANTS_VERSION.json");
 const EXTRACT_SCRIPT = join(import.meta.dir, "scanner", "scripts", "extract-bun-constants.ts");
@@ -71,28 +72,56 @@ function bumpVersion(current: string, type: "patch" | "minor" | "major"): string
   }
 }
 
-function updateRegistry(registry: VersionRegistry, newVersion: string, reason: string): void {
+async function updateRegistry(registry: VersionRegistry, newVersion: string, reason: string): Promise<void> {
   registry.version = newVersion;
   registry.metadata.extractionTime = new Date().toISOString();
   registry.changelog[newVersion] = reason;
   
-  writeFileSync(REGISTRY_FILE, JSON.stringify(registry, null, 2));
+  const result = await safeWriteFile(REGISTRY_FILE, JSON.stringify(registry, null, 2), { backup: true });
+  if (!result.success) {
+    logger.error(`❌ Failed to write registry file: ${result.error}`);
+    throw new Error(`Failed to write registry file: ${result.error}`);
+  }
 }
 
-function updateExtractScript(newVersion: string): void {
-  const content = readFileSync(EXTRACT_SCRIPT, "utf-8");
+async function updateExtractScript(newVersion: string): Promise<void> {
+  const result = await safeReadFile(EXTRACT_SCRIPT);
+  if (!result.success) {
+    logger.error(`❌ Failed to read extract script: ${result.error}`);
+    throw new Error(`Failed to read extract script: ${result.error}`);
+  }
+
+  const content = result.data!;
   // Match both single and double quotes, preserve the quote style used
   const updated = content.replace(
     /export const BUN_CONSTANTS_VERSION = (['"])([^'"]+)\1;/,
     (match, quote) => `export const BUN_CONSTANTS_VERSION = ${quote}${newVersion}${quote};`
   );
-  writeFileSync(EXTRACT_SCRIPT, updated);
+
+  const writeResult = await safeWriteFile(EXTRACT_SCRIPT, updated, { backup: true });
+  if (!writeResult.success) {
+    logger.error(`❌ Failed to write extract script: ${writeResult.error}`);
+    throw new Error(`Failed to write extract script: ${writeResult.error}`);
+  }
 }
 
-function validateIntegrity(): boolean {
+async function validateIntegrity(): Promise<boolean> {
   try {
-    const registry: VersionRegistry = JSON.parse(readFileSync(REGISTRY_FILE, "utf-8"));
-    const extractContent = readFileSync(EXTRACT_SCRIPT, "utf-8");
+    const registryResult = await safeReadFile(REGISTRY_FILE);
+    if (!registryResult.success) {
+      logger.error(`❌ Failed to read registry file: ${registryResult.error}`);
+      return false;
+    }
+
+    const extractResult = await safeReadFile(EXTRACT_SCRIPT);
+    if (!extractResult.success) {
+      logger.error(`❌ Failed to read extract script: ${extractResult.error}`);
+      return false;
+    }
+
+    const registry: VersionRegistry = JSON.parse(registryResult.data!);
+    const extractContent = extractResult.data!;
+    
     // Match both single and double quotes
     const match = extractContent.match(/export const BUN_CONSTANTS_VERSION = ['"]([^'"]+)['"];/);
     
@@ -119,9 +148,15 @@ function validateIntegrity(): boolean {
   }
 }
 
-function showCurrentVersion(): void {
+async function showCurrentVersion(): Promise<void> {
   try {
-    const registry: VersionRegistry = JSON.parse(readFileSync(REGISTRY_FILE, "utf-8"));
+    const result = await safeReadFile(REGISTRY_FILE);
+    if (!result.success) {
+      logger.error(`❌ Failed to read registry: ${result.error}`);
+      process.exit(1);
+    }
+
+    const registry: VersionRegistry = JSON.parse(result.data!);
     logger.info(`Current Version: ${registry.version}`);
     logger.info(`Schema: ${registry.schemaVersion}`);
     logger.info(`Bun: ${registry.bunVersion}`);
@@ -134,7 +169,7 @@ function showCurrentVersion(): void {
   }
 }
 
-function main(): void {
+async function main(): Promise<void> {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
@@ -163,11 +198,12 @@ Examples:
   try {
     switch (flag) {
       case "--current":
-        showCurrentVersion();
+        await showCurrentVersion();
         break;
         
       case "--validate":
-        validateIntegrity();
+        const isValid = await validateIntegrity();
+        process.exit(isValid ? 0 : 1);
         break;
         
       case "--type": {
@@ -176,11 +212,17 @@ Examples:
           process.exit(1);
         }
         
-        const registry: VersionRegistry = JSON.parse(readFileSync(REGISTRY_FILE, "utf-8"));
+        const registryResult = await safeReadFile(REGISTRY_FILE);
+        if (!registryResult.success) {
+          logger.error(`❌ Failed to read registry: ${registryResult.error}`);
+          process.exit(1);
+        }
+        
+        const registry: VersionRegistry = JSON.parse(registryResult.data!);
         const newVersion = bumpVersion(registry.version, value as "patch" | "minor" | "major");
         
-        updateRegistry(registry, newVersion, `Automated ${value} bump`);
-        updateExtractScript(newVersion);
+        await updateRegistry(registry, newVersion, `Automated ${value} bump`);
+        await updateExtractScript(newVersion);
         
         logger.info(`🚀 Version bumped: ${registry.version} -> ${newVersion}`);
         logger.info(`📝 Registry updated: ${REGISTRY_FILE}`);
@@ -195,10 +237,16 @@ Examples:
           process.exit(1);
         }
         
-        const registry: VersionRegistry = JSON.parse(readFileSync(REGISTRY_FILE, "utf-8"));
+        const registryResult = await safeReadFile(REGISTRY_FILE);
+        if (!registryResult.success) {
+          logger.error(`❌ Failed to read registry: ${registryResult.error}`);
+          process.exit(1);
+        }
         
-        updateRegistry(registry, value, `Manual version set to ${value}`);
-        updateExtractScript(value);
+        const registry: VersionRegistry = JSON.parse(registryResult.data!);
+        
+        await updateRegistry(registry, value, `Manual version set to ${value}`);
+        await updateExtractScript(value);
         
         logger.info(`🚀 Version set: ${registry.version} -> ${value}`);
         logger.info(`📝 Registry updated: ${REGISTRY_FILE}`);
@@ -217,6 +265,9 @@ Examples:
   }
 }
 
-if (import.meta.path === Bun.main) {
-  main();
-}
+// Run the main function
+main().catch(error => {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+  logger.error(`❌ Fatal error: ${errorMessage}`);
+  process.exit(1);
+});

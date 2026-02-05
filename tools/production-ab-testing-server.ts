@@ -756,8 +756,9 @@ function generateAdminDashboard(): string {
 }
 
 // Start server
+const PRODUCTION_AB_TESTING_PORT = parseInt(process.env.PRODUCTION_AB_TESTING_PORT || '3006', 10);
 const server = serve({
-  port: 3006,
+  port: PRODUCTION_AB_TESTING_PORT,
   async fetch(req) {
     const url = new URL(req.url);
     

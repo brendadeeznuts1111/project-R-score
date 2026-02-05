@@ -167,10 +167,12 @@ interface PoolStats {
 // ============================================================================
 
 class PortManager {
-  private static readonly DEFAULT_CONFIG: PortConfig = {
-    project: 'default',
-    port: 3000,
-    range: { start: 3000, end: 3100 },
+  private static getDefaultConfig(): PortConfig {
+    const DEFAULT_PORT = parseInt(process.env.DEFAULT_PORT || '3000', 10);
+    return {
+      project: 'default',
+      port: DEFAULT_PORT,
+      range: { start: DEFAULT_PORT, end: DEFAULT_PORT + 100 },
     maxConnections: 100,
     connectionTimeout: 30000,
     keepAlive: true
@@ -194,7 +196,7 @@ class PortManager {
       `${projectPath}/package.json`
     ];
 
-    let config = { ...this.DEFAULT_CONFIG };
+    let config = { ...this.getDefaultConfig() };
 
     for (const configFile of configFiles) {
       if (existsSync(configFile)) {
@@ -207,10 +209,10 @@ class PortManager {
           
           config = {
             project: parsed.name || 'unknown',
-            port: portConfig.port || this.DEFAULT_CONFIG.port,
-            range: portConfig.range || this.DEFAULT_CONFIG.range,
-            maxConnections: portConfig.maxConnections || this.DEFAULT_CONFIG.maxConnections,
-            connectionTimeout: portConfig.connectionTimeout || this.DEFAULT_CONFIG.connectionTimeout,
+            port: portConfig.port || this.getDefaultConfig().port,
+            range: portConfig.range || this.getDefaultConfig().range,
+            maxConnections: portConfig.maxConnections || this.getDefaultConfig().maxConnections,
+            connectionTimeout: portConfig.connectionTimeout || this.getDefaultConfig().connectionTimeout,
             keepAlive: portConfig.keepAlive !== false
           };
           break;
@@ -224,22 +226,23 @@ class PortManager {
     const portValidation = ValidationUtils.validatePort(config.port, 'Configuration port');
     if (!portValidation.isValid) {
       console.error(`Invalid port configuration: ${portValidation.errors.join(', ')}`);
-      console.log(`Falling back to default port ${this.DEFAULT_CONFIG.port}`);
-      config.port = this.DEFAULT_CONFIG.port;
+      console.log(`Falling back to default port ${this.getDefaultConfig().port}`);
+      config.port = this.getDefaultConfig().port;
     }
 
     const rangeValidation = ValidationUtils.validatePortRange(config.range.start, config.range.end);
     if (!rangeValidation.isValid) {
       console.error(`Invalid port range: ${rangeValidation.errors.join(', ')}`);
-      console.log(`Falling back to default range ${this.DEFAULT_CONFIG.range.start}-${this.DEFAULT_CONFIG.range.end}`);
-      config.range = this.DEFAULT_CONFIG.range;
+      const defaultConfig = this.getDefaultConfig();
+      console.log(`Falling back to default range ${defaultConfig.range.start}-${defaultConfig.range.end}`);
+      config.range = defaultConfig.range;
     }
 
     const connectionValidation = ValidationUtils.validateConnectionLimit(config.maxConnections, 'Configuration maxConnections');
     if (!connectionValidation.isValid) {
       console.error(`Invalid connection limit: ${connectionValidation.errors.join(', ')}`);
-      console.log(`Falling back to default maxConnections ${this.DEFAULT_CONFIG.maxConnections}`);
-      config.maxConnections = this.DEFAULT_CONFIG.maxConnections;
+      console.log(`Falling back to default maxConnections ${this.getDefaultConfig().maxConnections}`);
+      config.maxConnections = this.getDefaultConfig().maxConnections;
     }
 
     return { ...config, project: config.project || projectPath.split('/').pop() };

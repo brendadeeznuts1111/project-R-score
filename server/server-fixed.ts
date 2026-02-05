@@ -430,8 +430,9 @@ function handleNotFound(request: Request): Response {
 }
 
 // Create server with endpoints matching Bun's fetch pattern
+const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
 const server = Bun.serve({
-  port: 3000,
+  port: SERVER_PORT,
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -466,6 +467,6 @@ const server = Bun.serve({
 
 console.log('🚀 Starting Bun TypedArray Documentation Server on port 3000...');
 console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log('🌐 Visit: http://localhost:3000');
+console.log(`🌐 Visit: http://localhost:${SERVER_PORT}`);
 
 export default server;

@@ -257,7 +257,7 @@ export class CloudflareDomainManager {
         status: 'active',
         purpose: 'Database Services',
         dependencies: [],
-        health_check_url: 'http://database.factory-wager.com:5432/health',
+        health_check_url: `http://database.factory-wager.com:${process.env.DATABASE_PORT || '5432'}/health`,
         ssl_required: false,
         enterprise_tier: true
       },
@@ -299,7 +299,7 @@ export class CloudflareDomainManager {
         status: 'active',
         purpose: 'Cache Services',
         dependencies: [],
-        health_check_url: 'http://redis.factory-wager.com:6379/health',
+        health_check_url: `http://redis.factory-wager.com:${process.env.REDIS_PORT || '6379'}/health`,
         ssl_required: false,
         enterprise_tier: true
       },

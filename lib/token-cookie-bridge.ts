@@ -294,8 +294,9 @@ function withSetCookieHeaders(headers: string[]): Headers {
 }
 
 export function createTokenServer() {
+  const TOKEN_SERVER_PORT = parseInt(process.env.TOKEN_SERVER_PORT || '1380', 10);
   return Bun.serve({
-    port: 1380,
+    port: TOKEN_SERVER_PORT,
     routes: {
       "/api/tokens/:project": {
         POST: async (req) => {

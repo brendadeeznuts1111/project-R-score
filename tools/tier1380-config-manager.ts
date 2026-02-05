@@ -8,6 +8,8 @@
  */
 
 import { writeFileSync, readFileSync, existsSync } from "fs";
+import { validateConfig, COMMON_SCHEMAS } from "../lib/utils/config-validator.ts";
+import { logger } from "../lib/utils/logger.ts";
 
 /**
  * 🚀 Prefetch Optimizations
@@ -128,65 +130,139 @@ export class Tier1380ConfigManager {
   /**
    * Load configuration from environment variables
    */
-  loadFromEnvironment(): void {
-    console.log("🌍 Loading configuration from environment variables...");
+  loadFromEnvironment(): boolean {
+    logger.info("Loading configuration from environment variables", {
+      module: 'Tier1380ConfigManager'
+    });
 
-    // Load A/B test configurations
-    const abTestPattern = /^public_ab_test_(.+)$/;
-    for (const [key, value] of Object.entries(process.env)) {
-      const match = key.match(abTestPattern);
-      if (match && value) {
-        const testName = match[1];
-        const config = this.parseABTestConfig(value);
-        
-        if (config) {
-          this.config.abTests[testName] = {
-            ...config,
-            enabled: true
-          };
-          console.log(`✅ Loaded A/B test: ${testName} (${config.variants.join(", ")})`);
+    try {
+      // Validate environment configuration
+      const envConfig = {
+        r2Bucket: process.env.TIER1380_R2_BUCKET,
+        publicApiUrl: process.env.TIER1380_PUBLIC_API_URL,
+        variant: process.env.TIER1380_VARIANT,
+        cacheEnabled: process.env.TIER1380_CACHE_ENABLED,
+        cacheTTL: process.env.TIER1380_CACHE_TTL ? Number(process.env.TIER1380_CACHE_TTL) : undefined,
+        compressionLevel: process.env.TIER1380_COMPRESSION_LEVEL ? Number(process.env.TIER1380_COMPRESSION_LEVEL) : undefined,
+        environment: process.env.NODE_ENV
+      };
+
+      const schema = {
+        r2Bucket: {
+          type: 'string' as const,
+          required: true,
+          minLength: 1,
+          description: 'R2 bucket name',
+          envVar: 'TIER1380_R2_BUCKET'
+        },
+        publicApiUrl: {
+          type: 'url' as const,
+          required: false,
+          description: 'Public API URL',
+          envVar: 'TIER1380_PUBLIC_API_URL'
+        },
+        variant: {
+          type: 'string' as const,
+          required: false,
+          enum: ['development', 'staging', 'production', 'enhanced-live'],
+          description: 'Deployment variant',
+          envVar: 'TIER1380_VARIANT'
+        },
+        cacheEnabled: {
+          type: 'boolean' as const,
+          required: false,
+          description: 'Enable caching',
+          envVar: 'TIER1380_CACHE_ENABLED'
+        },
+        cacheTTL: {
+          type: 'number' as const,
+          required: false,
+          min: 1000,
+          max: 3600000,
+          description: 'Cache TTL in milliseconds',
+          envVar: 'TIER1380_CACHE_TTL'
+        },
+        compressionLevel: {
+          type: 'number' as const,
+          required: false,
+          min: 1,
+          max: 9,
+          description: 'Compression level',
+          envVar: 'TIER1380_COMPRESSION_LEVEL'
+        },
+        environment: {
+          type: 'string' as const,
+          required: false,
+          enum: ['development', 'staging', 'production'],
+          description: 'Environment',
+          envVar: 'NODE_ENV'
+        }
+      };
+
+      const validation = validateConfig(envConfig, schema, {
+        module: 'Tier1380ConfigManager',
+        environment: envConfig.environment
+      });
+
+      if (!validation.isValid) {
+        logger.error('Configuration validation failed', {
+          module: 'Tier1380ConfigManager',
+          errors: validation.errors
+        });
+        return false;
+      }
+
+      // Apply validated configuration
+      const validatedConfig = validation.config;
+      if (validatedConfig.r2Bucket) this.config.tier1380.r2Bucket = validatedConfig.r2Bucket;
+      if (validatedConfig.publicApiUrl) this.config.tier1380.publicApiUrl = validatedConfig.publicApiUrl;
+      if (validatedConfig.variant) this.config.tier1380.variant = validatedConfig.variant;
+      if (validatedConfig.cacheEnabled !== undefined) this.config.tier1380.cacheEnabled = validatedConfig.cacheEnabled;
+      if (validatedConfig.cacheTTL) this.config.tier1380.cacheTTL = validatedConfig.cacheTTL;
+      if (validatedConfig.compressionLevel) this.config.tier1380.compressionLevel = validatedConfig.compressionLevel;
+      if (validatedConfig.environment) this.config.tier1380.environment = validatedConfig.environment;
+
+      // Load A/B test configurations
+      const abTestPattern = /^public_ab_test_(.+)$/;
+      for (const [key, value] of Object.entries(process.env)) {
+        const match = key.match(abTestPattern);
+        if (match && value) {
+          const testName = match[1];
+          const config = this.parseABTestConfig(value);
+          
+          if (config) {
+            this.config.abTests[testName] = {
+              ...config,
+              enabled: true
+            };
+            logger.info(`Loaded A/B test configuration`, {
+              module: 'Tier1380ConfigManager',
+              testName,
+              variants: config.variants
+            });
+          }
         }
       }
-    }
 
-    // Load Tier-1380 system configuration
-    if (process.env.R2_BUCKET) {
-      this.config.tier1380.r2Bucket = process.env.R2_BUCKET;
-      console.log(`✅ R2 Bucket: ${process.env.R2_BUCKET}`);
-    }
+      logger.info('Configuration loaded successfully', {
+        module: 'Tier1380ConfigManager',
+        config: {
+          r2Bucket: this.config.tier1380.r2Bucket,
+          variant: this.config.tier1380.variant,
+          environment: this.config.tier1380.environment,
+          cacheEnabled: this.config.tier1380.cacheEnabled
+        }
+      });
 
-    if (process.env.PUBLIC_API_URL) {
-      this.config.tier1380.publicApiUrl = process.env.PUBLIC_API_URL;
-      console.log(`✅ Public API URL: ${process.env.PUBLIC_API_URL}`);
-    }
+      return true;
 
-    if (process.env.TIER1380_VARIANT) {
-      this.config.tier1380.variant = process.env.TIER1380_VARIANT;
-      console.log(`✅ Variant: ${process.env.TIER1380_VARIANT}`);
+    } catch (error) {
+      logger.error('Failed to load configuration from environment', {
+        module: 'Tier1380ConfigManager',
+        error
+      });
+      return false;
     }
-
-    if (process.env.TIER1380_CACHE_ENABLED !== undefined) {
-      this.config.tier1380.cacheEnabled = process.env.TIER1380_CACHE_ENABLED === "true";
-      console.log(`✅ Cache Enabled: ${this.config.tier1380.cacheEnabled}`);
-    }
-
-    if (process.env.TIER1380_CACHE_TTL) {
-      this.config.tier1380.cacheTTL = parseInt(process.env.TIER1380_CACHE_TTL);
-      console.log(`✅ Cache TTL: ${this.config.tier1380.cacheTTL}ms`);
-    }
-
-    if (process.env.TIER1380_COMPRESSION_LEVEL) {
-      this.config.tier1380.compressionLevel = parseInt(process.env.TIER1380_COMPRESSION_LEVEL);
-      console.log(`✅ Compression Level: ${this.config.tier1380.compressionLevel}`);
-    }
-
-    if (process.env.NODE_ENV) {
-      this.config.tier1380.environment = process.env.NODE_ENV as any;
-      console.log(`✅ Environment: ${process.env.NODE_ENV}`);
-    }
-
-    this.config.lastUpdated = new Date().toISOString();
-    this.saveConfig();
   }
 
   /**
