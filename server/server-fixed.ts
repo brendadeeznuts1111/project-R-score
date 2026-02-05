@@ -431,6 +431,7 @@ function handleNotFound(request: Request): Response {
 
 // Create server with endpoints matching Bun's fetch pattern
 const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
+const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
 const server = Bun.serve({
   port: SERVER_PORT,
   async fetch(request: Request): Promise<Response> {
@@ -467,6 +468,6 @@ const server = Bun.serve({
 
 console.log('🚀 Starting Bun TypedArray Documentation Server on port 3000...');
 console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
-console.log(`🌐 Visit: http://localhost:${SERVER_PORT}`);
+console.log(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
 
 export default server;

@@ -99,7 +99,8 @@ export class R2EventSystem {
     this.startHeartbeat();
     
     this.isRunning = true;
-    console.log(styled(`✅ Event system running on ws://localhost:${this.config.port}${this.config.path}`, 'success'));
+    const EVENT_SYSTEM_HOST = process.env.EVENT_SYSTEM_HOST || process.env.SERVER_HOST || 'localhost';
+    console.log(styled(`✅ Event system running on ws://${EVENT_SYSTEM_HOST}:${this.config.port}${this.config.path}`, 'success'));
   }
 
   /**

@@ -4,6 +4,7 @@ import { BUN_DOCS, TYPED_ARRAY_URLS } from '../config/urls.ts';
 
 // Create server that demonstrates content-type handling
 const CONTENT_TYPE_SERVER_PORT = parseInt(process.env.CONTENT_TYPE_SERVER_PORT || '3001', 10);
+const CONTENT_TYPE_SERVER_HOST = process.env.CONTENT_TYPE_SERVER_HOST || process.env.SERVER_HOST || 'localhost';
 const server = Bun.serve({
   port: CONTENT_TYPE_SERVER_PORT,
   async fetch(request) {
@@ -399,11 +400,11 @@ async function handleVerboseDemo(): Promise<Response> {
   <div class="example">
     <h3>📤 Request Headers</h3>
     <div class="verbose-output">
-[fetch] > HTTP/1.1 POST http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test
+[fetch] > HTTP/1.1 POST http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test
 [fetch] > Content-Type: application/json
 [fetch] > User-Agent: Bun/1.3.3
 [fetch] > Accept: */*
-[fetch] > Host: localhost:${CONTENT_TYPE_SERVER_PORT}
+[fetch] > Host: ${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}
 [fetch] > Content-Length: 32
     </div>
   </div>
@@ -429,7 +430,7 @@ async function handleVerboseDemo(): Promise<Response> {
   
   <div class="example">
     <h3>Verbose with Content-Type</h3>
-    <pre><code>const response = await fetch('http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test', {
+    <pre><code>const response = await fetch('http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ message: 'Hello' }),
@@ -440,7 +441,7 @@ async function handleVerboseDemo(): Promise<Response> {
   <div class="example">
     <h3>Verbose with Binary Data</h3>
     <pre><code>const binaryData = new Uint8Array([72, 101, 108, 108, 111]);
-const response = await fetch('http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/typedarray/binary', {
+const response = await fetch('http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/typedarray/binary', {
   method: 'POST',
   headers: { 'Content-Type': 'application/octet-stream' },
   body: binaryData,
@@ -450,9 +451,9 @@ const response = await fetch('http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/t
   
   <h2>Test Commands</h2>
   <ul>
-    <li><code>curl -X POST -H "Content-Type: application/json" -d '{"test": "data"}' http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test</code></li>
-    <li><code>curl -H "Accept: application/octet-stream" http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/typedarray/binary</code></li>
-    <li><code>curl http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/content-type/examples</code></li>
+    <li><code>curl -X POST -H "Content-Type: application/json" -d '{"test": "data"}' http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test</code></li>
+    <li><code>curl -H "Accept: application/octet-stream" http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/typedarray/binary</code></li>
+    <li><code>curl http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/content-type/examples</code></li>
   </ul>
   
   <h2>Benefits of Verbose Logging</h2>
@@ -474,5 +475,5 @@ const response = await fetch('http://localhost:${CONTENT_TYPE_SERVER_PORT}/api/t
   });
 }
 
-console.log(`📨 Content-Type Server running on http://localhost:${CONTENT_TYPE_SERVER_PORT}`);
+console.log(`📨 Content-Type Server running on http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}`);
 console.log(`📚 Documentation: ${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling`);

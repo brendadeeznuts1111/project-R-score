@@ -27,7 +27,8 @@ function wrapText(text: string, columns: number = 80): string {
 }
 
 const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://localhost:${DEFAULT_REGISTRY_PORT}`;
+const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
 
 const COMMANDS = {
   'start': 'Start the registry server',

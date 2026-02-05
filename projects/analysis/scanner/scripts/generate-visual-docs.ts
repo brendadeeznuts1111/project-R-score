@@ -1225,8 +1225,9 @@ async function main(): Promise<void> {
 
 			if (serveMode) {
 				const DASHBOARD_PORT = parseInt(process.env.DASHBOARD_PORT || '3000', 10);
+				const DASHBOARD_HOST = process.env.DASHBOARD_HOST || process.env.SERVER_HOST || 'localhost';
 				console.log(`🌐 Starting dashboard server...`);
-				console.log(`📱 Open http://localhost:${DASHBOARD_PORT} to view the dashboard`);
+				console.log(`📱 Open http://${DASHBOARD_HOST}:${DASHBOARD_PORT} to view the dashboard`);
 
 				const server = Bun.serve({
 					port: DASHBOARD_PORT,
@@ -1279,7 +1280,7 @@ async function main(): Promise<void> {
 					},
 				});
 
-				console.log(`🚀 Dashboard running at http://localhost:${DASHBOARD_PORT}`);
+				console.log(`🚀 Dashboard running at http://${DASHBOARD_HOST}:${DASHBOARD_PORT}`);
 				console.log(`🛑 Press Ctrl+C to stop the server`);
 
 				// Keep server running

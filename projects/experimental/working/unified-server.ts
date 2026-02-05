@@ -5,6 +5,8 @@ import { UnifiedQuantumSystem, MarketGame } from './unified-system';
 const unifiedSystem = new UnifiedQuantumSystem();
 
 const UNIFIED_SERVER_PORT = parseInt(process.env.UNIFIED_SERVER_PORT || '3003', 10);
+const UNIFIED_SERVER_HOST = process.env.UNIFIED_SERVER_HOST || process.env.SERVER_HOST || 'localhost';
+const CONTAINER_HOST = process.env.CONTAINER_HOST || process.env.SERVER_HOST || 'localhost';
 const server = serve({
   port: UNIFIED_SERVER_PORT,
   hostname: '0.0.0.0',
@@ -85,7 +87,7 @@ const server = serve({
             deployed: true,
             container: {
               id: 'mock-container',
-              endpoint: `http://localhost:${process.env.CONTAINER_PORT || '8080'}`,
+              endpoint: `http://${CONTAINER_HOST}:${process.env.CONTAINER_PORT || '8080'}`,
               status: 'DEPLOYING'
             }
           });

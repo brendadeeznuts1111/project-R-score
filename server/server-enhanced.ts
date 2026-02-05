@@ -20,7 +20,9 @@ const text = await response.text();`,
 
 // Create server with endpoints matching Bun's fetch pattern
 const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
+const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
 const CONTENT_TYPE_SERVER_PORT = parseInt(process.env.CONTENT_TYPE_SERVER_PORT || '3001', 10);
+const CONTENT_TYPE_SERVER_HOST = process.env.CONTENT_TYPE_SERVER_HOST || SERVER_HOST;
 const server = Bun.serve({
   port: SERVER_PORT,
   async fetch(request) {
@@ -847,7 +849,7 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
             
             const port = ports[projectId];
             if (port) {
-              window.open('http://localhost:' + port, '_blank');
+              window.open(`http://${SERVER_HOST}:${port}`, '_blank');
             } else {
               executeCommand('View ' + projectId, 'bun run ' + projectId, [projectId]);
             }
@@ -1210,7 +1212,7 @@ async function testFetchPattern(): Promise<Response> {
     testUrls.map(async (url) => {
       const start = Date.now();
       try {
-        const response = await fetch(`http://localhost:${SERVER_PORT}${url}`);
+        const response = await fetch(`http://${SERVER_HOST}:${SERVER_PORT}${url}`);
         const duration = Date.now() - start;
         return {
           url,
@@ -1521,7 +1523,7 @@ async function demonstrateContentTypeHandler(): Promise<Response> {
   
   // Demonstrate request creation
   const sampleRequest = ContentTypeHandler.createRequest(
-    `http://localhost:${SERVER_PORT}/api/content-type/blob`,
+    `http://${SERVER_HOST}:${SERVER_PORT}/api/content-type/blob`,
     { message: 'Hello from ContentTypeHandler' }
   );
   
@@ -1564,8 +1566,8 @@ async function handleExecuteCommand(request: Request): Promise<Response> {
         
       case 'bun run start':
         output = `Starting ${projects.length > 0 ? projects.join(', ') : 'services'}...\n\n` +
-                  `🚀 Main Portal: http://localhost:${SERVER_PORT} (running)\n` +
-                  `📨 Content-Type Server: http://localhost:${CONTENT_TYPE_SERVER_PORT} (running)\n` +
+                  `🚀 Main Portal: http://${SERVER_HOST}:${SERVER_PORT} (running)\n` +
+                  `📨 Content-Type Server: http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT} (running)\n` +
                   `⚡ Services ready\n` +
                   `⏱️  Started in 1.2s`;
         break;
@@ -1605,6 +1607,6 @@ async function handleExecuteCommand(request: Request): Promise<Response> {
   }
 }
 
-console.log(`🚀 Bun TypedArray Documentation Server running on http://localhost:${SERVER_PORT}`);
+console.log(`🚀 Bun TypedArray Documentation Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
 console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
 console.log(`📰 RSS Feed: /feed/rss`);
