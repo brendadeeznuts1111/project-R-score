@@ -1,8 +1,10 @@
 #!/usr/bin/env bun
 
-// Simple staging test server
-const PORT = parseInt(process.env.SERVER_PORT || process.env.PORT || '3000', 10);
-const HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';
+// Simple staging test server with environment validation
+import { validateHost, validatePort } from './lib/utils/env-validator';
+
+const PORT = validatePort(process.env.SERVER_PORT || process.env.PORT, 3000);
+const HOST = validateHost(process.env.SERVER_HOST) || 'localhost';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 console.log(`🚀 Starting Staging Test Server`);

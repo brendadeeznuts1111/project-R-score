@@ -6,6 +6,7 @@
  * Enhanced with fetch proxy service demonstrating Bun's fetch capabilities
  */
 
+import { validateHost } from '../lib/utils/env-validator';
 import { fetchProxy, type ProxyRequest } from './services/fetch-proxy.ts';
 
 /**
@@ -444,7 +445,8 @@ Bun.serve({
   }
 });
 
-console.log(`Server listening on http://example.com:${port}`);
+const SERVER_HOST = validateHost(process.env.SERVER_HOST) || 'localhost';
+console.log(`Server listening on http://${SERVER_HOST}:${port}`);
 console.log(`Project context: ${Bun.main}`);
 console.log(`Available endpoints:`);
 console.log(`  GET  /              - Main page with session management`);

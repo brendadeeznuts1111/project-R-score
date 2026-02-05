@@ -7,6 +7,7 @@
  */
 
 import { serve } from "bun";
+import { validatePort } from '../lib/utils/env-validator';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -150,7 +151,7 @@ function calculateSignificance(): {
 }
 
 // Start A/B testing server
-const AB_TESTING_SERVICE_PORT = parseInt(process.env.AB_TESTING_SERVICE_PORT || '3001', 10);
+const AB_TESTING_SERVICE_PORT = validatePort(process.env.AB_TESTING_SERVICE_PORT, 3001);
 const server = serve({
   port: AB_TESTING_SERVICE_PORT,
   async fetch(req) {
@@ -320,7 +321,7 @@ const server = serve({
       });
       
     } catch (error) {
-      console.error('AB Test Service Error:', error);
+      console.error('❌ AB Test Service Error:', error instanceof Error ? error.message : String(error));
       return Response.json({ 
         error: 'Internal server error' 
       }, { 
@@ -335,7 +336,8 @@ const server = serve({
   }
 });
 
-console.log('🧪 A/B Testing Service running on http://example.com');
+const AB_TESTING_SERVICE_HOST = process.env.AB_TESTING_SERVICE_HOST || process.env.SERVER_HOST || 'localhost';
+console.log(`🧪 A/B Testing Service running on http://${AB_TESTING_SERVICE_HOST}:${AB_TESTING_SERVICE_PORT}`);
 console.log('Endpoints:');
 console.log('  GET  /health - Health check');
 console.log('  GET  /variant - Get user variant assignment');

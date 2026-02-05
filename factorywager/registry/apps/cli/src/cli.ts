@@ -6,6 +6,7 @@
  * Uses Bun.wrapAnsi() for 33-88x faster ANSI text wrapping
  */
 
+import { sanitizeEnvVar } from '../../../../lib/utils/env-validator';
 import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
 import { NPMRegistryServer } from '../src/server';
@@ -506,15 +507,15 @@ class RegistryCLI {
     console.log(styled('==========================', 'accent'));
     
     console.log(styled('\n🌐 Server:', 'info'));
-    console.log(styled(`  Port: ${process.env.REGISTRY_PORT || '4873'}`, 'muted'));
-    console.log(styled(`  Auth: ${process.env.REGISTRY_AUTH || 'none'}`, 'muted'));
+    console.log(styled(`  Port: ${sanitizeEnvVar(process.env.REGISTRY_PORT, '4873')}`, 'muted'));
+    console.log(styled(`  Auth: ${sanitizeEnvVar(process.env.REGISTRY_AUTH, 'none', true)}`, 'muted'));
 
     console.log(styled('\n🪣 R2 Storage:', 'info'));
-    console.log(styled(`  Bucket: ${process.env.R2_REGISTRY_BUCKET || 'npm-registry'}`, 'muted'));
-    console.log(styled(`  Account: ${process.env.R2_ACCOUNT_ID || 'not set'}`, 'muted'));
+    console.log(styled(`  Bucket: ${sanitizeEnvVar(process.env.R2_REGISTRY_BUCKET, 'npm-registry')}`, 'muted'));
+    console.log(styled(`  Account: ${sanitizeEnvVar(process.env.R2_ACCOUNT_ID, 'not set', true)}`, 'muted'));
 
     console.log(styled('\n📡 CDN:', 'info'));
-    console.log(styled(`  URL: ${process.env.REGISTRY_CDN_URL || 'not set'}`, 'muted'));
+    console.log(styled(`  URL: ${sanitizeEnvVar(process.env.REGISTRY_CDN_URL, 'not set')}`, 'muted'));
 
     console.log(styled('\n📝 Environment Variables:', 'info'));
     console.log(styled('  REGISTRY_PORT - Server port (default: 4873)', 'muted'));

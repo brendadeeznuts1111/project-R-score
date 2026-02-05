@@ -1,10 +1,11 @@
 // server/content-type-server.ts
 import { CONTENT_TYPES, ContentTypeHandler } from '../config/content-types.ts';
 import { BUN_DOCS, TYPED_ARRAY_URLS } from '../config/urls.ts';
+import { validateHost, validatePort } from '../lib/utils/env-validator.ts';
 
-// Create server that demonstrates content-type handling
-const CONTENT_TYPE_SERVER_PORT = parseInt(process.env.CONTENT_TYPE_SERVER_PORT || '3001', 10);
-const CONTENT_TYPE_SERVER_HOST = process.env.CONTENT_TYPE_SERVER_HOST || process.env.SERVER_HOST || 'localhost';
+// Create server that demonstrates content-type handling with validated environment variables
+const CONTENT_TYPE_SERVER_PORT = validatePort(process.env.CONTENT_TYPE_SERVER_PORT, 3001);
+const CONTENT_TYPE_SERVER_HOST = validateHost(process.env.CONTENT_TYPE_SERVER_HOST) || validateHost(process.env.SERVER_HOST) || 'localhost';
 const server = Bun.serve({
   port: CONTENT_TYPE_SERVER_PORT,
   async fetch(request) {
@@ -423,7 +424,7 @@ async function handleVerboseDemo(): Promise<Response> {
   <h2>Usage Examples</h2>
   <div class="example">
     <h3>Basic Verbose Logging</h3>
-    <pre><code>const response = await fetch('https://api.example.com', {
+    <pre><code>const response = await fetch(`http://${CONTENT_TYPE_SERVER_HOST}:${CONTENT_TYPE_SERVER_PORT}/api/content-type/test`, {
   verbose: true // Bun-specific: shows detailed HTTP headers
 });</code></pre>
   </div>
