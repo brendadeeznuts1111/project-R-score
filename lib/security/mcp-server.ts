@@ -429,38 +429,46 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'search_security_docs',
-          description: 'Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and security guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how security features work, or locate implementation details. The search returns contextual content with titles and direct references to security components.',
+          description: 'Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how features work, or locate implementation details. The search returns contextual content with titles and direct links to the documentation pages.',
           inputSchema: {
-            type: 'object',
-            properties: {
-              query: {
-                type: 'string',
-                description: 'A query to search the security documentation with.'
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "A query to search the content with."
               },
-              category: {
-                type: 'string',
-                description: 'Filter to specific security category (e.g., "secrets", "auth", "deployment", "mcp")',
-                enum: ['secrets', 'auth', 'deployment', 'mcp', 'audit', 'all'],
-                default: 'all'
+              "version": {
+                "type": "string",
+                "description": "Filter to specific version (e.g., '4.5', '4.0', '3.0')"
               },
-              includeCode: {
-                type: 'boolean',
-                description: 'Include code examples in search results',
-                default: true
+              "language": {
+                "type": "string",
+                "description": "Filter to specific language code (e.g., 'en', 'zh', 'es'). Defaults to 'en'"
               },
-              includeApi: {
-                type: 'boolean',
-                description: 'Include API reference documentation',
-                default: true
+              "apiReferenceOnly": {
+                "type": "boolean",
+                "description": "Only return API reference docs"
               },
-              severity: {
-                type: 'string',
-                description: 'Filter by security severity level',
-                enum: ['critical', 'high', 'medium', 'low', 'all'],
-                default: 'all'
+              "codeOnly": {
+                "type": "boolean",
+                "description": "Only return code snippets"
+              },
+              "category": {
+                "type": "string",
+                "description": "Filter to specific security category (e.g., \"secrets\", \"auth\", \"deployment\", \"mcp\")",
+                "enum": ["secrets", "auth", "deployment", "mcp", "audit", "all"],
+                "default": "all"
+              },
+              "severity": {
+                "type": "string",
+                "description": "Filter by security severity level",
+                "enum": ["critical", "high", "medium", "low", "all"],
+                "default": "all"
               }
             },
-            required: ['query']
+            "required": [
+              "query"
+            ]
           }
         },
       ],
@@ -687,9 +695,11 @@ class Tier1380SecurityMCPServer {
           case 'search_security_docs':
             const searchResults = await this.searchSecurityDocumentation(
               args.query,
+              args.version,
+              args.language,
+              args.apiReferenceOnly,
+              args.codeOnly,
               args.category,
-              args.includeCode,
-              args.includeApi,
               args.severity
             );
             return {
@@ -697,7 +707,7 @@ class Tier1380SecurityMCPServer {
                 {
                   type: 'text',
                   text: `🔍 Security Documentation Search Results:\n${searchResults.map(result => 
-                    `📄 ${result.title}\n   📝 ${result.description}\n   🔗 ${result.reference}\n   🏷️  ${result.category} | ${result.severity}\n${result.codeExample ? `   💻 Code: ${result.codeExample}\n` : ''}`
+                    `📄 ${result.title}\n   📝 ${result.description}\n   🔗 ${result.url || result.reference}\n   🏷️  ${result.category} | ${result.severity} | ${result.version}\n${result.codeExample ? `   💻 Code: ${result.codeExample}\n` : ''}`
                   ).join('\n')}`
                 },
               ],
@@ -951,103 +961,172 @@ class Tier1380SecurityMCPServer {
   }
 
   /**
-   * Search security documentation knowledge base
+   * Search security documentation knowledge base (Bun SearchBun-style)
    */
   private async searchSecurityDocumentation(
     query: string,
+    version?: string,
+    language: string = 'en',
+    apiReferenceOnly: boolean = false,
+    codeOnly: boolean = false,
     category: string = 'all',
-    includeCode: boolean = true,
-    includeApi: boolean = true,
     severity: string = 'all'
   ): Promise<Array<{
     title: string;
     description: string;
+    url: string;
     reference: string;
     category: string;
     severity: string;
+    version: string;
+    language: string;
     codeExample?: string;
   }>> {
     
     const securityKnowledgeBase = [
       {
         title: 'Enterprise Password Security with Bun.password',
-        description: 'Learn how to implement enterprise-grade password hashing using Bun.password API with Argon2id and bcrypt algorithms',
+        description: 'Learn how to implement enterprise-grade password hashing using Bun.password API with Argon2id and bcrypt algorithms. Comprehensive guide with code examples and best practices.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-password-security.ts',
         reference: 'lib/security/enterprise-password-security.ts',
         category: 'secrets',
         severity: 'critical',
-        codeExample: includeCode ? 'await Tier1380PasswordSecurity.hashPassword(password, { algorithm: "argon2id" })' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'await Tier1380PasswordSecurity.hashPassword(password, { algorithm: "argon2id" })',
+        isApiReference: true
       },
       {
-        title: 'Cross-Platform Secret Storage',
-        description: 'Store secrets securely across Windows Credential Manager, macOS Keychain, and Linux libsecret',
+        title: 'Cross-Platform Secret Storage Implementation',
+        description: 'Store secrets securely across Windows Credential Manager, macOS Keychain, and Linux libsecret. Complete implementation guide with enterprise persistence support.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/tier1380-secret-manager.ts',
         reference: 'lib/security/tier1380-secret-manager.ts',
         category: 'secrets',
         severity: 'critical',
-        codeExample: includeCode ? 'await Tier1380SecretManager.setSecret(key, value, { persistEnterprise: true })' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'await Tier1380SecretManager.setSecret(key, value, { persistEnterprise: true })',
+        isApiReference: true
       },
       {
-        title: 'Enterprise Authentication System',
-        description: 'Implement user authentication with rate limiting, audit trails, and session management',
+        title: 'Enterprise Authentication System Guide',
+        description: 'Implement user authentication with rate limiting, audit trails, and session management. Complete security framework with compliance features.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-auth.ts',
         reference: 'lib/security/enterprise-auth.ts',
         category: 'auth',
         severity: 'high',
-        codeExample: includeCode ? 'await Tier1380EnterpriseAuth.authenticate(username, password, context)' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'await Tier1380EnterpriseAuth.authenticate(username, password, context)',
+        isApiReference: true
       },
       {
-        title: 'Secure Deployment Pipeline',
-        description: 'Deploy applications with enterprise security validation and monitoring',
+        title: 'Secure Deployment Pipeline Documentation',
+        description: 'Deploy applications with enterprise security validation and monitoring. Complete deployment workflow with authentication and audit trails.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/secure-deployment.ts',
         reference: 'lib/security/secure-deployment.ts',
         category: 'deployment',
         severity: 'high',
-        codeExample: includeCode ? 'await Tier1380SecureDeployment.deployWithPasswordAuth(snapshotId, credentials)' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'await Tier1380SecureDeployment.deployWithPasswordAuth(snapshotId, credentials)',
+        isApiReference: true
       },
       {
-        title: 'Secret Lifecycle Management',
-        description: 'Automate secret rotation, expiration monitoring, and compliance management',
+        title: 'Secret Lifecycle Management System',
+        description: 'Automate secret rotation, expiration monitoring, and compliance management. Enterprise-grade lifecycle automation with scheduling.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/secret-lifecycle.ts',
         reference: 'lib/security/secret-lifecycle.ts',
         category: 'secrets',
         severity: 'medium',
-        codeExample: includeCode ? 'await lifecycleManager.rotateNow(key, reason)' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'await lifecycleManager.rotateNow(key, reason)',
+        isApiReference: true
       },
       {
-        title: 'Versioned Secrets with Rollback',
-        description: 'Manage secret versions with audit trails and safe rollback capabilities',
+        title: 'Versioned Secrets with Rollback Capabilities',
+        description: 'Manage secret versions with audit trails and safe rollback capabilities. Complete versioning system with metadata tracking.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/versioned-secrets.ts',
         reference: 'lib/security/versioned-secrets.ts',
         category: 'secrets',
         severity: 'medium',
-        codeExample: includeCode ? 'await versionManager.rollback(key, targetVersion, { reason: "Security issue" })' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'await versionManager.rollback(key, targetVersion, { reason: "Security issue" })',
+        isApiReference: true
       },
       {
-        title: 'Security MCP Server',
-        description: 'Model Context Protocol server for enterprise security operations with HTTP transport',
+        title: 'Security MCP Server Implementation',
+        description: 'Model Context Protocol server for enterprise security operations with HTTP transport. Complete MCP server with tools, resources, and prompts.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/mcp-server.ts',
         reference: 'lib/security/mcp-server.ts',
         category: 'mcp',
         severity: 'high',
-        codeExample: includeCode ? 'bun run mcp-server.ts --http --port=3000' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'bun run mcp-server.ts --http --port=3000',
+        isApiReference: true
       },
       {
-        title: 'Security Audit and Monitoring',
-        description: 'Generate comprehensive security reports and monitor authentication events',
+        title: 'Security Audit and Monitoring Guide',
+        description: 'Generate comprehensive security reports and monitor authentication events. Complete audit system with compliance reporting.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-auth.ts#getAuditLog',
         reference: 'lib/security/enterprise-auth.ts#getAuditLog',
         category: 'audit',
         severity: 'medium',
-        codeExample: includeCode ? 'const auditLog = Tier1380EnterpriseAuth.getAuditLog(20)' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'const auditLog = Tier1380EnterpriseAuth.getAuditLog(20)',
+        isApiReference: true
       },
       {
         title: 'Bun Runtime Security Integration',
-        description: 'Leverage Bun\'s native cryptographic APIs for maximum security performance',
+        description: 'Leverage Bun\'s native cryptographic APIs for maximum security performance. Complete integration guide with performance optimizations.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-password-security.ts#Bun.password',
         reference: 'lib/security/enterprise-password-security.ts#Bun.password',
         category: 'secrets',
         severity: 'low',
-        codeExample: includeCode ? 'const hash = await Bun.password.hash(password, { algorithm: "argon2id" })' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'const hash = await Bun.password.hash(password, { algorithm: "argon2id" })',
+        isApiReference: true
       },
       {
-        title: 'HTTP Transport Security',
-        description: 'Secure HTTP transport for MCP protocol with JSON-RPC 2.0 compliance',
+        title: 'HTTP Transport Security for MCP',
+        description: 'Secure HTTP transport for MCP protocol with JSON-RPC 2.0 compliance. Complete HTTP server implementation with health checks.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/mcp-server.ts#HTTP',
         reference: 'lib/security/mcp-server.ts#HTTP',
         category: 'mcp',
         severity: 'medium',
-        codeExample: includeCode ? 'curl -X POST http://localhost:3000 -d \'{"jsonrpc":"2.0","method":"tools/list"}\'' : undefined
+        version: '4.5',
+        language: 'en',
+        codeExample: 'curl -X POST http://localhost:3000 -d \'{"jsonrpc":"2.0","method":"tools/list"}\'',
+        isApiReference: true
+      },
+      {
+        title: 'Security Integration Test Suite',
+        description: 'Comprehensive test suite for all security components. Integration testing with coverage reports and validation.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/test-integration.ts',
+        reference: 'lib/security/test-integration.ts',
+        category: 'audit',
+        severity: 'low',
+        version: '4.5',
+        language: 'en',
+        codeExample: 'bun run test-integration.ts',
+        isApiReference: false
+      },
+      {
+        title: 'MCP Configuration and Deployment',
+        description: 'Complete configuration guide for MCP server deployment. HTTP transport setup and client configuration examples.',
+        url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/bun-mcp-server-config.json',
+        reference: 'lib/security/bun-mcp-server-config.json',
+        category: 'mcp',
+        severity: 'low',
+        version: '4.5',
+        language: 'en',
+        codeExample: 'bun run mcp-server.ts --http --port=3000',
+        isApiReference: false
       }
     ];
 
@@ -1055,11 +1134,19 @@ class Tier1380SecurityMCPServer {
     let results = securityKnowledgeBase.filter(item => {
       const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase()) ||
                          item.description.toLowerCase().includes(query.toLowerCase());
+      const matchesVersion = !version || item.version === version;
+      const matchesLanguage = item.language === language;
       const matchesCategory = category === 'all' || item.category === category;
       const matchesSeverity = severity === 'all' || item.severity === severity;
+      const matchesApiFilter = !apiReferenceOnly || item.isApiReference;
       
-      return matchesQuery && matchesCategory && matchesSeverity;
+      return matchesQuery && matchesVersion && matchesLanguage && matchesCategory && matchesSeverity && matchesApiFilter;
     });
+
+    // Apply code-only filter
+    if (codeOnly) {
+      results = results.filter(item => item.codeExample);
+    }
 
     // Sort by relevance (title matches first, then description matches)
     results.sort((a, b) => {

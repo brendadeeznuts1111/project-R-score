@@ -138,29 +138,35 @@
       },
       "search_security_docs": {
         "name": "search_security_docs",
-        "description": "Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and security guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how security features work, or locate implementation details. The search returns contextual content with titles and direct references to security components.",
+        "description": "Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how security features work, or locate implementation details. The search returns contextual content with titles and direct links to the documentation pages.",
         "inputSchema": {
           "type": "object",
           "properties": {
             "query": {
               "type": "string",
-              "description": "A query to search the security documentation with."
+              "description": "A query to search the content with."
+            },
+            "version": {
+              "type": "string",
+              "description": "Filter to specific version (e.g., '4.5', '4.0', '3.0')"
+            },
+            "language": {
+              "type": "string",
+              "description": "Filter to specific language code (e.g., 'en', 'zh', 'es'). Defaults to 'en'"
+            },
+            "apiReferenceOnly": {
+              "type": "boolean",
+              "description": "Only return API reference docs"
+            },
+            "codeOnly": {
+              "type": "boolean",
+              "description": "Only return code snippets"
             },
             "category": {
               "type": "string",
-              "description": "Filter to specific security category (e.g., 'secrets', 'auth', 'deployment', 'mcp')",
+              "description": "Filter to specific security category (e.g., \"secrets\", \"auth\", \"deployment\", \"mcp\")",
               "enum": ["secrets", "auth", "deployment", "mcp", "audit", "all"],
               "default": "all"
-            },
-            "includeCode": {
-              "type": "boolean",
-              "description": "Include code examples in search results",
-              "default": true
-            },
-            "includeApi": {
-              "type": "boolean",
-              "description": "Include API reference documentation",
-              "default": true
             },
             "severity": {
               "type": "string",
