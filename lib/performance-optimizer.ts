@@ -8,28 +8,11 @@
  * 3. Server Response Time (3.3x slower than target)
  */
 
-// Entry guard check
-if (import.meta.main) {
-  // Only run when executed directly
-  main().catch(console.error);
-} else {
-  console.log('ℹ️  Script was imported, not executed directly');
-}
-
-import { performance } from 'perf_hooks';
-
-
 // ============================================================================
 // SPAWN OPTIMIZATION
 // ============================================================================
 
 class SpawnOptimizer {
-  private static readonly OPTIMIZATION_FLAGS = [
-    'BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER=0',
-    'BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS=0',
-    'NODE_OPTIONS="--max-old-space-size=512"'
-  ];
-
   /**
    * Security: Validate input to prevent command injection
    * Comprehensive check for shell metacharacters and injection vectors
@@ -79,7 +62,7 @@ class SpawnOptimizer {
   /**
    * Optimized spawn with performance monitoring and security validation
    */
-  static async optimizedSpawn(command: string, args: string[] = [], options: any = {}): Promise<{
+  static async optimizedSpawn(command: string, args: string[] = [], options: Omit<Parameters<typeof Bun.spawn>[1], 'stdio' | 'timeout'> = {}): Promise<{
     stdout: string;
     stderr: string;
     exitCode: number;
@@ -120,19 +103,19 @@ class SpawnOptimizer {
       const executionTime = performance.now() - startTime;
       
       // Ensure process cleanup on error
-      if (proc && !(await proc.exited)) {
+      if (proc && proc.exitCode === null) {
         try {
           proc.kill();
           console.warn(`Process killed due to error: ${command}`);
         } catch (killError) {
-          console.error(`Failed to kill process: ${killError.message}`);
+          console.error(`Failed to kill process: ${(killError as Error).message}`);
         }
       }
-      
+
       throw new Error(`Spawn failed after ${executionTime.toFixed(2)}ms: ${error?.message || String(error)}`);
     } finally {
       // Final cleanup check
-      if (proc && !(await proc.exited)) {
+      if (proc && proc.exitCode === null) {
         try {
           proc.kill();
         } catch {
@@ -178,22 +161,19 @@ class SpawnOptimizer {
       const executionTime = performance.now() - startTime;
       
       // Ensure process cleanup on error
-      if (proc && !(await proc.exited)) {
+      if (proc && proc.exitCode === null) {
         try {
           proc.kill();
           console.warn(`Process killed due to error: ${command}`);
         } catch (killError) {
-          console.error(`Failed to kill process: ${killError.message}`);
+          console.error(`Failed to kill process: ${(killError as Error).message}`);
         }
       }
-      
-      throw {
-        error: error.message,
-        executionTime
-      };
+
+      throw new Error(`Fast spawn failed after ${executionTime.toFixed(2)}ms: ${(error as Error).message}`);
     } finally {
       // Final cleanup check
-      if (proc && !(await proc.exited)) {
+      if (proc && proc.exitCode === null) {
         try {
           proc.kill();
         } catch {
@@ -328,36 +308,32 @@ class EnvironmentOptimizer {
   /**
    * Benchmark environment variable performance
    */
-  static benchmarkEnvAccess(): Promise<void> {
-    return new Promise((resolve) => {
-      console.log('🌍 ENVIRONMENT VARIABLE BENCHMARK');
-      console.log('=' .repeat(50));
+  static async benchmarkEnvAccess(): Promise<void> {
+    console.log('🌍 ENVIRONMENT VARIABLE BENCHMARK');
+    console.log('=' .repeat(50));
 
-      const testVar = 'PATH';
-      const iterations = 10000;
+    const testVar = 'PATH';
+    const iterations = 10000;
 
-      // Test standard access
-      const standardStart = performance.now();
-      for (let i = 0; i < iterations; i++) {
-        process.env[testVar];
-      }
-      const standardTime = performance.now() - standardStart;
+    // Test standard access
+    const standardStart = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      process.env[testVar];
+    }
+    const standardTime = performance.now() - standardStart;
 
-      // Test optimized access
-      this.preloadCriticalEnv();
-      const optimizedStart = performance.now();
-      for (let i = 0; i < iterations; i++) {
-        this.getOptimizedEnv(testVar);
-      }
-      const optimizedTime = performance.now() - optimizedStart;
+    // Test optimized access
+    this.preloadCriticalEnv();
+    const optimizedStart = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      this.getOptimizedEnv(testVar);
+    }
+    const optimizedTime = performance.now() - optimizedStart;
 
-      console.log(`Standard access (${iterations} iterations): ${standardTime.toFixed(2)}ms`);
-      console.log(`Optimized access (${iterations} iterations): ${optimizedTime.toFixed(2)}ms`);
-      console.log(`Improvement: ${(standardTime / optimizedTime).toFixed(2)}x faster`);
-      console.log('');
-      
-      resolve();
-    });
+    console.log(`Standard access (${iterations} iterations): ${standardTime.toFixed(2)}ms`);
+    console.log(`Optimized access (${iterations} iterations): ${optimizedTime.toFixed(2)}ms`);
+    console.log(`Improvement: ${(standardTime / optimizedTime).toFixed(2)}x faster`);
+    console.log('');
   }
 }
 
@@ -366,15 +342,14 @@ class EnvironmentOptimizer {
 // ============================================================================
 
 class ServerOptimizer {
-  private static server: any = null;
-  private static connectionPool: any[] = [];
-  private static responseCache = new Map<string, { data: any; timestamp: number }>();
+  private static server: ReturnType<typeof Bun.serve> | null = null;
+  private static responseCache = new Map<string, { data: unknown; timestamp: number }>();
   private static readonly CACHE_TTL = 30000; // 30 seconds
 
   /**
-   * Optimized server with connection pooling and caching
+   * Optimized server with response caching
    */
-  static createOptimizedServer(port: number = 3000): any {
+  static createOptimizedServer(port: number = 3000): ReturnType<typeof Bun.serve> {
     const server = Bun.serve({
       port,
       fetch: async (req) => {
@@ -401,8 +376,8 @@ class ServerOptimizer {
             method: req.method
           };
 
-          // Cache the response
-          this.responseCache.set(cacheKey, {
+          // Only cache GET responses
+          if (req.method === 'GET') this.responseCache.set(cacheKey, {
             data,
             timestamp: Date.now()
           });
@@ -447,9 +422,9 @@ class ServerOptimizer {
     await Bun.sleep(100);
 
     const testUrls = [
-      'http://example.com/',
-      'http://example.com/test',
-      'http://example.com/api/data'
+      'http://localhost:3001/',
+      'http://localhost:3001/test',
+      'http://localhost:3001/api/data'
     ];
 
     for (const url of testUrls) {
@@ -547,16 +522,9 @@ async function main(): Promise<void> {
   await OptimizationRunner.runAllOptimizations();
 }
 
-// Run main function
-main().catch(error => {
-  console.error('❌ Unhandled error:', error);
-  process.exit(1);
-});
-
-/**
- * 💡 Performance Tip: For better performance, consider:
- * 1. Using preconnect for frequently accessed domains
- * 2. Adding resource hints to your HTML head
- * 3. Implementing request caching
- * 4. Using the native fetch API with keep-alive
- */
+if (import.meta.main) {
+  main().catch(error => {
+    console.error('❌ Unhandled error:', error);
+    process.exit(1);
+  });
+}
