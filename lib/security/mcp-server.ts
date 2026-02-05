@@ -10,6 +10,7 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import {
   CallToolRequestSchema,
   ErrorCode,
@@ -60,6 +61,142 @@ class Tier1380SecurityMCPServer {
     this.setupToolHandlers();
     this.setupResourceHandlers();
     this.setupPromptHandlers();
+  }
+
+  /**
+   * Run server with stdio transport (default)
+   */
+  async runStdio(): Promise<void> {
+    const transport = new StdioServerTransport();
+    await this.server.connect(transport);
+    console.error('🔐 Tier-1380 Security MCP Server running on stdio');
+  }
+
+  /**
+   * Run server with HTTP transport (Bun-style)
+   */
+  async runHttp(port: number = 3000): Promise<void> {
+    if (!BUN_RUNTIME) {
+      throw new Error('HTTP transport requires Bun runtime');
+    }
+
+    const server = Bun.serve({
+      port,
+      fetch: async (req) => {
+        if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
+          try {
+            const body = await req.json();
+            const response = await this.handleHttpRequest(body);
+            return new Response(JSON.stringify(response), {
+              headers: { 'Content-Type': 'application/json' },
+            });
+          } catch (error) {
+            return new Response(
+              JSON.stringify({ error: error.message }),
+              { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+          }
+        }
+        
+        // Health check endpoint
+        if (req.url === '/health') {
+          return new Response(
+            JSON.stringify({ 
+              status: 'healthy', 
+              server: 'tier1380-security',
+              version: '4.5.0',
+              bunVersion: BUN_VERSION 
+            }),
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+        }
+
+        return new Response('Not Found', { status: 404 });
+      },
+    });
+
+    console.error(`🔐 Tier-1380 Security MCP Server running on HTTP port ${port}`);
+    console.error(`📊 Health check: http://localhost:${port}/health`);
+  }
+
+  /**
+   * Run server with SSE transport (alternative HTTP approach)
+   */
+  async runSSE(port: number = 3001): Promise<void> {
+    if (!BUN_RUNTIME) {
+      throw new Error('SSE transport requires Bun runtime');
+    }
+
+    const server = Bun.serve({
+      port,
+      fetch: async (req, server) => {
+        const url = new URL(req.url);
+        
+        if (url.pathname === '/mcp') {
+          // Upgrade to SSE for MCP communication
+          const transport = new SSEServerTransport('/message', req);
+          await this.server.connect(transport);
+          return new Response('MCP SSE connection established');
+        }
+
+        return new Response('Not Found', { status: 404 });
+      },
+    });
+
+    console.error(`🔐 Tier-1380 Security MCP Server running on SSE port ${port}`);
+  }
+
+  /**
+   * Handle HTTP requests for MCP protocol
+   */
+  private async handleHttpRequest(body: any): Promise<any> {
+    const { jsonrpc, id, method, params } = body;
+
+    if (jsonrpc !== '2.0') {
+      throw new Error('Invalid JSON-RPC version');
+    }
+
+    try {
+      let result;
+      
+      switch (method) {
+        case 'tools/list':
+          result = await this.server.request({ method: 'tools/list' }, ListToolsRequestSchema);
+          break;
+        case 'tools/call':
+          result = await this.server.request({ method: 'tools/call', params }, CallToolRequestSchema);
+          break;
+        case 'resources/list':
+          result = await this.server.request({ method: 'resources/list' }, ListResourcesRequestSchema);
+          break;
+        case 'resources/read':
+          result = await this.server.request({ method: 'resources/read', params }, ReadResourceRequestSchema);
+          break;
+        case 'prompts/list':
+          result = await this.server.request({ method: 'prompts/list' }, ListPromptsRequestSchema);
+          break;
+        case 'prompts/get':
+          result = await this.server.request({ method: 'prompts/get', params }, GetPromptRequestSchema);
+          break;
+        default:
+          throw new McpError(ErrorCode.MethodNotFound, `Unknown method: ${method}`);
+      }
+
+      return {
+        jsonrpc: '2.0',
+        id,
+        result,
+      };
+    } catch (error) {
+      return {
+        jsonrpc: '2.0',
+        id,
+        error: {
+          code: error.code || -32603,
+          message: error.message,
+        },
+      };
+    }
   }
 
   private setupToolHandlers(): void {
@@ -773,9 +910,23 @@ class Tier1380SecurityMCPServer {
   }
 
   async run(): Promise<void> {
-    const transport = new StdioServerTransport();
-    await this.server.connect(transport);
-    console.error('🔐 Tier-1380 Security MCP Server running on stdio');
+    const transport = process.argv.includes('--http') ? 'http' : 
+                     process.argv.includes('--sse') ? 'sse' : 'stdio';
+  
+    const port = parseInt(process.argv.find(arg => arg.startsWith('--port='))?.split('=')[1] || '3000');
+
+    switch (transport) {
+      case 'http':
+        await this.runHttp(port);
+        break;
+      case 'sse':
+        await this.runSSE(port);
+        break;
+      case 'stdio':
+      default:
+        await this.runStdio();
+        break;
+    }
   }
 }
 

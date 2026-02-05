@@ -1,0 +1,243 @@
+{
+  "server": {
+    "name": "tier1380-security",
+    "version": "4.5.0",
+    "transport": "http"
+  },
+  "capabilities": {
+    "tools": {
+      "store_secret": {
+        "name": "store_secret",
+        "description": "Store a secret in secure enterprise storage with cross-platform support (Windows Credential Manager, macOS Keychain, Linux libsecret). Use this tool when you need to securely store API keys, passwords, certificates, or other sensitive data.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "Secret key/identifier"
+            },
+            "value": {
+              "type": "string",
+              "description": "Secret value to store"
+            },
+            "persistEnterprise": {
+              "type": "boolean",
+              "description": "Use enterprise persistence (Windows CRED_PERSIST_ENTERPRISE)",
+              "default": false
+            }
+          },
+          "required": ["key", "value"]
+        }
+      },
+      "retrieve_secret": {
+        "name": "retrieve_secret",
+        "description": "Retrieve a secret from secure storage. Use this tool when you need to access previously stored secrets for authentication, API calls, or other secure operations.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "Secret key/identifier"
+            }
+          },
+          "required": ["key"]
+        }
+      },
+      "hash_password": {
+        "name": "hash_password",
+        "description": "Hash a password using enterprise-grade algorithms (Argon2id, bcrypt) with Bun.password API. Use this tool when you need to securely hash user passwords or create password hashes for storage.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "password": {
+              "type": "string",
+              "description": "Password to hash"
+            },
+            "algorithm": {
+              "type": "string",
+              "enum": ["argon2id", "bcrypt"],
+              "description": "Hashing algorithm to use",
+              "default": "argon2id"
+            },
+            "userId": {
+              "type": "string",
+              "description": "User identifier for storage"
+            }
+          },
+          "required": ["password"]
+        }
+      },
+      "authenticate_user": {
+        "name": "authenticate_user",
+        "description": "Authenticate a user with enterprise security, rate limiting, and audit trails. Use this tool when you need to verify user credentials for system access or API authentication.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string",
+              "description": "Username"
+            },
+            "password": {
+              "type": "string",
+              "description": "Password"
+            },
+            "ipAddress": {
+              "type": "string",
+              "description": "Client IP address",
+              "default": "127.0.0.1"
+            },
+            "userAgent": {
+              "type": "string",
+              "description": "Client user agent",
+              "default": "MCP Client"
+            }
+          },
+          "required": ["username", "password"]
+        }
+      },
+      "deploy_application": {
+        "name": "deploy_application",
+        "description": "Deploy an application with enterprise security, authentication, and audit logging. Use this tool when you need to deploy applications with security validation and monitoring.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "snapshotId": {
+              "type": "string",
+              "description": "Application snapshot identifier"
+            },
+            "username": {
+              "type": "string",
+              "description": "Deploying username"
+            },
+            "password": {
+              "type": "string",
+              "description": "User password for authentication"
+            }
+          },
+          "required": ["snapshotId", "username", "password"]
+        }
+      },
+      "rotate_secret": {
+        "name": "rotate_secret",
+        "description": "Rotate a secret to a new value using cryptographically secure generation (Bun.random.bytes). Use this tool when you need to update secrets for security compliance or regular rotation schedules.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "Secret key to rotate"
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reason for rotation",
+              "default": "Scheduled rotation"
+            }
+          },
+          "required": ["key"]
+        }
+      },
+      "bun_security_info": {
+        "name": "bun_security_info",
+        "description": "Get Bun runtime security information and capabilities. Use this tool when you need to check runtime features, cryptographic capabilities, or performance metrics.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "include_crypto": {
+              "type": "boolean",
+              "description": "Include cryptographic capabilities",
+              "default": true
+            }
+          }
+        }
+      }
+    },
+    "resources": {
+      "security_audit_log": {
+        "name": "security_audit_log",
+        "description": "Real-time security audit log with authentication events, secret operations, and deployment activities",
+        "uri": "security://audit-log"
+      },
+      "secret_status": {
+        "name": "secret_status",
+        "description": "Current status and health of all stored secrets with platform-specific information",
+        "uri": "security://secret-status"
+      },
+      "auth_report": {
+        "name": "auth_report",
+        "description": "Authentication system statistics, success rates, and security metrics",
+        "uri": "security://auth-report"
+      }
+    },
+    "prompts": {
+      "security_audit": {
+        "name": "security_audit",
+        "description": "Generate comprehensive security audit reports with findings and recommendations",
+        "arguments": [
+          {
+            "name": "timeframe",
+            "description": "Timeframe for the audit (e.g., '24h', '7d', '30d')",
+            "required": false
+          },
+          {
+            "name": "include_recommendations",
+            "description": "Include security recommendations",
+            "required": false
+          }
+        ]
+      },
+      "secret_rotation_plan": {
+        "name": "secret_rotation_plan",
+        "description": "Create automated secret rotation plans with schedules and procedures",
+        "arguments": [
+          {
+            "name": "secret_pattern",
+            "description": "Pattern to match secrets (e.g., 'API_*', 'JWT_*')",
+            "required": false
+          },
+          {
+            "name": "rotation_interval",
+            "description": "Rotation interval (e.g., '30d', '90d')",
+            "required": false
+          }
+        ]
+      },
+      "deployment_security_checklist": {
+        "name": "deployment_security_checklist",
+        "description": "Generate security checklists for deployments with compliance requirements",
+        "arguments": [
+          {
+            "name": "environment",
+            "description": "Deployment environment (e.g., 'production', 'staging')",
+            "required": false
+          },
+          {
+            "name": "compliance_level",
+            "description": "Compliance level (e.g., 'basic', 'enterprise', 'federal')",
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  "bun_features": {
+    "native_crypto": true,
+    "password_hashing": true,
+    "random_bytes": true,
+    "crypto_hash": true,
+    "sha256_hash": true,
+    "performance_optimized": true,
+    "http_transport": true,
+    "sse_transport": true,
+    "stdio_transport": true
+  },
+  "enterprise_security": {
+    "cross_platform_storage": true,
+    "credential_manager_integration": true,
+    "audit_trails": true,
+    "rate_limiting": true,
+    "session_management": true,
+    "versioned_secrets": true,
+    "rollback_capabilities": true,
+    "compliance_ready": true
+  }
+}
