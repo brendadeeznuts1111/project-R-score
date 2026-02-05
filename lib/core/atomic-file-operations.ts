@@ -11,12 +11,7 @@ export class AtomicFileOperations {
    */
   static async writeAtomic(filePath: string, content: string | ArrayBuffer): Promise<void> {
     await ConcurrencyManagers.fileOperations.withLock(async () => {
-      try {
-        // Direct write with mutex protection for atomicity at the application level
-        await Bun.write(filePath, content);
-      } catch (error) {
-        throw error;
-      }
+      await Bun.write(filePath, content);
     });
   }
 
