@@ -136,20 +136,42 @@
           "required": ["key"]
         }
       },
-      "bun_security_info": {
-        "name": "bun_security_info",
-        "description": "Get Bun runtime security information and capabilities. Use this tool when you need to check runtime features, cryptographic capabilities, or performance metrics.",
+      "search_security_docs": {
+        "name": "search_security_docs",
+        "description": "Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and security guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how security features work, or locate implementation details. The search returns contextual content with titles and direct references to security components.",
         "inputSchema": {
           "type": "object",
           "properties": {
-            "include_crypto": {
+            "query": {
+              "type": "string",
+              "description": "A query to search the security documentation with."
+            },
+            "category": {
+              "type": "string",
+              "description": "Filter to specific security category (e.g., 'secrets', 'auth', 'deployment', 'mcp')",
+              "enum": ["secrets", "auth", "deployment", "mcp", "audit", "all"],
+              "default": "all"
+            },
+            "includeCode": {
               "type": "boolean",
-              "description": "Include cryptographic capabilities",
+              "description": "Include code examples in search results",
               "default": true
+            },
+            "includeApi": {
+              "type": "boolean",
+              "description": "Include API reference documentation",
+              "default": true
+            },
+            "severity": {
+              "type": "string",
+              "description": "Filter by security severity level",
+              "enum": ["critical", "high", "medium", "low", "all"],
+              "default": "all"
             }
-          }
+          },
+          "required": ["query"]
         }
-      }
+      },
     },
     "resources": {
       "security_audit_log": {

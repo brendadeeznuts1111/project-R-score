@@ -428,18 +428,40 @@ class Tier1380SecurityMCPServer {
           },
         },
         {
-          name: 'bun_security_info',
-          description: 'Get Bun runtime security information and capabilities',
+          name: 'search_security_docs',
+          description: 'Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and security guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how security features work, or locate implementation details. The search returns contextual content with titles and direct references to security components.',
           inputSchema: {
             type: 'object',
             properties: {
-              include_crypto: {
-                type: 'boolean',
-                description: 'Include cryptographic capabilities',
-                default: true,
+              query: {
+                type: 'string',
+                description: 'A query to search the security documentation with.'
               },
+              category: {
+                type: 'string',
+                description: 'Filter to specific security category (e.g., "secrets", "auth", "deployment", "mcp")',
+                enum: ['secrets', 'auth', 'deployment', 'mcp', 'audit', 'all'],
+                default: 'all'
+              },
+              includeCode: {
+                type: 'boolean',
+                description: 'Include code examples in search results',
+                default: true
+              },
+              includeApi: {
+                type: 'boolean',
+                description: 'Include API reference documentation',
+                default: true
+              },
+              severity: {
+                type: 'string',
+                description: 'Filter by security severity level',
+                enum: ['critical', 'high', 'medium', 'low', 'all'],
+                default: 'all'
+              }
             },
-          },
+            required: ['query']
+          }
         },
       ],
     }));
@@ -661,6 +683,25 @@ class Tier1380SecurityMCPServer {
                 ],
               };
             }
+
+          case 'search_security_docs':
+            const searchResults = await this.searchSecurityDocumentation(
+              args.query,
+              args.category,
+              args.includeCode,
+              args.includeApi,
+              args.severity
+            );
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `🔍 Security Documentation Search Results:\n${searchResults.map(result => 
+                    `📄 ${result.title}\n   📝 ${result.description}\n   🔗 ${result.reference}\n   🏷️  ${result.category} | ${result.severity}\n${result.codeExample ? `   💻 Code: ${result.codeExample}\n` : ''}`
+                  ).join('\n')}`
+                },
+              ],
+            };
 
           case 'bun_security_info':
             const info = {
@@ -907,6 +948,131 @@ class Tier1380SecurityMCPServer {
           );
       }
     });
+  }
+
+  /**
+   * Search security documentation knowledge base
+   */
+  private async searchSecurityDocumentation(
+    query: string,
+    category: string = 'all',
+    includeCode: boolean = true,
+    includeApi: boolean = true,
+    severity: string = 'all'
+  ): Promise<Array<{
+    title: string;
+    description: string;
+    reference: string;
+    category: string;
+    severity: string;
+    codeExample?: string;
+  }>> {
+    
+    const securityKnowledgeBase = [
+      {
+        title: 'Enterprise Password Security with Bun.password',
+        description: 'Learn how to implement enterprise-grade password hashing using Bun.password API with Argon2id and bcrypt algorithms',
+        reference: 'lib/security/enterprise-password-security.ts',
+        category: 'secrets',
+        severity: 'critical',
+        codeExample: includeCode ? 'await Tier1380PasswordSecurity.hashPassword(password, { algorithm: "argon2id" })' : undefined
+      },
+      {
+        title: 'Cross-Platform Secret Storage',
+        description: 'Store secrets securely across Windows Credential Manager, macOS Keychain, and Linux libsecret',
+        reference: 'lib/security/tier1380-secret-manager.ts',
+        category: 'secrets',
+        severity: 'critical',
+        codeExample: includeCode ? 'await Tier1380SecretManager.setSecret(key, value, { persistEnterprise: true })' : undefined
+      },
+      {
+        title: 'Enterprise Authentication System',
+        description: 'Implement user authentication with rate limiting, audit trails, and session management',
+        reference: 'lib/security/enterprise-auth.ts',
+        category: 'auth',
+        severity: 'high',
+        codeExample: includeCode ? 'await Tier1380EnterpriseAuth.authenticate(username, password, context)' : undefined
+      },
+      {
+        title: 'Secure Deployment Pipeline',
+        description: 'Deploy applications with enterprise security validation and monitoring',
+        reference: 'lib/security/secure-deployment.ts',
+        category: 'deployment',
+        severity: 'high',
+        codeExample: includeCode ? 'await Tier1380SecureDeployment.deployWithPasswordAuth(snapshotId, credentials)' : undefined
+      },
+      {
+        title: 'Secret Lifecycle Management',
+        description: 'Automate secret rotation, expiration monitoring, and compliance management',
+        reference: 'lib/security/secret-lifecycle.ts',
+        category: 'secrets',
+        severity: 'medium',
+        codeExample: includeCode ? 'await lifecycleManager.rotateNow(key, reason)' : undefined
+      },
+      {
+        title: 'Versioned Secrets with Rollback',
+        description: 'Manage secret versions with audit trails and safe rollback capabilities',
+        reference: 'lib/security/versioned-secrets.ts',
+        category: 'secrets',
+        severity: 'medium',
+        codeExample: includeCode ? 'await versionManager.rollback(key, targetVersion, { reason: "Security issue" })' : undefined
+      },
+      {
+        title: 'Security MCP Server',
+        description: 'Model Context Protocol server for enterprise security operations with HTTP transport',
+        reference: 'lib/security/mcp-server.ts',
+        category: 'mcp',
+        severity: 'high',
+        codeExample: includeCode ? 'bun run mcp-server.ts --http --port=3000' : undefined
+      },
+      {
+        title: 'Security Audit and Monitoring',
+        description: 'Generate comprehensive security reports and monitor authentication events',
+        reference: 'lib/security/enterprise-auth.ts#getAuditLog',
+        category: 'audit',
+        severity: 'medium',
+        codeExample: includeCode ? 'const auditLog = Tier1380EnterpriseAuth.getAuditLog(20)' : undefined
+      },
+      {
+        title: 'Bun Runtime Security Integration',
+        description: 'Leverage Bun\'s native cryptographic APIs for maximum security performance',
+        reference: 'lib/security/enterprise-password-security.ts#Bun.password',
+        category: 'secrets',
+        severity: 'low',
+        codeExample: includeCode ? 'const hash = await Bun.password.hash(password, { algorithm: "argon2id" })' : undefined
+      },
+      {
+        title: 'HTTP Transport Security',
+        description: 'Secure HTTP transport for MCP protocol with JSON-RPC 2.0 compliance',
+        reference: 'lib/security/mcp-server.ts#HTTP',
+        category: 'mcp',
+        severity: 'medium',
+        codeExample: includeCode ? 'curl -X POST http://localhost:3000 -d \'{"jsonrpc":"2.0","method":"tools/list"}\'' : undefined
+      }
+    ];
+
+    // Filter based on search criteria
+    let results = securityKnowledgeBase.filter(item => {
+      const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase()) ||
+                         item.description.toLowerCase().includes(query.toLowerCase());
+      const matchesCategory = category === 'all' || item.category === category;
+      const matchesSeverity = severity === 'all' || item.severity === severity;
+      
+      return matchesQuery && matchesCategory && matchesSeverity;
+    });
+
+    // Sort by relevance (title matches first, then description matches)
+    results.sort((a, b) => {
+      const aTitleMatch = a.title.toLowerCase().includes(query.toLowerCase());
+      const bTitleMatch = b.title.toLowerCase().includes(query.toLowerCase());
+      
+      if (aTitleMatch && !bTitleMatch) return -1;
+      if (!aTitleMatch && bTitleMatch) return 1;
+      
+      return 0;
+    });
+
+    return results.slice(0, 10); // Limit to top 10 results
   }
 
   async run(): Promise<void> {
