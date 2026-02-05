@@ -317,30 +317,76 @@ export class BunNativeUrlBuilder {
       const cacheData = await file.json();
       const now = Date.now();
       
-      // Check if cacheData has entries
-      if (!cacheData || !cacheData.entries || !Array.isArray(cacheData.entries)) {
-        console.warn('⚠️ Invalid cache file format');
+      // Validate cache data structure
+      if (!this.isValidCacheData(cacheData)) {
+        console.warn('⚠️ Invalid cache file format - cache will be rebuilt');
         return;
       }
       
-      // Load only non-expired entries
+      let loadedCount = 0;
+      let skippedCount = 0;
+      
+      // Load only valid, non-expired entries
       for (const entry of cacheData.entries) {
-        if (now < entry.expires) {
-          this.cache.set(entry.key, {
-            url: entry.url,
-            pattern: entry.pattern,
-            groups: entry.groups,
-            timestamp: entry.timestamp,
-            expires: entry.expires
-          });
+        if (this.isValidCacheEntry(entry)) {
+          if (now < entry.expires) {
+            this.cache.set(entry.key, {
+              url: entry.url,
+              pattern: entry.pattern,
+              groups: entry.groups,
+              timestamp: entry.timestamp,
+              expires: entry.expires
+            });
+            loadedCount++;
+          } else {
+            skippedCount++;
+          }
+        } else {
+          console.warn(`⚠️ Skipping invalid cache entry: ${entry.key || 'unknown'}`);
+          skippedCount++;
         }
       }
       
-      console.log(`✅ Loaded ${this.cache.size} cached URLs from disk`);
+      console.log(`✅ Loaded ${loadedCount} cached URLs from disk (${skippedCount} skipped/expired)`);
       
-    } catch (error) {
-      console.warn('⚠️ Failed to load cache from disk:', error);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.warn('⚠️ Failed to load cache from disk:', errorMessage);
+      // Clear any partially loaded cache
+      this.cache.clear();
     }
+  }
+  
+  /**
+   * Validate cache data structure
+   */
+  private isValidCacheData(data: any): data is { entries: any[]; metadata?: any } {
+    return (
+      data &&
+      typeof data === 'object' &&
+      Array.isArray(data.entries) &&
+      data.entries.length >= 0
+    );
+  }
+  
+  /**
+   * Validate individual cache entry
+   */
+  private isValidCacheEntry(entry: any): entry is CacheEntry & { key: string } {
+    return (
+      entry &&
+      typeof entry === 'object' &&
+      typeof entry.key === 'string' &&
+      entry.key.length > 0 &&
+      typeof entry.url === 'string' &&
+      entry.url.length > 0 &&
+      typeof entry.timestamp === 'number' &&
+      entry.timestamp > 0 &&
+      typeof entry.expires === 'number' &&
+      entry.expires > 0 &&
+      (entry.pattern === undefined || typeof entry.pattern === 'string') &&
+      (entry.groups === undefined || typeof entry.groups === 'object')
+    );
   }
   
   /**
@@ -363,7 +409,13 @@ export class BunNativeUrlBuilder {
   /**
    * Get cache statistics
    */
-  getCacheStats() {
+  getCacheStats(): {
+    total: number;
+    expired: number;
+    valid: number;
+    env: ReturnType<typeof getEnvConfig>;
+    patterns: number;
+  } {
     const now = Date.now();
     const expired = Array.from(this.cache.values()).filter(
       entry => now >= entry.expires

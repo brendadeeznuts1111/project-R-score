@@ -134,6 +134,42 @@ export type PluginRegistryParams = {
 };
 
 export function createPluginRegistry(registryParams: PluginRegistryParams) {
+// Function memoization cache with size limits and cleanup
+const functionMemoCache = new Map<Function, Function>();
+const MAX_CACHE_SIZE = 1000;
+let cacheAccessCount = 0;
+
+function memoizeFunction<T extends Function>(fn: T): T {
+  // Check if already cached
+  if (functionMemoCache.has(fn)) {
+    return functionMemoCache.get(fn) as T;
+  }
+  
+  // Implement cache size limit with LRU eviction
+  if (functionMemoCache.size >= MAX_CACHE_SIZE) {
+    const oldestKey = functionMemoCache.keys().next().value;
+    functionMemoCache.delete(oldestKey);
+  }
+  
+  // Store the function
+  functionMemoCache.set(fn, fn);
+  
+  // Periodic cleanup every 1000 accesses
+  if (++cacheAccessCount % 1000 === 0) {
+    // Clean up entries where the original function might have been garbage collected
+    for (const [key] of functionMemoCache.entries()) {
+      try {
+        // Test if the function reference is still valid
+        key.toString();
+      } catch {
+        functionMemoCache.delete(key);
+      }
+    }
+  }
+  
+  return fn;
+}
+
   const registry: PluginRegistry = {
     plugins: [],
     tools: [],

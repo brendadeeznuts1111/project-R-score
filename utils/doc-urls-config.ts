@@ -165,18 +165,19 @@ export function validateAndParseUrl(url: string): {
   pattern?: PatternName;
   groups?: Record<string, string>;
 } {
-  // Check specific patterns first, then general
+  // Check most specific patterns first, then general ones
+  // This prevents bypassing specific validation with general patterns
   const patternOrder: PatternName[] = [
-    'API',
-    'RUNTIME', 
-    'GUIDES',
-    'CLI',
-    'RSS',
-    'BLOG',
-    'INSTALL',
-    'GITHUB_ISSUE',
-    'GITHUB_PR',
-    'DOCS' // General pattern last
+    'GITHUB_PR',      // Most specific: GitHub pull requests
+    'GITHUB_ISSUE',   // GitHub issues
+    'API',            // API endpoints
+    'RUNTIME',        // Runtime features  
+    'GUIDES',         // Documentation guides
+    'CLI',            // CLI commands
+    'RSS',            // RSS feeds
+    'BLOG',           // Blog posts
+    'INSTALL',        // Installation pages
+    'DOCS'            // General docs pattern (least specific)
   ];
   
   for (const patternName of patternOrder) {
@@ -216,7 +217,13 @@ export function buildValidatedUrl(path: string, baseUrl?: string): string {
 /**
  * Get environment-specific configuration
  */
-export function getEnvConfig() {
+export function getEnvConfig(): {
+  baseUrl: string;
+  feedUrl: string;
+  cacheDir: string;
+  isDevelopment: boolean;
+  isProduction: boolean;
+} {
   return {
     baseUrl: Bun.env.DOCS_BASE_URL || config.BASE_URL,
     feedUrl: Bun.env.RSS_FEED_URL || config.FEED_URL,
@@ -260,8 +267,9 @@ export function initializeConfig(): {
   // Validate base URL
   try {
     new URL(env.baseUrl);
-  } catch (error) {
-    console.error(`❌ Invalid base URL: ${env.baseUrl}`, error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error(`❌ Invalid base URL: ${env.baseUrl}`, errorMessage);
     throw new Error('Invalid base URL configuration');
   }
   

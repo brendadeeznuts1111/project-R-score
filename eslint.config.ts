@@ -24,7 +24,8 @@ export default tseslint.config(
     ],
     plugins: {
       security,
-      import: importPlugin,
+      '@typescript-eslint': tseslint.plugin,
+      'import': importPlugin,
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -33,10 +34,6 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
         warnOnUnsupportedTypeScriptVersion: true,
       },
-    },
-    plugins: {
-      '@typescript-eslint': tseslint.plugin,
-      'import': importPlugin,
     },
     settings: {
       'import/resolver': {
@@ -291,6 +288,34 @@ export default tseslint.config(
       'no-implied-eval': 'error',
       '@typescript-eslint/no-implied-eval': 'error',
       'no-new-func': 'error',
+
+      // ────────────────────────────────────────────────────────────────
+      // Bun API restrictions — enforce centralized utilities
+      // ────────────────────────────────────────────────────────────────
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.object.name='Bun'][callee.property.name='color']",
+          message: 'Direct Bun.color() is forbidden. Use utilities from lib/constants/color-constants.ts or lib/theme/colors.ts instead.',
+        },
+        {
+          selector: "MemberExpression[object.name='Bun'][property.name='color']",
+          message: 'Direct Bun.color access is forbidden. Use utilities from lib/constants/color-constants.ts or lib/theme/colors.ts instead.',
+        },
+      ],
+
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'bun',
+              importNames: ['color'],
+              message: 'Import color utilities from lib/constants/color-constants.ts or lib/theme/colors.ts instead of directly from bun.',
+            },
+          ],
+        },
+      ],
 
       // ────────────────────────────────────────────────────────────────
       // Complexity rules

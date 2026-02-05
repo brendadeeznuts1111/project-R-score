@@ -33,10 +33,19 @@ import { readFileSync, writeFileSync } from "fs";
  * Decrypt encrypted secrets from .env.secret file
  */
 function decryptSecrets(masterKey: string): Record<string, string> {
+  // Validate master key before proceeding
+  if (!masterKey || masterKey.length < 16) {
+    throw new Error('Invalid master key: must be at least 16 characters');
+  }
+  
   try {
     const encryptedContent = readFileSync('.env.secret', 'utf8');
     const lines = encryptedContent.split('\n').filter(line => line.trim());
     const secrets: Record<string, string> = {};
+    
+    // Pre-derive the key once to avoid repeated expensive operations
+    const crypto = require('crypto');
+    let derivedKey: Buffer | null = null;
     
     for (const line of lines) {
       if (!line.includes('=')) continue;
@@ -45,24 +54,55 @@ function decryptSecrets(masterKey: string): Record<string, string> {
       if (!key || !encryptedValue) continue;
       
       try {
-        // Decrypt using AES-256-CBC
-        const crypto = require('crypto');
-        const decipher = crypto.createDecipheriv('aes-256-cbc');
-        decipher.setAutoPadding(crypto.padding.Pkcs7);
-        const key = crypto.scryptSync(masterKey, 'salt', 5000);
-        const decrypted = decipher.update(encryptedValue, 'hex').final('utf8');
+        // Validate encrypted value format
+        if (!/^[a-fA-F0-9]+$/.test(encryptedValue)) {
+          throw new Error('Invalid encrypted value format');
+        }
+        
+        // Derive key only once and reuse
+        if (!derivedKey) {
+          derivedKey = crypto.scryptSync(masterKey, 'salt', 32); // Use 32 bytes for AES-256
+        }
+        
+        // Extract IV from the beginning of encrypted value (first 32 hex chars = 16 bytes)
+        if (encryptedValue.length < 64) { // Need at least IV + some encrypted data
+          throw new Error('Encrypted value too short');
+        }
+        
+        const iv = Buffer.from(encryptedValue.substring(0, 32), 'hex');
+        const encrypted = encryptedValue.substring(32);
+        
+        // Create decipher with proper IV
+        const decipher = crypto.createDecipheriv('aes-256-cbc', derivedKey, iv);
+        decipher.setAutoPadding(true);
+        
+        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        
+        // Validate decrypted value
+        if (!decrypted || decrypted.length === 0) {
+          throw new Error('Decrypted value is empty');
+        }
         
         secrets[key] = decrypted;
-      } catch (error) {
-        console.warn(`⚠️ Could not decrypt secret ${key}: ${error.message}`);
-        secrets[key] = '';
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        console.warn(`⚠️ Could not decrypt secret ${key}: ${errorMessage}`);
+        // Don't set empty string for failed decryption - this prevents silent failures
+        continue;
       }
     }
     
+    // Validate we have at least some secrets
+    if (Object.keys(secrets).length === 0) {
+      console.warn('⚠️ No secrets were successfully decrypted');
+    }
+    
     return secrets;
-  } catch (error) {
-    console.error('❌ Error decrypting secrets:', error.message);
-    return {};
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('❌ Error decrypting secrets:', errorMessage);
+    throw new Error(`Failed to decrypt secrets: ${errorMessage}`);
   }
 }
 
@@ -403,8 +443,9 @@ const testSecureFetch = async () => {
       }
     );
     console.log('✅ Secure fetch test passed:', response.ok);
-  } catch (error) {
-    console.error('❌ Secure fetch test failed:', error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('❌ Secure fetch test failed:', errorMessage);
   }
 };
 

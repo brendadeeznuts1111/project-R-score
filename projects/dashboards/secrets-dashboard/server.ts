@@ -62,15 +62,22 @@ class ErrorHandler {
    * Remove sensitive information from error messages
    */
   private static sanitizeMessage(message: string): string {
-    // Remove file paths, environment variables, and sensitive patterns
+    // Remove specific sensitive patterns with more precise regexes
     return message
-      .replace(/\/[^\s]+/g, '[PATH]') // Remove file paths
-      .replace(/[A-Z_]+_?[A-Z_]*=/g, '[ENV_VAR]=') // Remove env vars
-      .replace(/password[s]?:[^\s]*/gi, 'password:***') // Remove passwords
-      .replace(/secret[s]?:[^\s]*/gi, 'secret:***') // Remove secrets
-      .replace(/token[s]?:[^\s]*/gi, 'token:***') // Remove tokens
-      .replace(/key[s]?:[^\s]*/gi, 'key:***') // Remove keys
-      .substring(0, 200); // Limit length
+      // Remove absolute file paths (but keep relative paths for debugging)
+      .replace(/\/(?:Users|home|tmp|var|opt|usr)\/[^\s]+/g, '[ABSOLUTE_PATH]')
+      // Remove environment variable assignments
+      .replace(/\b[A-Z_]{2,}=/g, '[ENV_VAR]=')
+      // Remove sensitive data patterns (more specific)
+      .replace(/\b(password|passwd|pwd)\s*[:=]\s*[^\s\n]+/gi, '$1:***')
+      .replace(/\b(secret|secret_key|api_secret)\s*[:=]\s*[^\s\n]+/gi, '$1:***')
+      .replace(/\b(token|access_token|auth_token)\s*[:=]\s*[^\s\n]+/gi, '$1:***')
+      .replace(/\b(key|private_key|api_key)\s*[:=]\s*[^\s\n]+/gi, '$1:***')
+      // Remove potential JWT tokens
+      .replace(/\beyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\b/g, '[JWT_TOKEN]')
+      // Remove potential API keys (hex strings)
+      .replace(/\b[a-fA-F0-9]{32,}\b/g, '[API_KEY]')
+      .substring(0, 500); // Increased limit for better debugging
   }
   
   /**
@@ -617,6 +624,11 @@ function generateRequestId(): string {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+function logResponse(response: Response, startTime: number, requestId: string): void {
+  const duration = Date.now() - startTime;
+  logger.logRequest('HTTP', response.url || 'unknown', response.status, duration, requestId);
+}
+
 const server = Bun.serve({
   port: PORT,
   idleTimeout: 0,
@@ -634,27 +646,34 @@ const server = Bun.serve({
     }, requestId);
 
     try {
-
     if (url.pathname === '/' || url.pathname === '/index.html') {
-      return serveStatic(req, join(PUBLIC_DIR, 'index.html'));
+      const response = serveStatic(req, join(PUBLIC_DIR, 'index.html'));
+      logResponse(response, startTime, requestId);
+      return response;
     }
     if (url.pathname === '/app.js') {
-      return serveStatic(req, join(PUBLIC_DIR, 'app.js'));
+      const response = serveStatic(req, join(PUBLIC_DIR, 'app.js'));
+      logResponse(response, startTime, requestId);
+      return response;
     }
     if (url.pathname === '/constants.js') {
-      return serveStatic(req, join(PUBLIC_DIR, 'constants.js'));
+      const response = serveStatic(req, join(PUBLIC_DIR, 'constants.js'));
+      logResponse(response, startTime, requestId);
+      return response;
     }
     if (url.pathname === '/__hmr') {
       const stream = new TransformStream();
       const writer = stream.writable.getWriter();
       HMR_CLIENTS.add(writer);
-      return new Response(stream.readable, {
+      const response = new Response(stream.readable, {
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
         },
       });
+      logResponse(response, startTime, requestId);
+      return response;
     }
 
     if (url.pathname.startsWith('/api/')) {
@@ -879,17 +898,31 @@ const server = Bun.serve({
         return new Response('Not found', {status: 404});
       } catch (err) {
         // Log the full error for debugging
-        ErrorHandler.log(err, `API ${url.pathname}`, requestId);
+        logger.error(`API ${url.pathname} failed`, err instanceof Error ? err : new Error(String(err)), {
+          method: req.method,
+          path: url.pathname,
+          duration: Date.now() - startTime
+        }, requestId);
         
         // Return sanitized error to client
         const sanitized = ErrorHandler.sanitize(err, requestId);
-        return Response.json(sanitized, {status: 400});
+        const response = Response.json(sanitized, {status: 400});
+        logResponse(response, startTime, requestId);
+        return response;
       }
     }
 
-    return new Response('Not found', {status: 404});
+    const response = new Response('Not found', {status: 404});
+    logResponse(response, startTime, requestId);
+    return response;
   },
 });
 
 console.log(`Bun Secrets Dashboard running on http://localhost:${PORT}`);
+logger.info(`Secrets dashboard server started`, {
+  port: PORT,
+  environment: process.env.NODE_ENV || 'development',
+  version: '1.0.0'
+});
+
 watchHmr();
