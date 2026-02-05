@@ -835,19 +835,19 @@ export class ZeroTrustManager extends EventEmitter {
    * Generate unique IDs
    */
   private generateEventId(): string {
-    return `evt-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `evt-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
   private generateSessionId(): string {
-    return `sess-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `sess-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
   private generateChallengeId(): string {
-    return `chal-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `chal-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
   private generateMFACode(): string {
-    return Math.random().toString().substr(2, 6);
+    return Math.random().toString().substring(2, 8);
   }
 }
 

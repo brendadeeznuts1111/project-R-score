@@ -436,7 +436,7 @@ export class AnomalyDetector extends EventEmitter {
     const type = this.determineAnomalyType(metricName);
     
     return {
-      id: `anomaly-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `anomaly-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       type,
       severity,
       title: `${metricName} Anomaly Detected`,
@@ -457,7 +457,7 @@ export class AnomalyDetector extends EventEmitter {
    */
   private async createRuleBasedAnomaly(data: MetricData, rule: DetectionRule): Promise<Anomaly> {
     return {
-      id: `rule-anomaly-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `rule-anomaly-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       type: rule.type,
       severity: rule.severity,
       title: rule.name,
@@ -541,7 +541,7 @@ export class AnomalyDetector extends EventEmitter {
       const value = data.metrics[metric];
       if (value !== undefined && value > threshold) {
         const anomaly: Anomaly = {
-          id: `critical-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `critical-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
           type: 'operational',
           severity: 'critical',
           title: `Critical ${metric} Alert`,

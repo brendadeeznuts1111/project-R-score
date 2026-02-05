@@ -96,7 +96,7 @@ class StructuredLogger {
    * Generate new correlation ID
    */
   generateCorrelationId(): string {
-    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     this.setCorrelationId(id);
     return id;
   }
