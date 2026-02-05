@@ -384,6 +384,7 @@ export class TestRunner {
    * Create test suite
    */
   describe(name: string, fn: () => void): void {
+    const parentSuite = this.currentSuite;
     this.currentSuite = {
       name,
       tests: [],
@@ -394,17 +395,18 @@ export class TestRunner {
 
     fn();
     this.suites.push(this.currentSuite);
-    this.currentSuite = undefined;
+    this.currentSuite = parentSuite;
   }
 
   /**
    * Create test case
    */
-  it(name: string, fn: (assert: Assertions) => Promise<void> | void): void {
+  async it(name: string, fn: (assert: Assertions) => Promise<void> | void): Promise<void> {
     if (!this.currentSuite) {
       throw new Error('Test must be inside a describe block');
     }
 
+    const suite = this.currentSuite;
     const startTime = Date.now();
     const assert = new Assertions();
 
@@ -414,22 +416,22 @@ export class TestRunner {
         await result;
       }
 
-      this.currentSuite.tests.push({
+      suite.tests.push({
         name,
         passed: true,
         duration: Date.now() - startTime,
         assertions: assert.getAssertionCount()
       });
-      this.currentSuite.passed++;
+      suite.passed++;
     } catch (error) {
-      this.currentSuite.tests.push({
+      suite.tests.push({
         name,
         passed: false,
         error: error instanceof Error ? error.message : String(error),
         duration: Date.now() - startTime,
         assertions: assert.getAssertionCount()
       });
-      this.currentSuite.failed++;
+      suite.failed++;
     }
   }
 
