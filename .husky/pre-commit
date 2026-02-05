@@ -1,0 +1,32 @@
+#!/bin/bash
+# ═══════════════════════════════════════════════════════════════
+# Metadata Enforcement Hook
+# ═══════════════════════════════════════════════════════════════
+# Blocks: [CACHE] without *.test.ts
+# Warns:  [PERF][PARALLEL], [BUN][API]
+# ═══════════════════════════════════════════════════════════════
+# [GIT][HOOK][ENFORCE][META:METADATA][PRE-COMMIT][#REF:.husky]
+
+STAGED_TS=$(git diff --cached --name-only -- '*.ts')
+
+# Rule 1: [CACHE] changes require tests
+if ! git diff --cached -G'^[[:space:]]*//[[:space:]]*\[CACHE\]' --quiet -- '*.ts'; then
+  if ! echo "$STAGED_TS" | grep -q '\.test\.ts'; then
+    echo "❌ [CACHE] tag requires *.test.ts changes"
+    exit 1
+  fi
+fi
+
+# Rule 2: [PERF][PARALLEL] reminder
+if ! git diff --cached -G'^[[:space:]]*//[[:space:]]*\[PERF\]\[PARALLEL\]' --quiet -- '*.ts'; then
+  echo "⚠️  [PERF][PARALLEL] changed – run: bun generate-toc.ts -t --metrics"
+fi
+
+# Rule 3: [BUN][API] warning
+if ! git diff --cached -G'^[[:space:]]*//[[:space:]]*\[BUN\].*\[API\]' --quiet -- '*.ts'; then
+  if ! echo "$STAGED_TS" | grep -q '\.test\.ts'; then
+    echo "⚠️  [BUN][API] without tests – consider adding coverage"
+  fi
+fi
+
+exit 0

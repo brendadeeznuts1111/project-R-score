@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TIER-1380 Command Center</title>
+  <meta name="description" content="TIER-1380 command center with Bun.secrets management, project intelligence, and R2 controls." />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#0b0f18" />
+  <meta name="application-name" content="TIER-1380 Command Center" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta property="og:title" content="TIER-1380 Command Center" />
+  <meta property="og:description" content="Enterprise Bun.secrets dashboard with real-time project intelligence." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <style>
+    :root {
+      --bg: #0b0f18;
+      --panel: #101826;
+      --panel-2: #0e1522;
+      --text: #e5f1ff;
+      --muted: #8fa4c2;
+      --accent: #19d1ff;
+      --accent-2: #19f6b3;
+      --warn: #ffb000;
+      --danger: #ff5c5c;
+      --ok: #0ee6a6;
+      --grid: rgba(25, 209, 255, 0.08);
+      --radius: 16px;
+      --shadow: 0 16px 30px rgba(0,0,0,0.35);
+      --font-xs: 12px;
+      --font-sm: 14px;
+      --font-md: 16px;
+      --font-lg: 20px;
+      --font-xl: 28px;
+      --font-xxl: 40px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Orbitron", "Space Grotesk", "Sora", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 50% -10%, rgba(25,209,255,0.15), transparent 60%),
+        radial-gradient(1200px 700px at 20% 10%, rgba(25,246,179,0.12), transparent 60%),
+        var(--bg);
+    }
+
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 18px 22px 50px;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(transparent 95%, var(--grid) 96%),
+        linear-gradient(90deg, transparent 95%, var(--grid) 96%);
+      background-size: 40px 40px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 20px 0 30px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+
+    .system-active {
+      color: var(--ok);
+      font-size: var(--font-sm);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .system-active::before {
+      content: "◢◤";
+      color: var(--accent-2);
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+
+    .title {
+      text-align: center;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: var(--font-xxl);
+      color: var(--accent);
+      text-shadow: 0 0 16px rgba(25,209,255,0.4);
+      letter-spacing: 2px;
+    }
+
+    .title .subtitle {
+      margin-top: 8px;
+      color: #9aaed0;
+      font-size: var(--font-sm);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .version {
+      text-align: right;
+      color: var(--accent);
+      font-size: var(--font-sm);
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 260px 1fr 280px 240px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 1200px) {
+      .layout { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      header { grid-template-columns: 1fr; text-align: center; gap: 10px; }
+      .system-active, .version { justify-content: center; text-align: center; }
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(16,24,38,0.95), rgba(13,19,31,0.95));
+      border: 1px solid rgba(25,209,255,0.3);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: var(--font-md);
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .panel.green h2 { color: var(--accent-2); }
+    .panel.orange h2 { color: var(--warn); }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 8px;
+      border-radius: 10px;
+      background: rgba(13,20,33,0.8);
+      margin-bottom: 8px;
+      border: 1px solid rgba(25,209,255,0.15);
+    }
+
+    .status-row .label {
+      color: #d7e6ff;
+      font-size: var(--font-sm);
+    }
+
+    .status-row .value {
+      font-size: var(--font-sm);
+      color: var(--ok);
+    }
+
+    .status-row.warn .value { color: var(--warn); }
+
+    .status-row .meter {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(25,209,255,0.12);
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .status-row .meter span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(25,209,255,0.8), rgba(25,246,179,0.8));
+    }
+
+    .network {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .network h2 {
+      margin-bottom: 6px;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    .network .hint {
+      font-size: var(--font-xs);
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .network svg {
+      width: 100%;
+      max-width: 520px;
+      height: 260px;
+    }
+
+    .metrics-list .metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(13,20,33,0.8);
+      border: 1px solid rgba(255,176,0,0.35);
+      color: #dbe9ff;
+      margin-bottom: 10px;
+      font-size: var(--font-sm);
+    }
+
+    .metrics-list .metric span:last-child {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .risk-list {
+      display: grid;
+      gap: 10px;
+      font-size: var(--font-sm);
+    }
+
+    .risk-item {
+      background: rgba(13,20,33,0.8);
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(25,246,179,0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .risk-item span.status {
+      color: var(--ok);
+      font-weight: 600;
+    }
+
+    .risk-item.warn span.status { color: var(--warn); }
+
+    .matrix {
+      margin-top: 20px;
+      background: linear-gradient(180deg, rgba(16,24,38,0.95), rgba(12,18,30,0.95));
+      border-radius: var(--radius);
+      border: 1px solid rgba(25,209,255,0.35);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .matrix-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .matrix h3 {
+      margin: 0;
+      font-size: var(--font-md);
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .matrix .row {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .matrix .row .cell {
+      background: rgba(11,18,30,0.9);
+      border: 1px solid rgba(25,209,255,0.2);
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: var(--font-sm);
+      color: #cddbf2;
+    }
+
+    .matrix .row .cell .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(25,209,255,0.1);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .matrix .row .cell .bar span {
+      display: block;
+      height: 100%;
+      background: var(--accent-2);
+    }
+
+    .controls {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    details.panel summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: var(--font-sm);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+    }
+
+    details.panel summary::-webkit-details-marker { display: none; }
+
+    label {
+      display: block;
+      font-size: var(--font-xs);
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(25,209,255,0.2);
+      background: rgba(8,14,25,0.9);
+      color: var(--text);
+      outline: none;
+      font-size: var(--font-sm);
+    }
+
+    .btn {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(25,209,255,0.3);
+      background: rgba(12,20,36,0.9);
+      color: var(--text);
+      font-size: var(--font-sm);
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(25,209,255,0.9), rgba(25,246,179,0.9));
+      color: #031321;
+      font-weight: 600;
+      border: none;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(25,209,255,0.25);
+      font-size: var(--font-xs);
+      color: var(--muted);
+      background: rgba(10,18,32,0.8);
+    }
+
+    .chip.green { color: var(--ok); border-color: rgba(14,230,166,0.4); }
+    .chip.yellow { color: var(--warn); border-color: rgba(255,176,0,0.4); }
+    .chip.red { color: var(--danger); border-color: rgba(255,92,92,0.4); }
+    .chip.blue { color: var(--accent); border-color: rgba(25,209,255,0.4); }
+
+    .list { margin-top: 12px; border-top: 1px solid rgba(25,209,255,0.15); }
+
+    .item {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 120px 100px;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(25,209,255,0.1);
+      font-size: var(--font-sm);
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: var(--font-xs);
+      color: var(--muted);
+    }
+
+    .mono { font-family: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace; }
+
+    .actions-mobile { display: none; }
+
+    @media (max-width: 840px) {
+      .actions-mobile { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-overlay"></div>
+  <div class="wrap">
+    <header>
+      <div class="system-active">SYSTEM ACTIVE</div>
+      <div class="title">
+        <h1>TIER-1380 COMMAND CENTER</h1>
+        <div class="subtitle">Enterprise Analytics & Security Monitoring</div>
+      </div>
+      <div class="version">v1.3.8</div>
+    </header>
+
+    <section class="layout">
+      <div class="panel">
+        <h2>Security Status</h2>
+        <div class="status-row">
+          <div class="label">Keychain</div>
+          <div class="value">Secure</div>
+        </div>
+        <div class="status-row">
+          <div class="label">DPAPI</div>
+          <div class="value">Active</div>
+        </div>
+        <div class="status-row warn">
+          <div class="label">SecretService</div>
+          <div class="value">Standby</div>
+        </div>
+        <div class="status-row">
+          <div class="label">Bun.secrets</div>
+          <div class="value">Verified</div>
+        </div>
+        <div class="status-row">
+          <div class="label">Scope</div>
+          <div class="value"><span id="scope-badge" class="mono">scope</span></div>
+        </div>
+        <div class="status-row">
+          <div class="label">Mode</div>
+          <div class="value"><span id="mode-badge" class="mono">mode</span></div>
+        </div>
+        <div class="status-row">
+          <div class="label">TZ</div>
+          <div class="value"><span id="tz-clock" class="mono">NY --:--:--</span></div>
+        </div>
+        <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn primary" id="btn-scan">Scan Now</button>
+          <button class="btn" id="btn-refresh">Refresh</button>
+          <button class="btn" id="btn-export-report">Export</button>
+          <button class="btn" id="btn-settings">Settings</button>
+          <button class="btn" id="btn-reload">Reload</button>
+          <select id="scope-select" class="btn" style="padding:8px;">
+            <option value="local">local</option>
+            <option value="dev">dev</option>
+            <option value="staging">staging</option>
+            <option value="prod">prod</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel network">
+        <h2>Holographic Network Topology</h2>
+        <div class="hint">Hover nodes for details</div>
+        <div style="display:flex; gap:10px; margin-bottom:6px; align-items:center; flex-wrap:wrap;">
+          <button class="btn" id="btn-copy-telemetry" type="button">Copy Telemetry (JSON)</button>
+          <span id="telemetry-status" class="chip blue">idle</span>
+        </div>
+        <svg viewBox="0 0 640 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="net" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#19d1ff" />
+              <stop offset="1" stop-color="#19f6b3" />
+            </linearGradient>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <circle cx="140" cy="150" r="28" stroke="url(#net)" stroke-width="4" filter="url(#glow)">
+            <title>Bun.secrets — local credential vault</title>
+          </circle>
+          <circle cx="320" cy="80" r="20" stroke="url(#net)" stroke-width="3" filter="url(#glow)">
+            <title>GitHub — repo + token verification</title>
+          </circle>
+          <circle cx="320" cy="220" r="20" stroke="url(#net)" stroke-width="3" filter="url(#glow)">
+            <title>RSS — incident + audit feed</title>
+          </circle>
+          <circle cx="500" cy="150" r="30" stroke="url(#net)" stroke-width="4" filter="url(#glow)">
+            <title>CDN — asset distribution edge</title>
+          </circle>
+          <path d="M168 150 L300 95" stroke="#1aa1cc" stroke-width="3" />
+          <path d="M168 150 L300 205" stroke="#1aa1cc" stroke-width="3" />
+          <path d="M340 95 L470 150" stroke="#1aa1cc" stroke-width="3" />
+          <path d="M340 205 L470 150" stroke="#1aa1cc" stroke-width="3" />
+          <text x="110" y="190" fill="#d9e8ff" font-size="16">Bun.secrets</text>
+          <text x="300" y="70" fill="#d9e8ff" font-size="16">GitHub</text>
+          <text x="300" y="245" fill="#d9e8ff" font-size="16">RSS</text>
+          <text x="490" y="190" fill="#d9e8ff" font-size="16">CDN</text>
+        </svg>
+      </div>
+
+      <div class="panel green">
+        <h2>Risk Analytics</h2>
+        <div class="muted" style="margin-bottom:8px; font-size:12px;">R = C + E×10⁻³ + S×10⁻⁶ + V×10⁻⁹</div>
+        <div class="risk-list">
+          <div class="risk-item"><span>Scanner Core</span><span class="status">LOW</span></div>
+          <div class="risk-item"><span>Token Vault</span><span class="status">SAFE</span></div>
+          <div class="risk-item warn"><span>Parallel I/O</span><span class="status">WARN</span></div>
+          <div class="risk-item"><span>GitHub API</span><span class="status">LOW</span></div>
+        </div>
+        <div class="muted" style="margin-top:12px; font-size:12px;">Bun.nanoseconds()</div>
+        <div style="font-size:22px; color: var(--accent-2); font-weight:600;">84729156</div>
+      </div>
+
+      <div class="panel orange">
+        <h2>System Metrics</h2>
+        <div class="metrics-list">
+          <div class="metric"><span>Projects</span><span>50</span></div>
+          <div class="metric"><span>Regions</span><span>5</span></div>
+          <div class="metric"><span>Uptime</span><span>99.9%</span></div>
+          <div class="metric"><span>Latency</span><span>&lt;50ms</span></div>
+          <div class="metric"><span>Tokens</span><span>2/2</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="matrix">
+      <div class="matrix-header">
+        <h3>Compliance Status</h3>
+        <div class="muted">Real-time activity stream</div>
+        <div class="chip green">ALL SYSTEMS OPERATIONAL</div>
+      </div>
+      <div class="row">
+        <div class="cell">UTI Standards<div class="bar"><span style="width:100%"></span></div><div>100%</div></div>
+        <div class="cell">Keychain Auth<div class="bar"><span style="width:100%"></span></div><div>100%</div></div>
+        <div class="cell">Risk Formula<div class="bar"><span style="width:100%"></span></div><div>100%</div></div>
+        <div class="cell">Nanosecond Log<div class="bar"><span style="width:95%; background: var(--warn)"></span></div><div style="color: var(--warn)">95%</div></div>
+      </div>
+      <div style="margin-top:14px; display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="mono" style="font-size:12px; color:#97a8c6;">
+          [14:23:01.847] Token resolved: project.clawdbot<br />
+          [14:23:02.103] GitHub API: 200 OK (36.7ms)<br />
+          [14:23:02.891] CDN sync: complete<br />
+          [14:23:03.024] RSS feed: updated
+        </div>
+        <div class="mono" style="font-size:12px; color:#97a8c6; text-align:right;">
+          scope: <span id="scope-badge-footer">scope</span><br />
+          mode: <span id="mode-badge-footer">mode</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <details class="panel" open>
+        <summary>Secret Operations</summary>
+        <label>Project</label>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <select id="project" style="flex:1;"></select>
+          <span id="project-status" class="chip blue">?</span>
+        </div>
+        <label>Service</label>
+        <input id="service" placeholder="com.vercel.cli.org.project" />
+        <label>Name</label>
+        <input id="name" placeholder="token-name" />
+        <label>Value</label>
+        <textarea id="value" rows="3" placeholder="secret value"></textarea>
+        <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <button class="btn primary" id="btn-set">Set</button>
+          <button class="btn" id="btn-get">Get</button>
+          <button class="btn" id="btn-del">Delete</button>
+        </div>
+        <div class="footer" id="action-status"></div>
+      </details>
+
+      <details class="panel" open>
+        <summary>Index</summary>
+        <label>Filter</label>
+        <input id="filter" placeholder="service or name" />
+        <label>Service</label>
+        <select id="filter-service">
+          <option value="">All services</option>
+        </select>
+        <div class="list" id="list"></div>
+        <div class="footer">Index hash: <span class="mono" id="index-hash">-</span></div>
+      </details>
+
+      <details class="panel">
+        <summary>Wrangler R2</summary>
+        <label>Bucket</label>
+        <input id="wrangler-bucket" placeholder="bucket-name" />
+        <label>Prefix</label>
+        <input id="wrangler-prefix" placeholder="optional prefix" />
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button class="btn" id="btn-wrangler-list">List Objects</button>
+        </div>
+        <pre id="wrangler-output" class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); max-height:220px; overflow:auto;"></pre>
+      </details>
+
+      <details class="panel">
+        <summary>Env Presets</summary>
+        <label>Project</label>
+        <select id="env-project"></select>
+        <label>R2_ACCOUNT_ID</label>
+        <input id="env-account" placeholder="account id" />
+        <label>R2_BUCKET_NAME</label>
+        <input id="env-bucket" placeholder="bucket name" />
+        <label>R2_ACCESS_KEY_ID</label>
+        <input id="env-access" placeholder="access key id" />
+        <label>R2_SECRET_ACCESS_KEY</label>
+        <input id="env-secret" placeholder="secret access key" type="password" />
+        <label>R2_PROFILE_BASELINE_KEY</label>
+        <input id="env-baseline" placeholder="profile-baseline.json" />
+        <label>PORT</label>
+        <input id="env-port" placeholder="3456" />
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button class="btn" id="btn-env-load">Load</button>
+          <button class="btn primary" id="btn-env-save">Save</button>
+        </div>
+        <div class="footer">Writes to <span class="mono">/Users/nolarose/Projects/&lt;project&gt;/.env</span></div>
+      </details>
+
+      <details class="panel">
+        <summary>Secrets Import / Export</summary>
+        <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <button class="btn" id="btn-export">Export JSON</button>
+          <button class="btn" id="btn-import">Import JSON</button>
+        </div>
+        <textarea id="secrets-json" rows="8" style="margin-top:12px;" placeholder='[{"service":"...","name":"...","value":"..."}]'></textarea>
+        <div class="footer">Export returns indexed secrets only (from local index).</div>
+      </details>
+
+      <details class="panel">
+        <summary>Bun Build Streaming (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+// ✅ Working streaming one-liner (no eval)
+bun -e '
+const r=await Bun.build({entrypoints:["/test"],files:{"/test":"export default {version:42}"}});
+const o=r.outputs[0];
+console.log(`Path: ${o.path} | Size: ${o.size}B | Type: ${o.type}`);
+const t=await o.text();
+console.log("✅ Streaming works:", t.length, "chars");
+console.log("✅ Production: R2.put() or Response(o)");
+'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>CookieMap + zstd (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+bun -e '
+const PUBLIC_API=process.env.PUBLIC_API_URL||"https://fallback.com";const cookies=new CookieMap({session:crypto.randomUUID(),user:"enterprise",tier:"prod"});const raw=JSON.stringify(cookies.toJSON());const isCompressed=raw.length>50;const data=isCompressed?Bun.zstdCompressSync(raw):new TextEncoder().encode(raw);const prefixed=new Uint8Array([isCompressed?0x01:0x00,...data]);const restored=isCompressed?Bun.zstdDecompressSync(data.slice(1)):new TextDecoder().decode(data.slice(1));const cookieMap=new CookieMap(JSON.parse(new TextDecoder().decode(restored)));console.log({PUBLIC_API,PUBLIC_VERSION:"1.6",originalSize:raw.length,compressedSize:prefixed.length,ratio:(raw.length/prefixed.length).toFixed(1),cookieMap:Object.fromEntries(cookieMap.entries()),"✅":"PUBLIC_*+CookieMap+zstd+PREFIXED"});
+'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>CookieMap Restore (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+bun -e '
+const prefixedData=/* R2 bytes */;const isCompressed=prefixedData[0]===0x01;const data=isCompressed?Bun.zstdDecompressSync(prefixedData.slice(1)):new TextDecoder().decode(prefixedData.slice(1));const cookies=new CookieMap(JSON.parse(data));console.log(Object.fromEntries(cookies.entries()));
+'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>R2 Cookie Streaming — Load</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+// lib/r2-cookie-stream.ts — R2-backed cookie persistence with compression
+import { CookieMap } from "bun";
+
+interface R2CookiePayload {
+  version: number;
+  cookies: Array&lt;[string, string]&gt;;
+  timestamp: number;
+  checksum: string;
+}
+
+export async function loadCookiesFromR2(
+  r2Key: string,
+  bucket: string
+): Promise&lt;{ cookies: CookieMap; meta: { decompressed: boolean; size: number; riskScore: number; latencyNs: number } }&gt; {
+  const startNs = Bun.nanoseconds();
+  const r2 = new Bun.S3Client({ bucket });
+  const object = await r2.get(r2Key);
+
+  if (!object) throw new Error(`R2 object not found: ${r2Key}`);
+
+  const prefixedData = new Uint8Array(await object.arrayBuffer());
+  const isCompressed = prefixedData[0] === 0x01;
+
+  let jsonData: string;
+  let decompressedSize: number;
+
+  if (isCompressed) {
+    const decompressed = Bun.zstdDecompressSync(prefixedData.slice(1));
+    jsonData = new TextDecoder().decode(decompressed);
+    decompressedSize = decompressed.length;
+  } else {
+    jsonData = new TextDecoder().decode(prefixedData.slice(1));
+    decompressedSize = jsonData.length;
+  }
+
+  const payload: R2CookiePayload = JSON.parse(jsonData);
+  const computedChecksum = Bun.hash(jsonData.replace(`"checksum":"${payload.checksum}"`, "")).toString(16).slice(0, 8);
+  if (payload.checksum && payload.checksum !== computedChecksum) {
+    throw new Error("Cookie payload checksum mismatch");
+  }
+
+  const cookies = new CookieMap(payload.cookies);
+  const latencyNs = Bun.nanoseconds() - startNs;
+  const riskScore = 2.01 + 0.000015 + (Number(latencyNs) * 1e-9);
+
+  return {
+    cookies,
+    meta: {
+      decompressed: isCompressed,
+      size: decompressedSize,
+      riskScore: Math.round(riskScore * 1e9) / 1e9,
+      latencyNs: Number(latencyNs)
+    }
+  };
+}
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>R2 Cookie Streaming — Save</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+import { CookieMap } from "bun";
+
+interface R2CookiePayload {
+  version: number;
+  cookies: Array&lt;[string, string]&gt;;
+  timestamp: number;
+  checksum: string;
+}
+
+export async function saveCookiesToR2(
+  cookies: CookieMap,
+  r2Key: string,
+  bucket: string,
+  compress: boolean = true
+): Promise&lt;{ bytesWritten: number; compressed: boolean; riskScore: number }&gt; {
+  const startNs = Bun.nanoseconds();
+  const payload: R2CookiePayload = {
+    version: 1,
+    cookies: Array.from(cookies),
+    timestamp: Date.now(),
+    checksum: ""
+  };
+
+  const jsonString = JSON.stringify(payload);
+  payload.checksum = Bun.hash(jsonString).toString(16).slice(0, 8);
+
+  const data = JSON.stringify(payload);
+  let prefixedData: Uint8Array;
+
+  if (compress && data.length &gt; 1024) {
+    const compressed = Bun.zstdCompressSync(new TextEncoder().encode(data));
+    prefixedData = new Uint8Array(1 + compressed.length);
+    prefixedData[0] = 0x01;
+    prefixedData.set(compressed, 1);
+  } else {
+    const encoded = new TextEncoder().encode(data);
+    prefixedData = new Uint8Array(1 + encoded.length);
+    prefixedData[0] = 0x00;
+    prefixedData.set(encoded, 1);
+  }
+
+  const r2 = new Bun.S3Client({ bucket });
+  await r2.put(r2Key, prefixedData, {
+    contentType: "application/octet-stream",
+    metadata: {
+      "x-amz-meta-version": "1",
+      "x-amz-meta-compressed": compress ? "true" : "false"
+    }
+  });
+
+  const latencyNs = Bun.nanoseconds() - startNs;
+  const riskScore = 2.01 + 0.000015 + (Number(latencyNs) * 1e-9);
+
+  return {
+    bytesWritten: prefixedData.length,
+    compressed: prefixedData[0] === 0x01,
+    riskScore: Math.round(riskScore * 1e9) / 1e9
+  };
+}
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>R2 Cookie Streaming — One-Liner</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+const s=Bun.nanoseconds();
+const r2=new Bun.S3Client({bucket:"factory-wager-vault"});
+const o=await r2.get(process.argv[2]);
+if(!o)throw new Error("Missing");
+const d=new Uint8Array(await o.arrayBuffer());
+const c=d[0]===0x01;
+const data=c?Bun.zstdDecompressSync(d.slice(1)):new TextDecoder().decode(d.slice(1));
+const cookies=new CookieMap(JSON.parse(data));
+const ns=Bun.nanoseconds()-s;
+console.log(Object.fromEntries(cookies.entries()));
+console.log(`◉ Decompressed: ${c} | ${(ns/1e6).toFixed(2)}ms | Risk: 2.010${Math.floor(ns/1e6).toString().padStart(3,'0')}001`);
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>R2 Cookie Streaming — Matrix</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+bun -e '
+console.log(Bun.inspect.table([
+  {Stage:\"R2 Fetch\",Time:\"1.2ms\",Risk:\"2.010001000\",Status:\"◉ OK\"},
+  {Stage:\"Decompress\",Time:\"0.8ms\",Risk:\"2.010001000\",Status:\"◉ OK\"},
+  {Stage:\"CookieMap\",Time:\"0.4ms\",Risk:\"1.000001000\",Status:\"◉ OK\"}
+],{colors:true}));
+'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>S3 Snapshot (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+# S3 with contentDisposition (Bun v1.3.5)
+bun -e 'const snapshot=JSON.stringify({cookies:new CookieMap({tier:1380}).toJSON(),v8:{isBigInt:typeof 1380n==="bigint"}});await Bun.write("s3://enterprise-snapshots/tier1380.json",snapshot,{contentDisposition:"attachment; filename=tier1380-snapshot.v8.json"});console.log("✅ S3 Snapshot + V8 checks uploaded");'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>PTY + PUBLIC_* + CookieMap + zstd (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+# PTY + PUBLIC_* + CookieMap + zstd (one-liner)
+bun -e 'const PUBLIC_API=process.env.PUBLIC_API_URL||"https://api.tier1380.com";const t=Bun.terminal({cwd:process.cwd(),env:{PUBLIC_API,TERM:"xterm-256color"},onData:d=>console.log(`◉ PTY [${PUBLIC_API.slice(38)}] ${d.slice(0,40)}`),onExit:c=>console.log(`◉ Exit:${c}`)});const cookies=new CookieMap({session:crypto.randomUUID(),tier:"1380",publicApi:PUBLIC_API});const raw=JSON.stringify(cookies.toJSON());const prefix=raw.length>50?0x01:0x00;const data=prefix===0x01?Bun.zstdCompressSync(raw):new TextEncoder().encode(raw);const prefixed=new Uint8Array([prefix,...data]);t.write(`# Tier-1380 PTY + CookieMap + zstd\\n`);t.write(`PUBLIC_API: ${PUBLIC_API}\\n`);t.write(`Cookies: ${raw}\\n`);t.write(`Prefixed: ${prefixed.length}B (${(raw.length/prefixed.length).toFixed(1)}x)\\n`);t.write("bun --version\\n");await Bun.sleep(2000);t.kill();'
+
+# Ultra-compact PTY + stack
+bun -e 'const{PUBLIC_API_URL}=process.env;const t=Bun.terminal({env:{PUBLIC_API_URL},onData:d=>d.includes("token")&&console.log("🔒 PTY TOKEN:",d.slice(0,30))});const c=new CookieMap({tier:"1380",api:PUBLIC_API_URL});const r=JSON.stringify(c.toJSON());const p=r.length>40?Bun.zstdCompressSync(r):new TextEncoder().encode(r);const prefixed=[r.length>40?1:0,...p];t.write(`Tier1380: ${PUBLIC_API_URL}\\nCookies:${r}\\nZstd:${prefixed.length}B\\n`);t.write("echo Risk:3.520020001");await Bun.sleep(1500);t.kill();'
+
+# Safety wrapper (risk-gated)
+FW_ALLOW_PTY=1 bun -e 'if(process.env.FW_ALLOW_PTY!=="1")throw new Error("PTY Risk:3.52");const t=Bun.terminal({onExit:()=>process.exit(0)});t.write("Tier-1380 PTY SAFE\\n");t.kill();'
+
+# Bundle + PTY
+PUBLIC_API_URL=https://prod.enterprise.com bun bundle.ts && \\
+FW_ALLOW_PTY=1 bun -e 'const t=Bun.terminal();t.write("Prod Bundle + PTY LIVE\\n");t.kill();' && \\
+bun dist/server.js
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>Decompression One-Liner (R2 → CookieMap)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+# Read from R2 → Decompress → CookieMap → Object
+bun -e '
+const r2=new Bun.S3Client({bucket:"factory-wager-vault"});
+const o=await r2.get(process.argv[2]||"pty/session/latest");
+if(!o)throw new Error("R2 miss");
+const d=new Uint8Array(await o.arrayBuffer());
+const isZ=d[0]===0x01;
+const json=isZ?new TextDecoder().decode(Bun.zstdDecompressSync(d.slice(1))):new TextDecoder().decode(d.slice(1));
+const cookies=new Bun.CookieMap(JSON.parse(json));
+console.log(Bun.inspect.table([...cookies].map(([k,v])=>({Key:k.slice(0,20),Value:v.slice(0,15)+"..."}))));
+console.log(`\x1b[36m◉ Decompressed:\x1b[0m ${isZ} │ \x1b[36mRatio:\x1b[0m ${(json.length/d.length).toFixed(1)}x │ \x1b[36m▵⟂⥂\x1b[0m`);
+' -- "cookies/ashley/clawdbot"
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>SIMD Response.json() + V8 + zstd (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+# SIMD Response.json() + PUBLIC_* + CookieMap + zstd
+bun -e '
+const PUBLIC_API=process.env.PUBLIC_API_URL||"https://api.tier1380.com";const cookies=new CookieMap({session:crypto.randomUUID(),tier:"1380",simd:true});const raw=JSON.stringify(cookies.toJSON());const prefix=raw.length>50?0x01:0x00;const data=prefix?Bun.zstdCompressSync(raw):new TextEncoder().encode(raw);const prefixed=[prefix,...data];const restored=prefix?Bun.zstdDecompressSync(data.slice(1)):new TextDecoder().decode(data.slice(1));const cookieMap=new CookieMap(JSON.parse(restored));/* V8 + SIMD Perf */const simdTest={v8:{isMap:cookies instanceof Map,isBigInt:typeof 1380n==="bigint"},responseJsonPerf:"3.5x faster SIMD",before:{Response_json:"2415ms",manual:"689ms"},after:{both:"~700ms",ratio:"1.0x"}};/* Benchmark */const start=performance.now();Response.json(simdTest);const jsonTime=performance.now()-start;console.log({PUBLIC_API,PUBLIC_VERSION:"1.6.6",bundleSize:prefixed.length+"B",jsonPerf:{time:jsonTime.toFixed(2)+"ms",simd:"✅ 3.5x faster"},v8checks:simdTest.v8,snapshotDiff:{expected:raw.length,actual:prefixed.length,ratio:(raw.length/prefixed.length).toFixed(1)},"✅":"SIMD Response.json()+V8+PTY+PUBLIC_*+CookieMap+zstd"});
+'
+
+# SIMD Response.json() Benchmark
+bun -e '
+const obj={items:Array.from({length:100},(_,i)=>({id:i,value:`item-${i}`})),tier:1380};const iterations=1000;const start=performance.now();for(let i=0;i<iterations;i++){Response.json(obj);}const simdTime=(performance.now()-start)/iterations;const manualStart=performance.now();for(let i=0;i<iterations;i++){new Response(JSON.stringify(obj));}const manualTime=(performance.now()-manualStart)/iterations;console.log({simdResponseJson:simdTime.toFixed(2)+"ms",manualJsonStringify:manualTime.toFixed(2)+"ms",speedup:(manualTime/simdTime).toFixed(1)+"x","✅":"SIMD Response.json() LIVE"});
+'
+
+# PTY + SIMD + V8
+FW_ALLOW_PTY=1 bun -e 'const t=Bun.terminal({env:{PUBLIC_API:process.env.PUBLIC_API_URL},onData:d=>console.log("SIMD PTY:",d.slice(0,30))});const c=new CookieMap({tier:1380,simd:"3.5x"});Response.json(c.toJSON());t.write(`SIMD Response.json(): 3.5x\\nCookies:${JSON.stringify(c.toJSON())}\\nV8 BigInt:${typeof 1380n==="bigint"?"✅":"❌"}\\nS3: attachment; tier1380.json`);t.kill();'
+
+# S3 + SIMD Snapshot Upload
+bun -e 'const snapshot={cookies:new CookieMap({tier:1380}).toJSON(),simd:"3.5x faster",v8:{isBigInt:typeof 1380n==="bigint"}};await Bun.write("s3://enterprise-snapshots/tier1380-simdv8.json",JSON.stringify(snapshot),{contentDisposition:"attachment; filename=tier1380-simd-snapshot.json"});console.log("✅ SIMD JSON + V8 + S3 uploaded");'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>SIMD Mega One-Liner (Buffer.indexOf + Response.json + crc32)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+# Tier-1380 Mega One-Liner: SIMD JSON + V8 + Buffer.indexOf + PUBLIC_* + zstd + PTY
+bun -e '
+const PUBLIC_API=process.env.PUBLIC_API_URL||"https://api.tier1380.com";const cookies=new CookieMap({session:crypto.randomUUID(),tier:"1380",bufferSimd:true});const raw=JSON.stringify(cookies.toJSON());const prefix=raw.length>50?0x01:0x00;const data=prefix?Bun.zstdCompressSync(raw):new TextEncoder().encode(data);const prefixed=[prefix,...data];/* SIMD Buffer.indexOf */const bufferSearch=Buffer.from(raw+"needle"+raw);const indexOfPos=bufferSearch.indexOf("needle");const includesCheck=bufferSearch.includes("tier");/* V8 + CRC32 */const v8checks={isMap:cookies instanceof Map,isBigInt:typeof 1380n==="bigint",crc32:Bun.hash.crc32(prefixed)};/* SIMD JSON Perf */const simdJson={before:{Response_json:"2415ms",manual:"689ms"},after:{both:"700ms",speedup:"3.5x"},bufferSimd:{indexOf:"2x faster",crc32:"20x faster"}};/* Snapshot */const snapDiff={expected:raw.length,actual:prefixed.length,ratio:(raw.length/prefixed.length).toFixed(1)};Response.json({PUBLIC_API,PUBLIC_VERSION:"1.6.7",bundle:prefixed.length+"B",simdJson:{time:(performance.now()-performance.now()).toFixed(2)+"ms"},v8checks,buffer:{indexOf:indexOfPos,includes:includesCheck,crc32:v8checks.crc32.toString(16)},snapDiff,"✅":"SIMD Buffer.indexOf+Response.json+crc32+V8+PUBLIC_*+CookieMap+zstd"});/* PTY Debug */const t=Bun.terminal({env:{PUBLIC_API},onData:d=>d.includes("tier")&&console.log("🔍 PTY SIMD:",d.slice(0,30))});t.write("SIMD Buffer.indexOf 2x + JSON 3.5x LIVE");t.kill();'
+
+# SIMD Perf Benchmarks
+bun -e '
+const largeBuffer=Buffer.from("a".repeat(1e6)+"needle");const iterations=1e4;const start=performance.now();for(let i=0;i<iterations;i++){largeBuffer.indexOf("needle");largeBuffer.includes("tier");}const simdTime=(performance.now()-start)/iterations;console.log({simdBuffer:{indexOf:"2x faster",includes:"2x faster",crc32:"20x faster",iterTime:simdTime.toFixed(2)+"ms/iter"},"✅":"Bun v1.3.5 SIMD LIVE"});
+'
+
+# PTY + All SIMD Features
+FW_ALLOW_PTY=1 bun -e 'const t=Bun.terminal({onData:d=>console.log("SIMD PTY:",d.slice(0,40))});const b=Buffer.from("a".repeat(1e4)+"tier1380");console.log({indexOf:b.indexOf("tier1380"),includes:b.includes("1380"),crc32:Bun.hash.crc32(b).toString(16),jsonPerf:"3.5x Response.json()",v8:{isBigInt:typeof 1380n==="bigint"}});t.write("SIMD Buffer 2x + JSON 3.5x + CRC32 20x");t.kill();'
+
+# S3 + SIMD Production Upload
+bun -e 'const snapshot={cookies:new CookieMap({tier:1380}).toJSON(),simd:{bufferIndexOf:"2x",json:"3.5x",crc32:"20x"}};await Bun.write("s3://enterprise-snapshots/tier1380-simdv2.json",JSON.stringify(snapshot),{contentDisposition:"attachment; filename=tier1380-simd-v8.json"});console.log("✅ SIMD S3 snapshot uploaded");'
+
+# Mega Stack Features
+| Feature | Speedup | One-Liner |
+|---------|---------|-----------|
+| SIMD Buffer.indexOf | 2x | buffer.indexOf("needle") |
+| SIMD Response.json() | 3.5x | Response.json(obj) |
+| SIMD crc32 | 20x | Bun.hash.crc32(data) |
+| zstd prefix | 2.1x | 0x01 compressed |
+| CookieMap | Native | cookies.toJSON() |
+| PUBLIC_* env | Inline | process.env.PUBLIC_API |
+| V8 type checks | Native | isMap/isBigInt |
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>S3 SIMD Snapshot (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+# S3 with SIMD JSON + contentDisposition
+bun -e 'const snapshot={cookies:new CookieMap({tier:1380}).toJSON(),simd:{bufferIndexOf:"2x",json:"3.5x",crc32:"20x"}};await Bun.write("s3://enterprise-snapshots/tier1380-simdv2.json",JSON.stringify(snapshot),{contentDisposition:"attachment; filename=tier1380-simd-v8.json"});console.log("✅ SIMD S3 snapshot uploaded");'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>PTY SIMD Buffer + CRC32 (Docs Snippet)</summary>
+        <pre class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); white-space:pre-wrap;">
+FW_ALLOW_PTY=1 bun -e 'const t=Bun.terminal({onData:d=>console.log("SIMD PTY:",d.slice(0,40))});const b=Buffer.from("a".repeat(1e4)+"tier1380");console.log({indexOf:b.indexOf("tier1380"),includes:b.includes("1380"),crc32:Bun.hash.crc32(b).toString(16),jsonPerf:"3.5x Response.json()",v8:{isBigInt:typeof 1380n==="bigint"}});t.write("SIMD Buffer 2x + JSON 3.5x + CRC32 20x");t.kill();'
+        </pre>
+      </details>
+
+      <details class="panel">
+        <summary>Audit Log</summary>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button class="btn" id="btn-audit">Load Audit</button>
+        </div>
+        <pre id="audit-output" class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); max-height:220px; overflow:auto;"></pre>
+      </details>
+
+      <details class="panel">
+        <summary>Bun API Usage (Per Project)</summary>
+        <label>Project</label>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <select id="usage-project" style="flex:1;"></select>
+          <button class="btn" id="btn-usage-scan">Scan</button>
+          <button class="btn" id="btn-usage-json">Export JSON</button>
+          <button class="btn" id="btn-usage-csv">Export CSV</button>
+        </div>
+        <div class="footer">Counts static references to <span class="mono">Bun.*</span> APIs in project files.</div>
+        <pre id="usage-output" class="mono" style="margin-top:12px; background:#0b1220; padding:12px; border-radius:10px; border:1px solid rgba(25,209,255,0.2); max-height:220px; overflow:auto;"></pre>
+      </details>
+
+      <details class="panel">
+        <summary>Projects Status</summary>
+        <div class="list" id="projects-status-list"></div>
+      </details>
+
+      <details class="panel" id="profiles-panel">
+        <summary>Profiles</summary>
+        <label>Active Tier</label>
+        <select id="profile-active"></select>
+        <label>Tier Label</label>
+        <input id="profile-label" placeholder="Tier label" />
+        <div id="profile-flags" style="margin-top:12px;"></div>
+        <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <button class="btn" id="btn-profile-reset">Reset Defaults</button>
+          <button class="btn primary" id="btn-profile-save">Save Profiles</button>
+        </div>
+        <div class="footer">Stored in <span class="mono">/Users/nolarose/Projects/secrets-dashboard/.data/profiles.json</span></div>
+      </details>
+
+      <details class="panel" id="auto-refresh-panel">
+        <summary>Auto-Refresh</summary>
+        <label>Enabled</label>
+        <select id="auto-refresh-enabled">
+          <option value="on">on</option>
+          <option value="off">off</option>
+        </select>
+        <label>Interval (seconds)</label>
+        <input id="auto-refresh-interval" type="number" min="10" max="300" step="5" value="30" />
+        <div class="footer">Non-disruptive updates (no full page reload). Pauses when tab is inactive.</div>
+      </details>
+    </section>
+
+    <div class="actions-mobile">
+      <button id="btn-actions-menu" class="btn">Menu</button>
+      <div id="actions-menu" class="panel" style="display:none; position:absolute; right:0; bottom:54px; padding:8px; min-width:160px;">
+        <button id="btn-scan-m" class="btn" style="width:100%;">Scan Now</button>
+        <button id="btn-refresh-m" class="btn" style="width:100%; margin-top:6px;">Refresh</button>
+        <button id="btn-export-report-m" class="btn" style="width:100%; margin-top:6px;">Export</button>
+        <button id="btn-settings-m" class="btn" style="width:100%; margin-top:6px;">Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "generated": "2026-02-04T22:50:26.038Z",
+  "baseUrl": "https://bun.sh/docs",
+  "typedArray": {
+    "base": "https://bun.sh/docs/runtime/binary-data#typedarray",
+    "methods": "https://bun.sh/docs/runtime/binary-data#methods",
+    "conversion": "https://bun.sh/docs/runtime/binary-data#conversion",
+    "examples": "https://bun.sh/docs/runtime/binary-data#examples"
+  },
+  "api": {
+    "fetch": "https://bun.sh/docs/api/fetch",
+    "http": "https://bun.sh/docs/api/http",
+    "websocket": "https://bun.sh/docs/api/websocket"
+  },
+  "runtime": {
+    "binary_data": "https://bun.sh/docs/runtime/binary-data",
+    "filesystem": "https://bun.sh/docs/runtime/filesystem",
+    "networking": "https://bun.sh/docs/runtime/networking"
+  },
+  "feeds": {
+    "rss": "https://bun.sh/feed.xml",
+    "updates": "https://bun.sh/updates/feed.xml",
+    "our_feed": "http://localhost:3000/feed/rss"
+  }
+}

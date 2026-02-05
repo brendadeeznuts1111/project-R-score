@@ -1,0 +1,49 @@
+{
+  "activeTier": "tier1",
+  "tiers": {
+    "tier1": {
+      "label": "Tier 1",
+      "flags": {
+        "allowKeychain": true,
+        "allowEnvFallback": true,
+        "allowR2": true,
+        "allowWrites": true,
+        "allowDelete": true,
+        "requireAudit": false
+      }
+    },
+    "tier2": {
+      "label": "Tier 2",
+      "flags": {
+        "allowKeychain": true,
+        "allowEnvFallback": true,
+        "allowR2": true,
+        "allowWrites": true,
+        "allowDelete": false,
+        "requireAudit": true
+      }
+    },
+    "tier3": {
+      "label": "Tier 3",
+      "flags": {
+        "allowKeychain": true,
+        "allowEnvFallback": false,
+        "allowR2": true,
+        "allowWrites": true,
+        "allowDelete": false,
+        "requireAudit": true
+      }
+    },
+    "tier4": {
+      "label": "Tier 4",
+      "flags": {
+        "allowKeychain": true,
+        "allowEnvFallback": false,
+        "allowR2": false,
+        "allowWrites": false,
+        "allowDelete": false,
+        "requireAudit": true
+      }
+    }
+  }
+}
