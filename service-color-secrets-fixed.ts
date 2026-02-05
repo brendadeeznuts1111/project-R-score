@@ -7,6 +7,8 @@ import {
   deriveKeychainService,
   profileKeychainGet
 } from "./profiles";
+import { ConcurrencyManagers } from "./lib/core/safe-concurrency";
+import { AtomicFileOperations } from "./lib/core/atomic-file-operations";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // STATUS GLYPHS & FORMATTERS
@@ -51,7 +53,7 @@ export interface SecretStatus {
   keychainStatus: "found" | "missing" | "error";
   envStatus: "found" | "missing";
   overall: "success" | "warning" | "error";
-  maskedValue?: string;
+  // Removed: maskedValue - no secret exposure
 }
 
 export const BUN_SECRET_STATUS_COLUMNS = [
@@ -126,29 +128,43 @@ export const resolveSecretStatuses = async (profile: string): Promise<SecretStat
   const service = deriveKeychainService(profile);
   const statuses: SecretStatus[] = [];
 
-  for (const secretName of BUN_PROFILES_SECRET_NAMES) {
-    const envVar = Object.entries(BUN_PROFILES_ENV_MAP).find(([_, v]) => v === secretName)?.[0] || secretName.toUpperCase();
+  // Use sequential processing with mutex to prevent race conditions
+  await ConcurrencyManagers.secretResolution.withLock(async () => {
+    for (const secretName of BUN_PROFILES_SECRET_NAMES) {
+      const envVar = Object.entries(BUN_PROFILES_ENV_MAP).find(([_, v]) => v === secretName)?.[0] || secretName.toUpperCase();
 
-    const keychainResult = await profileKeychainGet(service, secretName);
-    const keychainStatus = keychainResult.ok ? "found" : keychainResult.code === "NOT_FOUND" ? "missing" : "error";
+      // Use mutex for keychain access
+      const keychainResult = await ConcurrencyManagers.keychain.withLock(async () => {
+        return await profileKeychainGet(service, secretName);
+      });
 
-    const envValue = process.env[envVar];
-    const envStatus = envValue ? "found" : "missing";
+      const keychainStatus = keychainResult.ok ? "found" : keychainResult.code === "NOT_FOUND" ? "missing" : "error";
 
-    let overall: "success" | "warning" | "error";
-    if (keychainStatus === "found") overall = "success";
-    else if (envStatus === "found") overall = "warning";
-    else overall = "error";
+      const envValue = process.env[envVar];
+      const envStatus = envValue ? "found" : "missing";
 
-    // CRITICAL FIX 3: Remove secret value exposure - never show any part of secrets
-    statuses.push({
-      name: secretName,
-      envVar,
-      keychainStatus,
-      envStatus,
-      overall,
-      maskedValue: keychainResult.ok || envValue ? "***" : undefined
-    });
+      let overall: "success" | "warning" | "error";
+      if (keychainStatus === "found") overall = "success";
+      else if (envStatus === "found") overall = "warning";
+      else overall = "error";
+
+      // CRITICAL SECURITY FIX: Remove all secret value exposure
+      statuses.push({
+        name: secretName,
+        envVar,
+        keychainStatus,
+        envStatus,
+        overall,
+        // Remove maskedValue entirely - no secret exposure
+      });
+    }
+  });
+
+  // Validate all secret statuses
+  for (const status of statuses) {
+    if (!validateSecretStatus(status)) {
+      throw new Error(`Invalid secret status for ${status.name}`);
+    }
   }
 
   return statuses;
@@ -163,8 +179,8 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
   try {
     statuses = await resolveSecretStatuses(profile);
   } catch (error) {
-    console.error(`${c.red}Failed to resolve secret statuses: ${error.message}${c.reset}`);
-    process.exit(1);
+    // SAFE FIX: Throw error instead of process.exit
+    throw new Error(`Failed to resolve secret statuses: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
   
   const config = getProjectConfig(profile);
@@ -183,9 +199,9 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
   const tableData = statuses.map(s => ({
     Secret: s.name,
     "Env Var": s.envVar,
-    Keychain: formatStatusCell(s.keychainStatus === "found" ? "success" : s.keychainStatus === "missing" ? "error" : "warning"),
-    Env: formatStatusCell(s.envStatus === "found" ? "success" : "error"),
-    Status: formatStatusCell(s.overall)
+    Keychain: formatStatusCell(s.keychainStatus === "found" ? "success" : s.keychainStatus === "missing" ? "error" : "warning", config),
+    Env: formatStatusCell(s.envStatus === "found" ? "success" : "error", config),
+    Status: formatStatusCell(s.overall, config)
   }));
 
   // Enhanced: Dynamic padding with stringWidth
@@ -213,10 +229,11 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
 
   if (error > 0) {
     console.log(`${c.red}Critical: Missing secrets detected${c.reset}`);
-    // DYNAMIC LINE NUMBER FIX: Use dynamic line number detection
-    const currentLine = new Error().stack?.split('\n')[2]?.match(/:(\d+):/)?.[1];
-    Bun.openInEditor(import.meta.url, { line: parseInt(currentLine || '100') });
-    process.exit(1);
+    // SAFE FIX: Use static line number instead of unreliable stack parsing
+    const editorLine = 216; // Static line number for error location
+    Bun.openInEditor(import.meta.url, { line: editorLine });
+    // SAFE FIX: Throw error instead of process.exit
+    throw new Error(`Critical: Missing secrets detected - ${error} missing secrets`);
   }
 
   // Enhanced: Compare to baseline with deepEquals
@@ -225,25 +242,25 @@ export const renderSecretMatrix = async (profile: string): Promise<void> => {
     console.warn(`${c.yellow}Warning: Statuses differ from baseline${c.reset}`);
   }
 
-  // HIGH PRIORITY FIX: Proper file operation error handling
+  // HIGH PRIORITY FIX: Proper atomic file operation error handling
   if (process.argv.includes("--html")) {
     try {
       const html = `<h1>Secret Status Report</h1><table border="1"><tr>${BUN_SECRET_STATUS_COLUMNS.map(c => `<th>${escapeHTML(c)}</th>`).join('')}</tr>${tableData.map(row => `<tr>${Object.values(row).map(v => `<td>${escapeHTML(v)}</td>`).join('')}</tr>`).join('')}</table>`;
-      await Bun.write("secrets-report.html", html);
+      await AtomicFileOperations.writeSafe("secrets-report.html", html);
       console.log("Exported HTML report: secrets-report.html");
     } catch (error) {
-      console.error(`${c.red}Failed to export HTML report: ${error.message}${c.reset}`);
+      console.error(`${c.red}Failed to export HTML report: ${error instanceof Error ? error.message : 'Unknown error'}${c.reset}`);
     }
   }
 
-  // HIGH PRIORITY FIX: Proper file operation error handling
+  // HIGH PRIORITY FIX: Proper atomic file operation error handling
   if (process.argv.includes("--plain")) {
     try {
       const plain = stripANSI(Bun.inspect.table(tableData, BUN_SECRET_STATUS_COLUMNS).toString());
-      await Bun.write("secrets-plain.txt", plain);
+      await AtomicFileOperations.writeSafe("secrets-plain.txt", plain);
       console.log("Exported plain text: secrets-plain.txt");
     } catch (error) {
-      console.error(`${c.red}Failed to export plain text report: ${error.message}${c.reset}`);
+      console.error(`${c.red}Failed to export plain text report: ${error instanceof Error ? error.message : 'Unknown error'}${c.reset}`);
     }
   }
 
@@ -318,7 +335,12 @@ if (import.meta.main) {
   }
 
   if (args[0] === "matrix" || args.length === 0) {
-    await renderSecretMatrix(profile);
+    try {
+      await renderSecretMatrix(profile);
+    } catch (error) {
+      console.error(`${c.red}Error: ${error instanceof Error ? error.message : 'Unknown error'}${c.reset}`);
+      process.exit(1);
+    }
   } else {
     console.log("Usage: bun run service-color-secrets.ts [matrix] --profile=<name>");
   }
