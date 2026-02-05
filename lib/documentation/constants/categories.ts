@@ -301,6 +301,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       BENCHMARKS: '/oven-sh/bun/tree/main/benchmarks'
     }
   }
+  }
 } as const;
 
 // Intelligent routing rules for different user types and contexts

@@ -39,8 +39,10 @@ export class NPMRegistryServer {
   private server?: ReturnType<typeof Bun.serve>;
 
   constructor(options: ServerOptions = {}) {
+    const REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
     this.options = {
-      port: 4873, // Default npm registry port
+      port: REGISTRY_PORT, // Default npm registry port
       hostname: '0.0.0.0',
       auth: 'none',
       allowProxy: true,
@@ -85,7 +87,8 @@ export class NPMRegistryServer {
 
     console.log(styled(`\n📦 NPM Registry Server`, 'accent'));
     console.log(styled(`=====================`, 'accent'));
-    console.log(styled(`🌐 URL: http://localhost:${port}`, 'info'));
+    const REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    console.log(styled(`🌐 URL: http://${REGISTRY_HOST}:${port}`, 'info'));
     console.log(styled(`🪣 Storage: ${this.options.storage?.bucketName || 'npm-registry'}`, 'info'));
     console.log(styled(`🔐 Auth: ${this.options.auth}`, 'info'));
     console.log(styled(`📡 Proxy: ${this.options.allowProxy ? 'Enabled' : 'Disabled'}`, 'info'));

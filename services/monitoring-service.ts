@@ -225,7 +225,9 @@ function checkAlerts() {
       (Date.now() - existing.timestamp) < 60000 // Avoid duplicate alerts within 1 minute
     )) {
       metrics.alerts.push(alert);
-      console.log(`🚨 ALERT [${alert.type.toUpperCase()}]: ${alert.message}`);
+      if (process.env.DEBUG === '1') {
+        console.log(`🚨 ALERT [${alert.type.toUpperCase()}]: ${alert.message}`);
+      }
     }
   });
   
@@ -392,7 +394,7 @@ const server = serve({
       });
       
     } catch (error) {
-      console.error('Monitoring Service Error:', error);
+      console.error('❌ Monitoring Service Error:', error instanceof Error ? error.message : String(error));
       return Response.json({ 
         error: 'Internal server error' 
       }, { 
@@ -418,10 +420,13 @@ setInterval(() => {
   metrics.redirects = metrics.redirects.filter(r => r.timestamp >= cutoff);
   metrics.satisfaction = metrics.satisfaction.filter(s => s.timestamp >= cutoff);
   
-  console.log(`📊 Metrics: ${metrics.requests.length} requests, ${metrics.errors.length} errors, ${metrics.alerts.length} alerts`);
+  if (process.env.DEBUG === '1') {
+    console.log(`📊 Metrics: ${metrics.requests.length} requests, ${metrics.errors.length} errors, ${metrics.alerts.length} alerts`);
+  }
 }, MONITORING_CONFIG.checkInterval);
 
-console.log('📊 Monitoring Service running on http://example.com');
+const MONITORING_SERVICE_HOST = process.env.MONITORING_SERVICE_HOST || process.env.SERVER_HOST || 'localhost';
+console.log(`📊 Monitoring Service running on http://${MONITORING_SERVICE_HOST}:${MONITORING_SERVICE_PORT}`);
 console.log('Endpoints:');
 console.log('  GET  /health - Health check');
 console.log('  GET  /metrics - Current metrics');
@@ -431,7 +436,7 @@ console.log('  POST /satisfaction - Track user satisfaction');
 console.log('  POST /feature-flags - Update feature flags');
 console.log('  GET  /alerts - Get recent alerts');
 console.log('  GET  /dashboard - Dashboard data');
-console.log(`\n📈 Monitoring every ${MONITORING_CONFIG.checkInterval/1000}s with ${MONITORING_CONFIG.metricsWindow/1000}s window`);
+console.log(`📈 Monitoring every ${MONITORING_CONFIG.checkInterval / 1000}s with ${MONITORING_CONFIG.metricsWindow / 1000}s window`);
 
 /**
  * 💡 Performance Tip: For better performance, consider:

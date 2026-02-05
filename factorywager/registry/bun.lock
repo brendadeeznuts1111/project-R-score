@@ -4,9 +4,48 @@
   "workspaces": {
     "": {
       "name": "@factorywager/registry",
+      "dependencies": {
+        "zod": "^3.22.0",
+      },
       "devDependencies": {
         "@types/bun": "latest",
         "typescript": "^5.0.0",
+      },
+    },
+    "apps/profile-cli": {
+      "name": "@factorywager/profile-cli",
+      "version": "10.0.0",
+      "bin": {
+        "profile": "./src/cli.ts",
+      },
+      "dependencies": {
+        "@factorywager/pref-propagation": "workspace:*",
+        "@factorywager/redis-profile": "workspace:*",
+        "@factorywager/user-profile": "workspace:*",
+        "@factorywager/xgboost-pers": "workspace:*",
+      },
+    },
+    "packages/dashboard-profile": {
+      "name": "@factorywager/dashboard-profile",
+      "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/pref-propagation": "workspace:*",
+        "@factorywager/redis-profile": "workspace:*",
+        "@factorywager/user-profile": "workspace:*",
+        "@factorywager/xgboost-pers": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "packages/pref-propagation": {
+      "name": "@factorywager/pref-propagation",
+      "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/user-profile": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
       },
     },
     "packages/r2-storage": {
@@ -17,21 +56,63 @@
         "@factorywager/theme": "workspace:*",
       },
     },
+    "packages/redis-profile": {
+      "name": "@factorywager/redis-profile",
+      "version": "10.0.0",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
     "packages/registry-core": {
       "name": "@factorywager/registry-core",
+      "version": "1.0.0",
+    },
+    "packages/semver": {
+      "name": "@factorywager/semver",
       "version": "1.0.0",
     },
     "packages/theme": {
       "name": "@factorywager/theme",
       "version": "1.0.0",
     },
+    "packages/user-profile": {
+      "name": "@factorywager/user-profile",
+      "version": "10.0.0",
+      "dependencies": {
+        "zod": "^3.22.0",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "packages/xgboost-pers": {
+      "name": "@factorywager/xgboost-pers",
+      "version": "10.0.0",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
   },
   "packages": {
+    "@factorywager/dashboard-profile": ["@factorywager/dashboard-profile@workspace:packages/dashboard-profile"],
+
+    "@factorywager/pref-propagation": ["@factorywager/pref-propagation@workspace:packages/pref-propagation"],
+
+    "@factorywager/profile-cli": ["@factorywager/profile-cli@workspace:apps/profile-cli"],
+
     "@factorywager/r2-storage": ["@factorywager/r2-storage@workspace:packages/r2-storage"],
+
+    "@factorywager/redis-profile": ["@factorywager/redis-profile@workspace:packages/redis-profile"],
 
     "@factorywager/registry-core": ["@factorywager/registry-core@workspace:packages/registry-core"],
 
+    "@factorywager/semver": ["@factorywager/semver@workspace:packages/semver"],
+
     "@factorywager/theme": ["@factorywager/theme@workspace:packages/theme"],
+
+    "@factorywager/user-profile": ["@factorywager/user-profile@workspace:packages/user-profile"],
+
+    "@factorywager/xgboost-pers": ["@factorywager/xgboost-pers@workspace:packages/xgboost-pers"],
 
     "@types/bun": ["@types/bun@1.3.8", "", { "dependencies": { "bun-types": "1.3.8" } }, "sha512-3LvWJ2q5GerAXYxO2mffLTqOzEu5qnhEAlh48Vnu8WQfnmSwbgagjGZV6BoHKJztENYEDn6QmVd949W4uESRJA=="],
 
@@ -42,5 +123,7 @@
     "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 
     "undici-types": ["undici-types@7.16.0", "", {}, "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="],
+
+    "zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
   }
 }

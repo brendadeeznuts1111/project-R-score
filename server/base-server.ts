@@ -152,7 +152,7 @@ const server = Bun.serve({
         
         return handleNotFound(request, url);
       } catch (error) {
-        console.error(`Server error for ${path}:`, error);
+        console.error(`❌ Server error for ${path}:`, error instanceof Error ? error.message : String(error));
         return handleError(error, request, url);
       }
     });
@@ -1407,7 +1407,7 @@ async function handleGitHubURLParse(request: Request, url: URL): Promise<Respons
       commitHash: EnhancedDocumentationURLValidator.extractCommitHash(targetURL)
     },
     examples: {
-      commitURL: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types',
+      commitURL: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
       blobURL: 'https://github.com/oven-sh/bun/blob/main/packages/bun-types/index.d.ts',
       issueURL: 'https://github.com/oven-sh/bun/issues/1234',
       pullURL: 'https://github.com/oven-sh/bun/pull/5678'
@@ -1423,7 +1423,7 @@ async function handleGitHubURLParse(request: Request, url: URL): Promise<Respons
  * GitHub Commit URL Handler
  */
 async function handleGitHubCommitURL(request: Request, url: URL): Promise<Response> {
-  const commitHash = url.searchParams.get('commit') || 'af76296637931381e9509c204c5f1af9cc174534';
+  const commitHash = url.searchParams.get('commit') || 'main';
   const path = url.searchParams.get('path') || 'packages/bun-types';
   const viewType = url.searchParams.get('view') as 'tree' | 'blob' || 'tree';
   
@@ -1441,7 +1441,7 @@ async function handleGitHubCommitURL(request: Request, url: URL): Promise<Respon
       raw: rawURL
     },
     exampleCommit: {
-      hash: 'af76296637931381e9509c204c5f1af9cc174534',
+      hash: 'main',
       short: 'af76296',
       url: docsURLBuilder.getExampleCommitURL()
     },
@@ -1612,7 +1612,7 @@ async function handleCriticalURLs(request: Request, url: URL): Promise<Response>
       bunAPI: 'https://bun.com/reference#:~:text=Bun%20API%20Reference'
     },
     exampleCommit: {
-      hash: 'af76296637931381e9509c204c5f1af9cc174534',
+      hash: 'main',
       short: 'af76296',
       url: docsURLBuilder.getExampleCommitURL(),
       description: 'Example commit showing bun-types package structure'
@@ -2297,7 +2297,7 @@ async function handlePerformanceTest(request: Request, url: URL): Promise<Respon
  * Error handler
  */
 function handleError(error: Error, request: Request, url: URL): Response {
-  console.error(`Error handling ${url.pathname}:`, error);
+  console.error(`❌ Error handling ${url.pathname}:`, error instanceof Error ? error.message : String(error));
   
   return new Response(JSON.stringify({
     error: 'Internal server error',

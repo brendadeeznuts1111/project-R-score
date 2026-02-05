@@ -13,7 +13,7 @@ export async function loadSqliteVecExtension(params: {
     if (resolvedPath) {
       params.db.loadExtension(extensionPath);
     } else {
-      sqliteVec.load(params.db);
+      sqliteVec.YAML.parse(params.db);
     }
 
     return { ok: true, extensionPath };

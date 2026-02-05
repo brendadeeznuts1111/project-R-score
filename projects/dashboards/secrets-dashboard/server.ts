@@ -105,7 +105,8 @@ class ErrorHandler {
   }
 }
 
-const PORT = Number(Bun.env.PORT ?? 3456);
+const PORT = parseInt(process.env.PORT || Bun.env.PORT || '3456', 10);
+const DASHBOARD_HOST = process.env.DASHBOARD_HOST || process.env.SERVER_HOST || 'localhost';
 const ROOT = import.meta.dir;
 const PUBLIC_DIR = join(ROOT, 'public');
 const DATA_DIR = join(ROOT, '.data');
@@ -918,7 +919,7 @@ const server = Bun.serve({
   },
 });
 
-console.log(`Bun Secrets Dashboard running on http://localhost:${PORT}`);
+console.log(`Bun Secrets Dashboard running on http://${DASHBOARD_HOST}:${PORT}`);
 logger.info(`Secrets dashboard server started`, {
   port: PORT,
   environment: process.env.NODE_ENV || 'development',

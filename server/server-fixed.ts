@@ -22,7 +22,6 @@ async function handleTypedArrayDocs(url: URL): Promise<Response> {
 // Binary data documentation
 async function handleBinaryData(url: URL): Promise<Response> {
   const response = await fetch(`${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`);
-  console.log(`Binary data docs fetch status: ${response.status}`);
   
   const html = await response.text();
   
@@ -351,10 +350,14 @@ console.log("Advanced fetch demo completed!");
 // Run the actual advanced demo
 async function runAdvancedDemo(): Promise<Response> {
   try {
-    console.log('🎯 Running advanced fetch demo...');
+    if (process.env.DEBUG === '1') {
+      console.log('🎯 Running advanced fetch demo...');
+    }
     
     // Run the demo in the background
-    advancedFetchService.runFullDemo().catch(console.error);
+    advancedFetchService.runFullDemo().catch((error) => {
+      console.error('❌ Advanced fetch demo failed:', error);
+    });
     
     const html = `
 <!DOCTYPE html>
@@ -466,7 +469,7 @@ const server = Bun.serve({
   },
 });
 
-console.log('🚀 Starting Bun TypedArray Documentation Server on port 3000...');
+console.log(`🚀 Starting Bun TypedArray Documentation Server on port ${SERVER_PORT}...`);
 console.log(`📚 Base URL: ${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`);
 console.log(`🌐 Visit: http://${SERVER_HOST}:${SERVER_PORT}`);
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { parse } from 'yaml';
+import { YAML } from "bun";
 import { glob } from 'glob';
 
 // Use glob for file discovery (reliable across environments)

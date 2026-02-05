@@ -65,7 +65,7 @@ class BunConfigLoader {
   private config: BunConfig = {};
   private isLoaded = false;
 
-  async load(): Promise<BunConfig> {
+  async YAML.parse(): Promise<BunConfig> {
     if (this.isLoaded) return this.config;
 
     try {

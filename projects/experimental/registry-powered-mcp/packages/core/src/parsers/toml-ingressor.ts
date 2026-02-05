@@ -84,7 +84,7 @@ export class RegistryLoader {
    * @param path - Path to registry.toml file (ignored in standalone builds)
    * @returns Parsed and validated registry configuration
    */
-  static async load(path: string = './registry.toml'): Promise<RegistryConfig> {
+  static async YAML.parse(path: string = './registry.toml'): Promise<RegistryConfig> {
     try {
       let config: RegistryConfig;
 

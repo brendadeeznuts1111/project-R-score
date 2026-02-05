@@ -6,6 +6,7 @@
  * Uses Bun.wrapAnsi() for 33-88x faster ANSI text wrapping
  */
 
+import { sanitizeEnvVar } from '../../../../lib/utils/env-validator';
 import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
 import { NPMRegistryServer } from '../src/server';
@@ -25,6 +26,10 @@ function wrapText(text: string, columns: number = 80): string {
   // Fallback for older Bun versions
   return text;
 }
+
+const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
 
 const COMMANDS = {
   'start': 'Start the registry server',
@@ -122,7 +127,10 @@ class RegistryCLI {
    */
   private async handlePublish(options: any): Promise<void> {
     const packagePath = options._[0] || '.';
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     console.log(styled(`\n📦 Publishing from ${packagePath}...`, 'accent'));
 
@@ -209,7 +217,10 @@ class RegistryCLI {
   private async handleUnpublish(options: any): Promise<void> {
     const packageName = options._[0];
     const version = options.version;
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     if (!packageName) {
       console.error(styled('❌ Package name required', 'error'));
@@ -261,7 +272,10 @@ class RegistryCLI {
    */
   private async handleInfo(options: any): Promise<void> {
     const packageName = options._[0];
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     if (!packageName) {
       console.error(styled('❌ Package name required', 'error'));
@@ -330,7 +344,10 @@ class RegistryCLI {
    */
   private async handleSearch(options: any): Promise<void> {
     const query = options._[0];
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     if (!query) {
       console.error(styled('❌ Search query required', 'error'));
@@ -367,7 +384,10 @@ class RegistryCLI {
    * List all packages
    */
   private async handleList(options: any): Promise<void> {
-    const registry = options.registry || process.env.REGISTRY_URL || 'http://localhost:4873';
+    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
+    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
+    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     try {
       const response = await fetch(`${registry}/-/all`);
@@ -487,15 +507,15 @@ class RegistryCLI {
     console.log(styled('==========================', 'accent'));
     
     console.log(styled('\n🌐 Server:', 'info'));
-    console.log(styled(`  Port: ${process.env.REGISTRY_PORT || '4873'}`, 'muted'));
-    console.log(styled(`  Auth: ${process.env.REGISTRY_AUTH || 'none'}`, 'muted'));
+    console.log(styled(`  Port: ${sanitizeEnvVar(process.env.REGISTRY_PORT, '4873')}`, 'muted'));
+    console.log(styled(`  Auth: ${sanitizeEnvVar(process.env.REGISTRY_AUTH, 'none', true)}`, 'muted'));
 
     console.log(styled('\n🪣 R2 Storage:', 'info'));
-    console.log(styled(`  Bucket: ${process.env.R2_REGISTRY_BUCKET || 'npm-registry'}`, 'muted'));
-    console.log(styled(`  Account: ${process.env.R2_ACCOUNT_ID || 'not set'}`, 'muted'));
+    console.log(styled(`  Bucket: ${sanitizeEnvVar(process.env.R2_REGISTRY_BUCKET, 'npm-registry')}`, 'muted'));
+    console.log(styled(`  Account: ${sanitizeEnvVar(process.env.R2_ACCOUNT_ID, 'not set', true)}`, 'muted'));
 
     console.log(styled('\n📡 CDN:', 'info'));
-    console.log(styled(`  URL: ${process.env.REGISTRY_CDN_URL || 'not set'}`, 'muted'));
+    console.log(styled(`  URL: ${sanitizeEnvVar(process.env.REGISTRY_CDN_URL, 'not set')}`, 'muted'));
 
     console.log(styled('\n📝 Environment Variables:', 'info'));
     console.log(styled('  REGISTRY_PORT - Server port (default: 4873)', 'muted'));
@@ -522,7 +542,7 @@ class RegistryCLI {
 
     console.log(styled('\nExamples:', 'info'));
     console.log(styled('  registry start --port 4873 --auth basic', 'muted'));
-    console.log(styled('  registry publish ./my-package --registry http://localhost:4873', 'muted'));
+    console.log(styled(`  registry publish ./my-package --registry ${DEFAULT_REGISTRY_URL}`, 'muted'));
     console.log(styled('  registry info my-package', 'muted'));
     console.log(styled('  registry search utils', 'muted'));
     console.log(styled('  registry tokens create admin', 'muted'));

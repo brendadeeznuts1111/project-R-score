@@ -1,4 +1,4 @@
-import YAML from "yaml";
+import { YAML } from "bun";
 
 export type ParsedFrontmatter = Record<string, string>;
 

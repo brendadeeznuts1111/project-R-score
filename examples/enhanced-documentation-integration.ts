@@ -225,7 +225,7 @@ async function urlValidation() {
     'https://bun.com/reference',
     'https://bun.com/guides',
     'https://bun.com/rss.xml',
-    'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types',
+    'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
     'https://bun.com/reference#:~:text=node%3Azlib',
     'https://bun.com/reference#:~:text=Bun%20API%20Reference',
     'https://www.npmjs.com/package/bun-types',

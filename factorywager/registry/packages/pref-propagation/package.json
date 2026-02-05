@@ -1,0 +1,13 @@
+{
+  "name": "@factorywager/pref-propagation",
+  "version": "10.0.0",
+  "description": "Graph Neural Network preference propagation with volume-weighted config saves",
+  "type": "module",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@factorywager/user-profile": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

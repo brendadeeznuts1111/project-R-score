@@ -1190,7 +1190,7 @@ export interface BunDatabase {
     transaction(fn: () => void): void;
     close(): void;
     serialize(): Uint8Array;
-    load(data: Uint8Array): void;
+    YAML.parse(data: Uint8Array): void;
 }
 
 export interface BunStatement {

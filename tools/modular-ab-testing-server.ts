@@ -650,8 +650,9 @@ const server = serve({
   },
 });
 
-console.log("🧪 Modular A/B Testing Server running on http://example.com");
-console.log("📊 Admin Dashboard: http://example.com/admin");
+const MODULAR_AB_TESTING_HOST = process.env.MODULAR_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
+console.log(`🧪 Modular A/B Testing Server running on http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}`);
+console.log(`📊 Admin Dashboard: http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}/admin`);
 console.log("🎲 Force assignment: POST /force/{testId}/{variant}");
 console.log("");
 console.log("Active Tests:");

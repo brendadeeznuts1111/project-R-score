@@ -79,10 +79,10 @@ describe("ConfigManager", () => {
     });
   });
 
-  describe("load()", () => {
+  describe("YAML.parse()", () => {
     it("should load a created config", async () => {
       await manager.createExample(TEST_CONFIG_PATH);
-      const config = await manager.load(TEST_CONFIG_PATH);
+      const config = await manager.YAML.parse(TEST_CONFIG_PATH);
       
       expect(config).toBeDefined();
       expect(config.title).toBe("Empire Pro CLI Config");
@@ -91,7 +91,7 @@ describe("ConfigManager", () => {
 
     it("should throw error for non-existent file", async () => {
       try {
-        await manager.load("./non-existent-file.toml");
+        await manager.YAML.parse("./non-existent-file.toml");
         expect(true).toBe(false); // Should not reach here
       } catch (error: any) {
         expect(error.message).toContain("Config file not found");
@@ -100,7 +100,7 @@ describe("ConfigManager", () => {
 
     it("should return config with proper structure", async () => {
       await manager.createExample(TEST_CONFIG_PATH);
-      const config = await manager.load(TEST_CONFIG_PATH);
+      const config = await manager.YAML.parse(TEST_CONFIG_PATH);
       
       expect(config.server).toBeDefined();
       expect(config.server.port).toBe(3000);
@@ -124,7 +124,7 @@ describe("ConfigManager", () => {
   describe("validate()", () => {
     it("should validate correct config", async () => {
       await manager.createExample(TEST_CONFIG_PATH);
-      const config = await manager.load(TEST_CONFIG_PATH);
+      const config = await manager.YAML.parse(TEST_CONFIG_PATH);
       const result = manager.validate(config);
       
       expect(result.valid).toBe(true);
@@ -181,7 +181,7 @@ describe("ConfigManager", () => {
   describe("save()", () => {
     it("should save config to file", async () => {
       await manager.createExample(TEST_CONFIG_PATH);
-      const config = await manager.load(TEST_CONFIG_PATH);
+      const config = await manager.YAML.parse(TEST_CONFIG_PATH);
       
       await manager.save(TEST_CONFIG_PATH_2, config);
       expect(existsSync(TEST_CONFIG_PATH_2)).toBe(true);
@@ -189,7 +189,7 @@ describe("ConfigManager", () => {
 
     it("should preserve config data on save", async () => {
       await manager.createExample(TEST_CONFIG_PATH);
-      const config = await manager.load(TEST_CONFIG_PATH);
+      const config = await manager.YAML.parse(TEST_CONFIG_PATH);
       
       await manager.save(TEST_CONFIG_PATH_2, config);
       const savedContent = await Bun.file(TEST_CONFIG_PATH_2).text();
@@ -288,7 +288,7 @@ describe("Integration", () => {
     expect(existsSync(TEST_CONFIG_PATH)).toBe(true);
     
     // Load
-    const config = await manager.load(TEST_CONFIG_PATH);
+    const config = await manager.YAML.parse(TEST_CONFIG_PATH);
     expect(config.title).toBe("Empire Pro CLI Config");
     
     // Validate
@@ -300,7 +300,7 @@ describe("Integration", () => {
     expect(existsSync(TEST_CONFIG_PATH_2)).toBe(true);
     
     // Reload and verify
-    const reloaded = await manager.load(TEST_CONFIG_PATH_2);
+    const reloaded = await manager.YAML.parse(TEST_CONFIG_PATH_2);
     expect(reloaded.title).toBe(config.title);
     expect(reloaded.version).toBe(config.version);
   });
@@ -309,8 +309,8 @@ describe("Integration", () => {
     await manager.createExample(TEST_CONFIG_PATH);
     await manager.createExample(TEST_CONFIG_PATH_2);
     
-    const config1 = await manager.load(TEST_CONFIG_PATH);
-    const config2 = await manager.load(TEST_CONFIG_PATH_2);
+    const config1 = await manager.YAML.parse(TEST_CONFIG_PATH);
+    const config2 = await manager.YAML.parse(TEST_CONFIG_PATH_2);
     
     // Both should be valid and equal
     expect(manager.validate(config1).valid).toBe(true);
@@ -340,7 +340,7 @@ describe("Edge Cases", () => {
       await manager.createExample(specialPath);
       expect(existsSync(specialPath)).toBe(true);
       
-      const config = await manager.load(specialPath);
+      const config = await manager.YAML.parse(specialPath);
       expect(config).toBeDefined();
       
       rmSync(specialPath);

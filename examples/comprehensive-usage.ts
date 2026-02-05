@@ -9,6 +9,7 @@ import {
   exampleCommit,
   getAllCriticalURLs
 } from '../lib/documentation';
+import { DocumentationProvider, DocumentationCategory } from '../lib/documentation/constants/domains.ts';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -33,35 +34,14 @@ async function runComprehensiveExamples() {
   
   // CLI documentation URLs
   const cliURLs = {
-    cliMain: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'CLI',
-      undefined,
-      undefined,
-      { includeTracking: true }
-    ),
-    
-    cliRun: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'CLI_RUN',
-      'examples'
-    ),
-    
-    cliTest: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'CLI_TEST',
-      'configuration'
-    ),
-    
-    cliBuild: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'CLI_BUILD',
-      'options'
-    )
+    cliMain: docsURLBuilder.buildURL({
+      provider: DocumentationProvider.BUN_OFFICIAL,
+      category: DocumentationCategory.CLI_REFERENCE,
+      path: '/docs/cli'
+    }),
+    cliRun: docsURLBuilder.buildCLIDocumentationURL('run', 'examples'),
+    cliTest: docsURLBuilder.buildCLIDocumentationURL('test', 'configuration'),
+    cliBuild: docsURLBuilder.buildCLIDocumentationURL('build', 'options')
   };
   
   console.log('📚 CLI Documentation URLs:');
@@ -88,33 +68,10 @@ async function runComprehensiveExamples() {
   
   // Bun.utils documentation URLs
   const utilsURLs = {
-    utilsMain: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'UTILS',
-      'overview'
-    ),
-    
-    fileSystem: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'UTILS',
-      'file-system'
-    ),
-    
-    validation: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'UTILS',
-      'validation'
-    ),
-    
-    conversion: docsURLBuilder.buildURL(
-      'bun_official',
-      'api_reference',
-      'UTILS',
-      'conversion'
-    )
+    utilsMain: docsURLBuilder.buildUtilsDocumentationURL(undefined, 'overview'),
+    fileSystem: docsURLBuilder.buildUtilsDocumentationURL(undefined, 'file-system'),
+    validation: docsURLBuilder.buildUtilsDocumentationURL(undefined, 'validation'),
+    conversion: docsURLBuilder.buildUtilsDocumentationURL(undefined, 'conversion')
   };
   
   console.log('📚 Bun.utils Documentation URLs:');
@@ -131,34 +88,19 @@ async function runComprehensiveExamples() {
       code: `import { isTypedArray } from 'bun';
 const arr = new Uint8Array([1, 2, 3]);
 console.log(isTypedArray(arr)); // true`,
-      url: docsURLBuilder.buildURL(
-        'bun_official',
-        'api_reference',
-        'UTILS',
-        'isTypedArray'
-      )
+      url: docsURLBuilder.buildUtilsDocumentationURL('isTypedArray')
     },
     {
       name: 'readFile (async)',
       code: `import { readFile } from 'bun';
 const content = await readFile('package.json', 'utf-8');`,
-      url: docsURLBuilder.buildURL(
-        'bun_official',
-        'api_reference',
-        'UTILS',
-        'readFile'
-      )
+      url: docsURLBuilder.buildUtilsDocumentationURL('readFile')
     },
     {
       name: 'writeFile (async)',
       code: `import { writeFile } from 'bun';
 await writeFile('output.txt', 'Hello, Bun!');`,
-      url: docsURLBuilder.buildURL(
-        'bun_official',
-        'api_reference',
-        'UTILS',
-        'writeFile'
-      )
+      url: docsURLBuilder.buildUtilsDocumentationURL('writeFile')
     }
   ];
   
@@ -198,7 +140,7 @@ await writeFile('output.txt', 'Hello, Bun!');`,
     'https://bun.com/reference#:~:text=Bun%20API%20Reference',
     
     // GitHub commit URLs
-    'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types',
+    'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
     'https://github.com/oven-sh/bun/blob/main/packages/bun-types/bun.d.ts'
   ];
   
@@ -284,45 +226,25 @@ await writeFile('output.txt', 'Hello, Bun!');`,
       name: 'isTypedArray',
       testValue: new Uint8Array([1, 2, 3]),
       expected: true,
-      docs: docsURLBuilder.buildURL(
-        'bun_official',
-        'api_reference',
-        'UTILS',
-        'isTypedArray'
-      )
+      docs: docsURLBuilder.buildUtilsDocumentationURL('isTypedArray')
     },
     {
       name: 'isBuffer',
       testValue: Buffer.from('hello'),
       expected: true,
-      docs: docsURLBuilder.buildURL(
-        'bun_official',
-        'api_reference',
-        'UTILS',
-        'isBuffer'
-      )
+      docs: docsURLBuilder.buildUtilsDocumentationURL('isBuffer')
     },
     {
       name: 'isString',
       testValue: 'Hello, Bun!',
       expected: true,
-      docs: docsURLBuilder.buildURL(
-        'bun_official',
-        'api_reference',
-        'UTILS',
-        'isString'
-      )
+      docs: docsURLBuilder.buildUtilsDocumentationURL('isString')
     },
     {
       name: 'isArray',
       testValue: [1, 2, 3],
       expected: true,
-      docs: docsURLBuilder.buildURL(
-        'bun_official',
-        'api_reference',
-        'UTILS',
-        'isArray'
-      )
+      docs: docsURLBuilder.buildUtilsDocumentationURL('isArray')
     }
   ];
   
@@ -348,23 +270,13 @@ await writeFile('output.txt', 'Hello, Bun!');`,
         step: 1,
         action: 'Initialize project',
         command: 'bun init',
-        docs: docsURLBuilder.buildURL(
-          'bun_official',
-          'api_reference',
-          'CLI_INIT',
-          'examples'
-        )
+        docs: docsURLBuilder.buildCLIDocumentationURL('init', 'examples')
       },
       {
         step: 2,
         action: 'Add TypeScript and validation library',
         command: 'bun add typescript zod @types/node',
-        docs: docsURLBuilder.buildURL(
-          'bun_official',
-          'api_reference',
-          'CLI_ADD',
-          'dependencies'
-        )
+        docs: docsURLBuilder.buildCLIDocumentationURL('add', 'dependencies')
       },
       {
         step: 3,
@@ -374,23 +286,13 @@ const config = { name: 'my-app', version: '1.0.0' };
 if (isObject(config)) {
   await writeFile('bun.config.json', JSON.stringify(config, null, 2));
 }`,
-        docs: docsURLBuilder.buildURL(
-          'bun_official',
-          'api_reference',
-          'UTILS',
-          'file-system'
-        )
+        docs: docsURLBuilder.buildUtilsDocumentationURL(undefined, 'file-system')
       },
       {
         step: 4,
         action: 'Run development server',
         command: 'bun run dev --hot',
-        docs: docsURLBuilder.buildURL(
-          'bun_official',
-          'api_reference',
-          'CLI_RUN',
-          'hot-reload'
-        )
+        docs: docsURLBuilder.buildCLIDocumentationURL('run', 'hot-reload')
       }
     ]
   };
@@ -533,10 +435,10 @@ const process = spawn(['bun', 'run', 'test'], {
 
 // Documentation references
 const docs = {
-  readFile: '${docsURLBuilder.buildURL('bun_official', 'api_reference', 'UTILS', 'readFile')}',
-  isTypedArray: '${docsURLBuilder.buildURL('bun_official', 'api_reference', 'UTILS', 'isTypedArray')}',
-  spawn: '${docsURLBuilder.buildURL('bun_official', 'api_reference', 'UTILS', 'spawn')}',
-  cliTest: '${docsURLBuilder.buildURL('bun_official', 'api_reference', 'CLI_TEST', 'options')}'
+  readFile: '${docsURLBuilder.buildUtilsDocumentationURL('readFile')}',
+  isTypedArray: '${docsURLBuilder.buildUtilsDocumentationURL('isTypedArray')}',
+  spawn: '${docsURLBuilder.buildUtilsDocumentationURL('spawn')}',
+  cliTest: '${docsURLBuilder.buildCLIDocumentationURL('test', 'options')}'
 };
 
 console.log('📚 Documentation:', docs);`;

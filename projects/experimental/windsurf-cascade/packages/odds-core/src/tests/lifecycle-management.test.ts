@@ -722,7 +722,7 @@ describe('Phase 2.2 - Metadata Lifecycle Management', () => {
 
       await storage.save(mockLifecycle);
       
-      const loaded = await storage.load('test_lifecycle');
+      const loaded = await storage.YAML.parse('test_lifecycle');
       expect(loaded).toBeDefined();
       expect(loaded?.id).toBe('test_lifecycle');
       expect(loaded?.currentState).toBe(MetadataLifecycleState.ACTIVE);
@@ -780,12 +780,12 @@ describe('Phase 2.2 - Metadata Lifecycle Management', () => {
 
       await storage.save(mockLifecycle);
       
-      let loaded = await storage.load('test_lifecycle');
+      let loaded = await storage.YAML.parse('test_lifecycle');
       expect(loaded).toBeDefined();
 
       await storage.delete('test_lifecycle');
       
-      loaded = await storage.load('test_lifecycle');
+      loaded = await storage.YAML.parse('test_lifecycle');
       expect(loaded).toBeNull();
     });
 

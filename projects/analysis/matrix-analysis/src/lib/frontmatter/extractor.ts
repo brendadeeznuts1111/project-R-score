@@ -3,7 +3,7 @@
  * Detects and parses YAML (---), TOML (+++), and JSON ({}) frontmatter
  */
 
-import { parse as parseYaml } from "yaml";
+import { YAML } from "bun";
 
 export type FrontmatterFormat = "yaml" | "toml" | "json" | "none";
 

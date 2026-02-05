@@ -8,6 +8,7 @@
  * @version 4.5
  */
 
+import { validateHost } from '../utils/env-validator';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 
 /**
@@ -127,7 +128,8 @@ class Tier1380SecurityMCPServer {
     });
 
     console.error(`🔐 Tier-1380 Security MCP Server running on HTTP port ${port}`);
-    console.error(`📊 Health check: http://example.com:${port}/health`);
+    const MCP_SERVER_HOST = validateHost(process.env.MCP_SERVER_HOST) || validateHost(process.env.SERVER_HOST) || 'localhost';
+    console.log(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
   }
 
   /**

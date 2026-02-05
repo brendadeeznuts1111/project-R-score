@@ -5,7 +5,7 @@
 
 import { VaultNode, VaultGraph } from '../models/VaultNode';
 import { file } from 'bun';
-import YAML from 'yaml';
+import { YAML } from "bun";
 import MarkdownIt from 'markdown-it';
 
 export interface ValidationResult {

@@ -14,7 +14,7 @@ async function main() {
   console.log('🚀 Registry-Powered-MCP Benchmarks v2.4.1\n');
 
   // Load configuration
-  const config = await RegistryLoader.load('./packages/core/registry.toml');
+  const config = await RegistryLoader.YAML.parse('./packages/core/registry.toml');
 
   // Initialize router
   const router = new LatticeRouter(config);

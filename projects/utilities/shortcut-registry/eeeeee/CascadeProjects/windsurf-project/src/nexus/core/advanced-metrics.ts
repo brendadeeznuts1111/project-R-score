@@ -3,7 +3,7 @@
 // Deep TypeScript and security analysis integration
 
 import { parse as parseToml } from 'toml';
-import { parse as parseYaml } from 'yaml';
+import { YAML } from "bun";
 import { Database } from 'bun:sqlite';
 import { join } from 'path';
 import { createInterface } from 'readline';

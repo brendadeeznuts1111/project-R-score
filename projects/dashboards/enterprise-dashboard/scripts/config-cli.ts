@@ -24,7 +24,7 @@ async function cmdLoad(args: string[]): Promise<void> {
     console.error("Usage: bun run config load <path>");
     process.exit(1);
   }
-  const config = await loader.load(path, {
+  const config = await loader.YAML.parse(path, {
     basePath: CONFIG_DIR,
     hot: true,
   });
@@ -77,7 +77,7 @@ async function cmdCompress(args: string[]): Promise<void> {
     console.error("Usage: bun run config compress <input> <output.zst>");
     process.exit(1);
   }
-  const config = await loader.load(input, { basePath: CONFIG_DIR });
+  const config = await loader.YAML.parse(input, { basePath: CONFIG_DIR });
   if (config === null) {
     console.error("Failed to load config");
     process.exit(1);

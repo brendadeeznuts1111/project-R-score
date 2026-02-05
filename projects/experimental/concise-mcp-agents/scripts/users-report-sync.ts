@@ -2,38 +2,48 @@
 
 // [API][USERS-REPORT][SYNC][v2.15][ACTIVE]
 
-import YAML from 'yaml';
+import { YAML } from "bun";
 
 const VAULT = process.cwd();
 
 async function syncUsersReport(start = 0, limit = 100) {
-  const body = new URLSearchParams({
-    action: 'getUsersReport',
-    start: start.toString(),
-    limit: limit.toString(),
-  });
+  try {
+    const body = new URLSearchParams({
+      action: 'getUsersReport',
+      start: start.toString(),
+      limit: limit.toString(),
+    });
 
-  const res = await fetch('/manager-tools/ajax.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-    body,
-  });
-  const data = await res.json();
-  const reports = data.r || [];
+    const res = await fetch('/manager-tools/ajax.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body,
+    });
 
-  // YAML + GOV
-  const yaml = YAML.stringify({ reports });
-  await Bun.write(`${VAULT}/data/users-report.yaml`, yaml);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
 
-  // Auto GOV rules
-  for (const report of reports) {
-    await createUserReportRule(report);
+    const data = await res.json();
+    const reports = data.r || [];
+
+    // YAML + GOV
+    const yaml = YAML.stringify({ reports });
+    await Bun.write(`${VAULT}/data/users-report.yaml`, yaml);
+
+    // Auto GOV rules
+    for (const report of reports) {
+      await createUserReportRule(report);
+    }
+
+    console.log(`✅ Synced ${reports.length} user reports`);
+  } catch (error) {
+    console.error('❌ Failed to sync user reports:', error);
+    throw error;
   }
-
-  console.log(`✅ Synced ${reports.length} user reports`);
 }
 
 async function createUserReportRule(report: any) {

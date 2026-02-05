@@ -334,3 +334,17 @@ export const FRAGMENT_PARSERS = {
     return result;
   }
 } as const;
+
+// Text fragment patterns (Scroll to Text Fragment specification)
+export const TEXT_FRAGMENT_PATTERNS = {
+  // Common patterns for bun.com/reference
+  NODE_ZLIB: 'node:zlib' as const,
+  BUN_API_REFERENCE: 'Bun API Reference' as const,
+  TYPED_ARRAY_METHODS: 'TypedArray methods' as const,
+  FETCH_TIMEOUT: 'fetch timeout' as const,
+  WEBSOCKET_EXAMPLE: 'WebSocket example' as const,
+
+  // Encoding helper
+  encode: (text: string) => encodeURIComponent(text),
+  decode: (encoded: string) => decodeURIComponent(encoded)
+} as const;

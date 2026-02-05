@@ -24,7 +24,7 @@ self.onmessage = async (event: MessageEvent) => {
 			const view = new Float64Array(buffer);
 			for (let i = 0; i < length; i++) {
 				// Use Atomics for thread-safe operations
-				const value = Atomics.load(view, i);
+				const value = Atomics.YAML.parse(view, i);
 				Atomics.store(view, i, Math.sqrt(value));
 			}
 			

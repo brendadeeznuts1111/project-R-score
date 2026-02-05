@@ -263,7 +263,7 @@ export class Cache<T = unknown> {
   /**
    * Load cache from file (Bun-native)
    */
-  async load(): Promise<void> {
+  async YAML.parse(): Promise<void> {
     if (!this.config.persistPath) {
       return; // Persistence disabled
     }

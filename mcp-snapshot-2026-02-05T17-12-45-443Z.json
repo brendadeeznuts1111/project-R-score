@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-02-05T17:12:45.443Z",
+  "runtime": {
+    "version": "1.3.9",
+    "revision": "e5cd034e",
+    "platform": "darwin-arm64",
+    "uptime": 0
+  },
+  "ecosystem": {
+    "docs": [
+      {
+        "url": "https://bun.com/docs",
+        "status": 200,
+        "responseTime": 112
+      },
+      {
+        "url": "https://bun.com/reference",
+        "status": 200,
+        "responseTime": 111
+      },
+      {
+        "url": "https://bun.com/docs/api/utils",
+        "status": 200,
+        "responseTime": 198
+      },
+      {
+        "url": "https://bun.com/docs/runtime/utils",
+        "status": 200,
+        "responseTime": 143
+      },
+      {
+        "url": "https://bun.com/docs/api/globals",
+        "status": 200,
+        "responseTime": 325
+      }
+    ],
+    "git": {
+      "commits": 10,
+      "warnings": 17
+    }
+  },
+  "reports": {
+    "generated": [
+      "mcp-snapshot-2026-02-05T17-12-45-443Z.json"
+    ],
+    "pending": 0
+  }
+}

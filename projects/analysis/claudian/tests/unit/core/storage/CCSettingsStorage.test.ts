@@ -21,7 +21,7 @@ describe('CCSettingsStorage', () => {
     describe('load', () => {
         it('should return defaults if file does not exist', async () => {
             (mockAdapter.exists as jest.Mock).mockResolvedValue(false);
-            const result = await storage.load();
+            const result = await storage.YAML.parse();
             expect(result.permissions).toBeDefined();
         });
 
@@ -35,7 +35,7 @@ describe('CCSettingsStorage', () => {
                 }
             }));
 
-            const result = await storage.load();
+            const result = await storage.YAML.parse();
             expect(result.permissions?.allow).toContain('tool1');
         });
 
@@ -43,7 +43,7 @@ describe('CCSettingsStorage', () => {
             (mockAdapter.exists as jest.Mock).mockResolvedValue(true);
             (mockAdapter.read as jest.Mock).mockRejectedValue(new Error('Read failed'));
 
-            await expect(storage.load()).rejects.toThrow('Read failed');
+            await expect(storage.YAML.parse()).rejects.toThrow('Read failed');
         });
     });
 

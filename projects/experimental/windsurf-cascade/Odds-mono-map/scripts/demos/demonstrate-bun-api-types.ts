@@ -93,7 +93,7 @@ console.log(chalk.white('  BunDatabase interface provides:'));
 console.log(chalk.gray('    • SQL execution (exec(), query())'));
 console.log(chalk.gray('    • Prepared statements (prepare())'));
 console.log(chalk.gray('    • Transaction support (transaction())'));
-console.log(chalk.gray('    • Database operations (close(), serialize(), load())'));
+console.log(chalk.gray('    • Database operations (close(), serialize(), YAML.parse())'));
 
 const mockBunDatabase: BunDatabase = {
     exec: (sql: string) => ({ changes: 1, lastInsertRowid: 1 }),

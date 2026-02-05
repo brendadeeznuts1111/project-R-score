@@ -545,7 +545,7 @@ text-align:center}
 </div>
 <footer>Tier-1380 | Bun | Col-89 Enforced | 30s refresh</footer>
 <script>
-async function load(){try{
+async function YAML.parse(){try{
 var s=await fetch("/api/stats").then(function(r){return r.json()});
 var ve=document.getElementById("v");
 ve.textContent=s.violations;
@@ -560,7 +560,7 @@ return "<tr><td>"+r.time+"</td><td>"+r.command+
 "</td><td>"+Number(r.duration_ms).toFixed(1)+
 "ms</td><td>"+r.result+"</td></tr>"}).join("");
 }catch(e){console.error(e)}}
-load();setInterval(load,30000);
+YAML.parse();setInterval(load,30000);
 </script>
 </body>
 </html>`;

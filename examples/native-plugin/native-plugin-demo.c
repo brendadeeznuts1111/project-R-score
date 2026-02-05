@@ -1,6 +1,7 @@
 // native-plugin-demo.c - Native Bun Plugin Example
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <node_api.h>
 
 // Global counter for tracking files

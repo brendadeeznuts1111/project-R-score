@@ -365,11 +365,11 @@ export class FeatureGatedMiddleware {
       loadAll: async () => {
         const loader = this.createDynamicMiddlewareLoader();
         const middlewarePromises = [
-          loader.load("FEAT_ENCRYPTION", "./middleware/encryption"),
-          loader.load("FEAT_NOTIFICATIONS", "./middleware/notifications"),
-          loader.load("FEAT_BATCH_PROCESSING", "./middleware/batch"),
-          loader.load("FEAT_ADVANCED_MONITORING", "./middleware/monitoring"),
-          loader.load("FEAT_AUTO_HEAL", "./middleware/auto-heal"),
+          loader.YAML.parse("FEAT_ENCRYPTION", "./middleware/encryption"),
+          loader.YAML.parse("FEAT_NOTIFICATIONS", "./middleware/notifications"),
+          loader.YAML.parse("FEAT_BATCH_PROCESSING", "./middleware/batch"),
+          loader.YAML.parse("FEAT_ADVANCED_MONITORING", "./middleware/monitoring"),
+          loader.YAML.parse("FEAT_AUTO_HEAL", "./middleware/auto-heal"),
         ];
 
         const middleware = await Promise.all(middlewarePromises);

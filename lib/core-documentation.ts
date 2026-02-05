@@ -201,7 +201,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     },
     
     // Example commit you provided
-    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types'
+    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types'
   },
   
   // GitHub Enterprise
@@ -302,7 +302,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
  */
 export const SIGNIFICANT_COMMITS = {
   // Example commit from your link
-  AF762966: 'af76296637931381e9509c204c5f1af9cc174534' as const,
+  AF762966: 'main' as const,
   
   // Other significant commits (would be maintained in real usage)
   LATEST_RELEASE: 'main' as const,
@@ -844,7 +844,7 @@ export const FRAGMENT_METADATA: Record<string, {
   'commit': {
     description: 'GitHub commit view - detailed commit information and file changes',
     relatedFragments: ['tree', 'blob', 'diff'],
-    examples: ['https://github.com/oven-sh/bun/commit/af76296637931381e9509c204c5f1af9cc174534'],
+    examples: ['https://github.com/oven-sh/bun/commit/main'],
     seeAlso: ['tree', 'pull', 'branch']
   },
   
@@ -2038,7 +2038,7 @@ export class EnterpriseDocumentationURLBuilder {
 
   /**
    * Build GitHub URL for a specific commit and path
-   * Example: https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types
+   * Example: https://github.com/oven-sh/bun/tree/main/packages/bun-types
    */
   public buildGitHubCommitURL(
     owner: string = 'oven-sh',
@@ -2868,130 +2868,6 @@ export const buildGitHubRepositoryURL = (
   }
 ) => docsURL.buildGitHubRepositoryURL(owner, repo, path, ref, options);
 
-export const buildGitHubRawURL = (owner: string, repo: string, path: string, ref?: string) => 
-  docsURL.buildGitHubRawURL(owner, repo, path, ref);
-
-export const buildGitHubAPIURL = (endpoint: string, apiVersion?: 'v3' | 'v4') => 
-  docsURL.buildGitHubAPIURL(endpoint, apiVersion);
-
-export const buildGitHubGistURL = (
-  gistId: string,
-  revision?: string,
-  action?: 'edit' | 'raw' | 'download'
-) => docsURL.buildGitHubGistURL(gistId, revision, action);
-
-export const buildGitHubSearchURL = (
-  query: string,
-  searchType?: 'repositories' | 'code' | 'commits' | 'issues' | 'discussions' | 'users' | 'topics',
-  options?: {
-    language?: string;
-    owner?: string;
-    repo?: string;
-    path?: string;
-    sort?: 'stars' | 'forks' | 'help-wanted-issues' | 'updated' | 'created';
-    order?: 'asc' | 'desc';
-  }
-) => docsURL.buildGitHubSearchURL(query, searchType, options);
-
-export const buildGitHubActionsURL = (
-  owner: string,
-  repo: string,
-  workflowFile?: string,
-  action?: 'runs' | 'new'
-) => docsURL.buildGitHubActionsURL(owner, repo, workflowFile, action);
-
-export const buildGitHubReleasesURL = (
-  owner: string,
-  repo: string,
-  tagName?: string,
-  action?: 'latest' | 'new' | 'edit'
-) => docsURL.buildGitHubReleasesURL(owner, repo, tagName, action);
-
-export const buildGitHubCommitURL = (
-  owner: string,
-  repo: string,
-  commitHash: string,
-  filePath?: string,
-  options?: { lineNumbers?: { start: number; end?: number } }
-) => docsURL.buildGitHubCommitURL(owner, repo, commitHash, filePath, options);
-
-export const buildGitHubCompareURL = (
-  owner: string,
-  repo: string,
-  baseRef: string,
-  headRef: string,
-  filePath?: string
-) => docsURL.buildGitHubCompareURL(owner, repo, baseRef, headRef, filePath);
-
-export const buildBunTypesURL = (path?: string, commitHash?: string) => 
-  docsURL.buildBunTypesURL(path, commitHash);
-
-export const buildReferenceURLWithTextFragment = (
-  section: string,
-  textFragment?: string,
-  options?: { language?: string }
-) => docsURL.buildReferenceURLWithTextFragment(section, textFragment, options);
-
-export const buildNodeCompatibilityURL = (nodeModule: string, fragment?: string) => 
-  docsURL.buildNodeCompatibilityURL(nodeModule, fragment);
-
-export const buildGitHubPublicURL = (
-  path?: string,
-  ref?: string,
-  options?: { 
-    viewType?: 'tree' | 'blob' | 'commits' | 'issues' | 'pulls' | 'actions' | 'projects' | 'wiki' | 'security' | 'insights' | 'settings' | 'releases' | 'packages' | 'discussions';
-    lineNumbers?: { start: number; end?: number };
-    pathType?: 'file' | 'dir' | 'submodule' | 'symlink';
-    action?: 'new' | 'edit' | 'delete' | 'find' | 'compare';
-    branch?: string;
-    tag?: string;
-  }
-) => docsURL.buildGitHubPublicURL(path, ref, options);
-
-export const buildSignificantCommitURL = (
-  commitKey: keyof typeof SIGNIFICANT_COMMITS,
-  path?: string,
-  viewType: 'tree' | 'blob' = 'tree'
-) => docsURL.buildSignificantCommitURL(commitKey, path, viewType);
-
-export const buildBunPackageURL = (
-  packageName: 'bun-types' | 'bun-test' | 'bun-ffi' | 'bun-pm',
-  path?: string,
-  ref?: string
-) => docsURL.buildBunPackageURL(packageName, path, ref);
-
-export const buildTextFragmentURL = (
-  section: string,
-  textFragment: string,
-  options?: { language?: string; provider?: DocumentationProvider.BUN_REFERENCE }
-) => docsURL.buildTextFragmentURL(section, textFragment, options);
-
-export const getCommitViewURLs = (
-  commitHash: string,
-  filePath?: string
-) => docsURL.getCommitViewURLs(commitHash, filePath);
-
-export const parseGitHubURL = (url: string) => 
-  docsURL.parseGitHubURL(url);
-
-export const buildGitHubURLWithFragment = (
-  owner: string,
-  repo: string,
-  fragment: keyof typeof ENTERPRISE_URL_FRAGMENTS.GITHUB,
-  ref?: string,
-  path?: string
-) => docsURL.buildGitHubURLWithFragment(owner, repo, fragment, ref, path);
-
-export const buildTypeScriptURL = (
-  fragment: keyof typeof ENTERPRISE_URL_FRAGMENTS.TYPESCRIPT,
-  section?: string,
-  options?: { language?: string }
-) => docsURL.buildTypeScriptURL(fragment, section, options);
-
-export const buildTextFragmentFromPattern = (
-  pattern: keyof typeof ENTERPRISE_URL_FRAGMENTS.TEXT_FRAGMENTS,
-  section?: string
-) => docsURL.buildTextFragmentFromPattern(pattern, section);
 
 export const buildGitHubCommitURL = (
   owner?: string,
@@ -3207,3 +3083,81 @@ export const getEnterprisePaths = () =>
  * 3. Implementing request caching
  * 4. Using the native fetch API with keep-alive
  */
+
+/**
+ * 🏗️ Bun Documentation URL Builder
+ *
+ * Centralized access to Bun documentation URLs organized by category
+ */
+export const BUN_DOCS = {
+  // Secrets management documentation
+  secrets: {
+    overview: () => buildBunDocsURL('docs/runtime/bun-secrets'),
+    api: () => buildBunDocsURL('docs/api/bun-secrets'),
+    getOptions: () => buildBunDocsURL('docs/api/bun-secrets#get'),
+    versioning: () => buildBunDocsURL('docs/runtime/bun-secrets#versioning'),
+    rollback: () => buildBunDocsURL('docs/runtime/bun-secrets#rollback')
+  },
+
+  // Runtime documentation
+  runtime: (topic: string) => buildBunDocsURL(`docs/runtime/${topic}`),
+
+  // Color utilities documentation
+  color: {
+    main: () => buildBunDocsURL('docs/api/color'),
+    flexibleInput: () => buildBunDocsURL('docs/api/color#flexible-input'),
+    formatANSI: () => buildBunDocsURL('docs/api/color#ansi'),
+    formatNumbers: () => buildBunDocsURL('docs/api/color#numbers'),
+    formatHex: () => buildBunDocsURL('docs/api/color#hex'),
+    getChannels: () => buildBunDocsURL('docs/api/color#channels'),
+    bundleTime: () => buildBunDocsURL('docs/api/color#bundle-time')
+  },
+
+  // File I/O documentation
+  fileIO: {
+    main: () => buildBunDocsURL('docs/api/file-io'),
+    binary: () => buildBunDocsURL('docs/runtime/binary-data'),
+    watcher: () => buildBunDocsURL('docs/api/file-watcher'),
+    path: () => buildBunDocsURL('docs/api/path')
+  },
+
+  // Network documentation
+  network: {
+    fetch: () => buildBunDocsURL('docs/api/fetch'),
+    websocket: () => buildBunDocsURL('docs/api/websocket'),
+    proxy: () => buildBunDocsURL('docs/runtime/proxy'),
+    tls: () => buildBunDocsURL('docs/runtime/tls')
+  },
+
+  // Bundler documentation
+  bundler: {
+    main: () => buildBunDocsURL('docs/bundler'),
+    server: () => buildBunDocsURL('docs/bundler#dev-server'),
+    static: () => buildBunDocsURL('docs/bundler#static'),
+    plugins: () => buildBunDocsURL('docs/bundler#plugins')
+  },
+
+  // Deployment documentation
+  deployment: {
+    docker: () => buildBunDocsURL('docs/deployment/docker'),
+    aws: () => buildBunDocsURL('docs/deployment/aws'),
+    vercel: () => buildBunDocsURL('docs/deployment/vercel'),
+    railway: () => buildBunDocsURL('docs/deployment/railway')
+  },
+
+  // API documentation
+  api: {
+    main: () => buildBunDocsURL('docs/api'),
+    utils: () => buildBunDocsURL('docs/api/utils'),
+    crypto: () => buildBunDocsURL('docs/api/crypto'),
+    hashing: () => buildBunDocsURL('docs/runtime/hashing')
+  },
+
+  // Guides
+  guides: {
+    gettingStarted: () => buildBunDocsURL('docs/guides'),
+    migration: () => buildBunDocsURL('docs/guides/migration'),
+    performance: () => buildBunDocsURL('docs/guides/performance'),
+    testing: () => buildBunDocsURL('docs/guides/testing')
+  }
+};

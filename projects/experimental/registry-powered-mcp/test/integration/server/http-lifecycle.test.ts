@@ -53,7 +53,7 @@ describe("HTTP Server Lifecycle Integration", () => {
   const TEST_PORT = 13333; // Use non-standard port for testing
 
   beforeAll(async () => {
-    const config = await RegistryLoader.load("./registry.toml");
+    const config = await RegistryLoader.YAML.parse("./registry.toml");
     router = new LatticeRouter(config);
     await router.initialize();
   });

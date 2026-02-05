@@ -75,7 +75,7 @@ async function demonstratePersistence() {
   });
   
   console.log('📖 Loading Previous Configuration...');
-  const loaded = await config2.load();
+  const loaded = await config2.YAML.parse();
   
   if (loaded) {
     console.log('✅ Configuration Successfully Restored!');

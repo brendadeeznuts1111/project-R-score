@@ -6,7 +6,7 @@
  */
 
 import { join, extname } from 'path';
-import { load } from 'js-yaml';
+import { YAML } from "bun";
 
 interface ValidationOptions {
   strict?: boolean;
@@ -582,7 +582,7 @@ class EnhancedTagValidator {
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
     if (frontmatterMatch) {
       try {
-        const frontmatter = load(frontmatterMatch[1]) as any;
+        const frontmatter = YAML.parse(frontmatterMatch[1]) as any;
         if (frontmatter.tags) {
           if (Array.isArray(frontmatter.tags)) {
             frontmatter.tags.forEach((tag: string) => {

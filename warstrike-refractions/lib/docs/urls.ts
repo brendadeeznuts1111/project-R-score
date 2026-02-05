@@ -33,7 +33,7 @@ export const BUN_DOCS = {
   // GitHub resources
   github: {
     repo: 'https://github.com/oven-sh/bun',
-    bunTypes: (commit = 'af76296637931381e9509c204c5f1af9cc174534') =>
+    bunTypes: (commit = 'main') =>
       `https://github.com/oven-sh/bun/tree/${commit}/packages/bun-types`,
     npm: 'https://www.npmjs.com/package/bun-types',
   },

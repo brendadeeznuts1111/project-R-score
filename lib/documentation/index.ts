@@ -12,30 +12,35 @@
  * @since 1.0.0
  */
 
-import { 
-  DocumentationProvider, 
+import {
+  DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
+  DocumentationFormat,
   ENTERPRISE_DOCUMENTATION_BASE_URLS,
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA,
-  QUICK_REFERENCE_URLS
+  QUICK_REFERENCE_URLS,
+  SIGNIFICANT_COMMITS
 } from './constants/domains.ts';
 import type {
   DocumentationURLType,
   DocumentationUserType,
   DocumentationURLConfig,
   DocumentationURLMapping,
-  ProviderMetadata
+  ProviderMetadata,
+  BaseURLs,
+  ProviderURLs
 } from './constants/domains.ts';
 import { 
   ENTERPRISE_DOCUMENTATION_PATHS,
   IntelligentRouting
 } from './constants/categories.ts';
-import { 
+import {
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,
+  TEXT_FRAGMENT_PATTERNS,
   FRAGMENT_BUILDERS,
   FRAGMENT_PARSERS
 } from './constants/fragments.ts';
@@ -97,11 +102,14 @@ export {
   DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
+  DocumentationFormat,
   DocumentationURLType,
   DocumentationUserType,
   DocumentationURLConfig,
   DocumentationURLMapping,
   ProviderMetadata,
+  BaseURLs,
+  ProviderURLs,
   
   // URL builder interfaces
   DocumentationURLOptions,
@@ -134,8 +142,10 @@ export {
   ENTERPRISE_DOCUMENTATION_PATHS,
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,
+  TEXT_FRAGMENT_PATTERNS,
   FRAGMENT_BUILDERS,
   FRAGMENT_PARSERS,
+  SIGNIFICANT_COMMITS,
   
   // Syscall system
   SyscallOptimizer,
@@ -255,7 +265,7 @@ export function getBunReferenceWithTextFragment(): {
 }
 
 export function getGitHubBunTypesCommitURL(
-  commitHash: string = 'af76296637931381e9509c204c5f1af9cc174534'
+  commitHash: string = 'main'
 ): string {
   return docsURLBuilder.buildBunTypesURL(commitHash);
 }
@@ -316,8 +326,8 @@ export function getAllCriticalURLs(): Record<string, any> {
 
 // TypeScript helper for the example commit
 export const exampleCommit = {
-  hash: 'af76296637931381e9509c204c5f1af9cc174534' as const,
-  url: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types' as const,
+  hash: 'main' as const,
+  url: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types' as const,
   shortHash: 'af76296' as const,
   date: '2023-08-15' as const, // Example date - would need actual commit date
   description: 'Example commit showing bun-types package structure'

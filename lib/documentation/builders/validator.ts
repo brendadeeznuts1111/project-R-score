@@ -993,4 +993,166 @@ export class EnhancedDocumentationURLValidator {
            parsed.repo === 'bun' && 
            parsed.path?.includes('packages/bun-types') === true;
   }
+
+  /**
+   * Validate a CLI command
+   */
+  public static validateCLICommand(command: string): {
+    isValid: boolean;
+    command?: string;
+    args?: string[];
+    options?: Record<string, string | boolean>;
+    errors?: string[];
+  } {
+    if (!command.startsWith('bun')) {
+      return {
+        isValid: false,
+        errors: ['Command must start with "bun"']
+      };
+    }
+    
+    const parts = command.split(' ');
+    const cmd = parts[0];
+    const subcommand = parts[1];
+    
+    // Basic validation for common commands
+    const validCommands = ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade', 'init', 'dev', 'pm'];
+    
+    if (!validCommands.includes(subcommand)) {
+      return {
+        isValid: false,
+        command: subcommand,
+        errors: [`Unknown subcommand: ${subcommand}`]
+      };
+    }
+    
+    // Extract arguments and options
+    const args: string[] = [];
+    const options: Record<string, string | boolean> = {};
+    
+    for (let i = 2; i < parts.length; i++) {
+      const part = parts[i];
+      
+      if (part.startsWith('--')) {
+        // Option
+        const [key, value] = part.slice(2).split('=');
+        options[key] = value !== undefined ? value : true;
+      } else if (part.startsWith('-')) {
+        // Short option
+        options[part.slice(1)] = true;
+      } else {
+        // Argument
+        args.push(part);
+      }
+    }
+    
+    return {
+      isValid: true,
+      command: subcommand,
+      args: args.length > 0 ? args : undefined,
+      options: Object.keys(options).length > 0 ? options : undefined
+    };
+  }
+
+  /**
+   * Check if a command is a valid CLI command (simple boolean check)
+   */
+  public static isValidCLICommand(command: string): boolean {
+    return this.validateCLICommand(command).isValid;
+  }
+
+  /**
+   * Validate if a URL is a Bun.utils documentation URL
+   */
+  public static isBunUtilsURL(url: string): boolean {
+    const validation = this.validateBunDocumentationURL(url);
+    return validation.isValid &&
+           validation.type === 'technical_docs' &&
+           validation.path?.includes('/api/utils') === true;
+  }
+
+  /**
+   * Validate if a URL is a CLI documentation URL
+   */
+  public static isCLIDocumentationURL(url: string): boolean {
+    const validation = this.validateBunDocumentationURL(url);
+    return validation.isValid &&
+           (validation.path?.includes('/cli') === true ||
+            validation.path?.includes('/reference/cli') === true);
+  }
+
+  /**
+   * Extract utility function name from URL
+   */
+  public static extractUtilityFunction(url: string): string | null {
+    if (!this.isBunUtilsURL(url)) {
+      return null;
+    }
+    
+    const fragment = new URL(url).hash.slice(1);
+    if (fragment.startsWith('is') || fragment.startsWith('to')) {
+      return fragment;
+    }
+    
+    return null;
+  }
+
+  /**
+   * Validate Bun documentation URL (alias for validateDocumentationURL with Bun-specific defaults)
+   */
+  public static validateBunDocumentationURL(url: string): {
+    isValid: boolean;
+    provider?: DocumentationProvider;
+    type?: DocumentationURLType;
+    path?: string;
+    fragment?: string;
+    errors?: string[];
+  } {
+    const result = this.validateDocumentationURL(url, {
+      allowedProviders: [
+        DocumentationProvider.BUN_OFFICIAL,
+        DocumentationProvider.BUN_REFERENCE,
+        DocumentationProvider.BUN_TECHNICAL,
+        DocumentationProvider.BUN_API_DOCS,
+        DocumentationProvider.BUN_RUNTIME_DOCS
+      ],
+      requireHTTPS: true,
+      allowFragments: true
+    });
+
+    return {
+      isValid: result.isValid,
+      provider: result.provider,
+      type: result.category ? this.mapCategoryToType(result.category) : undefined,
+      path: result.metadata?.path as string | undefined,
+      fragment: result.metadata?.fragment as string | undefined,
+      errors: result.errors.length > 0 ? result.errors : undefined
+    };
+  }
+
+  /**
+   * Map category to URL type
+   */
+  private static mapCategoryToType(category: DocumentationCategory): DocumentationURLType {
+    switch (category) {
+      case DocumentationCategory.API_REFERENCE:
+        return 'api_reference';
+      case DocumentationCategory.RUNTIME_FEATURES:
+        return 'technical_docs';
+      case DocumentationCategory.TUTORIALS:
+      case DocumentationCategory.EXAMPLES_TUTORIALS:
+        return 'tutorials';
+      case DocumentationCategory.RSS_FEEDS:
+      case DocumentationCategory.BLOG_POSTS:
+        return 'rss';
+      case DocumentationCategory.SECURITY:
+      case DocumentationCategory.SECURITY_GUIDELINES:
+        return 'security';
+      case DocumentationCategory.PERFORMANCE:
+      case DocumentationCategory.PERFORMANCE_OPTIMIZATION:
+        return 'performance';
+      default:
+        return 'unknown';
+    }
+  }
 }

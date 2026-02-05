@@ -272,7 +272,7 @@ interface TagManagerConfig {
 // ============================================================================
 
 class ConfigLoader {
-  static load(): TagManagerConfig {
+  static YAML.parse(): TagManagerConfig {
     try {
       const nodeEnv = Bun.env.NODE_ENV || 'development';
       const isProduction = nodeEnv === 'production';
@@ -337,7 +337,7 @@ function getEnvWithDefault<T>(key: keyof Bun.Env, defaultValue: T): string | T {
 
 // Safe configuration loading with error boundaries
 function loadConfig(): TagManagerConfig {
-  return ConfigLoader.load();
+  return ConfigLoader.YAML.parse();
 }
 
 const CONFIG = loadConfig();

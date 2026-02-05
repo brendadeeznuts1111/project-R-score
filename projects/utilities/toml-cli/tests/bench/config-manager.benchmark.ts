@@ -86,7 +86,7 @@ async function runBenchmarks() {
   await timeAsyncOperation(
     "Config file loading (single)",
     async () => {
-      await manager.load(TEST_FILE);
+      await manager.YAML.parse(TEST_FILE);
     },
     500
   );
@@ -100,7 +100,7 @@ async function runBenchmarks() {
   console.log("✔️  Validation Benchmarks");
   console.log("-".repeat(60));
   
-  const config = await manager.load(TEST_FILE);
+  const config = await manager.YAML.parse(TEST_FILE);
   
   timeOperation(
     "Config validation (single)",
@@ -206,7 +206,7 @@ async function runBenchmarks() {
       const tempFile2 = `./benchmark-workflow-${workflowCounter++}.toml`;
       
       await manager.createExample(tempFile);
-      const cfg = await manager.load(tempFile);
+      const cfg = await manager.YAML.parse(tempFile);
       manager.validate(cfg);
       await manager.save(tempFile2, cfg);
       

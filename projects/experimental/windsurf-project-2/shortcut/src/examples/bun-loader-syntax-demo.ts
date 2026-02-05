@@ -225,7 +225,7 @@ async function demonstrateAdvancedPatterns() {
     ];
     
     for (const plugin of plugins) {
-      const config = await plugin.load();
+      const config = await plugin.YAML.parse();
       console.log(`   ✅ ${plugin.name}: ${config.app?.name || 'Loaded'}`);
     }
     

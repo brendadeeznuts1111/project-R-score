@@ -381,7 +381,7 @@ class InteractiveCLI {
 
   private cmdDump() {
     if (this.servers.length > 0 && this.servers[0]) {
-      dump(this.servers[0]);
+      YAML.stringify(this.servers[0]);
     }
   }
 

@@ -428,7 +428,7 @@ describe('McpStorage', () => {
       };
       const { storage } = createMemoryStorage(initial);
 
-      const servers = await storage.load();
+      const servers = await storage.YAML.parse();
 
       expect(servers).toHaveLength(2);
       const stdio = servers.find((server) => server.name === 'stdio')!;
@@ -456,7 +456,7 @@ describe('McpStorage', () => {
       };
       const { storage } = createMemoryStorage(initial);
 
-      const servers = await storage.load();
+      const servers = await storage.YAML.parse();
 
       expect(servers).toHaveLength(1);
       expect(servers[0].name).toBe('valid');

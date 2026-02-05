@@ -1,4 +1,4 @@
-import { DocsCacheManager } from './cache-manager'
+import { EnhancedDocsCacheManager } from './cache-manager'
 
 export interface BunApiIndex {
   topic: string
@@ -18,7 +18,7 @@ export class EnhancedDocsFetcher {
   private domains = ['sh', 'com'] as const
 
   constructor(config?: any) {
-    this.cache = new DocsCacheManager(config)
+    this.cache = new EnhancedDocsCacheManager(config)
     this.fallbackData = this.loadFallbackIndex()
   }
 
@@ -64,62 +64,23 @@ export class EnhancedDocsFetcher {
           sh: 'https://bun.sh/docs/runtime/binary-data',
           com: 'https://bun.com/docs/runtime/binary-data'
         }
-      },
-      {
-        topic: 'File System',
-        apis: ['Bun.file', 'Bun.write', 'Bun.read'],
-        url: '/runtime/file-system',
-        category: 'io',
-        domains: {
-          sh: 'https://bun.sh/docs/runtime/file-system',
-          com: 'https://bun.com/docs/runtime/file-system'
-        }
-      },
-      {
-        topic: 'SQLite',
-        apis: ['Bun.sqlite'],
-        url: '/runtime/sqlite',
-        category: 'database',
-        domains: {
-          sh: 'https://bun.sh/docs/runtime/sqlite',
-          com: 'https://bun.com/docs/runtime/sqlite'
-        }
-      },
-      {
-        topic: 'Password Hashing',
-        apis: ['Bun.password.hash', 'Bun.password.verify'],
-        url: '/runtime/password',
-        category: 'security',
-        domains: {
-          sh: 'https://bun.sh/docs/runtime/password',
-          com: 'https://bun.com/docs/runtime/password'
-        }
-      },
-      {
-        topic: 'Compression',
-        apis: ['Bun.zstdCompressSync', 'Bun.zstdDecompressSync'],
-        url: '/runtime/compression',
-        category: 'utilities',
-        domains: {
-          sh: 'https://bun.sh/docs/runtime/compression',
-          com: 'https://bun.com/docs/runtime/compression'
-        }
       }
+      // Add more fallback entries as needed
     ]
   }
 
   async fetchIndex(domain: 'sh' | 'com' = 'com'): Promise<BunApiIndex[]> {
-    const cacheKey = `index:${domain}` 
-    
+    const cacheKey = `index:${domain}`
+
     try {
-      const llmsUrl = `https://bun.${domain}/docs/llms.txt` 
+      const llmsUrl = `https://bun.${domain}/docs/llms.txt`
       const content = await this.cache.fetchWithCache<string>(llmsUrl, {
         headers: { 'Accept': 'text/plain' }
       })
-      
+
       const parsed = this.parseIndex(content, domain)
       await this.cache.set(cacheKey, parsed)
-      
+
       return parsed
     } catch (error) {
       console.warn(`Failed to fetch index from ${domain}, using fallback`)
@@ -130,30 +91,30 @@ export class EnhancedDocsFetcher {
   private parseIndex(content: string, domain: 'sh' | 'com'): BunApiIndex[] {
     const lines = content.split('\n')
     const apis: BunApiIndex[] = []
-    
+
     // Simple parser for the index format
     let currentCategory = ''
-    
+
     for (const line of lines) {
       if (line.startsWith('## ')) {
         currentCategory = line.replace('## ', '').trim().toLowerCase()
         continue
       }
-      
+
       if (line.includes('|') && !line.startsWith('| Topic')) {
         const parts = line.split('|').map(p => p.trim()).filter(Boolean)
         if (parts.length >= 2) {
           const topic = parts[0]
           const apiText = parts[1]
-          
+
           // Extract URLs
           const urlMatch = apiText.match(/\[.*?\]\((.*?)\)/)
           const url = urlMatch ? urlMatch[1] : ''
-          
+
           // Extract API names from backticks
           const apiMatches = apiText.match(/`([^`]+)`/g) || []
           const apis = apiMatches.map(m => m.replace(/`/g, ''))
-          
+
           if (url) {
             apis.push({
               topic,
@@ -162,7 +123,7 @@ export class EnhancedDocsFetcher {
               category: currentCategory,
               domains: {
                 sh: `https://bun.sh/docs${url.startsWith('/') ? url : `/${url}`}`,
-                com: `https://bun.com/docs${url.startsWith('/') ? url : `/${url}`}` 
+                com: `https://bun.com/docs${url.startsWith('/') ? url : `/${url}`}`
               },
               lastUpdated: new Date()
             })
@@ -170,14 +131,14 @@ export class EnhancedDocsFetcher {
         }
       }
     }
-    
+
     return apis
   }
 
   async search(query: string, domain: 'sh' | 'com' = 'com'): Promise<BunApiIndex[]> {
     const index = await this.fetchIndex(domain)
     const lowerQuery = query.toLowerCase()
-    
+
     return index.filter(item =>
       item.topic.toLowerCase().includes(lowerQuery) ||
       item.apis.some(api => api.toLowerCase().includes(lowerQuery)) ||
@@ -187,10 +148,10 @@ export class EnhancedDocsFetcher {
 
   async getApiDoc(apiName: string, domain: 'sh' | 'com' = 'com'): Promise<string | null> {
     const index = await this.fetchIndex(domain)
-    const found = index.find(item => 
+    const found = index.find(item =>
       item.apis.some(api => api === apiName || api.includes(apiName))
     )
-    
+
     return found ? found.domains[domain] : null
   }
 
@@ -201,32 +162,32 @@ export class EnhancedDocsFetcher {
         this.fetchIndex('sh'),
         this.fetchIndex('com')
       ])
-      
+
       const merged = new Map<string, BunApiIndex>()
-      
+
       // Merge results
       const processResult = (result: any) => {
         if (result.status === 'fulfilled') {
           result.value.forEach((item: BunApiIndex) => {
-            const key = `${item.topic}-${item.url}` 
+            const key = `${item.topic}-${item.url}`
             if (!merged.has(key)) {
               merged.set(key, item)
             }
           })
         }
       }
-      
+
       processResult(shIndex)
       processResult(comIndex)
-      
+
       this.fallbackData = Array.from(merged.values())
-      
+
       // Save updated fallback
       await Bun.write(
         `${this.cache.getStats().cacheDir}/fallback.json`,
         JSON.stringify(this.fallbackData, null, 2)
       )
-      
+
       console.log('✅ Fallback data updated:', this.fallbackData.length, 'APIs')
     } catch (error) {
       console.error('Failed to update fallback data:', error)

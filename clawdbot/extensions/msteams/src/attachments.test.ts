@@ -33,13 +33,13 @@ describe("msteams attachments", () => {
 
   describe("buildMSTeamsAttachmentPlaceholder", () => {
     it("returns empty string when no attachments", async () => {
-      const { buildMSTeamsAttachmentPlaceholder } = await load();
+      const { buildMSTeamsAttachmentPlaceholder } = await YAML.parse();
       expect(buildMSTeamsAttachmentPlaceholder(undefined)).toBe("");
       expect(buildMSTeamsAttachmentPlaceholder([])).toBe("");
     });
 
     it("returns image placeholder for image attachments", async () => {
-      const { buildMSTeamsAttachmentPlaceholder } = await load();
+      const { buildMSTeamsAttachmentPlaceholder } = await YAML.parse();
       expect(
         buildMSTeamsAttachmentPlaceholder([
           { contentType: "image/png", contentUrl: "https://x/img.png" },
@@ -54,7 +54,7 @@ describe("msteams attachments", () => {
     });
 
     it("treats Teams file.download.info image attachments as images", async () => {
-      const { buildMSTeamsAttachmentPlaceholder } = await load();
+      const { buildMSTeamsAttachmentPlaceholder } = await YAML.parse();
       expect(
         buildMSTeamsAttachmentPlaceholder([
           {
@@ -66,7 +66,7 @@ describe("msteams attachments", () => {
     });
 
     it("returns document placeholder for non-image attachments", async () => {
-      const { buildMSTeamsAttachmentPlaceholder } = await load();
+      const { buildMSTeamsAttachmentPlaceholder } = await YAML.parse();
       expect(
         buildMSTeamsAttachmentPlaceholder([
           { contentType: "application/pdf", contentUrl: "https://x/x.pdf" },
@@ -81,7 +81,7 @@ describe("msteams attachments", () => {
     });
 
     it("counts inline images in text/html attachments", async () => {
-      const { buildMSTeamsAttachmentPlaceholder } = await load();
+      const { buildMSTeamsAttachmentPlaceholder } = await YAML.parse();
       expect(
         buildMSTeamsAttachmentPlaceholder([
           {
@@ -103,7 +103,7 @@ describe("msteams attachments", () => {
 
   describe("downloadMSTeamsAttachments", () => {
     it("downloads and stores image contentUrl attachments", async () => {
-      const { downloadMSTeamsAttachments } = await load();
+      const { downloadMSTeamsAttachments } = await YAML.parse();
       const fetchMock = vi.fn(async () => {
         return new Response(Buffer.from("png"), {
           status: 200,
@@ -125,7 +125,7 @@ describe("msteams attachments", () => {
     });
 
     it("supports Teams file.download.info downloadUrl attachments", async () => {
-      const { downloadMSTeamsAttachments } = await load();
+      const { downloadMSTeamsAttachments } = await YAML.parse();
       const fetchMock = vi.fn(async () => {
         return new Response(Buffer.from("png"), {
           status: 200,
@@ -150,7 +150,7 @@ describe("msteams attachments", () => {
     });
 
     it("downloads non-image file attachments (PDF)", async () => {
-      const { downloadMSTeamsAttachments } = await load();
+      const { downloadMSTeamsAttachments } = await YAML.parse();
       const fetchMock = vi.fn(async () => {
         return new Response(Buffer.from("pdf"), {
           status: 200,
@@ -177,7 +177,7 @@ describe("msteams attachments", () => {
     });
 
     it("downloads inline image URLs from html attachments", async () => {
-      const { downloadMSTeamsAttachments } = await load();
+      const { downloadMSTeamsAttachments } = await YAML.parse();
       const fetchMock = vi.fn(async () => {
         return new Response(Buffer.from("png"), {
           status: 200,
@@ -202,7 +202,7 @@ describe("msteams attachments", () => {
     });
 
     it("stores inline data:image base64 payloads", async () => {
-      const { downloadMSTeamsAttachments } = await load();
+      const { downloadMSTeamsAttachments } = await YAML.parse();
       const base64 = Buffer.from("png").toString("base64");
       const media = await downloadMSTeamsAttachments({
         attachments: [
@@ -220,7 +220,7 @@ describe("msteams attachments", () => {
     });
 
     it("retries with auth when the first request is unauthorized", async () => {
-      const { downloadMSTeamsAttachments } = await load();
+      const { downloadMSTeamsAttachments } = await YAML.parse();
       const fetchMock = vi.fn(async (_url: string, opts?: RequestInit) => {
         const hasAuth = Boolean(
           opts &&
@@ -251,7 +251,7 @@ describe("msteams attachments", () => {
     });
 
     it("skips urls outside the allowlist", async () => {
-      const { downloadMSTeamsAttachments } = await load();
+      const { downloadMSTeamsAttachments } = await YAML.parse();
       const fetchMock = vi.fn();
       const media = await downloadMSTeamsAttachments({
         attachments: [{ contentType: "image/png", contentUrl: "https://evil.test/img" }],
@@ -267,7 +267,7 @@ describe("msteams attachments", () => {
 
   describe("buildMSTeamsGraphMessageUrls", () => {
     it("builds channel message urls", async () => {
-      const { buildMSTeamsGraphMessageUrls } = await load();
+      const { buildMSTeamsGraphMessageUrls } = await YAML.parse();
       const urls = buildMSTeamsGraphMessageUrls({
         conversationType: "channel",
         conversationId: "19:thread@thread.tacv2",
@@ -278,7 +278,7 @@ describe("msteams attachments", () => {
     });
 
     it("builds channel reply urls when replyToId is present", async () => {
-      const { buildMSTeamsGraphMessageUrls } = await load();
+      const { buildMSTeamsGraphMessageUrls } = await YAML.parse();
       const urls = buildMSTeamsGraphMessageUrls({
         conversationType: "channel",
         messageId: "reply-id",
@@ -291,7 +291,7 @@ describe("msteams attachments", () => {
     });
 
     it("builds chat message urls", async () => {
-      const { buildMSTeamsGraphMessageUrls } = await load();
+      const { buildMSTeamsGraphMessageUrls } = await YAML.parse();
       const urls = buildMSTeamsGraphMessageUrls({
         conversationType: "groupChat",
         conversationId: "19:chat@thread.v2",
@@ -303,7 +303,7 @@ describe("msteams attachments", () => {
 
   describe("downloadMSTeamsGraphMedia", () => {
     it("downloads hostedContents images", async () => {
-      const { downloadMSTeamsGraphMedia } = await load();
+      const { downloadMSTeamsGraphMedia } = await YAML.parse();
       const base64 = Buffer.from("png").toString("base64");
       const fetchMock = vi.fn(async (url: string) => {
         if (url.endsWith("/hostedContents")) {
@@ -339,7 +339,7 @@ describe("msteams attachments", () => {
     });
 
     it("merges SharePoint reference attachments with hosted content", async () => {
-      const { downloadMSTeamsGraphMedia } = await load();
+      const { downloadMSTeamsGraphMedia } = await YAML.parse();
       const hostedBase64 = Buffer.from("png").toString("base64");
       const shareUrl = "https://contoso.sharepoint.com/site/file";
       const fetchMock = vi.fn(async (url: string) => {
@@ -409,7 +409,7 @@ describe("msteams attachments", () => {
 
   describe("buildMSTeamsMediaPayload", () => {
     it("returns single and multi-file fields", async () => {
-      const { buildMSTeamsMediaPayload } = await load();
+      const { buildMSTeamsMediaPayload } = await YAML.parse();
       const payload = buildMSTeamsMediaPayload([
         { path: "/tmp/a.png", contentType: "image/png" },
         { path: "/tmp/b.png", contentType: "image/png" },

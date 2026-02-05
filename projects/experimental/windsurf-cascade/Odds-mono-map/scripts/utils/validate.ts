@@ -28,7 +28,7 @@ import { estimateShallowMemoryUsageOf } from 'bun:jsc';
 import { ErrorHandler, ErrorSeverity, ErrorCategory, createErrorContext, logger } from '../../src/core/error-handler.js';
 import { ValidationResult, FileStatistics } from '../../src/types/tick-processor-types.js';
 import chalk from 'chalk';
-import { parse as parseYaml } from 'yaml';
+import { YAML } from "bun";
 
 // Bun utilities for enhanced functionality
 const vaultPath = process.cwd();
