@@ -1,16 +1,6 @@
 // lib/ansi-dashboard.ts
 import { CONTENT_TYPES } from '../config/content-types';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 
 // Mock metrics feed (would integrate with your tier1380-metrics.ts)
 interface MetricsData {

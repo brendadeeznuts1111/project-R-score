@@ -844,6 +844,8 @@ export class AIOperationsManager extends EventEmitter {
   private completedCommands: Map<string, OptimizationResult> = new Map();
   private config: Record<string, any> = {}; // Loaded from YAML
   private cleanupTimer?: ReturnType<typeof setInterval>;
+  private processingTimer?: ReturnType<typeof setInterval>; // Timer for command processing
+  private metricsTimer?: ReturnType<typeof setInterval>; // Timer for metrics collection
   private mutex: Mutex;
   private readonly MAX_INSIGHTS = 1000;
   private readonly MAX_COMPLETED_COMMANDS = 500;
@@ -915,7 +917,11 @@ export class AIOperationsManager extends EventEmitter {
       }
     } catch (e) {
       logger.error('Config load failed', e instanceof Error ? e : new Error(String(e)));
-      openInEditor(import.meta.url, { line: 50 }); // Open at loadConfig line
+      // Only open editor in development environment
+      if (Bun.env.NODE_ENV === 'development') {
+        const fileName = __filename || 'ai-operations-manager.ts';
+        openInEditor(`file://${fileName}`, { line: 50 }); // Open at loadConfig line
+      }
     }
   }
 
@@ -1393,7 +1399,11 @@ export class AIOperationsManager extends EventEmitter {
           correlationId
         }, ['ai', 'error']);
         
-        openInEditor(import.meta.url, { line: 200 });  // Open at error line for debug
+        // Only open editor in development environment
+        if (Bun.env.NODE_ENV === 'development') {
+          const fileName = __filename || 'ai-operations-manager.ts';
+          openInEditor(`file://${fileName}`, { line: 200 });  // Open at error line for debug
+        }
         
         result.executionTime = (nanoseconds() - start) / 1e6;
         
@@ -1411,7 +1421,7 @@ export class AIOperationsManager extends EventEmitter {
    * Start processing command queue
    */
   private startProcessing(): void {
-    setInterval(async () => {
+    this.processingTimer = setInterval(async () => {
       if (!this.processing && this.commandQueue.length > 0) {
         this.processing = true;
         
@@ -1478,9 +1488,30 @@ export class AIOperationsManager extends EventEmitter {
   }
 
   /**
+   * Validate IP address format to prevent injection attacks
+   */
+  private validateIP(ip: string): boolean {
+    // Basic IPv4 validation regex
+    const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    
+    // Reject obvious injection attempts
+    if (ip.includes(';') || ip.includes('&&') || ip.includes('||') || ip.includes('|')) {
+      return false;
+    }
+    
+    return ipv4Regex.test(ip);
+  }
+
+  /**
    * Check rate limit for client IP
    */
   private checkRateLimit(clientIp: string): boolean {
+    // Validate IP format first
+    if (!this.validateIP(clientIp)) {
+      logger.warn('Invalid IP format detected, blocking request', { ip: clientIp });
+      return false;
+    }
+    
     const now = Date.now();
     const clientLimit = this.rateLimiter.get(clientIp);
     
@@ -1900,16 +1931,17 @@ export class AIOperationsManager extends EventEmitter {
    * Start metrics collection
    */
   private startMetricsCollection(): void {
-    setInterval(() => {
+    this.metricsTimer = setInterval(() => {
       const metrics = this.getCurrentMetrics();
       this.metricsHistory.push(metrics);
       
-      // Keep only last 1000 data points
+      // Keep only last 1000 metrics entries
       if (this.metricsHistory.length > 1000) {
         this.metricsHistory = this.metricsHistory.slice(-1000);
       }
       
-      this.emit('metrics:collected', metrics);
+      // Emit metrics event for monitoring
+      this.emit('metrics:collected', { metrics, timestamp: Date.now() });
     }, 5000); // Collect metrics every 5 seconds
   }
 
@@ -2065,8 +2097,8 @@ export class AIOperationsManager extends EventEmitter {
     let cleanedCommands = 0;
     let cleanedInsights = 0;
 
-    // Clean up expired completed commands
-    for (const [id, result] of this.completedCommands) {
+    // Clean up expired completed commands - use Array.from for compatibility
+    for (const [id, result] of Array.from(this.completedCommands.entries())) {
       if (now - result.executionTime > this.COMMAND_TTL) {
         this.completedCommands.delete(id);
         cleanedCommands++;
@@ -2128,20 +2160,34 @@ export class AIOperationsManager extends EventEmitter {
   }
 
   /**
-   * Stop the AI operations manager
+   * Stop the AI operations manager and clean up resources
    */
   stop(): void {
+    // Clear all timers to prevent memory leaks
     if (this.cleanupTimer) {
       clearInterval(this.cleanupTimer);
       this.cleanupTimer = undefined;
     }
     
-    // Stop advanced caches
+    if (this.processingTimer) {
+      clearInterval(this.processingTimer);
+      this.processingTimer = undefined;
+    }
+    
+    if (this.metricsTimer) {
+      clearInterval(this.metricsTimer);
+      this.metricsTimer = undefined;
+    }
+    
+    // Stop cache instances
     this.insightsCache.stop();
     this.predictionsCache.stop();
     this.metricsCache.stop();
     
-    // Clear all data
+    // Remove all event listeners
+    this.removeAllListeners();
+    
+    // Clear data structures
     this.commandQueue = [];
     this.insights = [];
     this.learningData = [];
@@ -2151,10 +2197,7 @@ export class AIOperationsManager extends EventEmitter {
     this.rateLimiter.clear();
     this.mlModels.clear();
     
-    // Remove all event listeners
-    this.removeAllListeners();
-    
-    logger.info('AI Operations Manager stopped', {}, ['ai', 'lifecycle']);
+    logger.info('AI Operations Manager stopped and cleaned up');
   }
 
   /**

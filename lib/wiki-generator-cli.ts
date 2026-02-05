@@ -9,16 +9,6 @@
 import { write, exists } from "bun";
 import { r2MCPIntegration } from './mcp/r2-integration';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from './documentation/constants/utils';
 
 interface WikiConfig {

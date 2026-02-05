@@ -1,5 +1,5 @@
 // lib/docs/patterns-enhanced.ts - Enhanced documentation pattern matching with secrets support
-import { BUN_DOCS } from './url-builder';
+import { BUN_DOCS_URL_HELPERS as BUN_DOCS } from './url-builder';
 
 export const DOC_PATTERNS = {
   // Secret URL detection

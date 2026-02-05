@@ -227,7 +227,7 @@ export function getAllDocumentationURLs(): Record<string, string> {
     securityGuide: 'https://bun.sh/docs/security',
     
     // RSS Feeds
-    bunRSS: 'https://bun.sh/feed.xml',
+    bunRSS: 'https://bun.sh/rss.xml',
     bunBlog: 'https://bun.sh/blog',
     
     // Enterprise
@@ -250,7 +250,7 @@ export function getBunRSSURL(): string {
 }
 
 export function getBunTechnicalRSSURL(): string {
-  return 'https://bun.sh/feed.xml';
+  return 'https://bun.sh/rss.xml';
 }
 
 export function getBunReferenceWithTextFragment(): {
@@ -301,7 +301,7 @@ export function getAllCriticalURLs(): Record<string, any> {
     // RSS feeds from both domains
     rssFeeds: {
       main: 'https://bun.com/rss.xml',           // Main bun.com RSS
-      technical: 'https://bun.sh/feed.xml',     // Technical bun.sh RSS
+      technical: 'https://bun.sh/rss.xml',     // Technical bun.sh RSS
       blog: 'https://bun.com/blog/rss.xml',     // Blog RSS
       releases: 'https://bun.com/releases/rss.xml', // Release announcements
       security: 'https://bun.com/security/rss.xml', // Security updates

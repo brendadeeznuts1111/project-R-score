@@ -7,6 +7,8 @@
  * with compression, caching, and package-specific bucket management.
  */
 
+import { RSS_URLS } from '../../config/urls';
+
 export interface R2StorageConfig {
   accountId: string;
   accessKeyId: string;
@@ -91,7 +93,7 @@ export class R2Storage {
     <div id="rss-feed" class="rss-feed"></div>
     <script>
         // RSS feed integration
-        fetch('/rss/${packageName}').then(r => r.json()).then(feed => {
+        fetch('${RSS_URLS.OUR_FEED}/${packageName}').then(r => r.json()).then(feed => {
             const container = document.getElementById('rss-feed');
             if (feed && feed.items) {
                 container.innerHTML = feed.items.map(item => 

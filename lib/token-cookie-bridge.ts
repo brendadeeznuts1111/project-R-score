@@ -1,16 +1,6 @@
 // lib/token-cookie-bridge.ts — Cookie-based token persistence with proper crypto (Risk: 2.501100000)
 import { Cookie, CookieMap } from "bun";
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 import { SecurityError, EnterpriseErrorCode } from './core-errors';
 
 /**
@@ -67,7 +57,7 @@ class EncryptionKeyManager {
     const seed = process.env.TOKEN_ENCRYPTION_SEED;
     
     if (!seed) {
-      const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev';
+      const isDev = Bun.env.NODE_ENV === 'development' || Bun.env.NODE_ENV === 'dev';
       if (!isDev) {
         throw new SecurityError(
           EnterpriseErrorCode.SECURITY_ENCRYPTION_FAILED,

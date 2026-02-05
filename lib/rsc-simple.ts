@@ -1,14 +1,4 @@
 /**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
-/**
  * Simple RSC Handler - Using Bun's Built-in Keep-Alive Pooling
  * 
  * Achieves 85% of HTTP/2 multiplexing performance with zero custom implementation.

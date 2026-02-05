@@ -1,15 +1,5 @@
 import type { CookieInit } from 'bun';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 
 export class ABTestManager {
   private cookies: Bun.CookieMap;
@@ -44,7 +34,7 @@ export class ABTestManager {
       weights = Array(variants.length).fill(100 / variants.length),
       cookieName = `ab_${id.replace(/[^a-z0-9]/gi, '_')}`,
       maxAgeDays = 30,
-      secure = process.env.NODE_ENV === 'production',
+      secure = Bun.env.NODE_ENV === 'production',
       sameSite = 'lax',
       httpOnly = true
     } = config;

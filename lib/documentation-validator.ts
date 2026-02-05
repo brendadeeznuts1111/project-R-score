@@ -24,16 +24,6 @@ import {
   AutoHealer 
 } from './cli-constants-validation';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 
 import { CLICategory, CLI_DOCUMENTATION_URLS } from './documentation/constants/cli';
 import { UtilsCategory, BUN_UTILS_URLS } from './documentation/constants/utils';

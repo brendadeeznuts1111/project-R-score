@@ -10,16 +10,6 @@
 
 import { validateOrThrow, StringValidators, NumberValidators } from './core-validation';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 import { createValidationError, EnterpriseErrorCode, createSystemError } from './core-errors';
 import { DOCUMENTATION_PROVIDERS, DocumentationProvider } from './core-documentation';
 

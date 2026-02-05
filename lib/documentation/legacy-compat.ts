@@ -8,20 +8,21 @@
  */
 
 import { docsURLBuilder } from './builders/url-builder';
-import { QUICK_REFERENCE_URLS } from './constants/domains';
+import { QUICK_REFERENCE_URLS, ENTERPRISE_DOCUMENTATION_BASE_URLS, DocumentationProvider } from './constants/domains';
 
-// Legacy compatibility exports for existing code
+// Derive BUN_DOCS from the canonical enterprise source
+const _official = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
 export const BUN_DOCS = {
-  BASE: 'https://bun.sh',
-  DOCS: 'https://bun.sh/docs',
-  API: 'https://bun.sh/docs/api',
-  RUNTIME: 'https://bun.sh/docs/runtime',
-  CLI: 'https://bun.sh/docs/cli',
-  GUIDES: 'https://bun.sh/docs/guides',
-  EXAMPLES: 'https://bun.sh/docs/examples',
-  BLOG: 'https://bun.sh/blog',
-  SECURITY: 'https://bun.sh/docs/security',
-  PERFORMANCE: 'https://bun.sh/docs/performance'
+  BASE: _official.BASE,
+  DOCS: _official.DOCS,
+  API: _official.API,
+  RUNTIME: _official.RUNTIME,
+  CLI: _official.CLI,
+  GUIDES: _official.GUIDES,
+  EXAMPLES: _official.EXAMPLES,
+  BLOG: _official.BLOG,
+  SECURITY: _official.SECURITY,
+  PERFORMANCE: _official.PERFORMANCE
 };
 
 export const TYPED_ARRAY_URLS = {
@@ -37,7 +38,7 @@ export const TYPED_ARRAY_URLS = {
 
 export const RSS_URLS = {
   MAIN: 'https://bun.com/rss.xml',
-  TECHNICAL: 'https://bun.sh/feed.xml',
+  TECHNICAL: 'https://bun.sh/rss.xml',
   BLOG: 'https://bun.com/blog/rss.xml',
   RELEASES: 'https://bun.com/releases/rss.xml',
   SECURITY: 'https://bun.com/security/rss.xml',

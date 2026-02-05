@@ -196,13 +196,13 @@ export interface DomainPreferences {
 // Enterprise base URLs with environment awareness
 export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_OFFICIAL]: {
-    BASE: process.env.BUN_DOCS_BASE_URL || 'https://bun.sh',
-    DOCS: process.env.BUN_DOCS_URL || 'https://bun.sh/docs',
+    BASE: Bun.env.BUN_DOCS_BASE_URL || 'https://bun.sh',
+    DOCS: Bun.env.BUN_DOCS_URL || 'https://bun.sh/docs',
     API: 'https://bun.sh/docs/api',
     RUNTIME: 'https://bun.sh/docs/runtime',
     GUIDES: 'https://bun.sh/docs/guides',
     EXAMPLES: 'https://bun.sh/docs/examples',
-    RSS_FEED: 'https://bun.sh/feed.xml',
+    RSS_FEED: 'https://bun.sh/rss.xml',
     BLOG: 'https://bun.sh/blog',
     SECURITY: 'https://bun.sh/docs/security',
     PERFORMANCE: 'https://bun.sh/docs/performance',
@@ -211,7 +211,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     DOWNLOADS: 'https://bun.sh/download',
     CHANGELOG: 'https://bun.sh/changelog',
     COMPARE: 'https://bun.sh/compare',
-    FEED: 'https://bun.sh/feed.xml'
+    FEED: 'https://bun.sh/rss.xml'
   },
   
   [DocumentationProvider.BUN_TECHNICAL]: {
@@ -224,7 +224,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     PERFORMANCE: 'https://bun.sh/docs/performance',
     SECURITY: 'https://bun.sh/docs/security',
     TECHNICAL_BLOG: 'https://bun.sh/blog',
-    TECHNICAL_RSS: 'https://bun.sh/feed.xml'
+    TECHNICAL_RSS: 'https://bun.sh/rss.xml'
   },
   
   [DocumentationProvider.BUN_API_DOCS]: {
@@ -257,7 +257,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   
   // bun.com domain (reference portal)
   [DocumentationProvider.BUN_REFERENCE]: {
-    BASE: process.env.BUN_REFERENCE_URL || 'https://bun.com',
+    BASE: Bun.env.BUN_REFERENCE_URL || 'https://bun.com',
     REFERENCE: 'https://bun.com/reference',     // Main reference portal
     API_REFERENCE: 'https://bun.com/reference/api',
     CLI_REFERENCE: 'https://bun.com/reference/cli',
@@ -278,7 +278,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
   
   [DocumentationProvider.BUN_GUIDES]: {
-    BASE: process.env.BUN_GUIDES_URL || 'https://bun.com',
+    BASE: Bun.env.BUN_GUIDES_URL || 'https://bun.com',
     GUIDES: 'https://bun.com/guides',           // Main guides portal
     GETTING_STARTED: 'https://bun.com/guides/getting-started',
     TUTORIALS: 'https://bun.com/guides/tutorials',
@@ -325,7 +325,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_FEEDS]: {
     BASE: 'https://bun.com',
     MAIN_FEED: 'https://bun.com/rss.xml',
-    TECHNICAL_FEED: 'https://bun.sh/feed.xml',
+    TECHNICAL_FEED: 'https://bun.sh/rss.xml',
     BLOG_FEED: 'https://bun.com/blog/rss.xml',
     RELEASES_FEED: 'https://bun.com/releases/rss.xml',
     SECURITY_FEED: 'https://bun.com/security/rss.xml',
@@ -390,8 +390,8 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
   
   [DocumentationProvider.GITHUB_ENTERPRISE]: {
-    BASE: process.env.GITHUB_ENTERPRISE_URL || 'https://github.com',
-    ENTERPRISE: process.env.GITHUB_ENTERPRISE_URL || 'https://github.com/enterprise',
+    BASE: Bun.env.GITHUB_ENTERPRISE_URL || 'https://github.com',
+    ENTERPRISE: Bun.env.GITHUB_ENTERPRISE_URL || 'https://github.com/enterprise',
     API_V3: 'https://api.github.com',
     API_V4: 'https://api.github.com/graphql',
     RAW_CONTENT: 'https://raw.githubusercontent.com',
@@ -399,8 +399,8 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
   
   [DocumentationProvider.INTERNAL_WIKI]: {
-    BASE: process.env.INTERNAL_WIKI_URL || 'https://wiki.internal.example.com',
-    API: process.env.INTERNAL_WIKI_API_URL || 'https://wiki-api.internal.example.com',
+    BASE: Bun.env.INTERNAL_WIKI_URL || 'https://wiki.internal.example.com',
+    API: Bun.env.INTERNAL_WIKI_API_URL || 'https://wiki-api.internal.example.com',
     SEARCH: '/search',
     CATEGORIES: '/categories'
   },
@@ -457,7 +457,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   
   [DocumentationProvider.RSS_FEEDS]: {
     BASE: 'https://bun.sh',
-    MAIN_FEED: 'https://bun.sh/feed.xml',
+    MAIN_FEED: 'https://bun.sh/rss.xml',
     BLOG_FEED: 'https://bun.com/blog/rss.xml'
   },
   
@@ -481,7 +481,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     PERFORMANCE: 'https://bun.sh/docs/performance',
     SECURITY: 'https://bun.sh/docs/security',
     TECHNICAL_BLOG: 'https://bun.sh/blog',
-    TECHNICAL_RSS: 'https://bun.sh/feed.xml'
+    TECHNICAL_RSS: 'https://bun.sh/rss.xml'
   },
   
   [DocumentationProvider.BUN_API_DOCS]: {
@@ -513,7 +513,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
   
   [DocumentationProvider.BUN_REFERENCE]: {
-    BASE: process.env.BUN_REFERENCE_URL || 'https://bun.com',
+    BASE: Bun.env.BUN_REFERENCE_URL || 'https://bun.com',
     REFERENCE: 'https://bun.com/reference',
     API_REFERENCE: 'https://bun.com/reference/api',
     CLI_REFERENCE: 'https://bun.com/reference/cli',
@@ -528,7 +528,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
   
   [DocumentationProvider.BUN_GUIDES]: {
-    BASE: process.env.BUN_GUIDES_URL || 'https://bun.com',
+    BASE: Bun.env.BUN_GUIDES_URL || 'https://bun.com',
     GUIDES: 'https://bun.com/guides',
     GETTING_STARTED: 'https://bun.com/guides/getting-started',
     TUTORIALS: 'https://bun.com/guides/tutorials',
@@ -574,7 +574,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_FEEDS]: {
     BASE: 'https://bun.com',
     MAIN_FEED: 'https://bun.com/rss.xml',
-    TECHNICAL_FEED: 'https://bun.sh/feed.xml',
+    TECHNICAL_FEED: 'https://bun.sh/rss.xml',
     BLOG_FEED: 'https://bun.com/blog/rss.xml',
     RELEASES_FEED: 'https://bun.com/releases/rss.xml',
     SECURITY_FEED: 'https://bun.com/security/rss.xml',
@@ -725,7 +725,7 @@ export const QUICK_REFERENCE_URLS = {
   // RSS feeds from different sources
   RSS_FEEDS: {
     MAIN: 'https://bun.com/rss.xml',                                           // Main bun.com RSS
-    TECHNICAL: 'https://bun.sh/feed.xml',                                      // Technical bun.sh RSS
+    TECHNICAL: 'https://bun.sh/rss.xml',                                      // Technical bun.sh RSS
     BLOG: 'https://bun.com/blog/rss.xml',                                      // Blog RSS
     RELEASES: 'https://bun.com/releases/rss.xml',                              // Release announcements
     SECURITY: 'https://bun.com/security/rss.xml',                              // Security updates

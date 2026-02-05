@@ -163,16 +163,6 @@ if (import.meta.path !== Bun.main) {
 // ✅ SAFE PATTERN 1:
 import { ensureDirectExecution } from './shared/tools/entry-guard';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 ensureDirectExecution();
 // Your code here...
 

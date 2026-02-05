@@ -8,16 +8,6 @@
 
 import { Tier1380EnterpriseAuth } from './enterprise-auth';
 
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 import { styled, log } from '../theme/colors';
 import Tier1380SecretManager from './tier1380-secret-manager';
 
