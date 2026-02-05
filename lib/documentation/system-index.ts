@@ -19,9 +19,9 @@ import {
   DocumentationUserType,
   ENTERPRISE_DOCUMENTATION_BASE_URLS,
   DOCUMENTATION_URL_MAPPINGS
-} from './constants/domains.ts';
-import { ENTERPRISE_URL_FRAGMENTS } from './constants/fragments.ts';
-import { ENTERPRISE_DOCUMENTATION_PATHS } from './constants/categories.ts';
+} from './constants/domains';
+import { ENTERPRISE_URL_FRAGMENTS } from './constants/fragments';
+import { ENTERPRISE_DOCUMENTATION_PATHS } from './constants/categories';
 
 export interface DocumentationIndexEntry {
   id: string;

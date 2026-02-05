@@ -6,7 +6,7 @@
  * @version 4.5
  */
 
-import { Tier1380PasswordSecurity } from './enterprise-password-security.ts';
+import { Tier1380PasswordSecurity } from './enterprise-password-security';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -18,9 +18,9 @@ import { Tier1380PasswordSecurity } from './enterprise-password-security.ts';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { styled, log } from '../theme/colors.ts';
-import { Utils } from '../utils/index.ts';
-import Tier1380SecretManager from './tier1380-secret-manager.ts';
+import { styled, log } from '../theme/colors';
+import { Utils } from '../utils/index';
+import Tier1380SecretManager from './tier1380-secret-manager';
 
 interface AuthenticationContext {
   ipAddress: string;

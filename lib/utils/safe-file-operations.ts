@@ -8,7 +8,7 @@
 import { readFile, writeFile, appendFile, mkdir, stat, unlink, copyFile, rename } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, dirname, basename, extname } from 'path';
-import { ErrorHandler } from './error-handler.ts';
+import { ErrorHandler } from './error-handler';
 
 export interface FileOperationOptions {
   encoding?: BufferEncoding;

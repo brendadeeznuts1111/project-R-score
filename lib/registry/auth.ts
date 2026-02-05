@@ -5,8 +5,8 @@
  * Supports: none, basic, token, and JWT auth modes
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import type { RegistryUser, AuthToken } from './registry-types.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import type { RegistryUser, AuthToken } from './registry-types';
 
 export type AuthType = 'none' | 'basic' | 'token' | 'jwt';
 

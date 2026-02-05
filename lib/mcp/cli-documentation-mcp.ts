@@ -10,11 +10,11 @@ import {
   CLIDocumentationHandler, 
   CLIExampleGenerator, 
   CLIDocumentationSearch 
-} from '../core/cli-documentation-handler.ts';
-import { CLICategory, CLI_COMMAND_EXAMPLES } from '../documentation/constants/cli.ts';
-import { URLHandler, URLFragmentUtils } from '../core/url-handler.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { handleError } from '../core/error-handling.ts';
+} from '../core/cli-documentation-handler';
+import { CLICategory, CLI_COMMAND_EXAMPLES } from '../documentation/constants/cli';
+import { URLHandler, URLFragmentUtils } from '../core/url-handler';
+import { styled, FW_COLORS } from '../theme/colors';
+import { handleError } from '../core/error-handling';
 
 /**
  * CLI Documentation MCP Server

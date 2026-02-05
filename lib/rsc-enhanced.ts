@@ -19,7 +19,7 @@ import { dns, fetch } from "bun";
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ProductionRSCRequest, ProductionRSCResponse } from './rsc-production.ts';
+import { ProductionRSCRequest, ProductionRSCResponse } from './rsc-production';
 
 export interface EnhancedRSCRequest extends ProductionRSCRequest {
   prefetch?: boolean;

@@ -14,7 +14,7 @@ if (import.meta.main) {
   console.log('ℹ️  Script was imported, not executed directly');
 }
 
-import { SpawnOptimizer, EnvironmentOptimizer } from './performance-optimizer.ts';
+import { SpawnOptimizer, EnvironmentOptimizer } from './performance-optimizer';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -26,8 +26,8 @@ import { SpawnOptimizer, EnvironmentOptimizer } from './performance-optimizer.ts
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { OptimizedServer } from './optimized-server.ts';
-import { OptimizedSpawn } from './optimized-spawn-test.ts';
+import { OptimizedServer } from './optimized-server';
+import { OptimizedSpawn } from './optimized-spawn-test';
 
 // ============================================================================
 // SECURITY TESTS

@@ -5,10 +5,10 @@
  * for automated documentation generation and management.
  */
 
-import { WikiURLGenerator } from '../wiki-generator.ts';
-import { r2MCPIntegration } from './r2-integration.ts';
-import { masterTokenManager } from '../security/master-token.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { WikiURLGenerator } from '../wiki-generator';
+import { r2MCPIntegration } from './r2-integration';
+import { masterTokenManager } from '../security/master-token';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface WikiGenerationRequest {
   format: 'markdown' | 'html' | 'json' | 'all';

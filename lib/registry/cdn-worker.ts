@@ -8,7 +8,7 @@
  * - Handles npm API routes at the edge
  */
 
-import type { PackageManifest } from './registry-types.ts';
+import type { PackageManifest } from './registry-types';
 
 export interface Env {
   R2_BUCKET: R2Bucket;

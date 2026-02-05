@@ -10,7 +10,7 @@
  * - Hook system for custom event handlers
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface R2Event {
   id: string;

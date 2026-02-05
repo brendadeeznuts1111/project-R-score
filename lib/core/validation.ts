@@ -6,7 +6,7 @@
  * Type-safe validation with detailed error reporting and sanitization
  */
 
-import { ValidationError } from './error-handling.ts';
+import { ValidationError } from './error-handling';
 
 /**
  * Validation result interface

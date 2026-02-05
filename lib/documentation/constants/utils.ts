@@ -9,7 +9,7 @@
  * Generated automatically by optimize-examples-prefetch.ts
  */
 // lib/documentation/constants/utils.ts
-import { URLHandler, URLFragmentUtils } from '../../core/url-handler.ts';
+import { URLHandler, URLFragmentUtils } from '../../core/url-handler';
 
 export enum UtilsCategory {
   FILE_SYSTEM = 'file_system',

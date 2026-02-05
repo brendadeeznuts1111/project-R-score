@@ -11,9 +11,9 @@
  * - Sync job monitoring and management
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { r2EventSystem } from './r2-event-system.ts';
-import { r2BatchOperations } from './r2-batch-operations.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import { r2EventSystem } from './r2-event-system';
+import { r2BatchOperations } from './r2-batch-operations';
 
 export type SyncDirection = 'one-way' | 'bi-directional' | 'multi-master';
 export type ConflictStrategy = 'source-wins' | 'target-wins' | 'timestamp-wins' | 'manual' | 'merge';

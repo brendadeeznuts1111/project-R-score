@@ -7,8 +7,8 @@
  * and enterprise features with the MCP system and R2 storage.
  */
 
-import { r2MCPIntegration } from './r2-integration.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { r2MCPIntegration } from './r2-integration';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface DomainConfig {
   primary: {

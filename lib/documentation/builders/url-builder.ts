@@ -25,18 +25,18 @@ import {
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA,
   QUICK_REFERENCE_URLS
-} from '../constants/domains.ts';
+} from '../constants/domains';
 import { 
   ENTERPRISE_DOCUMENTATION_PATHS,
   IntelligentRouting
-} from '../constants/categories.ts';
+} from '../constants/categories';
 import { 
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,
   FRAGMENT_BUILDERS,
   FRAGMENT_VALIDATION
-} from '../constants/fragments.ts';
-import { URLHandler, URLFragmentUtils } from '../../core/url-handler.ts';
+} from '../constants/fragments';
+import { URLHandler, URLFragmentUtils } from '../../core/url-handler';
 
 // Enhanced interface for URL building options
 export interface DocumentationURLOptions {

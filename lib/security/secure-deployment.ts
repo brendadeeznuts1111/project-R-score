@@ -6,7 +6,7 @@
  * @version 4.5
  */
 
-import { Tier1380EnterpriseAuth } from './enterprise-auth.ts';
+import { Tier1380EnterpriseAuth } from './enterprise-auth';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -18,8 +18,8 @@ import { Tier1380EnterpriseAuth } from './enterprise-auth.ts';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { styled, log } from '../theme/colors.ts';
-import Tier1380SecretManager from './tier1380-secret-manager.ts';
+import { styled, log } from '../theme/colors';
+import Tier1380SecretManager from './tier1380-secret-manager';
 
 interface DeploymentCredentials {
   username: string;

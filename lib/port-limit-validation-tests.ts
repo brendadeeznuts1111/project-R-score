@@ -12,7 +12,7 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-import { PortManager, ConnectionPool, OptimizedFetch, ProjectServer } from './port-management-system.ts';
+import { PortManager, ConnectionPool, OptimizedFetch, ProjectServer } from './port-management-system';
 
 /**
  * 🚀 Prefetch Optimizations

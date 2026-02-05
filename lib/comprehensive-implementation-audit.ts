@@ -21,7 +21,7 @@ if (import.meta.path !== Bun.main) {
 // IMPORT ALL COMPONENTS FOR AUDIT
 // ============================================================================
 
-import { SpawnOptimizer, EnvironmentOptimizer, ServerOptimizer } from './performance-optimizer.ts';
+import { SpawnOptimizer, EnvironmentOptimizer, ServerOptimizer } from './performance-optimizer';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -33,9 +33,9 @@ import { SpawnOptimizer, EnvironmentOptimizer, ServerOptimizer } from './perform
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { OptimizedServer } from './optimized-server.ts';
-import { OptimizedSpawn } from './optimized-spawn-test.ts';
-import { PortManager, ConnectionPool, OptimizedFetch, ProjectServer, DNSOptimizer, ValidationUtils } from './port-management-system.ts';
+import { OptimizedServer } from './optimized-server';
+import { OptimizedSpawn } from './optimized-spawn-test';
+import { PortManager, ConnectionPool, OptimizedFetch, ProjectServer, DNSOptimizer, ValidationUtils } from './port-management-system';
 import { write } from 'bun';
 
 // ============================================================================

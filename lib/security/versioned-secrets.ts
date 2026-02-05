@@ -7,7 +7,7 @@
  * @version 5.1
  */
 
-import { styled, log, FW_COLORS } from '../theme/colors.ts';
+import { styled, log, FW_COLORS } from '../theme/colors';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -19,8 +19,8 @@ import { styled, log, FW_COLORS } from '../theme/colors.ts';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { Utils } from '../utils/index.ts';
-import type { R2Metadata } from '../types/index.ts';
+import { Utils } from '../utils/index';
+import type { R2Metadata } from '../types/index';
 
 export interface VersionMetadata {
   author?: string;

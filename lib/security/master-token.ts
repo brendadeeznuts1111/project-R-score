@@ -6,7 +6,7 @@
  */
 
 import { createHmac, createHash, randomBytes } from 'node:crypto';
-import { r2MCPIntegration } from '../mcp/r2-integration.ts';
+import { r2MCPIntegration } from '../mcp/r2-integration';
 
 export interface MasterTokenConfig {
   tokenId: string;

@@ -7,7 +7,7 @@
  */
 
 import { write, exists } from "bun";
-import { r2MCPIntegration } from './mcp/r2-integration.ts';
+import { r2MCPIntegration } from './mcp/r2-integration';
 
 /**
  * 🚀 Prefetch Optimizations

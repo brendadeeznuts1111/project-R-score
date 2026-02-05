@@ -13,7 +13,7 @@
  *   bun run bun:secrets:backup        - Backup all secrets to R2
  */
 
-import { styled } from '../theme/colors.ts';
+import { styled } from '../theme/colors';
 
 // R2 Configuration from environment - NO DEFAULTS FOR SECURITY
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;

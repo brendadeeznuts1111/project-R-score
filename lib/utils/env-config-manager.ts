@@ -14,8 +14,8 @@
  * @version 1.0.0
  */
 
-import { logger } from './logger.ts';
-import { getErrorMessage } from './error-utils.ts';
+import { logger } from './logger';
+import { getErrorMessage } from './error-utils';
 
 export interface EnvConfigOptions {
   /** Environment name (development, staging, production) */

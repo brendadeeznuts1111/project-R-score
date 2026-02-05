@@ -9,8 +9,8 @@
  * - IAM-style access control
  */
 
-import { styled } from '../theme/colors.ts';
-import { R2StorageAdapter } from './r2-storage.ts';
+import { styled } from '../theme/colors';
+import { R2StorageAdapter } from './r2-storage';
 
 // Use bun.secrets if available (Bun 1.2+)
 const secrets = (Bun as any).secrets;

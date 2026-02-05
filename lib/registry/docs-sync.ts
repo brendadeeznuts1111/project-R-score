@@ -6,7 +6,7 @@
  * Uses R2 as the central sync backend.
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface UserPreferences {
   userId: string;

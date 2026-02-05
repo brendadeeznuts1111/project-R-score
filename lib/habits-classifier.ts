@@ -15,7 +15,7 @@ import {
   type HabitsData,
   type HabitsTier,
   type Transaction,
-} from './habits-pure.ts';
+} from './habits-pure';
 
 // Re-export pure functions and types
 export {

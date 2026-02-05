@@ -9,8 +9,8 @@
  * - Lifecycle automation
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { R2StorageAdapter } from './r2-storage.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import { R2StorageAdapter } from './r2-storage';
 
 // Use bun.semver if available (Bun 1.2+)
 const semver = (Bun as any).semver || {

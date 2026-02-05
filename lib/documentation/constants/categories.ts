@@ -11,7 +11,7 @@ import {
   DocumentationProvider, 
   DocumentationCategory,
   DocumentationDomain 
-} from './domains.ts';
+} from './domains';
 
 // Structured path constants for each category
 export const ENTERPRISE_DOCUMENTATION_PATHS = {

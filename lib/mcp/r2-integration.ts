@@ -6,19 +6,19 @@
  * Fixed concurrent operations, standardized error handling, and proper cache management
  */
 
-import { r2MCPIntegration as baseR2Integration } from './r2-integration-base.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { r2MCPIntegration as baseR2Integration } from './r2-integration-base';
+import { styled, FW_COLORS } from '../theme/colors';
 import { 
   handleError, 
   safeAsync, 
   safeAsyncWithRetry, 
   R2ConnectionError, 
   R2DataError 
-} from '../core/error-handling.ts';
-import { validateR2Key } from '../core/validation.ts';
-import { globalCache } from '../core/cache-manager.ts';
-import { safeConcurrent } from '../core/concurrent-operations.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+} from '../core/error-handling';
+import { validateR2Key } from '../core/validation';
+import { globalCache } from '../core/cache-manager';
+import { safeConcurrent } from '../core/concurrent-operations';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface R2Config {
   accountId: string;

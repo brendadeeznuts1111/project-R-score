@@ -6,7 +6,7 @@
  * Intelligent caching with versioning, invalidation, and performance optimization
  */
 
-import { CacheError, handleError } from './error-handling.ts';
+import { CacheError, handleError } from './error-handling';
 
 /**
  * Cache entry interface

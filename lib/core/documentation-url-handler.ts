@@ -7,11 +7,11 @@
  * with fragment support, validation, and integration with existing constants
  */
 
-import { DOCS, DOC_PATHS, URL_PATTERNS } from '../docs-reference.ts';
-import { BUN_UTILS_URLS, UtilsCategory } from '../documentation/constants/utils.ts';
-import { CLI_DOCUMENTATION_URLS, CLICategory } from '../documentation/constants/cli.ts';
-import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler.ts';
-import { handleError } from './error-handling.ts';
+import { DOCS, DOC_PATHS, URL_PATTERNS } from '../docs-reference';
+import { BUN_UTILS_URLS, UtilsCategory } from '../documentation/constants/utils';
+import { CLI_DOCUMENTATION_URLS, CLICategory } from '../documentation/constants/cli';
+import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
+import { handleError } from './error-handling';
 
 /**
  * Documentation URL types

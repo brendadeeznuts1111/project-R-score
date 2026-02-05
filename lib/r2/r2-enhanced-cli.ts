@@ -12,17 +12,17 @@
  * - Backup/restore
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { r2EventSystem } from './r2-event-system.ts';
-import { r2BatchOperations, BatchConfig } from './r2-batch-operations.ts';
-import { r2LifecycleManager, LifecycleRule, StorageClass } from './r2-lifecycle-manager.ts';
-import { r2SearchEngine, SearchQuery } from './r2-search-engine.ts';
-import { r2SyncService, SyncJob, SyncDirection, SyncMode, ConflictStrategy } from './r2-sync-service.ts';
-import { r2BackupManager, BackupJob, BackupType, BackupSource, BackupDestination } from './r2-backup-manager.ts';
-import { r2Analytics } from './r2-analytics.ts';
-import { r2SecurityManager } from './r2-security-manager.ts';
-import { r2TransformPipeline } from './r2-transform-pipeline.ts';
-import { r2WebhookManager } from './r2-webhook-manager.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import { r2EventSystem } from './r2-event-system';
+import { r2BatchOperations, BatchConfig } from './r2-batch-operations';
+import { r2LifecycleManager, LifecycleRule, StorageClass } from './r2-lifecycle-manager';
+import { r2SearchEngine, SearchQuery } from './r2-search-engine';
+import { r2SyncService, SyncJob, SyncDirection, SyncMode, ConflictStrategy } from './r2-sync-service';
+import { r2BackupManager, BackupJob, BackupType, BackupSource, BackupDestination } from './r2-backup-manager';
+import { r2Analytics } from './r2-analytics';
+import { r2SecurityManager } from './r2-security-manager';
+import { r2TransformPipeline } from './r2-transform-pipeline';
+import { r2WebhookManager } from './r2-webhook-manager';
 
 const COMMANDS = {
   'events': 'Manage R2 Event System',

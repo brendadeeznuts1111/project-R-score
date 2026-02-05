@@ -6,7 +6,7 @@
  * Handles race conditions, provides transaction-like behavior, and ensures data consistency
  */
 
-import { handleError, R2IntegrationError, safeAsyncWithRetry } from './error-handling.ts';
+import { handleError, R2IntegrationError, safeAsyncWithRetry } from './error-handling';
 
 /**
  * Operation result interface
