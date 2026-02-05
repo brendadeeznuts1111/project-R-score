@@ -1,11 +1,11 @@
 {
-  "name": "bun-typedarray-docs",
+  "name": "project-r-score",
+  "description": "A comprehensive development ecosystem featuring enterprise-grade tools, automation frameworks, and performance optimization utilities built with Bun and TypeScript.",
   "type": "module",
   "scripts": {
     "dev": "bun run --watch server/server-enhanced.ts",
     "start": "bun run server/server-enhanced.ts",
     "start:content-type": "bun run server/content-type-server.ts",
-    "mcp:bun": "bun run lib/bun-mcp-server.ts",
     "mcp:security": "bun run lib/security/mcp-server.ts --http --port=3000",
     "build": "bun run scripts/build.ts",
     "test": "bun test",
@@ -49,7 +49,27 @@
     "markdown:extended": "bun run lib/official-markdown-options.ts extended",
     "urls:extract": "bun -e \"const urls=[];Bun.markdown.render(await Bun.file(process.argv[2]||'docs/api.md').text(),{link:(t,{href})=>{urls.push(href);return null;},paragraph:()=>null,heading:()=>null});console.log(urls.join('\\n'));\"",
     "validate:pointers:save": "bun scripts/validate-pointers.ts --save",
-    "validate:pointers:compare": "bun scripts/validate-pointers.ts --compare"
+    "validate:pointers:compare": "bun scripts/validate-pointers.ts --compare",
+    "mcp:bun": "bun run lib/mcp/bun-mcp-server.ts",
+    "mcp:tools": "bun run scripts/fw-tools-mcp.ts",
+    "mcp:bridge": "bun run scripts/mcp-bridge.ts",
+    "fw-docs": "bun run scripts/fw-docs.ts",
+    "interactive-docs": "bun run scripts/interactive-docs.ts",
+    "setup:mcp": "bash scripts/setup-mcp.sh",
+    "test:r2": "bun run lib/mcp/r2-integration.ts",
+    "demo:r2": "bun run scripts/demo-r2-mcp.ts",
+    "dashboard": "bun run dashboard/mcp-overview.ts status",
+    "dashboard:monitor": "bun run dashboard/mcp-overview.ts monitor",
+    "dashboard:web": "open dashboard/web-dashboard.html",
+    "wiki:generate": "bun run lib/mcp/wiki-generator-mcp.ts generate",
+    "wiki:templates": "bun run lib/mcp/wiki-generator-mcp.ts templates",
+    "wiki:template": "bun run lib/mcp/wiki-generator-mcp.ts template",
+    "wiki:history": "bun run lib/mcp/wiki-generator-mcp.ts history",
+    "wiki:factorywager": "bun run lib/mcp/wiki-generator-mcp.ts factorywager",
+    "wiki:matrix": "bun run scripts/wiki-matrix-cli.ts",
+    "wiki:interactive": "bun run scripts/wiki-matrix-cli.ts interactive",
+    "wiki:pipe": "bun run scripts/wiki-matrix-pipe.ts",
+    "wiki:filter": "bun run scripts/wiki-matrix-filter.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0"

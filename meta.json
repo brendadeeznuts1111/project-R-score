@@ -1,192 +1,57 @@
 {
-  "inputs": {
-    "lib/automated-validation-system.ts": {
-      "bytes": 14956,
-      "imports": [
-        {
-          "path": "/Users/nolarose/Projects/lib/cli-constants-validation.ts",
-          "kind": "import-statement",
-          "original": "./cli-constants-validation"
-        },
-        {
-          "path": "/Users/nolarose/Projects/lib/documentation-validator.ts",
-          "kind": "import-statement",
-          "original": "./documentation-validator"
-        },
-        {
-          "path": "/Users/nolarose/Projects/lib/untracked-files-analyzer.ts",
-          "kind": "import-statement",
-          "original": "./untracked-files-analyzer"
-        },
-        {
-          "path": "fs",
-          "kind": "require-call",
-          "external": true
-        },
-        {
-          "path": "fs",
-          "kind": "require-call",
-          "external": true
-        },
-        {
-          "path": "fs",
-          "kind": "require-call",
-          "external": true
-        },
-        {
-          "path": "fs",
-          "kind": "require-call",
-          "external": true
-        },
-        {
-          "path": "fs",
-          "kind": "require-call",
-          "external": true
-        }
-      ],
-      "format": "esm"
+  "name": "project-r-score",
+  "description": "A comprehensive development ecosystem featuring enterprise-grade tools, automation frameworks, and performance optimization utilities built with Bun and TypeScript.",
+  "version": "4.4.2-http2-preview",
+  "type": "monorepo",
+  "repository": "https://github.com/brendadeeznuts1111/project-R-score.git",
+  "author": "brendadeeznuts1111",
+  "license": "MIT",
+  "runtime": "bun",
+  "language": "typescript",
+  "architecture": "monorepo",
+  "lastUpdated": "2025-02-05",
+  "tags": ["enterprise", "automation", "dashboards", "security", "performance", "mcp", "bun", "typescript"],
+  "categories": {
+    "projects": {
+      "automation": "Automation frameworks and scripts",
+      "dashboards": "Enterprise dashboard interfaces", 
+      "analysis": "Security and performance analysis tools",
+      "apps": "Application projects",
+      "enterprise": "Enterprise-grade solutions",
+      "development": "Development tools and utilities"
     },
-    "lib/untracked-files-analyzer.ts": {
-      "bytes": 13031,
-      "imports": [
-        {
-          "path": "fs",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "/bun-vfs$$/node_modules/path/index.js",
-          "kind": "import-statement",
-          "original": "path"
-        }
-      ],
-      "format": "esm"
-    },
-    "lib/cli-constants-validation.ts": {
-      "bytes": 25381,
-      "imports": [
-        {
-          "path": "./core-validation",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "./core-errors",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "./core-documentation",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "bun",
-          "kind": "dynamic-import",
-          "external": true
-        }
-      ],
-      "format": "esm"
-    },
-    "lib/documentation-validator.ts": {
-      "bytes": 10872,
-      "imports": [
-        {
-          "path": "/Users/nolarose/Projects/lib/cli-constants-validation.ts",
-          "kind": "import-statement",
-          "original": "./cli-constants-validation"
-        },
-        {
-          "path": "/Users/nolarose/Projects/lib/documentation/constants/cli.ts",
-          "kind": "import-statement",
-          "original": "./documentation/constants/cli"
-        },
-        {
-          "path": "/Users/nolarose/Projects/lib/documentation/constants/utils.ts",
-          "kind": "import-statement",
-          "original": "./documentation/constants/utils"
-        }
-      ],
-      "format": "esm"
-    },
-    "node:path": {
-      "bytes": 7223,
-      "imports": [
-      ],
-      "format": "esm"
-    },
-    "lib/documentation/constants/utils.ts": {
-      "bytes": 3149,
-      "imports": [
-      ],
-      "format": "esm"
-    },
-    "lib/cli-constants-validation.ts": {
-      "bytes": 25381,
-      "imports": [
-        {
-          "path": "./core-validation",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "./core-errors",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "./core-documentation",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "bun",
-          "kind": "dynamic-import",
-          "external": true
-        }
-      ],
-      "format": "esm"
-    },
-    "lib/documentation/constants/cli.ts": {
-      "bytes": 2425,
-      "imports": [
-      ],
-      "format": "esm"
+    "core": {
+      "lib": "Shared libraries and utilities",
+      "tools": "Standalone development tools",
+      "utils": "Utility scripts and helpers",
+      "deployment": "Deployment configurations",
+      "docs": "Comprehensive documentation"
     }
   },
-  "outputs": {
-    "./automated-validation-system.js": {
-      "bytes": 72332,
-      "inputs": {
-        "lib/cli-constants-validation.ts": {
-          "bytesInOutput": 12469
-        },
-        "lib/cli-constants-validation.ts": {
-          "bytesInOutput": 14455
-        },
-        "lib/documentation/constants/cli.ts": {
-          "bytesInOutput": 1289
-        },
-        "lib/documentation/constants/utils.ts": {
-          "bytesInOutput": 1955
-        },
-        "lib/documentation-validator.ts": {
-          "bytesInOutput": 8506
-        },
-        "node:path": {
-          "bytesInOutput": 10002
-        },
-        "lib/untracked-files-analyzer.ts": {
-          "bytesInOutput": 10470
-        },
-        "lib/automated-validation-system.ts": {
-          "bytesInOutput": 12478
-        }
-      },
-      "imports": [
-      ],
-      "exports": [],
-      "entryPoint": "lib/automated-validation-system.ts"
-    }
+  "features": [
+    "Enterprise Dashboards - Real-time monitoring and analytics",
+    "Automation Frameworks - Streamlined workflow automation",
+    "Security Tools - Comprehensive security validation",
+    "Performance Optimization - Advanced optimization utilities",
+    "MCP Integration - Model Context Protocol servers",
+    "Documentation System - Auto-generated documentation"
+  ],
+  "technologies": [
+    "Bun Runtime",
+    "TypeScript",
+    "ESLint",
+    "Prettier",
+    "Model Context Protocol (MCP)"
+  ],
+  "scripts": {
+    "development": ["dev", "start", "test", "build"],
+    "tools": ["dashboard:ansi", "url:validate", "lint", "format", "type-check"],
+    "mcp": ["mcp:bun", "mcp:security"],
+    "validation": ["standards:check", "ci:validate"]
+  },
+  "releases": {
+    "latest": "v4.4.2-http2-preview",
+    "stable": "v4.4.1",
+    "optimized": "v4.4-rscore-optimized"
   }
 }

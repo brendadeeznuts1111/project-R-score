@@ -621,3 +621,6 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 }
+
+// Export for MCP integration
+export { WikiURLGenerator };
