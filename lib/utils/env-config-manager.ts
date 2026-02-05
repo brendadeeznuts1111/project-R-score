@@ -96,7 +96,7 @@ export class EnvConfigManager {
     // For immediate loading, use initializeEnvConfig() instead
 
     // Load configuration from environment variables
-    this.loadFromEnvironment();
+    this.reloadFromEnvironment();
 
     // Validate if requested
     if (this.options.validate) {
