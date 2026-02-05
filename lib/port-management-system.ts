@@ -119,17 +119,52 @@ class ValidationUtils {
 }
 
 // ============================================================================
-// PORT CONFIGURATION SYSTEM
+// TYPE DEFINITIONS
 // ============================================================================
 
 interface PortConfig {
   project: string;
   port: number;
   range: { start: number; end: number };
+  maxConnections?: number;
+  connectionTimeout?: number;
+  keepAlive?: boolean;
+}
+
+interface ConnectionPoolOptions {
   maxConnections: number;
   connectionTimeout: number;
   keepAlive: boolean;
+  retryAttempts: number;
+  retryDelay: number;
 }
+
+interface ConnectionInfo {
+  host: string;
+  port: number;
+  created: number;
+  destroyed?: boolean;
+  close?: () => void;
+  destroy?: () => void;
+}
+
+interface DNSCacheStats {
+  entries: number;
+  hitRate: number;
+  memoryUsage: number;
+  lastCleanup: number;
+}
+
+interface PoolStats {
+  totalConnections: number;
+  activeConnections: number;
+  idleConnections: number;
+  memoryUsage: number;
+}
+
+// ============================================================================
+// PORT CONFIGURATION SYSTEM
+// ============================================================================
 
 class PortManager {
   private static readonly DEFAULT_CONFIG: PortConfig = {
@@ -390,7 +425,7 @@ interface ConnectionPoolOptions {
 }
 
 class ConnectionPool {
-  private readonly pools = new Map<string, any[]>();
+  private readonly pools = new Map<string, ConnectionInfo[]>();
   private readonly activeConnections = new Map<string, number>();
   private readonly connectionTimestamps = new Map<string, number>();
   private readonly options: ConnectionPoolOptions;
@@ -413,7 +448,7 @@ class ConnectionPool {
   /**
    * Get connection from pool or create new one
    */
-  async getConnection(host: string, port: number): Promise<any> {
+  async getConnection(host: string, port: number): Promise<ConnectionInfo> {
     const poolKey = `${host}:${port}`;
     
     // Check if we have available connections in pool
@@ -427,7 +462,7 @@ class ConnectionPool {
       const connection = pool.pop();
       this.activeConnections.set(poolKey, activeCount + 1);
       this.connectionTimestamps.set(`${poolKey}:${Date.now()}`, Date.now());
-      return connection;
+      return connection!;
     }
 
     // Create new connection if under limit
@@ -445,7 +480,7 @@ class ConnectionPool {
   /**
    * Return connection to pool
    */
-  returnConnection(host: string, port: number, connection: any): void {
+  returnConnection(host: string, port: number, connection: ConnectionInfo): void {
     const poolKey = `${host}:${port}`;
     const pool = this.pools.get(poolKey) || [];
     const activeCount = this.activeConnections.get(poolKey) || 0;
@@ -491,7 +526,7 @@ class ConnectionPool {
   /**
    * Check if connection is still valid
    */
-  private isConnectionValid(connection: any): boolean {
+  private isConnectionValid(connection: ConnectionInfo): boolean {
     return connection && !connection.destroyed && 
            (!connection.created || (Date.now() - connection.created) < this.options.connectionTimeout);
   }
@@ -499,7 +534,7 @@ class ConnectionPool {
   /**
    * Destroy a connection properly
    */
-  private destroyConnection(connection: any): void {
+  private destroyConnection(connection: ConnectionInfo): void {
     try {
       if (connection && typeof connection.destroy === 'function') {
         connection.destroy();
@@ -582,20 +617,27 @@ class ConnectionPool {
   /**
    * Create new connection with Bun's optimized settings
    */
-  private async createConnection(host: string, port: number): Promise<any> {
+  private async createConnection(host: string, port: number): Promise<ConnectionInfo> {
     return {
       host,
       port,
       created: Date.now(),
-      lastUsed: Date.now(),
-      destroyed: false
+      destroyed: false,
+      close: () => {
+        // Simulate connection close
+        console.log(`Connection closed to ${host}:${port}`);
+      },
+      destroy: () => {
+        // Simulate connection destroy
+        console.log(`Connection destroyed to ${host}:${port}`);
+      }
     };
   }
 
   /**
    * Wait for available connection
    */
-  private async waitForConnection(poolKey: string): Promise<any> {
+  private async waitForConnection(poolKey: string): Promise<ConnectionInfo> {
     return new Promise((resolve, reject) => {
       const checkInterval = setInterval(() => {
         const activeCount = this.activeConnections.get(poolKey) || 0;

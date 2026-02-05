@@ -25,7 +25,7 @@ export type InlineActionResult =
       abortedLastRun: boolean;
     };
 
-function extractTextFromToolResult(result: any): string | null {
+function extractTextFromToolResult(result: unknown): string | null {
   if (!result || typeof result !== "object") return null;
   const content = (result as { content?: unknown }).content;
   if (typeof content === "string") {

@@ -4,6 +4,7 @@ import {readFile, writeFile, mkdir, readdir} from 'node:fs/promises';
 import {existsSync, watch} from 'node:fs';
 import {join, extname} from 'node:path';
 import { InputValidator, CommonSchemas, ValidationMiddleware } from '../../lib/input-validation.ts';
+import { Logger, LoggerFactory, LoggingMiddleware, LogLevel } from '../../lib/logging-monitoring.ts';
 
 // ============================================================================
 // ERROR SANITIZATION UTILITIES
@@ -107,13 +108,11 @@ const API_USAGE_PATH = join(DATA_DIR, 'bun-api-usage.json');
 const PROFILES_PATH = join(DATA_DIR, 'profiles.json');
 const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? (() => {
 	// Try to derive from Bun.main or current working directory
-	const mainDir = Bun.main ? Bun.main.slice(0, Bun.main.lastIndexOf('/')) : process.cwd();
-	let current = mainDir;
-	// Walk up to find platform root
-	while (current !== '/' && current !== '') {
-		if (Bun.file(`${current}/.husky`).existsSync() && Bun.file(`${current}/docs`).existsSync()) {
-			return current;
-		}
+	const mainPath = Bun.main;
+	if (mainPath && mainPath !== '') {
+		const parts = mainPath.split('/');
+		const idx = parts.lastIndexOf('bun');
+		if (idx > 0) return parts.slice(0, idx).join('/');
 		current = current.slice(0, current.lastIndexOf('/'));
 	}
 	return process.cwd();

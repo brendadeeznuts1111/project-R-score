@@ -285,7 +285,7 @@ export async function runPreparedReply(
     }
   }
   if (resetTriggered && command.isAuthorizedSender) {
-    const channel = ctx.OriginatingChannel || (command.channel as any);
+    const channel = ctx.OriginatingChannel || (command.channel as string | undefined);
     const to = ctx.OriginatingTo || command.from || command.to;
     if (channel && to) {
       const modelLabel = `${provider}/${model}`;

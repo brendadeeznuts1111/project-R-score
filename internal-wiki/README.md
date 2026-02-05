@@ -1,32 +1,16 @@
-# 🦌 Bun Utilities Internal Wiki
+# Bun Utilities Internal Wiki
 
-## 📁 Generated Files
+## Generated Files
 
 - **bun-utilities-wiki.md** - Markdown format for documentation systems
 - **bun-utilities-wiki.html** - HTML format for web viewing
 - **bun-utilities-wiki.json** - JSON format for API integration
 
-## 🚀 Usage
+## Statistics
 
-### Markdown
-Import into Confluence, Notion, or GitHub Wiki.
-
-### HTML
-Open directly in browser or embed in web applications.
-
-### JSON
-Use for API integration:
-
-```javascript
-const wikiData = require('./bun-utilities-wiki.json');
-console.log(wikiData.pages); // All utility pages
-```
-
-## 📊 Statistics
-
-- **Total Utilities**: 42
-- **Categories**: 5
-- **Generated**: 2026-02-05T03:15:16.308Z
+- **Total Utilities**: 46
+- **Categories**: 6
+- **Generated**: 2026-02-05T15:03:04.870Z
 
 ---
 
