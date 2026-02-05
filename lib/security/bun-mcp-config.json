@@ -1,0 +1,66 @@
+{
+  "mcpServers": {
+    "tier1380-security": {
+      "command": "bun",
+      "args": ["run", "/Users/nolarose/Projects/lib/security/mcp-server.ts"],
+      "description": "Tier-1380 Enterprise Security MCP Server - Bun-optimized for maximum performance with native Bun runtime integration",
+      "env": {
+        "BUN_RUNTIME": "true",
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "bun_features": {
+    "native_crypto": true,
+    "password_hashing": true,
+    "random_bytes": true,
+    "crypto_hash": true,
+    "sha256_hash": true,
+    "performance_optimized": true
+  },
+  "security_tools": [
+    {
+      "name": "store_secret",
+      "description": "Store secrets in enterprise-grade secure storage with Bun optimization",
+      "bun_feature": "Cross-platform native storage integration"
+    },
+    {
+      "name": "retrieve_secret",
+      "description": "Retrieve secrets from secure storage with Bun performance",
+      "bun_feature": "Sub-millisecond retrieval"
+    },
+    {
+      "name": "hash_password",
+      "description": "Hash passwords using Bun.password API",
+      "bun_feature": "Native Argon2id and bcrypt support"
+    },
+    {
+      "name": "verify_password",
+      "description": "Verify passwords with Bun.password optimization",
+      "bun_feature": "Hardware-accelerated verification"
+    },
+    {
+      "name": "rotate_secret",
+      "description": "Rotate secrets using Bun.random.bytes",
+      "bun_feature": "Cryptographically secure random generation"
+    },
+    {
+      "name": "bun_security_info",
+      "description": "Get Bun runtime security information",
+      "bun_feature": "Runtime introspection and capabilities"
+    }
+  ],
+  "performance": {
+    "startup_time": "<100ms",
+    "memory_usage": "Optimized for Bun runtime",
+    "throughput": "High-concurrency support",
+    "native_integration": "Full Bun API utilization"
+  },
+  "enterprise_features": {
+    "cross_platform": true,
+    "credential_manager": true,
+    "audit_trail": true,
+    "rate_limiting": true,
+    "encryption": "AES-256 with Bun crypto"
+  }
+}

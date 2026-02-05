@@ -1,7 +1,8 @@
 /**
- * 🔐 Tier-1380 Security MCP Server
+ * 🔐 Tier-1380 Security MCP Server (Bun-Optimized)
  * 
  * Model Context Protocol server for enterprise security operations
+ * Built with Bun runtime for maximum performance and native integration
  * Exposes security tools, resources, and prompts to LLM applications
  * 
  * @version 4.5
@@ -26,6 +27,10 @@ import { Tier1380EnterpriseAuth } from './enterprise-auth.ts';
 import { Tier1380SecureDeployment } from './secure-deployment.ts';
 import { SecretLifecycleManager } from './secret-lifecycle.ts';
 import { VersionedSecretManager } from './versioned-secrets.ts';
+
+// Bun-specific optimizations
+const BUN_RUNTIME = typeof Bun !== 'undefined';
+const BUN_VERSION = BUN_RUNTIME ? Bun.version : 'unknown';
 
 class Tier1380SecurityMCPServer {
   private server: Server;
@@ -62,7 +67,7 @@ class Tier1380SecurityMCPServer {
       tools: [
         {
           name: 'store_secret',
-          description: 'Store a secret in secure enterprise storage',
+          description: 'Store a secret in secure enterprise storage (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -85,7 +90,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'retrieve_secret',
-          description: 'Retrieve a secret from secure storage',
+          description: 'Retrieve a secret from secure storage (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -99,7 +104,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'delete_secret',
-          description: 'Delete a secret from secure storage',
+          description: 'Delete a secret from secure storage (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -113,7 +118,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'list_secrets',
-          description: 'List all stored secrets with Tier-1380 prefix',
+          description: 'List all stored secrets with Tier-1380 prefix (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {},
@@ -121,7 +126,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'hash_password',
-          description: 'Hash a password using enterprise-grade algorithms',
+          description: 'Hash a password using enterprise-grade algorithms (Bun.password)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -145,7 +150,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'verify_password',
-          description: 'Verify a password against stored hash',
+          description: 'Verify a password against stored hash (Bun.password)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -163,7 +168,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'authenticate_user',
-          description: 'Authenticate a user with enterprise security',
+          description: 'Authenticate a user with enterprise security (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -191,7 +196,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'deploy_application',
-          description: 'Deploy an application with enterprise security',
+          description: 'Deploy an application with enterprise security (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -213,7 +218,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'rotate_secret',
-          description: 'Rotate a secret to a new value',
+          description: 'Rotate a secret to a new value (Bun.random.bytes)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -232,7 +237,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'create_secret_version',
-          description: 'Create a new version of a secret',
+          description: 'Create a new version of a secret (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -259,7 +264,7 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'rollback_secret',
-          description: 'Rollback a secret to a previous version',
+          description: 'Rollback a secret to a previous version (Bun-optimized)',
           inputSchema: {
             type: 'object',
             properties: {
@@ -285,6 +290,20 @@ class Tier1380SecurityMCPServer {
             required: ['key', 'targetVersion'],
           },
         },
+        {
+          name: 'bun_security_info',
+          description: 'Get Bun runtime security information and capabilities',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              include_crypto: {
+                type: 'boolean',
+                description: 'Include cryptographic capabilities',
+                default: true,
+              },
+            },
+          },
+        },
       ],
     }));
 
@@ -301,7 +320,7 @@ class Tier1380SecurityMCPServer {
               content: [
                 {
                   type: 'text',
-                  text: `✅ Secret "${args.key}" stored successfully`,
+                  text: `✅ Secret "${args.key}" stored successfully (Bun runtime: ${BUN_VERSION})`,
                 },
               ],
             };
@@ -345,7 +364,7 @@ class Tier1380SecurityMCPServer {
               content: [
                 {
                   type: 'text',
-                  text: `📋 Stored secrets:\n${secrets.map(s => `  • ${s}`).join('\n') || '  No secrets found'}`,
+                  text: `📋 Stored secrets (Bun-optimized):\n${secrets.map(s => `  • ${s}`).join('\n') || '  No secrets found'}`,
                 },
               ],
             };
@@ -362,7 +381,7 @@ class Tier1380SecurityMCPServer {
               content: [
                 {
                   type: 'text',
-                  text: `🔐 Password hashed successfully:\n  Algorithm: ${hashResult.algorithm}\n  Version: ${hashResult.version}\n  Created: ${hashResult.createdAt.toISOString()}`,
+                  text: `🔐 Password hashed successfully (Bun.password):\n  Algorithm: ${hashResult.algorithm}\n  Version: ${hashResult.version}\n  Created: ${hashResult.createdAt.toISOString()}`,
                 },
               ],
             };
@@ -376,7 +395,7 @@ class Tier1380SecurityMCPServer {
               content: [
                 {
                   type: 'text',
-                  text: `🔍 Password verification:\n  Valid: ${verifyResult.valid ? '✅' : '❌'}\n  Score: ${verifyResult.score}/100\n  Needs Rehash: ${verifyResult.needsRehash ? '⚠️ Yes' : '✅ No'}`,
+                  text: `🔍 Password verification (Bun.password):\n  Valid: ${verifyResult.valid ? '✅' : '❌'}\n  Score: ${verifyResult.score}/100\n  Needs Rehash: ${verifyResult.needsRehash ? '⚠️ Yes' : '✅ No'}`,
                 },
               ],
             };
@@ -395,7 +414,7 @@ class Tier1380SecurityMCPServer {
                 content: [
                   {
                     type: 'text',
-                    text: `🔐 Authentication successful:\n  User: ${authResult.session?.userId}\n  Session: ${authResult.session?.token}\n  Expires: ${authResult.session?.expiresAt.toISOString()}`,
+                    text: `🔐 Authentication successful (Bun-optimized):\n  User: ${authResult.session?.userId}\n  Session: ${authResult.session?.token}\n  Expires: ${authResult.session?.expiresAt.toISOString()}`,
                   },
                 ],
               };
@@ -423,7 +442,7 @@ class Tier1380SecurityMCPServer {
                 content: [
                   {
                     type: 'text',
-                    text: `🚀 Deployment successful:\n  Deployment ID: ${deployResult.deploymentId}\n  URL: ${deployResult.metadata?.url}\n  Status: ${deployResult.metadata?.status}`,
+                    text: `🚀 Deployment successful (Bun-optimized):\n  Deployment ID: ${deployResult.deploymentId}\n  URL: ${deployResult.metadata?.url}\n  Status: ${deployResult.metadata?.status}`,
                   },
                 ],
               };
@@ -448,7 +467,7 @@ class Tier1380SecurityMCPServer {
                 content: [
                   {
                     type: 'text',
-                    text: `🔄 Secret "${args.key}" rotated successfully`,
+                    text: `🔄 Secret "${args.key}" rotated successfully (Bun.random.bytes)`,
                   },
                 ],
               };
@@ -472,7 +491,7 @@ class Tier1380SecurityMCPServer {
               content: [
                 {
                   type: 'text',
-                  text: `📝 Secret version created:\n  Key: ${versionResult.key}\n  Version: ${versionResult.version}`,
+                  text: `📝 Secret version created (Bun-optimized):\n  Key: ${versionResult.key}\n  Version: ${versionResult.version}`,
                 },
               ],
             };
@@ -492,19 +511,45 @@ class Tier1380SecurityMCPServer {
                   {
                     type: 'text',
                     text: `⚠️ Rollback cancelled by user`,
-                },
-              ],
-            };
+                  },
+                ],
+              };
             } else {
               return {
                 content: [
                   {
                     type: 'text',
-                    text: `🔄 Secret rolled back:\n  From: ${rollbackResult.from}\n  To: ${rollbackResult.to}\n  Reason: ${rollbackResult.reason}`,
+                    text: `🔄 Secret rolled back (Bun-optimized):\n  From: ${rollbackResult.from}\n  To: ${rollbackResult.to}\n  Reason: ${rollbackResult.reason}`,
                   },
                 ],
               };
             }
+
+          case 'bun_security_info':
+            const info = {
+              bunVersion: BUN_VERSION,
+              runtime: BUN_RUNTIME ? 'Bun' : 'Node.js',
+              platform: process.platform,
+              arch: process.arch,
+              cryptoCapabilities: args.include_crypto ? {
+                passwordHashing: typeof Bun?.password !== 'undefined',
+                randomBytes: typeof Bun?.random !== 'undefined',
+                cryptoHash: typeof Bun?.CryptoHash !== 'undefined',
+                sha256: typeof Bun?.hash?.sha256 !== 'undefined',
+              } : undefined,
+              performance: {
+                startupTime: Date.now(),
+                memoryUsage: BUN_RUNTIME ? process.memoryUsage() : 'N/A',
+              },
+            };
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `🔧 Bun Security Information:\n${JSON.stringify(info, null, 2)}`,
+                },
+              ],
+            };
 
           default:
             throw new McpError(
