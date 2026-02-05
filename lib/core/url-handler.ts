@@ -329,7 +329,8 @@ export class URLHandler {
    * Build URL from components
    */
   static build(components: Partial<URLComponents>): string {
-    const url = new URL('http://localhost');
+    const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';
+    const url = new URL(`http://${DEFAULT_HOST}`);
 
     if (components.protocol) {
       url.protocol = components.protocol;

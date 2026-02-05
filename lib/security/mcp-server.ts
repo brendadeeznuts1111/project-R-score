@@ -331,7 +331,7 @@ class Tier1380SecurityMCPServer {
               ipAddress: {
                 type: 'string',
                 description: 'Client IP address',
-                default: '127.0.0.1',
+                default: process.env.DEFAULT_CLIENT_IP || process.env.SERVER_HOST || '127.0.0.1',
               },
               userAgent: {
                 type: 'string',

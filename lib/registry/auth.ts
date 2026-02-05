@@ -339,14 +339,16 @@ if (import.meta.main) {
   console.log(styled('🔐 Registry Auth Test', 'accent'));
   console.log(styled('=====================', 'accent'));
 
+  const TEST_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || process.env.HOST || 'localhost';
+
   // Test no auth
   const noAuth = new RegistryAuth(AuthConfigs.none());
-  const ctx1 = await noAuth.authenticate(new Request('http://localhost'));
+  const ctx1 = await noAuth.authenticate(new Request(`http://${TEST_HOST}`));
   console.log(styled(`\nNo Auth: ${ctx1.authenticated ? '✅' : '❌'}`, ctx1.authenticated ? 'success' : 'error'));
 
   // Test basic auth
   const basicAuth = new RegistryAuth(AuthConfigs.basic('testpass'));
-  const req = new Request('http://localhost', {
+  const req = new Request(`http://${TEST_HOST}`, {
     headers: {
       'Authorization': `Basic ${btoa('admin:testpass')}`,
     },
@@ -357,7 +359,7 @@ if (import.meta.main) {
   // Test JWT
   const jwtAuth = new RegistryAuth(AuthConfigs.jwt('test-secret'));
   const token = jwtAuth.createJwt('admin');
-  const jwtReq = new Request('http://localhost', {
+  const jwtReq = new Request(`http://${TEST_HOST}`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },

@@ -315,7 +315,7 @@ export const COMMON_SCHEMAS = {
     host: {
       type: 'string' as const,
       required: false,
-      default: 'localhost',
+      default: process.env.SERVER_HOST || process.env.HOST || 'localhost',
       description: 'Server host',
       envVar: 'HOST'
     },

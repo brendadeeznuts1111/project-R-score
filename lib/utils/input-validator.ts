@@ -150,7 +150,14 @@ export class SecureInputValidator implements InputValidator {
 
       // Prevent localhost in production
       if (process.env.NODE_ENV === 'production') {
-        const localhostPatterns = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]'];
+        const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';
+        const localhostPatterns = [
+          'localhost', 
+          '127.0.0.1', 
+          '0.0.0.0', 
+          '[::1]',
+          ...(DEFAULT_HOST !== 'localhost' ? [] : [])
+        ];
         if (localhostPatterns.some(pattern => url.hostname.includes(pattern))) {
           errors.push('Localhost URLs are not allowed in production');
         }
