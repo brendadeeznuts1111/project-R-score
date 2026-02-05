@@ -215,7 +215,7 @@ export class R2BatchOperations {
 
     // Wait if too many concurrent jobs
     while (this.activeJobs.size >= this.maxConcurrentJobs) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await Bun.sleep(100);
     }
 
     // Start the batch
@@ -370,7 +370,7 @@ export class R2BatchOperations {
             retries
           };
         }
-        await new Promise(resolve => setTimeout(resolve, config.retryDelay! * retries));
+        await Bun.sleep(config.retryDelay! * retries);
       }
     }
 
@@ -534,7 +534,7 @@ export class R2BatchOperations {
         return job;
       }
       
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await Bun.sleep(100);
     }
     
     throw new Error(`Timeout waiting for job: ${jobId}`);

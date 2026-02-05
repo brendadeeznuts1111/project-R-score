@@ -126,7 +126,7 @@ export class OperationQueue {
 
   async flush(): Promise<void> {
     while (this.running > 0 || this.queue.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await Bun.sleep(10);
     }
   }
 }

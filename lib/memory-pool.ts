@@ -115,7 +115,7 @@ export class BunMemoryPool {
           // Wait for expansion to complete
           while (this.expanding) {
             this.releaseLock();
-            await new Promise(resolve => setTimeout(resolve, 1));
+            await Bun.sleep(1);
             await this.acquireLock();
           }
         }

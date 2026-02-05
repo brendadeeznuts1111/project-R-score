@@ -129,7 +129,7 @@ export async function validateDocPointers(pointers: DocPointer[]): Promise<{
     
     // Small delay between batches
     if (i + batchSize < pointers.length) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await Bun.sleep(100);
     }
   }
   

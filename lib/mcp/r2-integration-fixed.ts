@@ -644,7 +644,7 @@ export class R2MCPIntegration {
    */
   private async fetchFromR2<T = any>(key: string): Promise<T | null> {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await Bun.sleep(50);
     
     // Simulate occasional failures
     if (Math.random() < 0.05) { // 5% failure rate
@@ -664,7 +664,7 @@ export class R2MCPIntegration {
    */
   private async storeToR2<T = any>(key: string, data: T): Promise<void> {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
     
     // Simulate occasional failures
     if (Math.random() < 0.03) { // 3% failure rate

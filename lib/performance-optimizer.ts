@@ -454,7 +454,7 @@ class ServerOptimizer {
     const server = this.createOptimizedServer(3001);
     
     // Wait for server to start
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
 
     const testUrls = [
       'http://example.com/',

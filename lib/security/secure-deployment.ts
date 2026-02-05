@@ -244,7 +244,7 @@ export class Tier1380SecureDeployment {
    */
   private static async validateSnapshot(snapshotId: string): Promise<void> {
     // Simulate snapshot validation
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await Bun.sleep(500);
     
     // In real implementation, would:
     // - Check snapshot hash
@@ -259,7 +259,7 @@ export class Tier1380SecureDeployment {
    */
   private static async checkDependencies(snapshotId: string): Promise<void> {
     // Simulate dependency checking
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await Bun.sleep(300);
     
     // In real implementation, would:
     // - Check package.json dependencies
@@ -274,7 +274,7 @@ export class Tier1380SecureDeployment {
    */
   private static async buildApplication(snapshotId: string): Promise<{ size: string }> {
     // Simulate build process
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await Bun.sleep(2000);
     
     // In real implementation, would:
     // - Run build command (npm run build, etc.)
@@ -293,7 +293,7 @@ export class Tier1380SecureDeployment {
    */
   private static async runTests(snapshotId: string): Promise<{ passed: number; failed: number }> {
     // Simulate test execution
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await Bun.sleep(1500);
     
     // In real implementation, would:
     // - Run unit tests
@@ -316,7 +316,7 @@ export class Tier1380SecureDeployment {
     context: any
   ): Promise<{ url: string }> {
     // Simulate deployment
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await Bun.sleep(1000);
     
     // In real implementation, would:
     // - Upload build artifacts to server
@@ -335,7 +335,7 @@ export class Tier1380SecureDeployment {
    */
   private static async updateLoadBalancer(snapshotId: string, deployResult: any): Promise<void> {
     // Simulate load balancer update
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await Bun.sleep(500);
     
     // In real implementation, would:
     // - Update routing rules
@@ -350,7 +350,7 @@ export class Tier1380SecureDeployment {
    */
   private static async runHealthChecks(snapshotId: string): Promise<{ status: string; memoryUsage: string }> {
     // Simulate health checks
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await Bun.sleep(500);
     
     // In real implementation, would:
     // - Check application endpoints

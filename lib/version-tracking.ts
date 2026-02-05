@@ -615,7 +615,7 @@ export class VersionTracker {
     console.log(`Performing rollback for ${componentUri}: ${fromVersion} -> ${toVersion}`);
     
     // Simulate rollback delay
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
   }
 
   private async cleanupOldVersions(componentUri: string, versions: VersionMetadata[]): Promise<void> {
