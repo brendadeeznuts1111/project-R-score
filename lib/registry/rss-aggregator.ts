@@ -9,8 +9,8 @@
  * - Custom feeds
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { R2StorageAdapter } from './r2-storage.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import { R2StorageAdapter } from './r2-storage';
 
 export interface RSSFeed {
   id: string;

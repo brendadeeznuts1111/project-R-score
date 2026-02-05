@@ -7,7 +7,7 @@
  * @version 4.5
  */
 
-import { styled, log } from '../theme/colors.ts';
+import { styled, log } from '../theme/colors';
 
 /**
  * 🚀 Prefetch Optimizations

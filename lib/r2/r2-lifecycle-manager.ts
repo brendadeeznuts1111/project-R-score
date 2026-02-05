@@ -11,9 +11,9 @@
  * - Storage class transitions
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { r2EventSystem } from './r2-event-system.ts';
-import { r2BatchOperations } from './r2-batch-operations.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import { r2EventSystem } from './r2-event-system';
+import { r2BatchOperations } from './r2-batch-operations';
 
 export type StorageClass = 'hot' | 'warm' | 'cold' | 'archive' | 'deep-archive';
 

@@ -161,7 +161,7 @@ if (import.meta.path !== Bun.main) {
 }
 
 // ✅ SAFE PATTERN 1:
-import { ensureDirectExecution } from './shared/tools/entry-guard.ts';
+import { ensureDirectExecution } from './shared/tools/entry-guard';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -177,7 +177,7 @@ ensureDirectExecution();
 // Your code here...
 
 // ✅ SAFE PATTERN 2 (RECOMMENDED):
-import { runIfMain } from './shared/tools/entry-guard.ts';
+import { runIfMain } from './shared/tools/entry-guard';
 runIfMain(async () => {
   // Your async code here...
   console.log('Running safely!');

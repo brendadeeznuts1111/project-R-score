@@ -4,8 +4,8 @@
  * Secure authentication layer for MCP servers using master tokens
  */
 
-import { masterTokenManager, TokenValidation } from '../security/master-token.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { masterTokenManager, TokenValidation } from '../security/master-token';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface AuthContext {
   tokenId: string;

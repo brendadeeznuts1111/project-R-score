@@ -7,12 +7,12 @@
  * for intelligent dispute resolution, evidence analysis, and cross-domain learning.
  */
 
-import { r2MCPIntegration } from './r2-integration.ts';
-import { domainIntegration } from './domain-integration.ts';
-import { duoplusIntegration } from './duoplus-integration.ts';
-import { advancedIntegration } from './advanced-integration.ts';
-import { masterTokenManager } from '../security/master-token.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { r2MCPIntegration } from './r2-integration';
+import { domainIntegration } from './domain-integration';
+import { duoplusIntegration } from './duoplus-integration';
+import { advancedIntegration } from './advanced-integration';
+import { masterTokenManager } from '../security/master-token';
+import { styled, FW_COLORS } from '../theme/colors';
 
 // Import the AI analyzer from the duo-automation project
 import { 
@@ -21,7 +21,7 @@ import {
   EvidenceAnalysis, 
   BatchAnalysis,
   AIConfig 
-} from '../../projects/automation/duo-automation/src/ai/bun-native-ai-analyzer.ts';
+} from '../../projects/automation/duo-automation/src/ai/bun-native-ai-analyzer';
 
 export interface AIDomainIntegration {
   domain: string;

@@ -11,8 +11,8 @@
  * - Pipeline scheduling and monitoring
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { r2EventSystem } from './r2-event-system.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import { r2EventSystem } from './r2-event-system';
 
 export type TransformOperation = 
   | 'compress' 

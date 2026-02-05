@@ -13,24 +13,24 @@
  */
 
 // Export types
-export * from './registry-types.ts';
+export * from './registry-types';
 
 // Export core modules
-export { R2StorageAdapter, type SignedUrlOptions } from './r2-storage.ts';
-export { RegistryAuth, AuthConfigs } from './auth.ts';
-export { NPMRegistryServer } from './server.ts';
+export { R2StorageAdapter, type SignedUrlOptions } from './r2-storage';
+export { RegistryAuth, AuthConfigs } from './auth';
+export { NPMRegistryServer } from './server';
 
 // Export documentation & sync
-export { PackageDocumentationFetcher, PACKAGE_MANAGERS } from './package-docs.ts';
-export { DocumentationSync } from './docs-sync.ts';
-export { RSSAggregator, DEFAULT_FEEDS } from './rss-aggregator.ts';
+export { PackageDocumentationFetcher, PACKAGE_MANAGERS } from './package-docs';
+export { DocumentationSync } from './docs-sync';
+export { RSSAggregator, DEFAULT_FEEDS } from './rss-aggregator';
 
 // Export config loader (Bun v1.3.7 JSON5/JSONL)
 export { 
   loadRegistryConfig, 
   saveRegistryConfig, 
   validateConfig 
-} from './config-loader.ts';
+} from './config-loader';
 
 // Export NEW: Version Manager (bun.semver)
 export { 
@@ -39,7 +39,7 @@ export {
   type VersionGraph,
   type VersionLifecycle,
   type VersionHistoryEntry,
-} from './version-manager.ts';
+} from './version-manager';
 
 // Export NEW: Secrets Manager (bun.secrets)
 export { 
@@ -48,14 +48,14 @@ export {
   type SecretVersion,
   type SecretPolicy,
   type IAMRole,
-} from './secrets-manager.ts';
+} from './secrets-manager';
 
 // Export NEW: bun x Integration
 export { 
   BunXIntegration,
   type BunXOptions,
   type CachedPackage,
-} from './bunx-integration.ts';
+} from './bunx-integration';
 
 // Version
 export const VERSION = '1.1.0';

@@ -7,9 +7,9 @@
  * and provides real-time DNS management capabilities.
  */
 
-import { r2MCPIntegration } from './r2-integration.ts';
-import { cloudflareDomainManager } from './cloudflare-domain-manager.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { r2MCPIntegration } from './r2-integration';
+import { cloudflareDomainManager } from './cloudflare-domain-manager';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface DNSRecord {
   id?: string;

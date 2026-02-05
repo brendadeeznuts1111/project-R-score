@@ -6,8 +6,8 @@
  * Comprehensive URL parsing, validation, and fragment handling for the FactoryWager ecosystem
  */
 
-import { handleError, ValidationError } from './error-handling.ts';
-import { Validator } from './validation.ts';
+import { handleError, ValidationError } from './error-handling';
+import { Validator } from './validation';
 
 /**
  * URL components interface

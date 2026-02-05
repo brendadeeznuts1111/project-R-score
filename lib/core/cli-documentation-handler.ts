@@ -6,9 +6,9 @@
  * Advanced CLI documentation navigation with deep linking and state management
  */
 
-import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../documentation/constants/cli.ts';
-import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler.ts';
-import { handleError } from './error-handling.ts';
+import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../documentation/constants/cli';
+import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
+import { handleError } from './error-handling';
 
 /**
  * CLI Documentation URL Generator

@@ -30,7 +30,7 @@ import { performance } from 'perf_hooks';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { PortManager, ConnectionPool, OptimizedFetch } from './port-management-system.ts';
+import { PortManager, ConnectionPool, OptimizedFetch } from './port-management-system';
 
 // ============================================================================
 // OPTIMIZED SERVER IMPLEMENTATION

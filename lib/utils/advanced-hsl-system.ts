@@ -8,7 +8,7 @@
  */
 
 import { color } from 'bun';
-import { colorize } from './color-system.ts';
+import { colorize } from './color-system';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // PERCEPTUAL UNIFORMITY & ADVANCED HSL MATH

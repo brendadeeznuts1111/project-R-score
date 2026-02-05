@@ -18,7 +18,7 @@ import {
   DocumentationURLType,
   DocumentationUserType,
   ENTERPRISE_DOCUMENTATION_BASE_URLS 
-} from '../constants/domains.ts';
+} from '../constants/domains';
 
 export interface DocumentationMetadata {
   provider?: DocumentationProvider;

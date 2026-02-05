@@ -16,17 +16,17 @@
  * - Cross-domain intelligence
  */
 
-import { r2MCPIntegration } from './r2-integration.ts';
-import { domainIntegration } from './domain-integration.ts';
-import { duoplusIntegration } from './duoplus-integration.ts';
-import { cloudflareDomainManager } from './cloudflare-domain-manager.ts';
-import { dnsSynchronization } from './dns-sync.ts';
-import { EnterpriseSecretsManager } from '../enterprise-secrets.ts';
-import { VersionedSecretManager } from '../security/versioned-secrets.ts';
-import { masterTokenManager } from '../security/master-token.ts';
-import { hardenedFetch } from '../hardened-fetch.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { FACTORYWAGER_VERSION, R2_CONFIG, PERFORMANCE_THRESHOLDS } from '../constants/index.ts';
+import { r2MCPIntegration } from './r2-integration';
+import { domainIntegration } from './domain-integration';
+import { duoplusIntegration } from './duoplus-integration';
+import { cloudflareDomainManager } from './cloudflare-domain-manager';
+import { dnsSynchronization } from './dns-sync';
+import { EnterpriseSecretsManager } from '../enterprise-secrets';
+import { VersionedSecretManager } from '../security/versioned-secrets';
+import { masterTokenManager } from '../security/master-token';
+import { hardenedFetch } from '../hardened-fetch';
+import { styled, FW_COLORS } from '../theme/colors';
+import { FACTORYWAGER_VERSION, R2_CONFIG, PERFORMANCE_THRESHOLDS } from '../constants/index';
 
 export interface CookieCompressionConfig {
   compression: 'zstd' | 'gzip' | 'br';

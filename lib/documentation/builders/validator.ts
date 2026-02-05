@@ -15,17 +15,17 @@ import {
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA
-} from '../constants/domains.ts';
+} from '../constants/domains';
 import { 
   GITHUB_URL_PATTERNS,
   FRAGMENT_PARSERS,
   FRAGMENT_VALIDATION
-} from '../constants/fragments.ts';
+} from '../constants/fragments';
 import { 
   IntelligentRouting,
   ENTERPRISE_DOCUMENTATION_PATHS
-} from '../constants/categories.ts';
-import { URLHandler } from '../../core/url-handler.ts';
+} from '../constants/categories';
+import { URLHandler } from '../../core/url-handler';
 
 export class EnhancedDocumentationURLValidator {
   

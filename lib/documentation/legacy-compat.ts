@@ -7,8 +7,8 @@
  * supporting the new enterprise documentation system.
  */
 
-import { docsURLBuilder } from './builders/url-builder.ts';
-import { QUICK_REFERENCE_URLS } from './constants/domains.ts';
+import { docsURLBuilder } from './builders/url-builder';
+import { QUICK_REFERENCE_URLS } from './constants/domains';
 
 // Legacy compatibility exports for existing code
 export const BUN_DOCS = {

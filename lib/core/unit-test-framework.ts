@@ -6,7 +6,7 @@
  * Comprehensive testing with mocking, assertions, and coverage reporting
  */
 
-import { handleError } from './error-handling.ts';
+import { handleError } from './error-handling';
 
 /**
  * Test result interface

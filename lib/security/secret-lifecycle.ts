@@ -6,7 +6,7 @@
  * @version 5.1
  */
 
-import { styled, log } from '../theme/colors.ts';
+import { styled, log } from '../theme/colors';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -18,8 +18,8 @@ import { styled, log } from '../theme/colors.ts';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { Utils } from '../utils/index.ts';
-import type { LifecycleRule } from './versioned-secrets.ts';
+import { Utils } from '../utils/index';
+import type { LifecycleRule } from './versioned-secrets';
 
 export interface ExpirationReport {
   generated: string;

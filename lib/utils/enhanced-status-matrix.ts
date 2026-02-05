@@ -7,8 +7,8 @@
  * dynamic severity colors, and WCAG compliance.
  */
 
-import { getDynamicStatusColor, ensureContrast, autoAdjustContrast, perceivedBrightness } from './advanced-hsl-system.ts';
-import { colorize, ColorStatus } from './color-system.ts';
+import { getDynamicStatusColor, ensureContrast, autoAdjustContrast, perceivedBrightness } from './advanced-hsl-system';
+import { colorize, ColorStatus } from './color-system';
 
 export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
 export type ContextType = 'light' | 'dark';
@@ -192,7 +192,7 @@ function getStatusIcon(status: ColorStatus): string {
 }
 
 // Re-export perceivedBrightness for external use
-export { perceivedBrightness } from './advanced-hsl-system.ts';
+export { perceivedBrightness } from './advanced-hsl-system';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // DEMO & TESTING

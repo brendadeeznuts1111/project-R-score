@@ -17,7 +17,7 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { styled, FW_COLORS } from '../theme/colors';
 
 interface BunDocResult {
   title: string;

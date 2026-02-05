@@ -6,18 +6,18 @@
  * Fixed concurrent operations, standardized error handling, and proper cache management
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { styled, FW_COLORS } from '../theme/colors';
 import { 
   handleError, 
   safeAsync, 
   safeAsyncWithRetry, 
   R2ConnectionError, 
   R2DataError 
-} from '../core/error-handling.ts';
-import { validateR2Key } from '../core/validation.ts';
-import { globalCache } from '../core/cache-manager.ts';
-import { safeConcurrent } from '../core/concurrent-operations.ts';
-import { URLHandler, FactoryWagerURLUtils, URLFragmentUtils } from '../core/url-handler.ts';
+} from '../core/error-handling';
+import { validateR2Key } from '../core/validation';
+import { globalCache } from '../core/cache-manager';
+import { safeConcurrent } from '../core/concurrent-operations';
+import { URLHandler, FactoryWagerURLUtils, URLFragmentUtils } from '../core/url-handler';
 
 export interface R2Config {
   accountId: string;

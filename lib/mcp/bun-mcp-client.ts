@@ -1,6 +1,6 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { styled, FW_COLORS, FactoryWagerColor } from '../theme/colors.ts';
+import { styled, FW_COLORS, FactoryWagerColor } from '../theme/colors';
 
 export interface SearchResult {
   title: string;

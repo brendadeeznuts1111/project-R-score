@@ -27,7 +27,7 @@ if (import.meta.main) {
 }
 
 import { write } from "bun";
-import { OptimizedFetch } from './port-management-system.ts';
+import { OptimizedFetch } from './port-management-system';
 
 // ============================================================================
 // BUN.WRITE EXACT DOCUMENTATION TEST

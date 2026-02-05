@@ -6,13 +6,13 @@
  * Leverages Bun v1.3.7 features: contentEncoding, signed URLs, header preservation
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { styled, FW_COLORS } from '../theme/colors';
 import type { 
   PackageManifest, 
   PackageVersion, 
   RegistryStats,
   PackageStats 
-} from './registry-types.ts';
+} from './registry-types';
 
 export interface R2StorageConfig {
   accountId: string;

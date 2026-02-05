@@ -6,7 +6,7 @@
  * @version 5.1
  */
 
-import { styled } from '../theme/colors.ts';
+import { styled } from '../theme/colors';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -18,7 +18,7 @@ import { styled } from '../theme/colors.ts';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import type { VersionNode } from './versioned-secrets.ts';
+import type { VersionNode } from './versioned-secrets';
 
 export interface VisualizationData {
   mermaidUrl?: string;

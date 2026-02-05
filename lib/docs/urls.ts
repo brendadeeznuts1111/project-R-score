@@ -9,7 +9,7 @@
  * @version 5.1
  */
 
-import { BUN_DOCS } from './constants/domains.ts';
+import { BUN_DOCS } from './constants/domains';
 
 // Base domain configuration
 export const DOC_DOMAINS = {

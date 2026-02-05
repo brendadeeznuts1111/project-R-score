@@ -7,11 +7,11 @@
  * for the complete FactoryWager ecosystem integration.
  */
 
-import { R2MCPIntegration } from './r2-integration-fixed.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { globalCache } from '../core/cache-manager.ts';
-import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from '../core/url-handler.ts';
-import { handleError } from '../core/error-handling.ts';
+import { R2MCPIntegration } from './r2-integration-fixed';
+import { styled, FW_COLORS } from '../theme/colors';
+import { globalCache } from '../core/cache-manager';
+import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from '../core/url-handler';
+import { handleError } from '../core/error-handling';
 
 export interface R2DataItem {
   key: string;

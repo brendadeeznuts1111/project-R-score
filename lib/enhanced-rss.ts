@@ -1,5 +1,5 @@
 // lib/enhanced-rss.ts
-import { CONTENT_TYPES } from '../config/content-types.ts';
+import { CONTENT_TYPES } from '../config/content-types';
 
 /**
  * 🚀 Prefetch Optimizations

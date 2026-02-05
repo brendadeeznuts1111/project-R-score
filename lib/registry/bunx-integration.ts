@@ -9,9 +9,9 @@
  * - Secure credential handling
  */
 
-import { styled } from '../theme/colors.ts';
-import { R2StorageAdapter } from './r2-storage.ts';
-import { RegistrySecretsManager } from './secrets-manager.ts';
+import { styled } from '../theme/colors';
+import { R2StorageAdapter } from './r2-storage';
+import { RegistrySecretsManager } from './secrets-manager';
 
 // Use bun.semver if available
 const semver = (Bun as any).semver || {

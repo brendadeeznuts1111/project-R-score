@@ -7,7 +7,7 @@
  * @version 4.5
  */
 
-import { styled, log } from '../theme/colors.ts';
+import { styled, log } from '../theme/colors';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -19,8 +19,8 @@ import { styled, log } from '../theme/colors.ts';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { Utils } from '../utils/index.ts';
-import Tier1380SecretManager from './tier1380-secret-manager.ts';
+import { Utils } from '../utils/index';
+import Tier1380SecretManager from './tier1380-secret-manager';
 
 interface PasswordPolicy {
   minLength: number;

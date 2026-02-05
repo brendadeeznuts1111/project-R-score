@@ -7,7 +7,7 @@
  * and package-specific feed generation.
  */
 
-import type { PackageInfo } from '../package/package-manager.ts';
+import type { PackageInfo } from '../package/package-manager';
 
 export interface RSSFeedItem {
   title: string;

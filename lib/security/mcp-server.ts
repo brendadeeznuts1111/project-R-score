@@ -34,12 +34,12 @@ import {
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import Tier1380SecretManager from './tier1380-secret-manager.ts';
-import { Tier1380PasswordSecurity } from './enterprise-password-security.ts';
-import { Tier1380EnterpriseAuth } from './enterprise-auth.ts';
-import { Tier1380SecureDeployment } from './secure-deployment.ts';
-import { SecretLifecycleManager } from './secret-lifecycle.ts';
-import { VersionedSecretManager } from './versioned-secrets.ts';
+import Tier1380SecretManager from './tier1380-secret-manager';
+import { Tier1380PasswordSecurity } from './enterprise-password-security';
+import { Tier1380EnterpriseAuth } from './enterprise-auth';
+import { Tier1380SecureDeployment } from './secure-deployment';
+import { SecretLifecycleManager } from './secret-lifecycle';
+import { VersionedSecretManager } from './versioned-secrets';
 
 // Bun-specific optimizations
 const BUN_RUNTIME = typeof Bun !== 'undefined';

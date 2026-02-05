@@ -6,11 +6,11 @@
  * Uses Bun.wrapAnsi() for 33-88x faster ANSI text wrapping
  */
 
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { R2StorageAdapter } from './r2-storage.ts';
-import { NPMRegistryServer } from './server.ts';
-import { RegistryAuth, AuthConfigs } from './auth.ts';
-import { loadRegistryConfig } from './config-loader.ts';
+import { styled, FW_COLORS } from '../theme/colors';
+import { R2StorageAdapter } from './r2-storage';
+import { NPMRegistryServer } from './server';
+import { RegistryAuth, AuthConfigs } from './auth';
+import { loadRegistryConfig } from './config-loader';
 
 // Bun v1.3.7: ANSI-aware text wrapping helper
 function wrapText(text: string, columns: number = 80): string {

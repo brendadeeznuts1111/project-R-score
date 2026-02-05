@@ -5,8 +5,8 @@
  * Supports JSON, JSON5, and JSONL config files (Bun v1.3.7+)
  */
 
-import { styled } from '../theme/colors.ts';
-import type { RegistryConfig } from './registry-types.ts';
+import { styled } from '../theme/colors';
+import type { RegistryConfig } from './registry-types';
 
 export interface ConfigLoadOptions {
   path?: string;

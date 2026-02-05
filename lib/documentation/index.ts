@@ -23,7 +23,7 @@ import {
   PROVIDER_METADATA,
   QUICK_REFERENCE_URLS,
   SIGNIFICANT_COMMITS
-} from './constants/domains.ts';
+} from './constants/domains';
 import type {
   DocumentationURLType,
   DocumentationUserType,
@@ -32,40 +32,40 @@ import type {
   ProviderMetadata,
   BaseURLs,
   ProviderURLs
-} from './constants/domains.ts';
+} from './constants/domains';
 import { 
   ENTERPRISE_DOCUMENTATION_PATHS,
   IntelligentRouting
-} from './constants/categories.ts';
+} from './constants/categories';
 import {
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,
   TEXT_FRAGMENT_PATTERNS,
   FRAGMENT_BUILDERS,
   FRAGMENT_PARSERS
-} from './constants/fragments.ts';
+} from './constants/fragments';
 import { 
   EnterpriseDocumentationURLBuilder,
   docsURLBuilder
-} from './builders/url-builder.ts';
+} from './builders/url-builder';
 import type {
   DocumentationURLOptions,
   TypedArrayURLOptions,
   EnterpriseAPIURLOptions,
   SyscallOptimizationURLOptions
-} from './builders/url-builder.ts';
+} from './builders/url-builder';
 import { 
   EnhancedDocumentationURLValidator 
-} from './builders/validator.ts';
+} from './builders/validator';
 import { 
   EnterpriseDocumentationURLValidator as DocumentationURLValidatorNew
-} from './builders/validator-enhanced.ts';
+} from './builders/validator-enhanced';
 import type { 
   DocumentationMetadata,
   ValidationOptions,
   ValidationResult,
   SecurityValidationResult
-} from './builders/validator-enhanced.ts';
+} from './builders/validator-enhanced';
 import { 
   SyscallOptimizer,
   SyscallPlatform,
@@ -73,25 +73,25 @@ import {
   PerformanceTier,
   PERFORMANCE_TIER_ORDER,
   ENTERPRISE_SYSCALL_CONSTANTS
-} from './constants/syscalls.ts';
+} from './constants/syscalls';
 import { 
   DocumentationAnalytics
-} from './services/analytics.ts';
+} from './services/analytics';
 import type {
   AccessEvent,
   PopularURL,
   UsageMetrics
-} from './services/analytics.ts';
+} from './services/analytics';
 import { 
   DocumentationCache,
   documentationCache
-} from './services/cache.ts';
+} from './services/cache';
 import type {
   CacheEntry,
   CacheStats,
   CacheOptions
-} from './services/cache.ts';
-import * as LegacyCompat from './legacy-compat.ts';
+} from './services/cache';
+import * as LegacyCompat from './legacy-compat';
 
 // Enhanced singleton instance with proper typing
 export const docsURLBuilder = EnterpriseDocumentationURLBuilder.getInstance();

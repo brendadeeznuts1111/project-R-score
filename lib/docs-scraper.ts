@@ -1,5 +1,5 @@
 // lib/docs-scraper.ts
-import { BUN_DOCS } from '../config/urls.ts';
+import { BUN_DOCS } from '../config/urls';
 
 /**
  * 🚀 Prefetch Optimizations

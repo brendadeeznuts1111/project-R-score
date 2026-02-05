@@ -7,9 +7,9 @@
  * and integrates them with the R2 MCP system for comprehensive monitoring.
  */
 
-import { r2MCPIntegration } from './r2-integration.ts';
-import { domainIntegration } from './domain-integration.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
+import { r2MCPIntegration } from './r2-integration';
+import { domainIntegration } from './domain-integration';
+import { styled, FW_COLORS } from '../theme/colors';
 
 export interface CloudflareZone {
   id: string;

@@ -7,9 +7,9 @@
  * and purple color scheme theming with the MCP system.
  */
 
-import { r2MCPIntegration } from './r2-integration.ts';
-import { styled, FW_COLORS } from '../theme/colors.ts';
-import { domainIntegration } from './domain-integration.ts';
+import { r2MCPIntegration } from './r2-integration';
+import { styled, FW_COLORS } from '../theme/colors';
+import { domainIntegration } from './domain-integration';
 
 export interface DuoPlusConfig {
   domain: {

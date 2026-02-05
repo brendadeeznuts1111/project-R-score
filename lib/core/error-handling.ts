@@ -6,7 +6,7 @@
  * Comprehensive error handling with proper types, logging, and recovery strategies
  */
 
-import { styled } from '../theme/colors.ts';
+import { styled } from '../theme/colors';
 
 /**
  * Base error class for all R2 integration errors

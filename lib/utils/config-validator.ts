@@ -5,8 +5,8 @@
  * environment variable validation, and schema validation.
  */
 
-import { logger } from './logger.ts';
-import { ErrorHandler } from './error-handler.ts';
+import { logger } from './logger';
+import { ErrorHandler } from './error-handler';
 
 export interface ConfigValidationRule {
   required?: boolean;

@@ -7,7 +7,7 @@
  * secrets, and system resources
  */
 
-import { BUN_DOCS_EXTENDED } from './docs/urls.ts';
+import { BUN_DOCS_EXTENDED } from './docs/urls';
 
 interface ReferenceItem {
   url: string;
