@@ -9,6 +9,7 @@
 import { Tier1380PasswordSecurity } from './enterprise-password-security.ts';
 import { styled, log } from '../theme/colors.ts';
 import { Utils } from '../utils/index.ts';
+import Tier1380SecretManager from './tier1380-secret-manager.ts';
 
 interface AuthenticationContext {
   ipAddress: string;
@@ -391,6 +392,16 @@ export class Tier1380EnterpriseAuth {
    * Generate authentication report
    */
   static generateAuthReport(): {
+    timestamp: Date;
+    period: string;
+    totalAttempts: number;
+    successfulLogins: number;
+    failedLogins: number;
+    uniqueUsers: number;
+    successRate: string;
+    topFailedIPs: Array<{ ip: string; count: number }>;
+    recommendations: string[];
+  } {
     const now = new Date();
     const last24Hours = this.auditLog.filter(
       entry => now.getTime() - entry.timestamp.getTime() < 24 * 60 * 60 * 1000
@@ -457,16 +468,11 @@ export class Tier1380EnterpriseAuth {
   }
 }
 
-// Mock Tier1380SecretManager for demo purposes
-const Tier1380SecretManager = {
-  async getSecret(key: string): Promise<string | null> {
-    // Mock implementation
-    return null;
-  },
-  async setSecret(key: string, value: string, options?: any): Promise<void> {
-    // Mock implementation
-    console.log(`Storing secret: ${key}`);
-  }
-};
-
 export default Tier1380EnterpriseAuth;
+
+export class AuthenticationError extends Error {
+  constructor(message: string, public code?: string, public score?: number, public userId?: string) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}

@@ -9,19 +9,7 @@
 
 import { styled, log } from '../theme/colors.ts';
 import { Utils } from '../utils/index.ts';
-
-// Import Tier1380SecretManager (would be implemented separately)
-// For now, we'll create a mock implementation
-const Tier1380SecretManager = {
-  async getSecret(key: string): Promise<string | null> {
-    // Mock implementation - in production would use Windows Credential Manager
-    return null;
-  },
-  async setSecret(key: string, value: string, options?: any): Promise<void> {
-    // Mock implementation
-    console.log(`Storing secret: ${key}`);
-  }
-};
+import Tier1380SecretManager from './tier1380-secret-manager.ts';
 
 interface PasswordPolicy {
   minLength: number;
@@ -81,7 +69,7 @@ export class Tier1380PasswordSecurity {
     this.validatePassword(password, options.policy);
     
     // 2. Choose algorithm based on requirements
-    const algorithm = options.algorithm || this.selectBestAlgorithm();
+    const algorithm = options.algorithm || await this.selectBestAlgorithm();
     const metadata: any = {};
     
     let hash: string;
@@ -209,9 +197,9 @@ export class Tier1380PasswordSecurity {
   /**
    * Choose best algorithm based on system capabilities
    */
-  private static selectBestAlgorithm(): 'argon2id' | 'bcrypt' {
+  private static async selectBestAlgorithm(): Promise<'argon2id' | 'bcrypt'> {
     // Argon2id for servers with >1GB RAM, bcrypt for constrained environments
-    const memory = this.getSystemMemory();
+    const memory = await this.getSystemMemory();
     
     if (memory >= 1024 * 1024 * 1024) { // 1GB
       return 'argon2id'; // Use memory-hard algorithm on capable systems
@@ -387,7 +375,7 @@ export class Tier1380PasswordSecurity {
     return commonPasswords.has(password.toLowerCase());
   }
 
-  private static getSystemMemory(): number {
+  private static async getSystemMemory(): Promise<number> {
     try {
       if (process.platform === 'win32') {
         // Windows - use wmic

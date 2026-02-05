@@ -212,29 +212,68 @@ export class SecretLifecycleManager {
   }
   
   private generateNewValue(key: string, currentValue: string): string {
-    // In production, would implement proper value generation based on secret type
+    // Proper secret value generation based on secret type
     if (key.includes('JWT') || key.includes('SECRET')) {
-      // Generate random JWT secret
+      // Generate cryptographically secure JWT secret (256 bits)
       return Bun.random.bytes(32).toString('hex');
     }
     
     if (key.includes('KEY') || key.includes('TOKEN')) {
-      // Generate random API key
-      return 'sk_' + Bun.random.bytes(24).toString('hex');
+      // Generate API key with prefix and secure random component
+      const prefix = key.includes('API') ? 'sk_' : key.includes('DEPLOY') ? 'deploy_' : 'key_';
+      const randomBytes = Bun.random.bytes(24);
+      return prefix + randomBytes.toString('hex');
     }
     
     if (key.includes('PASSWORD')) {
-      // Generate random password
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-      let password = '';
-      for (let i = 0; i < 16; i++) {
-        password += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return password;
+      // Generate secure password with high entropy
+      return this.generateSecurePassword();
     }
     
-    // Default: hash current value with timestamp
-    return Bun.hash.sha256(currentValue + Date.now()).toString('hex');
+    if (key.includes('CERTIFICATE') || key.includes('CERT')) {
+      // Generate certificate-like string (simplified for demo)
+      return `-----BEGIN CERTIFICATE-----\n${Bun.random.bytes(64).toString('base64')}\n-----END CERTIFICATE-----`;
+    }
+    
+    if (key.includes('PRIVATE_KEY') || key.includes('PRIVATE-KEY')) {
+      // Generate private key-like string (simplified for demo)
+      return `-----BEGIN PRIVATE KEY-----\n${Bun.random.bytes(64).toString('base64')}\n-----END PRIVATE KEY-----`;
+    }
+    
+    // Default: generate cryptographically secure random value
+    return Bun.random.bytes(32).toString('hex');
+  }
+  
+  /**
+   * Generate a secure password with high entropy
+   */
+  private generateSecurePassword(length: number = 16): string {
+    // Use cryptographically secure random bytes
+    const randomBytes = Bun.random.bytes(length);
+    
+    // Character sets with different entropy weights
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    
+    const allChars = uppercase + lowercase + numbers + symbols;
+    
+    let password = '';
+    
+    // Ensure at least one character from each set
+    password += uppercase[randomBytes[0] % uppercase.length];
+    password += lowercase[randomBytes[1] % lowercase.length];
+    password += numbers[randomBytes[2] % numbers.length];
+    password += symbols[randomBytes[3] % symbols.length];
+    
+    // Fill remaining characters with random selection from all sets
+    for (let i = 4; i < length; i++) {
+      password += allChars[randomBytes[i] % allChars.length];
+    }
+    
+    // Shuffle the password to avoid predictable patterns
+    return password.split('').sort(() => randomBytes[Math.floor(Math.random() * randomBytes.length)] % 2 - 0.5).join('');
   }
   
   private async notifyRotation(key: string, version: string, reason: string) {
