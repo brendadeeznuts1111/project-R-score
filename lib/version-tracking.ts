@@ -587,11 +587,11 @@ export class VersionTracker {
   }
 
   private generateDeploymentId(): string {
-    return `deploy_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `deploy_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   private generateRollbackId(): string {
-    return `rollback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `rollback_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   private async calculateChecksum(componentUri: string): Promise<string> {

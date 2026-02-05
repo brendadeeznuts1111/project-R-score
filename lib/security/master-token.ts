@@ -297,7 +297,7 @@ export class MasterTokenManager {
     // Store in R2 if available
     try {
       await r2MCPIntegration.storeAuditEntry({
-        id: `token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `token-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
         timestamp: logEntry.timestamp,
         errorType: 'TokenAudit',
         errorMessage: `${action}: ${tokenId}`,

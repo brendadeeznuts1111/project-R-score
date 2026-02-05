@@ -1446,14 +1446,14 @@ export class AIOperationsManager extends EventEmitter {
    * Generate unique ID
    */
   private generateId(): string {
-    return `ai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `ai-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
 
   /**
    * Generate correlation ID for tracing
    */
   private generateCorrelationId(): string {
-    return `corr-${Date.now()}-${++this.correlationCounter}-${Math.random().toString(36).substr(2, 6)}`;
+    return `corr-${Date.now()}-${++this.correlationCounter}-${Math.random().toString(36).substring(2, 8)}`;
   }
 
   /**
