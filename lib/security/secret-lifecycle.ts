@@ -1,312 +1,174 @@
-/**
- * ⏰ FactoryWager Secret Lifecycle Manager v5.1
- * 
- * Automated rotation, expiration monitoring, and lifecycle policies
- * 
- * @version 5.1
- */
+import { env } from 'bun';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { dirname } from 'node:path';
+import { VersionedSecretManager } from './versioned-secrets';
 
-import { styled, log } from '../theme/colors';
-
-import { Utils } from '../utils/index';
-import type { LifecycleRule } from './versioned-secrets';
-
-export interface ExpirationReport {
-  generated: string;
-  count: number;
-  critical: number;
-  warnings: number;
-  secrets: Array<{
-    key: string;
-    expiresAt: Date;
-    daysLeft: number;
-    severity: 'CRITICAL' | 'WARNING';
-    action: string;
-  }>;
-  factorywager: string;
-}
+export type LifecycleRule = {
+  key: string;
+  schedule: { type: 'cron' | 'interval'; cron?: string; intervalMs?: number };
+  action: 'rotate';
+  metadata?: Record<string, string>;
+};
 
 export class SecretLifecycleManager {
-  private scheduler = new Map<string, LifecycleRule>();
-  private secretRegistry = new Map<string, any>(); // Would be populated from actual secrets
-  private r2Bucket: any;
-  
-  constructor(r2Bucket?: any) {
-    this.r2Bucket = r2Bucket;
-  }
-  
+  private scheduler = new Map<string, LifecycleRule & { ruleId: string; nextRotation?: string }>();
+  private versioned = new VersionedSecretManager();
+  private registry = new Map<string, { expiresAt?: string }>();
+
   async scheduleRotation(key: string, rule: LifecycleRule) {
     const ruleId = `rotation-${key}-${Date.now()}`;
-    
-    rule.ruleId = ruleId;
-    rule.nextRotation = this.calculateNextRotation(rule.schedule);
-    
-    this.scheduler.set(ruleId, rule);
-    
-    // Store rule in R2 for persistence
-    if (this.r2Bucket) {
-      await this.r2Bucket.put(
+    const nextRotation = this.calculateNextRotation(rule.schedule);
+
+    this.scheduler.set(ruleId, { ...rule, key, ruleId, nextRotation });
+
+    if (env.R2_BUCKET) {
+      await env.R2_BUCKET.put(
         `lifecycle/rules/${ruleId}.json`,
-        JSON.stringify(rule, null, 2),
-        {
-          customMetadata: {
-            'lifecycle:type': 'rotation-rule',
-            'lifecycle:key': key,
-            'lifecycle:schedule': rule.schedule.type,
-            'lifecycle:next': rule.nextRotation.toISOString(),
-            'visual:color': '#f59e0b',
-            'factorywager:version': '5.1'
-          }
-        }
+        JSON.stringify(this.scheduler.get(ruleId), null, 2),
+        { customMetadata: { 'lifecycle:type': 'rotation-rule', 'lifecycle:key': key } }
       );
     }
-    
-    // Setup scheduling
-    if (rule.schedule.type === 'cron') {
-      this.setupCron(ruleId, rule.schedule.cron!);
-    } else if (rule.schedule.type === 'interval') {
-      this.setupInterval(ruleId, rule.schedule.intervalMs!);
-    }
-    
-    log.info(`Scheduled rotation for ${key}`);
-    log.metric('Next rotation', rule.nextRotation.toISOString(), 'muted');
-    
-    return { ruleId, nextRotation: rule.nextRotation };
+
+    return { ruleId, nextRotation };
   }
-  
+
   async rotateNow(key: string, reason = 'Manual rotation') {
-    try {
-      const current = await Bun.secrets.get(key);
-      
-      // Generate new value (implement based on secret type)
-      const newValue = this.generateNewValue(key, current);
-      
-      // Set new version (would use VersionedSecretManager in real implementation)
-      await Bun.secrets.set(key, newValue, {
-        description: `Auto-rotation: ${reason}`,
-        tags: {
-          'factorywager:auto-rotated': 'true',
-          'factorywager:rotation-reason': reason,
-          'factorywager:rotation-timestamp': new Date().toISOString()
-        }
-      });
-      
-      log.success(`Rotated ${key}`);
-      
-      // In real implementation, would notify services and update dependencies
-      await this.notifyRotation(key, 'v' + Date.now(), reason);
-      
-      return { success: true, newValue };
-    } catch (error) {
-      log.error(`Failed to rotate ${key}: ${error}`);
-      return { success: false, error };
-    }
+    const current = await this.versioned.getWithVersion(key);
+    const newValue = this.generateNewValue(key, current.value);
+    const result = await this.versioned.set(key, newValue, {
+      author: 'lifecycle-manager',
+      description: `Auto-rotation: ${reason}`,
+      level: 'HIGH',
+      tags: { 'factorywager:auto-rotated': 'true' }
+    });
+
+    return result;
   }
-  
-  async checkExpirations(): Promise<any[]> {
-    const now = new Date();
-    const expiring: Array<{ key: string; expiresAt: Date; daysLeft: number }> = [];
-    
-    // Scan all secrets with expiration metadata
-    for (const [key, metadata] of this.secretRegistry) {
-      if (metadata.expiresAt) {
-        const expiresAt = new Date(metadata.expiresAt);
-        const daysLeft = Math.ceil(
-          (expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-        );
-        
-        if (daysLeft <= 0) {
-          log.error(`EXPIRED: ${key}`);
-          await this.handleExpired(key);
-        } else if (daysLeft <= 7) {
-          expiring.push({ key, expiresAt, daysLeft });
-          log.warning(`Expiring soon: ${key} (${daysLeft} days)`);
-        }
+
+  async checkExpirations() {
+    const expiring: Array<{ key: string; daysLeft: number }> = [];
+    const now = Date.now();
+
+    await this.loadRegistry();
+
+    for (const [key, meta] of this.registry) {
+      if (!meta.expiresAt) continue;
+      const expiresAt = Date.parse(meta.expiresAt);
+      if (Number.isNaN(expiresAt)) continue;
+      const daysLeft = Math.ceil((expiresAt - now) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= 7) {
+        expiring.push({ key, daysLeft });
       }
     }
-    
-    // Generate expiration report
-    if (expiring.length > 0) {
-      await this.generateExpirationReport(expiring);
+
+    if (expiring.length) {
+      const reportInfo = await this.generateExpirationReport(expiring);
+      return { expiring, reportInfo };
     }
-    
-    return expiring;
+
+    return { expiring, reportInfo: undefined };
   }
-  
+
+  private calculateNextRotation(schedule: LifecycleRule['schedule']) {
+    if (schedule.type === 'interval') {
+      const next = new Date(Date.now() + (schedule.intervalMs ?? 0));
+      return next.toISOString();
+    }
+    return undefined;
+  }
+
+  private generateNewValue(_key: string, current: string) {
+    return current + '-rotated';
+  }
+
+  private async loadRegistry() {
+    if (this.registry.size) return;
+    const path = env.SECRET_REGISTRY_PATH ?? 'config/secret-registry.json';
+    try {
+      const raw = await readFile(path, 'utf8');
+      const data = JSON.parse(raw) as Array<{ key: string; expiresAt?: string }>;
+      data.forEach((entry) => this.registry.set(entry.key, { expiresAt: entry.expiresAt }));
+    } catch {
+      // No registry file; leave empty
+    }
+  }
+
   private async generateExpirationReport(expiring: Array<{ key: string; daysLeft: number }>) {
-    const report: ExpirationReport = {
+    const report = {
       generated: new Date().toISOString(),
       count: expiring.length,
-      critical: expiring.filter(e => e.daysLeft <= 3).length,
-      warnings: expiring.filter(e => e.daysLeft > 3 && e.daysLeft <= 7).length,
-      secrets: expiring.map(e => ({
+      critical: expiring.filter((e) => e.daysLeft <= 3).length,
+      warnings: expiring.filter((e) => e.daysLeft > 3 && e.daysLeft <= 7).length,
+      secrets: expiring.map((e) => ({
         key: e.key,
-        expiresAt: e.expiresAt,
         daysLeft: e.daysLeft,
         severity: e.daysLeft <= 3 ? 'CRITICAL' : 'WARNING',
         action: e.daysLeft <= 1 ? 'ROTATE_NOW' : 'SCHEDULE_ROTATION'
-      })),
-      factorywager: '5.1'
+      }))
     };
-    
-    // Store in R2
-    if (this.r2Bucket) {
-      await this.r2Bucket.put(
-        `reports/expirations/${new Date().toISOString().split('T')[0]}.json`,
-        JSON.stringify(report, null, 2),
-        {
-          customMetadata: {
-            'report:type': 'secret-expirations',
-            'report:date': new Date().toISOString(),
-            'report:critical-count': report.critical.toString(),
-            'visual:theme': 'factorywager-expiration-report',
-            'factorywager:version': '5.1'
-          }
+
+    const date = new Date().toISOString().split('T')[0];
+    const key = `reports/expirations/${date}.json`;
+    const htmlKey = `reports/expirations/${date}.html`;
+    const localDir = env.SECRET_REPORT_DIR ?? 'reports/expirations';
+    const localJson = `${localDir}/${date}.json`;
+    const localHtml = `${localDir}/${date}.html`;
+    if (env.R2_BUCKET) {
+      await env.R2_BUCKET.put(key, JSON.stringify(report, null, 2), {
+        customMetadata: {
+          'report:type': 'secret-expirations',
+          'report:date': report.generated,
+          'report:critical-count': report.critical.toString()
         }
-      );
-      
-      // Generate signed URL
-      const signedUrl = await this.r2Bucket.createSignedUrl(
-        `reports/expirations/${new Date().toISOString().split('T')[0]}.json`,
-        { expiresInSeconds: 86400 }
-      );
-      
-      log.metric('Expiration report', signedUrl, 'accent');
+      });
     }
-    
-    return { report, signedUrl: this.r2Bucket ? await this.r2Bucket.createSignedUrl(
-      `reports/expirations/${new Date().toISOString().split('T')[0]}.json`,
-      { expiresInSeconds: 86400 }
-    ) : undefined };
-  }
-  
-  private calculateNextRotation(schedule: LifecycleRule['schedule']): Date {
-    const now = new Date();
-    
-    if (schedule.type === 'interval' && schedule.intervalMs) {
-      return new Date(now.getTime() + schedule.intervalMs);
+
+    const html = this.generateExpirationHtml(report);
+    if (env.R2_BUCKET) {
+      await env.R2_BUCKET.put(htmlKey, html, {
+        customMetadata: {
+          'report:type': 'secret-expirations',
+          'report:format': 'html',
+          'report:date': report.generated
+        }
+      });
     }
-    
-    if (schedule.type === 'cron' && schedule.cron) {
-      // Simple cron parsing (would use a proper cron library in production)
-      // For demo, assume daily at midnight
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      return tomorrow;
+
+    let jsonUrl: string | undefined;
+    let htmlUrl: string | undefined;
+    if (env.R2_BUCKET && typeof env.R2_BUCKET.createSignedUrl === 'function') {
+      jsonUrl = await env.R2_BUCKET.createSignedUrl(key, { expiresInSeconds: 86400 });
+      htmlUrl = await env.R2_BUCKET.createSignedUrl(htmlKey, { expiresInSeconds: 86400 });
     }
-    
-    // Default to 30 days from now
-    const thirtyDays = new Date(now);
-    thirtyDays.setDate(thirtyDays.getDate() + 30);
-    return thirtyDays;
+
+    await this.writeLocalReport(localJson, JSON.stringify(report, null, 2));
+    await this.writeLocalReport(localHtml, html);
+
+    return { jsonUrl, htmlUrl, key, htmlKey, localJson, localHtml };
   }
-  
-  private setupCron(ruleId: string, cronExpression: string) {
-    // In production, would use a proper cron scheduler
-    log.info(`Setup cron for ${ruleId}: ${cronExpression}`);
+
+  private async writeLocalReport(path: string, contents: string) {
+    await mkdir(dirname(path), { recursive: true });
+    await writeFile(path, contents, 'utf8');
   }
-  
-  private setupInterval(ruleId: string, intervalMs: number) {
-    // In production, would use setInterval with proper cleanup
-    log.info(`Setup interval for ${ruleId}: ${intervalMs}ms`);
-  }
-  
-  private generateNewValue(key: string, currentValue: string): string {
-    // Proper secret value generation based on secret type
-    if (key.includes('JWT') || key.includes('SECRET')) {
-      // Generate cryptographically secure JWT secret (256 bits)
-      return Bun.random.bytes(32).toString('hex');
-    }
-    
-    if (key.includes('KEY') || key.includes('TOKEN')) {
-      // Generate API key with prefix and secure random component
-      const prefix = key.includes('API') ? 'sk_' : key.includes('DEPLOY') ? 'deploy_' : 'key_';
-      const randomBytes = Bun.random.bytes(24);
-      return prefix + randomBytes.toString('hex');
-    }
-    
-    if (key.includes('PASSWORD')) {
-      // Generate secure password with high entropy
-      return this.generateSecurePassword();
-    }
-    
-    if (key.includes('CERTIFICATE') || key.includes('CERT')) {
-      // Generate certificate-like string (simplified for demo)
-      return `-----BEGIN CERTIFICATE-----\n${Bun.random.bytes(64).toString('base64')}\n-----END CERTIFICATE-----`;
-    }
-    
-    if (key.includes('PRIVATE_KEY') || key.includes('PRIVATE-KEY')) {
-      // Generate private key-like string (simplified for demo)
-      return `-----BEGIN PRIVATE KEY-----\n${Bun.random.bytes(64).toString('base64')}\n-----END PRIVATE KEY-----`;
-    }
-    
-    // Default: generate cryptographically secure random value
-    return Bun.random.bytes(32).toString('hex');
-  }
-  
-  /**
-   * Generate a secure password with high entropy
-   */
-  private generateSecurePassword(length: number = 16): string {
-    // Use cryptographically secure random bytes
-    const randomBytes = Bun.random.bytes(length);
-    
-    // Character sets with different entropy weights
-    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-    const numbers = '0123456789';
-    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    
-    const allChars = uppercase + lowercase + numbers + symbols;
-    
-    let password = '';
-    
-    // Ensure at least one character from each set
-    password += uppercase[randomBytes[0] % uppercase.length];
-    password += lowercase[randomBytes[1] % lowercase.length];
-    password += numbers[randomBytes[2] % numbers.length];
-    password += symbols[randomBytes[3] % symbols.length];
-    
-    // Fill remaining characters with random selection from all sets
-    for (let i = 4; i < length; i++) {
-      password += allChars[randomBytes[i] % allChars.length];
-    }
-    
-    // Shuffle the password to avoid predictable patterns
-    return password.split('').sort(() => randomBytes[Math.floor(Math.random() * randomBytes.length)] % 2 - 0.5).join('');
-  }
-  
-  private async notifyRotation(key: string, version: string, reason: string) {
-    // In production, would send notifications to configured channels
-    log.info(`Notified services about ${key} rotation to ${version}`);
-  }
-  
-  private async handleExpired(key: string) {
-    // In production, would handle expired secrets (disable services, alert admins, etc.)
-    log.error(`Handling expired secret: ${key}`);
-    
-    // Try emergency rotation
-    await this.rotateNow(key, 'Emergency rotation - expired');
-  }
-  
-  async registerSecret(key: string, metadata: any) {
-    this.secretRegistry.set(key, metadata);
-  }
-  
-  async getActiveRules(): LifecycleRule[] {
-    return Array.from(this.scheduler.values());
-  }
-  
-  async cancelRotation(ruleId: string) {
-    this.scheduler.delete(ruleId);
-    
-    if (this.r2Bucket) {
-      await this.r2Bucket.delete(`lifecycle/rules/${ruleId}.json`);
-    }
-    
-    log.info(`Cancelled rotation rule: ${ruleId}`);
+
+  private generateExpirationHtml(report: any) {
+    const rows = report.secrets.map((s: any) => {
+      return `<tr><td>${s.key}</td><td>${s.daysLeft}</td><td>${s.severity}</td><td>${s.action}</td></tr>`;
+    }).join('');
+    return `<!doctype html>
+<html><head><meta charset="utf-8"><title>Secret Expiration Report</title>
+<style>
+body{font-family:ui-sans-serif,system-ui;margin:24px;background:#0b0f1a;color:#e8f2ff}
+table{border-collapse:collapse;width:100%;background:#0f1a2b}
+th,td{border:1px solid #1c2740;padding:8px;font-size:12px}
+th{background:#101b35;text-align:left}
+</style></head><body>
+<h2>Secret Expiration Report</h2>
+<p>Generated: ${report.generated}</p>
+<p>Count: ${report.count} | Critical: ${report.critical} | Warnings: ${report.warnings}</p>
+<table><thead><tr><th>Key</th><th>Days Left</th><th>Severity</th><th>Action</th></tr></thead>
+<tbody>${rows}</tbody></table>
+</body></html>`;
   }
 }
-
-export default SecretLifecycleManager;
