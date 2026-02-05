@@ -469,7 +469,8 @@ class Tier1380SecurityMCPServer {
             "required": [
               "query"
             ]
-          }
+          },
+          "operationId": "Tier1380SecuritySearch"
         },
       ],
     }));
