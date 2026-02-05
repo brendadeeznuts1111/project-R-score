@@ -113,10 +113,19 @@ const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? (() => {
 		const parts = mainPath.split('/');
 		const idx = parts.lastIndexOf('bun');
 		if (idx > 0) return parts.slice(0, idx).join('/');
-		current = current.slice(0, current.lastIndexOf('/'));
 	}
 	return process.cwd();
 })();
+
+// Initialize logger for secrets dashboard
+const logger = LoggerFactory.getLogger('secrets-dashboard', {
+  service: 'secrets-dashboard',
+  level: process.env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
+  enableConsole: true,
+  enableMetrics: true,
+  structuredFormat: true
+});
+
 const HMR_CLIENTS = new Set<WritableStreamDefaultWriter>();
 const ENV_ROOT = PROJECTS_ROOT;
 const MAIN_DIR = Bun.fileURLToPath(new URL('.', Bun.pathToFileURL(Bun.main)));
@@ -614,6 +623,17 @@ const server = Bun.serve({
   async fetch(req) {
     const requestId = generateRequestId();
     const url = new URL(req.url);
+    const startTime = Date.now();
+
+    // Log request start
+    logger.info(`${req.method} ${url.pathname} started`, {
+      method: req.method,
+      path: url.pathname,
+      userAgent: req.headers.get('user-agent'),
+      ip: req.headers.get('x-forwarded-for') || 'unknown'
+    }, requestId);
+
+    try {
 
     if (url.pathname === '/' || url.pathname === '/index.html') {
       return serveStatic(req, join(PUBLIC_DIR, 'index.html'));
