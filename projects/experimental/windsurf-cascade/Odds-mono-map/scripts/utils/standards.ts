@@ -24,7 +24,7 @@ import { ErrorHandler, ErrorSeverity, ErrorCategory, createErrorContext } from '
 import { join } from 'path';
 import { glob } from 'glob';
 import chalk from 'chalk';
-import { parse as parseYaml } from 'yaml';
+import { YAML } from "bun";
 
 interface StandardCheck {
     name: string;

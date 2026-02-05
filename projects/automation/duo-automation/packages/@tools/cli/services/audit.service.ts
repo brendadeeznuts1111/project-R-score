@@ -323,7 +323,7 @@ export class AuditService {
   /**
    * Load audit log from file
    */
-  async load(): Promise<void> {
+  async YAML.parse(): Promise<void> {
     if (!this.persistPath) return;
 
     try {

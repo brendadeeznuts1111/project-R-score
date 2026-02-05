@@ -72,9 +72,9 @@ describe('DynamicConfigManager', () => {
     manager = new DynamicConfigManager(`${tempDir}/config.json`);
   });
 
-  describe('load()', () => {
+  describe('YAML.parse()', () => {
     test('should return default config when file does not exist', async () => {
-      const config = await manager.load();
+      const config = await manager.YAML.parse();
 
       expect(config.title).toBe(blogConfig.title);
       expect(config.url).toBe(blogConfig.url);
@@ -88,7 +88,7 @@ describe('DynamicConfigManager', () => {
 
       await Bun.write(`${tempDir}/config.json`, JSON.stringify(customConfig));
 
-      const config = await manager.load();
+      const config = await manager.YAML.parse();
 
       expect(config.title).toBe('Custom Blog Title');
       expect(config.rss.itemCount).toBe(50);
@@ -99,7 +99,7 @@ describe('DynamicConfigManager', () => {
     test('should handle malformed JSON gracefully', async () => {
       await Bun.write(`${tempDir}/config.json`, 'not valid json{');
 
-      const config = await manager.load();
+      const config = await manager.YAML.parse();
 
       // Should fall back to defaults
       expect(config.title).toBe(blogConfig.title);
@@ -110,7 +110,7 @@ describe('DynamicConfigManager', () => {
       await Bun.write(`${tempDir}/config.json`, JSON.stringify(validConfig));
 
       const start = performance.now();
-      await manager.load();
+      await manager.YAML.parse();
       const loadTime = performance.now() - start;
 
       expect(loadTime).toBeLessThan(50); // Allow margin for CI
@@ -119,14 +119,14 @@ describe('DynamicConfigManager', () => {
 
   describe('getConfig()', () => {
     test('should return current configuration', async () => {
-      await manager.load();
+      await manager.YAML.parse();
       const config = manager.getConfig();
 
       expect(config).toBeDefined();
       expect(config.title).toBeDefined();
     });
 
-    test('should return defaults before load() is called', () => {
+    test('should return defaults before YAML.parse() is called', () => {
       const config = manager.getConfig();
 
       expect(config.title).toBe(blogConfig.title);
@@ -135,7 +135,7 @@ describe('DynamicConfigManager', () => {
 
   describe('update()', () => {
     test('should update configuration in memory', async () => {
-      await manager.load();
+      await manager.YAML.parse();
       await manager.update({ title: 'Updated Title' });
 
       const config = manager.getConfig();
@@ -143,7 +143,7 @@ describe('DynamicConfigManager', () => {
     });
 
     test('should persist updates to file', async () => {
-      await manager.load();
+      await manager.YAML.parse();
       await manager.update({ title: 'Persisted Title' });
 
       // Read file directly
@@ -154,7 +154,7 @@ describe('DynamicConfigManager', () => {
     });
 
     test('should notify subscribers on update', async () => {
-      await manager.load();
+      await manager.YAML.parse();
 
       let notifiedConfig: BlogConfig | null = null;
       manager.subscribe((config) => {
@@ -170,7 +170,7 @@ describe('DynamicConfigManager', () => {
 
   describe('subscribe()', () => {
     test('should register callback and return unsubscribe function', async () => {
-      await manager.load();
+      await manager.YAML.parse();
 
       let callCount = 0;
       const unsubscribe = manager.subscribe(() => {
@@ -187,7 +187,7 @@ describe('DynamicConfigManager', () => {
     });
 
     test('should support multiple subscribers', async () => {
-      await manager.load();
+      await manager.YAML.parse();
 
       const calls: string[] = [];
 
@@ -203,7 +203,7 @@ describe('DynamicConfigManager', () => {
     });
 
     test('should call all subscribers on update', async () => {
-      await manager.load();
+      await manager.YAML.parse();
 
       const calls: number[] = [];
 
@@ -223,7 +223,7 @@ describe('DynamicConfigManager', () => {
 
   describe('validate()', () => {
     test('should validate complete configuration', async () => {
-      await manager.load();
+      await manager.YAML.parse();
       const result = manager.validate();
 
       expect(result.valid).toBe(true);
@@ -237,7 +237,7 @@ describe('DynamicConfigManager', () => {
         rss: { filename: 'rss.xml' }
       }));
 
-      await manager.load();
+      await manager.YAML.parse();
 
       // Override with empty title to test validation
       const configWithEmptyTitle = new DynamicConfigManager(`${tempDir}/empty-title.json`);
@@ -245,7 +245,7 @@ describe('DynamicConfigManager', () => {
         title: null,
         url: 'https://test.com'
       }));
-      await configWithEmptyTitle.load();
+      await configWithEmptyTitle.YAML.parse();
 
       // Manually set empty title to test
       (configWithEmptyTitle as any).config.title = '';
@@ -258,7 +258,7 @@ describe('DynamicConfigManager', () => {
 
     test('should detect missing URL', async () => {
       const badManager = new DynamicConfigManager(`${tempDir}/no-url.json`);
-      await badManager.load();
+      await badManager.YAML.parse();
       (badManager as any).config.url = '';
 
       const result = badManager.validate();
@@ -269,7 +269,7 @@ describe('DynamicConfigManager', () => {
 
     test('should detect missing RSS filename', async () => {
       const badManager = new DynamicConfigManager(`${tempDir}/no-rss.json`);
-      await badManager.load();
+      await badManager.YAML.parse();
       (badManager as any).config.rss = { filename: '', itemCount: 20 };
 
       const result = badManager.validate();
@@ -284,7 +284,7 @@ describe('DynamicConfigManager', () => {
     // These tests are skipped when the API is unavailable
     test.skipIf(typeof Bun.watch !== 'function')('should start and stop watcher without error', async () => {
       await Bun.write(`${tempDir}/config.json`, JSON.stringify({ title: 'Watch Test' }));
-      await manager.load();
+      await manager.YAML.parse();
 
       manager.startWatching();
       // Starting twice should be idempotent
@@ -300,7 +300,7 @@ describe('DynamicConfigManager', () => {
       // The implementation should handle this gracefully
       const existingManager = new DynamicConfigManager(`${tempDir}/config.json`);
       await Bun.write(`${tempDir}/config.json`, JSON.stringify({ title: 'Watch Test 2' }));
-      await existingManager.load();
+      await existingManager.YAML.parse();
 
       // This should work without throwing
       existingManager.startWatching();

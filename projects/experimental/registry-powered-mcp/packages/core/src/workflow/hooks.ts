@@ -403,7 +403,7 @@ export function createWebhookHooks(config: WebhookConfig): readonly WorkflowHook
  */
 export interface PersistenceStore {
   save(executionId: string, data: unknown): Promise<void>;
-  load(executionId: string): Promise<unknown | null>;
+  YAML.parse(executionId: string): Promise<unknown | null>;
   delete(executionId: string): Promise<void>;
 }
 
@@ -417,7 +417,7 @@ class InMemoryPersistenceStore implements PersistenceStore {
     this.store.set(executionId, data);
   }
 
-  async load(executionId: string): Promise<unknown | null> {
+  async YAML.parse(executionId: string): Promise<unknown | null> {
     return this.store.get(executionId) ?? null;
   }
 
@@ -457,7 +457,7 @@ export function createPersistenceHooks(
         const { result } = data as { step: WorkflowStep; result: StepResult };
 
         // Update stored state with step result
-        const existing = await store.load(context.executionId);
+        const existing = await store.YAML.parse(context.executionId);
         if (existing) {
           const state = existing as Record<string, unknown>;
           const stepResults = (state.stepResults as StepResult[]) ?? [];
@@ -474,7 +474,7 @@ export function createPersistenceHooks(
         const result = data as { status: WorkflowStatus } | undefined;
 
         // Update final state
-        const existing = await store.load(context.executionId);
+        const existing = await store.YAML.parse(context.executionId);
         if (existing) {
           const state = existing as Record<string, unknown>;
           state.status = result?.status;

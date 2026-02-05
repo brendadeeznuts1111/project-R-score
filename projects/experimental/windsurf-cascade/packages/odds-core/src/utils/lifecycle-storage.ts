@@ -24,7 +24,7 @@ export class InMemoryLifecycleStorage implements LifecycleStorage {
   /**
    * Load lifecycle by ID
    */
-  async load(metadataId: string): Promise<MetadataLifecycle | null> {
+  async YAML.parse(metadataId: string): Promise<MetadataLifecycle | null> {
     const lifecycle = this.lifecycles.get(metadataId);
     return lifecycle ? { ...lifecycle } : null;
   }

@@ -46,7 +46,7 @@ async function bootstrap() {
   try {
     // Phase 1: Load Registry Configuration
     logger.info('📡 Phase 1: Loading registry.toml...');
-    const registry = await RegistryLoader.load('./registry.toml');
+    const registry = await RegistryLoader.YAML.parse('./registry.toml');
     logger.info(`✓ Loaded ${registry.servers.length} servers, ${registry.routes.length} routes`);
 
     // Phase 1.5: Load Exchange Configuration from Environment

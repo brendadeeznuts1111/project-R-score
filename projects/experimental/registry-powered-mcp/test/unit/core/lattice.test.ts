@@ -13,7 +13,7 @@ describe('LatticeRouter', () => {
   let config: RegistryConfig;
 
   beforeAll(async () => {
-    config = await RegistryLoader.load('./registry.toml');
+    config = await RegistryLoader.YAML.parse('./registry.toml');
     router = new LatticeRouter(config);
     await router.initialize();
   });

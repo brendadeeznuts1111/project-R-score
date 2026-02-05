@@ -89,36 +89,61 @@ export class EnterpriseDocumentationURLBuilder {
   
   /**
    * Main URL construction with intelligent routing
+   * Supports both new options-based signature and legacy positional arguments
    */
-  public buildURL(options: DocumentationURLOptions): string {
+  public buildURL(
+    providerOrOptions: DocumentationProvider | DocumentationURLOptions,
+    category?: DocumentationCategory,
+    path?: string,
+    fragment?: string,
+    userType?: DocumentationUserType,
+    preferences?: DocumentationURLOptions['preferences']
+  ): string {
+    let options: DocumentationURLOptions;
+    
+    // If first argument is an options object, use it directly
+    if (typeof providerOrOptions === 'object' && 'provider' in providerOrOptions) {
+      options = providerOrOptions;
+    } else {
+      // Otherwise, use legacy signature
+      options = {
+        provider: providerOrOptions as DocumentationProvider,
+        category,
+        path,
+        fragment,
+        userType,
+        preferences
+      };
+    }
+    
     const {
       provider = DocumentationProvider.BUN_OFFICIAL,
-      category,
-      path,
-      fragment,
+      category: cat,
+      path: pth,
+      fragment: frag,
       queryParams,
-      userType = 'all_users',
-      preferences = {}
+      userType: ut = 'all_users',
+      preferences: prefs = {}
     } = options;
     
     // Get base URL configuration
     const urlConfig = this.getURLConfig(provider);
-    const baseURL = this.selectOptimalBaseURL(urlConfig, category, userType);
+    const baseURL = this.selectOptimalBaseURL(urlConfig, cat, ut);
     
     // Build full URL path
-    const fullPath = this.buildPath(baseURL, path, category);
+    const fullPath = this.buildPath(baseURL, pth, cat);
     
     // Add query parameters
     const finalURL = this.addQueryParams(fullPath, {
       ...queryParams,
-      ...this.buildTrackingParams(preferences)
+      ...this.buildTrackingParams(prefs)
     });
     
     // Add fragment
-    const urlWithFragment = fragment ? this.addFragment(finalURL, fragment) : finalURL;
+    const urlWithFragment = frag ? this.addFragment(finalURL, frag) : finalURL;
     
     // Log access for analytics
-    this.logAccess(urlWithFragment, provider, userType, category);
+    this.logAccess(urlWithFragment, provider, ut, cat);
     
     return urlWithFragment;
   }
@@ -346,6 +371,323 @@ export class EnterpriseDocumentationURLBuilder {
       }
     });
   }
+
+  /**
+   * Build CLI documentation URL with fragment
+   */
+  public buildCLIDocumentationURL(
+    subcommand: string,
+    fragment?: string,
+    options?: { includeExamples?: boolean }
+  ): string {
+    const baseURLs = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
+    let path = `/docs/cli/${subcommand.toLowerCase()}`;
+    
+    if (options?.includeExamples) {
+      path += '?examples=true';
+    }
+    
+    const url = new URL(path, baseURLs.DOCS);
+    if (fragment) {
+      url.hash = fragment;
+    }
+    
+    return url.toString();
+  }
+
+  /**
+   * Build Bun.utils documentation URL
+   */
+  public buildUtilsDocumentationURL(
+    utilityFunction?: string,
+    fragment?: string
+  ): string {
+    const baseURLs = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
+    let url = new URL('/docs/api/utils', baseURLs.API);
+    
+    if (utilityFunction) {
+      url.hash = utilityFunction;
+    } else if (fragment) {
+      url.hash = fragment;
+    }
+    
+    return url.toString();
+  }
+
+  /**
+   * Get CLI fragment URLs
+   */
+  public getCLIFragmentURLs(): Record<string, string> {
+    const base = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL].DOCS;
+    
+    return {
+      run: `${base}/docs/cli/run#examples`,
+      test: `${base}/docs/cli/test#configuration`,
+      build: `${base}/docs/cli/build#options`,
+      install: `${base}/docs/cli/install-command#dependencies`,
+      add: `${base}/docs/cli/add#packages`
+    };
+  }
+
+  /**
+   * Build CLI command example
+   */
+  public buildCLICommandExample(
+    command: string,
+    options: Record<string, any> = {}
+  ): string {
+    let cmd = `bun ${command}`;
+    
+    // Add positional arguments
+    if (options.script) {
+      cmd += ` ${options.script}`;
+    }
+    if (options.package) {
+      cmd += ` ${options.package}`;
+      if (options.version) {
+        cmd += `@${options.version}`;
+      }
+    }
+    if (options.entry) {
+      cmd += ` ${options.entry}`;
+    }
+    
+    // Add flags
+    Object.entries(options).forEach(([key, value]) => {
+      if (!['script', 'package', 'version', 'entry'].includes(key)) {
+        if (typeof value === 'boolean' && value) {
+          cmd += ` --${key}`;
+        } else if (typeof value !== 'boolean') {
+          cmd += ` --${key}=${value}`;
+        }
+      }
+    });
+    
+    return cmd;
+  }
+
+  /**
+   * Get cheatsheet URLs
+   */
+  public getCheatsheetURLs(): any {
+    const base = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
+    
+    return {
+      cli: {
+        main: `${base.CLI}`,
+        commands: [
+          {
+            name: 'run',
+            example: 'bun run dev',
+            docs: `${base.CLI}/run`
+          },
+          {
+            name: 'test',
+            example: 'bun test --watch',
+            docs: `${base.CLI}/test`
+          },
+          {
+            name: 'build',
+            example: 'bun build ./src/index.ts',
+            docs: `${base.CLI}/build`
+          }
+        ]
+      },
+      utils: {
+        main: `${base.API}/utils`,
+        functions: [
+          {
+            name: 'readFile',
+            example: "await readFile('file.txt', 'utf-8')",
+            docs: `${base.API}/utils#readFile`
+          },
+          {
+            name: 'isTypedArray',
+            example: 'isTypedArray(new Uint8Array())',
+            docs: `${base.API}/utils#isTypedArray`
+          },
+          {
+            name: 'toBuffer',
+            example: 'toBuffer("Hello")',
+            docs: `${base.API}/utils#toBuffer`
+          }
+        ],
+        validation: [
+          {
+            name: 'isTypedArray',
+            test: 'new Uint8Array([1, 2, 3])',
+            result: 'true'
+          },
+          {
+            name: 'isString',
+            test: '"Hello"',
+            result: 'true'
+          },
+          {
+            name: 'isArray',
+            test: '[1, 2, 3]',
+            result: 'true'
+          }
+        ]
+      },
+      api: {
+        main: `${base.API}`,
+        typedArray: `${base.RUNTIME}/binary-data#typedarray`,
+        fetch: `${base.RUNTIME}/networking/fetch`
+      }
+    };
+  }
+
+  /**
+   * Get example commit URL
+   */
+  public getExampleCommitURL(): string {
+    return 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types';
+  }
+
+  /**
+   * Build GitHub raw URL
+   */
+  public buildGitHubRawURL(
+    ref: string,
+    path: string
+  ): string {
+    // Sanitize path to prevent path traversal
+    const sanitizedPath = path.replace(/\.\./g, '').replace(/\/+/g, '/').replace(/^\/+/, '');
+    return `https://raw.githubusercontent.com/oven-sh/bun/${ref}/${sanitizedPath}`;
+  }
+
+  /**
+   * Build GitHub commit URL
+   */
+  public buildGitHubCommitURL(
+    owner: string,
+    repo: string,
+    commitHash: string,
+    path: string,
+    viewType: 'tree' | 'blob' = 'tree'
+  ): string {
+    const sanitizedPath = path.replace(/\.\./g, '').replace(/\/+/g, '/').replace(/^\/+/, '');
+    return `https://github.com/${owner}/${repo}/${viewType}/${commitHash}/${sanitizedPath}`;
+  }
+
+  /**
+   * Get GitHub package URLs
+   */
+  public getGitHubPackageURLs(
+    packageName: string,
+    commitHash?: string
+  ): Record<string, string> {
+    const hash = commitHash || 'af76296637931381e9509c204c5f1af9cc174534';
+    const basePath = `packages/${packageName}`;
+    return {
+      tree: this.buildGitHubCommitURL('oven-sh', 'bun', hash, basePath, 'tree'),
+      blob: this.buildGitHubCommitURL('oven-sh', 'bun', hash, basePath, 'blob'),
+      raw: this.buildGitHubRawURL(hash, basePath)
+    };
+  }
+
+  /**
+   * Build Bun types URL
+   */
+  public buildBunTypesURL(
+    commitHash?: string,
+    path?: string
+  ): string {
+    const hash = commitHash || 'af76296637931381e9509c204c5f1af9cc174534';
+    const pth = path || 'packages/bun-types';
+    return this.buildGitHubCommitURL('oven-sh', 'bun', hash, pth, 'tree');
+  }
+
+  /**
+   * Build Bun reference URL with text fragment
+   */
+  public buildBunReferenceWithTextFragment(
+    text: string,
+    options?: {
+      prefix?: string;
+      suffix?: string;
+      textStart?: string;
+      textEnd?: string;
+    }
+  ): string {
+    const baseURL = 'https://bun.com/reference';
+    const fragment = TEXT_FRAGMENT_SPEC.build({
+      textStart: options?.textStart || text,
+      prefix: options?.prefix,
+      suffix: options?.suffix,
+      textEnd: options?.textEnd
+    });
+    return `${baseURL}${fragment}`;
+  }
+
+  /**
+   * Get common text fragment URLs
+   */
+  public getCommonTextFragmentURLs(): Record<string, string> {
+    return {
+      nodeZlib: this.buildBunReferenceWithTextFragment('node:zlib'),
+      bunAPIReference: this.buildBunReferenceWithTextFragment('Bun API Reference')
+    };
+  }
+
+  /**
+   * Get TypeScript definition file URLs
+   */
+  public getTypeDefinitionURLs(): Record<string, string> {
+    const baseURLs = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_TYPES];
+
+    return {
+      npmPackage: baseURLs.NPM_PACKAGE,
+      githubPackage: baseURLs.GITHUB_PACKAGE,
+      latestTypes: baseURLs.LATEST_TYPES_COMMIT(),
+      exampleCommit: this.getExampleCommitURL(),
+      typescriptPlayground: baseURLs.TYPESCRIPT_PLAYGROUND
+    };
+  }
+
+  /**
+   * Build URL with text fragment (for bun.com/reference#:~:text=...)
+   */
+  public buildURLWithTextFragment(
+    baseURL: string,
+    textFragment: string,
+    options?: {
+      prefix?: string;
+      suffix?: string;
+      textStart?: string;
+      textEnd?: string;
+    }
+  ): string {
+    const url = new URL(baseURL);
+
+    // Build text fragment according to spec: #:~:text=[prefix-,]textStart[,textEnd][,-suffix]
+    let fragment = ':~:text=';
+
+    if (options?.prefix) {
+      fragment += `${encodeURIComponent(options.prefix)}-`;
+    }
+
+    fragment += encodeURIComponent(options?.textStart || textFragment);
+
+    if (options?.textEnd) {
+      fragment += `,${encodeURIComponent(options.textEnd)}`;
+    }
+
+    if (options?.suffix) {
+      fragment += `,-${encodeURIComponent(options.suffix)}`;
+    }
+
+    // Append to existing hash or create new
+    if (url.hash && !url.hash.includes(':~:')) {
+      url.hash = `${url.hash}${fragment}`;
+    } else {
+      url.hash = fragment;
+    }
+
+    return url.toString();
+  }
+
 }
 
 // Export singleton instance for easy access

@@ -63,7 +63,7 @@ export class DynamicConfigManager {
    * Load configuration from file
    * Uses Bun.file() for zero-copy I/O
    */
-  async load(): Promise<BlogConfig> {
+  async YAML.parse(): Promise<BlogConfig> {
     try {
       const file = Bun.file(this.configPath);
 
@@ -108,7 +108,7 @@ export class DynamicConfigManager {
           const startTime = performance.now();
 
           console.log(`🔄 Config change detected: ${filename}`);
-          await this.load();
+          await this.YAML.parse();
 
           // Notify subscribers
           for (const subscriber of this.subscribers) {

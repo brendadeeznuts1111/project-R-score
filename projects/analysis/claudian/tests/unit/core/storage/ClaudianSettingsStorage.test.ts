@@ -29,7 +29,7 @@ describe('ClaudianSettingsStorage', () => {
     it('should return defaults when file does not exist', async () => {
       (mockAdapter.exists as jest.Mock).mockResolvedValue(false);
 
-      const result = await storage.load();
+      const result = await storage.YAML.parse();
 
       expect(result.model).toBe(DEFAULT_SETTINGS.model);
       expect(result.thinkingBudget).toBe(DEFAULT_SETTINGS.thinkingBudget);
@@ -44,7 +44,7 @@ describe('ClaudianSettingsStorage', () => {
         userName: 'TestUser',
       }));
 
-      const result = await storage.load();
+      const result = await storage.YAML.parse();
 
       expect(result.model).toBe('claude-opus-4-5');
       expect(result.userName).toBe('TestUser');
@@ -61,7 +61,7 @@ describe('ClaudianSettingsStorage', () => {
         },
       }));
 
-      const result = await storage.load();
+      const result = await storage.YAML.parse();
 
       expect(result.blockedCommands.unix).toContain('custom-unix-cmd');
       expect(result.blockedCommands.windows).toContain('custom-win-cmd');
@@ -76,7 +76,7 @@ describe('ClaudianSettingsStorage', () => {
         },
       }));
 
-      const result = await storage.load();
+      const result = await storage.YAML.parse();
 
       expect(result.claudeCliPathsByHost['host-a']).toBe('/custom/path-a');
       expect(result.claudeCliPathsByHost['host-b']).toBe('/custom/path-b');
@@ -88,7 +88,7 @@ describe('ClaudianSettingsStorage', () => {
         claudeCliPath: '/legacy/path',
       }));
 
-      const result = await storage.load();
+      const result = await storage.YAML.parse();
 
       expect(result.claudeCliPath).toBe('/legacy/path');
     });
@@ -97,14 +97,14 @@ describe('ClaudianSettingsStorage', () => {
       (mockAdapter.exists as jest.Mock).mockResolvedValue(true);
       (mockAdapter.read as jest.Mock).mockResolvedValue('invalid json');
 
-      await expect(storage.load()).rejects.toThrow();
+      await expect(storage.YAML.parse()).rejects.toThrow();
     });
 
     it('should throw on read error', async () => {
       (mockAdapter.exists as jest.Mock).mockResolvedValue(true);
       (mockAdapter.read as jest.Mock).mockRejectedValue(new Error('Read failed'));
 
-      await expect(storage.load()).rejects.toThrow('Read failed');
+      await expect(storage.YAML.parse()).rejects.toThrow('Read failed');
     });
   });
 

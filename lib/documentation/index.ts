@@ -12,30 +12,35 @@
  * @since 1.0.0
  */
 
-import { 
-  DocumentationProvider, 
+import {
+  DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
+  DocumentationFormat,
   ENTERPRISE_DOCUMENTATION_BASE_URLS,
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA,
-  QUICK_REFERENCE_URLS
+  QUICK_REFERENCE_URLS,
+  SIGNIFICANT_COMMITS
 } from './constants/domains.ts';
 import type {
   DocumentationURLType,
   DocumentationUserType,
   DocumentationURLConfig,
   DocumentationURLMapping,
-  ProviderMetadata
+  ProviderMetadata,
+  BaseURLs,
+  ProviderURLs
 } from './constants/domains.ts';
 import { 
   ENTERPRISE_DOCUMENTATION_PATHS,
   IntelligentRouting
 } from './constants/categories.ts';
-import { 
+import {
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,
+  TEXT_FRAGMENT_PATTERNS,
   FRAGMENT_BUILDERS,
   FRAGMENT_PARSERS
 } from './constants/fragments.ts';
@@ -97,11 +102,14 @@ export {
   DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
+  DocumentationFormat,
   DocumentationURLType,
   DocumentationUserType,
   DocumentationURLConfig,
   DocumentationURLMapping,
   ProviderMetadata,
+  BaseURLs,
+  ProviderURLs,
   
   // URL builder interfaces
   DocumentationURLOptions,
@@ -134,8 +142,10 @@ export {
   ENTERPRISE_DOCUMENTATION_PATHS,
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,
+  TEXT_FRAGMENT_PATTERNS,
   FRAGMENT_BUILDERS,
   FRAGMENT_PARSERS,
+  SIGNIFICANT_COMMITS,
   
   // Syscall system
   SyscallOptimizer,

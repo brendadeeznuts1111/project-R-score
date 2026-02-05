@@ -246,7 +246,7 @@ describe("CLI Integration Tests", () => {
   describe("Configuration Integration", () => {
     test("should load configuration", async () => {
       const configLoader = await import("../../src/config-loader.ts");
-      const config = await configLoader.default.load();
+      const config = await configLoader.default.YAML.parse();
 
       expect(config).toBeDefined();
       expect(config).toHaveProperty('http');
@@ -256,7 +256,7 @@ describe("CLI Integration Tests", () => {
 
     test("should provide HTTP headers", async () => {
       const configLoader = await import("../../src/config-loader.ts");
-      const config = await configLoader.default.load();
+      const config = await configLoader.default.YAML.parse();
 
       if (config.http?.headers) {
         expect(typeof config.http.headers).toBe('object');
@@ -266,7 +266,7 @@ describe("CLI Integration Tests", () => {
 
     test("should validate feature flags", async () => {
       const configLoader = await import("../../src/config-loader.ts");
-      const config = await configLoader.default.load();
+      const config = await configLoader.default.YAML.parse();
 
       expect(config.features).toBeDefined();
       expect(typeof config.features?.enterprise).toBe('boolean');

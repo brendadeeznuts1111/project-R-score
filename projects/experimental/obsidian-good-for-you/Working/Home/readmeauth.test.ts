@@ -18,7 +18,7 @@ describe('APIAppleIDCreator', () => {
 
   describe('Configuration', () => {
     test('should load default configuration', () => {
-      const config = ConfigManager.load();
+      const config = ConfigManager.YAML.parse();
       expect(config.maxRetries).toBe(3);
       expect(config.enableLogging).toBe(true);
       expect(config.userAgent).toContain('iPhone');

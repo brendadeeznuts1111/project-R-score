@@ -142,7 +142,7 @@ for (const size of loadSizes) {
     3,
     async () => {
       const manager = new HistoryCLIManager(path);
-      await manager.load();
+      await manager.YAML.parse();
     }
   );
 
@@ -167,7 +167,7 @@ const completionTests = [
 for (const { size, prefix } of completionTests) {
   const path = setupTest();
   const manager = new HistoryCLIManager(path);
-  await manager.load();
+  await manager.YAML.parse();
 
   // Populate history
   for (let i = 0; i < size; i++) {
@@ -204,7 +204,7 @@ const searchTests = [
 for (const { size, pattern } of searchTests) {
   const path = setupTest();
   const manager = new HistoryCLIManager(path);
-  await manager.load();
+  await manager.YAML.parse();
 
   // Populate history with repeated patterns
   for (let i = 0; i < size; i++) {
@@ -233,7 +233,7 @@ console.log('━'.repeat(80));
 
 const path = setupTest();
 const manager = new HistoryCLIManager(path);
-await manager.load();
+await manager.YAML.parse();
 
 // Populate with 1000 entries
 for (let i = 0; i < 1000; i++) {
@@ -276,7 +276,7 @@ console.log('━'.repeat(80));
 
 const path2 = setupTest();
 const manager2 = new HistoryCLIManager(path2);
-await manager2.load();
+await manager2.YAML.parse();
 
 await runBenchmark(
   'Add entry to history',
@@ -301,7 +301,7 @@ const statSizes = [100, 500, 1000, 5000];
 for (const size of statSizes) {
   const path3 = setupTest();
   const manager3 = new HistoryCLIManager(path3);
-  await manager3.load();
+  await manager3.YAML.parse();
 
   for (let i = 0; i < size; i++) {
     manager3.addEntry(`cmd_${i}`, Math.random() > 0.1 ? 0 : 1, Math.random() * 1000);
@@ -331,7 +331,7 @@ const memSizes = [100, 500, 1000, 5000, 10000];
 for (const size of memSizes) {
   const path4 = setupTest();
   const manager4 = new HistoryCLIManager(path4);
-  await manager4.load();
+  await manager4.YAML.parse();
 
   for (let i = 0; i < size; i++) {
     manager4.addEntry(`memory_test_command_${i}`, 0, Math.random() * 1000);
@@ -357,7 +357,7 @@ console.log('━'.repeat(80));
 
 const path5 = setupTest();
 const manager5 = new HistoryCLIManager(path5);
-await manager5.load();
+await manager5.YAML.parse();
 
 for (let i = 0; i < 500; i++) {
   manager5.addEntry(`verify_${i}`, 0, Math.random() * 1000);

@@ -14,7 +14,7 @@ describe('End-to-End Routing', () => {
 
   beforeAll(async () => {
     // Load full config
-    config = await RegistryLoader.load('./registry.toml');
+    config = await RegistryLoader.YAML.parse('./registry.toml');
 
     // Initialize router
     router = new LatticeRouter(config);

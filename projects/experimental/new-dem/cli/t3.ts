@@ -806,7 +806,7 @@ class T3LatticePlugin {
 
     try {
       // Test configuration loading
-      const config = await import("../src/config-loader.ts").then(m => m.default.load());
+      const config = await import("../src/config-loader.ts").then(m => m.default.YAML.parse());
 
       // Test cookie functionality
       const { LatticeCookieManager } = await import("../web/advanced-dashboard.ts");

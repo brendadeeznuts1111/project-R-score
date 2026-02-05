@@ -18,7 +18,7 @@ import { join, dirname, basename, extname } from 'path';
 import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync } from 'fs';
 import { glob } from 'glob';
 import chalk from 'chalk';
-import { parse as parseYaml } from 'yaml';
+import { YAML } from "bun";
 
 interface OrganizationRule {
     pattern: RegExp;

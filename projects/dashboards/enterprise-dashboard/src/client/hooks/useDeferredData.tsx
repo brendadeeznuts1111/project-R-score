@@ -54,7 +54,7 @@ export function useDeferredData<T>(
       }
     };
 
-    load();
+    YAML.parse();
 
     return () => {
       mounted = false;

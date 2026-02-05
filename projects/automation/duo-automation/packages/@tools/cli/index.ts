@@ -92,7 +92,7 @@ async function initializeServices(): Promise<{
     persistPath: configService.getScopedPath('audit.log'),
     actor: Bun.env.USER || 'cli-user'
   });
-  await auditService.load();
+  await auditService.YAML.parse();
   setGlobalAuditService(auditService);
 
   // Initialize command service

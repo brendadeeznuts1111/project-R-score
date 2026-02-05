@@ -846,7 +846,7 @@ interface EdgeRecommendation {
 // Fractal Edge Finder Server
 function startLatticeFinderSystem(runtimeConfig: any = {}): void {
   // Load configuration
-  bunConfig.load().catch(() => console.log('Using default configuration'));
+  bunConfig.YAML.parse().catch(() => console.log('Using default configuration'));
 
   // Initialize components
   const client = new LatticeRegistryClient();

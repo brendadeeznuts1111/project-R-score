@@ -321,7 +321,9 @@ function exportPlain(statuses: SecretStatus[]): string {
 		`Total: ${statuses.length}`,
 	];
 
-	return Bun.stripAnsi(lines.join('\n'));
+	// Fallback for Bun.stripAnsi if not available
+	const ansiRegex = /\x1B\[[0-9;]*[JKmsu]/g;
+	return lines.join('\n').replace(ansiRegex, '');
 }
 
 // ── Enhanced: Render with timing, exports, validation ────────────────────

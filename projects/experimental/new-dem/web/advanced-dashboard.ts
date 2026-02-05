@@ -214,7 +214,7 @@ export class LatticeCookieManager {
   constructor() {
     this.cookieMap = new Bun.CookieMap();
     // Load config asynchronously
-    bunConfig.load().then(config => {
+    bunConfig.YAML.parse().then(config => {
       this.config = config;
     }).catch(() => {
       // Use defaults if config fails to load
@@ -644,7 +644,7 @@ function generateAdvancedDashboardHTML(view: keyof typeof VIEWS = "overview"): s
 
 async function startAdvancedDashboard(runtimeConfig: any = {}): Promise<void> {
   // Load Bun configuration
-  const bunCfg = await bunConfig.load();
+  const bunCfg = await bunConfig.YAML.parse();
 
   const mergedConfig = {
     port: runtimeConfig.port ?? config.server.port ?? 8080,

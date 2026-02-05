@@ -136,10 +136,10 @@ export class EnvironmentConfigLoader {
     const configPath = `../config.${env}.toml`;
     
     try {
-      return await this.loader.load(configPath);
+      return await this.loader.YAML.parse(configPath);
     } catch {
       console.warn(`Environment config ${configPath} not found, using default`);
-      return await this.loader.load("../config.toml");
+      return await this.loader.YAML.parse("../config.toml");
     }
   }
 
@@ -253,13 +253,13 @@ export async function mergeConfigurations() {
   const loader = new TomlConfigLoader();
   
   // Load base configuration
-  const baseConfig = await loader.load("../config.toml");
+  const baseConfig = await loader.YAML.parse("../config.toml");
   
   // Load environment-specific overrides
-  const envOverrides = await loader.load("../config.development.toml").catch(() => ({}));
+  const envOverrides = await loader.YAML.parse("../config.development.toml").catch(() => ({}));
   
   // Load user-specific overrides
-  const userOverrides = await loader.load("../config.user.toml").catch(() => ({}));
+  const userOverrides = await loader.YAML.parse("../config.user.toml").catch(() => ({}));
   
   // Merge all configurations
   const mergedConfig = {

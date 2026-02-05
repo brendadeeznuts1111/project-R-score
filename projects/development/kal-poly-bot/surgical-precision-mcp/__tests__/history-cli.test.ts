@@ -58,7 +58,7 @@ describe('HistoryCLI Initialization', () => {
 
   test('handles non-existent history file gracefully', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
     
     const stats = manager.getStats();
     expect(stats.totalCommands).toBe(0);
@@ -88,7 +88,7 @@ describe('HistoryCLI Initialization', () => {
     );
 
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     const stats = manager.getStats();
     expect(stats.totalCommands).toBe(2);
@@ -103,7 +103,7 @@ describe('HistoryCLI Initialization', () => {
 describe('Adding History Entries', () => {
   test('adds entry to history', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('echo test', 0, 10);
 
@@ -121,13 +121,13 @@ describe('Adding History Entries', () => {
 
   test('persists entry to file', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('test command', 0, 5);
 
     // Load with new manager to verify persistence
     const manager2 = new HistoryCLIManager(testHistoryPath);
-    await manager2.load();
+    await manager2.YAML.parse();
 
     const stats = manager2.getStats();
     expect(stats.totalCommands).toBe(1);
@@ -135,7 +135,7 @@ describe('Adding History Entries', () => {
 
   test('handles exit code variations', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('successful', 0, 10);
     manager.addEntry('failed', 1, 20);
@@ -148,7 +148,7 @@ describe('Adding History Entries', () => {
 
   test('respects max history size', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     // Add entries above max size (10000)
     // In real scenario, this would trim oldest entries
@@ -168,7 +168,7 @@ describe('Adding History Entries', () => {
 describe('Tab Completion', () => {
   test('provides completions for empty prefix', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
     manager.addEntry('npm build', 0, 50);
@@ -182,7 +182,7 @@ describe('Tab Completion', () => {
 
   test('provides completions for command prefix', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
     manager.addEntry('npm build', 0, 50);
@@ -198,7 +198,7 @@ describe('Tab Completion', () => {
 
   test('filters out duplicate suggestions', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
     manager.addEntry('npm test', 0, 101);
@@ -212,7 +212,7 @@ describe('Tab Completion', () => {
 
   test('caches completion results', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
 
@@ -226,7 +226,7 @@ describe('Tab Completion', () => {
 
   test('detects file paths for completion type', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     const result = await manager.getCompletions('/tmp/test', 9, '/tmp/test');
     
@@ -235,7 +235,7 @@ describe('Tab Completion', () => {
 
   test('performance target: completion under 50ms', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     // Add many entries
     for (let i = 0; i < 100; i++) {
@@ -250,7 +250,7 @@ describe('Tab Completion', () => {
 
   test('clears completion cache', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
 
@@ -271,7 +271,7 @@ describe('Tab Completion', () => {
 describe('History Search', () => {
   test('searches history by pattern', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
     manager.addEntry('npm build', 0, 50);
@@ -286,7 +286,7 @@ describe('History Search', () => {
 
   test('searches with case-insensitive regex', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('NPM TEST', 0, 100);
     manager.addEntry('npm test', 0, 100);
@@ -298,7 +298,7 @@ describe('History Search', () => {
 
   test('limits search results', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     for (let i = 0; i < 50; i++) {
       manager.addEntry(`npm command ${i}`, 0, 100);
@@ -311,7 +311,7 @@ describe('History Search', () => {
 
   test('returns empty results for no matches', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
 
@@ -336,7 +336,7 @@ describe('History Search', () => {
 describe('History Statistics', () => {
   test('calculates basic statistics', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('cmd1', 0, 100);
     manager.addEntry('cmd2', 0, 200);
@@ -352,7 +352,7 @@ describe('History Statistics', () => {
 
   test('counts unique commands correctly', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('npm test', 0, 100);
     manager.addEntry('npm test', 0, 100);
@@ -366,7 +366,7 @@ describe('History Statistics', () => {
 
   test('calculates success rate correctly', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('success1', 0, 100);
     manager.addEntry('success2', 0, 100);
@@ -380,7 +380,7 @@ describe('History Statistics', () => {
 
   test('handles empty history stats', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     const stats = manager.getStats();
     
@@ -392,7 +392,7 @@ describe('History Statistics', () => {
 
   test('tracks memory size', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('command with some data', 0, 100);
 
@@ -409,7 +409,7 @@ describe('History Statistics', () => {
 describe('Formatting and Display', () => {
   test('formats entry with team colors', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     const entry: HistoryEntry = {
       command: 'npm test',
@@ -428,7 +428,7 @@ describe('Formatting and Display', () => {
 
   test('exports history to JSON', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('cmd1', 0, 100);
     manager.addEntry('cmd2', 0, 200);
@@ -442,7 +442,7 @@ describe('Formatting and Display', () => {
 
   test('display history returns void', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('cmd1', 0, 100);
 
@@ -459,7 +459,7 @@ describe('Formatting and Display', () => {
 describe('Zero-Collateral Guarantees', () => {
   test('verifies zero-collateral state', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('cmd1', 0, 100);
 
@@ -470,7 +470,7 @@ describe('Zero-Collateral Guarantees', () => {
 
   test('detects invalid entries', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     // Manually add invalid entry (simulate corruption)
     manager.addEntry('cmd1', 0, 100);
@@ -484,7 +484,7 @@ describe('Zero-Collateral Guarantees', () => {
 
   test('clears large cache to prevent memory leak', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('cmd1', 0, 100);
 
@@ -501,7 +501,7 @@ describe('Zero-Collateral Guarantees', () => {
 
   test('clears history without data corruption', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     manager.addEntry('cmd1', 0, 100);
     manager.addEntry('cmd2', 0, 200);
@@ -538,7 +538,7 @@ describe('Performance Targets', () => {
     const manager = new HistoryCLIManager(testHistoryPath);
     
     const startTime = performance.now();
-    await manager.load();
+    await manager.YAML.parse();
     const loadTimeMs = performance.now() - startTime;
 
     expect(loadTimeMs).toBeLessThan(10);
@@ -546,7 +546,7 @@ describe('Performance Targets', () => {
 
   test('completion responds in under 50ms', async () => {
     const manager = new HistoryCLIManager(testHistoryPath);
-    await manager.load();
+    await manager.YAML.parse();
 
     // Add many entries
     for (let i = 0; i < 100; i++) {

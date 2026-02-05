@@ -23,69 +23,103 @@ export enum DocumentationDomain {
   BUN_CDN = 'cdn.bun.sh',      // Static assets
 }
 
+// Enterprise documentation providers with full metadata
 export enum DocumentationProvider {
-  // bun.sh domain (technical documentation)
-  BUN_OFFICIAL = 'bun_official',        // bun.sh/docs - Technical docs
-  BUN_TECHNICAL = 'bun_technical',      // bun.sh/docs - Technical reference
-  BUN_API_DOCS = 'bun_api_docs',        // bun.sh/docs/api - API documentation
-  BUN_RUNTIME_DOCS = 'bun_runtime_docs', // bun.sh/docs/runtime - Runtime features
-  
-  // bun.com domain (reference portal)
-  BUN_REFERENCE = 'bun_reference',      // bun.com/reference - API reference portal
-  BUN_GUIDES = 'bun_guides',            // bun.com/guides - Tutorials & guides
-  BUN_TUTORIALS = 'bun_tutorials',      // bun.com/tutorials - Interactive tutorials
-  BUN_EXAMPLES = 'bun_examples',        // bun.com/examples - Code examples
-  
-  // RSS feeds from both domains
-  BUN_RSS = 'bun_rss',                  // RSS feeds
-  BUN_FEEDS = 'bun_feeds',              // Feed aggregation
-  
-  // GitHub and external sources
-  GITHUB_PUBLIC = 'github_public',      // oven-sh/bun public repo
+  // Official providers
+  BUN_OFFICIAL = 'bun_official',
+  BUN_TYPES = 'bun_types',
   GITHUB_ENTERPRISE = 'github_enterprise',
   INTERNAL_WIKI = 'internal_wiki',
   
-  // External documentation
+  // External references
   MDN_WEB_DOCS = 'mdn_web_docs',
   NODE_JS = 'node_js',
   WEB_STANDARDS = 'web_standards',
   
-  // Specialized enterprise providers
+  // Specialized
   PERFORMANCE_GUIDES = 'performance_guides',
   SECURITY_DOCS = 'security_docs',
+  API_REFERENCE = 'api_reference',
+  COMMUNITY_BLOG = 'community_blog',
+  RSS_FEEDS = 'rss_feeds',
+  
+  // Legacy/backward compatibility (deprecated)
+  /** @deprecated Use BUN_OFFICIAL instead */
+  BUN_TECHNICAL = 'bun_technical',
+  /** @deprecated Use BUN_OFFICIAL instead */
+  BUN_API_DOCS = 'bun_api_docs',
+  /** @deprecated Use BUN_OFFICIAL instead */
+  BUN_RUNTIME_DOCS = 'bun_runtime_docs',
+  /** @deprecated Use BUN_OFFICIAL instead */
+  BUN_REFERENCE = 'bun_reference',
+  /** @deprecated Use BUN_OFFICIAL instead */
+  BUN_GUIDES = 'bun_guides',
+  /** @deprecated Use BUN_OFFICIAL instead */
+  BUN_TUTORIALS = 'bun_tutorials',
+  /** @deprecated Use BUN_OFFICIAL instead */
+  BUN_EXAMPLES = 'bun_examples',
+  /** @deprecated Use RSS_FEEDS instead */
+  BUN_RSS = 'bun_rss',
+  /** @deprecated Use RSS_FEEDS instead */
+  BUN_FEEDS = 'bun_feeds',
+  /** @deprecated Use GITHUB_ENTERPRISE instead */
+  GITHUB_PUBLIC = 'github_public',
+  /** @deprecated Use COMMUNITY_BLOG instead */
   COMMUNITY_RESOURCES = 'community_resources'
 }
 
 export enum DocumentationCategory {
-  // bun.sh categories (technical)
+  // Core documentation
+  INSTALLATION = 'installation',
+  QUICKSTART = 'quickstart',
   API_REFERENCE = 'api_reference',
   RUNTIME_FEATURES = 'runtime_features',
-  INSTALLATION = 'installation',
-  CLI_REFERENCE = 'cli_reference',
-  BENCHMARKS = 'benchmarks',
-  SECURITY = 'security',
-  PERFORMANCE = 'performance',
-  MIGRATION = 'migration',
   
-  // bun.com categories (user-facing)
-  GETTING_STARTED = 'getting_started',
-  TUTORIALS = 'tutorials',
-  EXAMPLES_TUTORIALS = 'examples_tutorials',
-  BEST_PRACTICES = 'best_practices',
-  MIGRATION_GUIDES = 'migration_guides',
-  TROUBLESHOOTING = 'troubleshooting',
-  COMMUNITY_RESOURCES = 'community_resources',
-  
-  // Enhanced enterprise categories
+  // Technical guides
   PERFORMANCE_OPTIMIZATION = 'performance_optimization',
   SECURITY_GUIDELINES = 'security_guidelines',
   DEPLOYMENT_GUIDES = 'deployment_guides',
-  QUICKSTART = 'quickstart',
+  TROUBLESHOOTING = 'troubleshooting',
   
-  // RSS categories
+  // Development
+  EXAMPLES_TUTORIALS = 'examples_tutorials',
+  BEST_PRACTICES = 'best_practices',
+  MIGRATION_GUIDES = 'migration_guides',
+  COMMUNITY_RESOURCES = 'community_resources',
+  
+  // Legacy/backward compatibility (deprecated)
+  /** @deprecated Use API_REFERENCE instead */
+  CLI_REFERENCE = 'cli_reference',
+  /** @deprecated Use PERFORMANCE_OPTIMIZATION instead */
+  BENCHMARKS = 'benchmarks',
+  /** @deprecated Use SECURITY_GUIDELINES instead */
+  SECURITY = 'security',
+  /** @deprecated Use PERFORMANCE_OPTIMIZATION instead */
+  PERFORMANCE = 'performance',
+  /** @deprecated Use MIGRATION_GUIDES instead */
+  MIGRATION = 'migration',
+  /** @deprecated Use QUICKSTART instead */
+  GETTING_STARTED = 'getting_started',
+  /** @deprecated Use EXAMPLES_TUTORIALS instead */
+  TUTORIALS = 'tutorials',
+  /** @deprecated Use COMMUNITY_RESOURCES instead */
   RSS_FEEDS = 'rss_feeds',
+  /** @deprecated Use COMMUNITY_RESOURCES instead */
   BLOG_POSTS = 'blog_posts',
+  /** @deprecated Use COMMUNITY_RESOURCES instead */
   RELEASE_ANNOUNCEMENTS = 'release_announcements'
+}
+
+// Documentation format types
+export enum DocumentationFormat {
+  HTML = 'html',
+  MARKDOWN = 'markdown',
+  PDF = 'pdf',
+  JSON = 'json',
+  RSS = 'rss',
+  XML = 'xml',
+  OPEN_API = 'open_api',
+  GRAPHQL = 'graphql'
 }
 
 // Enhanced type definitions for better type safety
@@ -159,24 +193,24 @@ export interface DomainPreferences {
   };
 }
 
-// Enhanced base URLs with all domains and proper separation
+// Enterprise base URLs with environment awareness
 export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
-  // bun.sh domain (technical documentation)
   [DocumentationProvider.BUN_OFFICIAL]: {
     BASE: process.env.BUN_DOCS_BASE_URL || 'https://bun.sh',
-    DOCS: 'https://bun.sh/docs',
+    DOCS: process.env.BUN_DOCS_URL || 'https://bun.sh/docs',
     API: 'https://bun.sh/docs/api',
     RUNTIME: 'https://bun.sh/docs/runtime',
-    CLI: 'https://bun.sh/docs/cli',
     GUIDES: 'https://bun.sh/docs/guides',
     EXAMPLES: 'https://bun.sh/docs/examples',
+    RSS_FEED: 'https://bun.sh/feed.xml',
     BLOG: 'https://bun.sh/blog',
     SECURITY: 'https://bun.sh/docs/security',
     PERFORMANCE: 'https://bun.sh/docs/performance',
+    // Legacy/backward compatibility
+    CLI: 'https://bun.sh/docs/cli',
     DOWNLOADS: 'https://bun.sh/download',
     CHANGELOG: 'https://bun.sh/changelog',
     COMPARE: 'https://bun.sh/compare',
-    RSS_FEED: 'https://bun.sh/feed.xml',       // Technical blog RSS
     FEED: 'https://bun.sh/feed.xml'
   },
   
@@ -235,7 +269,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     COOKBOOK: 'https://bun.com/reference/cookbook',
     CHEATSHEET: 'https://bun.com/reference/cheatsheet',
     GLOSSARY: 'https://bun.com/reference/glossary',
-    
+
     // Text fragment examples
     TEXT_FRAGMENT_EXAMPLES: {
       NODE_ZLIB: 'https://bun.com/reference#:~:text=node%3Azlib',
@@ -297,7 +331,26 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     SECURITY_FEED: 'https://bun.com/security/rss.xml',
     COMMUNITY_FEED: 'https://bun.com/community/rss.xml'
   },
-  
+
+  // Bun TypeScript Definitions
+  [DocumentationProvider.BUN_TYPES]: {
+    BASE: 'https://bun.sh/docs/typescript',
+    INSTALLATION: 'https://bun.sh/docs/typescript/installation',
+    CONFIGURATION: 'https://bun.sh/docs/typescript/configuration',
+    AUTOCOMPLETE: 'https://bun.sh/docs/typescript/autocomplete',
+
+    // npm package
+    NPM_PACKAGE: 'https://www.npmjs.com/package/bun-types',
+
+    // GitHub
+    GITHUB_PACKAGE: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
+    LATEST_TYPES_COMMIT: (commitHash?: string) =>
+      `https://github.com/oven-sh/bun/tree/${commitHash || 'main'}/packages/bun-types`,
+
+    // TypeScript playground with Bun types
+    TYPESCRIPT_PLAYGROUND: 'https://www.typescriptlang.org/play?install-plugin=bun-types'
+  },
+
   // GitHub and external sources
   [DocumentationProvider.GITHUB_PUBLIC]: {
     BASE: 'https://github.com',
@@ -308,11 +361,11 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     DISCUSSIONS: 'https://github.com/oven-sh/bun/discussions',
     ACTIONS: 'https://github.com/oven-sh/bun/actions',
     WIKI: 'https://github.com/oven-sh/bun/wiki',
-    
-    // Specific branches/commits
+
+    // Specific branches/tags/commits
     MAIN_BRANCH: 'https://github.com/oven-sh/bun/tree/main',
     CANARY: 'https://github.com/oven-sh/bun/tree/canary',
-    
+
     // Package directories
     PACKAGES: {
       BUN_TYPES: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
@@ -320,17 +373,19 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
       BUN_FFI: 'https://github.com/oven-sh/bun/tree/main/packages/bun-ffi',
       BUN_PM: 'https://github.com/oven-sh/bun/tree/main/packages/bun-pm'
     },
-    
-    // Specific commits
-    SPECIFIC_COMMIT: (commitHash: string, path: string = '') => 
+
+    // Specific commits (with commit hash pattern)
+    SPECIFIC_COMMIT: (commitHash: string, path: string = '') =>
       `https://github.com/oven-sh/bun/tree/${commitHash}${path ? `/${path}` : ''}`,
-    
-    SPECIFIC_COMMIT_BLOB: (commitHash: string, path: string = '') => 
+
+    SPECIFIC_COMMIT_BLOB: (commitHash: string, path: string = '') =>
       `https://github.com/oven-sh/bun/blob/${commitHash}${path ? `/${path}` : ''}`,
-      
+
+    // Raw content (for direct access to files)
     RAW_CONTENT: (commitHash: string, path: string) =>
       `https://raw.githubusercontent.com/oven-sh/bun/${commitHash}/${path}`,
-      
+
+    // Example commit you provided
     EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types'
   },
   
@@ -350,7 +405,6 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     CATEGORIES: '/categories'
   },
   
-  // External documentation
   [DocumentationProvider.MDN_WEB_DOCS]: {
     BASE: 'https://developer.mozilla.org',
     EN_US: 'https://developer.mozilla.org/en-US',
@@ -358,6 +412,14 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     SEARCH: 'https://developer.mozilla.org/search'
   },
   
+  [DocumentationProvider.PERFORMANCE_GUIDES]: {
+    BASE: 'https://web.dev',
+    METRICS: 'https://web.dev/metrics',
+    OPTIMIZATION: 'https://web.dev/optimize',
+    TOOLS: 'https://web.dev/tools'
+  },
+  
+  // Legacy/backward compatibility providers (deprecated)
   [DocumentationProvider.NODE_JS]: {
     BASE: 'https://nodejs.org',
     DOCS: 'https://nodejs.org/docs',
@@ -372,14 +434,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     TOOLS: 'https://web.dev/tools'
   },
   
-  [DocumentationProvider.PERFORMANCE_GUIDES]: {
-    BASE: 'https://web.dev',
-    PERFORMANCE: 'https://web.dev/performance',
-    OPTIMIZATION: 'https://web.dev/optimize',
-    TOOLS: 'https://web.dev/tools',
-    METRICS: 'https://web.dev/metrics'
-  },
-  
+  // Additional providers (backward compatibility)
   [DocumentationProvider.SECURITY_DOCS]: {
     BASE: 'https://bun.com',
     SECURITY: 'https://bun.com/security',
@@ -388,6 +443,25 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     VULNERABILITIES: 'https://bun.com/security/vulnerabilities'
   },
   
+  [DocumentationProvider.API_REFERENCE]: {
+    BASE: 'https://bun.sh',
+    API: 'https://bun.sh/docs/api',
+    REFERENCE: 'https://bun.com/reference'
+  },
+  
+  [DocumentationProvider.COMMUNITY_BLOG]: {
+    BASE: 'https://bun.com',
+    BLOG: 'https://bun.com/blog',
+    COMMUNITY: 'https://bun.com/community'
+  },
+  
+  [DocumentationProvider.RSS_FEEDS]: {
+    BASE: 'https://bun.sh',
+    MAIN_FEED: 'https://bun.sh/feed.xml',
+    BLOG_FEED: 'https://bun.com/blog/rss.xml'
+  },
+  
+  // Legacy providers (deprecated - kept for backward compatibility)
   [DocumentationProvider.COMMUNITY_RESOURCES]: {
     BASE: 'https://bun.com',
     COMMUNITY: 'https://bun.com/community',
@@ -395,8 +469,136 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     GITHUB_DISCUSSIONS: 'https://github.com/oven-sh/bun/discussions',
     STACK_OVERFLOW: 'https://stackoverflow.com/questions/tagged/bun',
     REDDIT: 'https://reddit.com/r/bun'
+  },
+  
+  [DocumentationProvider.BUN_TECHNICAL]: {
+    BASE: 'https://bun.sh',
+    TECHNICAL_DOCS: 'https://bun.sh/docs',
+    API_REFERENCE: 'https://bun.sh/docs/api',
+    RUNTIME_REFERENCE: 'https://bun.sh/docs/runtime',
+    CLI_REFERENCE: 'https://bun.sh/docs/cli',
+    BENCHMARKS: 'https://bun.sh/docs/benchmarks',
+    PERFORMANCE: 'https://bun.sh/docs/performance',
+    SECURITY: 'https://bun.sh/docs/security',
+    TECHNICAL_BLOG: 'https://bun.sh/blog',
+    TECHNICAL_RSS: 'https://bun.sh/feed.xml'
+  },
+  
+  [DocumentationProvider.BUN_API_DOCS]: {
+    BASE: 'https://bun.sh',
+    API_OVERVIEW: 'https://bun.sh/docs/api',
+    UTILS: 'https://bun.sh/docs/api/utils',
+    HTTP: 'https://bun.sh/docs/api/http',
+    WEBSOCKET: 'https://bun.sh/docs/api/websocket',
+    STREAMS: 'https://bun.sh/docs/api/streams',
+    SERVE: 'https://bun.sh/docs/api/serve',
+    SQL: 'https://bun.sh/docs/api/sql',
+    TEST: 'https://bun.sh/docs/api/test',
+    BUILD: 'https://bun.sh/docs/api/build',
+    PLUGINS: 'https://bun.sh/docs/api/plugins'
+  },
+  
+  [DocumentationProvider.BUN_RUNTIME_DOCS]: {
+    BASE: 'https://bun.sh',
+    RUNTIME_OVERVIEW: 'https://bun.sh/docs/runtime',
+    FILESYSTEM: 'https://bun.sh/docs/runtime/filesystem',
+    PROCESS: 'https://bun.sh/docs/runtime/process',
+    NETWORKING: 'https://bun.sh/docs/runtime/networking',
+    BINARY_DATA: 'https://bun.sh/docs/runtime/binary-data',
+    CONCURRENCY: 'https://bun.sh/docs/runtime/concurrency',
+    MODULES: 'https://bun.sh/docs/runtime/modules',
+    ENVIRONMENT: 'https://bun.sh/docs/runtime/environment',
+    PERF_HOOKS: 'https://bun.sh/docs/runtime/perf-hooks',
+    INSPECTOR: 'https://bun.sh/docs/runtime/inspector'
+  },
+  
+  [DocumentationProvider.BUN_REFERENCE]: {
+    BASE: process.env.BUN_REFERENCE_URL || 'https://bun.com',
+    REFERENCE: 'https://bun.com/reference',
+    API_REFERENCE: 'https://bun.com/reference/api',
+    CLI_REFERENCE: 'https://bun.com/reference/cli',
+    CONFIG_REFERENCE: 'https://bun.com/reference/config',
+    ENVIRONMENT_REFERENCE: 'https://bun.com/reference/environment',
+    PACKAGES_REFERENCE: 'https://bun.com/reference/packages',
+    TEMPLATES_REFERENCE: 'https://bun.com/reference/templates',
+    TUTORIALS: 'https://bun.com/reference/tutorials',
+    COOKBOOK: 'https://bun.com/reference/cookbook',
+    CHEATSHEET: 'https://bun.com/reference/cheatsheet',
+    GLOSSARY: 'https://bun.com/reference/glossary'
+  },
+  
+  [DocumentationProvider.BUN_GUIDES]: {
+    BASE: process.env.BUN_GUIDES_URL || 'https://bun.com',
+    GUIDES: 'https://bun.com/guides',
+    GETTING_STARTED: 'https://bun.com/guides/getting-started',
+    TUTORIALS: 'https://bun.com/guides/tutorials',
+    HOW_TO: 'https://bun.com/guides/how-to',
+    BEST_PRACTICES: 'https://bun.com/guides/best-practices',
+    MIGRATION: 'https://bun.com/guides/migration',
+    TROUBLESHOOTING: 'https://bun.com/guides/troubleshooting',
+    FAQ: 'https://bun.com/guides/faq',
+    COMMUNITY: 'https://bun.com/guides/community',
+    STEP_BY_STEP: 'https://bun.com/guides/step-by-step',
+    VIDEO_TUTORIALS: 'https://bun.com/guides/video-tutorials',
+    INTERACTIVE: 'https://bun.com/guides/interactive'
+  },
+  
+  [DocumentationProvider.BUN_TUTORIALS]: {
+    BASE: 'https://bun.com',
+    TUTORIALS: 'https://bun.com/tutorials',
+    INTERACTIVE_TUTORIALS: 'https://bun.com/tutorials/interactive',
+    VIDEO_TUTORIALS: 'https://bun.com/tutorials/video',
+    WORKSHOP: 'https://bun.com/tutorials/workshop',
+    LEARNING_PATH: 'https://bun.com/tutorials/learning-path'
+  },
+  
+  [DocumentationProvider.BUN_EXAMPLES]: {
+    BASE: 'https://bun.com',
+    EXAMPLES: 'https://bun.com/examples',
+    CODE_SAMPLES: 'https://bun.com/examples/code',
+    PROJECT_TEMPLATES: 'https://bun.com/examples/templates',
+    DEMO_APPS: 'https://bun.com/examples/demo-apps',
+    PLAYGROUND: 'https://bun.com/examples/playground'
+  },
+  
+  [DocumentationProvider.BUN_RSS]: {
+    BASE: 'https://bun.com',
+    MAIN_RSS: 'https://bun.com/rss.xml',
+    BLOG_RSS: 'https://bun.com/blog/rss.xml',
+    RELEASES_RSS: 'https://bun.com/releases/rss.xml',
+    SECURITY_RSS: 'https://bun.com/security/rss.xml',
+    COMMUNITY_RSS: 'https://bun.com/community/rss.xml',
+    GUIDES_RSS: 'https://bun.com/guides/rss.xml'
+  },
+  
+  [DocumentationProvider.BUN_FEEDS]: {
+    BASE: 'https://bun.com',
+    MAIN_FEED: 'https://bun.com/rss.xml',
+    TECHNICAL_FEED: 'https://bun.sh/feed.xml',
+    BLOG_FEED: 'https://bun.com/blog/rss.xml',
+    RELEASES_FEED: 'https://bun.com/releases/rss.xml',
+    SECURITY_FEED: 'https://bun.com/security/rss.xml',
+    COMMUNITY_FEED: 'https://bun.com/community/rss.xml'
+  },
+  
+  [DocumentationProvider.GITHUB_PUBLIC]: {
+    BASE: 'https://github.com',
+    REPOSITORY: 'https://github.com/oven-sh/bun',
+    RELEASES: 'https://github.com/oven-sh/bun/releases',
+    ISSUES: 'https://github.com/oven-sh/bun/issues',
+    PULL_REQUESTS: 'https://github.com/oven-sh/bun/pulls',
+    DISCUSSIONS: 'https://github.com/oven-sh/bun/discussions',
+    ACTIONS: 'https://github.com/oven-sh/bun/actions',
+    WIKI: 'https://github.com/oven-sh/bun/wiki',
+    MAIN_BRANCH: 'https://github.com/oven-sh/bun/tree/main',
+    CANARY: 'https://github.com/oven-sh/bun/tree/canary',
+    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/af76296637931381e9509c204c5f1af9cc174534/packages/bun-types'
   }
 } as const;
+
+// Type-safe access to base URLs
+export type BaseURLs = typeof ENTERPRISE_DOCUMENTATION_BASE_URLS;
+export type ProviderURLs<T extends DocumentationProvider> = BaseURLs[T];
 
 // URL categorization and mapping for intelligent routing
 export const DOCUMENTATION_URL_MAPPINGS = {
@@ -577,6 +779,24 @@ export const QUICK_REFERENCE_URLS = {
     TOOLS: 'https://bun.com/examples/performance-testing',                     // Performance testing examples
     COMPARISON: 'https://bun.sh/compare'                                       // vs Node.js, Deno, etc.
   }
+} as const;
+
+// Special commit hashes for important releases
+export const SIGNIFICANT_COMMITS = {
+  // Example commit from your link
+  AF762966: 'af76296637931381e9509c204c5f1af9cc174534' as const,
+
+  // Other significant commits (would be maintained in real usage)
+  LATEST_RELEASE: 'main' as const,
+  CANARY_BUILD: 'canary' as const,
+
+  // Tags for versioning
+  V1_0_0: 'v1.0.0' as const,
+  V1_1_0: 'v1.1.0' as const,
+
+  // Feature branches
+  TYPED_ARRAY_PERF: 'feature/typed-array-perf' as const,
+  FETCH_OPTIMIZATION: 'feature/fetch-optimization' as const
 } as const;
 
 // Domain preferences for different user types

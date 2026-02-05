@@ -497,7 +497,7 @@ describe("Credentials", () => {
     Bun.env.CREDENTIALS_TEST = "from-env";
 
     try {
-      const loaded = await Credentials.load(
+      const loaded = await Credentials.YAML.parse(
         { service: "creds-app", name: "my-cred" },
         "CREDENTIALS_TEST",
         "default-value"
@@ -510,7 +510,7 @@ describe("Credentials", () => {
   });
 
   it("should return undefined when not found", async () => {
-    const loaded = await Credentials.load(
+    const loaded = await Credentials.YAML.parse(
       { service: "nonexistent-app", name: "nonexistent-cred" },
       "NONEXISTENT_ENV_VAR"
     );
@@ -518,7 +518,7 @@ describe("Credentials", () => {
   });
 
   it("should return default value when provided", async () => {
-    const loaded = await Credentials.load(
+    const loaded = await Credentials.YAML.parse(
       { service: "nonexistent-app", name: "nonexistent-cred" },
       "NONEXISTENT_ENV_VAR",
       "my-default"

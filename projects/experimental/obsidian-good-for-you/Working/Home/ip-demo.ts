@@ -18,7 +18,7 @@ async function demonstrateIPBasedConfig() {
     console.log(`Expected: ${test.expected}`);
     
     // Show configuration details
-    const config = ConfigManager.load(test.ip);
+    const config = ConfigManager.YAML.parse(test.ip);
     console.log(`📱 Device: ${config.deviceProfile?.deviceModel || 'Default'}`);
     console.log(`🌍 Timezone: ${config.deviceProfile?.timezone || config.timezone}`);
     console.log(`🌐 Locale: ${config.deviceProfile?.locale || config.locale}`);

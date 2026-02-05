@@ -27,7 +27,7 @@ export class MigrationHelper {
       performanceGain: 'Native C++ implementation',
       bundleSizeReduction: '0KB (vs ~50KB)',
       example: {
-        npm: "import { load } from 'js-yaml';\nconst data = load(yamlString);",
+        npm: "import { YAML } from "bun";\nconst data = YAML.parse(yamlString);",
         bun: "const data = await Bun.file('config.yaml').yaml();"
       }
     },

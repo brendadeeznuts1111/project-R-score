@@ -289,7 +289,7 @@ export class VersionGraph {
     if (lastChange) {
       const daysSinceLastChange = (Date.now() - new Date(lastChange).getTime()) / (1000 * 60 * 60 * 24);
       if (daysSinceLastChange > 90) {
-        recommendations.push('Secret hasn't been updated in 90+ days - consider rotation');
+        recommendations.push('Secret has not been updated in 90+ days - consider rotation');
       }
     }
     

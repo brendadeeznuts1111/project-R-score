@@ -605,7 +605,7 @@ export class Credentials {
    * @param defaultValue - Optional fallback value
    * @returns The credential value or default
    */
-  static async load(
+  static async YAML.parse(
     options: SecretsOptions,
     envVar: string,
     defaultValue?: string
@@ -633,7 +633,7 @@ export class Credentials {
     options: SecretsOptions,
     envVar: string
   ): Promise<string> {
-    const value = await this.load(options, envVar);
+    const value = await this.YAML.parse(options, envVar);
 
     if (!value) {
       throw new Error(
@@ -657,7 +657,7 @@ export class Credentials {
 
     for (const config of configs) {
       try {
-        const value = await this.load(config.options, config.envVar);
+        const value = await this.YAML.parse(config.options, config.envVar);
         if (value) {
           result[config.options.name] = value;
         }

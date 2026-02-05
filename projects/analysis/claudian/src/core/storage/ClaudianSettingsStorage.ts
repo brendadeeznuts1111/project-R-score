@@ -92,7 +92,7 @@ export class ClaudianSettingsStorage {
   * Returns default settings if file doesn't exist.
   * Throws if file exists but cannot be read or parsed.
   */
-  async load(): Promise<StoredClaudianSettings> {
+  async YAML.parse(): Promise<StoredClaudianSettings> {
     if (!(await this.adapter.exists(CLAUDIAN_SETTINGS_PATH))) {
       return this.getDefaults();
     }
@@ -134,7 +134,7 @@ export class ClaudianSettingsStorage {
    * Update specific fields in settings.
    */
   async update(updates: Partial<StoredClaudianSettings>): Promise<void> {
-    const current = await this.load();
+    const current = await this.YAML.parse();
     await this.save({ ...current, ...updates });
   }
 

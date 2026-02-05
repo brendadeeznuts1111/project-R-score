@@ -95,7 +95,7 @@ export class CCSettingsStorage {
    * Returns default settings if file doesn't exist.
    * Throws if file exists but cannot be read or parsed.
    */
-  async load(): Promise<CCSettings> {
+  async YAML.parse(): Promise<CCSettings> {
     if (!(await this.adapter.exists(CC_SETTINGS_PATH))) {
       return { ...DEFAULT_CC_SETTINGS };
     }
@@ -185,7 +185,7 @@ export class CCSettingsStorage {
    * Get permissions from CC settings.
    */
   async getPermissions(): Promise<CCPermissions> {
-    const settings = await this.load();
+    const settings = await this.YAML.parse();
     return settings.permissions ?? { ...DEFAULT_CC_PERMISSIONS };
   }
 
@@ -193,7 +193,7 @@ export class CCSettingsStorage {
    * Update permissions in CC settings.
    */
   async updatePermissions(permissions: CCPermissions): Promise<void> {
-    const settings = await this.load();
+    const settings = await this.YAML.parse();
     settings.permissions = permissions;
     await this.save(settings);
   }
@@ -251,7 +251,7 @@ export class CCSettingsStorage {
    * Returns empty object if not set.
    */
   async getEnabledPlugins(): Promise<Record<string, boolean>> {
-    const settings = await this.load();
+    const settings = await this.YAML.parse();
     return settings.enabledPlugins ?? {};
   }
 
@@ -263,7 +263,7 @@ export class CCSettingsStorage {
    * @param enabled - true to enable, false to disable
    */
   async setPluginEnabled(pluginId: string, enabled: boolean): Promise<void> {
-    const settings = await this.load();
+    const settings = await this.YAML.parse();
     const enabledPlugins = settings.enabledPlugins ?? {};
 
     enabledPlugins[pluginId] = enabled;

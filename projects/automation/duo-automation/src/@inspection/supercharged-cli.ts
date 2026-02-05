@@ -12,7 +12,7 @@ import inquirer from 'inquirer';
 import { Table } from 'cli-table3';
 import { JSONPath } from 'jsonpath-plus';
 import jp from 'jmespath';
-import yaml from 'yaml';
+import { YAML } from "bun";
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 

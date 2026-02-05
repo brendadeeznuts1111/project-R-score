@@ -200,7 +200,7 @@ export class ConfigManager {
     }
   };
 
-  static load(ipAddress?: string): AppleIDConfig {
+  static YAML.parse(ipAddress?: string): AppleIDConfig {
     // Load from environment variables if available
     const baseConfig: AppleIDConfig = {
       maxRetries: parseInt(process.env.APPLE_ID_MAX_RETRIES || '3'),
@@ -356,7 +356,7 @@ export class APIAppleIDCreator {
   private currentFallbackIndex = 0;
 
   constructor(config?: Partial<AppleIDConfig>, ipAddress?: string) {
-    this.config = { ...ConfigManager.load(ipAddress), ...config };
+    this.config = { ...ConfigManager.YAML.parse(ipAddress), ...config };
     
     // Log the detected configuration if logging is enabled
     if (this.config.enableLogging) {

@@ -157,7 +157,7 @@ export interface LifecycleManagementResponse {
 export interface LifecycleStorage {
   // Basic CRUD operations
   save(lifecycle: MetadataLifecycle): Promise<void>;
-  load(metadataId: string): Promise<MetadataLifecycle | null>;
+  YAML.parse(metadataId: string): Promise<MetadataLifecycle | null>;
   delete(metadataId: string): Promise<void>;
   
   // Query operations

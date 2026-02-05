@@ -155,7 +155,7 @@ describe('BunProductionConfig - Production Features', () => {
         debugMode: true 
       });
       
-      const loaded = await config2.load();
+      const loaded = await config2.YAML.parse();
       expect(loaded).toBe(true);
       
       // Verify loaded config
@@ -204,7 +204,7 @@ describe('BunProductionConfig - Production Features', () => {
         'Persistence not enabled. Initialize with persistPath option.'
       );
       
-      expect(config.load()).rejects.toThrow(
+      expect(config.YAML.parse()).rejects.toThrow(
         'Persistence not enabled.'
       );
     });

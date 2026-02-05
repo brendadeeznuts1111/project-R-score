@@ -8,7 +8,7 @@ import { RegistryLoader } from "../../../packages/core/src/parsers/toml-ingresso
 
 describe('RegistryLoader', () => {
   test('should load and parse registry.toml', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
 
     expect(config).toBeDefined();
     expect(config.lattice).toBeDefined();
@@ -18,7 +18,7 @@ describe('RegistryLoader', () => {
   });
 
   test('should validate lattice performance metrics', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
 
     expect(config.lattice.performance.bundle_size_kb).toBe(9.64);
     expect(config.lattice.performance.p99_response_ms).toBe(10.8);
@@ -27,7 +27,7 @@ describe('RegistryLoader', () => {
   });
 
   test('should load all servers', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
 
     expect(config.servers).toBeArray();
     expect(config.servers.length).toBeGreaterThan(0);
@@ -38,7 +38,7 @@ describe('RegistryLoader', () => {
   });
 
   test('should load all routes', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
 
     expect(config.routes).toBeArray();
     expect(config.routes.length).toBeGreaterThan(0);
@@ -49,14 +49,14 @@ describe('RegistryLoader', () => {
   });
 
   test('should filter enabled servers', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
     const enabledServers = RegistryLoader.getEnabledServers(config);
 
     expect(enabledServers.every(s => s.enabled)).toBe(true);
   });
 
   test('should filter enabled routes', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
     const enabledRoutes = RegistryLoader.getEnabledRoutes(config);
 
     // All routes should be enabled (enabled !== false)
@@ -67,7 +67,7 @@ describe('RegistryLoader', () => {
     // In standalone builds with fused config, this won't throw
     // In development mode without fused config, this should throw
     try {
-      const config = await RegistryLoader.load('./nonexistent.toml');
+      const config = await RegistryLoader.YAML.parse('./nonexistent.toml');
       // If we get here, fused config was used
       expect(config).toBeDefined();
     } catch (error) {

@@ -52,7 +52,7 @@ describe("Router Performance Integration", () => {
   let router: LatticeRouter;
 
   beforeAll(async () => {
-    const config = await RegistryLoader.load("./registry.toml");
+    const config = await RegistryLoader.YAML.parse("./registry.toml");
     router = new LatticeRouter(config);
     await router.initialize();
   });

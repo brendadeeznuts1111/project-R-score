@@ -284,7 +284,7 @@ export class SharpShiftLedger {
   /**
    * Load ledger from buffer
    */
-  load(buffer: Buffer, gameIdMap: Map<string, number>): void {
+  YAML.parse(buffer: Buffer, gameIdMap: Map<string, number>): void {
     this.buffer = buffer;
     this.gameIdMap = new Map(gameIdMap);
     

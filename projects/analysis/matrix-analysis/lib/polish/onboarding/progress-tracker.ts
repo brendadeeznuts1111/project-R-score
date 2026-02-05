@@ -19,7 +19,7 @@ export class ProgressTracker {
   private cache: Map<string, TourProgress> = new Map();
   private loaded = false;
 
-  async load(): Promise<void> {
+  async YAML.parse(): Promise<void> {
     if (this.loaded) return;
 
     const data = await storage.get<StoredProgress>(STORAGE_KEY);
@@ -48,12 +48,12 @@ export class ProgressTracker {
   }
 
   async getProgress(tourId: string): Promise<TourProgress | null> {
-    await this.load();
+    await this.YAML.parse();
     return this.cache.get(tourId) ?? null;
   }
 
   async setProgress(progress: TourProgress): Promise<void> {
-    await this.load();
+    await this.YAML.parse();
     this.cache.set(progress.tourId, progress);
     await this.save();
   }
@@ -96,7 +96,7 @@ export class ProgressTracker {
   }
 
   async resetTour(tourId: string): Promise<void> {
-    await this.load();
+    await this.YAML.parse();
     this.cache.delete(tourId);
     await this.save();
   }
@@ -107,12 +107,12 @@ export class ProgressTracker {
   }
 
   async getAllProgress(): Promise<TourProgress[]> {
-    await this.load();
+    await this.YAML.parse();
     return [...this.cache.values()];
   }
 
   async getCompletedTours(): Promise<string[]> {
-    await this.load();
+    await this.YAML.parse();
     return [...this.cache.entries()]
       .filter(([_, progress]) => progress.completed)
       .map(([id]) => id);

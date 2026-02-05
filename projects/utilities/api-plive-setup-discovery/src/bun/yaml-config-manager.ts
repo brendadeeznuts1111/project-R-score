@@ -15,7 +15,7 @@ export class YamlConfigManager {
   /**
    * Load YAML configuration from file
    */
-  async load(filePath: string): Promise<any> {
+  async YAML.parse(filePath: string): Promise<any> {
     try {
       if (this.configCache.has(filePath)) {
         return this.configCache.get(filePath);
@@ -166,7 +166,7 @@ export class YamlConfigManager {
         try {
           console.log(`🔄 Config file changed: ${filePath}`);
           this.configCache.delete(filePath);
-          const newConfig = await this.load(filePath);
+          const newConfig = await this.YAML.parse(filePath);
           callback(newConfig);
         } catch (error) {
           console.error(`❌ Error reloading config ${filePath}:`, error);

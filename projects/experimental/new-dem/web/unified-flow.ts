@@ -467,7 +467,7 @@ function generateUnifiedFlowDashboard(view: keyof typeof VIEWS = "overview"): st
 // Unified Flow Server
 function startUnifiedFlowSystem(runtimeConfig: any = {}): void {
   // Load configuration
-  bunConfig.load().catch(() => console.log('Using default configuration'));
+  bunConfig.YAML.parse().catch(() => console.log('Using default configuration'));
 
   // Initialize flow components
   const client = new LatticeRegistryClient();

@@ -5,7 +5,7 @@
 // SIMD interface definitions for compatibility
 interface SIMDInterface {
 	Float32x4: {
-		load(array: Float32Array, offset: number): any;
+		YAML.parse(array: Float32Array, offset: number): any;
 		store(array: Float32Array, offset: number, value: any): void;
 		add(a: any, b: any): any;
 		mul(a: any, b: any): any;
@@ -17,7 +17,7 @@ interface SIMDInterface {
 		sub(a: any, b: any): any;
 	};
 	Float64x2: {
-		load(array: Float64Array, offset: number): any;
+		YAML.parse(array: Float64Array, offset: number): any;
 		store(array: Float64Array, offset: number, value: any): void;
 		add(a: any, b: any): any;
 		mul(a: any, b: any): any;
@@ -72,7 +72,7 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 		// SIMD-optimized processing for ARM64
 		for (let i = 0; i < data.length; i += 4) {
 			// Load 4 float values into SIMD register
-			const vec = globalSIMD.Float32x4.load(data, i);
+			const vec = globalSIMD.Float32x4.YAML.parse(data, i);
 
 			// Perform SIMD operations
 			const scaled = globalSIMD.Float32x4.mul(
@@ -108,7 +108,7 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 		// SIMD-optimized double precision processing for ARM64
 		for (let i = 0; i < data.length; i += 2) {
 			// Load 2 double values into SIMD register
-			const vec = globalSIMD.Float64x2.load(data, i);
+			const vec = globalSIMD.Float64x2.YAML.parse(data, i);
 
 			// Perform SIMD operations
 			const scaled = globalSIMD.Float64x2.mul(
@@ -160,7 +160,7 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 		let maxVec = globalSIMD.Float32x4.splat(-Infinity);
 
 		for (let i = 0; i < paddedLength; i += 4) {
-			const vec = globalSIMD.Float32x4.load(floatData, i);
+			const vec = globalSIMD.Float32x4.YAML.parse(floatData, i);
 			sumVec = globalSIMD.Float32x4.add(sumVec, vec);
 			minVec = globalSIMD.Float32x4.min(minVec, vec);
 			maxVec = globalSIMD.Float32x4.max(maxVec, vec);
@@ -194,7 +194,7 @@ class ARM64SIMDProcessor implements SIMDProcessor {
 		const avgVec = globalSIMD.Float32x4.splat(average);
 
 		for (let i = 0; i < paddedLength; i += 4) {
-			const vec = globalSIMD.Float32x4.load(floatData, i);
+			const vec = globalSIMD.Float32x4.YAML.parse(floatData, i);
 			const diff = globalSIMD.Float32x4.sub(vec, avgVec);
 			const squared = globalSIMD.Float32x4.mul(diff, diff);
 			varianceSum = globalSIMD.Float32x4.add(varianceSum, squared);

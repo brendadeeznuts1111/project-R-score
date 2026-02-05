@@ -2,7 +2,7 @@
 
 // [API][USERS-REPORT][SYNC][v2.15][ACTIVE]
 
-import YAML from 'yaml';
+import { YAML } from "bun";
 
 const VAULT = process.cwd();
 

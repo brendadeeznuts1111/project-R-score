@@ -26,7 +26,7 @@ import { glob } from 'glob';
 import { ErrorHandler, ErrorSeverity, ErrorCategory, createErrorContext, logger } from '../../src/core/error-handler.js';
 import { SIZE_CONSTANTS } from '../../src/constants/vault-constants.js';
 import chalk from 'chalk';
-import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
+import { YAML } from "bun";
 
 interface FixResult {
     fixed: string[];

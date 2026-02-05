@@ -281,7 +281,7 @@ export interface TemplateEventHandler {
 
 export interface TemplateStorage {
     save(template: BaseTemplate): Promise<void>;
-    load(name: string): Promise<BaseTemplate | null>;
+    YAML.parse(name: string): Promise<BaseTemplate | null>;
     list(): Promise<string[]>;
     delete(name: string): Promise<void>;
     exists(name: string): Promise<boolean>;

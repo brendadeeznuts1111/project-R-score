@@ -552,8 +552,9 @@ export class SimpleBunMCPServer {
       },
     });
 
-    console.error(`🌐 Simple Bun MCP server running on http://example.com:${port}`);
-    console.error(`📊 Health check: http://example.com:${port}/health`);
+    const MCP_SERVER_HOST = process.env.MCP_SERVER_HOST || process.env.SERVER_HOST || 'localhost';
+    console.log(`🌐 Simple Bun MCP server running on http://${MCP_SERVER_HOST}:${port}`);
+    console.log(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
   }
 }
 

@@ -949,8 +949,8 @@ function handleTypedArrayURLs(): Response {
       websocket: `${BUN_DOCS.BASE}${BUN_DOCS.API.WEBSOCKET}`,
     },
     feeds: {
-      rss: '/feed/rss',
-      json: '/feed/json',
+      rss: `http://${SERVER_HOST}:${SERVER_PORT}/feed/rss`,
+      json: `http://${SERVER_HOST}:${SERVER_PORT}/feed/json`,
       bun_blog: RSS_URLS.BUN_BLOG,
       bun_updates: RSS_URLS.BUN_UPDATES,
     }
@@ -1033,7 +1033,7 @@ async function generateRSSFeed(): Promise<Response> {
   <description>Latest updates, examples, and patterns for working with TypedArrays in Bun</description>
   <language>en-us</language>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-  <atom:link href="/feed/rss" rel="self" type="application/rss+xml" />
+  <atom:link href="http://${SERVER_HOST}:${SERVER_PORT}/feed/rss" rel="self" type="application/rss+xml" />
   
   <item>
     <title>TypedArray Methods Reference</title>
@@ -1091,7 +1091,7 @@ function generateJSONFeed(): Response {
     version: "https://jsonfeed.org/version/1.1",
     title: "Bun TypedArray Documentation",
     home_page_url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
-    feed_url: "/feed/json",
+    feed_url: `http://${SERVER_HOST}:${SERVER_PORT}/feed/json`,
     description: "Latest updates and examples for TypedArrays in Bun",
     items: [
       {
@@ -1194,7 +1194,7 @@ async function handleBinaryData(): Promise<Response> {
     return new Response(`<h1>Binary Data Runtime Documentation</h1>
       <p>Unable to fetch from: <a href="${targetUrl}">${targetUrl}</a></p>
       <p>Error: ${error.message}</p>
-      <p><a href="/">Return to portal</a></p>`, {
+      <p><a href="http://${SERVER_HOST}:${SERVER_PORT}/">Return to portal</a></p>`, {
       headers: { 'Content-Type': 'text/html' },
     });
   }
@@ -1290,10 +1290,10 @@ function generateFallbackDocs(targetUrl: string, section: string): string {
     
     <h2>Available Sections</h2>
     <ul>
-      <li><a href="/docs/typedarray#typedarray">TypedArray Overview</a></li>
-      <li><a href="/docs/typedarray#methods">TypedArray Methods</a></li>
-      <li><a href="/docs/typedarray#conversion">Binary Data Conversion</a></li>
-      <li><a href="/docs/typedarray#examples">Examples</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray#typedarray">TypedArray Overview</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray#methods">TypedArray Methods</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray#conversion">Binary Data Conversion</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray#examples">Examples</a></li>
     </ul>
     
     <h2>Fetch Pattern Example</h2>
@@ -1311,7 +1311,7 @@ const text = await response.text();</code></pre>
       </ul>
     </div>
     
-    <p><a href="/">← Return to portal</a></p>
+    <p><a href="http://${SERVER_HOST}:${SERVER_PORT}/">← Return to portal</a></p>
   </div>
 </body>
 </html>`;
@@ -1324,12 +1324,12 @@ function handleNotFound(request: Request): Response {
     <p>The endpoint <code>${url.pathname}</code> was not found.</p>
     <p>Available endpoints:</p>
     <ul>
-      <li><a href="/">Home Page</a></li>
-      <li><a href="/api/fetch">Fetch Example</a></li>
-      <li><a href="/api/typedarray/urls">TypedArray URLs</a></li>
-      <li><a href="/api/content-type/demo">Content-Type Demo</a></li>
-      <li><a href="/feed/rss">RSS Feed</a></li>
-      <li><a href="/docs/typedarray">TypedArray Docs</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/">Home Page</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/api/fetch">Fetch Example</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/api/typedarray/urls">TypedArray URLs</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/api/content-type/demo">Content-Type Demo</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/feed/rss">RSS Feed</a></li>
+      <li><a href="http://${SERVER_HOST}:${SERVER_PORT}/docs/typedarray">TypedArray Docs</a></li>
     </ul>
     <p>Base URL for typed arrays: <code>${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}</code></p>`, {
     status: 404,
@@ -1459,7 +1459,7 @@ const contentType = ContentTypeHandler.getContentType(data);
 
 // Create requests with proper Content-Type
 const request = ContentTypeHandler.createRequest(
-  'https://api.example.com',
+  `http://${SERVER_HOST}:${SERVER_PORT}/api`,
   { message: 'Hello' }
 );</code></pre>
       

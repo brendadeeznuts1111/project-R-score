@@ -153,7 +153,7 @@ export async function createWorkflowSystemFromConfig(
   registry: PluginRegistry;
 }> {
   // Load configuration
-  const tomlConfig = await WorkflowConfigLoader.load(configPath);
+  const tomlConfig = await WorkflowConfigLoader.YAML.parse(configPath);
 
   if (!tomlConfig.enabled) {
     throw new Error('Workflow system is disabled in configuration');

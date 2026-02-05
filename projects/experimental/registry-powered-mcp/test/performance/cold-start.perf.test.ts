@@ -33,7 +33,7 @@ const LOAD_MULTIPLIER = getLoadMultiplier();
 describe('Cold Start Performance', () => {
   test('config loading should be fast', async () => {
     const start = Bun.nanoseconds();
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
     const end = Bun.nanoseconds();
 
     const durationMs = (end - start) / 1_000_000;
@@ -51,7 +51,7 @@ describe('Cold Start Performance', () => {
   });
 
   test('router initialization should be fast', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
 
     const start = Bun.nanoseconds();
     const router = new LatticeRouter(config);
@@ -73,7 +73,7 @@ describe('Cold Start Performance', () => {
   });
 
   test('URLPattern pre-compilation overhead', async () => {
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
     const patterns = config.routes?.map(r => r.pattern) || [];
 
     const start = Bun.nanoseconds();
@@ -95,7 +95,7 @@ describe('Cold Start Performance', () => {
   test('full bootstrap time (config + init)', async () => {
     const start = Bun.nanoseconds();
 
-    const config = await RegistryLoader.load('./registry.toml');
+    const config = await RegistryLoader.YAML.parse('./registry.toml');
     const router = new LatticeRouter(config);
     await router.initialize();
 

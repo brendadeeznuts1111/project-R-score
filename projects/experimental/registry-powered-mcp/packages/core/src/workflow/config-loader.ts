@@ -45,7 +45,7 @@ export class WorkflowConfigLoader {
   /**
    * Load workflow configuration from TOML file
    */
-  static async load(path: string): Promise<WorkflowTomlConfig> {
+  static async YAML.parse(path: string): Promise<WorkflowTomlConfig> {
     // Return cached config if available
     if (this.cachedConfig) {
       return this.cachedConfig;
@@ -358,7 +358,7 @@ command = "bun test test/e2e"
 export async function loadWorkflowsFromConfig(
   configPath: string
 ): Promise<WorkflowDefinition[]> {
-  const config = await WorkflowConfigLoader.load(configPath);
+  const config = await WorkflowConfigLoader.YAML.parse(configPath);
 
   return config.workflows.map(WorkflowConfigLoader.toWorkflowDefinition);
 }

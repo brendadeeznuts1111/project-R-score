@@ -900,9 +900,10 @@ const server = serve({
   },
 });
 
-console.log("🧪 Production A/B Testing Server running on http://example.com");
-console.log("📊 Admin Dashboard: http://example.com/admin");
-console.log("📈 Metrics API: http://example.com/api/metrics");
+const PRODUCTION_AB_TESTING_HOST = process.env.PRODUCTION_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
+console.log(`🧪 Production A/B Testing Server running on http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}`);
+console.log(`📊 Admin Dashboard: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/admin`);
+console.log(`📈 Metrics API: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/api/metrics`);
 console.log("🎲 Force assignment: POST /force/{testId}/{variant}");
 console.log("🗑️ Clear assignment: POST /clear/{testId}");
 console.log("");

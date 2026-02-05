@@ -50,7 +50,7 @@ class ModalKYCIntegration {
 
 	async initialize(): Promise<void> {
 		// Load configuration
-		const config = this.configLoader.load();
+		const config = this.configLoader.YAML.parse();
 
 		// Store configuration in database for access by KYC system
 		await this.db.setConfig("modal-settings", config);
