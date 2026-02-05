@@ -1,9 +1,9 @@
 /**
  * 🏭 FactoryWager Library Index
  * 
- * The heart of all projects - centralized constants, types, utilities, theming, and documentation
+ * The heart of all projects - centralized constants, types, utilities, theming, documentation, and security
  * 
- * @version 4.0
+ * @version 5.1
  * @author FactoryWager Team
  */
 
@@ -20,6 +20,9 @@ export * from './terminal-color-256';
 // Documentation
 export * from './docs';
 
+// Security (NEW v5.1)
+export * from './security';
+
 // Constants and configuration
 export * from './constants';
 export * from './config';
@@ -31,14 +34,15 @@ export { styled, log, FW_COLORS } from './theme/colors';
 export { FACTORYWAGER_CONFIG, PERFORMANCE_THRESHOLDS } from './config';
 export { Utils } from './utils';
 export { DOC_PATTERNS, DocumentationUtils } from './docs';
+export { VersionedSecretManager, SecurityUtils } from './security';
 
 /**
  * FactoryWager Library Info
  */
 export const LIB_INFO = {
   name: 'FactoryWager',
-  version: '4.0',
-  description: 'The heart of FactoryWager monorepo - centralized infrastructure',
+  version: '5.1',
+  description: 'The heart of FactoryWager monorepo - centralized infrastructure with temporal security',
   author: 'FactoryWager Team',
   license: 'MIT',
 } as const;
@@ -62,6 +66,12 @@ export const FW = {
   docs: {
     patterns: DOC_PATTERNS,
     utils: DocumentationUtils,
+  },
+  
+  // Security (v5.1)
+  security: {
+    versionedSecrets: VersionedSecretManager,
+    utils: SecurityUtils,
   },
   
   // Types
